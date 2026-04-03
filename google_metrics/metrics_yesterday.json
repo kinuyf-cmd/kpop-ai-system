@@ -1,0 +1,250 @@
+{
+  "date": "2026-04-02",
+  "ga4": {
+    "summary": {
+      "sessions": "429",
+      "users": "275",
+      "pageviews": "301",
+      "engaged_sessions": "19",
+      "avg_session_duration": "12.718663573426573"
+    },
+    "top_landing_pages": [
+      {
+        "page": "/mama-awards-2026-osaka/",
+        "sessions": "201",
+        "users": "198",
+        "pageviews": "217",
+        "engaged_sessions": "14",
+        "avg_session_duration": "16.77145970646766"
+      },
+      {
+        "page": "",
+        "sessions": "148",
+        "users": "142",
+        "pageviews": "0",
+        "engaged_sessions": "1",
+        "avg_session_duration": "12.625430844594595"
+      },
+      {
+        "page": "/kpop-demon-hunters-cast-characters/",
+        "sessions": "15",
+        "users": "14",
+        "pageviews": "15",
+        "engaged_sessions": "0",
+        "avg_session_duration": "0.46290946666666666"
+      },
+      {
+        "page": "/",
+        "sessions": "10",
+        "users": "9",
+        "pageviews": "13",
+        "engaged_sessions": "2",
+        "avg_session_duration": "4.004254"
+      },
+      {
+        "page": "/swf3-rhtokyo-profile/",
+        "sessions": "6",
+        "users": "6",
+        "pageviews": "6",
+        "engaged_sessions": "0",
+        "avg_session_duration": "0"
+      },
+      {
+        "page": "/xg-complete-guide-members-history/",
+        "sessions": "5",
+        "users": "5",
+        "pageviews": "6",
+        "engaged_sessions": "1",
+        "avg_session_duration": "4.7493356"
+      },
+      {
+        "page": "/kpop-events-japan-april-2026-complete/",
+        "sessions": "4",
+        "users": "4",
+        "pageviews": "4",
+        "engaged_sessions": "0",
+        "avg_session_duration": "2.621758"
+      },
+      {
+        "page": "/bts-jimin-relationship-controversy-2025/",
+        "sessions": "3",
+        "users": "3",
+        "pageviews": "3",
+        "engaged_sessions": "0",
+        "avg_session_duration": "0"
+      },
+      {
+        "page": "/itzy-jyp-renewal-2025/",
+        "sessions": "3",
+        "users": "3",
+        "pageviews": "3",
+        "engaged_sessions": "0",
+        "avg_session_duration": "2.461537"
+      },
+      {
+        "page": "/kpop-demon-hunters-golden-analysis/",
+        "sessions": "3",
+        "users": "3",
+        "pageviews": "3",
+        "engaged_sessions": "0",
+        "avg_session_duration": "1.5065283333333335"
+      }
+    ]
+  },
+  "gsc": {
+    "period_label": "3日前",
+    "start_date": "2026-03-31",
+    "end_date": "2026-03-31",
+    "top_queries": [
+      {
+        "query": "riehatatokyo メンバー",
+        "clicks": 2,
+        "impressions": 4,
+        "ctr": 0.5,
+        "position": 7
+      },
+      {
+        "query": "ive公式ライトスティック ver.2",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 13
+      },
+      {
+        "query": "rht. メンバー 年齢",
+        "clicks": 1,
+        "impressions": 5,
+        "ctr": 0.2,
+        "position": 7.6
+      },
+      {
+        "query": "youngji",
+        "clicks": 1,
+        "impressions": 2,
+        "ctr": 0.5,
+        "position": 66.5
+      },
+      {
+        "query": "スキズ ost",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 1
+      },
+      {
+        "query": "デーモン ハンターズ 相関 図",
+        "clicks": 1,
+        "impressions": 5,
+        "ctr": 0.2,
+        "position": 2.2
+      },
+      {
+        "query": "デーモンハンターズ キャラクター 名前",
+        "clicks": 1,
+        "impressions": 6,
+        "ctr": 0.16666666666666666,
+        "position": 2.5
+      },
+      {
+        "query": "デーモンハンターズ 名前",
+        "clicks": 1,
+        "impressions": 6,
+        "ctr": 0.16666666666666666,
+        "position": 6.666666666666667
+      },
+      {
+        "query": "2026 コーチェラ bigbang",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0,
+        "position": 8
+      },
+      {
+        "query": "bigbang コーチェラ 2026",
+        "clicks": 0,
+        "impressions": 16,
+        "ctr": 0,
+        "position": 1
+      }
+    ],
+    "top_pages": [
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-events-japan-august-2025/",
+        "clicks": 23,
+        "impressions": 120,
+        "ctr": 0.19166666666666668,
+        "position": 9.583333333333334
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-demon-hunters-cast-characters/",
+        "clicks": 5,
+        "impressions": 147,
+        "ctr": 0.034013605442176874,
+        "position": 6.183673469387755
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/2025-mama-awards-nominees-vote-guide/",
+        "clicks": 3,
+        "impressions": 50,
+        "ctr": 0.06,
+        "position": 9.12
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/swf3-rhtokyo-profile/",
+        "clicks": 3,
+        "impressions": 22,
+        "ctr": 0.13636363636363635,
+        "position": 6.590909090909091
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/ive-lightstick-ver2-announcement/",
+        "clicks": 1,
+        "impressions": 4,
+        "ctr": 0.25,
+        "position": 11.25
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-chart-march-week4-2026-full/",
+        "clicks": 1,
+        "impressions": 13,
+        "ctr": 0.07692307692307693,
+        "position": 30
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-demon-hunters-inserted-songs/",
+        "clicks": 1,
+        "impressions": 9,
+        "ctr": 0.1111111111111111,
+        "position": 9.88888888888889
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-events-japan-2025-list/",
+        "clicks": 1,
+        "impressions": 28,
+        "ctr": 0.03571428571428571,
+        "position": 21.392857142857142
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/kpop-spotify-vs-applemusic/",
+        "clicks": 1,
+        "impressions": 1,
+        "ctr": 1,
+        "position": 3
+      },
+      {
+        "page": "https://www.kpopjournal.tokyo/straykids-ost-genie-skz-it-tape-2025/",
+        "clicks": 1,
+        "impressions": 10,
+        "ctr": 0.1,
+        "position": 6.5
+      }
+    ]
+  },
+  "adsense": {
+    "ESTIMATED_EARNINGS": "95",
+    "PAGE_VIEWS": "303",
+    "IMPRESSIONS": "2670",
+    "CLICKS": "25",
+    "PAGE_VIEWS_RPM": "313"
+  }
+}
