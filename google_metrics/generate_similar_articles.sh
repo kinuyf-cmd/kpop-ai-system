@@ -49,7 +49,7 @@ print('YES' if '$SLUG' in data.get('generated', []) else 'NO')
   [ "$ALREADY" = "YES" ] && echo "生成済みスキップ: $SLUG" | tee -a "$LOG" && continue
 
   # WPから元記事のタイトル取得
-  POST=$(curl -s -u "kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM"     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?slug=$SLUG")
+  POST=$(curl -s -u "$WP_USER:$WP_PASS"     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?slug=$SLUG")
   ORIG_TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['title']['rendered'] if d else '')")
   [ -z "$ORIG_TITLE" ] && continue
 

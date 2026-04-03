@@ -3,8 +3,8 @@ set -e
 
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-WP_USER="kpop-bot"
-WP_PASS="afX1 yOFd nlrp I751 3XgW zMmM"
+WP_USER="${WP_USER:-kpop-bot}"
+WP_PASS="${WP_PASS}"
 SITE="https://www.kpopjournal.tokyo"
 LOCK_FILE="$BASE/revenue_cta_lock.json"
 LOG="$BASE/revenue_cta.log"
@@ -192,7 +192,7 @@ PY
 
   if [ -n "$LINK" ]; then
     echo "✅ CTA強化完了: $TITLE" | tee -a "$LOG"
-    curl -s -X POST "$https://discord.com/api/webhooks/1489227617373782037/kXg39l1szo4i8IrbgejdIPoug4SDqnFSizbcQB89S0K5JSp8ohSj04Ys_QR0_9xe_9zH" \
+    curl -s -X POST "$$DISCORD_WEBHOOK" \
       -H "Content-Type: application/json" \
       -d "{\"content\":\"🎯 収益記事CTA強化\n$TITLE\n冒頭/中盤/FAQ/末尾CTA追加済み\"}" > /dev/null
   else

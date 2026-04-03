@@ -78,7 +78,7 @@ today_dt = datetime.strptime(today_str, "%Y%m%d").replace(tzinfo=timezone.utc)
 after  = today_dt.strftime("%Y-%m-%dT00:00:00")
 before = today_dt.strftime("%Y-%m-%dT23:59:59")
 
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 headers = {"Authorization": "Basic " + auth}
 url = ("https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
        "?per_page=50&after=" + urllib.parse.quote(after)

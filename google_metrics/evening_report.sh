@@ -2,7 +2,7 @@
 set -e
 
 BASE="$HOME/google_metrics"
-DISCORD_WEBHOOK="https://discord.com/api/webhooks/1489227617373782037/kXg39l1szo4i8IrbgejdIPoug4SDqnFSizbcQB89S0K5JSp8ohSj04Ys_QR0_9xe_9zH"
+DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 TODAY=$(date '+%Y-%m-%d')
 TODAY_JP=$(date '+%Y年%m月%d日')
 
@@ -12,7 +12,7 @@ import json, urllib.request, base64, urllib.parse
 from datetime import datetime, timezone
 today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0).strftime("%Y-%m-%dT%H:%M:%S")
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=20&after=" + urllib.parse.quote(today_start)
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
 try:
     with urllib.request.urlopen(req, timeout=10) as res:

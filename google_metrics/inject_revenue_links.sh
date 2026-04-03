@@ -2,9 +2,9 @@
 set -e
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-WP_USER="kpop-bot"
-WP_PASS="afX1 yOFd nlrp I751 3XgW zMmM"
-DISCORD_WEBHOOK="https://discord.com/api/webhooks/1489227617373782037/kXg39l1szo4i8IrbgejdIPoug4SDqnFSizbcQB89S0K5JSp8ohSj04Ys_QR0_9xe_9zH"
+WP_USER="${WP_USER:-kpop-bot}"
+WP_PASS="${WP_PASS}"
+DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 BASE="$HOME/google_metrics"
 SITE="https://www.kpopjournal.tokyo"
 

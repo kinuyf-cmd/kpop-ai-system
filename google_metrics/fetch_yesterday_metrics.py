@@ -12,9 +12,9 @@ from google.auth.transport.requests import Request
 
 BASE_DIR = os.path.expanduser("~/google_metrics")
 
-GA4_PROPERTY_ID = "493983919"
-GSC_SITE_URL = "https://www.kpopjournal.tokyo/"
-ADSENSE_ACCOUNT_NAME = "accounts/pub-5968839599715792"
+GA4_PROPERTY_ID = os.environ.get("GA4_PROPERTY_ID", "493983919")
+GSC_SITE_URL = os.environ.get("GSC_SITE_URL", "https://www.kpopjournal.tokyo/")
+ADSENSE_ACCOUNT_NAME = os.environ.get("ADSENSE_ACCOUNT_NAME", "accounts/pub-5968839599715792")
 
 SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "service_account.json")
 ADSENSE_CLIENT_SECRET_FILE = os.path.join(BASE_DIR, "adsense_client_secret.json")

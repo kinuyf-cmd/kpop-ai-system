@@ -53,7 +53,7 @@ import sys, json, urllib.request, base64, urllib.parse
 today = sys.argv[1]
 after = today + "T00:00:00"
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=50&after=" + urllib.parse.quote(after) + "&status=publish"
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
 try:
     with urllib.request.urlopen(req, timeout=15) as res:
@@ -148,7 +148,7 @@ new_keywords = sys.argv[2].strip().split("\n")
 
 after = today + "T00:00:00"
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=50&after=" + urllib.parse.quote(after) + "&status=publish"
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
 
 try:

@@ -9,7 +9,7 @@ wp_health_check() {
   echo "=== WordPress 接続確認 ==="
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=1" \
-    -u "kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM" \
+    -u "$WP_USER:$WP_PASS" \
     --connect-timeout 10 --max-time 15)
   if [[ "$HTTP_CODE" != "200" ]]; then
     echo "❌ WordPress API 接続失敗 (HTTP ${HTTP_CODE}) → パイプライン停止"
@@ -30,7 +30,7 @@ from datetime import datetime, timedelta, timezone
 days = int(sys.argv[1])
 cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%S")
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=30&after=" + urllib.parse.quote(cutoff)
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
 try:
     with urllib.request.urlopen(req, timeout=10) as res:
@@ -187,7 +187,7 @@ python3 ~/make_thumbnail.py "$THUMB_TITLE" 2>/dev/null
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then
   MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
-    -u "kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM" \
+    -u "$WP_USER:$WP_PASS" \
     -H "Content-Disposition: attachment; filename=thumbnail.jpg" \
     -H "Content-Type: image/jpeg" \
     --data-binary @thumbnail.jpg)
@@ -222,7 +222,7 @@ PY
 )
 
 RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
-  -u "kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM" \
+  -u "$WP_USER:$WP_PASS" \
   -H "Content-Type: application/json" \
   -d "$JSON")
 
