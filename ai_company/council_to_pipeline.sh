@@ -49,7 +49,7 @@ title = open('/tmp/council_title.txt', 'w').write("""$TITLE""") or open('/tmp/co
 content = """$CONTENT"""
 slug = "$SLUG"
 
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 headers = {
     "Authorization": "Basic " + auth,
     "Content-Type": "application/json"

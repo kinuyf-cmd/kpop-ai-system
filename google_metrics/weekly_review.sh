@@ -2,7 +2,7 @@
 set -e
 
 BASE="$HOME/google_metrics"
-DISCORD_WEBHOOK="${DISCORD_WEBHOOK_REDACTED}"
+DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 LOG="$BASE/weekly_review.log"
 
 echo "" >> "$LOG"
@@ -67,7 +67,7 @@ import urllib.request, base64, urllib.parse, json
 from datetime import datetime, timedelta, timezone
 start = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S")
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=100&after=" + urllib.parse.quote(start)
-auth = base64.b64encode(b"kpop-bot:afX1 yOFd nlrp I751 3XgW zMmM").decode()
+auth = base64.b64encode(os.environ.get("WP_USER","kpop-bot").encode() + b":" + os.environ.get("WP_PASS","").encode()).decode()
 req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
 with urllib.request.urlopen(req, timeout=10) as res:
     posts = json.loads(res.read())

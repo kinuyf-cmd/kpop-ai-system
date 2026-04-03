@@ -7,9 +7,9 @@ TMP_LOW="$BASE/low_ctr_pages.json"
 TMP_OUT="$BASE/auto_title_updates.log"
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-WP_USER="kpop-bot"
-WP_PASS="afX1 yOFd nlrp I751 3XgW zMmM"
-DISCORD_WEBHOOK="${DISCORD_WEBHOOK_REDACTED}"
+WP_USER="${WP_USER:-kpop-bot}"
+WP_PASS="${WP_PASS}"
+DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 
 echo "" > "$TMP_OUT"
 

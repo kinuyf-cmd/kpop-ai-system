@@ -3,9 +3,9 @@ set -e
 
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-WP_USER="kpop-bot"
-WP_PASS="afX1 yOFd nlrp I751 3XgW zMmM"
-DISCORD_WEBHOOK="${DISCORD_WEBHOOK_REDACTED}"
+WP_USER="${WP_USER:-kpop-bot}"
+WP_PASS="${WP_PASS}"
+DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 OUT="$BASE/noindex_candidates.json"
 LOG="$BASE/noindex_candidates.log"
 

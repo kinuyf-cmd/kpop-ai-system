@@ -4,9 +4,9 @@ set -e
 BASE="$HOME/google_metrics"
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-WP_USER="kpop-bot"
-WP_PASS="afX1 yOFd nlrp I751 3XgW zMmM"
-DISCORD="${DISCORD_WEBHOOK_REDACTED}"
+WP_USER="${WP_USER:-kpop-bot}"
+WP_PASS="${WP_PASS}"
+DISCORD="$DISCORD_WEBHOOK"
 
 PAGES=$(python3 "$BASE/find_low_ctr_pages.py" < "$BASE/metrics_yesterday.json" | jq -r '.[].page')
 
