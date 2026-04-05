@@ -1,0 +1,46 @@
+{
+  "sites": {
+    "kpop_journal": {
+      "name": "KPOP JOURNAL",
+      "domain": "https://www.kpopjournal.tokyo",
+      "wp_api": "https://www.kpopjournal.tokyo/wp-json/wp/v2",
+      "genre": "kpop",
+      "language": "ja",
+      "categories_file": "config/categories_kpop.json",
+      "revenue_config": "config/revenue_config.json",
+      "seo_config": "config/seo_config.json",
+      "agents_dir": "agents/",
+      "active": true
+    }
+  },
+  "multi_genre_template": {
+    "_comment": "Template for future site expansion",
+    "required_files": [
+      "config/categories_{genre}.json",
+      "config/revenue_{genre}.json",
+      "config/seo_{genre}.json",
+      "agents/{genre}_deoxys.md",
+      "agents/{genre}_metamon.md",
+      "hooks/{genre}_style_hook.md"
+    ],
+    "shared_infrastructure": [
+      "lib/post_guard.py",
+      "lib/retry_handler.py",
+      "lib/kpi_logger.py",
+      "lib/data_collector.py",
+      "post_to_wp.py"
+    ],
+    "brand_assets": {
+      "logo_dir": "assets/logos/",
+      "thumbnail_templates": "assets/thumbnails/",
+      "color_scheme_file": "config/brand_colors.json",
+      "font_config": "config/fonts.json"
+    }
+  },
+  "scalability": {
+    "max_sites": 10,
+    "shared_db": "logs/master_kpi.json",
+    "cross_site_linking": true,
+    "unified_dashboard": true
+  }
+}
