@@ -731,6 +731,9 @@ X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイ
 " > reports/15_sns.md
 check_output reports/15_sns.md "ペルシアン"
 
+echo "=== [15.1] X/Twitter 自動投稿 ==="
+bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/15_sns.md" 2>/dev/null || echo "X投稿スキップ"
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # レジギガス: 実行履歴アーカイブ
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

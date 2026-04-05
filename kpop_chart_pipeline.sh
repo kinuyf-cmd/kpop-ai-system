@@ -245,6 +245,9 @@ claude --agent persian -p "
 X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイミング・採用推奨パターンを出力せよ。
 " > reports/chart_2_sns.md
 
+echo "=== X/Twitter 自動投稿 ==="
+bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>/dev/null || echo "X投稿スキップ"
+
 # アーカイブ
 mkdir -p "$ARCHIVE_DIR"
 cp reports/chart_* "$ARCHIVE_DIR/" 2>/dev/null
