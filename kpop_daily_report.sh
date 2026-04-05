@@ -63,6 +63,12 @@ done
 echo "  総実行: ${TOTAL}回 | 成功: ${SUCCESS}回 | 停止: ${STOPPED}回"
 echo "  速報: ✅${SPEED_OK} ❌${SPEED_NG}  戦略: ✅${STRATEGY_OK} ❌${STRATEGY_NG}  チャート: ✅${CHART_OK} ❌${CHART_NG}"
 
+# トークンコスト集計
+TOKEN_REPORT=$(python3 ~/kpop-ai-system/lib/token_report.py daily "$TODAY_KEY" --json 2>/dev/null || echo '{}')
+TOKEN_TOTAL=$(echo "$TOKEN_REPORT" | python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(f\"{d.get('total_tokens',0):,}\")" 2>/dev/null || echo "0")
+TOKEN_COST=$(echo "$TOKEN_REPORT" | python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(f\"${d.get('total_cost_usd',0):.4f} (約{d.get('total_cost_jpy',0):.0f}円)\")" 2>/dev/null || echo "N/A")
+echo "  トークン: ${TOKEN_TOTAL} | コスト: ${TOKEN_COST}"
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [2] WordPressの本日投稿を取得
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

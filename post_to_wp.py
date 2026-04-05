@@ -276,6 +276,7 @@ def main():
             "pipeline": "post_to_wp",
             "has_cta": "revenue-cta" in body,
             "has_thumbnail": media_id > 0,
+            "token_count": int(os.environ.get("PIPELINE_TOKEN_COUNT", 0)),
             "processing_time_sec": round(elapsed, 1),
         })
 
