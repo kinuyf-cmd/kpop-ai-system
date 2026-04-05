@@ -8,6 +8,12 @@
 # ============================================================
 set -euo pipefail
 
+# dry-run制御: ENABLE_X_POST=1 で本番投稿、未設定/0 でdry-run
+DRY_RUN=true
+if [ "${ENABLE_X_POST:-0}" = "1" ]; then
+  DRY_RUN=false
+fi
+
 TITLE="${1:-}"
 POST_URL="${2:-}"
 PERSIAN_FILE="${3:-}"
@@ -76,5 +82,12 @@ ${POST_URL}"
 fi
 
 echo "  投稿文: ${TWEET_TEXT:0:100}..."
+
+if [ "$DRY_RUN" = "true" ]; then
+  echo "[DRY-RUN] X投稿をスキップしました（ENABLE_X_POST=1 で有効化）"
+  echo "  投稿予定文:"
+  echo "  $TWEET_TEXT"
+  exit 0
+fi
 
 python3 ~/google_metrics/post_to_x.py "$TWEET_TEXT"
