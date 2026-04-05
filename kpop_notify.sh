@@ -34,11 +34,27 @@ if [[ -f "$LINE_TOKEN_FILE" ]]; then
   fi
 fi
 
-# Discord Webhook（~/.kpop_discord_webhook にURLを置けば有効）
-DISCORD_WEBHOOK_FILE=~/.kpop_discord_webhook
-if [[ -f "$DISCORD_WEBHOOK_FILE" ]]; then
-  DISCORD_URL=$(cat "$DISCORD_WEBHOOK_FILE" | tr -d '[:space:]')
-  if [[ -n "$DISCORD_URL" ]]; then
+# Discord Webhook（チャネル別振り分け対応）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+
+# チャネル振り分け: success→publishing_log, error→urgent_errors
+if [[ "$STATUS" == "success" ]]; then
+  DISCORD_CHANNEL="publishing_log"
+else
+  DISCORD_CHANNEL="urgent_errors"
+fi
+DISCORD_URL=$(get_discord_webhook "$DISCORD_CHANNEL" 2>/dev/null || echo "")
+
+# フォールバック
+if [[ -z "$DISCORD_URL" ]]; then
+  DISCORD_WEBHOOK_FILE=~/.kpop_discord_webhook
+  if [[ -f "$DISCORD_WEBHOOK_FILE" ]]; then
+    DISCORD_URL=$(cat "$DISCORD_WEBHOOK_FILE" | tr -d '[:space:]')
+  fi
+fi
+
+if [[ -n "$DISCORD_URL" ]]; then
     if [[ "$STATUS" == "success" ]]; then
       COLOR=3066993   # 緑
     else

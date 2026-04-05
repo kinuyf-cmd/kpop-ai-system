@@ -185,11 +185,18 @@ else
   echo "  ⚠️  ~/.kpop_line_token なし → LINE通知スキップ"
 fi
 
-# Discord Webhook
-DISCORD_WEBHOOK_FILE=~/.kpop_discord_webhook
-if [[ -f "$DISCORD_WEBHOOK_FILE" ]]; then
-  DISCORD_URL=$(cat "$DISCORD_WEBHOOK_FILE" | tr -d '[:space:]')
-  if [[ -n "$DISCORD_URL" ]]; then
+# Discord Webhook（#daily-ceo-report チャネル）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+DISCORD_URL=$(get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
+if [[ -z "$DISCORD_URL" ]]; then
+  DISCORD_WEBHOOK_FILE=~/.kpop_discord_webhook
+  if [[ -f "$DISCORD_WEBHOOK_FILE" ]]; then
+    DISCORD_URL=$(cat "$DISCORD_WEBHOOK_FILE" | tr -d '[:space:]')
+  fi
+fi
+if [[ -n "$DISCORD_URL" ]]; then
+  {
     # 投稿記事リストをDiscord用に整形
     DISCORD_ARTICLES=$(echo -e "$ARTICLE_LIST" | sed 's/^  //' | head -c 1800)
 

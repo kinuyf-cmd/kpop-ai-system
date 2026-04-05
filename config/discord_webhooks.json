@@ -1,0 +1,9 @@
+{
+  "daily_ceo_report": "${DISCORD_WEBHOOK_REDACTED}",
+  "weekly_board_report": "${DISCORD_WEBHOOK_REDACTED}",
+  "monthly_board_report": "${DISCORD_WEBHOOK_REDACTED}",
+  "urgent_errors": "${DISCORD_WEBHOOK_REDACTED}",
+  "seo_insights": "${DISCORD_WEBHOOK_REDACTED}",
+  "publishing_log": "${DISCORD_WEBHOOK_REDACTED}",
+  "sales_monetization": "${DISCORD_WEBHOOK_REDACTED}"
+}

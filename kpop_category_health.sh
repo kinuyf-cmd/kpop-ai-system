@@ -70,7 +70,11 @@ echo "  保存先: $REPORT_FILE"
 echo ""
 echo "=== [5] Discord通知 ==="
 
-DISCORD_URL="${DISCORD_WEBHOOK:-}"
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+DISCORD_URL=$(get_discord_webhook "weekly_board_report" 2>/dev/null || echo "")
+if [ -z "$DISCORD_URL" ]; then
+  DISCORD_URL="${DISCORD_WEBHOOK:-}"
+fi
 if [ -z "$DISCORD_URL" ] && [ -f ~/.kpop_discord_webhook ]; then
   DISCORD_URL=$(cat ~/.kpop_discord_webhook | tr -d '[:space:]')
 fi
