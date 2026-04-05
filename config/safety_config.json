@@ -1,0 +1,51 @@
+{
+  "emergency_stop": {
+    "consecutive_failures": 3,
+    "daily_error_threshold": 5,
+    "post_log_corruption": true,
+    "wp_api_5xx_count": 3,
+    "token_budget_exceeded": true
+  },
+  "manual_approval_triggers": {
+    "article_score_below": 38,
+    "revenue_article": false,
+    "first_post_of_day": false,
+    "new_category_first_post": true,
+    "content_length_over": 8000,
+    "gossip_category": true,
+    "controversy_keywords": [
+      "炎上", "訴訟", "脱退", "逮捕", "薬物", "暴行",
+      "セクハラ", "パワハラ", "詐欺", "裁判"
+    ]
+  },
+  "anomaly_detection": {
+    "pv_drop_threshold": 0.5,
+    "ctr_drop_threshold": 0.3,
+    "zero_post_alert_hour": 12,
+    "duplicate_title_similarity": 0.85,
+    "abnormal_post_count_daily": 25
+  },
+  "block_conditions": {
+    "no_title": true,
+    "no_body": true,
+    "contains_question": true,
+    "contains_review_report": true,
+    "html_broken": true,
+    "wrong_source_file": true,
+    "min_char_count_flow": 1500,
+    "min_char_count_normal": 2500,
+    "min_char_count_analysis": 4000,
+    "min_h2_count": 2
+  },
+  "notification_channels": {
+    "critical": ["discord", "line"],
+    "warning": ["discord"],
+    "info": ["discord"]
+  },
+  "daily_post_limits": {
+    "max_total": 8,
+    "max_flow": 4,
+    "max_asset": 4,
+    "max_revenue": 2
+  }
+}

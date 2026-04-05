@@ -1,0 +1,197 @@
+#!/bin/bash
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CEO Morning Brief - 毎朝 9:00 JST
+# ミュウツー（CFO/Data）主担当
+#
+# データソース:
+#   必須: ~/kpop_archives/YYYYMMDD_*/summary.txt
+#   任意: ~/google_metrics/metrics_yesterday.json
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/env_loader.sh"
+
+TODAY=$(date '+%Y年%m月%d日')
+YESTERDAY_KEY=$(date -d 'yesterday' '+%Y%m%d' 2>/dev/null || date -v-1d '+%Y%m%d' 2>/dev/null || echo "")
+YESTERDAY_LABEL=$(date -d 'yesterday' '+%Y年%m月%d日' 2>/dev/null || date -v-1d '+%Y年%m月%d日' 2>/dev/null || echo "前日")
+ARCHIVE_BASE=~/kpop_archives
+METRICS_FILE=~/google_metrics/metrics_yesterday.json
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [1] 前日アーカイブ集計
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL=0; SUCCESS=0; STOPPED=0
+SPEED_OK=0; SPEED_NG=0
+STRATEGY_OK=0; STRATEGY_NG=0
+CHART_OK=0; CHART_NG=0
+ARTICLE_LINES=""
+
+if [[ -n "$YESTERDAY_KEY" && -d "$ARCHIVE_BASE" ]]; then
+  for dir in "$ARCHIVE_BASE"/*/; do
+    [[ ! -d "$dir" ]] && continue
+    dir_id=$(basename "$dir")
+    dir_date=$(echo "$dir_id" | cut -c1-8)
+    [[ "$dir_date" != "$YESTERDAY_KEY" ]] && continue
+
+    TOTAL=$((TOTAL + 1))
+    summary="$dir/summary.txt"
+    [[ ! -f "$summary" ]] && continue
+
+    pipeline=$(grep 'パイプライン' "$summary" | sed 's/.*: *//' | tr -d ' ')
+    verdict=$(grep '判定' "$summary" | head -1)
+    title=$(grep 'タイトル' "$summary" | sed 's/.*: *//')
+    chars=$(grep '文字数' "$summary" | sed 's/.*: *//')
+
+    if echo "$verdict" | grep -q '投稿OK'; then
+      SUCCESS=$((SUCCESS + 1))
+      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ✅ [${pipeline}] ${title}（${chars}文字）\n"
+      case "$pipeline" in
+        speed)    SPEED_OK=$((SPEED_OK + 1)) ;;
+        strategy) STRATEGY_OK=$((STRATEGY_OK + 1)) ;;
+        chart)    CHART_OK=$((CHART_OK + 1)) ;;
+      esac
+    else
+      STOPPED=$((STOPPED + 1))
+      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ❌ [${pipeline}] ${title}（停止）\n"
+      case "$pipeline" in
+        speed)    SPEED_NG=$((SPEED_NG + 1)) ;;
+        strategy) STRATEGY_NG=$((STRATEGY_NG + 1)) ;;
+        chart)    CHART_NG=$((CHART_NG + 1)) ;;
+      esac
+    fi
+  done
+fi
+
+if [ "$TOTAL" -gt 0 ]; then
+  RATE=$(( SUCCESS * 100 / TOTAL ))
+else
+  RATE=0
+fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [2] メトリクス（存在する場合のみ）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+METRICS_SECTION="※ メトリクスデータ未取得"
+
+if [[ -f "$METRICS_FILE" ]]; then
+  METRICS_SECTION=$(python3 -c "
+import json, sys
+try:
+    with open('$METRICS_FILE') as f:
+        d = json.load(f)
+    lines = []
+    ga4 = d.get('ga4', {}).get('summary', {})
+    if ga4:
+        lines.append(f\"  PV: {ga4.get('pageviews', '?')} / セッション: {ga4.get('sessions', '?')} / ユーザー: {ga4.get('users', '?')}\")
+    gsc = d.get('gsc', {})
+    queries = gsc.get('top_queries', [])
+    if queries:
+        top = ', '.join(q['query'] for q in queries[:3])
+        lines.append(f'  Top検索: {top}')
+    adsense = d.get('adsense', {})
+    earnings = adsense.get('ESTIMATED_EARNINGS')
+    if earnings:
+        lines.append(f'  AdSense: ¥{earnings}')
+    if lines:
+        print('\n'.join(lines))
+    else:
+        print('  データはあるが主要項目なし')
+except Exception as e:
+    print(f'  読み込みエラー: {e}')
+" 2>/dev/null || echo "  メトリクス解析失敗")
+fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [3] 特筆事項
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NOTABLE=""
+
+if [ "$TOTAL" -eq 0 ]; then
+  NOTABLE="${NOTABLE}  ⚠ 前日のパイプライン実行がゼロです\n"
+fi
+if [ "$STOPPED" -ge 3 ]; then
+  NOTABLE="${NOTABLE}  🚨 停止${STOPPED}回 — パイプライン異常の可能性\n"
+elif [ "$STOPPED" -ge 1 ]; then
+  NOTABLE="${NOTABLE}  ⚠ 停止${STOPPED}回あり（原因確認推奨）\n"
+fi
+if [ "$SUCCESS" -eq 0 ] && [ "$TOTAL" -gt 0 ]; then
+  NOTABLE="${NOTABLE}  🚨 成功ゼロ — 全パイプラインが停止\n"
+fi
+if [ "$TOTAL" -gt 0 ] && [ "$RATE" -lt 50 ]; then
+  NOTABLE="${NOTABLE}  ⚠ 成功率${RATE}% — 品質チェック基準の見直しを検討\n"
+fi
+
+[[ -z "$NOTABLE" ]] && NOTABLE="  特になし\n"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [4] 当日方針（ルールベース）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POLICY=""
+
+if [ "$TOTAL" -eq 0 ]; then
+  POLICY="  → cron実行状況を確認。パイプラインが起動していない可能性"
+elif [ "$STOPPED" -ge 3 ]; then
+  POLICY="  → アーカイブログで停止原因を調査。品質チェック閾値の見直しを検討"
+elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -ge 1 ]; then
+  POLICY="  → 停止分の原因を確認しつつ、通常運用を継続"
+elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -eq 0 ]; then
+  POLICY="  → 全件成功。通常運用を継続"
+else
+  POLICY="  → 通常運用を継続"
+fi
+
+if [[ "$METRICS_SECTION" == *"未取得"* ]]; then
+  POLICY="${POLICY}\n  → fetch_yesterday_metrics.py の定期実行を検討"
+fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [5] ブリーフ組み立て
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BRIEF="📋 CEO Morning Brief — ${TODAY}
+
+【1. 前日サマリー（${YESTERDAY_LABEL}）】
+  投稿: ${SUCCESS}本成功 / ${STOPPED}本停止 / 計${TOTAL}回実行（成功率${RATE}%）
+  速報: ✅${SPEED_OK} ❌${SPEED_NG} / 戦略: ✅${STRATEGY_OK} ❌${STRATEGY_NG} / チャート: ✅${CHART_OK} ❌${CHART_NG}
+
+【2. 投稿記事一覧】
+$(echo -e "${ARTICLE_LINES:-  （なし）}")
+【3. SEO/アクセス】
+${METRICS_SECTION}
+
+【4. 特筆事項】
+$(echo -e "$NOTABLE")
+【5. 当日の方針】
+$(echo -e "$POLICY")
+
+— Generated by ミュウツー (CFO/Data)"
+
+echo "$BRIEF"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [6] Discord送信
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WEBHOOK="${DISCORD_WEBHOOK:-}"
+
+if [[ -z "$WEBHOOK" ]]; then
+  echo ""
+  echo "⚠ DISCORD_WEBHOOK 未設定 → Discord送信スキップ"
+  exit 0
+fi
+
+# テキストメッセージとして送信（2000文字制限に収める）
+MESSAGE=$(echo "$BRIEF" | head -c 1950)
+
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  -X POST "$WEBHOOK" \
+  -H "Content-Type: application/json" \
+  -d "$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}))" "$MESSAGE")" \
+  --connect-timeout 10 --max-time 15 2>/dev/null || echo "000")
+
+if [[ "$HTTP_CODE" == "204" || "$HTTP_CODE" == "200" ]]; then
+  echo ""
+  echo "✅ Discord送信完了"
+else
+  echo ""
+  echo "⚠ Discord送信失敗 (HTTP ${HTTP_CODE})"
+fi

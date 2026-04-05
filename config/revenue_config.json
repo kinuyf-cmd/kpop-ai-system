@@ -1,0 +1,75 @@
+{
+  "asp_providers": {
+    "a8": {
+      "name": "A8.net",
+      "type": "asp",
+      "categories": ["beauty", "skincare", "cosme", "clinic", "diet"],
+      "avg_commission": 3000,
+      "cookie_days": 90,
+      "priority_categories": [12, 51, 52, 53, 54, 55, 56],
+      "cta_style": "product_review"
+    },
+    "amazon": {
+      "name": "Amazon Associates",
+      "type": "affiliate",
+      "categories": ["goods", "book", "electronics", "kpop_goods"],
+      "avg_commission_rate": 0.03,
+      "avg_order_value": 3500,
+      "cookie_days": 1,
+      "priority_categories": [13, 6],
+      "cta_style": "product_link"
+    },
+    "rakuten": {
+      "name": "Rakuten Affiliate",
+      "type": "affiliate",
+      "categories": ["travel", "hotel", "ticket", "goods"],
+      "avg_commission_rate": 0.01,
+      "avg_order_value": 15000,
+      "cookie_days": 30,
+      "priority_categories": [5, 11, 62, 63, 64, 66, 69, 70],
+      "cta_style": "booking_link"
+    }
+  },
+  "article_type_cv_design": {
+    "flow": {
+      "description": "speed/breaking - low CV but high volume",
+      "primary_goal": "pv_and_awareness",
+      "cta_position": "article_bottom",
+      "cta_count": 1,
+      "expected_cvr": 0.005,
+      "expected_revenue_per_pv": 1.5,
+      "monetization": ["adsense", "internal_link_to_revenue_article"]
+    },
+    "asset": {
+      "description": "evergreen/update - stable traffic",
+      "primary_goal": "search_traffic_and_authority",
+      "cta_position": "mid_and_bottom",
+      "cta_count": 2,
+      "expected_cvr": 0.015,
+      "expected_revenue_per_pv": 5.0,
+      "monetization": ["adsense", "affiliate", "internal_link"]
+    },
+    "revenue": {
+      "description": "conversion-focused articles",
+      "primary_goal": "conversion",
+      "cta_position": "intro_mid_bottom",
+      "cta_count": 3,
+      "expected_cvr": 0.04,
+      "expected_revenue_per_pv": 25.0,
+      "monetization": ["a8", "amazon", "rakuten", "direct_ad"]
+    }
+  },
+  "ltv_config": {
+    "avg_session_value_adsense": 2.5,
+    "avg_return_rate": 0.15,
+    "avg_sessions_per_returning_user": 4.2,
+    "churn_rate_monthly": 0.7,
+    "discount_rate_monthly": 0.05
+  },
+  "daily_revenue_targets": {
+    "month_1": 3000,
+    "month_3": 6600,
+    "month_6": 16600,
+    "month_12": 33000
+  }
+}

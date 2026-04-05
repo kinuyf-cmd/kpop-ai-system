@@ -1,0 +1,73 @@
+{
+  "keyword_classification": {
+    "branded": {
+      "description": "branded/navigational queries",
+      "examples": ["KPOP JOURNAL", "kpopjournal"],
+      "difficulty": "low",
+      "priority": "maintain",
+      "target_share": 0.10
+    },
+    "non_branded_head": {
+      "description": "high-volume competitive head terms",
+      "examples": ["BTS 最新情報", "K-POP チャート"],
+      "difficulty": "high",
+      "priority": "long_term",
+      "target_share": 0.15
+    },
+    "long_tail": {
+      "description": "specific long-tail queries",
+      "examples": ["ILLIT カムバック 2026 日程", "aespa ワールドツアー チケット 値段"],
+      "difficulty": "low",
+      "priority": "high",
+      "target_share": 0.45
+    },
+    "trending": {
+      "description": "trending/breaking keywords",
+      "examples": ["BTS ジン 復帰 速報", "NewJeans 契約"],
+      "difficulty": "medium",
+      "priority": "immediate",
+      "target_share": 0.30
+    }
+  },
+  "difficulty_article_allocation": {
+    "low_difficulty": {
+      "share": 0.50,
+      "article_types": ["long_tail", "branded"],
+      "min_word_count": 2500,
+      "target_position": 5
+    },
+    "medium_difficulty": {
+      "share": 0.35,
+      "article_types": ["trending", "non_branded_head"],
+      "min_word_count": 3500,
+      "target_position": 10
+    },
+    "high_difficulty": {
+      "share": 0.15,
+      "article_types": ["non_branded_head"],
+      "min_word_count": 5000,
+      "target_position": 20,
+      "strategy": "pillar_content_with_cluster"
+    }
+  },
+  "competitor_domains": [
+    "kpopmonster.jp",
+    "danmee.jp",
+    "kban.me",
+    "noritter.com",
+    "k-plaza.com",
+    "mottokorea.com",
+    "wowkorea.jp"
+  ],
+  "internal_link_rules": {
+    "min_links": 2,
+    "max_links": 5,
+    "same_category_priority": true,
+    "recent_article_required": true,
+    "evergreen_article_required": true
+  },
+  "meta_description": {
+    "min_length": 110,
+    "max_length": 130
+  }
+}

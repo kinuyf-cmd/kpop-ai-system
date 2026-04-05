@@ -12,3 +12,5 @@ google_metrics/x_login.json
 google_metrics/x_debug/
 reports/
 council_reports/
+.venv/
+.env.save

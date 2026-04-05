@@ -477,14 +477,52 @@ if grep -q '❌ 投稿却下' reports/14_arceus.md; then
 fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# final_post.md 生成（審査レポート分離）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+echo "=== final_post.md 生成 ==="
+
+# [ガード0] ソースファイルの存在・空チェック
+if [[ ! -f reports/13_final.md ]]; then
+  echo "🚨 BLOCK: reports/13_final.md が存在しません"
+  archive_and_exit 1
+fi
+if [[ ! -s reports/13_final.md ]]; then
+  echo "🚨 BLOCK: reports/13_final.md が空です"
+  archive_and_exit 1
+fi
+
+# [ガード1] 審査レポート文言の混入チェック
+REVIEW_CHECK=$(grep -cE '(エージェント別採点|最終記事品質評価|投稿承認|投稿却下|採点表|/50点|/10点|デオキシス:|メタモン:|ジラーチ:|アルセウス:|修正箇所：|修正サマリー|チェック項目：|【修正内容】)' reports/13_final.md || true)
+if [ "$REVIEW_CHECK" -gt 0 ]; then
+  echo "🚨 BLOCK: 審査レポートの文言が記事本文に混入しています（${REVIEW_CHECK}箇所）"
+  echo "  検出内容:"
+  grep -E '(エージェント別採点|最終記事品質評価|投稿承認|投稿却下|採点表|/50点|/10点|デオキシス:|メタモン:|ジラーチ:|アルセウス:|修正箇所：|修正サマリー|チェック項目：|【修正内容】)' reports/13_final.md | head -5
+  archive_and_exit 1
+fi
+
+# [ガード2] 質問文・AI定型文の混入チェック
+QUESTION_CHECK=$(grep -cE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして|言語モデル|お答えできません|いかがでしょうか|ご確認ください|ご質問)' reports/13_final.md || true)
+if [ "$QUESTION_CHECK" -gt 0 ]; then
+  echo "🚨 BLOCK: 質問文またはAI定型文が記事本文に混入しています（${QUESTION_CHECK}箇所）"
+  echo "  検出内容:"
+  grep -E '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして|言語モデル|お答えできません|いかがでしょうか|ご確認ください|ご質問)' reports/13_final.md | head -5
+  archive_and_exit 1
+fi
+
+# 13_final.md → final_post.md にコピー（投稿対象はfinal_post.mdのみ）
+cp reports/13_final.md reports/final_post.md
+echo "  ✓ reports/final_post.md 生成完了"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # PHASE 5: 品質チェック・投稿・拡散
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 echo ""
 echo "━━━ PHASE 5: 品質チェック・投稿・拡散 ━━━"
 
-TITLE=$(head -n 1 reports/13_final.md)
+# 投稿対象: final_post.md のみ（13_final.mdや14_arceus.mdからは絶対に投稿しない）
+TITLE=$(head -n 1 reports/final_post.md)
 check_duplicate "$TITLE" 5
-CONTENT=$(tail -n +2 reports/13_final.md)
+CONTENT=$(tail -n +2 reports/final_post.md)
 
 if [[ -z "$TITLE" ]] || [[ "$TITLE" == "#"* ]] || \
    [[ "$TITLE" == *"ファクトチェック"* ]] || [[ "$TITLE" == *"申し訳ありません"* ]]; then
@@ -676,6 +714,8 @@ RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
 
 POST_URL=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('link','（URL取得失敗）'))" 2>/dev/null)
 POST_ID=$(echo "$RESPONSE"  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
+echo "=== ABEMA CTA自動挿入 ==="
+bash /home/aiuser/kpop-ai-system/google_metrics/inject_abema_cta.sh "$POST_ID" 2>/dev/null || echo "ABEMA CTAスキップ"
 
 echo "[15/15] ペルシアン: SNS拡散戦略..."
 claude --agent persian -p "
