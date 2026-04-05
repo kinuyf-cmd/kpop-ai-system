@@ -189,7 +189,7 @@ echo "✅ 品質OK（${CONTENT_LENGTH}文字）"
 
 # アイキャッチ生成
 THUMB_TITLE=$(echo "$TITLE" | cut -c1-30)
-python3 ~/make_thumbnail.py "$THUMB_TITLE" 2>/dev/null
+python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre chart --title "$TITLE" 2>/dev/null
 
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then

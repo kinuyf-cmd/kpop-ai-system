@@ -632,7 +632,7 @@ PY2
 fi
 
 echo "=== アイキャッチ生成 ==="
-python3 ~/make_thumbnail.py "$THUMB_TITLE"
+python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre breaking --title "$TITLE"
 
 echo "=== アイキャッチアップロード ==="
 MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
