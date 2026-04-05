@@ -35,7 +35,7 @@
     "min_char_count_flow": 1500,
     "min_char_count_normal": 2500,
     "min_char_count_analysis": 4000,
-    "min_h2_count": 2
+    "min_h2_count": 4
   },
   "notification_channels": {
     "critical": ["discord", "line"],

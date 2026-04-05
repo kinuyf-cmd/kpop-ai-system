@@ -81,12 +81,12 @@ PY
 }
 
 POST_COUNT=$(get_today_post_count)
-slog "📊 本日の投稿数: ${POST_COUNT}/20"
+slog "📊 本日の投稿数: ${POST_COUNT}/8"
 
-# 上限チェック
-if [ "$POST_COUNT" -ge 20 ]; then
-  slog "🛑 本日の投稿上限（20本）に到達 → 終了"
-  discord "🛑 投稿上限到達（${POST_COUNT}/20）→ 本日の投稿終了"
+# 上限チェック（§5: 安定期は最大8本）
+if [ "$POST_COUNT" -ge 8 ]; then
+  slog "🛑 本日の投稿上限（8本）に到達 → 終了"
+  discord "🛑 投稿上限到達（${POST_COUNT}/8）→ 本日の投稿終了"
   exit 0
 fi
 

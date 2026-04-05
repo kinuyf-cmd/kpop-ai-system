@@ -230,7 +230,25 @@ def main():
 
     # ── 4. WordPress投稿 ──
     print("\n--- Publishing ---")
-    excerpt = re.sub(r'<[^>]+>', '', body).strip()[:120]
+    # メタディスクリプション生成（110-130字、§9準拠）
+    plain = re.sub(r'<[^>]+>', '', body).strip()
+    # 最初の文（。で区切り）を収集して110-130字に収める
+    sentences = re.split(r'(?<=[。！？])', plain)
+    excerpt = ""
+    for s in sentences:
+        s = s.strip()
+        if not s:
+            continue
+        if len(excerpt) + len(s) <= 130:
+            excerpt += s
+        else:
+            break
+    # 110字未満なら本文先頭から取得
+    if len(excerpt) < 110:
+        excerpt = plain[:125]
+    # 130字超なら切り詰め
+    if len(excerpt) > 130:
+        excerpt = excerpt[:127] + "..."
 
     result = post_to_wordpress(
         title=title,

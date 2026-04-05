@@ -14,17 +14,18 @@ echo "=== Google Indexing API リクエスト ==="
 echo "  URL: $URL"
 
 python3 - "$URL" << 'PY'
-import sys, json
+import sys, json, time
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
 import requests
 
 url = sys.argv[1]
+MAX_RETRIES = 3
 
 SCOPES = ["https://www.googleapis.com/auth/indexing"]
 
 creds = service_account.Credentials.from_service_account_file(
-    "/Users/funayamayuuta/google_metrics/service_account.json",
+    "/home/aiuser/kpop-ai-system/google_metrics/service_account.json",
     scopes=SCOPES
 )
 
@@ -42,13 +43,25 @@ data = {
     "type": "URL_UPDATED"
 }
 
-r = requests.post(endpoint, headers=headers, data=json.dumps(data))
-result = r.json() if r.ok else {"error": r.text}
-print(json.dumps(result, indent=2, ensure_ascii=False))
+for attempt in range(MAX_RETRIES):
+    try:
+        r = requests.post(endpoint, headers=headers, data=json.dumps(data), timeout=30)
+        result = r.json() if r.ok else {"error": r.text}
+        print(json.dumps(result, indent=2, ensure_ascii=False))
 
-if r.ok:
-    print(f"\n✅ インデックス登録リクエスト成功: {url}")
-else:
-    print(f"\n❌ インデックス登録失敗 (HTTP {r.status_code})")
-    sys.exit(1)
+        if r.ok:
+            print(f"\n✅ インデックス登録リクエスト成功: {url}")
+            sys.exit(0)
+        else:
+            print(f"\n⚠ 試行{attempt+1}/{MAX_RETRIES} 失敗 (HTTP {r.status_code})")
+    except Exception as e:
+        print(f"\n⚠ 試行{attempt+1}/{MAX_RETRIES} エラー: {e}")
+
+    if attempt < MAX_RETRIES - 1:
+        delay = 5 * (attempt + 1)
+        print(f"  {delay}秒後にリトライ...")
+        time.sleep(delay)
+
+print(f"\n❌ インデックス登録失敗（{MAX_RETRIES}回リトライ後）: {url}")
+sys.exit(1)
 PY
