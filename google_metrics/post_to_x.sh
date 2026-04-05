@@ -81,6 +81,46 @@ if [[ -n "$POST_URL" ]] && [[ "$TWEET_TEXT" != *"$POST_URL"* ]]; then
 ${POST_URL}"
 fi
 
+# X投稿スコアリング
+X_SCORE_JSON=$(python3 ~/google_metrics/score_x_post.py "$TWEET_TEXT" 2>/dev/null || echo '{"pass":true,"score":0}')
+X_PASS=$(python3 -c "import json,sys; print('YES' if json.loads(sys.argv[1]).get('pass') else 'NO')" "$X_SCORE_JSON" 2>/dev/null || echo "YES")
+X_SCORE=$(python3 -c "import json,sys; print(json.loads(sys.argv[1]).get('score',0))" "$X_SCORE_JSON" 2>/dev/null || echo "0")
+echo "  X_SCORE=$X_SCORE (pass=$X_PASS)"
+
+if [ "$X_PASS" != "YES" ]; then
+  echo "  ⚠ X投稿スコア低 → articunoで再生成"
+  TWEET_TEXT=$(claude --agent articuno -p "
+以下のK-POP記事のX/Twitter投稿文を1つだけ作れ。
+【ルール】
+- 200文字以内
+- 冒頭でニュースの核心を伝える（バイラル狙い）
+- ハッシュタグ2-4個（#KPOP必須）
+- 絵文字1-2個
+- 説明・前置き禁止。投稿文のみ出力。
+
+記事タイトル: ${TITLE}
+記事URL: ${POST_URL}
+" 2>/dev/null || echo "")
+
+  if [ -n "$TWEET_TEXT" ] && [ ${#TWEET_TEXT} -ge 20 ]; then
+    # URLが含まれていなければ追加
+    if [[ -n "$POST_URL" ]] && [[ "$TWEET_TEXT" != *"$POST_URL"* ]]; then
+      TWEET_TEXT="${TWEET_TEXT}
+${POST_URL}"
+    fi
+    # 再スコアリング
+    X_SCORE_JSON=$(python3 ~/google_metrics/score_x_post.py "$TWEET_TEXT" 2>/dev/null || echo '{"pass":true,"score":0}')
+    X_PASS=$(python3 -c "import json,sys; print('YES' if json.loads(sys.argv[1]).get('pass') else 'NO')" "$X_SCORE_JSON" 2>/dev/null || echo "YES")
+    X_SCORE=$(python3 -c "import json,sys; print(json.loads(sys.argv[1]).get('score',0))" "$X_SCORE_JSON" 2>/dev/null || echo "0")
+    echo "  再スコア: X_SCORE=$X_SCORE (pass=$X_PASS)"
+  fi
+
+  if [ "$X_PASS" != "YES" ]; then
+    echo "  ❌ X投稿スコア不合格 → スキップ"
+    exit 0
+  fi
+fi
+
 echo "  投稿文: ${TWEET_TEXT:0:100}..."
 
 if [ "$DRY_RUN" = "true" ]; then

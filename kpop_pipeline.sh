@@ -2,6 +2,11 @@
 #!/bin/bash
 source "$(cd "$(dirname "$0")" && pwd)/env_loader.sh"
 
+# トークントラッキング（ENABLE_TOKEN_TRACKING=1 で有効化）
+if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
+  source "$(cd "$(dirname "$0")" && pwd)/lib/claude_wrapper.sh"
+fi
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ユーティリティ: 出力検証関数
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -132,6 +137,7 @@ THEME_INPUT="${1:-}"
 TODAY=$(date '+%Y年%m月%d日')
 RUN_ID=$(date '+%Y%m%d_%H%M%S')
 ARCHIVE_DIR=~/kpop_archives/$RUN_ID
+export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
 echo " K-POP速報パイプライン 開始: $TODAY"
@@ -861,6 +867,12 @@ print(json.dumps({
 }, ensure_ascii=False))
 PY
 )
+
+# トークン合計をエクスポート（post_to_wp.py のKPIログ用）
+if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ] && [ -f "$TOKEN_LOG" ]; then
+  export PIPELINE_TOKEN_COUNT=$(token_total "$TOKEN_LOG")
+  echo "  トークン合計: $PIPELINE_TOKEN_COUNT"
+fi
 
 RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
 -u "$WP_USER:$WP_PASS" \

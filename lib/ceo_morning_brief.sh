@@ -37,6 +37,13 @@ else
   YESTERDAY_KPI="KPIデータなし"
 fi
 
+# トークンコスト補足（token_report.py から取得）
+TOKEN_COST_LINE=$(python3 ~/kpop-ai-system/lib/token_report.py daily "$YESTERDAY" 2>/dev/null | grep "コスト:" || echo "")
+if [ -n "$TOKEN_COST_LINE" ]; then
+  YESTERDAY_KPI="${YESTERDAY_KPI}
+${TOKEN_COST_LINE}"
+fi
+
 # ── 2. SEOサマリー ──
 SEO_SUMMARY=""
 if [ -f "$METRICS_DIR/metrics_yesterday.json" ]; then
@@ -89,6 +96,13 @@ if counts.get('revenue', 0) == 0 and total > 0:
     notes.append('⚠ 収益記事ゼロ')
 print('\n'.join(notes) if notes else '特になし')
 " 2>/dev/null || echo "判定不可")
+fi
+
+# 不採算カテゴリチェック
+CAT_WARNINGS=$(python3 "$SCRIPT_DIR/lib/category_analyzer.py" unprofitable 2>/dev/null || echo "")
+if [ -n "$CAT_WARNINGS" ] && [ "$CAT_WARNINGS" != "不採算カテゴリなし" ]; then
+  NOTABLE="${NOTABLE}
+${CAT_WARNINGS}"
 fi
 
 # ── 4. 健全性チェック ──
