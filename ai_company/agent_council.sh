@@ -648,7 +648,7 @@ ${RECENT_TITLES}
 
   # --- サムネ生成・アップロード ---
   log "  アイキャッチ生成..."
-  python3 ~/make_thumbnail.py "$THUMB_TITLE" 2>/dev/null || log "  ⚠ サムネ生成スキップ"
+  python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre breaking --title "$TITLE" 2>/dev/null || log "  ⚠ サムネ生成スキップ"
 
   MEDIA_ID=""
   if [ -f thumbnail.jpg ]; then

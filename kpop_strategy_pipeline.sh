@@ -557,7 +557,7 @@ PUBLISH_TITLE=$(echo "$TITLE" | sed 's/^/【戦略】/')
 # === アイキャッチ生成 ===
 echo "--- アイキャッチ生成..."
 THUMB_TITLE=$(echo "$PUBLISH_TITLE" | cut -c1-30)
-python3 ~/make_thumbnail.py "$THUMB_TITLE" 2>/dev/null
+python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre analysis --title "$PUBLISH_TITLE" 2>/dev/null
 
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then
