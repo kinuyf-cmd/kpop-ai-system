@@ -12,7 +12,7 @@ check_output() {
     echo "❌ [$step] 出力が空 → パイプライン停止"
     archive_and_exit 1
   fi
-  if grep -qE '申し訳ありません|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可をいただ' "$file"; then
+  if grep -qE '申し訳ありません|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ' "$file"; then
     echo "❌ [$step] エラー応答を検出 → パイプライン停止"
     echo "  先頭行: $(head -1 "$file")"
     archive_and_exit 1
@@ -111,7 +111,7 @@ path = sys.argv[1]
 with open(path, encoding="utf-8", errors="replace") as f:
     lines = f.readlines()
 pat = re.compile(
-    r'(許可が必要|許可をいただ|許可してください|WebSearchを使用|WebSearchの許可|'
+    r'(許可が必要|許可を?いただ|許可してください|WebSearchを使用|WebSearchの許可|'
     r'ウェブ検索の許可|確認させてください|お手伝いできますか|'
     r'どちらで進めますか|書き込み権限が必要|ファイル編集の許可|'
     r'ツール.*の許可|権限.*要求|許可.*いただけますか|'
@@ -288,6 +288,14 @@ $(cat reports/1_rewrite.md)
 sanitize_output reports/2_checked.md
 check_output reports/2_checked.md "ジラーチ"
 
+# [ガード] ジラーチ出力のサイズ比較（元記事の10%未満なら異常）
+SIZE_REWRITE=$(wc -c < reports/1_rewrite.md)
+SIZE_CHECKED=$(wc -c < reports/2_checked.md)
+if [ "$SIZE_REWRITE" -gt 0 ] && [ "$((SIZE_CHECKED * 100 / SIZE_REWRITE))" -lt 10 ]; then
+  echo "🚨 BLOCK: ジラーチ出力が異常に小さい（${SIZE_CHECKED}B / 元${SIZE_REWRITE}B = $((SIZE_CHECKED * 100 / SIZE_REWRITE))%）→ パイプライン停止"
+  archive_and_exit 1
+fi
+
 echo "=== [4] アルセウス: 品質監督・最終承認 ==="
 claude --agent arceus -p "
 今日は${TODAY}です。
@@ -383,7 +391,7 @@ PY
 # [ガード2] sanitize_output で既に除去済みだが念のためチェック
 # ※ 「できません$」は通常記事で誤検知するため除外
 # ※ 「WebSearch」「ウェブ検索」は単体だと誤検知するため「許可」とセットで検出
-QUESTION_CHECK=$(grep -cE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可をいただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか)' reports/2_checked.md || true)
+QUESTION_CHECK=$(grep -cE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可を?いただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか)' reports/2_checked.md || true)
 if [ "$QUESTION_CHECK" -gt 0 ]; then
   echo "🚨 BLOCK: 質問文またはAI定型文が記事本文に混入しています（${QUESTION_CHECK}箇所）"
   echo "  検出内容:"
@@ -551,10 +559,12 @@ THUMB_TITLE=$(claude -p "
 
 【ルール】
 ・4〜14文字
-・短く強く
-・クリックしたくなる言葉にする
+・以下の強ワードを1つ以上必ず使うこと：
+　速報／緊急／衝撃／ついに／電撃／初公開／復活／決定／解禁／発表／判明／大反響／史上最大級
+・可能なら数字も1つ入れる（例：初公開3曲）
 ・本文タイトルのコピペは禁止
-・『修正箇所』『特定』『まとめ』のような弱い語は禁止
+・『修正箇所』『特定』『まとめ』『解説』『情報』『レポート』のような弱い語は禁止
+・コロン（：や:）は使わない
 ・説明禁止
 ・1行だけ出力
 
@@ -585,8 +595,34 @@ PY3
 echo "THUMB_SCORE=$THUMB_SCORE"
 
 if [ "$THUMB_PASS" != "YES" ]; then
-  echo "❌ サムネ文言NG → デフォルト文言に切替"
-  THUMB_TITLE="緊急発表"
+  echo "⚠️ サムネ文言NG(score=$THUMB_SCORE) → 1回再生成"
+  THUMB_TITLE=$(claude -p "
+サムネイル文言を1つだけ出力してください。
+
+【絶対ルール】
+・4〜14文字
+・以下から1つ以上使う：速報／緊急／衝撃／ついに／電撃／初公開／復活／決定／解禁／発表／判明／大反響
+・数字があれば入れる
+・弱い語禁止（まとめ／解説／情報／特定／レポート）
+・コロン禁止
+・1行だけ出力
+
+タイトル：
+$TITLE
+" | tail -n 1)
+  echo "RETRY THUMB_TITLE=$THUMB_TITLE"
+  THUMB_SCORE_JSON=$(python3 ~/google_metrics/score_thumbnail_text.py "$THUMB_TITLE")
+  echo "RETRY $THUMB_SCORE_JSON"
+  THUMB_PASS=$(python3 - << 'PY2' "$THUMB_SCORE_JSON"
+import json, sys
+data = json.loads(sys.argv[1])
+print("YES" if data.get("pass") else "NO")
+PY2
+)
+  if [ "$THUMB_PASS" != "YES" ]; then
+    echo "❌ 再生成もNG → デフォルト文言に切替"
+    THUMB_TITLE="緊急発表"
+  fi
 fi
 
 echo "=== アイキャッチ生成 ==="

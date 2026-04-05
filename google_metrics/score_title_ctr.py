@@ -7,17 +7,19 @@ title = sys.argv[1].strip()
 score = 0
 reasons = []
 
-# 1. アーティスト名
-artist_keywords = [
+# 1. 主要キーワード（アーティスト名・番組名・サービス名）
+main_keywords = [
     "bts", "blackpink", "bigbang", "aespa", "babymonster", "illit", "ive",
     "le sserafim", "seventeen", "twice", "stray kids", "newjeans", "xg",
-    "nct", "riize", "monsta x", "zerobaseone", "exo", "itzy", "boa"
+    "nct", "riize", "monsta x", "zerobaseone", "exo", "itzy", "boa",
+    "スウパ", "swf", "プデュ", "produce", "i-land", "ボイプラ", "boys planet",
+    "abema", "mnet", "hulu", "tving", "wavve"
 ]
 title_l = title.lower()
 
-if any(k in title_l for k in artist_keywords):
+if any(k in title_l for k in main_keywords):
     score += 3
-    reasons.append("アーティスト名あり +3")
+    reasons.append("主要キーワードあり +3")
 
 # 2. 数字・日付
 if re.search(r'[0-9０-９]+', title):
@@ -28,7 +30,8 @@ if re.search(r'[0-9０-９]+', title):
 event_keywords = [
     "coachella", "billboard", "ツアー", "ワールドツアー", "来日", "ライブ",
     "カムバック", "アルバム", "新曲", "mv", "ファンミ", "コンサート",
-    "mama", "人気歌謡", "music bank", "m countdown", "festival", "フェス"
+    "mama", "人気歌謡", "music bank", "m countdown", "festival", "フェス",
+    "視聴方法", "見る方法", "無料", "見逃し", "比較", "料金", "配信", "放送"
 ]
 if any(k.lower() in title_l for k in event_keywords):
     score += 2
