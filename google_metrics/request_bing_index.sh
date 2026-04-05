@@ -21,12 +21,25 @@ fi
 echo "=== Bing URL Submission ==="
 echo "  URL: $URL"
 
-RESPONSE=$(curl -s -X POST "https://ssl.bing.com/webmaster/api.svc/json/SubmitUrl?apikey=${API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d "{\"siteUrl\":\"https://www.kpopjournal.tokyo\",\"url\":\"${URL}\"}")
+MAX_RETRIES=3
+for ATTEMPT in $(seq 1 $MAX_RETRIES); do
+  RESPONSE=$(curl -s -X POST "https://ssl.bing.com/webmaster/api.svc/json/SubmitUrl?apikey=${API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{\"siteUrl\":\"https://www.kpopjournal.tokyo\",\"url\":\"${URL}\"}" \
+    --connect-timeout 10 --max-time 30)
 
-if echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('d') is None else 1)" 2>/dev/null; then
-  echo "✅ Bing インデックス登録成功: $URL"
-else
-  echo "⚠ Bing レスポンス: $RESPONSE"
-fi
+  if echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('d') is None else 1)" 2>/dev/null; then
+    echo "✅ Bing インデックス登録成功: $URL"
+    exit 0
+  else
+    echo "⚠ 試行${ATTEMPT}/${MAX_RETRIES} 失敗: $RESPONSE"
+    if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+      DELAY=$((5 * ATTEMPT))
+      echo "  ${DELAY}秒後にリトライ..."
+      sleep $DELAY
+    fi
+  fi
+done
+
+echo "❌ Bing インデックス登録失敗（${MAX_RETRIES}回リトライ後）"
+exit 1

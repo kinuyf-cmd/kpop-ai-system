@@ -225,8 +225,8 @@ def validate_final_post(file_path=None, article_type="flow"):
 
     # ── HTML構造チェック ──
     h2_count = len(re.findall(r'<h2', body, re.IGNORECASE))
-    if h2_count < 2:
-        errors.append(f"insufficient_h2: {h2_count} (min 2)")
+    if h2_count < 4:
+        errors.append(f"insufficient_h2: {h2_count} (min 4)")
 
     if not re.search(r'<(h2|h3|p|div|ul|ol)', body, re.IGNORECASE):
         errors.append("no_html: HTML tags not found")
