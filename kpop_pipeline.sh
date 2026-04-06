@@ -148,6 +148,14 @@ check_output() {
   echo "  ✓ [$step] OK"
 }
 
+cleanup_reports_dir() {
+  # run専用reportsディレクトリを削除し、シンボリックリンクも解除
+  if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
+    rm -rf "$REPORTS_DIR"
+  fi
+  rm -f "$SCRIPT_DIR/reports"
+}
+
 archive_and_exit() {
   local code="${1:-1}"
   if [[ "$code" -ne 0 ]]; then
@@ -164,6 +172,7 @@ archive_and_exit() {
 SUMMARY
     echo "  アーカイブ保存: $ARCHIVE_DIR"
   fi
+  cleanup_reports_dir
   bash $SCRIPT_DIR/kpop_notify.sh error "ニュース" "パイプライン停止 (RUN: $RUN_ID)" 2>/dev/null
   # 異常検知: エラーログ記録 + 連続失敗チェック
   python3 "$SCRIPT_DIR/lib/kpi_logger.py" log_error "{\"error_type\":\"pipeline_stop\",\"message\":\"RUN $RUN_ID stopped\",\"recoverable\":true}" 2>/dev/null || true
@@ -293,14 +302,18 @@ PYEOF
 # テーマ記事・速報共通: 許可要求禁止の共通プロンプト
 NO_CONV_RULE='【★絶対禁止★】許可要求・質問・会話文・説明文を一切出力するな。「許可が必要」「WebSearchの許可」「確認させてください」等を含む出力は自動BLOCKされる。完成記事のみ出力せよ。'
 
-mkdir -p reports
-
 THEME_INPUT="${1:-}"
 
 TODAY=$(date '+%Y年%m月%d日')
 RUN_ID=$(date '+%Y%m%d_%H%M%S')
 PIPELINE_START=$(date +%s)
 ARCHIVE_DIR=~/kpop_archives/$RUN_ID
+
+# run_idごとに reports を分離（並列実行時のファイル競合を防止）
+REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
+mkdir -p "$REPORTS_DIR"
+rm -f "$SCRIPT_DIR/reports"
+ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
@@ -1508,11 +1521,13 @@ if [ $? -ne 0 ]; then
   echo "KPIログ記録スキップ"
 fi
 
+cleanup_reports_dir
+
 echo ""
 echo "========================================"
 echo " ✅ 完了"
 echo " 記事ID  : $POST_ID"
 echo " URL     : $POST_URL"
-echo " SNS戦略 : reports/4_sns.md"
+echo " SNS戦略 : (archived) $ARCHIVE_DIR/4_sns.md"
 echo " アーカイブ: $ARCHIVE_DIR"
 echo "========================================"
