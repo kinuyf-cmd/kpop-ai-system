@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# .envから環境変数を読み込み
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+fi
+
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
@@ -170,10 +176,17 @@ if len(h2_positions) >= 3:
     pos = h2_positions[2]
     content = content[:pos] + cta_mid + "\n" + content[pos:]
 
-# FAQ + 末尾CTA: 情報元の直前 or 末尾
+# FAQ + 末尾CTA: 情報元の直前 or 末尾（ブロック要素を壊さない）
 if "情報元" in content:
     idx = content.rfind("情報元")
-    content = content[:idx] + faq + "\n\n" + cta_bottom + "\n\n" + content[idx:]
+    # 情報元を含む最も近い開始タグ(<p>, <div>等)の先頭を探す
+    best = -1
+    for tag in ["<p", "<div"]:
+        t = content.rfind(tag, 0, idx)
+        if t >= 0 and (idx - t) < 300 and t > best:
+            best = t
+    insert_pos = best if best >= 0 else idx
+    content = content[:insert_pos] + faq + "\n\n" + cta_bottom + "\n\n" + content[insert_pos:]
 else:
     content = content + "\n\n" + faq + "\n\n" + cta_bottom
 

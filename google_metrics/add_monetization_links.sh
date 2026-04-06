@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# .envから環境変数を読み込み
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+fi
+
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
 WP_PASS="${WP_PASS}"

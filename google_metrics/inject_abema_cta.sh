@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# .envから環境変数を読み込み
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+fi
+
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
 WP_PASS="${WP_PASS}"
@@ -16,15 +22,15 @@ CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); pr
 [ -z "$TITLE" ] && echo "タイトル取得失敗 → スキップ" && exit 0
 [ -z "$CONTENT" ] && echo "本文取得失敗 → スキップ" && exit 0
 
-PLAIN=$(python3 -c "
-import re, sys
-text = sys.argv[1] + ' ' + sys.argv[2]
+PLAIN=$(TITLE_IN="$TITLE" CONTENT_IN="$CONTENT" python3 -c "
+import re, os
+text = os.environ['TITLE_IN'] + ' ' + os.environ['CONTENT_IN']
 print(re.sub(r'<[^>]+>', '', text))
-" "$TITLE" "$CONTENT" 2>/dev/null)
+" 2>/dev/null)
 
-MATCH=$(python3 - << 'PY' "$PLAIN"
-import sys
-text = sys.argv[1]
+MATCH=$(PLAIN_IN="$PLAIN" python3 - << 'PY'
+import os
+text = os.environ["PLAIN_IN"]
 keywords = [
     "スウパ",
     "STREET WOMAN FIGHTER",
@@ -73,31 +79,34 @@ ABEMAで無料視聴する
 </p>
 </div>'
 
-NEW_CONTENT=$(python3 - << 'PY' "$CONTENT" "$CTA_HTML"
-import sys, re
-content = sys.argv[1]
-cta = sys.argv[2]
+NEW_CONTENT=$(CONTENT_IN="$CONTENT" CTA_IN="$CTA_HTML" python3 - << 'PY'
+import os, re
+content = os.environ["CONTENT_IN"]
+cta = os.environ["CTA_IN"]
 
+# 挿入位置: 情報元の前 > 末尾（ブロック要素を壊さない）
 if "情報元" in content:
     idx = content.rfind("情報元")
-    content = content[:idx] + cta + "\n\n" + content[idx:]
+    # 情報元を含む最も近い開始タグ(<p>, <div>等)の先頭を探す
+    best = -1
+    for tag in ["<p", "<div"]:
+        t = content.rfind(tag, 0, idx)
+        if t >= 0 and (idx - t) < 300 and t > best:
+            best = t
+    insert_pos = best if best >= 0 else idx
+    content = content[:insert_pos] + cta + "\n\n" + content[insert_pos:]
 else:
     content = content + "\n\n" + cta
-
-h2_first = re.search(r'<h2', content)
-if h2_first:
-    pos = h2_first.start()
-    content = content[:pos] + cta + "\n\n" + content[pos:]
 
 print(content)
 PY
 )
 
-UPDATE=$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}, ensure_ascii=False))" "$NEW_CONTENT")
-RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
+UPDATE=$(CONTENT_IN="$NEW_CONTENT" python3 -c "import json,os; print(json.dumps({'content': os.environ['CONTENT_IN']}, ensure_ascii=False))")
+RESP=$(echo "$UPDATE" | curl -s -X POST "$WP_API/$POST_ID" \
   -u "$WP_USER:$WP_PASS" \
   -H "Content-Type: application/json" \
-  -d "$UPDATE")
+  -d @-)
 
 LINK=$(echo "$RESP" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('link',''))" 2>/dev/null)
 

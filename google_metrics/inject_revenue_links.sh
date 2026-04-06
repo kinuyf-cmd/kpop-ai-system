@@ -1,10 +1,16 @@
 #!/bin/bash
 set -e
 
+# .envから環境変数を読み込み
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+fi
+
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
 WP_PASS="${WP_PASS}"
-DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
+DISCORD_WEBHOOK="${DISCORD_WEBHOOK:-}"
 BASE="$HOME/google_metrics"
 SITE="https://www.kpopjournal.tokyo"
 
@@ -57,13 +63,14 @@ for cat_group, articles in mapping.items():
         break
 
 if not selected:
-    # デフォルト: ライブ・イベント
+    # デフォルト: 複数の導線を提供
     selected = [
         ("/kpop-events-japan-april-2026-complete/", "2026年4月 K-POPライブ・来日イベント完全ガイド"),
+        ("/glass-skin-routine-kpop-2026/", "BTS・IVEも実践するガラス肌ルーティン5選"),
     ]
 
 links = "".join(
-    f'<li><a href="{site}{slug}" style="color:#ff4d6d;font-weight:bold;">{title}</a></li>'
+    f'<li><a href="{site}{slug}?utm_source=internal&utm_medium=cta&utm_campaign=revenue_link" style="color:#ff4d6d;font-weight:bold;">{title}</a></li>'
     for slug, title in selected
 )
 
@@ -75,28 +82,37 @@ print(html)
 PY
 )
 
-NEW_CONTENT=$(python3 - << 'PY' "$CONTENT" "$REVENUE_BLOCK"
-import sys
-content = sys.argv[1]
-block = sys.argv[2]
-# 末尾の情報元の前に挿入
+NEW_CONTENT=$(CONTENT_IN="$CONTENT" BLOCK_IN="$REVENUE_BLOCK" python3 - << 'PY'
+import os
+content = os.environ["CONTENT_IN"]
+block = os.environ["BLOCK_IN"]
+# 末尾の情報元の前に挿入（囲むブロック要素ごと分割して壊さない）
 if "情報元" in content:
     idx = content.rfind("情報元")
-    print(content[:idx] + block + "\n\n" + content[idx:])
+    # 情報元を含む最も近い開始タグ(<p>, <div>等)の先頭を探す
+    best = -1
+    for tag in ["<p", "<div"]:
+        t = content.rfind(tag, 0, idx)
+        if t >= 0 and (idx - t) < 300 and t > best:
+            best = t
+    insert_pos = best if best >= 0 else idx
+    print(content[:insert_pos] + block + "\n\n" + content[insert_pos:])
 else:
     print(content + "\n\n" + block)
 PY
 )
 
-UPDATE=$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}, ensure_ascii=False))" "$NEW_CONTENT")
+UPDATE=$(CONTENT_IN="$NEW_CONTENT" python3 -c "import json,os; print(json.dumps({'content': os.environ['CONTENT_IN']}, ensure_ascii=False))")
 
-RESP=$(curl -s -X POST "$WP_API/$POST_ID"   -u "$WP_USER:$WP_PASS"   -H "Content-Type: application/json"   -d "$UPDATE")
+RESP=$(echo "$UPDATE" | curl -s -X POST "$WP_API/$POST_ID"   -u "$WP_USER:$WP_PASS"   -H "Content-Type: application/json"   -d @-)
 
 LINK=$(echo "$RESP" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('link',''))")
 
 if [ -n "$LINK" ]; then
   echo "✅ 収益導線追加: $TITLE"
-  curl -s -X POST "$DISCORD_WEBHOOK" -H "Content-Type: application/json"     -d "{\"content\":\"💰 収益導線追加\n$TITLE\n$LINK\"}" > /dev/null
+  source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+  SALES_WEBHOOK=$(get_discord_webhook "sales_monetization" 2>/dev/null || echo "$DISCORD_WEBHOOK")
+  curl -s -X POST "$SALES_WEBHOOK" -H "Content-Type: application/json"     -d "{\"content\":\"💰 収益導線追加\n$TITLE\n$LINK\"}" > /dev/null
 else
   echo "❌ 失敗: POST_ID=$POST_ID"
 fi

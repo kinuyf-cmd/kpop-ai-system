@@ -72,6 +72,27 @@ def get_ga4_data():
     summary_res = client.run_report(summary_req)
     summary_row = summary_res.rows[0]
 
+    # トラフィックソース別セッション数（X流入計測用）
+    source_req = RunReportRequest(
+        property=f"properties/{GA4_PROPERTY_ID}",
+        dimensions=[Dimension(name="sessionSource")],
+        metrics=[Metric(name="sessions")],
+        date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+    )
+    try:
+        source_res = client.run_report(source_req)
+        traffic_sources = {}
+        x_sessions = 0
+        for row in source_res.rows:
+            src = row.dimension_values[0].value
+            sess = int(row.metric_values[0].value)
+            traffic_sources[src] = sess
+            if src in ("t.co", "x.com", "twitter.com"):
+                x_sessions += sess
+    except Exception:
+        traffic_sources = {}
+        x_sessions = 0
+
     return {
         "summary": {
             "sessions": summary_row.metric_values[0].value,
@@ -80,7 +101,9 @@ def get_ga4_data():
             "engaged_sessions": summary_row.metric_values[3].value,
             "avg_session_duration": summary_row.metric_values[4].value,
         },
-        "top_landing_pages": top_pages
+        "top_landing_pages": top_pages,
+        "traffic_sources": traffic_sources,
+        "x_sessions": x_sessions,
     }
 
 def run_gsc_query(service, body):
