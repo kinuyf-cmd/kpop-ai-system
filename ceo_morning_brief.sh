@@ -169,9 +169,11 @@ $(echo -e "$POLICY")
 echo "$BRIEF"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [6] Discord送信
+# [6] Discord送信（#daily-ceo-report チャネル）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WEBHOOK="${DISCORD_WEBHOOK:-}"
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+WEBHOOK=$(get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
+[ -z "$WEBHOOK" ] && WEBHOOK="${DISCORD_WEBHOOK:-}"
 
 if [[ -z "$WEBHOOK" ]]; then
   echo ""

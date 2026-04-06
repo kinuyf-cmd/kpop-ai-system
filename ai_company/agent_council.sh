@@ -566,7 +566,12 @@ phase7_publish() {
 
   TITLE=$(head -n 1 "$article")
   CONTENT=$(tail -n +3 "$article")
-  TITLE="【速報】${TITLE}"
+  # v1.3: 【速報】は真の速報記事のみ付与。まとめ・スケジュール・ランキング等には付けない
+  if echo "$TITLE" | grep -qE '(まとめ|スケジュール|ランキング|一覧|TOP|チャート|振り返り|解説|徹底|比較|分析|予定|カレンダー|イベント情報)'; then
+    echo "  ⚠️ まとめ/ランキング系記事のため【速報】を付与しない: $TITLE"
+  elif ! echo "$TITLE" | grep -q '【速報】'; then
+    TITLE="【速報】${TITLE}"
+  fi
 
   # --- 重複チェック ---
   log "  重複投稿チェック（過去2日）..."
