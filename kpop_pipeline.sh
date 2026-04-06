@@ -444,6 +444,13 @@ if [[ -n "$CHOSEN_TOPIC" ]]; then
   reserve_topic "$CHOSEN_TOPIC"
 fi
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 自律改善ディレクティブ読み込み（週次レビューで自動更新）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEOXYS_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent deoxys 2>/dev/null || echo "")
+METAMON_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent metamon 2>/dev/null || echo "")
+EEVEE_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent eevee 2>/dev/null || echo "")
+
 echo "=== [1] デオキシス: 記事化 ==="
 if [[ -n "$THEME_INPUT" ]]; then
   # テーマ記事: WebSearch不要（許可要求の根本原因を排除）
@@ -480,6 +487,8 @@ ${NO_CONV_RULE}
 2行目：空行
 3行目以降：<h2>から始まるHTML本文のみ
 末尾に情報元と「※本記事は${TODAY}時点の情報です」を明記
+
+${DEOXYS_DIRECTIVE}
 " > reports/0_breaking.md
 else
   # ニュース取得モード: ミュウツーの戦略判断を反映
@@ -523,6 +532,8 @@ ${NO_CONV_RULE}
 2行目：空行
 3行目以降：<h2>から始まるHTML本文のみ
 末尾に情報元と「※本記事は${TODAY}時点の情報です」を明記
+
+${DEOXYS_DIRECTIVE}
 " > reports/0_breaking.md
 fi
 sanitize_output reports/0_breaking.md
@@ -568,6 +579,8 @@ ${NO_CONV_RULE}
 【重要】
 最終完成記事だけを出力せよ
 
+${METAMON_DIRECTIVE}
+
 ---
 $(cat reports/0_breaking.md)
 " > reports/1_rewrite.md
@@ -605,6 +618,8 @@ $TITLE_A
 ・タイトルAの固有名詞・数字を変えない
 
 ${WIN_PROMPT}
+
+${EEVEE_DIRECTIVE}
 
 【例】
 A: KISS OF LIFE「Who is she」4月6日カムバック詳細

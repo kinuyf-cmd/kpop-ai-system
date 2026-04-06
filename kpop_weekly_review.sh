@@ -105,6 +105,18 @@ ${LUGIA_REPORT}
 EOF
 
 echo "  ✓ ルギア戦略完了"
+
+# [2.5] 自律改善: ルギアの指示を構造化して自動適用
+echo "=== [2.5] 自律改善エンジン: ディレクティブ更新 ==="
+echo "$LUGIA_REPORT" | python3 "$SCRIPT_DIR/lib/auto_improve.py" extract 2>/dev/null && {
+  echo "  ✓ config/auto_directives.json 更新完了"
+} || {
+  echo "  ⚠️ ディレクティブ抽出スキップ"
+}
+
+# 勝ちワードも更新
+python3 "$SCRIPT_DIR/lib/auto_improve.py" update-titles 2>/dev/null || true
+
 echo "  保存先: $REPORT_FILE"
 
 # [3] Discord配信（#weekly-board-report）
