@@ -11,6 +11,10 @@ google_metrics/adsense_token.json
 google_metrics/x_login.json
 google_metrics/x_debug/
 reports/
+reports_*/
 council_reports/
+thumbnail.jpg
+thumbnail.webp
+logs/
 .venv/
 .env.save
