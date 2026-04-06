@@ -259,7 +259,21 @@ X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイ
 " > reports/chart_2_sns.md
 
 echo "=== X/Twitter 自動投稿 ==="
-bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>/dev/null || echo "X投稿スキップ"
+X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
+X_POST_RESULT=$(bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>&1 | tee -a "$X_POST_LOG") || {
+  echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
+  X_POST_RESULT="X投稿失敗"
+}
+X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
+if [ -n "$X_TWEET_URL" ]; then
+  X_STATUS="成功 ($X_TWEET_URL)"
+elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
+  X_STATUS="DRY-RUN（テストモード）"
+elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
+  X_STATUS="スキップ"
+else
+  X_STATUS="失敗"
+fi
 
 # アーカイブ
 mkdir -p "$ARCHIVE_DIR"
@@ -273,6 +287,7 @@ URL         : $POST_URL
 タイトル    : $TITLE
 文字数      : $CONTENT_LENGTH
 判定        : 投稿OK
+X投稿       : $X_STATUS
 SUMMARY
 
 bash ~/kpop_notify.sh success "チャート" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null

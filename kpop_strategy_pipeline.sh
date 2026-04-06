@@ -120,6 +120,29 @@ echo "========================================"
 
 wp_health_check
 
+# 直近3日間の投稿タイトルを取得（ネタ被り防止）
+echo "=== 直近投稿タイトル取得（ネタ被り防止）==="
+RECENT_POSTED=$(python3 - <<'PYEOF'
+import json, urllib.request, urllib.parse, base64, os
+from datetime import datetime, timedelta, timezone
+cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%S")
+url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=30&after=" + urllib.parse.quote(cutoff) + "&status=publish"
+auth = base64.b64encode((os.environ.get("WP_USER","kpop-bot") + ":" + os.environ.get("WP_PASS","")).encode()).decode()
+try:
+    req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        posts = json.loads(resp.read())
+    if not posts:
+        print("（直近3日間の投稿なし）")
+    else:
+        for p in posts:
+            print("- " + p["title"]["rendered"])
+except Exception as e:
+    print("（取得失敗: " + str(e)[:80] + "）")
+PYEOF
+)
+echo "  直近3日間の投稿: $(echo "$RECENT_POSTED" | grep -c '^\-' || echo 0)件"
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # PHASE 1: インテリジェンス収集
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -257,6 +280,15 @@ claude --agent mewtwo -p "
 今日は${TODAY}です。
 以下の全レポートを統合し、今日書くべきK-POP記事TOP3を意思決定せよ。
 
+【★最重要★ ネタ被り絶対禁止】
+同じネタを繰り返すな。直近3日間の投稿と被らないテーマを選べ。
+以下は直近3日間に既に投稿済みの記事タイトル一覧である。
+これらと同じテーマ・同じ切り口・同じまとめ形式の記事を選ぶことは絶対に禁止。
+TOP3の全てが投稿済み記事と異なるテーマであることを確認せよ。
+
+【直近3日間の投稿済み記事（これらと被るテーマは禁止）】
+${RECENT_POSTED}
+
 【バタフリー：トレンド】
 $(cat reports/1_trend.md)
 
@@ -277,6 +309,7 @@ $(cat reports/6_structure.md)
 
 矛盾・重複を整理し、時事性・検索ポテンシャル・差別化可能性・ファン感情・継続価値の5軸で評価して
 TOP3を優先度・タイトル3案・推奨構成付きで出力せよ。
+【重要】TOP3の各テーマが直近3日間の投稿済み記事と被っていないことを明記せよ。
 異常検知・注意事項と、デオキシスへの具体的な実行指示も出力せよ。
 " > reports/7_strategy.md
 check_output reports/7_strategy.md "ミュウツー"
@@ -720,15 +753,74 @@ if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ] && [ -f "$TOKEN_LOG" ]; then
   echo "  トークン合計: $PIPELINE_TOKEN_COUNT"
 fi
 
-RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
-  -u "$WP_USER:$WP_PASS" \
-  -H "Content-Type: application/json" \
-  -d "$JSON")
+# --- WordPress投稿 (リトライ付き) ---
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
 
-POST_URL=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('link','（URL取得失敗）'))" 2>/dev/null)
-POST_ID=$(echo "$RESPONSE"  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
+wp_post_attempt() {
+  local HTTP_CODE BODY TMPFILE
+  TMPFILE=$(mktemp)
+  HTTP_CODE=$(curl -s -o "$TMPFILE" -w "%{http_code}" \
+    -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
+    -u "$WP_USER:$WP_PASS" \
+    -H "Content-Type: application/json" \
+    -d "$JSON")
+  BODY=$(cat "$TMPFILE")
+  rm -f "$TMPFILE"
+
+  if [[ "$HTTP_CODE" -lt 200 || "$HTTP_CODE" -ge 300 ]]; then
+    echo "ERROR: WordPress API returned HTTP $HTTP_CODE" >&2
+    echo "$BODY" >&2
+    return 1
+  fi
+
+  RESPONSE="$BODY"
+  return 0
+}
+
+RESPONSE=""
+POST_ID=""
+POST_URL=""
+WP_POST_OK=0
+
+for _attempt in 1 2; do
+  if wp_post_attempt; then
+    POST_URL=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('link','（URL取得失敗）'))")
+    POST_ID=$(echo "$RESPONSE"  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))")
+
+    # POST_IDが数値であることを確認
+    if [[ "$POST_ID" =~ ^[0-9]+$ ]]; then
+      WP_POST_OK=1
+      echo "  WordPress投稿成功: POST_ID=$POST_ID (試行 $_attempt)"
+      break
+    else
+      echo "ERROR: POST_IDが不正 (値='$POST_ID', 試行 $_attempt)" >&2
+    fi
+  else
+    echo "ERROR: WordPress投稿失敗 (試行 $_attempt)" >&2
+  fi
+
+  if [ "$_attempt" -eq 1 ]; then
+    echo "  5秒後にリトライ..."
+    sleep 5
+  fi
+done
+
+if [ "$WP_POST_OK" -ne 1 ]; then
+  echo "CRITICAL: WordPress投稿が2回とも失敗しました" >&2
+  discord_send "urgent_errors" \
+    "[CRITICAL] WordPress投稿失敗 - $TODAY - $TITLE | POST_IDが空または非数値。RESPONSEの先頭200文字: $(echo "$RESPONSE" | head -c 200)" \
+    "" 2>/dev/null || true
+  # POST_IDが無い状態で後続処理が壊れないようデフォルト設定
+  POST_ID=""
+  POST_URL="（投稿失敗）"
+fi
+
 echo "=== ABEMA CTA自動挿入 ==="
-bash /home/aiuser/kpop-ai-system/google_metrics/inject_abema_cta.sh "$POST_ID" 2>/dev/null || echo "ABEMA CTAスキップ"
+if [ -n "$POST_ID" ]; then
+  bash /home/aiuser/kpop-ai-system/google_metrics/inject_abema_cta.sh "$POST_ID" || echo "ABEMA CTAスキップ"
+else
+  echo "ABEMA CTAスキップ (POST_IDなし)"
+fi
 
 echo "[15/15] ペルシアン: SNS拡散戦略..."
 claude --agent persian -p "
@@ -745,7 +837,21 @@ X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイ
 check_output reports/15_sns.md "ペルシアン"
 
 echo "=== [15.1] X/Twitter 自動投稿 ==="
-bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/15_sns.md" 2>/dev/null || echo "X投稿スキップ"
+X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
+X_POST_RESULT=$(bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/15_sns.md" 2>&1 | tee -a "$X_POST_LOG") || {
+  echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
+  X_POST_RESULT="X投稿失敗"
+}
+X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
+if [ -n "$X_TWEET_URL" ]; then
+  X_STATUS="成功 ($X_TWEET_URL)"
+elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
+  X_STATUS="DRY-RUN（テストモード）"
+elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
+  X_STATUS="スキップ"
+else
+  X_STATUS="失敗"
+fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # レジギガス: 実行履歴アーカイブ
@@ -763,10 +869,94 @@ URL         : $POST_URL
 タイトル    : $TITLE
 文字数      : $CONTENT_LENGTH
 判定        : 投稿OK
+X投稿       : $X_STATUS
 SUMMARY
 echo "  保存先: $ARCHIVE_DIR ($(ls "$ARCHIVE_DIR" | wc -l | tr -d ' ')ファイル)"
 
 bash ~/kpop_notify.sh success "戦略" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# KPIログ記録
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PIPELINE_END=$(date +%s)
+PROCESSING_TIME=$((PIPELINE_END - ${PIPELINE_START:-$PIPELINE_END}))
+HAS_CTA="false"
+echo "$CONTENT" | grep -qE '(px\.a8\.net|amazon\.co\.jp|affiliate|あわせて読みたい|関連記事)' && HAS_CTA="true"
+PLAIN_CHARS=$(echo "$CONTENT" | sed 's/<[^>]*>//g' | wc -m | tr -d ' ')
+H2_COUNT=$(echo "$CONTENT" | grep -coP '<h2[\s>]' || true)
+SLUG=$(echo "$POST_URL" | sed 's|.*/||; s|/$||')
+
+# アルセウスの採点結果から50点満点スコアを抽出
+ARCEUS_SCORE=$(python3 - << 'SCORE_PY' "reports/14_arceus.md"
+import re, sys
+score = 0
+try:
+    with open(sys.argv[1], encoding="utf-8") as f:
+        text = f.read()
+    # 方法1: 総合スコア行から抽出 (例: "総合スコア: 9.0/10") → x5で50点満点に換算
+    m = re.search(r'総合スコア[：:]\s*([\d.]+)\s*/\s*10', text)
+    if m:
+        score = round(float(m.group(1)) * 5)
+    else:
+        # 方法2: エージェント別採点表の個別スコアを合算 (例: "| エージェント名 | **9.5/10** |")
+        # 採点表の行のみを対象にし、本文中の無関係な "X/10" を拾わないようにする
+        scores = re.findall(r'\|\s*\*{0,2}([\d.]+)\s*/\s*10\*{0,2}\s*\|', text)
+        if not scores:
+            # フォールバック: 太字で囲まれたスコアのみ (例: "**9.5/10**")
+            scores = re.findall(r'\*\*([\d.]+)\s*/\s*10\*\*', text)
+        if scores:
+            total = sum(float(s) for s in scores)
+            score = round(min(total, 50))
+except Exception:
+    pass
+# 0-50の範囲に収める
+print(max(0, min(50, score)))
+SCORE_PY
+)
+ARCEUS_SCORE=${ARCEUS_SCORE:-0}
+echo "ARCEUS_SCORE=$ARCEUS_SCORE"
+
+# KPIログ: JSONをPythonで安全に構築（タイトル等の特殊文字でJSON破損を防止）
+python3 - << 'KPI_PY' "$SCRIPT_DIR/lib/kpi_logger.py" "$POST_ID" "$TITLE" "$POST_URL" "$SLUG" "$CATEGORY_ID" "$PLAIN_CHARS" "$H2_COUNT" "$ARCEUS_SCORE" "$HAS_CTA" "${PIPELINE_TOKEN_COUNT:-0}" "$PROCESSING_TIME"
+import json, sys, importlib.util
+
+logger_path, post_id, title, url, slug = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
+category_id, plain_chars, h2_count = sys.argv[6], sys.argv[7], sys.argv[8]
+arceus_score, has_cta, token_count, proc_time = sys.argv[9], sys.argv[10], sys.argv[11], sys.argv[12]
+
+def safe_int(v, default=0):
+    try: return int(v)
+    except: return default
+
+def safe_bool(v):
+    return v.lower() == "true"
+
+data = {
+    "post_id": post_id,
+    "title": title,
+    "url": url,
+    "slug": slug,
+    "article_type": "stock",
+    "categories": [safe_int(category_id)],
+    "char_count": safe_int(plain_chars),
+    "h2_count": safe_int(h2_count),
+    "score": safe_int(arceus_score),
+    "pipeline": "strategy",
+    "has_cta": safe_bool(has_cta),
+    "has_thumbnail": True,
+    "token_count": safe_int(token_count),
+    "processing_time_sec": safe_int(proc_time),
+}
+
+spec = importlib.util.spec_from_file_location("kpi_logger", logger_path)
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+result = mod.log_post(data)
+print(json.dumps(result, ensure_ascii=False))
+KPI_PY
+if [ $? -ne 0 ]; then
+  echo "KPIログ記録スキップ"
+fi
 
 echo ""
 echo "========================================"
