@@ -592,18 +592,23 @@ TITLE_B=$(claude -p "
 $TITLE_A
 
 【タイトルBのルール】
-・感情を動かす表現必須（ついに／衝撃／まさか／神／完全復帰 等）
-・アーティスト名は必ず含める
+・タイトルAに含まれる固有情報（アーティスト名・作品名・日付・数字）は必ず保持する
+・感情を動かす表現を追加（ついに／衝撃／まさか／神／完全復帰 等）
 ・24〜38文字
 ・SEOキーワードも意識する
 ・弱い表現禁止（まとめ／情報／解説）
 ・タイトル文字列のみ出力。説明・前置き・理由は一切不要
 
+【絶対禁止】
+・タイトルAにない事実を追加しない（事実逸脱禁止）
+・釣り表現禁止（「閲覧注意」「ガチでやばい」等の過剰煽り）
+・タイトルAの固有名詞・数字を変えない
+
 ${WIN_PROMPT}
 
 【例】
-A: KISS OF LIFE「Who is she」カムバック詳細まとめ
-B: ついに完全復帰…KISS OF LIFEが帰ってきた
+A: KISS OF LIFE「Who is she」4月6日カムバック詳細
+B: ついに完全復帰…KISS OF LIFE「Who is she」4月6日解禁
 " 2>/dev/null | grep -v '^$' | head -1)
 
 # フォールバック: タイトルBが空ならタイトルAをそのまま使用
@@ -1465,30 +1470,22 @@ else
 fi
 log_step "x_post" "$(echo "$X_STATUS" | grep -q '成功' && echo ok || echo skipped)" "" "A: $X_STATUS"
 
-echo "=== [5.2] X/Twitter 自動投稿（パターンB: 45分後） ==="
-# パターンBは遅延投稿（バックグラウンド）
-(
-  sleep 2700  # 45分
-  X_POST_RESULT_B=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE_B" "$POST_URL" "reports/4_sns_b.md" 2>&1)
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] X_POST_B: $X_POST_RESULT_B" >> "$X_POST_LOG"
-) &
-X_POST_B_PID=$!
-echo "  パターンB投稿を45分後にスケジュール (PID: $X_POST_B_PID)"
-log_step "x_post_b" "ok" "reports/4_sns_b.md" "scheduled +45min (PID=$X_POST_B_PID)"
+echo "=== [5.2] X投稿パターンB: dry-run保存 ==="
+echo "  パターンBは reports/4_sns_b.md に保存済（自動投稿なし）"
+log_step "x_post_b" "skipped" "reports/4_sns_b.md" "dry-run保存のみ"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# タイトル学習: ABタイトルを記録（初期スコアはアルセウス採点を使用）
+# タイトル学習: ABタイトルを pending で記録（実CTR取得後に win/lose 確定）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ARCEUS_SCORE_NUM=${ARCEUS_SCORE:-0}
 python3 "$SCRIPT_DIR/lib/title_learner.py" record \
-  --title "$TITLE" --score "$ARCEUS_SCORE_NUM" --pattern "情報型" \
-  --post-id "$POST_ID" 2>/dev/null || true
+  --title "$TITLE" --score 0 --pattern "情報型" \
+  --post-id "$POST_ID" --pending 2>/dev/null || true
 if [[ "$TITLE_B" != "$TITLE" ]]; then
   python3 "$SCRIPT_DIR/lib/title_learner.py" record \
-    --title "$TITLE_B" --score "$ARCEUS_SCORE_NUM" --pattern "感情型" \
-    --post-id "$POST_ID" 2>/dev/null || true
+    --title "$TITLE_B" --score 0 --pattern "感情型" \
+    --post-id "$POST_ID" --pending 2>/dev/null || true
 fi
-echo "  ✓ タイトル学習データ記録完了"
+echo "  ✓ タイトル学習データ記録完了（pending）"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # レジギガス: 実行履歴アーカイブ
@@ -1506,7 +1503,7 @@ URL         : $POST_URL
 文字数      : $CONTENT_LENGTH
 判定        : 投稿OK
 X投稿A      : $X_STATUS
-X投稿B      : 45分後スケジュール済
+X投稿B      : dry-run保存（reports/4_sns_b.md）
 SUMMARY
 
 bash $SCRIPT_DIR/kpop_notify.sh success "速報" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null

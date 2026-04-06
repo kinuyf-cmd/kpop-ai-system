@@ -133,7 +133,11 @@ def generate_winning_prompt() -> str:
 def cmd_record(args):
     """タイトルパフォーマンスを記録"""
     pattern = args.pattern or classify_pattern(args.title)
-    result = score_to_result(args.score)
+
+    if args.pending:
+        result = "pending"
+    else:
+        result = score_to_result(args.score)
 
     record = {
         "title": args.title,
@@ -145,6 +149,30 @@ def cmd_record(args):
     }
     save_record(record)
     print(json.dumps(record, ensure_ascii=False))
+
+
+def cmd_update(args):
+    """pending レコードを実CTRデータで win/lose 確定する"""
+    records = load_records()
+    updated = 0
+    new_records = []
+    for r in records:
+        if r.get("post_id") == args.post_id and r.get("result") == "pending":
+            r["ctr_score"] = args.score
+            r["result"] = score_to_result(args.score)
+            updated += 1
+        new_records.append(r)
+
+    if updated == 0:
+        print(f"No pending records found for post_id={args.post_id}")
+        return
+
+    # 全レコードを書き直す
+    PERF_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(PERF_FILE, "w", encoding="utf-8") as f:
+        for r in new_records:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print(f"Updated {updated} records for post_id={args.post_id} → score={args.score}, result={score_to_result(args.score)}")
 
 
 def cmd_winners(args):
@@ -185,6 +213,12 @@ def main():
     p_record.add_argument("--score", type=float, required=True)
     p_record.add_argument("--pattern", default="")
     p_record.add_argument("--post-id", default="")
+    p_record.add_argument("--pending", action="store_true",
+                          help="result=pending で記録（実CTR取得後に確定）")
+
+    p_update = sub.add_parser("update", help="pending → win/lose 確定")
+    p_update.add_argument("--post-id", required=True)
+    p_update.add_argument("--score", type=float, required=True)
 
     sub.add_parser("winners", help="勝ちパターン一覧")
     sub.add_parser("winning-words", help="勝ちワード抽出")
@@ -194,6 +228,8 @@ def main():
 
     if args.command == "record":
         cmd_record(args)
+    elif args.command == "update":
+        cmd_update(args)
     elif args.command == "winners":
         cmd_winners(args)
     elif args.command == "winning-words":
