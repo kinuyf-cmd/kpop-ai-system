@@ -64,7 +64,8 @@ def get_auth_headers():
 
 
 def post_to_wordpress(title, content, slug="", categories=None, tags=None,
-                       featured_media=0, excerpt="", status="publish"):
+                       featured_media=0, excerpt="", meta_description="",
+                       status="publish"):
     """
     WordPress REST API で記事を投稿
     指数バックオフ付きリトライ
@@ -76,6 +77,9 @@ def post_to_wordpress(title, content, slug="", categories=None, tags=None,
         "status": status,
         "slug": slug,
         "excerpt": excerpt,
+        "meta": {
+            "_aioseo_description": meta_description,
+        },
     }
     if categories:
         data["categories"] = categories
@@ -258,6 +262,7 @@ def main():
         tags=tags if tags else None,
         featured_media=media_id,
         excerpt=excerpt,
+        meta_description=excerpt,
         status=status,
     )
 

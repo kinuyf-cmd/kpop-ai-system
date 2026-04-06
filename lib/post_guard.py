@@ -223,6 +223,33 @@ def validate_final_post(file_path=None, article_type="flow"):
             errors.append(f"question_detected: '{signal}' found")
             break
 
+    # ── 英語Claudeエラーメッセージ混入チェック ──
+    claude_error_signals = [
+        "Web tools are currently blocked",
+        "WebSearch requires a permission",
+        "I don't have access to web search",
+        "Tool use is not available",
+        "Search is not available",
+        "I'm unable to use tools",
+        "I cannot access the web",
+        "I'm not able to access the web",
+        "I do not have access to web search",
+        "I can't perform web search",
+    ]
+    content_lower = content.lower()
+    for signal in claude_error_signals:
+        if signal.lower() in content_lower:
+            errors.append(f"claude_error_detected: '{signal}' found in content")
+            break
+
+    # ── タイトル英語混入チェック ──
+    #    K-POP記事タイトルは基本的に日本語。英語が50%超なら異常
+    if title:
+        alpha_count = len(re.findall(r'[a-zA-Z]', title))
+        title_len = len(title.strip())
+        if title_len > 0 and alpha_count / title_len > 0.5:
+            errors.append(f"title_english_ratio: 英語比率が高すぎます ({alpha_count}/{title_len})")
+
     # ── HTML構造チェック ──
     h2_count = len(re.findall(r'<h2', body, re.IGNORECASE))
     if h2_count < 4:

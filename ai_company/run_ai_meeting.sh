@@ -190,3 +190,26 @@ $(cat "$REPORTS/meowth_output.md")
 
 echo "✅ AI会社会議 完了"
 echo "保存先: $REPORTS"
+
+# Discord送信（#daily-ceo-report チャネル）
+MEETING_SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+source "$MEETING_SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+MEETING_WEBHOOK=$(get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
+[ -z "$MEETING_WEBHOOK" ] && MEETING_WEBHOOK="${DISCORD_WEBHOOK:-}"
+if [ -z "$MEETING_WEBHOOK" ] && [ -f ~/.kpop_discord_webhook ]; then
+  MEETING_WEBHOOK=$(cat ~/.kpop_discord_webhook | tr -d '[:space:]')
+fi
+
+if [ -n "$MEETING_WEBHOOK" ]; then
+  SUMMARY="🏢 AI日次運営会議 完了 ($(date '+%Y-%m-%d %H:%M'))"
+  if [ -f "$REPORTS/porygon_review.md" ]; then
+    REVIEW=$(head -c 1500 "$REPORTS/porygon_review.md")
+    MSG="${SUMMARY}"$'\n\n'"${REVIEW}"
+  else
+    MSG="$SUMMARY"
+  fi
+  curl -s -o /dev/null -X POST "$MEETING_WEBHOOK" \
+    -H "Content-Type: application/json" \
+    -d "$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1][:1950]}))" "$MSG")" 2>/dev/null
+  echo "✅ Discord送信完了"
+fi
