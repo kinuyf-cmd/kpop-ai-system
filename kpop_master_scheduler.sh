@@ -202,7 +202,7 @@ determine_content() {
 
   case $hour in
     6)
-      echo "beauty|kpop_pipeline|朝の美容・韓国コスメ・スキンケア系SEO記事（通勤時間帯の検索需要）"
+      echo "beauty|kpop_pipeline|朝の美容記事：韓国スキンケア・基礎化粧品・モーニングルーティン系SEO記事（通勤時間帯の検索需要）※10時の美容記事とは切り口を変えること"
       ;;
     7)
       echo "breaking|kpop_pipeline|K-POP朝の速報・カムバック・ツアー情報"
@@ -218,7 +218,7 @@ determine_content() {
       echo "breaking|kpop_pipeline|K-POP速報・韓国エンタメ最新情報"
       ;;
     10)
-      echo "beauty|kpop_pipeline|韓国美容・アイドルメイク・スキンケアルーティン"
+      echo "beauty|kpop_pipeline|美容記事：アイドルメイク・ヘアスタイル・ファッションコスメ系（6時のスキンケア記事とは別の切り口にすること）"
       ;;
     11)
       echo "strategy|kpop_strategy|K-POPアーティスト特集・ファンダム分析"
@@ -233,7 +233,7 @@ determine_content() {
       echo "breaking|kpop_pipeline|K-POP午後の速報・アーティスト最新ニュース"
       ;;
     15)
-      echo "lifestyle|kpop_pipeline|韓国ドラマ・配信情報・韓国旅行・ソウルカフェ"
+      echo "lifestyle|kpop_pipeline|ライフスタイル記事：韓国旅行・ソウルカフェ・グルメ・ポップアップストア（ドラマ記事は20時枠に回すこと）"
       ;;
     16)
       echo "strategy|kpop_strategy|K-POP比較・まとめ・考察記事"
@@ -242,13 +242,13 @@ determine_content() {
       echo "breaking|kpop_pipeline|K-POP夕方速報（帰宅時間帯の高需要）"
       ;;
     18)
-      echo "council|agent_council|合議制高品質記事（夜のゴールデンタイム）"
+      echo "council|agent_council|合議制高品質記事：ファッション・スタイル分析・衣装解説など（夜のゴールデンタイム）"
       ;;
     19)
       echo "breaking|kpop_pipeline|K-POP夜の速報・コンサート・イベントレポ"
       ;;
     20)
-      echo "lifestyle|kpop_pipeline|韓国ドラマレビュー・配信視聴ガイド（夜のリラックスタイム）"
+      echo "lifestyle|kpop_pipeline|ライフスタイル記事：韓国ドラマレビュー・配信視聴ガイド（15時の旅行・カフェ記事とは別ジャンルにすること）"
       ;;
     *)
       echo "breaking|kpop_pipeline|K-POP最新ニュース"
@@ -266,6 +266,29 @@ run_pipeline() {
 
   slog "🚀 パイプライン実行: ${pipeline} (${content_type})"
   slog "  テーマ: ${focus}"
+
+  # 直近3日間の投稿タイトルを取得（全パイプライン共通・ネタ被り防止）
+  local RECENT_POSTED
+  RECENT_POSTED=$(python3 - <<'PYEOF'
+import json, urllib.request, urllib.parse, base64, os
+from datetime import datetime, timedelta, timezone
+cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%S")
+url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=30&after=" + urllib.parse.quote(cutoff) + "&status=publish"
+auth = base64.b64encode((os.environ.get("WP_USER","kpop-bot") + ":" + os.environ.get("WP_PASS","")).encode()).decode()
+try:
+    req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        posts = json.loads(resp.read())
+    if not posts:
+        print("（直近3日間の投稿なし）")
+    else:
+        for p in posts:
+            print("- " + p["title"]["rendered"])
+except Exception as e:
+    print("（取得失敗: " + str(e)[:80] + "）")
+PYEOF
+  )
+  slog "  直近3日間の投稿: $(echo "$RECENT_POSTED" | grep -c '^\-' || echo 0)件"
 
   case "$pipeline" in
     kpop_pipeline)
@@ -307,14 +330,24 @@ print('YES' if any(e in kw for e in events) else 'NO')
 【コンテンツ方針】
 ${focus}
 
+【★最重要★ ネタ被り絶対禁止】
+同じネタを繰り返すな。直近3日間の投稿と被らないテーマを選べ。
+以下は直近3日間に既に投稿済みの記事タイトル一覧である。
+これらと同じテーマ・同じ切り口・同じまとめ形式の記事を書くことは絶対に禁止。
+特に「カムバックスケジュールまとめ」「カムバック一覧」「○月のカムバック予定」のような
+まとめ・ラウンドアップ形式の記事が既にある場合、類似のまとめ記事は絶対に書くな。
+
+【直近3日間の投稿済み記事（これらと被るテーマは禁止）】
+${RECENT_POSTED}
+
 【今日のトレンドキーワード（参考）】
 ${TREND_KEYWORDS}
 
 【昨日のアクセスデータに基づく示唆】
 ${CTR_INSIGHTS}
 
-上記の方針・トレンド・アクセスデータを踏まえて、今最も需要がある記事を1本書いてください。
-既に本日${POST_COUNT}本投稿済みです。過去記事と被らないテーマを選んでください。
+上記の方針・トレンド・アクセスデータを踏まえて、直近投稿と完全に異なるテーマで記事を1本書いてください。
+既に本日${POST_COUNT}本投稿済みです。
 昨日のデータで需要が確認されたテーマがあれば積極的に活用してください。
 
 【出力形式・絶対厳守】
