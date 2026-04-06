@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# .envから環境変数を読み込み
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+fi
+
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
 WP_PASS="${WP_PASS}"
@@ -21,9 +27,9 @@ PY
 )
 
 POST_JSON=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
-POST_ID=$(python3 - << 'PY' "$POST_JSON"
+POST_ID=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
-data = json.loads(sys.argv[1])
+data = json.load(sys.stdin)
 if isinstance(data, list) and len(data) > 0:
     print(data[0].get("id",""))
 else:
@@ -31,9 +37,9 @@ else:
 PY
 )
 
-TITLE=$(python3 - << 'PY' "$POST_JSON"
+TITLE=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
-data = json.loads(sys.argv[1])
+data = json.load(sys.stdin)
 if isinstance(data, list) and len(data) > 0:
     print(data[0].get("title",{}).get("rendered",""))
 else:
@@ -41,9 +47,9 @@ else:
 PY
 )
 
-CONTENT=$(python3 - << 'PY' "$POST_JSON"
+CONTENT=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
-data = json.loads(sys.argv[1])
+data = json.load(sys.stdin)
 if isinstance(data, list) and len(data) > 0:
     print(data[0].get("content",{}).get("rendered",""))
 else:
@@ -103,9 +109,9 @@ if [ -z "$RELATED_HTML" ]; then
 fi
 
 # 既に関連記事ブロックがある場合はスキップ
-HAS_RELATED=$(python3 - << 'PY' "$CONTENT"
-import sys
-content = sys.argv[1]
+HAS_RELATED=$(CONTENT_IN="$CONTENT" python3 - << 'PY'
+import os
+content = os.environ["CONTENT_IN"]
 print("YES" if "関連記事" in content else "NO")
 PY
 )
@@ -115,32 +121,32 @@ if [ "$HAS_RELATED" = "YES" ]; then
   exit 0
 fi
 
-NEW_CONTENT=$(python3 - << 'PY' "$CONTENT" "$RELATED_HTML"
-import sys
-content = sys.argv[1]
-related = sys.argv[2]
+NEW_CONTENT=$(CONTENT_IN="$CONTENT" RELATED_IN="$RELATED_HTML" python3 - << 'PY'
+import os
+content = os.environ["CONTENT_IN"]
+related = os.environ["RELATED_IN"]
 print(content + "\n\n" + related)
 PY
 )
 
-UPDATE_JSON=$(python3 - << 'PY' "$TITLE" "$NEW_CONTENT"
-import sys, json
+UPDATE_JSON=$(TITLE_IN="$TITLE" CONTENT_IN="$NEW_CONTENT" python3 - << 'PY'
+import os, json
 print(json.dumps({
-    "title": sys.argv[1],
-    "content": sys.argv[2]
+    "title": os.environ["TITLE_IN"],
+    "content": os.environ["CONTENT_IN"]
 }, ensure_ascii=False))
 PY
 )
 
-RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
+RESP=$(echo "$UPDATE_JSON" | curl -s -X POST "$WP_API/$POST_ID" \
   -u "$WP_USER:$WP_PASS" \
   -H "Content-Type: application/json" \
-  -d "$UPDATE_JSON")
+  -d @-)
 
-UPDATED=$(python3 - << 'PY' "$RESP"
+UPDATED=$(echo "$RESP" | python3 - << 'PY'
 import sys, json
 try:
-    data = json.loads(sys.argv[1])
+    data = json.load(sys.stdin)
     print(data.get("link",""))
 except:
     print("")

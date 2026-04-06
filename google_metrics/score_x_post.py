@@ -40,9 +40,9 @@ if "http" in text:
     score += 2
     reasons.append("URL含む +2")
 
-# 3. ハッシュタグ数: 2-3 = +2, 1 = +1, 0/4+ = 0
+# 3. ハッシュタグ数: 2-4 = +2, 1 = +1, 0/5+ = 0
 hashtag_count = len(re.findall(r'#\S+', text))
-if 2 <= hashtag_count <= 3:
+if 2 <= hashtag_count <= 4:
     score += 2
     reasons.append(f"ハッシュタグ{hashtag_count}個 +2")
 elif hashtag_count == 1:
@@ -50,7 +50,7 @@ elif hashtag_count == 1:
     reasons.append("ハッシュタグ1個 +1")
 elif hashtag_count == 0:
     reasons.append("ハッシュタグなし +0")
-elif hashtag_count >= 4:
+elif hashtag_count >= 5:
     score -= 1
     reasons.append(f"ハッシュタグ過多({hashtag_count}個) -1")
 
