@@ -937,7 +937,7 @@ if [ "$THUMB_PASS" != "YES" ]; then
 
 【絶対ルール】
 ・最大2行（改行で区切る）
-・1行あたり最大14文字（厳守）
+・1行あたり最大10文字（厳守）
 ・強ワード必須：衝撃／速報／判明／神／炎上／ついに／電撃／復活／決定／解禁
 ・数字を優先的に入れる
 ・アーティスト名を入れる
@@ -951,19 +951,19 @@ $TITLE
   THUMB_SCORE_JSON=$(python3 $SCRIPT_DIR/google_metrics/score_thumbnail_text.py "$THUMB_TITLE")
   THUMB_PASS=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print('YES' if d.get('pass') else 'NO')" "$THUMB_SCORE_JSON")
   if [ "$THUMB_PASS" != "YES" ]; then
-    echo "❌ 再生成もNG → タイトルから自動抽出（2行×14文字）"
+    echo "❌ 再生成もNG → タイトルから自動抽出（2行×10文字）"
     THUMB_TITLE=$(python3 -c "
 import re, sys
 t = sys.argv[1]
 t = re.sub(r'【[^】]*】', '', t).strip()
 t = t.replace('『', '').replace('』', '').replace('「', '').replace('」', '')
 t = re.sub(r'\s+', ' ', t).strip()
-# 2行に分割（14文字×2行）
-if len(t) > 14:
-    line1 = t[:14]
-    line2 = t[14:28]
-    if len(line2) > 14:
-        line2 = line2[:13] + '…'
+# 2行に分割（10文字×2行）
+if len(t) > 10:
+    line1 = t[:10]
+    line2 = t[10:20]
+    if len(line2) > 10:
+        line2 = line2[:9] + '…'
     print(line1)
     print(line2)
 else:
