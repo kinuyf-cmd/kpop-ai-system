@@ -6,6 +6,25 @@ if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$SCRIPT_DIR/lib/claude_wrapper.sh"
 fi
 
+# パイプラインログ
+PIPELINE_JSONL="$SCRIPT_DIR/logs/pipeline.jsonl"
+mkdir -p "$SCRIPT_DIR/logs"
+
+log_step() {
+  local step="$1" status="$2" file="${3:-}" msg="${4:-}"
+  local ts sz
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  if [[ -n "$file" && -f "$file" ]]; then
+    sz=$(wc -c < "$file")
+  else
+    sz=0
+  fi
+  msg="${msg//\\/\\\\}"
+  msg="${msg//\"/\\\"}"
+  printf '{"timestamp":"%s","run_id":"%s","step":"%s","status":"%s","file":"%s","size_bytes":%d,"message":"%s"}\n' \
+    "$ts" "${RUN_ID:-unknown}" "$step" "$status" "$file" "$sz" "$msg" >> "$PIPELINE_JSONL"
+}
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # K-POPチャートランキング記事パイプライン
 # 毎週月曜 8:00 自動実行
@@ -127,9 +146,11 @@ claude --allowedTools WebSearch --agent zapdos -p "
 
 if [[ ! -s reports/chart_0_article.md ]]; then
   echo "❌ ザップドス: 出力が空 → 停止"
+  log_step "zapdos" "error" "reports/chart_0_article.md" "出力が空"
   exit 1
 fi
 echo "  ✓ reports/chart_0_article.md ($(wc -c < reports/chart_0_article.md | tr -d ' ') bytes)"
+log_step "zapdos" "ok" "reports/chart_0_article.md"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [2] アラカザム: ファクトチェック
@@ -160,6 +181,9 @@ $(cat reports/chart_0_article.md)
 if [[ ! -s reports/chart_1_checked.md ]]; then
   echo "❌ アラカザム: 出力が空 → ザップドス出力をそのまま使用"
   cp reports/chart_0_article.md reports/chart_1_checked.md
+  log_step "alakazam" "skipped" "reports/chart_1_checked.md" "出力空→フォールバック"
+else
+  log_step "alakazam" "ok" "reports/chart_1_checked.md"
 fi
 echo "  ✓ reports/chart_1_checked.md"
 
@@ -247,6 +271,12 @@ RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
 POST_URL=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('link','（URL取得失敗）'))" 2>/dev/null)
 POST_ID=$(echo "$RESPONSE"  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
 
+if [[ "$POST_ID" =~ ^[0-9]+$ ]]; then
+  log_step "wordpress_post" "ok" "reports/chart_1_checked.md" "post_id=$POST_ID"
+else
+  log_step "wordpress_post" "error" "reports/chart_1_checked.md" "POST_ID不正"
+fi
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [4] ペルシアン: SNS拡散戦略
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -262,6 +292,7 @@ claude --agent persian -p "
 
 X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイミング・採用推奨パターンを出力せよ。
 " > reports/chart_2_sns.md
+log_step "persian" "ok" "reports/chart_2_sns.md"
 
 echo "=== X/Twitter 自動投稿 ==="
 X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"

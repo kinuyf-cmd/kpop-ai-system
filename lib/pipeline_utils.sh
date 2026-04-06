@@ -23,6 +23,26 @@ source "$SCRIPT_DIR/env_loader.sh"
 mkdir -p "$REPORTS_DIR" "$LOGS_DIR"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# パイプラインログ: logs/pipeline.jsonl
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PIPELINE_JSONL="${PIPELINE_JSONL:-$LOGS_DIR/pipeline.jsonl}"
+
+log_step() {
+  local step="$1" status="$2" file="${3:-}" msg="${4:-}"
+  local ts sz
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  if [[ -n "$file" && -f "$file" ]]; then
+    sz=$(wc -c < "$file")
+  else
+    sz=0
+  fi
+  msg="${msg//\\/\\\\}"
+  msg="${msg//\"/\\\"}"
+  printf '{"timestamp":"%s","run_id":"%s","step":"%s","status":"%s","file":"%s","size_bytes":%d,"message":"%s"}\n' \
+    "$ts" "${RUN_ID:-unknown}" "$step" "$status" "$file" "$sz" "$msg" >> "$PIPELINE_JSONL"
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 強制停止チェック
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 check_emergency_stop() {

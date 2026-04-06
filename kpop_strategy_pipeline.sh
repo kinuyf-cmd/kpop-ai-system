@@ -6,22 +6,54 @@ if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$SCRIPT_DIR/lib/claude_wrapper.sh"
 fi
 
+# パイプラインログ
+PIPELINE_JSONL="$SCRIPT_DIR/logs/pipeline.jsonl"
+mkdir -p "$SCRIPT_DIR/logs"
+
+log_step() {
+  local step="$1" status="$2" file="${3:-}" msg="${4:-}"
+  local ts sz
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  if [[ -n "$file" && -f "$file" ]]; then
+    sz=$(wc -c < "$file")
+  else
+    sz=0
+  fi
+  msg="${msg//\\/\\\\}"
+  msg="${msg//\"/\\\"}"
+  printf '{"timestamp":"%s","run_id":"%s","step":"%s","status":"%s","file":"%s","size_bytes":%d,"message":"%s"}\n' \
+    "$ts" "${RUN_ID:-unknown}" "$step" "$status" "$file" "$sz" "$msg" >> "$PIPELINE_JSONL"
+}
+
+# 日本語名→英語ステップ名マッピング
+declare -A AGENT_KEY=(
+  ["バタフリー"]="butterfree" ["ラプラス"]="lapras" ["ミミッキュ"]="mimikyu"
+  ["ソーナンス"]="wobbuffet" ["ジラーチ"]="jirachi" ["フシギバナ"]="venusaur"
+  ["ミュウツー"]="mewtwo" ["デオキシス"]="deoxys" ["メタモン"]="metamon"
+  ["イーブイ"]="eevee" ["アラカザム"]="alakazam" ["ゲンガー"]="gengar"
+  ["カイリュー"]="dragonite" ["アルセウス"]="arceus" ["ペルシアン"]="persian"
+)
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ユーティリティ: 出力検証関数
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 check_output() {
   local file="$1"
   local step="$2"
+  local key="${AGENT_KEY[$step]:-$step}"
   if [[ ! -s "$file" ]]; then
     echo "❌ [$step] 出力が空 → パイプライン停止"
+    log_step "$key" "error" "$file" "出力が空"
     archive_and_exit 1
   fi
   if grep -qE '申し訳ありません|お手伝いできますか' "$file"; then
     echo "❌ [$step] エラー応答を検出 → パイプライン停止"
     echo "  先頭行: $(head -1 "$file")"
+    log_step "$key" "error" "$file" "エラー応答検出"
     archive_and_exit 1
   fi
   echo "  ✓ [$step] OK ($(wc -c < "$file" | tr -d ' ') bytes)"
+  log_step "$key" "ok" "$file"
 }
 
 cleanup_reports_dir() {
@@ -819,12 +851,14 @@ done
 
 if [ "$WP_POST_OK" -ne 1 ]; then
   echo "CRITICAL: WordPress投稿が2回とも失敗しました" >&2
+  log_step "wordpress_post" "error" "reports/final_post.md" "投稿失敗"
   discord_send "urgent_errors" \
     "[CRITICAL] WordPress投稿失敗 - $TODAY - $TITLE | POST_IDが空または非数値。RESPONSEの先頭200文字: $(echo "$RESPONSE" | head -c 200)" \
     "" 2>/dev/null || true
-  # POST_IDが無い状態で後続処理が壊れないようデフォルト設定
   POST_ID=""
   POST_URL="（投稿失敗）"
+else
+  log_step "wordpress_post" "ok" "reports/final_post.md" "post_id=$POST_ID"
 fi
 
 echo "=== ABEMA CTA自動挿入 ==="
