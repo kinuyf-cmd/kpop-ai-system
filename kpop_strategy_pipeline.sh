@@ -24,6 +24,13 @@ check_output() {
   echo "  ✓ [$step] OK ($(wc -c < "$file" | tr -d ' ') bytes)"
 }
 
+cleanup_reports_dir() {
+  if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
+    rm -rf "$REPORTS_DIR"
+  fi
+  rm -f "$SCRIPT_DIR/reports"
+}
+
 archive_and_exit() {
   local code="${1:-1}"
   if [[ -n "$ARCHIVE_DIR" ]]; then
@@ -37,6 +44,7 @@ archive_and_exit() {
 SUMMARY
     echo "  アーカイブ保存: $ARCHIVE_DIR"
   fi
+  cleanup_reports_dir
   bash ~/kpop_notify.sh error "戦略" "パイプライン停止 (RUN: $RUN_ID)" 2>/dev/null
   exit "$code"
 }
@@ -106,11 +114,15 @@ ${RECENT_TITLES}
   echo "  ✓ 重複なし"
 }
 
-mkdir -p reports
-
 TODAY=$(date '+%Y年%m月%d日')
 RUN_ID=$(date '+%Y%m%d_%H%M%S')
 ARCHIVE_DIR=~/kpop_archives/$RUN_ID
+
+# run_idごとに reports を分離（並列実行時のファイル競合を防止）
+REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
+mkdir -p "$REPORTS_DIR"
+rm -f "$SCRIPT_DIR/reports"
+ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
@@ -958,11 +970,13 @@ if [ $? -ne 0 ]; then
   echo "KPIログ記録スキップ"
 fi
 
+cleanup_reports_dir
+
 echo ""
 echo "========================================"
 echo " ✅ パイプライン完了"
 echo " 記事ID  : $POST_ID"
 echo " URL     : $POST_URL"
-echo " SNS戦略 : reports/15_sns.md"
+echo " SNS戦略 : (archived) $ARCHIVE_DIR/15_sns.md"
 echo " アーカイブ: $ARCHIVE_DIR"
 echo "========================================"

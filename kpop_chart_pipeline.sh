@@ -75,12 +75,17 @@ ${RECENT_TITLES}
   echo "  ✓ 重複なし"
 }
 
-mkdir -p reports
-
 TODAY=$(date '+%Y年%m月%d日')
 WEEK=$(date '+%Y年%m月第%V週')
 RUN_ID=$(date '+%Y%m%d_%H%M%S')
 ARCHIVE_DIR=~/kpop_archives/chart_$RUN_ID
+
+# run_idごとに reports を分離（並列実行時のファイル競合を防止）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
+mkdir -p "$REPORTS_DIR"
+rm -f "$SCRIPT_DIR/reports"
+ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
@@ -292,10 +297,16 @@ SUMMARY
 
 bash ~/kpop_notify.sh success "チャート" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null
 
+# クリーンアップ: run専用reportsディレクトリを削除
+if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
+  rm -rf "$REPORTS_DIR"
+fi
+rm -f "$SCRIPT_DIR/reports"
+
 echo ""
 echo "========================================"
 echo " ✅ チャートランキング記事投稿完了"
 echo " 記事ID  : $POST_ID"
 echo " URL     : $POST_URL"
-echo " SNS戦略 : reports/chart_2_sns.md"
+echo " アーカイブ: $ARCHIVE_DIR"
 echo "========================================"
