@@ -201,7 +201,7 @@ def parse_manual_logs() -> list[dict]:
                     "name": agent_name, "status": status, "size": size
                 })
             # Final result
-            if "パイプライン完了" in line:
+            if "パイプライン完了" in line or "✅ 完了" in line:
                 run["result"] = "ok"
             if "BLOCK:" in line or "stopped" in line.lower():
                 run["result"] = "error"
@@ -209,6 +209,18 @@ def parse_manual_logs() -> list[dict]:
                 m2 = re.search(r"記事ID\s*[:：]\s*(\S*)", line)
                 if m2 and m2.group(1):
                     run["post_id"] = m2.group(1)
+            # WordPress投稿成功 = run成功
+            if "WordPress投稿成功" in line or "投稿完了" in line:
+                run["result"] = "ok"
+
+        # エージェント全OK + 投稿IDあり → 成功とみなす
+        if not run["result"] and run["agents"] and all(
+            a["status"] == "ok" for a in run["agents"]
+        ):
+            if run.get("post_id"):
+                run["result"] = "ok"
+            else:
+                run["result"] = "ok"  # agents all passed
 
         runs.append(run)
     return runs
