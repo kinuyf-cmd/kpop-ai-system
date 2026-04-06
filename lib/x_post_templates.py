@@ -196,24 +196,42 @@ def generate_tweet(title: str, url: str, genre: str) -> str:
     return tweet
 
 
+def generate_tweet_ab(title_a: str, title_b: str, url: str, genre: str) -> dict:
+    """ABテスト用: 2パターンのツイートを生成する。
+    パターンA: 情報型タイトルベース
+    パターンB: 感情型タイトルベース
+    """
+    tweet_a = generate_tweet(title_a, url, genre)
+    tweet_b = generate_tweet(title_b, url, genre)
+    return {"tweet_a": tweet_a, "tweet_b": tweet_b}
+
+
 def main():
     parser = argparse.ArgumentParser(description="X/Twitter投稿テンプレート生成")
     parser.add_argument("title", help="記事タイトル")
     parser.add_argument("url", help="記事URL")
     parser.add_argument("--genre", default="default",
                         choices=list(HOOKS.keys()),
-                        help="ジャンル (breaking/comeback/controversy/beauty/live/chart/default)")
+                        help="ジャンル")
     parser.add_argument("--category-id", default="",
                         help="CATEGORY_IDから自動でgenreを判定")
+    parser.add_argument("--title-b", default="",
+                        help="ABテスト用タイトルB（感情型）")
+    parser.add_argument("--ab", action="store_true",
+                        help="ABテストモード: 2パターン出力")
     args = parser.parse_args()
 
     genre = args.genre
-    # category-idが指定されていればgenreを上書き
     if args.category_id:
         genre = CATEGORY_TO_GENRE.get(args.category_id, genre)
 
-    tweet = generate_tweet(args.title, args.url, genre)
-    print(tweet)
+    if args.ab and args.title_b:
+        import json
+        result = generate_tweet_ab(args.title, args.title_b, args.url, genre)
+        print(json.dumps(result, ensure_ascii=False))
+    else:
+        tweet = generate_tweet(args.title, args.url, genre)
+        print(tweet)
 
 
 if __name__ == "__main__":

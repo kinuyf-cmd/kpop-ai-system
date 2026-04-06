@@ -47,6 +47,8 @@ AGENT_NAMES = {
     "venusaur": "フシギバナ",  "alakazam": "アラカザム",
     "gengar": "ゲンガー",     "dragonite": "カイリュー",
     "persian": "ペルシアン",   "regigigas": "レジギガス",
+    "x_post_b": "X投稿B",     "wordpress_post": "WP投稿",
+    "x_post": "X投稿A",
 }
 
 # ── Helpers ──

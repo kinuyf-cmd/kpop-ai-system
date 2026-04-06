@@ -575,9 +575,53 @@ sanitize_output reports/1_rewrite.md
 check_output reports/1_rewrite.md "メタモン"
 log_step "metamon" "ok" "reports/1_rewrite.md"
 
-echo "=== [2.5] イーブイ: スキップ（メタモン出力で十分） ==="
-echo "  ✓ イーブイ省略 → メタモン出力をそのまま使用"
-log_step "eevee" "skipped" "" "メタモン出力で代替"
+echo "=== [2.5] イーブイ: ABタイトル生成 ==="
+TITLE_A=$(head -n 1 reports/1_rewrite.md)
+echo "  タイトルA（情報型）: $TITLE_A"
+
+# 勝ちパターン参照（学習データがあれば）
+WIN_PROMPT=$(python3 "$SCRIPT_DIR/lib/title_learner.py" prompt 2>/dev/null || echo "")
+
+# イーブイ: タイトルB（感情型・クリック特化）を生成
+TITLE_B=$(claude -p "
+あなたはK-POPメディアのCTR特化タイトルライターです。
+
+以下のタイトルA（情報型）に対して、感情型のタイトルBを1つだけ出力してください。
+
+【タイトルA】
+$TITLE_A
+
+【タイトルBのルール】
+・感情を動かす表現必須（ついに／衝撃／まさか／神／完全復帰 等）
+・アーティスト名は必ず含める
+・24〜38文字
+・SEOキーワードも意識する
+・弱い表現禁止（まとめ／情報／解説）
+・タイトル文字列のみ出力。説明・前置き・理由は一切不要
+
+${WIN_PROMPT}
+
+【例】
+A: KISS OF LIFE「Who is she」カムバック詳細まとめ
+B: ついに完全復帰…KISS OF LIFEが帰ってきた
+" 2>/dev/null | grep -v '^$' | head -1)
+
+# フォールバック: タイトルBが空ならタイトルAをそのまま使用
+if [[ -z "$TITLE_B" ]]; then
+  TITLE_B="$TITLE_A"
+  echo "  ⚠️ タイトルB生成失敗 → タイトルAで代替"
+fi
+echo "  タイトルB（感情型）: $TITLE_B"
+
+# ABタイトルをJSONで保存（後続ステップで使用）
+python3 -c "
+import json, sys
+data = {'title_a': sys.argv[1], 'title_b': sys.argv[2]}
+with open('reports/title_ab.json', 'w') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+" "$TITLE_A" "$TITLE_B"
+echo "  ✓ reports/title_ab.json 保存完了"
+log_step "eevee" "ok" "reports/title_ab.json" "AB titles generated"
 
 echo "=== [3] ジラーチ: ファクトチェック ==="
 claude --agent jirachi_kpop -p "
@@ -1374,23 +1418,41 @@ bash $SCRIPT_DIR/google_metrics/request_index.sh "$POST_URL" 2>&1 || echo "⚠�
 echo "=== [4.8] Bing URL Submission ==="
 bash $SCRIPT_DIR/google_metrics/request_bing_index.sh "$POST_URL" 2>&1 || echo "⚠️ Bing インデックススキップ"
 
-echo "=== [5] テンプレートベースSNS戦略 ==="
-SNS_TEXT=$(python3 "$SCRIPT_DIR/lib/x_post_templates.py" "$TITLE" "$POST_URL" --category-id "$CATEGORY_ID" 2>&1) || {
-  echo "⚠️ テンプレート生成失敗、フォールバック使用"
-  SNS_TEXT="${TITLE}
-${POST_URL}
+echo "=== [5] ABテスト対応SNS戦略 ==="
 
-#KPOP #韓国"
+# タイトルAB取得
+TITLE_B=""
+if [[ -f reports/title_ab.json ]]; then
+  TITLE_B=$(python3 -c "import json; d=json.load(open('reports/title_ab.json')); print(d.get('title_b',''))" 2>/dev/null)
+fi
+if [[ -z "$TITLE_B" ]]; then
+  TITLE_B="$TITLE"
+fi
+
+# パターンA: 情報型
+SNS_TEXT_A=$(python3 "$SCRIPT_DIR/lib/x_post_templates.py" "$TITLE" "$POST_URL" --category-id "$CATEGORY_ID" 2>&1) || {
+  SNS_TEXT_A="${TITLE}\n${POST_URL}\n\n#KPOP #韓国"
 }
-echo "$SNS_TEXT" > reports/4_sns.md
+echo "$SNS_TEXT_A" > reports/4_sns_a.md
 
-echo "=== [5.1] X/Twitter 自動投稿 ==="
+# パターンB: 感情型
+SNS_TEXT_B=$(python3 "$SCRIPT_DIR/lib/x_post_templates.py" "$TITLE_B" "$POST_URL" --category-id "$CATEGORY_ID" 2>&1) || {
+  SNS_TEXT_B="${TITLE_B}\n${POST_URL}\n\n#KPOP #韓国"
+}
+echo "$SNS_TEXT_B" > reports/4_sns_b.md
+
+# 互換性: 4_sns.md はパターンAをデフォルト
+cp reports/4_sns_a.md reports/4_sns.md
+
+echo "  パターンA: $(head -1 reports/4_sns_a.md)"
+echo "  パターンB: $(head -1 reports/4_sns_b.md)"
+
+echo "=== [5.1] X/Twitter 自動投稿（パターンA: 即時） ==="
 X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
-X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/4_sns.md" 2>&1 | tee -a "$X_POST_LOG") || {
+X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/4_sns_a.md" 2>&1 | tee -a "$X_POST_LOG") || {
   echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
   X_POST_RESULT="X投稿失敗"
 }
-# X投稿結果からツイートURL/IDを抽出
 X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
 if [ -n "$X_TWEET_URL" ]; then
   X_STATUS="成功 ($X_TWEET_URL)"
@@ -1401,7 +1463,32 @@ elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
 else
   X_STATUS="失敗"
 fi
-log_step "x_post" "$(echo "$X_STATUS" | grep -q '成功' && echo ok || echo skipped)" "" "$X_STATUS"
+log_step "x_post" "$(echo "$X_STATUS" | grep -q '成功' && echo ok || echo skipped)" "" "A: $X_STATUS"
+
+echo "=== [5.2] X/Twitter 自動投稿（パターンB: 45分後） ==="
+# パターンBは遅延投稿（バックグラウンド）
+(
+  sleep 2700  # 45分
+  X_POST_RESULT_B=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE_B" "$POST_URL" "reports/4_sns_b.md" 2>&1)
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] X_POST_B: $X_POST_RESULT_B" >> "$X_POST_LOG"
+) &
+X_POST_B_PID=$!
+echo "  パターンB投稿を45分後にスケジュール (PID: $X_POST_B_PID)"
+log_step "x_post_b" "ok" "reports/4_sns_b.md" "scheduled +45min (PID=$X_POST_B_PID)"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# タイトル学習: ABタイトルを記録（初期スコアはアルセウス採点を使用）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ARCEUS_SCORE_NUM=${ARCEUS_SCORE:-0}
+python3 "$SCRIPT_DIR/lib/title_learner.py" record \
+  --title "$TITLE" --score "$ARCEUS_SCORE_NUM" --pattern "情報型" \
+  --post-id "$POST_ID" 2>/dev/null || true
+if [[ "$TITLE_B" != "$TITLE" ]]; then
+  python3 "$SCRIPT_DIR/lib/title_learner.py" record \
+    --title "$TITLE_B" --score "$ARCEUS_SCORE_NUM" --pattern "感情型" \
+    --post-id "$POST_ID" 2>/dev/null || true
+fi
+echo "  ✓ タイトル学習データ記録完了"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # レジギガス: 実行履歴アーカイブ
@@ -1414,10 +1501,12 @@ cat > "$ARCHIVE_DIR/summary.txt" << SUMMARY
 日時        : $TODAY
 記事ID      : $POST_ID
 URL         : $POST_URL
-タイトル    : $TITLE
+タイトルA   : $TITLE
+タイトルB   : $TITLE_B
 文字数      : $CONTENT_LENGTH
 判定        : 投稿OK
-X投稿       : $X_STATUS
+X投稿A      : $X_STATUS
+X投稿B      : 45分後スケジュール済
 SUMMARY
 
 bash $SCRIPT_DIR/kpop_notify.sh success "速報" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null
