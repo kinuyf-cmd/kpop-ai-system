@@ -1,5 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/env_loader.sh"
+source "$SCRIPT_DIR/lib/sanitize_output.sh"
 
 # トークントラッキング（ENABLE_TOKEN_TRACKING=1 で有効化）
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
@@ -60,7 +62,7 @@ cleanup_reports_dir() {
   if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
     rm -rf "$REPORTS_DIR"
   fi
-  rm -f "$SCRIPT_DIR/reports"
+  rm -rf "$SCRIPT_DIR/reports"
 }
 
 archive_and_exit() {
@@ -101,7 +103,7 @@ check_duplicate() {
   echo "=== 重複投稿チェック（過去${days}日）==="
 
   RECENT_TITLES=$(python3 - "$days" <<'PYEOF'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 from datetime import datetime, timedelta, timezone
 days = int(sys.argv[1])
 cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%S")
@@ -124,7 +126,7 @@ PYEOF
 
   echo "  直近${days}日の投稿: $(echo "$RECENT_TITLES" | grep -c .)件"
 
-  SIMILARITY=$(claude -p "
+  SIMILARITY=$(claude --no-session-persistence -p "
 【タスク】類似記事重複チェック
 新しく投稿しようとしている記事タイトルが、過去${days}日間の投稿済みタイトルと内容が重複しているか判定せよ。
 【新タイトル】${title}
@@ -153,7 +155,7 @@ ARCHIVE_DIR=~/kpop_archives/$RUN_ID
 # run_idごとに reports を分離（並列実行時のファイル競合を防止）
 REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
 mkdir -p "$REPORTS_DIR"
-rm -f "$SCRIPT_DIR/reports"
+rm -rf "$SCRIPT_DIR/reports"
 ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
@@ -194,7 +196,7 @@ echo ""
 echo "━━━ PHASE 1: インテリジェンス収集 ━━━"
 
 echo "[1/15] バタフリー: 最新トレンド収集..."
-claude --allowedTools WebSearch --agent butterfree -p "
+claude --no-session-persistence --allowedTools WebSearch --agent butterfree -p "
 今日は${TODAY}です。
 K-POPの最新トレンドをWebSearchで収集し、記事化優先度スコア付きのインテリジェンスレポートを出力せよ。
 
@@ -207,10 +209,11 @@ K-POPの最新トレンドをWebSearchで収集し、記事化優先度スコア
 
 速報TOP5・チャート動向・SNS反応・イベントカレンダー・記事化推奨テーマ（優先度スコア付き）を必ず出力せよ。
 " > reports/1_trend.md
+sanitize_output reports/1_trend.md
 check_output reports/1_trend.md "バタフリー"
 
 echo "[2/15] ラプラス: SEOキーワード戦略..."
-claude --agent lapras -p "
+claude --no-session-persistence --agent lapras -p "
 今日は${TODAY}です。
 以下のK-POPトレンドレポートを分析し、記事が検索上位を狙えるキーワード戦略を立案せよ。
 
@@ -226,10 +229,11 @@ $(cat reports/1_trend.md)
 - 避けるべきキーワード
 を必ず出力せよ。
 " > reports/2_seo.md
+sanitize_output reports/2_seo.md
 check_output reports/2_seo.md "ラプラス"
 
 echo "[3/15] ミミッキュ: 競合分析・差別化設計..."
-claude --allowedTools WebSearch --agent mimikyu -p "
+claude --no-session-persistence --allowedTools WebSearch --agent mimikyu -p "
 今日は${TODAY}です。
 以下のSEOキーワード戦略のメインキーワードでWebSearchし、競合記事を実際に調査・分析して差別化戦略を設計せよ。
 
@@ -245,12 +249,13 @@ WebSearchで上位3〜5記事を確認した上で：
 - 勝算評価
 を出力せよ。
 " > reports/3_competitor.md
+sanitize_output reports/3_competitor.md
 check_output reports/3_competitor.md "ミミッキュ"
 
 # ▶ ソーナンス（4）とジラーチ（5）を並列実行
 echo "[4+5/15] ソーナンス・ジラーチ: 並列実行..."
 
-claude --agent wobbuffet -p "
+claude --no-session-persistence --agent wobbuffet -p "
 今日は${TODAY}です。
 以下のトレンド・競合分析を元に、K-POPファンの読者ニーズと記事の最適な切り口を分析せよ。
 
@@ -268,7 +273,7 @@ $(cat reports/3_competitor.md)
 " > reports/4_reader.md &
 PID_SONANSU=$!
 
-claude --agent jirachi_kpop -p "
+claude --no-session-persistence --agent jirachi_kpop -p "
 今日は${TODAY}です。
 以下のレポートを元に、今後72時間でバズる可能性が高いテーマを予測し、リスク評価を行え。
 
@@ -286,7 +291,9 @@ $(cat reports/3_competitor.md)
 PID_JIRACHI=$!
 
 wait $PID_SONANSU $PID_JIRACHI
+sanitize_output reports/4_reader.md
 check_output reports/4_reader.md "ソーナンス"
+sanitize_output reports/5_future.md
 check_output reports/5_future.md "ジラーチ"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -296,7 +303,7 @@ echo ""
 echo "━━━ PHASE 2: 戦略設計 ━━━"
 
 echo "[6/15] フシギバナ: SEO記事構成設計..."
-claude --agent venusaur -p "
+claude --no-session-persistence --agent venusaur -p "
 今日は${TODAY}です。
 以下のSEOキーワード戦略・競合分析・読者ニーズ分析を統合し、記事の設計図を作成せよ。
 
@@ -317,10 +324,11 @@ $(cat reports/4_reader.md)
 - デオキシスへの引き継ぎメモ
 を必ず出力せよ。
 " > reports/6_structure.md
+sanitize_output reports/6_structure.md
 check_output reports/6_structure.md "フシギバナ"
 
 echo "[7/15] ミュウツー: 戦略統合・編集長判断..."
-claude --agent mewtwo -p "
+claude --no-session-persistence --agent mewtwo -p "
 今日は${TODAY}です。
 以下の全レポートを統合し、今日書くべきK-POP記事TOP3を意思決定せよ。
 
@@ -356,6 +364,7 @@ TOP3を優先度・タイトル3案・推奨構成付きで出力せよ。
 【重要】TOP3の各テーマが直近3日間の投稿済み記事と被っていないことを明記せよ。
 異常検知・注意事項と、デオキシスへの具体的な実行指示も出力せよ。
 " > reports/7_strategy.md
+sanitize_output reports/7_strategy.md
 check_output reports/7_strategy.md "ミュウツー"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -365,7 +374,7 @@ echo ""
 echo "━━━ PHASE 3: 記事生成・品質改善 ━━━"
 
 echo "[8/15] デオキシス: 高品質記事生成..."
-claude --allowedTools WebSearch --agent deoxys_kpop -p "
+claude --no-session-persistence --allowedTools WebSearch --agent deoxys_kpop -p "
 今日は${TODAY}です。
 以下の戦略レポートの第1位テーマで高品質K-POP記事を生成せよ。
 
@@ -391,10 +400,11 @@ $(cat reports/4_reader.md)
 2行目：空行
 3行目以降：<h2>から始まるHTML本文のみ
 " > reports/8_article.md
+sanitize_output reports/8_article.md
 check_output reports/8_article.md "デオキシス"
 
 echo "[9/15] メタモン: CTRリライト..."
-claude --agent metamon_kpop -p "
+claude --no-session-persistence --agent metamon_kpop -p "
 今日は${TODAY}です。
 以下の記事をCTRとSEOの両方を最大化する形にリライトせよ。
 
@@ -416,10 +426,11 @@ $(cat reports/2_seo.md | head -40)
 2行目：空行
 3行目以降：HTML本文のみ
 " > reports/9_rewrite.md
+sanitize_output reports/9_rewrite.md
 check_output reports/9_rewrite.md "メタモン"
 
 echo "[10/15] イーブイ: タイトルA/B最終選定..."
-claude --agent eevee -p "
+claude --no-session-persistence --agent eevee -p "
 今日は${TODAY}です。
 以下の記事のタイトルをA/B評価し、最も効果的な1案を選定して最終タイトルを確定せよ。
 
@@ -432,10 +443,11 @@ $(cat reports/2_seo.md | grep -A3 'メインキーワード' | head -5)
 5案（速報型/感情型/SEO型/数字型/疑問型）を生成し、CTR/SEO/感情の3軸で評価表を作成。
 採用タイトルを決定したら、1行目にタイトルのみ・2行目以降に記事本文をそのまま出力せよ。
 " > reports/10_title.md
+sanitize_output reports/10_title.md
 check_output reports/10_title.md "イーブイ"
 
 echo "[11/15] アラカザム: ファクトチェック..."
-claude --agent alakazam_kpop -p "
+claude --no-session-persistence --agent alakazam_kpop -p "
 今日は${TODAY}です。
 以下の記事の日付・時制・事実・誇張表現を確認し、必要箇所のみ修正せよ。
 
@@ -453,10 +465,11 @@ $(cat reports/10_title.md)
 2行目：空行
 3行目以降：修正済みHTML本文のみ（<h2>から始める）
 " > reports/11_checked.md
+sanitize_output reports/11_checked.md
 check_output reports/11_checked.md "アラカザム"
 
 echo "[12/15] ゲンガー: SEO・品質最終監査..."
-claude --agent gengar -p "
+claude --no-session-persistence --agent gengar -p "
 今日は${TODAY}です。
 以下の記事に対してSEO・コンテンツ品質・リスクの3観点で最終監査を行え。
 
@@ -473,6 +486,7 @@ OKまたは要確認の場合のみ以下の形式で最終記事を出力：
 2行目：空行
 3行目以降：HTML本文のみ（<h2>から始める）
 " > reports/12_audited.md
+sanitize_output reports/12_audited.md
 check_output reports/12_audited.md "ゲンガー"
 
 if grep -q '❌ 投稿停止' reports/12_audited.md; then
@@ -494,7 +508,7 @@ else
   cp reports/12_audited.md /tmp/gengar_article.md
 fi
 
-claude --agent kairyu_kpop -p "
+claude --no-session-persistence --agent kairyu_kpop -p "
 今日は${TODAY}です。
 以下の記事にCVR・回遊導線を追加せよ。
 
@@ -512,6 +526,7 @@ $(cat /tmp/gengar_article.md)
 2行目：空行
 3行目以降：改善済みHTML本文のみ（<h2>から始める）
 " > reports/13_final.md
+sanitize_output reports/13_final.md
 check_output reports/13_final.md "カイリュー"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -521,7 +536,7 @@ echo ""
 echo "━━━ PHASE 4: 総監督・最終承認 ━━━"
 
 echo "[14/15] アルセウス: 総監督・最終承認..."
-claude --agent arceus -p "
+claude --no-session-persistence --agent arceus -p "
 今日は${TODAY}です。
 以下の全エージェントのレポートと最終記事を確認し、総監督レポートを出力せよ。
 
@@ -550,13 +565,38 @@ $(head -50 reports/7_strategy.md)
 $(cat reports/13_final.md)
 
 全エージェントを採点表で評価し、最終記事品質を評価して投稿承認/却下を判定せよ。
+
+【最終判定の絶対ルール（厳守）】
+出力の末尾に必ず以下のどちらか一方のみを記載せよ：
+- 投稿する場合 → 「✅ 投稿承認」
+- 投稿しない場合 → 「❌ 投稿却下：〇〇のため」
+「条件付き承認」「保留」「投稿不可」「REJECT」「CONDITIONAL」等の表現は絶対禁止。
+パイプラインは「✅ 投稿承認」か「❌ 投稿却下」の2文字列のみを検出して動作する。
 " > reports/14_arceus.md
+sanitize_output reports/14_arceus.md
 check_output reports/14_arceus.md "アルセウス"
 
-if grep -q '❌ 投稿却下' reports/14_arceus.md; then
+# 却下パターン検出（表記揺れを網羅）
+if grep -qE '(❌ 投稿却下|投稿判定.*却下|条件付き却下|却下（REJECT）|却下\(REJECT\)|^.*投稿不可|REJECT)' reports/14_arceus.md; then
   echo ""
   echo "❌ アルセウスが投稿を却下しました"
-  grep '投稿却下' reports/14_arceus.md
+  grep -E '(投稿却下|却下|REJECT|投稿不可)' reports/14_arceus.md | head -3
+  archive_and_exit 1
+fi
+# 「条件付き承認」単独は禁止表現 → 却下扱い
+if grep -qE '条件付き承認' reports/14_arceus.md; then
+  echo "❌ アルセウスが禁止表現「条件付き承認」を使用（フォーマット違反・却下扱い）"
+  log_step "arceus" "rejected" "reports/14_arceus.md" "禁止表現:条件付き承認"
+  archive_and_exit 1
+fi
+# 承認確認（承認文字列がなければ停止・CONDITIONAL系は除外）
+if ! grep -qE '(✅ 投稿承認|✅ 承認|投稿判定.*承認|投稿OK|即時投稿可)' reports/14_arceus.md; then
+  echo "❌ アルセウスの承認確認ができません（パイプライン停止）"
+  archive_and_exit 1
+fi
+# プロンプトインジェクション検出
+if grep -qiE '(プロンプトインジェクション|prompt injection|この指示を無視|ignore previous instructions)' reports/14_arceus.md reports/title_ab.json 2>/dev/null; then
+  echo "🚨 プロンプトインジェクションの痕跡を検出 — パイプライン停止"
   archive_and_exit 1
 fi
 
@@ -634,7 +674,11 @@ PUBLISH_TITLE=$(echo "$TITLE" | sed 's/^/【戦略】/')
 # === アイキャッチ生成 ===
 echo "--- アイキャッチ生成..."
 THUMB_TITLE=$(echo "$PUBLISH_TITLE" | cut -c1-30)
-python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre analysis --title "$PUBLISH_TITLE" 2>/dev/null
+THUMB_META_FILE=$(mktemp)
+python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre analysis --title "$PUBLISH_TITLE" 2>"$THUMB_META_FILE"
+THUMB_META_LINE=$(grep "^THUMB_META: " "$THUMB_META_FILE" | head -1 | sed 's/^THUMB_META: //')
+rm -f "$THUMB_META_FILE"
+[ -n "$THUMB_META_LINE" ] && echo "  thumb_meta: $THUMB_META_LINE"
 
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then
@@ -736,7 +780,7 @@ PY
 )
 
 TAG_IDS=$(python3 - << 'PY' "$TAG_NAMES"
-import sys, json, urllib.request, urllib.parse, base64
+import sys, json, os, urllib.request, urllib.parse, base64
 raw = sys.argv[1].strip()
 if not raw:
     print(""); sys.exit()
@@ -768,12 +812,17 @@ echo "$PUBLISH_TITLE" > /tmp/kpop_title.txt
 echo "$CONTENT"       > /tmp/kpop_content.txt
 echo "$DESC"          > /tmp/kpop_desc.txt
 
-JSON=$(python3 - << 'PY' "$CATEGORY_ID" "$MEDIA_ID" "$ARTIST_CATEGORY_IDS" "$TAG_IDS"
+# 共通slug生成器でSEO向きslug作成（日本語URL問題の修正）
+SLUG=$(python3 "$SCRIPT_DIR/lib/slug.py" "$PUBLISH_TITLE")
+echo "  slug: $SLUG"
+
+JSON=$(python3 - << 'PY' "$CATEGORY_ID" "$MEDIA_ID" "$ARTIST_CATEGORY_IDS" "$TAG_IDS" "$SLUG"
 import json, sys
 main_cat       = int(sys.argv[1])
 media_id       = int(sys.argv[2])
 artist_ids_raw = sys.argv[3].strip()
 tag_ids_raw    = sys.argv[4].strip()
+slug           = sys.argv[5].strip()
 with open("/tmp/kpop_title.txt")   as f: title   = f.read().strip()
 with open("/tmp/kpop_content.txt") as f: content = f.read().strip()
 with open("/tmp/kpop_desc.txt")    as f: desc    = f.read().strip()
@@ -784,6 +833,7 @@ for x in (artist_ids_raw.split(",") if artist_ids_raw else []):
 categories = list(dict.fromkeys(categories))
 tags = [int(x.strip()) for x in tag_ids_raw.split(",") if x.strip()] if tag_ids_raw else []
 data = {'title': title, 'content': content, 'status': 'publish',
+        'slug': slug,
         'categories': categories, 'tags': tags, 'excerpt': desc}
 if media_id > 0:
     data['featured_media'] = media_id
@@ -795,6 +845,19 @@ PY
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ] && [ -f "$TOKEN_LOG" ]; then
   export PIPELINE_TOKEN_COUNT=$(token_total "$TOKEN_LOG")
   echo "  トークン合計: $PIPELINE_TOKEN_COUNT"
+fi
+
+# === 投稿前バリデーション（再発防止の本丸） ===
+echo "=== 投稿前バリデーション ==="
+if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/validate_post.py"; then
+  echo "❌ バリデーション失敗 → 投稿中止 (アーカイブのみ)"
+  archive_and_exit 1
+fi
+
+echo "=== ダークライ権利監査 ==="
+if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/darkrai_audit.py"; then
+  echo "❌ 権利監査失敗 → 投稿中止 (アーカイブのみ)"
+  archive_and_exit 1
 fi
 
 # --- WordPress投稿 (リトライ付き) ---
@@ -869,7 +932,7 @@ else
 fi
 
 echo "[15/15] ペルシアン: SNS拡散戦略..."
-claude --agent persian -p "
+claude --no-session-persistence --agent persian -p "
 今日は${TODAY}です。
 以下のK-POP記事が投稿されました。SNS拡散戦略を設計せよ。
 
@@ -880,11 +943,12 @@ $(echo "$CONTENT" | sed 's/<[^>]*>//g' | head -c 300)
 
 X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイミング・採用推奨パターンを出力せよ。
 " > reports/15_sns.md
+sanitize_output reports/15_sns.md
 check_output reports/15_sns.md "ペルシアン"
 
 echo "=== [15.1] X/Twitter 自動投稿 ==="
 X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
-X_POST_RESULT=$(bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/15_sns.md" 2>&1 | tee -a "$X_POST_LOG") || {
+X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/15_sns.md" 2>&1) || {
   echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
   X_POST_RESULT="X投稿失敗"
 }
@@ -897,6 +961,39 @@ elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
   X_STATUS="スキップ"
 else
   X_STATUS="失敗"
+fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 学習データ記録（タイトル + サムネ）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if [ -n "$POST_ID" ]; then
+  python3 "$SCRIPT_DIR/lib/title_learner.py" record \
+    --title "$PUBLISH_TITLE" --score 0 --pattern "情報型" \
+    --post-id "$POST_ID" --pending 2>/dev/null || true
+  echo "  ✓ タイトル学習記録（pending）"
+
+  if [ -n "$THUMB_META_LINE" ]; then
+    python3 - "$POST_ID" "$THUMB_META_LINE" << 'PYEOF' 2>/dev/null || true
+import sys, json, subprocess
+post_id = sys.argv[1]
+try:
+    meta = json.loads(sys.argv[2])
+except Exception:
+    sys.exit(0)
+cmd = [
+    "python3", "/home/aiuser/kpop-ai-system/lib/thumbnail_learner.py", "record",
+    "--post-id", post_id,
+    "--thumb-text", meta.get("thumb_text",""),
+    "--genre", meta.get("genre",""),
+    "--layout", meta.get("layout","v2"),
+    "--has-image", "true" if meta.get("has_image") else "false",
+    "--eng-hero", meta.get("eng_hero",""),
+    "--image-source", meta.get("image_source",""),
+]
+subprocess.run(cmd, check=False)
+PYEOF
+    echo "  ✓ サムネ学習記録（pending）"
+  fi
 fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1014,3 +1111,9 @@ echo " URL     : $POST_URL"
 echo " SNS戦略 : (archived) $ARCHIVE_DIR/15_sns.md"
 echo " アーカイブ: $ARCHIVE_DIR"
 echo "========================================"
+
+# ─── 投稿後自動監査 ────────────────────────────────────────────────────────
+echo "=== 投稿後自動監査 ==="
+if [[ -n "${POST_ID:-}" ]] && [[ -n "${POST_URL:-}" ]]; then
+  bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "${TITLE:-}" "$RUN_ID" 2>&1 || true
+fi

@@ -73,7 +73,7 @@ PYEOF
 
   echo "  直近${days}日の投稿: $(echo "$RECENT_TITLES" | grep -c .)件"
 
-  SIMILARITY=$(claude -p "
+  SIMILARITY=$(claude --no-session-persistence -p "
 【タスク】類似記事重複チェック
 新しく投稿しようとしている記事タイトルが、過去${days}日間の投稿済みタイトルと内容が重複しているか判定せよ。
 【新タイトル】${title}
@@ -103,7 +103,7 @@ ARCHIVE_DIR=~/kpop_archives/chart_$RUN_ID
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
 mkdir -p "$REPORTS_DIR"
-rm -f "$SCRIPT_DIR/reports"
+rm -rf "$SCRIPT_DIR/reports"
 ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
@@ -120,7 +120,7 @@ wp_health_check
 echo ""
 echo "[1/4] ザップドス: 最新チャートランキング記事生成..."
 
-claude --allowedTools WebSearch --agent zapdos -p "
+claude --no-session-persistence --allowedTools WebSearch --agent zapdos -p "
 今日は${TODAY}（${WEEK}）です。
 以下の手順でK-POPチャートランキング記事を生成せよ。
 
@@ -157,7 +157,7 @@ log_step "zapdos" "ok" "reports/chart_0_article.md"
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 echo "[2/4] アラカザム: 順位・日付ファクトチェック..."
 
-claude --agent alakazam_kpop -p "
+claude --no-session-persistence --agent alakazam_kpop -p "
 今日は${TODAY}です。
 以下のK-POPチャートランキング記事をファクトチェックせよ。
 
@@ -218,7 +218,11 @@ echo "✅ 品質OK（${CONTENT_LENGTH}文字）"
 
 # アイキャッチ生成
 THUMB_TITLE=$(echo "$TITLE" | cut -c1-30)
-python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre chart --title "$TITLE" 2>/dev/null
+THUMB_META_FILE=$(mktemp)
+python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre chart --title "$TITLE" 2>"$THUMB_META_FILE"
+THUMB_META_LINE=$(grep "^THUMB_META: " "$THUMB_META_FILE" | head -1 | sed 's/^THUMB_META: //')
+rm -f "$THUMB_META_FILE"
+[ -n "$THUMB_META_LINE" ] && echo "  thumb_meta: $THUMB_META_LINE"
 
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then
@@ -282,7 +286,7 @@ fi
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 echo "[4/4] ペルシアン: SNS拡散戦略..."
 
-claude --agent persian -p "
+claude --no-session-persistence --agent persian -p "
 今日は${TODAY}です。
 以下のK-POPチャートランキング記事が投稿されました。SNS拡散戦略を設計せよ。
 
@@ -296,7 +300,7 @@ log_step "persian" "ok" "reports/chart_2_sns.md"
 
 echo "=== X/Twitter 自動投稿 ==="
 X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
-X_POST_RESULT=$(bash ~/google_metrics/post_to_x.sh "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>&1 | tee -a "$X_POST_LOG") || {
+X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>&1) || {
   echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
   X_POST_RESULT="X投稿失敗"
 }
@@ -332,7 +336,7 @@ bash ~/kpop_notify.sh success "チャート" "記事投稿完了: $TITLE" "$POST
 if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
   rm -rf "$REPORTS_DIR"
 fi
-rm -f "$SCRIPT_DIR/reports"
+rm -rf "$SCRIPT_DIR/reports"
 
 echo ""
 echo "========================================"
@@ -341,3 +345,9 @@ echo " 記事ID  : $POST_ID"
 echo " URL     : $POST_URL"
 echo " アーカイブ: $ARCHIVE_DIR"
 echo "========================================"
+
+# ─── 投稿後自動監査 ────────────────────────────────────────────────────────
+echo "=== 投稿後自動監査 ==="
+if [[ -n "${POST_ID:-}" ]] && [[ -n "${POST_URL:-}" ]]; then
+  bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "${TITLE:-}" "${RUN_ID:-}" 2>&1 || true
+fi
