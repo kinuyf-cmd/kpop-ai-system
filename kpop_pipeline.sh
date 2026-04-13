@@ -2,6 +2,22 @@
 #!/bin/bash
 source "$(cd "$(dirname "$0")" && pwd)/env_loader.sh"
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 1日最大投稿数チェック（上限3本）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+_DAILY_MAX="${DAILY_POST_LIMIT:-3}"
+_TODAY=$(date +%Y-%m-%d)
+_KPI_LOG="$(cd "$(dirname "$0")" && pwd)/logs/kpi_posts.jsonl"
+_TODAY_COUNT=0
+if [[ -f "$_KPI_LOG" ]]; then
+  _TODAY_COUNT=$(grep -c "\"date\": \"${_TODAY}\"" "$_KPI_LOG" 2>/dev/null || echo 0)
+fi
+if [[ "$_TODAY_COUNT" -ge "$_DAILY_MAX" ]]; then
+  echo "⛔ 本日の投稿上限（${_DAILY_MAX}本）に達しています（本日投稿済み: ${_TODAY_COUNT}本）" >&2
+  echo "   投稿戦略ルール: logs/posting_strategy.md を参照してください" >&2
+  exit 0
+fi
+
 # トークントラッキング（ENABLE_TOKEN_TRACKING=1 で有効化）
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$(cd "$(dirname "$0")" && pwd)/lib/claude_wrapper.sh"
@@ -140,7 +156,25 @@ check_output() {
     echo "❌ [$step] 出力が空 → パイプライン停止"
     archive_and_exit 1
   fi
-  if grep -qE '申し訳ありません|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ' "$file"; then
+  # 極小ファイル（200バイト未満）は記事として不十分 → エラー応答の疑い
+  local _sz
+  _sz=$(wc -c < "$file" 2>/dev/null || echo 0)
+  if [[ "$_sz" -lt 200 ]]; then
+    echo "❌ [$step] 出力が極小 (${_sz}bytes < 200) → エラー応答の疑い → パイプライン停止"
+    echo "  内容: $(cat "$file")"
+    archive_and_exit 1
+  fi
+  # 先頭行がHTMLコメントのみ → デオキシスがメタデータコメントを先頭に出力したケース（本文なし扱い）
+  # ただし article-type / TITLE_LOG などの既知メタデータコメントは正常出力のため除外
+  local _first_line
+  _first_line=$(head -1 "$file")
+  if [[ "$_first_line" =~ ^\s*\<!--.*--\>\s*$ ]] && \
+     ! [[ "$_first_line" =~ article-type|TITLE_LOG|pipeline-meta ]]; then
+    echo "❌ [$step] 先頭行がHTMLコメントのみ → 本文なし扱い → パイプライン停止"
+    echo "  先頭行: $_first_line"
+    archive_and_exit 1
+  fi
+  if grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ|入力記事が見当たりません|記事の入力が見当たりません|チェック対象の記事本文を貼り付けてください|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|ウェブフェッチはできません|ウェブフェッチ(は|が|でき)|ユーザーから記事のソース|元の記事が提供されていません|記事本文・題材・元記事URL|対象アーティスト・トピック・元記事内容を貼り付け' "$file"; then
     echo "❌ [$step] エラー応答を検出 → パイプライン停止"
     echo "  先頭行: $(head -1 "$file")"
     archive_and_exit 1
@@ -188,7 +222,7 @@ wp_health_check() {
   echo "=== WordPress 接続確認 ==="
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=1" \
-    -u "$WP_USER:$WP_PASS" \
+    -K ~/.wp_auth \
     --connect-timeout 10 --max-time 15)
   if [[ "$HTTP_CODE" != "200" ]]; then
     echo "❌ WordPress API 接続失敗 (HTTP ${HTTP_CODE}) → パイプライン停止"
@@ -237,6 +271,7 @@ ${RECENT_TITLES}
 - 同じアーティスト＋同じイベント＋同じ時期 → 重複（YES��
 - 同じテーマのまとめ・ラウンドアップ記事（例：カムバックスケジュールまとめが既にあるのに再度カムバック一覧を書く）→ 重複（YES）
 - 同じカテゴリの総まとめ・一覧系記事が既にある場合（例：4月のカムバック予定 vs 2025年春のカムバックまとめ）→ 重複（YES）
+- 美容・スキンケア・ガラス肌・韓国コスメ・Kビューティ系記事が過去${days}日に既に1本以上ある → 重複（YES）
 - 同じアー��ィストでも別イベント・別テーマ → 重複なし（NO）
 - チャートランキングは毎週異なるため常に重複なし（NO）
 【出力ルール】YESまたはNOの1単語のみ。他は出力禁止。
@@ -260,6 +295,9 @@ THEME_INPUT="${1:-}"
 # マスタースケジューラが事前に記事を生成した場合はスキップフラグを立てる
 # 呼び出し例: DEOXYS_PREBUILT=1 bash kpop_pipeline.sh
 DEOXYS_PREBUILT="${DEOXYS_PREBUILT:-0}"
+# ゴシップ記事フラグ（kpop_master_scheduler.sh の gossip content_type から渡される）
+# 呼び出し例: GOSSIP_MODE=1 DEOXYS_PREBUILT=1 bash kpop_pipeline.sh
+GOSSIP_MODE="${GOSSIP_MODE:-0}"
 
 TODAY=$(date '+%Y年%m月%d日')
 RUN_ID=$(date '+%Y%m%d_%H%M%S')
@@ -269,6 +307,20 @@ ARCHIVE_DIR=~/kpop_archives/$RUN_ID
 # run_idごとに reports を分離（並列実行時のファイル競合を防止）
 REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
 mkdir -p "$REPORTS_DIR"
+# DEOXYS_PREBUILT=1 時: マスタースケジューラが書いた 0_breaking.md を新ディレクトリに引き継ぐ
+# (reports リセット前にバックアップ)
+_PREBUILT_CONTENT=""
+if [[ "${DEOXYS_PREBUILT:-0}" == "1" ]]; then
+  _PREBUILT_SRC=""
+  if [[ -L "$SCRIPT_DIR/reports" ]] && [[ -s "$SCRIPT_DIR/reports/0_breaking.md" ]]; then
+    _PREBUILT_SRC="$SCRIPT_DIR/reports/0_breaking.md"
+  elif [[ -f "$SCRIPT_DIR/reports/0_breaking.md" ]] && [[ -s "$SCRIPT_DIR/reports/0_breaking.md" ]]; then
+    _PREBUILT_SRC="$SCRIPT_DIR/reports/0_breaking.md"
+  fi
+  if [[ -n "$_PREBUILT_SRC" ]]; then
+    _PREBUILT_CONTENT=$(cat "$_PREBUILT_SRC")
+  fi
+fi
 # シンボリックリンクと実ディレクトリの両方に対応
 if [[ -L "$SCRIPT_DIR/reports" ]]; then
   rm -f "$SCRIPT_DIR/reports"
@@ -276,6 +328,10 @@ elif [[ -d "$SCRIPT_DIR/reports" ]]; then
   rm -rf "$SCRIPT_DIR/reports"
 fi
 ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
+# DEOXYS_PREBUILT=1 時: 引き継いだ記事を新ディレクトリに復元
+if [[ "${DEOXYS_PREBUILT:-0}" == "1" ]] && [[ -n "$_PREBUILT_CONTENT" ]]; then
+  echo "$_PREBUILT_CONTENT" > "$SCRIPT_DIR/reports/0_breaking.md"
+fi
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
@@ -412,6 +468,7 @@ fi
 DEOXYS_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent deoxys 2>/dev/null || echo "")
 METAMON_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent metamon 2>/dev/null || echo "")
 EEVEE_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent eevee 2>/dev/null || echo "")
+GARDEVOIR_DIRECTIVE=$(python3 "$SCRIPT_DIR/lib/auto_improve.py" directive --agent gardevoir_hook_critic 2>/dev/null || echo "")
 
 echo "=== [1] デオキシス: 記事化 ==="
 if [[ "$DEOXYS_PREBUILT" == "1" ]] && [[ -s reports/0_breaking.md ]]; then
@@ -421,6 +478,52 @@ if [[ "$DEOXYS_PREBUILT" == "1" ]] && [[ -s reports/0_breaking.md ]]; then
     echo "❌ 事前生成記事にDEOXYS_SOURCE_FAILが含まれています（パイプライン停止）"
     log_step "deoxys" "rejected" "reports/0_breaking.md" "DEOXYS_SOURCE_FAIL（prebuilt）"
     archive_and_exit 1
+  fi
+  # ゴシップ専用: GOSSIP_SOURCE_FAILチェック
+  if grep -q '^GOSSIP_SOURCE_FAIL' reports/0_breaking.md; then
+    echo "❌ ゴシップ記事の一次ソース不足（GOSSIP_SOURCE_FAIL） → pipeline停止"
+    log_step "deoxys" "rejected" "reports/0_breaking.md" "GOSSIP_SOURCE_FAIL（prebuilt）"
+    archive_and_exit 1
+  fi
+  # ゴシップ専用: 本文内の憶測語チェック（prebuilt記事がGOSSIP_MODEで来た場合）
+  if [[ "$GOSSIP_MODE" == "1" ]]; then
+    echo "  → GOSSIP_MODE: ゴシップ記事の憶測語チェックを実施"
+    _GOSSIP_SPECULATION=$(python3 - << 'GSPY'
+import sys, re
+try:
+    text = open("reports/0_breaking.md", encoding="utf-8", errors="replace").read()
+    # 憶測語パターン（ゴシップ記事で危険な表現）
+    speculation_patterns = [
+        r'関係者によると',
+        r'ネットで話題',
+        r'噂によると',
+        r'〜という噂',
+        r'〜と噂され',
+        r'匿名.*によると',
+        r'消息筋によると',
+        r'確認は取れていない',
+        r'未確認.*情報',
+    ]
+    hits = [p for p in speculation_patterns if re.search(p, text)]
+    if hits:
+        print("WARN:" + "|".join(hits))
+    else:
+        print("OK")
+except Exception as e:
+    print("OK")
+GSPY
+)
+    if [[ "$_GOSSIP_SPECULATION" == WARN:* ]]; then
+      _SPEC_DETAIL="${_GOSSIP_SPECULATION#WARN:}"
+      echo "❌ [GOSSIP_SOURCE_GUARD] 憶測語検出: ${_SPEC_DETAIL} → pipeline停止"
+      log_step "gossip_source_guard" "rejected" "reports/0_breaking.md" "憶測語検出: ${_SPEC_DETAIL}"
+      # logs/gossip_source_guard.log にも記録
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] [GOSSIP_SOURCE_GUARD] 憶測語検出: ${_SPEC_DETAIL}" \
+        >> "$SCRIPT_DIR/logs/gossip_source_guard.log" 2>/dev/null || true
+      archive_and_exit 1
+    fi
+    echo "  ✓ ゴシップ記事: 憶測語なし"
+    log_step "gossip_source_guard" "ok" "reports/0_breaking.md" "憶測語チェック通過"
   fi
   log_step "deoxys" "ok" "reports/0_breaking.md"
 elif [[ -n "$THEME_INPUT" ]]; then
@@ -509,6 +612,40 @@ ${DEOXYS_DIRECTIVE}
 " > reports/0_breaking.md
 fi
 sanitize_output reports/0_breaking.md
+
+# 空出力なら1回リトライ（レートリミット・一時失敗対策）
+if [[ ! -s reports/0_breaking.md ]]; then
+  echo "  ⚠️ デオキシス空出力 → 30秒待機後リトライ..."
+  sleep 30
+  # テーマ入力があればテーマモードでリトライ
+  if [[ -n "$THEME_INPUT" ]]; then
+    claude --no-session-persistence --allowedTools WebSearch --agent deoxys_kpop -p "
+今日は${TODAY}です。以下のテーマでK-POP記事を作成せよ。
+【指定テーマ】${THEME_INPUT}
+${NO_CONV_RULE}
+【重要】必ずWebSearchでテーマに関する最新情報を確認してから記事を書け。
+一次ソースが見つからない場合は「DEOXYS_SOURCE_FAIL」を出力して停止せよ。
+【出力形式】1行目：タイトルのみ 2行目：空行 3行目以降：<h2>から始まるHTML
+" > reports/0_breaking.md
+  else
+    claude --no-session-persistence --allowedTools WebSearch --agent deoxys_kpop -p "
+今日は${TODAY}です。K-POPの最新ニュース1本を記事化せよ。
+【ネタ被り禁止】${RECENT_POSTED}
+${NO_CONV_RULE}
+【出力形式】1行目：タイトルのみ 2行目：空行 3行目以降：<h2>から始まるHTML
+末尾に情報元と「※本記事は${TODAY}時点の情報です」を明記
+${DEOXYS_DIRECTIVE}
+" > reports/0_breaking.md
+  fi
+  sanitize_output reports/0_breaking.md
+  if [[ ! -s reports/0_breaking.md ]]; then
+    echo "❌ デオキシス: リトライ後も空出力 → パイプライン停止"
+    log_step "deoxys" "error" "reports/0_breaking.md" "空出力（リトライ失敗）"
+    archive_and_exit 1
+  fi
+  echo "  ✅ デオキシス リトライ成功"
+fi
+
 check_output reports/0_breaking.md "デオキシス"
 # [ガード] デオキシスがSOURCE_FAILを出力した場合は即停止
 if grep -q '^DEOXYS_SOURCE_FAIL' reports/0_breaking.md; then
@@ -538,18 +675,42 @@ ${NO_CONV_RULE}
 - 今日は${TODAY}。未来は未来形・過去は過去形
 - 日付は必ず本文に明記すること
 
-【CTR強化ルール】
-・タイトルは内部で3案作り、最もクリックされやすい1案だけ出力する
-・タイトルには必ず「アーティスト名」「数字 or 日付」「具体イベント名」のうち2つ以上を含める
-・タイトルは24〜38文字を目安にする
-・弱い一般表現は禁止
+【CTRタイトル生成ルール】
+以下の3パターンで内部タイトル案を作り、最もCTRが高い1案を採用して出力すること。
+A【SEO型】: 「アーティスト名＋具体イベント名＋日付 or 数字」でロングテール検索を狙う
+B【感情フック型】: 「ついに／衝撃／まさか／神／完全復帰」などの感情語＋固有情報で読者の感情を動かす
+C【異常性・ギャップ型】: 予想外・矛盾・驚きの数字・裏事情など「え、なんで？」を誘う表現を使う
+
+採用ルール:
+・固有情報（アーティスト名・数字・日付・イベント名）は必ず保持
+・24〜38文字を目安にする
+・弱い一般表現禁止（まとめ／情報／解説／について／とは）
+・事実にない情報は追加しない
 ・冒頭3行は必ず「結論 → 注目理由 → 読む価値」で構成する
+
+【TITLE_LOG出力ルール（必須）】
+記事本文の最終行の後に、必ず以下の形式で1行だけ出力すること:
+TITLE_LOG: A=「...」 B=「...」 C=「...」 → 採用=X（理由1行）
 
 【精度ルール】
 - 実在しない情報を増やさない
 - 不確実な内容は断定しない
 - 記事末尾に情報元を明記する
 - 記事末尾に「※本記事は${TODAY}時点の情報です」を入れる
+
+【記事タイプ付与（必須）】
+HTML本文の最初の<p>または<h2>の直前に、以下を判定して1行挿入すること：
+・タイトルに「速報」「決定」「判明」「解禁」「確定」「発表」が含まれる → <p class="article-type speed">【速報】</p>
+・タイトルに「視聴方法」「チケット」「アクセス」「持ち物」「どこで」が含まれる → <p class="article-type guide">【ガイド】</p>
+・それ以外 → <p class="article-type explanation">【解説】</p>
+・タイトルにすでに【速報】等が明示されている場合は重複付与しない
+
+【回遊導線（末尾に必ず追加）】
+記事末尾に以下を追加すること。記事対象アーティストがBTS/BIGBANG/BLACKPINK/StrayKids/NCT/TWICE/NewJeans/XG/IVE/aespaの場合、該当ハブページへのリンクを含めること：
+<div class="related-articles"><h3>関連記事もチェック</h3><ul>
+<li>▶ <a href="https://www.kpopjournal.tokyo/【該当アーティスト名】-hub/">【アーティスト名】最新情報まとめ</a></li>
+</ul></div>
+（ハブURLの対応: bts-hub / bigbang-hub / blackpink-hub / straykids-hub / nct-hub / twice-hub / newjeans-hub / xg-hub / ive-hub / aespa-hub）
 
 【出力形式】
 1行目：タイトルのみ
@@ -564,55 +725,61 @@ ${METAMON_DIRECTIVE}
 $(cat reports/0_breaking.md)
 " > reports/1_rewrite.md
 sanitize_output reports/1_rewrite.md
+# TITLE_LOG 抽出（メタモンが出力した内部ログ行を記録してから本文から除去）
+_TITLE_LOG=$(grep '^TITLE_LOG:' reports/1_rewrite.md | head -1)
+if [[ -n "$_TITLE_LOG" ]]; then
+  echo "  [metamon] $_TITLE_LOG"
+  grep -v '^TITLE_LOG:' reports/1_rewrite.md > /tmp/1_rewrite_clean.md && mv /tmp/1_rewrite_clean.md reports/1_rewrite.md
+fi
 check_output reports/1_rewrite.md "メタモン"
 log_step "metamon" "ok" "reports/1_rewrite.md"
 
-echo "=== [2.5] イーブイ: ABタイトル生成 ==="
+echo "=== [2.5] イーブイ: タイトル評価・確定 ==="
 TITLE_A=$(head -n 1 reports/1_rewrite.md)
-echo "  タイトルA（情報型）: $TITLE_A"
+echo "  メタモン採用タイトル: $TITLE_A"
 
 # 勝ちパターン参照（学習データがあれば）
 WIN_PROMPT=$(python3 "$SCRIPT_DIR/lib/title_learner.py" prompt 2>/dev/null || echo "")
 
-# イーブイ: タイトルB（感情型・クリック特化）を生成
+# イーブイ: 採用タイトルを評価し、必要なら改善して1案に確定
 TITLE_B=$(claude --no-session-persistence -p "
-あなたはK-POPメディアのCTR特化タイトルライターです。
+あなたはK-POPメディアのCTR改善専門エディターです。
 
-以下のタイトルA（情報型）に対して、感情型のタイトルBを1つだけ出力してください。
+メタモンが選んだ以下のタイトルを評価し、最終タイトルを1つだけ出力してください。
 
-【タイトルA】
+【メタモン採用タイトル】
 $TITLE_A
 
-【タイトルBのルール】
-・タイトルAに含まれる固有情報（アーティスト名・作品名・日付・数字）は必ず保持する
-・感情を動かす表現を追加（ついに／衝撃／まさか／神／完全復帰 等）
-・24〜38文字
-・SEOキーワードも意識する
-・弱い表現禁止（まとめ／情報／解説）
-・タイトル文字列のみ出力。説明・前置き・理由は一切不要
+【評価基準（5項目）】
+1. 固有情報（アーティスト名・数字・日付・イベント名）が含まれているか
+2. 感情語または異常性・ギャップ表現が入っているか
+3. 24〜38文字の範囲内か
+4. 弱い表現（まとめ／解説／情報／について／とは）が使われていないか
+5. 事実逸脱・釣り過剰になっていないか
+
+【判断ルール】
+・5項目すべて合格 → そのままタイトルを出力
+・1〜2項目に問題 → 修正して改善版を出力
+・3項目以上問題 → 最初からより良いタイトルを生成して出力
 
 【絶対禁止】
-・タイトルAにない事実を追加しない（事実逸脱禁止）
-・釣り表現禁止（「閲覧注意」「ガチでやばい」等の過剰煽り）
-・タイトルAの固有名詞・数字を変えない
+・タイトル文字列以外の出力（説明・前置き・評価コメント）
+・タイトルAにない事実を追加（事実逸脱禁止）
+・釣り表現（「閲覧注意」「ガチでやばい」等の過剰煽り）
 
 ${WIN_PROMPT}
 
 ${EEVEE_DIRECTIVE}
-
-【例】
-A: KISS OF LIFE「Who is she」4月6日カムバック詳細
-B: ついに完全復帰…KISS OF LIFE「Who is she」4月6日解禁
 " 2>/dev/null | grep -v '^$' | head -1)
 
 # フォールバック: タイトルBが空ならタイトルAをそのまま使用
 if [[ -z "$TITLE_B" ]]; then
   TITLE_B="$TITLE_A"
-  echo "  ⚠️ タイトルB生成失敗 → タイトルAで代替"
+  echo "  ⚠️ イーブイ評価失敗 → メタモンタイトルで確定"
 fi
-echo "  タイトルB（感情型）: $TITLE_B"
+echo "  イーブイ確定タイトル: $TITLE_B"
 
-# ABタイトルをJSONで保存（後続ステップで使用）
+# タイトルをJSONで保存（後続ステップで使用）
 python3 -c "
 import json, sys
 data = {'title_a': sys.argv[1], 'title_b': sys.argv[2]}
@@ -620,9 +787,45 @@ with open('reports/title_ab.json', 'w') as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
 " "$TITLE_A" "$TITLE_B"
 echo "  ✓ reports/title_ab.json 保存完了"
-log_step "eevee" "ok" "reports/title_ab.json" "AB titles generated"
+log_step "eevee" "ok" "reports/title_ab.json" "title confirmed"
 
 echo "=== [3] ジラーチ: ファクトチェック ==="
+
+# カテゴリ111（視聴方法・配信ガイド）判定
+_JIRACHI_TITLE=$(head -1 reports/1_rewrite.md | sed 's/^[#[:space:]]*//')
+_IS_STREAMING_GUIDE_J=$(python3 -c "
+import sys
+title = sys.argv[1].lower()
+keywords = ['視聴方法','どこで見れる','無料視聴','配信サービス','配信比較','サブスク','abema','netflix','hulu','prime video','ライブ配信','見る方法','見る全方法','視聴ガイド']
+print('yes' if any(k in title for k in keywords) else 'no')
+" "$_JIRACHI_TITLE" 2>/dev/null)
+
+if [[ "$_IS_STREAMING_GUIDE_J" == "yes" ]]; then
+  echo "  ⚠️  視聴導線記事（カテゴリ111相当）検出 → 強化ファクトチェックモード"
+  _STREAMING_EXTRA_J="
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【視聴導線記事 専用ファクトチェックルール（最優先・必須）】
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+■ 料金チェック
+- ABEMAプレミアム正しい料金: 月1,180円（2026年4月改定済み）。960円があれば即修正
+- Leminoプレミアム正しい料金: Web登録月1,540円（2026年2月改定済み）。990円があれば即修正
+- 料金記載箇所には「最新料金は公式サイトをご確認ください」を必ず同段落内に追加
+■ 配信状況チェック
+- 配信状況は「確認済み」「未確認」「過去実績あり」の3分類で表現
+- 「過去実績あり」と「2026年も配信決定」を混同している箇所を全て修正
+- 未確認情報に「配信予定です」「視聴できます」が付いていたら「要確認」に修正
+■ プラットフォーム正確性
+- IVEはKakao系（Weverse非対応）。IVE記事のWeverse導線は公式SNSに置き換えよ
+- YouTubeは「無料公開動画あり」と表現（「全て無料視聴可能」は禁止）
+■ 出力末尾への監査ログ追加（必須）
+本文の最後の行の後に以下を1行追加せよ：
+FACTCHECK_LOG: price=OK/NG stream=OK/NG schedule=OK/NG status=OK/NG source_count=N
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+else
+  _STREAMING_EXTRA_J=""
+fi
+
 claude --no-session-persistence --agent jirachi_kpop -p "
 今日は${TODAY}です。
 
@@ -639,7 +842,7 @@ claude --no-session-persistence --agent jirachi_kpop -p "
 - 同じ記事内で矛盾する記述がないか
 - 不自然な誇張（世界初・史上初など）
 - 情報元表記があるか
-
+${_STREAMING_EXTRA_J}
 【ルール】
 - 修正が必要な箇所のみ修正。構造は変えない
 - 検証できない情報はそのまま残す（削除・拒否しない）
@@ -655,11 +858,19 @@ claude --no-session-persistence --agent jirachi_kpop -p "
 1行目：タイトルのみ
 2行目：空行
 3行目以降：HTML本文のみ
+視聴導線記事の場合のみ、本文の最後の行の後にFACTCHECK_LOGを追加せよ（本文内には含めない）
 
 ---
 $(cat reports/1_rewrite.md)
 " > reports/2_checked.md
 sanitize_output reports/2_checked.md
+# FACTCHECK_LOG行をログに保存して本文から除去
+_FACTCHECK_LOG_J=$(grep '^FACTCHECK_LOG:' reports/2_checked.md | head -1)
+if [[ -n "$_FACTCHECK_LOG_J" ]]; then
+  echo "  [jirachi] $_FACTCHECK_LOG_J"
+  echo "$_FACTCHECK_LOG_J" >> "$SCRIPT_DIR/logs/factcheck.log"
+  grep -v '^FACTCHECK_LOG:' reports/2_checked.md > /tmp/2_checked_clean.md && mv /tmp/2_checked_clean.md reports/2_checked.md
+fi
 check_output reports/2_checked.md "ジラーチ"
 
 # [ガード] ジラーチ出力のサイズ比較（元記事の10%未満なら異常→フォールバック）
@@ -684,6 +895,312 @@ fi
 if grep -qiE '(プロンプトインジェクション|prompt injection|この指示を無視|ignore previous instructions|IGNORE PREVIOUS|system prompt|システムプロンプトを)' reports/2_checked.md reports/title_ab.json 2>/dev/null; then
   echo "🚨 プロンプトインジェクションの痕跡を検出 — パイプライン停止"
   log_step "security" "rejected" "reports/2_checked.md" "プロンプトインジェクション検出"
+  archive_and_exit 1
+fi
+
+# === [3.5] ガルーラ批評: 刺さり品質ゲート ===
+echo "=== [3.5] ガルデvoir: 刺さり品質判定 ==="
+# ガルデvoir ログファイルを事前に確保（存在しない場合は作成）
+touch "$SCRIPT_DIR/logs/gardevoir_hook.jsonl"
+
+# タイトル取得（eevee選定済みのtitle_ab.jsonから最終タイトルを取得）
+_GDV_TITLE=""
+if [ -f reports/title_ab.json ]; then
+  _GDV_TITLE=$(python3 -c "
+import json,sys
+data=json.load(open('reports/title_ab.json'))
+t=data.get('SELECTED_TITLE') or data.get('TITLE_A') or data.get('title_a') or ''
+print(t.strip())
+" 2>/dev/null || echo "")
+fi
+[ -z "$_GDV_TITLE" ] && _GDV_TITLE=$(head -1 reports/2_checked.md)
+
+# [前段ガード] タイトル崩壊パターン検出 → サーナイト呼び出し前に即停止
+# 根拠: gardevoir HARD_FAIL率68%の主因がタイトル崩壊であることをagent_monitorが検出
+_TITLE_COLLAPSE=0
+if echo "$_GDV_TITLE" | grep -qE '(以下に|分析します|ウェブフェッチ|以下の記事|提供してください|見当たりません|コンテンツが提供されていません|^以下)'; then
+  _TITLE_COLLAPSE=1
+fi
+# タイトルが空・10文字未満・HTMLタグのみ の場合も崩壊とみなす
+_TITLE_LEN=${#_GDV_TITLE}
+if [[ $_TITLE_LEN -lt 10 ]]; then
+  _TITLE_COLLAPSE=1
+fi
+if [[ "$_TITLE_COLLAPSE" == "1" ]]; then
+  echo "❌ [前段ガード] タイトル崩壊を検出しました → パイプライン停止"
+  echo "  検出タイトル: ${_GDV_TITLE}"
+  echo "  原因: デオキシス/メタモンがメタコメントをタイトルとして出力した可能性"
+  log_step "gardevoir_hook_critic" "ERROR" "reports/2_checked.md" "前段ガード: タイトル崩壊検出 title=${_GDV_TITLE}"
+  python3 "$SCRIPT_DIR/lib/kpi_logger.py" log_error "{\"error_type\":\"title_collapse\",\"step\":\"pre_gardevoir_guard\",\"title\":\"${_GDV_TITLE}\",\"message\":\"タイトル崩壊パターン検出: deoxys/metamonのメタコメント混入疑い\",\"recoverable\":false}" 2>/dev/null || true
+  bash "$SCRIPT_DIR/kpop_notify.sh" error "速報" "タイトル崩壊検出で停止 (RUN: $RUN_ID) title=${_GDV_TITLE}" 2>/dev/null || true
+  archive_and_exit 1
+fi
+
+# 冒頭500文字・H2一覧・メタディスクリプション抽出
+_GDV_HOOK=$(python3 -c "
+import re
+text=open('reports/2_checked.md').read()
+body=re.sub(r'^.*\n','',text,count=1)  # タイトル行除去
+body=re.sub(r'<[^>]+>','',body)         # タグ除去
+print(body[:500])
+" 2>/dev/null || head -20 reports/2_checked.md)
+
+_GDV_H2=$(grep -oP '(?<=<h2>)[^<]+' reports/2_checked.md 2>/dev/null | head -10 | sed 's/^/- /' || grep -E '^## ' reports/2_checked.md | head -10)
+[ -z "$_GDV_H2" ] && _GDV_H2="（H2なし）"
+
+_GDV_META=$(python3 -c "
+import re
+text=open('reports/2_checked.md').read()
+m=re.search(r'description[\":\s]+([^\n\"]{20,140})',text,re.I)
+if m: print(m.group(1).strip())
+" 2>/dev/null || echo "")
+
+# カテゴリ情報（CATEGORY_HINTがあれば使用、なければ不明）
+_GDV_CATEGORY="${CATEGORY_HINT:-不明}"
+
+_GDV_RETRY=0
+_GDV_VERDICT=""
+
+while true; do
+  echo "  ガルデvoir採点中... (試行$((${_GDV_RETRY}+1)))"
+  claude --no-session-persistence --agent gardevoir_hook_critic -p "
+以下の記事を採点せよ。出力は SCORE: から始まる固定フォーマットのみとする。会話・説明・質問を出力してはならない。
+
+${GARDEVOIR_DIRECTIVE}
+
+記事カテゴリ: ${_GDV_CATEGORY}
+想定ターゲット: KPOPファン・韓国カルチャー好き・旅行/美容/ファッション興味層
+タイトル: ${_GDV_TITLE}
+メタディスクリプション: ${_GDV_META:-（なし）}
+
+【冒頭300〜500文字】
+${_GDV_HOOK}
+
+【H2一覧】
+${_GDV_H2}
+
+【CTA】
+（記事末尾のCTAを参照してください）
+
+【記事全文】
+$(cat reports/2_checked.md)
+" > reports/3_gardevoir.md 2>/dev/null
+  sanitize_output reports/3_gardevoir.md
+
+  _GDV_VERDICT=$(grep -oP '^VERDICT:\s*\K(PASS|SOFT_RETRY|HARD_FAIL)' reports/3_gardevoir.md | head -1)
+  # SCORE パース: 複数フォーマットに対応
+  #   パターン1: "SCORE: 81"           (同一行にスコアあり)
+  #   パターン2: "SCORE: 81/100"       (同一行に /100 付き)
+  #   パターン3: "TOTAL: 81/100"       (TOTAL行)
+  #   パターン4: "SCORE:\n総合: 81/100"  (直後行)
+  #   パターン5: "SCORE:\n- 総合: 81/100" (直後行・箇条書き)
+  #   パターン6: "- 総合スコア: 87/100"  (任意行・総合スコア)
+  #   パターン7: "総合: 87/100"         (任意行・総合のみ)
+  _GDV_SCORE=$(python3 -c "
+import re, sys
+text = open('reports/3_gardevoir.md', errors='replace').read()
+# パターン1/2: SCORE: 81 または SCORE: 81/100 (同一行)
+m = re.search(r'^SCORE:\s*(\d+)', text, re.MULTILINE)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン3: TOTAL: 81/100 (同一行)
+m = re.search(r'^TOTAL[：:]\s*(\d+)', text, re.MULTILINE)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン4/5: SCORE:行の後（距離制限なし）に 総合: or - 総合: or 合計: が来るケース
+m = re.search(r'^SCORE:\s*\n(?:.*\n)*?[-\s]*(?:総合|合計)[：:]\s*(\d+)', text, re.MULTILINE)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン6: 任意行の「総合スコア: 87/100」
+m = re.search(r'総合スコア[：:]\s*(\d+)', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン7: 任意行の「総合: 87/100」(総合スコアとは別語)
+m = re.search(r'総合[：:]\s*(\d+)', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン8: 任意行の「合計: 87/100」(合計キーワード)
+m = re.search(r'合計[：:]\s*(\d+)', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン9: 任意行の「総合点: 81/100」(総合点キーワード)
+m = re.search(r'総合点[：:]\s*(\d+)', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン10a: テーブルセル形式 | 合計 | 81 | or | 合計 | 81/100 |
+m = re.search(r'\|\s*(?:合計|総合|SCORE|スコア)\s*\|\s*(\d+)', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン10b: フォールバック — テキスト中の NN/100 形式を拾う（最後の手段）
+m = re.search(r'(?<!\d)([6-9]\d|100)/100\b', text)
+if m:
+    print(m.group(1)); sys.exit(0)
+# パターン11: NN/90 形式（総合スコアが/90の場合、100点換算に変換）
+m = re.search(r'(?<!\d)(\d+)/90\b', text)
+if m:
+    raw = int(m.group(1))
+    print(min(100, int(round(raw * 100 / 90)))); sys.exit(0)
+# パターン12: SCORE:行後の箇条書き個別スコアから平均を計算（最終フォールバック）
+scores = re.findall(r'[-\s]*[^：:\n]+[：:]\s*(\d+)/\d+', text)
+if len(scores) >= 3:
+    nums = [int(s) for s in scores[:8]]
+    avg = int(round(sum(nums) / len(nums)))
+    print(avg); sys.exit(0)
+print('')
+" 2>/dev/null || echo "")
+  _GDV_MUST_FIX=$(awk '/^MUST_FIX:/,/^[A-Z_]+:/' reports/3_gardevoir.md | grep -v '^[A-Z_]*:' | head -3 | tr '\n' ' ')
+
+  # VERDICT フォールバック: VERDICT行が省略されているがスコアが取れた場合はスコアから推定
+  if [[ -z "${_GDV_VERDICT}" ]] && [[ -n "${_GDV_SCORE}" ]]; then
+    if [[ "${_GDV_SCORE}" -ge 80 ]]; then
+      _GDV_VERDICT="PASS"
+      echo "  ℹ️ [gardevoir] VERDICT行なし → score=${_GDV_SCORE} からPASSに推定"
+    elif [[ "${_GDV_SCORE}" -ge 65 ]]; then
+      _GDV_VERDICT="SOFT_RETRY"
+      echo "  ℹ️ [gardevoir] VERDICT行なし → score=${_GDV_SCORE} からSOFT_RETRYに推定"
+    else
+      _GDV_VERDICT="HARD_FAIL"
+      echo "  ℹ️ [gardevoir] VERDICT行なし → score=${_GDV_SCORE} からHARD_FAILに推定"
+    fi
+  fi
+
+  log_step "gardevoir_hook_critic" "${_GDV_VERDICT:-ERROR}" "reports/3_gardevoir.md" "score=${_GDV_SCORE:-?} retry=${_GDV_RETRY} must_fix=${_GDV_MUST_FIX}"
+  python3 -c "
+import json, sys
+print(json.dumps({
+  'ts':       '$(date -u +%Y-%m-%dT%H:%M:%SZ)',
+  'run_id':   '${RUN_ID:-unknown}',
+  'pipeline': 'breaking',
+  'agent':    'gardevoir_hook_critic',
+  'score':    int('${_GDV_SCORE:-0}' or 0),
+  'verdict':  '${_GDV_VERDICT:-ERROR}',
+  'retry':    int('${_GDV_RETRY:-0}' or 0),
+  'must_fix': '${_GDV_MUST_FIX}',
+  'title':    sys.argv[1],
+  'category': sys.argv[2],
+}, ensure_ascii=False))" "${_GDV_TITLE:-}" "${_GDV_CATEGORY:-}" >> "$SCRIPT_DIR/logs/gardevoir_hook.jsonl"
+
+  if [ "${_GDV_VERDICT}" = "PASS" ]; then
+    echo "✅ ガルデvoir PASS (score=${_GDV_SCORE})"
+    break
+  elif [ "${_GDV_VERDICT}" = "SOFT_RETRY" ] && [ "${_GDV_RETRY}" -lt 2 ]; then
+    _GDV_RETRY=$((_GDV_RETRY+1))
+    echo "⚠️ ガルデvoir SOFT_RETRY (score=${_GDV_SCORE}, 試行${_GDV_RETRY}/2) — メタモン・デオキシス差し戻し"
+    # タイトル再生成（メタモン）
+    claude --no-session-persistence --agent metamon_kpop -p "
+以下の記事のタイトルを再生成せよ。
+【改善要求】
+${_GDV_MUST_FIX}
+【現タイトル】${_GDV_TITLE}
+【記事本文】
+$(cat reports/2_checked.md)
+" > /tmp/gardevoir_metamon_retry.md 2>/dev/null
+    _NEW_TITLE=$(head -1 /tmp/gardevoir_metamon_retry.md | sed 's/^[#[:space:]]*//')
+    [ -n "$_NEW_TITLE" ] && _GDV_TITLE="$_NEW_TITLE"
+    # 冒頭再生成（デオキシス的リライト — 2_checked.mdの冒頭を差し替え）
+    claude --no-session-persistence --agent deoxys_kpop -p "
+以下の記事の冒頭（最初の300〜500文字）を書き直せ。タイトル行・H2・CTAは変えない。
+【改善要求】
+${_GDV_MUST_FIX}
+【記事全文】
+$(cat reports/2_checked.md)
+" > /tmp/gardevoir_deoxys_retry.md 2>/dev/null
+    [ -s /tmp/gardevoir_deoxys_retry.md ] && cp /tmp/gardevoir_deoxys_retry.md reports/2_checked.md
+    _GDV_HOOK=$(python3 -c "
+import re
+text=open('reports/2_checked.md').read()
+body=re.sub(r'^.*\n','',text,count=1)
+body=re.sub(r'<[^>]+>','',body)
+print(body[:500])
+" 2>/dev/null || head -20 reports/2_checked.md)
+  else
+    # HARD_FAIL（または SOFT_RETRY 2回超過）
+    echo "❌ ガルデvoir HARD_FAIL (score=${_GDV_SCORE}, retry=${_GDV_RETRY}) — 刺さらないため公開停止"
+    log_step "gardevoir_hook_critic" "hard_fail" "reports/3_gardevoir.md" "公開停止 score=${_GDV_SCORE}"
+    if [[ -z "${_GDV_SCORE}" ]] || [[ "${_GDV_SCORE}" == "0" ]]; then
+      echo "🚨 GARDEVOIR_HARD_FAIL"
+      echo "run_id=${RUN_ID:-unknown}"
+      echo "title=${_GDV_TITLE}"
+      echo "category=${_GDV_CATEGORY}"
+      echo "reason=score=${_GDV_SCORE:-未取得} フォーマット不正の疑い"
+      echo "action=exit(1)"
+      python3 -c "
+import json, sys
+print(json.dumps({
+  'ts':       '$(date -u +%Y-%m-%dT%H:%M:%SZ)',
+  'agent':    'gardevoir_hook_critic',
+  'score':    int('${_GDV_SCORE:-0}' or 0),
+  'verdict':  'HARD_FAIL',
+  'retry':    int('${_GDV_RETRY:-0}' or 0),
+  'must_fix': '',
+  'run_id':   '${RUN_ID:-unknown}',
+  'pipeline': 'breaking',
+  'title':    sys.argv[1],
+  'category': sys.argv[2],
+  'reason':   'score=${_GDV_SCORE:-未取得} format_error',
+  'action':   'exit(1)',
+}, ensure_ascii=False))" "${_GDV_TITLE}" "${_GDV_CATEGORY}" >> "$SCRIPT_DIR/logs/gardevoir_hook.jsonl"
+    fi
+
+    # Discord urgent通知
+    _GDV_DISCORD_MSG="🛑 *刺さり品質HARD_FAIL* — 公開停止\nScore: ${_GDV_SCORE:-?} / RETRY: ${_GDV_RETRY}回\nTitle: ${_GDV_TITLE}\nMUST_FIX: ${_GDV_MUST_FIX}"
+    if command -v python3 &>/dev/null && [ -f lib/discord_channels.sh ]; then
+      source lib/discord_channels.sh
+      _GDV_WH=$(get_discord_webhook urgent_errors 2>/dev/null || echo "")
+      if [ -n "$_GDV_WH" ]; then
+        curl -s -X POST "$_GDV_WH" \
+          -H 'Content-Type: application/json' \
+          -d "{\"content\":\"${_GDV_DISCORD_MSG}\"}" > /dev/null 2>&1 || true
+      fi
+    fi
+    archive_and_exit 1
+  fi
+done
+
+# ─── [3.9] arceus前シェルハードガード（LLM不使用・即判定） ───────────────────
+echo "=== [3.9] arceus前ハードガード ==="
+python3 - <<'PRE_ARCEUS_GUARD'
+import re, sys
+from pathlib import Path
+
+src = Path("reports/2_checked.md")
+if not src.exists():
+    print("🚨 GUARD: reports/2_checked.md が存在しない")
+    sys.exit(1)
+
+text = src.read_text(encoding="utf-8", errors="replace")
+lines = text.splitlines()
+title = lines[0].strip() if lines else ""
+
+# タイトル文字数チェック（20文字未満は即停止）
+if len(title) < 20:
+    print(f"🚨 GUARD: タイトルが短すぎる ({len(title)}文字 < 20) → arceus停止")
+    sys.exit(1)
+
+# 本文プレーンテキスト文字数チェック（800文字未満は即停止）
+plain = re.sub(r'<[^>]+>', '', text)
+plain = re.sub(r'\s+', '', plain)
+if len(plain) < 800:
+    print(f"🚨 GUARD: 本文テキストが短すぎる ({len(plain)}文字 < 800) → arceus停止")
+    sys.exit(1)
+
+# K-POP文脈キーワードチェック（タイトルに1つもなければ警告ログ出力・停止はしない）
+kpop_words = ['K-POP','K-pop','KPOP','韓国','アイドル','カムバック',
+              'ガールズグループ','ボーイズグループ','K-POPアイドル',
+              'BTS','BLACKPINK','NewJeans','IVE','aespa','ILLIT','TWICE',
+              'SHINee','BIGBANG','Stray Kids','ATEEZ','SEVENTEEN','NCT',
+              'EXO','GOT7','MONSTA X','MAMAMOO','Red Velvet','Girls Generation',
+              'MAMA','Coachella','コーチェラ']
+has_kpop = any(w in title for w in kpop_words)
+if not has_kpop:
+    print(f"⚠️ GUARD_WARN: タイトルにK-POP文脈語なし: '{title}' → post_audit [2b] でフォールバック対応")
+
+print(f"✅ GUARD: タイトル={len(title)}文字 本文={len(plain)}文字 K-POP文脈={'あり' if has_kpop else '警告'}")
+sys.exit(0)
+PRE_ARCEUS_GUARD
+if [[ $? -ne 0 ]]; then
+  echo "❌ arceus前ハードガード失敗 → パイプライン停止"
+  log_step "pre_arceus_guard" "rejected" "reports/2_checked.md" "ハードガード: 文字数不足"
   archive_and_exit 1
 fi
 
@@ -807,11 +1324,11 @@ PY
 # [ガード2] sanitize_output で既に除去済みだが念のためチェック
 # ※ 「できません$」は通常記事で誤検知するため除外
 # ※ 「WebSearch」「ウェブ検索」は単体だと誤検知するため「許可」とセットで検出
-QUESTION_CHECK=$(grep -ciE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可を?いただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか|Web tools are currently blocked|WebSearch requires a permission|I don.t have access to web search|Tool use is not available|Search is not available|I.m unable to use tools)' reports/2_checked.md || true)
+QUESTION_CHECK=$(grep -ciE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません[がで。、 ]|申し訳ありません$|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可を?いただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか|Web tools are currently blocked|WebSearch requires a permission|I don.t have access to web search|Tool use is not available|Search is not available|I.m unable to use tools)' reports/2_checked.md || true)
 if [ "$QUESTION_CHECK" -gt 0 ]; then
   echo "🚨 BLOCK: 質問文またはAI定型文が記事本文に混入しています（${QUESTION_CHECK}箇所）"
   echo "  検出内容:"
-  grep -iE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可をいただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか|Web tools are currently blocked|WebSearch requires a permission|I don.t have access to web search|Tool use is not available|Search is not available|I.m unable to use tools)' reports/2_checked.md | head -5
+  grep -iE '(質問があります|確認させてください|お手伝いできますか|申し訳ありません[がで。、 ]|申し訳ありません$|承知しました|以下に示します|AIとして[、。]|言語モデルとして|お答えできません|許可してください|許可をいただ|許可が必要です|WebSearch.*許可|ウェブ検索.*許可|どちらで進めますか|Web tools are currently blocked|WebSearch requires a permission|I don.t have access to web search|Tool use is not available|Search is not available|I.m unable to use tools)' reports/2_checked.md | head -5
   archive_and_exit 1
 fi
 
@@ -821,7 +1338,7 @@ echo "=== 投稿 ==="
 
 # 投稿対象: final_post.md のみ（2_checked.mdや3_arceus.mdからは絶対に投稿しない）
 TITLE=$(head -n 1 reports/final_post.md)
-check_duplicate "$TITLE" 3
+check_duplicate "$TITLE" 7
 # 速報判定: デオキシスが【速報】を付けた場合のみ速報扱い（無条件付加しない）
 # 既に【速報】が含まれていればそのまま、なければ付けない
 CONTENT=$(tail -n +2 reports/final_post.md)
@@ -868,11 +1385,14 @@ hit = [w for w in ng_words if w in t]
 hit += [w for w in ng_words_en if w.lower() in t.lower()]
 # 英語混入検出（K-POP固有名詞以外の英文がタイトルの大部分を占める場合）
 import re as _re
-# タイトルからK-POP固有名詞を除外し、残りの英語比率をチェック
-alpha_chars = len(_re.findall(r'[a-zA-Z]', t))
-total_chars = len(t.strip())
-if total_chars > 0 and alpha_chars / total_chars > 0.5:
-    hit.append("英語比率過大")
+# 日本語文字（ひらがな・カタカナ・漢字）が含まれるタイトルはK-POP記事として正常
+# 例: "NewJeans「How Sweet」問題提起" → 日本語含むので除外
+has_japanese = bool(_re.search(r'[\u3040-\u30ff\u4e00-\u9fff]', t))
+if not has_japanese:
+    alpha_chars = len(_re.findall(r'[a-zA-Z]', t))
+    total_chars = len(t.strip())
+    if total_chars > 0 and alpha_chars / total_chars > 0.5:
+        hit.append("英語比率過大")
 # マークダウンコードブロック検出
 if t.startswith("#") or "```" in t:
     hit.append("markdown記法")
@@ -894,6 +1414,18 @@ if [ "$TITLE_LEN" -gt 60 ]; then
   echo "⚠️  警告: タイトルが長すぎる（${TITLE_LEN}文字）→ 続行"
 fi
 echo "  ✓ タイトル文字数OK（${TITLE_LEN}文字）"
+
+# CTR弱ワード警告（停止しない・ログのみ）
+_CTR_WARN=$(python3 -c "
+import sys, re
+t = sys.argv[1]
+weak = ['について解説', 'まとめ', 'とは?', 'とは？', 'とは ', 'とは$', '分析', 'の魅力', '徹底解説', '完全解説', 'ガイド', '一覧']
+hit = [w for w in weak if re.search(re.escape(w), t)]
+print(','.join(hit) if hit else '')
+" "$TITLE" 2>/dev/null || true)
+if [[ -n "$_CTR_WARN" ]]; then
+  echo "  ⚠️ [CTR警告] タイトルに弱ワードあり: $_CTR_WARN → 続行（停止しない）"
+fi
 
 # -----------------------------------------------
 # [B] 本文基本チェック
@@ -1154,23 +1686,14 @@ $TITLE
   THUMB_SCORE_JSON=$(python3 $SCRIPT_DIR/google_metrics/score_thumbnail_text.py "$THUMB_TITLE")
   THUMB_PASS=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print('YES' if d.get('pass') else 'NO')" "$THUMB_SCORE_JSON")
   if [ "$THUMB_PASS" != "YES" ]; then
-    echo "❌ 再生成もNG → タイトルから自動抽出（2行×10文字）"
+    echo "❌ 再生成もNG → select_thumbnail_text()でテンプレート生成"
     THUMB_TITLE=$(python3 -c "
-import re, sys
-t = sys.argv[1]
-t = re.sub(r'【[^】]*】', '', t).strip()
-t = t.replace('『', '').replace('』', '').replace('「', '').replace('」', '')
-t = re.sub(r'\s+', ' ', t).strip()
-if len(t) > 10:
-    line1 = t[:10]
-    line2 = t[10:20]
-    if len(line2) > 10:
-        line2 = line2[:9] + '…'
-    print(line1)
-    print(line2)
-else:
-    print(t)
-" "$TITLE")
+import sys
+sys.path.insert(0, '$(dirname "$0")')
+from lib.thumbnail_templates import select_thumbnail_text
+print(select_thumbnail_text(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None))
+" "$TITLE" "$THUMB_GENRE")
+    echo "TEMPLATE THUMB_TITLE=$THUMB_TITLE"
   fi
 fi
 
@@ -1183,12 +1706,29 @@ rm -f "$THUMB_META_FILE"
 
 echo "=== アイキャッチアップロード ==="
 MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
--u "$WP_USER:$WP_PASS" \
+-K ~/.wp_auth \
 -H "Content-Disposition: attachment; filename=thumbnail.webp" \
 -H "Content-Type: image/webp" \
 --data-binary @thumbnail.webp)
 
 MEDIA_ID=$(echo "$MEDIA_RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
+
+# === アイキャッチ ALTテキスト自動設定（再発防止: ALT空防止） ===
+if [ -n "$MEDIA_ID" ]; then
+  ALT_TEXT=$(python3 -c "
+import sys, re
+title = '''$TITLE'''
+# タイトルから簡潔なALTテキストを生成（120文字以内）
+alt = re.sub(r'[【】「」『』\|｜]', ' ', title).strip()
+alt = re.sub(r'\s+', ' ', alt)[:100]
+print(alt)
+" 2>/dev/null)
+  curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${MEDIA_ID}" \
+    -K ~/.wp_auth \
+    -H "Content-Type: application/json" \
+    -d "{\"alt_text\": \"$(echo "$ALT_TEXT" | sed 's/"/\\"/g')\"}" > /dev/null 2>&1
+  echo "  ✅ ALTテキスト設定: ${ALT_TEXT:0:50}..."
+fi
 
 # === カテゴリ自動判定（15分類） ===
 CATEGORY_ID=$(python3 - << 'PY' "$TITLE"
@@ -1204,14 +1744,16 @@ rules = [
     (28, ['音楽番組','人気歌謡','music bank','m countdown','show champion','music core']),
     (8,  ['ドラマ','主演','出演ドラマ','配信ドラマ','俳優','女優']),
     (27, ['映画','映画出演','映画化','スクリーンデビュー']),
-    (10, ['コラボ','共同','feat','featuring','ユニット','ブランドコラボ']),
-    (15, ['広告','アンバサダー','モデル起用','cm','キャンペーン','ブランドモデル']),
+    (30, ['ファッション','着用','コーデ','私服','ストリートスナップ','outfit','ブランドコレクション']),
     (13, ['新商品','発売','限定発売','新作','グッズ','公式グッズ']),
-    (12, ['美容','コスメ','スキンケア','ヘアケア','ダイエット','インナーケア','サロン','クリニック','ガラス肌','グラスキン','ルーティン','保湿','洗顔','美白','韓国スキンケア','韓国コスメ']),
+    (12, ['美容','コスメ','スキンケア','ヘアケア','ダイエット','サロン','クリニック','ガラス肌','グラスキン','ルーティン','保湿','洗顔','美白','韓国スキンケア','韓国コスメ']),
     (11, ['旅行','釜山','観光','レストラン','渡韓','タクシー','聖地巡礼','ポップアップ','カフェ','ソウル','ホテル']),
+    (111,['視聴方法','どこで見れる','無料視聴','配信サービス','配信比較','サブスク','abema','netflix','hulu','prime video']),
+    (112,['プロフィール','メンバー紹介','経歴','生年月日','身長','出身','デビュー日']),
+    (113,['入門','初心者','始め方','完全ガイド','わかりやすく','ゼロから']),
     (14, ['熱愛','炎上','騒動','脱退','訴訟','事件','問題','謝罪','ゴシップ']),
     (9,  ['話題','注目','反応','バズ','拡散','snsで話題','海外の反応']),
-    (4,  ['考察','分析','なぜ','理由','比較','解説','深掘り','特集','まとめ','徹底解説']),
+    (4,  ['考察','分析','なぜ','理由','比較','解説','深掘り','特集','まとめ','徹底解説','戦略','グローバル','ボーカル','トレーニング','練習生','レッスン']),
 ]
 
 for cid, keywords in rules:
@@ -1227,19 +1769,28 @@ echo "CATEGORY_ID=$CATEGORY_ID"
 
 # === アーティスト別カテゴリ自動判定 ===
 ARTIST_CATEGORY_IDS=$(python3 - << 'PY' "$TITLE"
-import sys
+import sys, re
 title = sys.argv[1].lower()
 
+def match_keyword(title, keyword):
+    """短語・単語バウンダリーを考慮したマッチング。誤検知防止。"""
+    if len(keyword) <= 2:
+        # 1〜2文字は完全単語マッチのみ（スペース/記号/文字列境界）
+        return bool(re.search(r'(?<![a-z0-9])' + re.escape(keyword) + r'(?![a-z0-9])', title))
+    return keyword in title
+
 artist_rules = [
-    (19, ['bigbang', 'g-dragon', 'gd', 'taeyang', 'daesung', 'top', 't.o.p']),
-    (23, ['blackpink', 'black pink', 'jennie', 'jisoo', 'rose', 'rosé', 'lisa']),
-    (18, ['bts', '방탄', 'rm', 'jin', 'suga', 'j-hope', 'jhope', 'jimin', 'v', 'jungkook']),
-    (25, ['aespa', 'karina', 'winter', 'ningning', 'giselle']),
-    (38, ['babymonster', 'baby monster', 'ahyeon', 'asa', 'ruka', 'pharita', 'rami', 'rora', 'chiquita']),
-    (44, ['illit', 'iroha', 'wonhee', 'minju', 'moka', 'yunah']),
-    (68, ['ive', 'wonyoung', 'yujin', 'rei', 'gaeul', 'liz', 'leeseo']),
-    (41, ['le sserafim', 'lesserafim', 'sakura', 'chaewon', 'yunjin', 'kazuha', 'eunchae']),
-    (75, ['monsta x', 'shownu', 'minhyuk', 'kihyun', 'hyungwon', 'jooheon', 'i.m', 'im']),
+    (19, ['bigbang', 'g-dragon', 'gd', 'taeyang', 'daesung', 't.o.p']),
+    (23, ['blackpink', 'black pink', 'jennie', 'jisoo', 'rosé', 'lisa']),
+    (18, ['bts', '방탄', 'j-hope', 'jhope', 'jimin', 'jungkook', 'jung kook',
+           'rm（', 'rm・', 'rm/', ' rm ', '「rm」', 'jin（', 'jin・', '「jin」',
+           'suga（', 'suga・', '「suga」', 'v（', 'v・', '「v」', 'テヒョン']),
+    (25, ['aespa', 'karina', 'ningning', 'giselle']),
+    (38, ['babymonster', 'baby monster', 'ahyeon', 'pharita', 'rami', 'rora', 'chiquita']),
+    (44, ['illit', 'iroha', 'wonhee', 'moka', 'yunah']),
+    (68, ['ive', 'wonyoung', 'yujin', 'gaeul', 'leeseo']),
+    (41, ['le sserafim', 'lesserafim', 'chaewon', 'yunjin', 'kazuha', 'eunchae']),
+    (98, ['enhypen', 'enha', 'jungwon', 'heeseung', 'jay', 'jake', 'sunghoon', 'sunoo', 'ni-ki', 'niki']),
     (40, ['nct', 'nct wish', 'mark', 'haechan', 'taeyong', 'jaehyun', 'doyoung']),
     (32, ['newjeans', 'new jeans', 'minji', 'hani', 'danielle', 'haerin', 'hyein']),
     (39, ['riize', 'shotaro', 'sungchan', 'wonbin', 'sohee', 'anton', 'eunseok']),
@@ -1255,7 +1806,7 @@ artist_rules = [
 
 matched = []
 for cid, keywords in artist_rules:
-    if any(word in title for word in keywords):
+    if any(match_keyword(title, word) for word in keywords):
         matched.append(str(cid))
 
 print(",".join(matched))
@@ -1292,7 +1843,7 @@ PY
   if [ -n "$DETECTED_ARTIST" ]; then
     echo "=== 新規アーティストカテゴリ自動作成: $DETECTED_ARTIST ==="
     NEW_CAT_RESPONSE=$(curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/categories" \
-      -u "$WP_USER:$WP_PASS" \
+      -K ~/.wp_auth \
       -H "Content-Type: application/json" \
       -d "{\"name\": \"$DETECTED_ARTIST\", \"description\": \"$DETECTED_ARTIST 関連記事\"}")
     NEW_CAT_ID=$(echo "$NEW_CAT_RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
@@ -1319,7 +1870,9 @@ import sys
 title = sys.argv[1]
 
 rules = [
-    ('BTS', ['bts', 'rm', 'jin', 'suga', 'j-hope', 'jhope', 'jimin', 'v', 'jungkook']),
+    ('BTS', ['bts', '방탄', 'j-hope', 'jhope', 'jimin', 'jungkook', 'jung kook',
+              'rm（', 'rm・', 'rm/', ' rm ', '「rm」', 'jin（', 'jin・', '「jin」',
+              'suga（', 'suga・', '「suga」', 'v（', 'v・', '「v」', 'テヒョン']),
     ('BIGBANG', ['bigbang', 'g-dragon', 'gd', 'taeyang', 'daesung', 'top', 't.o.p']),
     ('BLACKPINK', ['blackpink', 'black pink', 'jennie', 'jisoo', 'rose', 'rosé', 'lisa']),
     ('aespa', ['aespa', 'karina', 'winter', 'ningning', 'giselle']),
@@ -1395,7 +1948,7 @@ PY
 
 echo "TAG_IDS=$TAG_IDS"
 
-SLUG=$(python3 "$SCRIPT_DIR/lib/slug.py" "$TITLE")
+SLUG=$(python3 "$SCRIPT_DIR/lib/slug_generator.py" "$TITLE")
 echo "  slug: $SLUG"
 
 DESC=$(echo "$CONTENT" | sed -e 's/<[^>]*>//g' | python3 -c "import sys; t=sys.stdin.read().strip(); print(t[:120])")
@@ -1468,7 +2021,7 @@ if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/darkrai_audit.py"; then
 fi
 
 RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
--u "$WP_USER:$WP_PASS" \
+-K ~/.wp_auth \
 -H "Content-Type: application/json" \
 -d "$JSON")
 
@@ -1481,6 +2034,96 @@ if [[ -n "$POST_ID" && "$POST_ID" =~ ^[0-9]+$ ]]; then
   log_step "wordpress_post" "ok" "reports/final_post.md" "post_id=$POST_ID"
 else
   log_step "wordpress_post" "error" "reports/final_post.md" "POST_ID empty or invalid"
+fi
+
+# === 視聴導線記事: 再監査台帳に追記 ===
+if [[ -n "$POST_ID" && "$POST_ID" =~ ^[0-9]+$ && "$CATEGORY_ID" == "111" ]]; then
+  echo "=== 視聴導線記事 再監査台帳追記 ==="
+  python3 - << 'LEDGER_PY' "$POST_ID" "$TITLE" "$CATEGORY_ID"
+import sys, json
+from datetime import date, timedelta
+from pathlib import Path
+
+post_id = int(sys.argv[1])
+title = sys.argv[2]
+category_id = int(sys.argv[3])
+
+BASE = Path("/home/aiuser/kpop-ai-system")
+LEDGER = BASE / "logs" / "streaming_guide_review.jsonl"
+today = date.today()
+
+t = title.lower()
+if any(k in t for k in ['kcon','mama','award','授賞式','イベント','開催']):
+    article_type = "event_guide"
+    interval = 14
+elif any(k in t for k in ['music bank','inkigayo','m countdown','show champion','music core','人気歌謡']):
+    article_type = "single_show_guide"
+    interval = 60
+elif any(k in t for k in ['まとめ','比較','一覧','総まとめ','全サービス']):
+    article_type = "comprehensive_guide"
+    interval = 30
+else:
+    article_type = "artist_streaming_guide"
+    interval = 14
+
+new_record = {
+    "post_id": post_id,
+    "title": title,
+    "category_id": category_id,
+    "article_type": article_type,
+    "risk_level": "high" if interval <= 14 else ("medium" if interval <= 60 else "low"),
+    "reason": f"パイプライン自動登録 ({today})",
+    "review_rule": f"{article_type}: {interval}日後",
+    "audit_focus": ["料金変動", "配信可否確認", "活動状況確認"],
+    "last_factchecked_at": today.isoformat(),
+    "next_review_due": (today + timedelta(days=interval)).isoformat(),
+    "status": "published_verified",
+}
+
+records = []
+if LEDGER.exists():
+    with open(LEDGER) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                r = json.loads(line)
+                if r["post_id"] != post_id:
+                    records.append(r)
+records.append(new_record)
+with open(LEDGER, "w") as f:
+    for r in records:
+        f.write(json.dumps(r, ensure_ascii=False) + "\n")
+print(f"  ✅ 再監査台帳追記: post_id={post_id} article_type={article_type} next_review={new_record['next_review_due']}")
+LEDGER_PY
+fi
+
+# === [4.1] AIOSEO meta設定（再発防止: title/desc空防止） ===
+if [[ -n "$POST_ID" && "$POST_ID" =~ ^[0-9]+$ ]]; then
+  echo "=== [4.1] AIOSEO metaタイトル・説明設定 ==="
+  # AIOSEOの内部メタキーはREST API非公開のため、
+  # post_meta直書き用エンドポイント or wp-cli 経由で設定
+  # → post_audit.shのAIOSEO設定ロジックを呼ぶ（再発防止の本丸）
+  # meta_desc_copied 再発防止: 本文冒頭コピーではなくSEO独立文を生成
+  AIOSEO_DESC=$(echo "$CONTENT" | sed -e 's/<[^>]*>//g' | python3 -c "
+import sys, re
+text = sys.stdin.read().strip()
+text = re.sub(r'\s+', ' ', text)
+sentences = re.split(r'[。！？]', text)
+sentences = [s.strip() for s in sentences if len(s.strip()) >= 20]
+# 2文目以降からキーワードを取得（冒頭コピー禁止）
+mid = sentences[1] if len(sentences) > 1 else (sentences[0] if sentences else text[:60])
+mid = mid[:60].rstrip('。！？')
+title_short = re.sub(r'[【】「」『』\[\]]', '', sys.argv[1] if len(sys.argv) > 1 else '')[:20]
+desc = f'{title_short}について解説。{mid}。K-POPファン必見の最新情報をお届けします。'
+if len(desc) > 130:
+    desc = desc[:127] + '...'
+print(desc)
+" \"$TITLE\" 2>/dev/null)
+  curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
+    -K ~/.wp_auth \
+    -H "Content-Type: application/json" \
+    -d "{\"meta\":{\"_aioseo_description\": \"$(echo "$AIOSEO_DESC" | sed 's/"/\\"/g')\"}}" > /dev/null 2>&1 \
+    && echo "  ✅ AIOSEO description設定完了" || echo "  ⚠️ AIOSEO description設定スキップ"
 fi
 
 echo "=== [4.5] 収益導線自動挿入 ==="
@@ -1508,7 +2151,7 @@ echo "CTA_TYPE=$CTA_TYPE (CATEGORY_ID=$CATEGORY_ID)"
 
 # 投稿済み記事のコンテンツからCTA有無を確認
 HAS_CTA_CHECK=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/$POST_ID" \
-  -u "$WP_USER:$WP_PASS" | python3 -c "
+  -K ~/.wp_auth | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
 content = data.get('content', {}).get('rendered', '')
@@ -1518,17 +2161,32 @@ print('YES' if has else 'NO')
 
 if [ "$HAS_CTA_CHECK" != "YES" ]; then
   echo "CTA未挿入 → フォールバックCTA挿入 (type=$CTA_TYPE)"
-  python3 - << 'FALLBACK_CTA_PY' "$POST_ID" "$CATEGORY_ID" "$CTA_TYPE" "$WP_USER" "$WP_PASS"
-import requests, json, sys
+  python3 - << 'FALLBACK_CTA_PY' "$POST_ID" "$CATEGORY_ID" "$CTA_TYPE"
+import requests, json, sys, os, re as _re
 
 post_id = sys.argv[1]
 category_id = sys.argv[2] or "1"
 cta_type = sys.argv[3]
-wp_auth = (sys.argv[4], sys.argv[5])
+
+_auth_header = ""
+_wp_auth_path = os.path.expanduser("~/.wp_auth")
+if os.path.exists(_wp_auth_path):
+    with open(_wp_auth_path) as _f:
+        for _line in _f:
+            _m = _re.match(r'header\s*=\s*"(Authorization:\s*Basic\s+[^"\n]+)"?', _line.strip())
+            if _m:
+                _auth_header = _m.group(1)
+                break
+if not _auth_header:
+    import base64
+    _u = os.environ.get("WP_USER","kpop-bot")
+    _p = os.environ.get("WP_PASS","")
+    _auth_header = "Authorization: Basic " + base64.b64encode(f"{_u}:{_p}".encode()).decode()
+_wp_headers = {"Authorization": _auth_header.split(": ", 1)[1]}
 base_url = "https://www.kpopjournal.tokyo/wp-json/wp/v2"
 
 # 現在の投稿コンテンツを取得
-resp = requests.get(f"{base_url}/posts/{post_id}", auth=wp_auth)
+resp = requests.get(f"{base_url}/posts/{post_id}", headers=_wp_headers)
 resp.raise_for_status()
 post_data = resp.json()
 current_content = post_data.get("content", {}).get("raw", post_data.get("content", {}).get("rendered", ""))
@@ -1565,7 +2223,7 @@ else:
         recent = requests.get(
             f"{base_url}/posts",
             params={"categories": category_id, "per_page": 4, "exclude": post_id, "status": "publish"},
-            auth=wp_auth, timeout=10
+            headers=_wp_headers, timeout=10
         )
         recent.raise_for_status()
         articles = recent.json()[:3]
@@ -1597,7 +2255,7 @@ if cta_html:
     updated_content = current_content + cta_html
     update_resp = requests.post(
         f"{base_url}/posts/{post_id}",
-        auth=wp_auth,
+        headers={**_wp_headers, "Content-Type": "application/json"},
         json={"content": updated_content},
         timeout=15
     )
@@ -1625,7 +2283,18 @@ bash $SCRIPT_DIR/google_metrics/request_bing_index.sh "$POST_URL" 2>&1 || echo "
 
 echo "=== [5] SNS投稿 (v12.0 シングル投稿モード) ==="
 
-# v12.0: シングル投稿モード — 引数をファイル渡しで安全に処理（タイトル内のクォート破損防止）
+# ── [DRAFT GUARD 2重防衛] X投稿直前にWP側のstatus を再確認 ─────────────
+# WP投稿後に何らかの理由でdraftになっていた場合のX拡散事故を防ぐ
+_WP_STATUS_NOW=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
+  -K ~/.wp_auth 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('status','unknown'))" 2>/dev/null || echo "unknown")
+if [[ "$_WP_STATUS_NOW" != "publish" ]]; then
+  echo "⛔ [DRAFT GUARD] X投稿スキップ: WP status=${_WP_STATUS_NOW} (publish以外はX投稿禁止)"
+  echo "  → POST_ID=$POST_ID が publish 状態でないためX投稿を中止"
+  log_step "sns_draft_guard" "blocked" "" "X投稿スキップ: status=${_WP_STATUS_NOW}"
+  X_STATUS="スキップ(DRAFT_GUARD: status=${_WP_STATUS_NOW})"
+else
+
+# v12.0: シングル投稿モード — 引数をファイル渡しで安全に処理（タイトル内のクォート破論防止）
 _SNS_ARGS_FILE=$(mktemp /tmp/kpop_sns_args.XXXXXX.json)
 python3 -c "import json,sys; json.dump({'title':sys.argv[1],'url':sys.argv[2],'category_id':sys.argv[3],'lib':sys.argv[4]}, open(sys.argv[5],'w'))" \
   "$TITLE" "$POST_URL" "$CATEGORY_ID" "$SCRIPT_DIR/lib" "$_SNS_ARGS_FILE" 2>/dev/null
@@ -1684,7 +2353,7 @@ if [ -n "$X_TWEET_ID" ] && [ -n "$POST_ID" ]; then
   echo "  tweet_id=$X_TWEET_ID をローカルDB保存 ($TWEET_DB)"
   # WordPressメタにも保存（show_in_rest=true が設定されていれば取得可能）
   curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/$POST_ID" \
-    -u "$WP_USER:$WP_PASS" \
+    -K ~/.wp_auth \
     -H "Content-Type: application/json" \
     -d "{\"meta\": {\"_x_tweet_id\": \"$X_TWEET_ID\"}}" > /dev/null 2>&1 || true
 fi
@@ -1760,7 +2429,7 @@ PROCESSING_TIME=$((PIPELINE_END - ${PIPELINE_START:-$PIPELINE_END}))
 # CTA存在を実際の投稿済みコンテンツから確認（ローカル変数$CONTENTではなくWP APIから取得）
 HAS_CTA="false"
 FINAL_CONTENT_CHECK=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/$POST_ID" \
-  -u "$WP_USER:$WP_PASS" | python3 -c "
+  -K ~/.wp_auth | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
 content = data.get('content', {}).get('rendered', '')
@@ -1855,6 +2524,8 @@ if [ $? -ne 0 ]; then
   echo "KPIログ記録スキップ"
 fi
 
+fi  # end DRAFT GUARD 2 else block
+
 cleanup_reports_dir
 
 echo ""
@@ -1870,7 +2541,7 @@ echo "========================================"
 echo ""
 echo "=== 投稿後自動監査 ==="
 if [[ -n "$POST_ID" ]] && [[ -n "$POST_URL" ]]; then
-  bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "$TITLE" "$RUN_ID" 2>&1 || true
+  env -u AUDIT_LOOP_COUNT bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "$TITLE" "$RUN_ID" 2>&1 || true
 else
   echo "  ⚠️ POST_IDまたはPOST_URLが未設定 → 監査スキップ"
 fi
