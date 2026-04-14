@@ -362,6 +362,57 @@ if [[ "$_TWEET_QUALITY" == NG:* ]]; then
 fi
 xlog "TWEET_QUALITY: OK"
 
+# ─── フックCTRスコアリング（数字+25/固有名詞+25/感情語+20/対比+20/120-150字+10、合計80未満BLOCK） ──
+_HOOK_CTR_SCORE=$(python3 - << 'HOOKPY' "$TWEET_TEXT"
+import sys, re
+text = sys.argv[1]
+# ハッシュタグ・URL行を除いた本文のみ
+lines = [l for l in text.strip().split('\n') if l.strip() and not l.strip().startswith('#') and not re.match(r'https?://', l.strip())]
+body = '\n'.join(lines)
+score = 0
+reasons = []
+
+# 数字あり +25
+if re.search(r'[0-9]', body):
+    score += 25
+    reasons.append("数字 +25")
+
+# 固有名詞 +25
+if re.search(r'BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|LE\s*SSERAFIM|EXO|GOT7|MAMAMOO|BIGBANG|G-DRAGON|JIMIN|SHINee', body, re.IGNORECASE):
+    score += 25
+    reasons.append("固有名詞 +25")
+
+# 感情語 +20
+if re.search(r'衝撃|電撃|判明|ついに|まさか|速報|記録|驚愕|神|レベチ|解禁|完全|必見|復帰|制覇|初|歴史|快挙|1位|首位|伝説|奇跡|爆発|炎上|暴露|激白', body):
+    score += 20
+    reasons.append("感情語 +20")
+
+# 対比構造 +20
+if re.search(r'→|vs|VS|から|でも|なのに|なぜ|なのか|空白|一転|激変|崩壊|異常|6年|13年|[0-9]+年ぶり', body):
+    score += 20
+    reasons.append("対比/異常 +20")
+
+# 文字数120〜150 +10（ハッシュタグ含む全体）
+total_len = len(text.strip())
+if 120 <= total_len <= 150:
+    score += 10
+    reasons.append(f"文字数{total_len}字(120-150) +10")
+
+print(f"{min(score,100)}|{','.join(reasons)}")
+HOOKPY
+)
+_HOOK_SCORE=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f1)
+_HOOK_REASONS=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f2)
+xlog "HOOK_CTR_SCORE: ${_HOOK_SCORE}/100 (${_HOOK_REASONS})"
+
+if [[ "$_HOOK_SCORE" -lt 80 ]]; then
+  xlog "HOOK_CTR_BLOCK: スコア${_HOOK_SCORE}/100 < 80 → 投稿停止"
+  echo "❌ [X投稿] フックCTRスコア${_HOOK_SCORE}/100（80未満）→ BLOCK"
+  X_STATUS="BLOCKED_HOOK_CTR"
+  exit 1
+fi
+xlog "HOOK_CTR: OK(${_HOOK_SCORE}/100)"
+
 # ─── ハッシュタグ4個以上BLOCK ────────────────────────────────────────────────
 _HASHTAG_COUNT=$(echo "$TWEET_TEXT" | grep -oE '#[^ #　]+' | wc -l || echo 0)
 if [[ "$_HASHTAG_COUNT" -ge 4 ]]; then

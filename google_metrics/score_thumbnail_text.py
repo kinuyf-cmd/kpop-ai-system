@@ -1,129 +1,153 @@
 """
-サムネイル文言スコアリング v4
+サムネイル文言スコアリング v5 (100点満点)
 
-評価基準:
-  1. 文字数 (1行あたり最大10文字、最大2行)
-  2. 強ワード (感情を動かす表現 必須)
-  3. 数字 (具体性)
-  4. アーティスト名
-  5. 弱ワード・抽象表現 (減点)
-  6. 感情訴求
+評価基準 (100点満点):
+  1. 数字（例: 641,000 / 3週連続）→ +25
+  2. 固有名詞（BTS/BLACKPINKなど）→ +25
+  3. 対比構造（復帰/空白/異常/vs/→）→ +20
+  4. 感情語（衝撃・異常・ついに・判明など）→ +15
+  5. 2行構造適正（15文字以内×2行）→ +15
 
-通過基準: score >= 5
+判定:
+  score < 60   → pass: false, block: true
+  60 ≤ score < 80 → pass: true, block: false, warning: true
+  score ≥ 80   → pass: true, block: false
+
+禁止パターン (score関係なく block=true):
+  - ".." または "…" を含む
+  - 改行なし（1行のみ）
+  - 1行15文字超
+  - 数字が行をまたいで分割されている
 """
 import sys
 import json
+import re
 
-raw = sys.argv[1].strip()
+def score_thumbnail(raw: str) -> dict:
+    lines = raw.split("\n")
+    lines = [l.strip() for l in lines if l.strip()]
+    text = "\n".join(lines)
 
-lines = raw.split("\n")
-lines = [l.strip() for l in lines if l.strip()]
+    score = 0
+    reasons = []
+    block_reasons = []
 
-text = " ".join(lines)
+    # ---- 禁止パターンチェック ----
+    blocked = False
 
-score = 0
-reasons = []
+    # ".." または "…" を含む
+    if ".." in text or "…" in text:
+        blocked = True
+        block_reasons.append("省略記号(.../…)を含む")
 
-# 1. 行数チェック
-if len(lines) > 2:
-    score -= 3
-    reasons.append(f"3行以上({len(lines)}行) -3")
-elif len(lines) == 2:
-    score += 1
-    reasons.append("2行構成 +1")
+    # 改行なし（1行のみ）
+    if len(lines) <= 1:
+        blocked = True
+        block_reasons.append("改行なし（1行のみ）")
 
-# 2. 各行の文字数チェック（10文字制限）
-all_lines_ok = True
-for i, line in enumerate(lines):
-    line_len = len(line)
-    if line_len <= 10:
-        if i == 0:
-            score += 2
-            reasons.append(f"L{i+1}: {line_len}文字 OK +2")
+    # 1行15文字超
+    for i, line in enumerate(lines):
+        if len(line) > 15:
+            blocked = True
+            block_reasons.append(f"L{i+1}が15文字超({len(line)}文字): {line}")
+
+    # 数字が行をまたいで分割されている
+    # 1行目末尾が数字で終わり、2行目先頭も数字で始まるケース
+    if len(lines) >= 2:
+        if re.search(r'\d$', lines[0]) and re.search(r'^\d', lines[1]):
+            blocked = True
+            block_reasons.append("数字が行をまたいで分割されている")
+
+    # ---- スコアリング ----
+
+    # 1. 数字 (最大25点)
+    number_patterns = [
+        r'\d[\d,，.万億千百]*[万億千百位週連続]?',  # 数字+単位
+    ]
+    has_number = any(re.search(p, text) for p in number_patterns) or any(ch.isdigit() for ch in text)
+    if has_number:
+        score += 25
+        reasons.append("数字あり +25")
+
+    # 2. 固有名詞 (最大25点)
+    artist_words = [
+        "BTS", "BLACKPINK", "BIGBANG", "aespa", "BABYMONSTER", "ILLIT", "IVE",
+        "SEVENTEEN", "TWICE", "Stray Kids", "XG", "NewJeans", "LE SSERAFIM",
+        "NCT", "RIIZE", "PLAVE", "KATSEYE", "KISS OF LIFE", "TXT", "ENHYPEN",
+        "ITZY", "NMIXX", "(G)I-DLE", "RED VELVET", "EXO", "SHINee", "T.O.P",
+        "G-DRAGON", "ZEROBASEONE", "Mark Lee", "JIMIN", "ジミン", "ジョングク",
+        "テヒョン", "ソクジン", "ナムジュン", "ホソク", "ユンギ",
+        "ジェニー", "ロゼ", "リサ", "ジス",
+    ]
+    matched_artists = [w for w in artist_words if w.lower() in text.lower()]
+    if matched_artists:
+        score += 25
+        reasons.append(f"固有名詞({','.join(matched_artists[:2])}) +25")
+
+    # 3. 対比構造 (最大20点)
+    contrast_patterns = ["復帰", "空白", "異常", " vs ", "VS", "→", "⇒", "急落", "急騰",
+                         "一転", "激変", "崩壊", "解散", "脱退", "電撃", "電撃復帰"]
+    matched_contrasts = [w for w in contrast_patterns if w in text]
+    if matched_contrasts:
+        score += 20
+        reasons.append(f"対比構造({','.join(matched_contrasts[:2])}) +20")
+
+    # 4. 感情語 (最大15点)
+    emotion_words = [
+        "衝撃", "異常", "ついに", "判明", "速報", "まさか", "爆発", "炎上",
+        "暴露", "激白", "騒然", "完全", "神", "伝説", "歴史的", "奇跡",
+        "待望", "号泣", "鳥肌", "やばい", "ヤバい", "バグ", "尊い",
+        "真相", "解禁", "初公開", "大反響",
+    ]
+    matched_emotions = [w for w in emotion_words if w in text]
+    if matched_emotions:
+        score += 15
+        reasons.append(f"感情語({','.join(matched_emotions[:2])}) +15")
+
+    # 5. 2行構造適正 (最大15点): 2行 かつ 全行15文字以内
+    if len(lines) == 2 and all(len(l) <= 15 for l in lines):
+        score += 15
+        reasons.append("2行構造適正(15文字以内×2行) +15")
+    elif len(lines) >= 2 and all(len(l) <= 15 for l in lines):
+        score += 8
+        reasons.append(f"多行構造({len(lines)}行、全行15文字以内) +8")
+
+    score = min(score, 100)
+
+    # ---- 判定 ----
+    if blocked:
+        pass_ = False
+        block = True
+        warning = False
+    elif score < 60:
+        pass_ = False
+        block = True
+        warning = False
+    elif score < 80:
+        pass_ = True
+        block = False
+        warning = True
     else:
-        score -= 2
-        reasons.append(f"L{i+1}: {line_len}文字 超過 -2")
-        all_lines_ok = False
+        pass_ = True
+        block = False
+        warning = False
 
-if all_lines_ok and lines:
-    score += 1
-    reasons.append("全行10文字以内 +1")
+    return {
+        "score": score,
+        "pass": pass_,
+        "block": block,
+        "warning": warning,
+        "block_reasons": block_reasons,
+        "reasons": reasons,
+        "lines": lines,
+    }
 
-# 3. 強ワード（感情を動かす表現 = 必須）
-strong_words = [
-    "衝撃", "速報", "ついに", "電撃", "判明", "復活", "決定", "解禁",
-    "初公開", "大反響", "騒然", "まさか", "完全", "即完売",
-    "神", "炎上", "暴露", "激白", "独占",
-    "レベチ", "バグ", "尊い", "やばい", "ヤバい",
-    "真相", "裏側", "闇", "結論",
-]
-matched_strong = [w for w in strong_words if w in text]
-if matched_strong:
-    score += 3
-    reasons.append(f"強ワード({','.join(matched_strong[:3])}) +3")
-else:
-    score -= 2
-    reasons.append("強ワードなし -2")
 
-# 4. 数字
-if any(ch.isdigit() for ch in text):
-    score += 2
-    reasons.append("数字あり +2")
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print(json.dumps({"error": "usage: score_thumbnail_text.py <text>"}, ensure_ascii=False))
+        sys.exit(1)
 
-# 5. アーティスト名
-artist_words = [
-    "BTS", "BLACKPINK", "BIGBANG", "aespa", "BABYMONSTER", "ILLIT", "IVE",
-    "SEVENTEEN", "TWICE", "Stray Kids", "XG", "NewJeans", "LE SSERAFIM",
-    "NCT", "RIIZE", "PLAVE", "KATSEYE", "KISS OF LIFE", "TXT", "ENHYPEN",
-    "ITZY", "NMIXX", "(G)I-DLE", "RED VELVET", "EXO", "SHINee", "T.O.P",
-    "G-DRAGON", "ZEROBASEONE", "Mark Lee",
-]
-if any(w.lower() in text.lower() for w in artist_words):
-    score += 2
-    reasons.append("アーティスト名あり +2")
-
-# 6. 感情訴求
-emotion_words = [
-    "号泣", "感動", "泣ける", "鳥肌", "神", "最高",
-    "待望", "念願", "奇跡", "伝説", "歴代", "歴史的",
-    "尊い", "沼", "推せる",
-]
-if any(w in text for w in emotion_words):
-    score += 1
-    reasons.append("感情訴求 +1")
-
-# 7. 弱ワード・抽象表現（厳しく減点）
-weak_words = [
-    "修正箇所", "特定", "まとめ", "整理", "情報", "レポート",
-    "サマリー", "チェック", "確認", "最新情報",
-]
-for w in weak_words:
-    if w in text:
-        score -= 3
-        reasons.append(f"弱ワード『{w}』 -3")
-
-# 8. 説明的・抽象的表現（NG）
-abstract_patterns = [
-    "日ぶりの", "についてまとめ", "を紹介", "を解説",
-]
-for p in abstract_patterns:
-    if p in text:
-        score -= 2
-        reasons.append(f"抽象表現『{p}』 -2")
-
-# 9. コロン使用
-if "：" in text or ":" in text:
-    score -= 1
-    reasons.append("コロン使用 -1")
-
-result = {
-    "text": raw,
-    "lines": lines,
-    "score": score,
-    "line_count": len(lines),
-    "line_lengths": [len(l) for l in lines],
-    "reasons": reasons,
-    "pass": score >= 5
-}
-
-print(json.dumps(result, ensure_ascii=False))
+    raw = sys.argv[1]
+    result = score_thumbnail(raw)
+    print(json.dumps(result, ensure_ascii=False))

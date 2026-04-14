@@ -2098,6 +2098,24 @@ print(select_thumbnail_text(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else N
   fi
 fi
 
+# ─── サムネ最終スコア判定（score_thumbnail_text.py v5・60未満BLOCK） ────────────
+echo "=== サムネ最終スコア判定 ==="
+_FINAL_THUMB_JSON=$(python3 "$SCRIPT_DIR/google_metrics/score_thumbnail_text.py" "$THUMB_TITLE" 2>/dev/null || echo '{"block":true,"score":0,"block_reasons":["スコア取得失敗"]}')
+_FINAL_THUMB_BLOCK=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print('YES' if d.get('block') else 'NO')" "$_FINAL_THUMB_JSON" 2>/dev/null || echo "YES")
+_FINAL_THUMB_SCORE=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print(d.get('score',0))" "$_FINAL_THUMB_JSON" 2>/dev/null || echo "0")
+_FINAL_THUMB_WARN=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print('YES' if d.get('warning') else 'NO')" "$_FINAL_THUMB_JSON" 2>/dev/null || echo "NO")
+_FINAL_THUMB_REASONS=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); print(' / '.join(d.get('block_reasons',d.get('reasons',[])))[:120])" "$_FINAL_THUMB_JSON" 2>/dev/null || echo "")
+echo "  サムネスコア: ${_FINAL_THUMB_SCORE}/100 (block=${_FINAL_THUMB_BLOCK} warn=${_FINAL_THUMB_WARN})"
+if [[ "$_FINAL_THUMB_BLOCK" == "YES" ]]; then
+  echo "❌ サムネCTRスコアBLOCK(${_FINAL_THUMB_SCORE}/100): $_FINAL_THUMB_REASONS → 投稿停止"
+  log_step "thumb_ctr_block" "BLOCKED" "" "score=${_FINAL_THUMB_SCORE} reasons=${_FINAL_THUMB_REASONS}"
+  archive_and_exit 1
+fi
+if [[ "$_FINAL_THUMB_WARN" == "YES" ]]; then
+  echo "  ⚠️ サムネCTRスコア警告(${_FINAL_THUMB_SCORE}/100): 60〜79点 → 投稿は続行"
+fi
+echo "  ✅ サムネCTRスコアOK(${_FINAL_THUMB_SCORE}/100)"
+
 echo "=== アイキャッチ生成（v3: 固定テンプレ背景） ==="
 THUMB_META_FILE=$(mktemp)
 python3 $SCRIPT_DIR/make_thumbnail.py "$THUMB_TITLE" --title "$TITLE" --genre "$THUMB_GENRE" 2>"$THUMB_META_FILE"
