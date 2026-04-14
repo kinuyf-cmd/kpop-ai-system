@@ -1896,21 +1896,32 @@ if not my_genre:
 
 # 直近24時間の投稿を取得
 cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+# ~/.wp_auth 読み込み失敗 → 安全側BLOCK（SKIPしない）
+auth = ""
 try:
     auth_file = os.path.expanduser("~/.wp_auth")
-    auth = ""
-    if os.path.exists(auth_file):
-        import re as _re
-        with open(auth_file) as f:
-            m = _re.search(r'Basic\s+(\S+)', f.read())
-            if m: auth = m.group(1)
-    headers = {"Authorization": f"Basic {auth}"} if auth else {}
+    if not os.path.exists(auth_file):
+        print("AUTH_FAIL:~/.wp_authが存在しない → 安全側BLOCK")
+        sys.exit(0)
+    import re as _re
+    with open(auth_file) as f:
+        m = _re.search(r'Basic\s+(\S+)', f.read())
+        if m:
+            auth = m.group(1)
+        else:
+            print("AUTH_FAIL:~/.wp_authにBasicトークンなし → 安全側BLOCK")
+            sys.exit(0)
+except Exception as e:
+    print(f"AUTH_FAIL:~/.wp_auth読み込みエラー({e}) → 安全側BLOCK")
+    sys.exit(0)
+
+try:
     url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=10&after={urllib.request.quote(cutoff)}&status=publish&_fields=id,title,categories"
-    req = urllib.request.Request(url, headers={**headers, "User-Agent": "kpop-gate/1.0"})
+    req = urllib.request.Request(url, headers={"Authorization": f"Basic {auth}", "User-Agent": "kpop-gate/1.0"})
     with urllib.request.urlopen(req, timeout=6) as resp:
         posts = json.loads(resp.read())
 except Exception as e:
-    print(f"SKIP:取得失敗({e})")
+    print(f"API_FAIL:取得失敗({str(e)[:60]}) → 安全側BLOCK")
     sys.exit(0)
 
 for p in posts:
@@ -1932,6 +1943,11 @@ echo "  同ジャンル連投チェック: $_SAME_GENRE_BLOCK"
 if [[ "$_SAME_GENRE_BLOCK" == BLOCK:* ]]; then
   echo "❌ 同ジャンル連投BLOCK: $_SAME_GENRE_BLOCK → 投稿停止"
   log_step "genre_block" "BLOCKED" "" "$_SAME_GENRE_BLOCK"
+  archive_and_exit 1
+fi
+if [[ "$_SAME_GENRE_BLOCK" == AUTH_FAIL:* ]] || [[ "$_SAME_GENRE_BLOCK" == API_FAIL:* ]]; then
+  echo "⚠️  同ジャンルチェック: $_SAME_GENRE_BLOCK → 安全側でBLOCK"
+  log_step "genre_block" "BLOCKED_AUTH_FAIL" "" "$_SAME_GENRE_BLOCK"
   archive_and_exit 1
 fi
 

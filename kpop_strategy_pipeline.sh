@@ -58,7 +58,8 @@ check_output() {
     log_step "$key" "error" "$file" "先頭行HTMLコメントのみ"
     archive_and_exit 1
   fi
-  if grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ|入力記事が見当たりません|記事の入力が見当たりません|チェック対象の記事本文を貼り付けてください|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|ウェブフェッチはできません|ウェブフェッチ(は|が|でき)|ユーザーから記事のソース|元の記事が提供されていません|記事本文・題材・元記事URL|対象アーティスト・トピック・元記事内容を貼り付け' "$file"; then
+  # 【SRE調査】プレフィックス行はシステムコメントのためNGワードチェック対象外
+  if grep -vE '^\s*【SRE調査】' "$file" | grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ|入力記事が見当たりません|記事の入力が見当たりません|チェック対象の記事本文を貼り付けてください|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|ウェブフェッチはできません|ウェブフェッチ(は|が|でき)|ユーザーから記事のソース|元の記事が提供されていません|記事本文・題材・元記事URL|対象アーティスト・トピック・元記事内容を貼り付け' ; then
     echo "❌ [$step] エラー応答を検出 → パイプライン停止"
     echo "  先頭行: $(head -1 "$file")"
     log_step "$key" "error" "$file" "エラー応答検出"
@@ -1345,6 +1346,110 @@ if [[ "$_CONTENT_HEAD_NG" != "0" ]]; then
 fi
 
 echo "✅ 品質チェック通過（${CONTENT_LENGTH}文字）"
+
+# ─── [追加③] メタディスクリプション 110〜130文字 BLOCK ─────────────────────────
+echo "=== [品質B] メタディスクリプション文字数チェック ==="
+_META_DESC_CHECK=$(echo "$FINAL_CONTENT" | sed -e 's/<[^>]*>//g' | python3 -c "
+import sys, re
+text = sys.stdin.read().strip()
+text = re.sub(r'\s+', ' ', text)
+sentences = re.split(r'[。！？]', text)
+for s in sentences:
+    s = s.strip()
+    if len(s) >= 30:
+        desc = (s + '。')[:130]
+        break
+else:
+    desc = text[:130]
+print(len(desc), desc[:20])
+" 2>/dev/null)
+_META_LEN=$(echo "$_META_DESC_CHECK" | awk '{print $1}')
+if [[ -n "$_META_LEN" ]] && [[ "$_META_LEN" -lt 110 ]]; then
+  echo "❌ 品質NG: メタディスクリプション候補が短すぎる(${_META_LEN}文字 < 110) → 投稿停止"
+  archive_and_exit 1
+fi
+echo "  ✓ メタディスクリプション候補: ${_META_LEN}文字 (110〜130範囲内)"
+
+# ─── [追加④] 同ジャンル連投チェック（明示的BLOCK） ─────────────────────────────
+echo "=== [品質E] 同ジャンル連投チェック ==="
+_STRATEGY_GENRE_BLOCK=$(python3 - << 'SGENRE_PY' "$CATEGORY_ID"
+import sys, json, urllib.request, os
+from datetime import datetime, timezone, timedelta
+
+cat_id = sys.argv[1] if len(sys.argv) > 1 else ""
+
+GENRE_GROUPS = {
+    "chart":    ["71"],
+    "comeback": ["3", "6"],
+    "beauty":   ["12"],
+    "travel":   ["11"],
+    "live":     ["5"],
+    "fashion":  ["30"],
+    "breaking": ["7"],
+}
+
+def detect_genre(cid):
+    for g, ids in GENRE_GROUPS.items():
+        if cid in ids:
+            return g
+    return None
+
+my_genre = detect_genre(cat_id)
+if not my_genre:
+    print("SKIP:ジャンル不明")
+    sys.exit(0)
+
+cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+auth = ""
+try:
+    auth_file = os.path.expanduser("~/.wp_auth")
+    import re as _re
+    with open(auth_file) as f:
+        m = _re.search(r'Basic\s+(\S+)', f.read())
+        if m: auth = m.group(1)
+except Exception:
+    # ~/.wp_auth 読み込み失敗 → 安全側：BLOCK（続行しない）
+    print(f"AUTH_FAIL:~/.wp_auth読み込み失敗 → 安全側BLOCK")
+    sys.exit(0)
+
+if not auth:
+    print("AUTH_FAIL:認証トークン空 → 安全側BLOCK")
+    sys.exit(0)
+
+try:
+    url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=10&after={urllib.request.quote(cutoff)}&status=publish&_fields=id,title,categories"
+    req = urllib.request.Request(url, headers={"Authorization": f"Basic {auth}", "User-Agent": "kpop-gate/1.0"})
+    with urllib.request.urlopen(req, timeout=6) as resp:
+        posts = json.loads(resp.read())
+except Exception as e:
+    # API取得失敗 → 安全側：BLOCK
+    print(f"API_FAIL:取得失敗({str(e)[:60]}) → 安全側BLOCK")
+    sys.exit(0)
+
+for p in posts:
+    cats = p.get("categories", [])
+    title2 = p.get("title", {}).get("rendered", "")
+    for g, ids in GENRE_GROUPS.items():
+        if g == my_genre:
+            for k in ids:
+                if k.isdigit() and int(k) in cats:
+                    print(f"BLOCK:{my_genre}ジャンルが直近24h以内に投稿済み → ID={p.get('id')} {title2[:40]}")
+                    sys.exit(0)
+print("OK")
+SGENRE_PY
+)
+
+echo "  同ジャンル連投チェック: $_STRATEGY_GENRE_BLOCK"
+if [[ "$_STRATEGY_GENRE_BLOCK" == BLOCK:* ]]; then
+  echo "❌ 同ジャンル連投BLOCK: $_STRATEGY_GENRE_BLOCK → 投稿停止"
+  log_step "genre_block" "BLOCKED" "" "$_STRATEGY_GENRE_BLOCK"
+  archive_and_exit 1
+fi
+if [[ "$_STRATEGY_GENRE_BLOCK" == AUTH_FAIL:* ]] || [[ "$_STRATEGY_GENRE_BLOCK" == API_FAIL:* ]]; then
+  echo "⚠️  同ジャンルチェック: $_STRATEGY_GENRE_BLOCK → 安全側でBLOCK"
+  log_step "genre_block" "BLOCKED_AUTH_FAIL" "" "$_STRATEGY_GENRE_BLOCK"
+  archive_and_exit 1
+fi
 
 PUBLISH_TITLE="$TITLE"  # 【戦略】プレフィックスは廃止（CTR阻害・読者に不要）
 

@@ -331,6 +331,37 @@ if [[ "$V12_CHECK" == *"URL混入"* ]]; then
   fi
 fi
 
+# ─── URL除去後の品質ゲート（最低50文字・固有名詞/数字/感情語必須） ────────────
+_TWEET_QUALITY=$(python3 - << 'TQPY' "$TWEET_TEXT"
+import sys, re
+text = sys.argv[1]
+# ハッシュタグ・空行を除いた実テキスト
+lines = [l for l in text.strip().split('\n') if l.strip() and not l.strip().startswith('#')]
+body = ' '.join(lines)
+issues = []
+# 最低50文字
+if len(body) < 50:
+    issues.append(f'本文{len(body)}文字（50文字未満）')
+# 固有名詞 or 数字 or 感情語のいずれか1つ必須
+has_proper = bool(re.search(r'BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|LE\s*SSERAFIM|EXO|GOT7|MAMAMOO', body, re.IGNORECASE))
+has_number = bool(re.search(r'[0-9]', body))
+has_emotion = bool(re.search(r'衝撃|電撃|判明|ついに|まさか|速報|記録|驚愕|神|レベチ|解禁|完全|必見|復帰|制覇|初|歴史|快挙|1位|首位', body))
+if not (has_proper or has_number or has_emotion):
+    issues.append('固有名詞/数字/感情語が1つもなし')
+if issues:
+    print('NG: ' + ' / '.join(issues))
+else:
+    print('OK')
+TQPY
+)
+if [[ "$_TWEET_QUALITY" == NG:* ]]; then
+  xlog "TWEET_QUALITY_BLOCK: $_TWEET_QUALITY"
+  echo "❌ [X投稿] 投稿品質不足: $_TWEET_QUALITY → BLOCK"
+  X_STATUS="BLOCKED_QUALITY"
+  exit 1
+fi
+xlog "TWEET_QUALITY: OK"
+
 # ─── ハッシュタグ4個以上BLOCK ────────────────────────────────────────────────
 _HASHTAG_COUNT=$(echo "$TWEET_TEXT" | grep -oE '#[^ #　]+' | wc -l || echo 0)
 if [[ "$_HASHTAG_COUNT" -ge 4 ]]; then
