@@ -236,11 +236,13 @@ pre_publish_gate() {
     fi
   fi
 
-  # [3] メタディスクリプション
+  # [3] メタディスクリプション（110〜130文字）
   if [[ -z "$aioseo_desc" ]]; then
     block_reasons+=("AIOSEO_DESC未設定")
-  elif [[ "${#aioseo_desc}" -lt 50 ]]; then
-    block_reasons+=("AIOSEO_DESC短すぎ(${#aioseo_desc}文字 < 50)")
+  elif [[ "${#aioseo_desc}" -lt 110 ]]; then
+    block_reasons+=("AIOSEO_DESC短すぎ(${#aioseo_desc}文字 < 110)")
+  elif [[ "${#aioseo_desc}" -gt 130 ]]; then
+    block_reasons+=("AIOSEO_DESC長すぎ(${#aioseo_desc}文字 > 130)")
   fi
 
   # [4] スラッグ品質チェック
@@ -1844,8 +1846,8 @@ HAS_SOURCE=$(echo "$CONTENT_STATS"  | cut -d'|' -f5)
 
 echo "  純テキスト: ${PLAIN_CHARS}文字 / h2:${H2_COUNT} / h3:${H3_COUNT} / p:${P_COUNT} / 情報元:${HAS_SOURCE}"
 
-if [ "$PLAIN_CHARS" -lt 800 ]; then
-  echo "❌ 品質NG: 純テキストが短すぎる（${PLAIN_CHARS}文字）→ 投稿停止"
+if [ "$PLAIN_CHARS" -lt 1500 ]; then
+  echo "❌ 品質NG: 純テキストが1500文字未満（${PLAIN_CHARS}文字）→ 投稿停止"
   archive_and_exit 1
 fi
 
@@ -1860,6 +1862,79 @@ fi
 
 CONTENT_LENGTH="$PLAIN_CHARS"
 echo "✅ 品質OK（純テキスト${PLAIN_CHARS}文字 / h2:${H2_COUNT} / p:${P_COUNT}）"
+
+# ─── [C-QUALITY] 同ジャンル連投チェック（明示的BLOCK） ───────────────────────
+echo "=== [品質C] 同ジャンル連投チェック ==="
+_SAME_GENRE_BLOCK=$(python3 - << 'GENRE_BLOCK_PY' "$CATEGORY_ID" "${CATEGORY_HINT:-}"
+import sys, json, urllib.request, os
+from datetime import datetime, timezone, timedelta
+
+cat_id = sys.argv[1] if len(sys.argv) > 1 else ""
+cat_hint = sys.argv[2] if len(sys.argv) > 2 else ""
+
+# ジャンルグループ定義（同グループ内は連投禁止）
+GENRE_GROUPS = {
+    "chart":    ["71", "chart", "チャート", "ランキング"],
+    "comeback": ["3", "comeback", "カムバック"],
+    "beauty":   ["12", "beauty", "美容", "コスメ"],
+    "travel":   ["11", "travel", "旅行"],
+    "live":     ["5", "live", "ライブ", "コンサート"],
+    "fashion":  ["30", "fashion", "ファッション"],
+    "breaking": ["7", "breaking", "速報"],
+}
+
+def detect_genre(cat_id_str, hint):
+    for g, keywords in GENRE_GROUPS.items():
+        if any(k in cat_id_str or k in hint for k in keywords):
+            return g
+    return None
+
+my_genre = detect_genre(cat_id, cat_hint)
+if not my_genre:
+    print("SKIP:ジャンル不明")
+    sys.exit(0)
+
+# 直近24時間の投稿を取得
+cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+try:
+    auth_file = os.path.expanduser("~/.wp_auth")
+    auth = ""
+    if os.path.exists(auth_file):
+        import re as _re
+        with open(auth_file) as f:
+            m = _re.search(r'Basic\s+(\S+)', f.read())
+            if m: auth = m.group(1)
+    headers = {"Authorization": f"Basic {auth}"} if auth else {}
+    url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=10&after={urllib.request.quote(cutoff)}&status=publish&_fields=id,title,categories"
+    req = urllib.request.Request(url, headers={**headers, "User-Agent": "kpop-gate/1.0"})
+    with urllib.request.urlopen(req, timeout=6) as resp:
+        posts = json.loads(resp.read())
+except Exception as e:
+    print(f"SKIP:取得失敗({e})")
+    sys.exit(0)
+
+for p in posts:
+    cats = p.get("categories", [])
+    title2 = p.get("title", {}).get("rendered", "")
+    # カテゴリIDで同ジャンル判定
+    for g, keywords in GENRE_GROUPS.items():
+        if g == my_genre:
+            for k in keywords:
+                if k.isdigit() and int(k) in cats:
+                    print(f"BLOCK:{my_genre}ジャンルが直近24h以内に投稿済み → ID={p.get('id')} {title2[:40]}")
+                    sys.exit(0)
+
+print("OK")
+GENRE_BLOCK_PY
+)
+
+echo "  同ジャンル連投チェック: $_SAME_GENRE_BLOCK"
+if [[ "$_SAME_GENRE_BLOCK" == BLOCK:* ]]; then
+  echo "❌ 同ジャンル連投BLOCK: $_SAME_GENRE_BLOCK → 投稿停止"
+  log_step "genre_block" "BLOCKED" "" "$_SAME_GENRE_BLOCK"
+  archive_and_exit 1
+fi
+
 STATUS="publish"
 
 echo "=== CTRタイトル採点 ==="
