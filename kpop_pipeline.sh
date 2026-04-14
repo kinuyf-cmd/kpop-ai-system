@@ -10,7 +10,7 @@ _TODAY=$(date +%Y-%m-%d)
 _KPI_LOG="$(cd "$(dirname "$0")" && pwd)/logs/kpi_posts.jsonl"
 _TODAY_COUNT=0
 if [[ -f "$_KPI_LOG" ]]; then
-  _TODAY_COUNT=$(grep -c "\"date\": \"${_TODAY}\"" "$_KPI_LOG" 2>/dev/null || echo 0)
+  _TODAY_COUNT=$(grep -c "\"date\": \"${_TODAY}\"" "$_KPI_LOG" 2>/dev/null) || _TODAY_COUNT=0
 fi
 if [[ "$_TODAY_COUNT" -ge "$_DAILY_MAX" ]]; then
   echo "⛔ 本日の投稿上限（${_DAILY_MAX}本）に達しています（本日投稿済み: ${_TODAY_COUNT}本）" >&2
@@ -154,14 +154,16 @@ check_output() {
   local step="$2"
   if [[ ! -s "$file" ]]; then
     echo "❌ [$step] 出力が空 → パイプライン停止"
+    log_step "$step" "error" "$file" "出力が空（check_output）"
     archive_and_exit 1
   fi
-  # 極小ファイル（200バイト未満）は記事として不十分 → エラー応答の疑い
+  # 極小ファイル（500バイト未満）は記事として不十分 → エラー応答の疑い（定型文1行通過防止）
   local _sz
   _sz=$(wc -c < "$file" 2>/dev/null || echo 0)
-  if [[ "$_sz" -lt 200 ]]; then
-    echo "❌ [$step] 出力が極小 (${_sz}bytes < 200) → エラー応答の疑い → パイプライン停止"
+  if [[ "$_sz" -lt 500 ]]; then
+    echo "❌ [$step] 出力が極小 (${_sz}bytes < 500) → エラー応答の疑い → パイプライン停止"
     echo "  内容: $(cat "$file")"
+    log_step "$step" "error" "$file" "出力極小: ${_sz}bytes（エラー応答の疑い）"
     archive_and_exit 1
   fi
   # 先頭行がHTMLコメントのみ → デオキシスがメタデータコメントを先頭に出力したケース（本文なし扱い）
@@ -172,11 +174,13 @@ check_output() {
      ! [[ "$_first_line" =~ article-type|TITLE_LOG|pipeline-meta ]]; then
     echo "❌ [$step] 先頭行がHTMLコメントのみ → 本文なし扱い → パイプライン停止"
     echo "  先頭行: $_first_line"
+    log_step "$step" "error" "$file" "先頭行HTMLコメントのみ（本文なし）"
     archive_and_exit 1
   fi
-  if grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ|入力記事が見当たりません|記事の入力が見当たりません|チェック対象の記事本文を貼り付けてください|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|ウェブフェッチはできません|ウェブフェッチ(は|が|でき)|ユーザーから記事のソース|元の記事が提供されていません|記事本文・題材・元記事URL|対象アーティスト・トピック・元記事内容を貼り付け' "$file"; then
+  if grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|許可が必要です|確認させてください|WebSearchを使用|ウェブ検索の許可|許可を?いただ|入力記事が見当たりません|記事の入力が見当たりません|チェック対象の記事本文を貼り付けてください|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|ウェブフェッチはできません|ウェブフェッチ(は|が|でき)|ユーザーから記事のソース|元の記事が提供されていません|記事本文・題材・元記事URL|対象アーティスト・トピック・元記事内容を貼り付け|元ネタが見当たりません|リライト対象の記事本文を貼り付け|記事の元となる情報.*を提供してください|元記事.*を提供してください|元記事.*を貼り付けてください|読んでいただきありがとうございます.*提供してください|このチャットに貼り付けてください|元情報.*を.*貼り付け|ドラフト文章.*貼り付け|アーティスト名.*イベント詳細.*日付.*貼り付け|記事の元情報が貼り付けられていません|貼り付けられていません|このチャットに貼り付け|タイトルを入力してください|評価対象がありません' "$file"; then
     echo "❌ [$step] エラー応答を検出 → パイプライン停止"
     echo "  先頭行: $(head -1 "$file")"
+    log_step "$step" "error" "$file" "エラー応答検出（boilerplate）: $(head -1 "$file")"
     archive_and_exit 1
   fi
   echo "  ✓ [$step] OK"
@@ -192,6 +196,190 @@ cleanup_reports_dir() {
   elif [[ -d "$SCRIPT_DIR/reports" ]]; then
     rm -rf "$SCRIPT_DIR/reports"
   fi
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# pre_publish_gate: 投稿前品質ゲート
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+pre_publish_gate() {
+  local title="${1:-}"
+  local content_file="${2:-/tmp/kpop_content.txt}"
+  local aioseo_desc="${3:-}"
+  local slug="${4:-}"
+
+  local block_reasons=()
+  local warn_reasons=()
+  local gate_pass=true
+
+  # [1] タイトル崩壊チェック
+  if [[ -z "$title" ]]; then
+    block_reasons+=("タイトル空")
+  elif [[ "${#title}" -lt 10 ]]; then
+    block_reasons+=("タイトル短すぎ(${#title}文字)")
+  else
+    # AIボイラープレート検出
+    if echo "$title" | grep -qE "以下に完成記事|以下がリライト|記事を生成します|入力記事が見当たりません|提供してください|確認させてください"; then
+      block_reasons+=("タイトルにAIボイラープレート検出")
+    fi
+  fi
+
+  # [2] コンテンツ最低品質チェック
+  if [[ -f "$content_file" ]]; then
+    local content_size
+    content_size=$(wc -c < "$content_file" 2>/dev/null || echo 0)
+    if [[ "$content_size" -lt 3000 ]]; then
+      block_reasons+=("コンテンツサイズ不足(${content_size}bytes < 3000)")
+    fi
+    # エラーボイラープレート検出
+    if grep -qE "以下に完成記事|記事を生成します|入力記事が見当たりません|ウェブフェッチできません" "$content_file" 2>/dev/null; then
+      block_reasons+=("コンテンツにエラーボイラープレート検出")
+    fi
+  fi
+
+  # [3] メタディスクリプション
+  if [[ -z "$aioseo_desc" ]]; then
+    block_reasons+=("AIOSEO_DESC未設定")
+  elif [[ "${#aioseo_desc}" -lt 50 ]]; then
+    block_reasons+=("AIOSEO_DESC短すぎ(${#aioseo_desc}文字 < 50)")
+  fi
+
+  # [4] スラッグ品質チェック
+  if [[ -n "$slug" ]]; then
+    # 先頭が数字 → 禁止（数字のみ・年+数字・数字始まり全般）
+    if [[ "$slug" =~ ^[0-9] ]]; then
+      block_reasons+=("スラッグが数字始まり（禁止）: '$slug'")
+    fi
+    if [[ "$slug" =~ ^[0-9]+$ ]]; then
+      block_reasons+=("スラッグが純粋な数字: '$slug'")
+    fi
+    # T.O.P表記が残存している場合（slug_generatorで変換済みのはずだが念のため）
+    if echo "$slug" | grep -qi "t\.o\.p\|t-o-p"; then
+      block_reasons+=("スラッグにT.O.P表記残存（topに変換必須）: '$slug'")
+    fi
+    # アーティスト/キーワードトークン数チェック（ハイフン区切りで最低2語）
+    local slug_token_count
+    slug_token_count=$(echo "$slug" | tr '-' '\n' | grep -cE "[a-z]{2,}" || echo 0)
+    if [[ "$slug_token_count" -lt 2 ]]; then
+      block_reasons+=("スラッグのキーワードトークン不足(${slug_token_count}語)")
+    fi
+  fi
+
+  # [5] 重複チェック（WP APIで直近10件のタイトルを取得）
+  local dup_title
+  dup_title=$(python3 - << 'DUPPY' "$title" 2>/dev/null || echo "")
+import sys, json, urllib.request, re
+
+title = sys.argv[1]
+def token_overlap(a, b):
+    ta = set(re.findall(r'[\w]+', a.lower()))
+    tb = set(re.findall(r'[\w]+', b.lower()))
+    if not ta or not tb: return 0.0
+    return len(ta & tb) / len(ta | tb)
+
+try:
+    url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&_fields=id,title"
+    req = urllib.request.Request(url, headers={"User-Agent": "kpop-gate/1.0"})
+    with urllib.request.urlopen(req, timeout=6) as resp:
+        posts = json.loads(resp.read())
+    for p in posts:
+        t2 = p.get("title", {})
+        t2 = t2.get("rendered", "") if isinstance(t2, dict) else str(t2)
+        sim = token_overlap(title, t2)
+        if sim >= 0.70:
+            print(f"ID={p.get('id')} sim={sim:.0%}: {t2[:60]}")
+            sys.exit()
+except Exception:
+    pass
+DUPPY
+  if [[ -n "$dup_title" ]]; then
+    block_reasons+=("類似タイトルの記事が既存: $dup_title")
+  fi
+
+  # [6] サムネイルコピー品質チェック（全違反BLOCK）
+  local thumb_copy="${THUMB_TITLE:-}"
+  if [[ -n "$thumb_copy" ]]; then
+    # 禁止パターン
+    if [[ "$thumb_copy" == *".."* ]] || [[ "$thumb_copy" == *"…"* ]]; then
+      block_reasons+=("サムネイルコピーに'..'/'…'検出（禁止）: '$thumb_copy'")
+    fi
+    if [[ "$thumb_copy" == *"「」"* ]]; then
+      block_reasons+=("サムネイルコピーに「」空パターン検出（禁止）: '$thumb_copy'")
+    fi
+    # 2行構成チェック（改行区切り）
+    local thumb_line_count
+    thumb_line_count=$(echo "$thumb_copy" | wc -l)
+    if [[ "$thumb_line_count" -lt 2 ]]; then
+      block_reasons+=("サムネイルコピーが1行のみ（2行構成必須）: '$thumb_copy'")
+    else
+      # 各行15文字以内チェック
+      local thumb_line_ok=true
+      while IFS= read -r line; do
+        [[ -z "$line" ]] && continue
+        if [[ "${#line}" -gt 15 ]]; then
+          block_reasons+=("サムネイルコピー行が15文字超(${#line}文字): '$line'")
+          thumb_line_ok=false
+        fi
+      done <<< "$thumb_copy"
+    fi
+    # 固有名詞・数字・感情要素のいずれか必須
+    local has_artist has_number has_emotion
+    has_artist=$(echo "$thumb_copy" | grep -ciE "BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|Stray|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|LE SSERAFIM|aespa|EXO|GOT7|MAMAMOO|ATEEZ" || true)
+    has_number=$(echo "$thumb_copy" | grep -cE "[0-9]" || true)
+    has_emotion=$(echo "$thumb_copy" | grep -ciE "制覇|記録|復帰|衝撃|独占|最高|伝説|解禁|初|号泣|歴史|快挙|圧倒|無双|覚醒|爆発|崩壊|激震|話題|炎上" || true)
+    if [[ "$has_artist" -eq 0 ]] && [[ "$has_number" -eq 0 ]] && [[ "$has_emotion" -eq 0 ]]; then
+      block_reasons+=("サムネイルコピーに固有名詞・数字・感情要素のいずれもなし（CTR必須条件未達）: '$thumb_copy'")
+    fi
+  fi
+
+  # [7] CTRスコアチェック（タイトルベース・60未満BLOCK）
+  local ctr_score=0
+  if [[ -n "$title" ]]; then
+    ctr_score=$(python3 - << 'CTRPY' "$title"
+import sys, re
+t = sys.argv[1]
+score = 0
+# 数字あり +20
+if re.search(r'[0-9０-９]', t): score += 20
+# 対比構造 +20（vs/→/から/より/でも/なのに/ただし）
+if re.search(r'(vs|→|から|より|でも|なのに|ただし|なぜ|なのか|？|？)', t): score += 20
+# 固有名詞 +20
+if re.search(r'BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|LE SSERAFIM|EXO|GOT7|MAMAMOO', t, re.IGNORECASE): score += 20
+# 感情ワード +20
+if re.search(r'制覇|記録|復帰|衝撃|独占|最高|伝説|解禁|初|号泣|歴史|快挙|圧倒|無双|覚醒|爆発|崩壊|激震|1位|首位|全米|全英|Billboard', t): score += 20
+# 32文字以内 +20
+if len(t) <= 32: score += 20
+print(score)
+CTRPY
+)
+    if [[ "$ctr_score" -lt 60 ]]; then
+      block_reasons+=("CTRスコア不足(${ctr_score}/100 < 60): タイトル='$title'")
+    fi
+  fi
+
+  # ── 結果ログ・判定 ─────────────────────────────────────────────────────
+  local all_issues=""
+  for r in "${block_reasons[@]}"; do all_issues="$all_issues|BLOCK:$r"; done
+  for w in "${warn_reasons[@]}"; do all_issues="$all_issues|WARN:$w"; done
+
+  log_step "pre_publish_gate" "$([ ${#block_reasons[@]} -eq 0 ] && echo ok || echo BLOCKED)" "" "${all_issues:1}"
+
+  if [[ ${#warn_reasons[@]} -gt 0 ]]; then
+    echo "  ⚠️ [pre_publish_gate] 警告:"
+    for w in "${warn_reasons[@]}"; do
+      echo "      - $w"
+    done
+  fi
+
+  if [[ ${#block_reasons[@]} -gt 0 ]]; then
+    echo "❌ [pre_publish_gate] 投稿ブロック理由:"
+    for r in "${block_reasons[@]}"; do
+      echo "    - $r"
+    done
+    return 1
+  fi
+
+  echo "  ✅ [pre_publish_gate] 全チェック通過"
+  return 0
 }
 
 archive_and_exit() {
@@ -657,7 +845,25 @@ fi
 log_step "deoxys" "ok" "reports/0_breaking.md"
 
 echo "=== [2] メタモン: CTRリライト ==="
-claude --no-session-persistence --agent metamon_kpop -p "
+# [ガード] 0_breaking.mdが空またはreportsリンク切れの場合は即停止
+_BREAKING_CONTENT=$(cat reports/0_breaking.md 2>/dev/null || echo "")
+if [[ -z "$_BREAKING_CONTENT" ]] || [[ ${#_BREAKING_CONTENT} -lt 100 ]]; then
+  echo "❌ [メタモン前ガード] reports/0_breaking.md が空または取得不可 (${#_BREAKING_CONTENT}文字) → パイプライン停止"
+  log_step "pre_metamon_guard" "error" "reports/0_breaking.md" "0_breaking.md空: reportsリンク切れの疑い"
+  archive_and_exit 1
+fi
+# [前処理] デオキシスのメタ説明行（「記事を生成します」等）を除去して本文のみを渡す
+_BREAKING_CONTENT=$(echo "$_BREAKING_CONTENT" | grep -vE '(一次ソース情報が確認できました|記事を生成します|情報が確認できました。記事を|以下に記事を生成|記事を作成します|記事を出力します)' || echo "$_BREAKING_CONTENT")
+# [ガード] デオキシスがチャットUI向け定型文を返した場合は即停止
+if echo "$_BREAKING_CONTENT" | grep -qE '(記事の元情報.*貼り付け|このチャットに貼り付け|ドラフト文章.*このチャット|チャットに貼り付けてください|記事の元原稿が提供されていません|リライト対象の記事本文を貼り付け|元原稿.*提供されていません)'; then
+  echo "❌ [メタモン前ガード] デオキシスがチャットUI向け定型文を出力しました → パイプライン停止"
+  echo "  内容冒頭: $(head -c 200 reports/0_breaking.md)"
+  log_step "pre_metamon_guard" "error" "reports/0_breaking.md" "デオキシスがチャット定型文を出力（入力コンテキスト誤認識）"
+  archive_and_exit 1
+fi
+# [重要] _BREAKING_CONTENTをシェル引数展開のトラブルを避けるためファイル経由で渡す
+_METAMON_PROMPT_FILE=$(mktemp "/tmp/metamon_prompt_${RUN_ID}_XXXXXX.txt")
+cat > "$_METAMON_PROMPT_FILE" << METAMON_PROMPT_EOF
 あなたはK-POPニュース専門ライター兼CTR改善担当です。
 
 以下の記事を、SEOとCTRの両方が強い完成記事にしてください。
@@ -722,20 +928,77 @@ HTML本文の最初の<p>または<h2>の直前に、以下を判定して1行�
 ${METAMON_DIRECTIVE}
 
 ---
-$(cat reports/0_breaking.md)
-" > reports/1_rewrite.md
+【リライト対象記事・全文（以下をそのままリライトせよ）】
+METAMON_PROMPT_EOF
+# 記事本文をファイルに追記（変数展開の問題を回避）
+printf '%s\n' "${_BREAKING_CONTENT}" >> "$_METAMON_PROMPT_FILE"
+_METAMON_PROMPT_SZ=$(wc -c < "$_METAMON_PROMPT_FILE" 2>/dev/null || echo 0)
+echo "  [metamon] プロンプトファイル: $_METAMON_PROMPT_SZ bytes (記事: ${#_BREAKING_CONTENT} chars)"
+claude --no-session-persistence --agent metamon_kpop -p < "$_METAMON_PROMPT_FILE" > reports/1_rewrite.md
+rm -f "$_METAMON_PROMPT_FILE"
 sanitize_output reports/1_rewrite.md
+# [sanitize後ガード] sanitize_outputが定型文を除去した結果ファイルが空/極小になった場合
+_METAMON_SZ_AFTER=$(wc -c < reports/1_rewrite.md 2>/dev/null || echo 0)
+if [[ "$_METAMON_SZ_AFTER" -lt 500 ]]; then
+  echo "❌ [メタモン後ガード] sanitize後ファイルが極小(${_METAMON_SZ_AFTER}bytes) → 定型文除去後に実記事なし → パイプライン停止"
+  log_step "metamon" "error" "reports/1_rewrite.md" "sanitize後極小: ${_METAMON_SZ_AFTER}bytes（定型文のみだった疑い）"
+  archive_and_exit 1
+fi
 # TITLE_LOG 抽出（メタモンが出力した内部ログ行を記録してから本文から除去）
 _TITLE_LOG=$(grep '^TITLE_LOG:' reports/1_rewrite.md | head -1)
 if [[ -n "$_TITLE_LOG" ]]; then
   echo "  [metamon] $_TITLE_LOG"
-  grep -v '^TITLE_LOG:' reports/1_rewrite.md > /tmp/1_rewrite_clean.md && mv /tmp/1_rewrite_clean.md reports/1_rewrite.md
+  grep -v '^TITLE_LOG:' reports/1_rewrite.md > /tmp/1_rewrite_clean_${RUN_ID}.md && mv /tmp/1_rewrite_clean_${RUN_ID}.md reports/1_rewrite.md
 fi
 check_output reports/1_rewrite.md "メタモン"
+# [追加ガード] メタモン出力がチャット定型文のみの場合（check_output通過後も念のため確認）
+# ※ sanitize_outputが除去しきれなかったHTMLタグ内定型文等に対するフォールバック
+if grep -qE '(記事の元情報.*貼り付け|このチャットに貼り付け|ドラフト文章.*貼り付け|アーティスト名.*イベント詳細.*日付.*貼り付け|記事の元情報が貼り付けられていません|チェック対象の記事本文を貼り付け|貼り付けられていません|タイトルを入力してください|評価対象がありません|入力記事が見当たりません|記事の入力が見当たりません)' reports/1_rewrite.md; then
+  echo "❌ [メタモン後ガード] メタモンがチャットUI向け定型文を出力しました → パイプライン停止"
+  echo "  内容冒頭: $(head -c 200 reports/1_rewrite.md)"
+  log_step "metamon" "error" "reports/1_rewrite.md" "メタモンがチャット定型文を出力（入力コンテキスト誤認識）"
+  archive_and_exit 1
+fi
 log_step "metamon" "ok" "reports/1_rewrite.md"
 
 echo "=== [2.5] イーブイ: タイトル評価・確定 ==="
-TITLE_A=$(head -n 1 reports/1_rewrite.md)
+# 1行目タイトル抽出: 空行スキップ・<h1>タグがある場合はタグを除去して中身のみ取得
+TITLE_A=$(python3 -c "
+import re, sys
+lines = open('reports/1_rewrite.md', encoding='utf-8', errors='replace').read().splitlines()
+for l in lines:
+    l = l.strip()
+    if not l:
+        continue
+    # <h1>...</h1> 形式のタイトルを除去してテキストのみ取得（閉じタグなし・行末なしも対応）
+    m = re.match(r'^<h1[^>]*>(.*?)(?:</h1>)?$', l, re.IGNORECASE)
+    if m:
+        title = m.group(1).strip()
+        if title:
+            print(title)
+            break
+    # h2以下・div・p等のコンテンツタグはスキップ（h1以外のブロック要素）
+    if re.match(r'^<(h[2-6]|p|div|ul|ol|li|table|section|article|header|footer|nav|aside|figure|blockquote|pre|code)[^>]*>', l, re.IGNORECASE):
+        continue
+    # HTMLコメントはスキップ
+    if l.startswith('<!--'):
+        continue
+    # テキスト行（または未知のタグ行）はタイトル候補として採用
+    # 未知タグの場合はタグを除去してテキストを取得
+    clean = re.sub(r'<[^>]+>', '', l).strip()
+    if clean:
+        print(clean)
+        break
+" 2>/dev/null || head -n 1 reports/1_rewrite.md)
+# フォールバック: TITLE_LOGの採用タイトルから取得（本文先頭から取れなかった場合）
+if [[ -z "$TITLE_A" ]] && [[ -n "$_TITLE_LOG" ]]; then
+  _ADOPTED=$(echo "$_TITLE_LOG" | sed 's/.*採用=\([ABC]\).*/\1/')
+  case "$_ADOPTED" in
+    A) TITLE_A=$(echo "$_TITLE_LOG" | grep -oP 'A=「\K[^」]+') ;;
+    B) TITLE_A=$(echo "$_TITLE_LOG" | grep -oP 'B=「\K[^」]+') ;;
+    C) TITLE_A=$(echo "$_TITLE_LOG" | grep -oP 'C=「\K[^」]+') ;;
+  esac
+fi
 echo "  メタモン採用タイトル: $TITLE_A"
 
 # 勝ちパターン参照（学習データがあれば）
@@ -772,10 +1035,28 @@ ${WIN_PROMPT}
 ${EEVEE_DIRECTIVE}
 " 2>/dev/null | grep -v '^$' | head -1)
 
+# [ガード] TITLE_Aが空の場合はパイプライン停止（メタモンタイトル未取得）
+if [[ -z "$TITLE_A" ]]; then
+  echo "❌ [イーブイ前ガード] メタモン採用タイトルが空 → パイプライン停止"
+  log_step "eevee" "error" "reports/1_rewrite.md" "TITLE_A空: メタモンタイトル取得失敗"
+  archive_and_exit 1
+fi
+# [ガード] TITLE_Aが定型文の場合はパイプライン停止（メタモンがコンテキストを誤認識）
+if echo "$TITLE_A" | grep -qE '(記事の元情報.*貼り付け|このチャットに貼り付け|ドラフト文章.*貼り付け|アーティスト名.*イベント詳細.*日付.*貼り付け|記事の元情報が貼り付けられていません|タイトルを入力してください|評価対象がありません)'; then
+  echo "❌ [イーブイ前ガード] TITLE_Aが定型文 → メタモンがコンテキストを誤認識 → パイプライン停止"
+  echo "  TITLE_A冒頭: $(echo "$TITLE_A" | head -c 100)"
+  log_step "eevee" "error" "reports/1_rewrite.md" "TITLE_Aが定型文: メタモン誤認識"
+  archive_and_exit 1
+fi
 # フォールバック: タイトルBが空ならタイトルAをそのまま使用
 if [[ -z "$TITLE_B" ]]; then
   TITLE_B="$TITLE_A"
   echo "  ⚠️ イーブイ評価失敗 → メタモンタイトルで確定"
+fi
+# [ガード] タイトルBに定型文が含まれている場合はフォールバック
+if echo "$TITLE_B" | grep -qE 'タイトルを入力してください|評価対象がありません|このチャットに貼り付け|記事の元情報|メタモン採用タイトルが空白|空白のため|入力してください'; then
+  echo "  ⚠️ [イーブイ後ガード] イーブイが定型文を出力 → TITLE_Aで確定"
+  TITLE_B="$TITLE_A"
 fi
 echo "  イーブイ確定タイトル: $TITLE_B"
 
@@ -790,6 +1071,20 @@ echo "  ✓ reports/title_ab.json 保存完了"
 log_step "eevee" "ok" "reports/title_ab.json" "title confirmed"
 
 echo "=== [3] ジラーチ: ファクトチェック ==="
+
+# [事前ガード] ジラーチへの入力(1_rewrite.md)が定型文・極小でないか最終確認
+_JIRACHI_INPUT_SZ=$(wc -c < reports/1_rewrite.md 2>/dev/null || echo 0)
+if [[ "$_JIRACHI_INPUT_SZ" -lt 500 ]]; then
+  echo "❌ [ジラーチ前ガード] 1_rewrite.mdが極小(${_JIRACHI_INPUT_SZ}bytes) → パイプライン停止"
+  log_step "jirachi" "error" "reports/1_rewrite.md" "入力極小: ${_JIRACHI_INPUT_SZ}bytes"
+  archive_and_exit 1
+fi
+if grep -qE '記事の元情報.*貼り付け|このチャットに貼り付け|ドラフト文章.*貼り付け|記事の元情報が貼り付けられていません|タイトルを入力してください' reports/1_rewrite.md; then
+  echo "❌ [ジラーチ前ガード] 1_rewrite.mdに定型文を検出 → パイプライン停止"
+  echo "  内容冒頭: $(head -c 150 reports/1_rewrite.md)"
+  log_step "jirachi" "error" "reports/1_rewrite.md" "入力に定型文検出"
+  archive_and_exit 1
+fi
 
 # カテゴリ111（視聴方法・配信ガイド）判定
 _JIRACHI_TITLE=$(head -1 reports/1_rewrite.md | sed 's/^[#[:space:]]*//')
@@ -826,7 +1121,9 @@ else
   _STREAMING_EXTRA_J=""
 fi
 
-claude --no-session-persistence --agent jirachi_kpop -p "
+# ジラーチプロンプトをファイル経由で渡す（インライン $(cat) によるプロンプト破損を防ぐ）
+_JIRACHI_PROMPT_FILE=$(mktemp "/tmp/jirachi_prompt_${RUN_ID}_XXXXXX.txt")
+cat > "$_JIRACHI_PROMPT_FILE" <<EOF
 今日は${TODAY}です。
 
 【前提条件】
@@ -861,8 +1158,11 @@ ${_STREAMING_EXTRA_J}
 視聴導線記事の場合のみ、本文の最後の行の後にFACTCHECK_LOGを追加せよ（本文内には含めない）
 
 ---
-$(cat reports/1_rewrite.md)
-" > reports/2_checked.md
+【ファクトチェック対象記事・全文（以下を確認せよ）】
+EOF
+cat reports/1_rewrite.md >> "$_JIRACHI_PROMPT_FILE"
+claude --no-session-persistence --agent jirachi_kpop -p < "$_JIRACHI_PROMPT_FILE" > reports/2_checked.md
+rm -f "$_JIRACHI_PROMPT_FILE"
 sanitize_output reports/2_checked.md
 # FACTCHECK_LOG行をログに保存して本文から除去
 _FACTCHECK_LOG_J=$(grep '^FACTCHECK_LOG:' reports/2_checked.md | head -1)
@@ -965,6 +1265,7 @@ while true; do
   echo "  ガルデvoir採点中... (試行$((${_GDV_RETRY}+1)))"
   claude --no-session-persistence --agent gardevoir_hook_critic -p "
 以下の記事を採点せよ。出力は SCORE: から始まる固定フォーマットのみとする。会話・説明・質問を出力してはならない。
+【必須】出力の最後に必ず「VERDICT: PASS」「VERDICT: SOFT_RETRY」「VERDICT: HARD_FAIL」のいずれか1行を含めること。VERDICT行を省略することは絶対に禁止。
 
 ${GARDEVOIR_DIRECTIVE}
 
@@ -987,7 +1288,7 @@ $(cat reports/2_checked.md)
 " > reports/3_gardevoir.md 2>/dev/null
   sanitize_output reports/3_gardevoir.md
 
-  _GDV_VERDICT=$(grep -oP '^VERDICT:\s*\K(PASS|SOFT_RETRY|HARD_FAIL)' reports/3_gardevoir.md | head -1)
+  _GDV_VERDICT=$(grep -oP '^\s*VERDICT:\s*\K(PASS|SOFT_RETRY|HARD_FAIL)' reports/3_gardevoir.md | head -1)
   # SCORE パース: 複数フォーマットに対応
   #   パターン1: "SCORE: 81"           (同一行にスコアあり)
   #   パターン2: "SCORE: 81/100"       (同一行に /100 付き)
@@ -1086,25 +1387,31 @@ print(json.dumps({
   elif [ "${_GDV_VERDICT}" = "SOFT_RETRY" ] && [ "${_GDV_RETRY}" -lt 2 ]; then
     _GDV_RETRY=$((_GDV_RETRY+1))
     echo "⚠️ ガルデvoir SOFT_RETRY (score=${_GDV_SCORE}, 試行${_GDV_RETRY}/2) — メタモン・デオキシス差し戻し"
-    # タイトル再生成（メタモン）
-    claude --no-session-persistence --agent metamon_kpop -p "
+    # タイトル再生成（メタモン）— ファイル経由でプロンプト渡し（シェル展開でのHTMLエスケープ破損を防ぐ）
+    _GDV_META_RETRY_PROMPT=$(mktemp "/tmp/gdv_meta_retry_${RUN_ID}_XXXXXX.txt")
+    cat > "$_GDV_META_RETRY_PROMPT" <<EOF
 以下の記事のタイトルを再生成せよ。
 【改善要求】
 ${_GDV_MUST_FIX}
 【現タイトル】${_GDV_TITLE}
-【記事本文】
-$(cat reports/2_checked.md)
-" > /tmp/gardevoir_metamon_retry.md 2>/dev/null
+【記事本文（以下をそのまま参照せよ）】
+EOF
+    cat reports/2_checked.md >> "$_GDV_META_RETRY_PROMPT"
+    claude --no-session-persistence --agent metamon_kpop -p < "$_GDV_META_RETRY_PROMPT" > /tmp/gardevoir_metamon_retry.md 2>/dev/null
+    rm -f "$_GDV_META_RETRY_PROMPT"
     _NEW_TITLE=$(head -1 /tmp/gardevoir_metamon_retry.md | sed 's/^[#[:space:]]*//')
     [ -n "$_NEW_TITLE" ] && _GDV_TITLE="$_NEW_TITLE"
-    # 冒頭再生成（デオキシス的リライト — 2_checked.mdの冒頭を差し替え）
-    claude --no-session-persistence --agent deoxys_kpop -p "
+    # 冒頭再生成（デオキシス的リライト — 2_checked.mdの冒頭を差し替え）— ファイル経由
+    _GDV_DEO_RETRY_PROMPT=$(mktemp "/tmp/gdv_deo_retry_${RUN_ID}_XXXXXX.txt")
+    cat > "$_GDV_DEO_RETRY_PROMPT" <<EOF
 以下の記事の冒頭（最初の300〜500文字）を書き直せ。タイトル行・H2・CTAは変えない。
 【改善要求】
 ${_GDV_MUST_FIX}
-【記事全文】
-$(cat reports/2_checked.md)
-" > /tmp/gardevoir_deoxys_retry.md 2>/dev/null
+【記事全文（以下をそのまま参照せよ）】
+EOF
+    cat reports/2_checked.md >> "$_GDV_DEO_RETRY_PROMPT"
+    claude --no-session-persistence --agent deoxys_kpop -p < "$_GDV_DEO_RETRY_PROMPT" > /tmp/gardevoir_deoxys_retry.md 2>/dev/null
+    rm -f "$_GDV_DEO_RETRY_PROMPT"
     [ -s /tmp/gardevoir_deoxys_retry.md ] && cp /tmp/gardevoir_deoxys_retry.md reports/2_checked.md
     _GDV_HOOK=$(python3 -c "
 import re
@@ -1372,6 +1679,9 @@ ng_words = [
     "まとめました", "解説します", "ご質問", "サポート",
     "AIとして", "言語モデル", "できません", "お答えできません",
     "修正箇所", "修正サマリー", "##",
+    "入力記事が見当たりません", "記事が見当たりません", "記事を提供してください",
+    "以下の記事を提供", "記事の入力が見当たりません", "元となる記事の原文",
+    "元の記事が提供されていません", "入力記事が提供されていない",
 ]
 # 英語Claudeエラーメッセージ（タイトル混入防止）
 ng_words_en = [
@@ -1730,6 +2040,55 @@ print(alt)
   echo "  ✅ ALTテキスト設定: ${ALT_TEXT:0:50}..."
 fi
 
+# === サムネイルコピー品質警告（pre-publish thumbnail check） ===
+if [[ -n "${THUMB_TITLE:-}" ]]; then
+  echo "=== サムネイルコピー品質チェック ==="
+  python3 - << 'THUMB_CHECK_PY' "${THUMB_TITLE:-}" "${TITLE:-}"
+import sys, re
+copy = sys.argv[1] if len(sys.argv) > 1 else ""
+title = sys.argv[2] if len(sys.argv) > 2 else ""
+
+ARTIST_PAT = re.compile(
+    r"BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|"
+    r"Stray\s*Kids|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|BIGBANG|SHINee|MAMAMOO",
+    re.IGNORECASE
+)
+
+issues = []
+blocks = []
+
+if not copy:
+    issues.append("コピーテキストなし")
+else:
+    if ".." in copy:
+        blocks.append(f"'..'パターン検出（フォントバグ）: '{copy}'")
+    if "「」" in copy:
+        blocks.append(f"「」空パターン検出: '{copy}'")
+    if len(copy) > 28:
+        issues.append(f"コピー長={len(copy)}文字（28文字超、オーバーフロー懸念）")
+    if not ARTIST_PAT.search(copy):
+        issues.append(f"アーティスト名未検出: '{copy}'")
+    # タイトルキーワード一致チェック
+    if title:
+        tw = set(re.findall(r"[\w]+", title.lower()))
+        cw = set(re.findall(r"[\w]+", copy.lower()))
+        if tw and cw:
+            overlap = len(tw & cw) / len(tw)
+            if overlap < 0.1:
+                issues.append(f"タイトルとコピーの一致率低（{overlap:.0%}）")
+
+if blocks:
+    for b in blocks:
+        print(f"  ❌ [サムネ/BLOCK] {b}")
+    sys.exit(1)
+elif issues:
+    for i in issues:
+        print(f"  ⚠️ [サムネ/WARN] {i}")
+else:
+    print(f"  ✅ サムネイルコピーOK: '{copy}'")
+THUMB_CHECK_PY
+fi
+
 # === カテゴリ自動判定（15分類） ===
 CATEGORY_ID=$(python3 - << 'PY' "$TITLE"
 import sys
@@ -1949,6 +2308,11 @@ PY
 echo "TAG_IDS=$TAG_IDS"
 
 SLUG=$(python3 "$SCRIPT_DIR/lib/slug_generator.py" "$TITLE")
+# スラッグ品質チェック: 数字始まり or 語が少なすぎる場合は警告・kpop-プレフィックス付与
+if [[ "$SLUG" =~ ^[0-9] ]] || [[ "$(echo "$SLUG" | tr -cd '-' | wc -c)" -lt 2 ]]; then
+  echo "  ⚠️ [slug_validator] 不良スラッグ検出: '$SLUG' → kpop-プレフィックス付与"
+  SLUG="kpop-${SLUG}"
+fi
 echo "  slug: $SLUG"
 
 DESC=$(echo "$CONTENT" | sed -e 's/<[^>]*>//g' | python3 -c "import sys; t=sys.stdin.read().strip(); print(t[:120])")
@@ -2005,6 +2369,13 @@ PY
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ] && [ -f "$TOKEN_LOG" ]; then
   export PIPELINE_TOKEN_COUNT=$(token_total "$TOKEN_LOG")
   echo "  トークン合計: $PIPELINE_TOKEN_COUNT"
+fi
+
+# === Pre-Publish品質ゲート ===
+echo "=== Pre-Publish品質ゲート ==="
+if ! pre_publish_gate "$TITLE" "/tmp/kpop_content.txt" "${AIOSEO_DESC:-}" "$SLUG"; then
+  echo "❌ Pre-Publishゲート失敗 → 投稿中止"
+  archive_and_exit 1
 fi
 
 # === 投稿前バリデーション（再発防止の本丸） ===
@@ -2367,6 +2738,67 @@ else
   X_STATUS="失敗"
 fi
 log_step "x_post" "$(echo "$X_STATUS" | grep -q '成功' && echo ok || echo skipped)" "reports/4_sns.md" "$X_STATUS (pre_score=$SNS_SCORE/100)"
+
+# === X投稿監査ログ（x_post_audit.jsonl）───────────────────────────────────
+{
+  _xaudit_ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  _xaudit_status=""
+  if echo "$X_STATUS" | grep -q "成功"; then
+    _xaudit_status="posted"
+  elif echo "$X_STATUS" | grep -q "DRY-RUN"; then
+    _xaudit_status="plan_only"
+  elif echo "$X_STATUS" | grep -q "スキップ\|フェイルセーフ"; then
+    _xaudit_status="skipped"
+  elif echo "$X_STATUS" | grep -q "失敗"; then
+    _xaudit_status="failed"
+  else
+    _xaudit_status="unknown"
+  fi
+  _xaudit_mode=$([ "${ENABLE_X_POST:-0}" = "1" ] && echo "live" || echo "dry_run")
+  _xaudit_tweet_id=$(echo "$X_POST_RESULT" | grep -oP 'TWEET_ID=\K[0-9]+' | head -1 || echo "")
+  _xaudit_tweet_url=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || echo "")
+  _xaudit_main_text=$(head -c 200 "reports/4_sns.md" 2>/dev/null | tr '\n' ' ' | sed 's/"/\\"/g' || echo "")
+  python3 - << XAUDIT_PY "${POST_ID:-}" "${POST_URL:-}" "$_xaudit_status" "$_xaudit_tweet_id" "$_xaudit_tweet_url" "$_xaudit_mode" "$_xaudit_ts" "${SNS_SCORE:-0}"
+import json, sys
+from pathlib import Path
+
+post_id   = sys.argv[1]
+art_url   = sys.argv[2]
+status    = sys.argv[3]
+tweet_id  = sys.argv[4]
+tweet_url = sys.argv[5]
+mode      = sys.argv[6]
+ts        = sys.argv[7]
+score     = sys.argv[8]
+
+main_text = ""
+try:
+    main_text = Path("reports/4_sns.md").read_text(errors="replace")[:300].replace("\n"," ")
+except Exception:
+    pass
+
+issues = []
+if not tweet_id and status == "posted":
+    issues.append("tweet_id取得失敗")
+
+rec = {
+    "post_id": post_id,
+    "article_url": art_url,
+    "main_post_text": main_text,
+    "reply_text": "",
+    "tweet_status": status,
+    "tweet_id": tweet_id,
+    "tweet_url": tweet_url,
+    "posted_at": ts,
+    "mode": mode,
+    "pre_score": float(score) if score else 0,
+    "issues": issues,
+}
+out = Path("/home/aiuser/kpop-ai-system/logs/x_post_audit.jsonl")
+with out.open("a", encoding="utf-8") as f:
+    f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+XAUDIT_PY
+} 2>/dev/null || true
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # タイトル学習: pending で記録（実CTR取得後に win/lose 確定）
