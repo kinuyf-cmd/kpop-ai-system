@@ -45,8 +45,8 @@ AGENT_NAMES = {
     "butterfree": "バタフリー", "lapras": "ラプラス",
     "mimikyu": "ミミッキュ",  "wobbuffet": "ソーナンス",
     "venusaur": "フシギバナ",  "alakazam": "アラカザム",
-    "gengar": "ゲンガー",     "dragonite": "カイリュー",
-    "persian": "ペルシアン",   "regigigas": "レジギガス",
+    "gengar": "ゲンガー",
+    "persian": "ペルシアン",
     "x_post_b": "X投稿B",     "wordpress_post": "WP投稿",
     "x_post": "X投稿A",
 }

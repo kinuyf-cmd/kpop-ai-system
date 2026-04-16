@@ -69,5 +69,4 @@ print(json.dumps({'embeds': [{'title': sys.argv[1], 'description': sys.argv[2].r
     curl -s -o /dev/null -X POST "$DISCORD_URL" \
       -H "Content-Type: application/json" \
       -d "$DISCORD_JSON" 2>/dev/null
-  fi
 fi

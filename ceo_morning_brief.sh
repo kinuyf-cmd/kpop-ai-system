@@ -1,175 +1,368 @@
 #!/bin/bash
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # CEO Morning Brief - 毎朝 9:00 JST
-# ミュウツー（CFO/Data）主担当
+# 担当: ミュウツー（CFO/Data）| 監視: ポリゴンZ（SRE）
 #
-# データソース:
-#   必須: ~/kpop_archives/YYYYMMDD_*/summary.txt
-#   任意: ~/google_metrics/metrics_yesterday.json
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 出力: KPIダッシュボード（デイリー/月次/最終目標進捗）
+#       + パイプライン稼働状況 + SRE監査 + X投稿実績
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/env_loader.sh"
 
 TODAY=$(date '+%Y年%m月%d日')
-YESTERDAY_KEY=$(date -d 'yesterday' '+%Y%m%d' 2>/dev/null || date -v-1d '+%Y%m%d' 2>/dev/null || echo "")
+TODAY_KEY=$(date '+%Y-%m-%d')
+YESTERDAY_KEY=$(date -d 'yesterday' '+%Y-%m-%d' 2>/dev/null || date -v-1d '+%Y-%m-%d' 2>/dev/null || echo "")
 YESTERDAY_LABEL=$(date -d 'yesterday' '+%Y年%m月%d日' 2>/dev/null || date -v-1d '+%Y年%m月%d日' 2>/dev/null || echo "前日")
-ARCHIVE_BASE=~/kpop_archives
-METRICS_FILE=~/google_metrics/metrics_yesterday.json
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [1] 前日アーカイブ集計
+# [SECTION 1] KPI ダッシュボード
+# （lib/kpi_dashboard.py が目標値・実績・達成率・進捗バーを生成）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TOTAL=0; SUCCESS=0; STOPPED=0
-SPEED_OK=0; SPEED_NG=0
-STRATEGY_OK=0; STRATEGY_NG=0
-CHART_OK=0; CHART_NG=0
-ARTICLE_LINES=""
-
-if [[ -n "$YESTERDAY_KEY" && -d "$ARCHIVE_BASE" ]]; then
-  for dir in "$ARCHIVE_BASE"/*/; do
-    [[ ! -d "$dir" ]] && continue
-    dir_id=$(basename "$dir")
-    dir_date=$(echo "$dir_id" | cut -c1-8)
-    [[ "$dir_date" != "$YESTERDAY_KEY" ]] && continue
-
-    TOTAL=$((TOTAL + 1))
-    summary="$dir/summary.txt"
-    [[ ! -f "$summary" ]] && continue
-
-    pipeline=$(grep 'パイプライン' "$summary" | sed 's/.*: *//' | tr -d ' ')
-    verdict=$(grep '判定' "$summary" | head -1)
-    title=$(grep 'タイトル' "$summary" | sed 's/.*: *//')
-    chars=$(grep '文字数' "$summary" | sed 's/.*: *//')
-
-    if echo "$verdict" | grep -q '投稿OK'; then
-      SUCCESS=$((SUCCESS + 1))
-      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ✅ [${pipeline}] ${title}（${chars}文字）\n"
-      case "$pipeline" in
-        speed)    SPEED_OK=$((SPEED_OK + 1)) ;;
-        strategy) STRATEGY_OK=$((STRATEGY_OK + 1)) ;;
-        chart)    CHART_OK=$((CHART_OK + 1)) ;;
-      esac
-    else
-      STOPPED=$((STOPPED + 1))
-      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ❌ [${pipeline}] ${title}（停止）\n"
-      case "$pipeline" in
-        speed)    SPEED_NG=$((SPEED_NG + 1)) ;;
-        strategy) STRATEGY_NG=$((STRATEGY_NG + 1)) ;;
-        chart)    CHART_NG=$((CHART_NG + 1)) ;;
-      esac
-    fi
-  done
-fi
-
-if [ "$TOTAL" -gt 0 ]; then
-  RATE=$(( SUCCESS * 100 / TOTAL ))
-else
-  RATE=0
-fi
+KPI_DASHBOARD=$(python3 "$SCRIPT_DIR/lib/kpi_dashboard.py" 2>/dev/null || echo "⚠ KPIダッシュボード生成失敗")
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [2] メトリクス（存在する場合のみ）
+# [SECTION 2] パイプライン稼働状況
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-METRICS_SECTION="※ メトリクスデータ未取得"
+PIPELINE_STATUS=$(python3 - << 'PYPIPE'
+import os
+from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
-if [[ -f "$METRICS_FILE" ]]; then
-  METRICS_SECTION=$(python3 -c "
-import json, sys
-try:
-    with open('$METRICS_FILE') as f:
-        d = json.load(f)
-    lines = []
-    ga4 = d.get('ga4', {}).get('summary', {})
-    if ga4:
-        lines.append(f\"  PV: {ga4.get('pageviews', '?')} / セッション: {ga4.get('sessions', '?')} / ユーザー: {ga4.get('users', '?')}\")
-    gsc = d.get('gsc', {})
-    queries = gsc.get('top_queries', [])
-    if queries:
-        top = ', '.join(q['query'] for q in queries[:3])
-        lines.append(f'  Top検索: {top}')
-    adsense = d.get('adsense', {})
-    earnings = adsense.get('ESTIMATED_EARNINGS')
-    if earnings:
-        lines.append(f'  AdSense: ¥{earnings}')
-    if lines:
-        print('\n'.join(lines))
+JST = timezone(timedelta(hours=9))
+now = datetime.now(JST)
+today = now.strftime("%Y-%m-%d")
+yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+base = Path("/home/aiuser/kpop-ai-system/logs")
+
+PIPELINES = [
+    (Path("/home/aiuser/ai_kpop.log"),       "07:00 速報パイプライン"),
+    (base / "beauty_pipeline.log",            "11:00 美容・コスメ"),
+    (base / "strategy_pipeline.log",          "12:00 戦略・資産記事"),
+    (base / "lifestyle_pipeline.log",         "15:00 旅行・ライフスタイル"),
+    (base / "fashion_pipeline.log",           "18:00 ファッション"),
+    (base / "morning_brief.log",              "09:00 CEOブリーフ"),
+    (base / "ai_meeting.log",                 "21:00 AI日次会議"),
+    (base / "chart_pipeline.log",             "07:30 チャート（月曜）"),
+    (base / "weekly_review.log",              "06:30 週次改善（月曜）"),
+]
+
+lines = []
+ok = ng = 0
+for log_path, label in PIPELINES:
+    if not log_path.exists():
+        lines.append(f"  ⬜ {label:<24} ログなし")
+        continue
+    mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=JST)
+    mtime_str = mtime.strftime("%m/%d %H:%M")
+    if mtime.strftime("%Y-%m-%d") == today:
+        lines.append(f"  ✅ {label:<24} 本日 {mtime.strftime('%H:%M')} 更新")
+        ok += 1
+    elif mtime.strftime("%Y-%m-%d") == yesterday:
+        lines.append(f"  🟡 {label:<24} 昨日 {mtime.strftime('%H:%M')} 更新")
+        ok += 1
     else:
-        print('  データはあるが主要項目なし')
-except Exception as e:
-    print(f'  読み込みエラー: {e}')
-" 2>/dev/null || echo "  メトリクス解析失敗")
-fi
+        lines.append(f"  🔴 {label:<24} 最終: {mtime_str}")
+        ng += 1
+
+uptime = ok/(ok+ng)*100 if (ok+ng) > 0 else 0
+icon = "✅" if uptime >= 95 else ("🟡" if uptime >= 70 else "🔴")
+print(f"  {icon} 稼働率: {uptime:.0f}% ({ok}本稼働 / {ng}本停止)\n")
+print("\n".join(lines))
+PYPIPE
+)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [3] 特筆事項
+# [SECTION 3] X投稿実績（前日）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NOTABLE=""
+X_POST_SUMMARY=$(python3 - << 'PYXPOST'
+import re
+from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
-if [ "$TOTAL" -eq 0 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 前日のパイプライン実行がゼロです\n"
-fi
-if [ "$STOPPED" -ge 3 ]; then
-  NOTABLE="${NOTABLE}  🚨 停止${STOPPED}回 — パイプライン異常の可能性\n"
-elif [ "$STOPPED" -ge 1 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 停止${STOPPED}回あり（原因確認推奨）\n"
-fi
-if [ "$SUCCESS" -eq 0 ] && [ "$TOTAL" -gt 0 ]; then
-  NOTABLE="${NOTABLE}  🚨 成功ゼロ — 全パイプラインが停止\n"
-fi
-if [ "$TOTAL" -gt 0 ] && [ "$RATE" -lt 50 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 成功率${RATE}% — 品質チェック基準の見直しを検討\n"
-fi
+JST = timezone(timedelta(hours=9))
+yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
 
-[[ -z "$NOTABLE" ]] && NOTABLE="  特になし\n"
+x_log = Path("/home/aiuser/kpop-ai-system/logs/x_post.log")
+if not x_log.exists():
+    print("  ⬜ X投稿ログなし")
+    exit()
+
+ok_pat  = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?:投稿成功|フック投稿成功)')
+ng_pat  = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?!DRY-RUN).*(?:失敗|不合格)')
+dry_pat = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: DRY-RUN')
+url_pat = re.compile(r'RESULT: (?:投稿成功|フック投稿成功) - (https://x\.com/\S+)')
+
+ok = ng = dry = 0
+tweet_urls = []
+for line in x_log.read_text(errors="replace").splitlines():
+    if yesterday not in line:
+        continue
+    if ok_pat.search(line):
+        ok += 1
+        u = url_pat.search(line)
+        if u:
+            tweet_urls.append(u.group(1))
+    elif ng_pat.search(line):
+        ng += 1
+    elif dry_pat.search(line):
+        dry += 1
+
+if ok > 0:
+    icon = "✅"
+elif dry > 0:
+    icon = "🟡"
+else:
+    icon = "🔴"
+
+print(f"  {icon} 投稿成功: {ok}件  失敗: {ng}件  DRY-RUN: {dry}件")
+for u in tweet_urls[:3]:
+    print(f"      ↳ {u}")
+if ok == 0 and dry == 0 and ng == 0:
+    print("  ⬜ 前日のX投稿記録なし（パイプライン未実行の可能性）")
+PYXPOST
+)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [4] 当日方針（ルールベース）
+# [SECTION 4] 前日投稿記事一覧
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-POLICY=""
+ARTICLE_LIST=$(python3 - << 'PYART'
+import json, re, os
+from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
-if [ "$TOTAL" -eq 0 ]; then
-  POLICY="  → cron実行状況を確認。パイプラインが起動していない可能性"
-elif [ "$STOPPED" -ge 3 ]; then
-  POLICY="  → アーカイブログで停止原因を調査。品質チェック閾値の見直しを検討"
-elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -ge 1 ]; then
-  POLICY="  → 停止分の原因を確認しつつ、通常運用を継続"
-elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -eq 0 ]; then
-  POLICY="  → 全件成功。通常運用を継続"
-else
-  POLICY="  → 通常運用を継続"
-fi
+JST = timezone(timedelta(hours=9))
+yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
 
-if [[ "$METRICS_SECTION" == *"未取得"* ]]; then
-  POLICY="${POLICY}\n  → fetch_yesterday_metrics.py の定期実行を検討"
-fi
+# pipeline logから昨日投稿された記事を検出
+base = Path("/home/aiuser/kpop-ai-system/logs")
+PIPELINE_LOGS = [
+    (Path("/home/aiuser/ai_kpop.log"), "速報"),
+    (base / "beauty_pipeline.log", "美容"),
+    (base / "strategy_pipeline.log", "戦略"),
+    (base / "lifestyle_pipeline.log", "ライフスタイル"),
+    (base / "fashion_pipeline.log", "ファッション"),
+    (base / "chart_pipeline.log", "チャート"),
+]
+
+articles = []
+for log_path, label in PIPELINE_LOGS:
+    if not log_path.exists():
+        continue
+    mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=JST)
+    if mtime.strftime("%Y-%m-%d") != yesterday:
+        continue
+    txt = log_path.read_text(errors="replace")
+    # POST_ID= で投稿IDを取得
+    pids = re.findall(r'POST_ID=(\d+)', txt)
+    # TITLE行を取得
+    titles = re.findall(r'TITLE[:=]\s*(.+)', txt)
+    # スコアを取得
+    scores = re.findall(r'SCORE[:=]\s*([\d.]+)', txt)
+    if pids:
+        for i, pid in enumerate(pids[:5]):  # 最大5本
+            title = titles[i] if i < len(titles) else "不明"
+            score = scores[i] if i < len(scores) else "?"
+            articles.append(f"  ✅ [{label}] ID:{pid} | {title[:35]} | スコア:{score}")
+    elif mtime.strftime("%Y-%m-%d") == yesterday:
+        articles.append(f"  🟡 [{label}] 実行済み（記事ID取得不可）")
+
+if not articles:
+    print("  ⬜ 前日の投稿記事データなし")
+else:
+    print("\n".join(articles))
+PYART
+)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [5] ブリーフ組み立て
+# [SECTION 5] 自動修復ログ（前日）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BRIEF="📋 CEO Morning Brief — ${TODAY}
+REPAIR_SUMMARY=$(python3 - << 'PYREPAIR'
+import json
+from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
-【1. 前日サマリー（${YESTERDAY_LABEL}）】
-  投稿: ${SUCCESS}本成功 / ${STOPPED}本停止 / 計${TOTAL}回実行（成功率${RATE}%）
-  速報: ✅${SPEED_OK} ❌${SPEED_NG} / 戦略: ✅${STRATEGY_OK} ❌${STRATEGY_NG} / チャート: ✅${CHART_OK} ❌${CHART_NG}
+JST = timezone(timedelta(hours=9))
+yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
+base = Path("/home/aiuser/kpop-ai-system/logs")
 
-【2. 投稿記事一覧】
-$(echo -e "${ARTICLE_LINES:-  （なし）}")
-【3. SEO/アクセス】
-${METRICS_SECTION}
+repairs, alerts = [], []
+for path, lst in [(base/"watchdog_repairs.jsonl", repairs), (base/"watchdog_alerts.jsonl", alerts)]:
+    if path.exists():
+        for line in path.read_text(errors="replace").splitlines():
+            try:
+                r = json.loads(line.strip())
+                if yesterday in r.get("ts",""):
+                    lst.append(r)
+            except: pass
 
-【4. 特筆事項】
-$(echo -e "$NOTABLE")
-【5. 当日の方針】
-$(echo -e "$POLICY")
+if not repairs and not alerts:
+    print("  ✅ 自動修復なし・未解決アラートなし（正常稼働）")
+else:
+    if repairs:
+        print(f"  🔧 自動修復: {len(repairs)}件")
+        for r in repairs[:3]:
+            print(f"      [{r.get('action','')}] {r.get('message','')[:70]}")
+    if alerts:
+        print(f"  🚨 未解決アラート: {len(alerts)}件")
+        for r in alerts[:3]:
+            print(f"      [{r.get('check','')}] {r.get('message','')[:70]}")
+PYREPAIR
+)
 
-— Generated by ミュウツー (CFO/Data)"
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [SECTION 6] 当日方針（ルールベース）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POLICY=$(python3 - << 'PYPOLICY'
+import json
+from pathlib import Path
+from datetime import datetime, timedelta, timezone
+
+JST = timezone(timedelta(hours=9))
+now = datetime.now(JST)
+yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+base = Path("/home/aiuser/kpop-ai-system/logs")
+
+# 前日のx_post状況
+x_ok = 0
+x_log = base / "x_post.log"
+if x_log.exists():
+    import re
+    ok_pat = re.compile(r'\[(\d{4}-\d{2}-\d{2})[^\]]*\] RESULT: (?:投稿成功|フック投稿成功)')
+    for line in x_log.read_text(errors="replace").splitlines():
+        m = ok_pat.search(line)
+        if m and m.group(1) == yesterday:
+            x_ok += 1
+
+# failsafe状態
+failsafe_active = False
+fs_path = base / "x_failsafe.jsonl"
+if fs_path.exists():
+    lines = [l for l in fs_path.read_text(errors="replace").splitlines() if l.strip()]
+    if lines:
+        try:
+            last = json.loads(lines[-1])
+            if last.get("event") == "failsafe_triggered":
+                failsafe_active = True
+        except: pass
+
+actions = []
+
+if failsafe_active:
+    actions.append("  🚨 【緊急】X投稿フェイルセーフが発動中 → CTR低下の原因を調査し、logs/x_failsafe.jsonlを確認してください")
+
+if x_ok == 0:
+    actions.append("  ⚠ 前日のX投稿がゼロ → ENABLE_X_POST=1 の確認、パイプライン実行ログを確認してください")
+
+# 記事投稿数チェック（pipeline log）
+import os, re
+pipeline_ok = False
+LOGS = [
+    Path("/home/aiuser/ai_kpop.log"),
+    base / "lifestyle_pipeline.log",
+    base / "beauty_pipeline.log",
+    base / "fashion_pipeline.log",
+]
+for p in LOGS:
+    if p.exists():
+        mtime = datetime.fromtimestamp(os.path.getmtime(p), tz=JST)
+        if mtime.strftime("%Y-%m-%d") == yesterday:
+            pipeline_ok = True
+            break
+
+if not pipeline_ok:
+    actions.append("  ⚠ 前日のパイプライン実行記録なし → cron設定・サーバー稼働状況を確認してください")
+
+# 月次進捗
+day_of_month = now.day
+if day_of_month <= 10:
+    actions.append(f"  📅 月初フェーズ ({day_of_month}日経過) → コンテンツ量を積み上げる時期。品質重視で5本/日を維持")
+elif day_of_month <= 20:
+    actions.append(f"  📅 月中フェーズ ({day_of_month}日経過) → SEO効果が出始める時期。低CTR記事のリライトを検討")
+else:
+    actions.append(f"  📅 月末フェーズ ({day_of_month}日経過) → 月次目標の達成状況を確認。CTR改善・収益導線強化")
+
+if not actions:
+    actions.append("  ✅ 特段の対応事項なし。通常運用を継続してください")
+
+print("\n".join(actions))
+PYPOLICY
+)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [SECTION 7] 直近 TOP記事（GSC）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOP_PAGES=$(python3 - << 'PYTOP'
+import json
+from pathlib import Path
+
+m = Path("/home/aiuser/google_metrics/metrics_yesterday.json")
+if not m.exists():
+    print("  ⬜ GSCデータなし")
+    exit()
+
+d = json.loads(m.read_text())
+pages = d.get("gsc",{}).get("top_pages",[])[:5]
+if not pages:
+    print("  ⬜ GSCデータなし")
+    exit()
+
+for i, p in enumerate(pages, 1):
+    url = p.get("page","").replace("https://www.kpopjournal.tokyo","")[:35]
+    clicks = p.get("clicks", 0)
+    imps = p.get("impressions", 0)
+    ctr = p.get("ctr", 0)
+    pos = p.get("position", 0)
+    print(f"  {i}. {url:<36} C:{clicks:>3} I:{imps:>4} CTR:{ctr*100:.1f}% Pos:{pos:.1f}")
+PYTOP
+)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [組み立て] フルブリーフ
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BRIEF=$(cat << BRIEF_EOF
+${KPI_DASHBOARD}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📡 パイプライン稼働状況
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${PIPELINE_STATUS}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐦 X投稿実績（${YESTERDAY_LABEL}）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${X_POST_SUMMARY}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 前日投稿記事
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${ARTICLE_LIST}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏆 GSC TOP記事（直近）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${TOP_PAGES}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 自動修復ログ（${YESTERDAY_LABEL}）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${REPAIR_SUMMARY}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 本日の優先アクション
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${POLICY}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Generated by ミュウツー (CFO/Data) | 監視: ポリゴンZ (SRE) | ${TODAY} 09:00 JST
+BRIEF_EOF
+)
 
 echo "$BRIEF"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [6] Discord送信（#daily-ceo-report チャネル）
+# Discord送信（#daily-ceo-report）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
 WEBHOOK=$(get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
@@ -181,19 +374,47 @@ if [[ -z "$WEBHOOK" ]]; then
   exit 0
 fi
 
-# テキストメッセージとして送信（2000文字制限に収める）
-MESSAGE=$(echo "$BRIEF" | head -c 1950)
+# Discord は 2000文字制限のため、KPIダッシュボード部分を優先
+# 複数メッセージに分割して送信
+send_discord() {
+  local msg="$1"
+  local trimmed
+  trimmed=$(echo "$msg" | head -c 1950)
+  local http_code
+  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X POST "$WEBHOOK" \
+    -H "Content-Type: application/json" \
+    -d "$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}))" "$trimmed")" \
+    --connect-timeout 10 --max-time 15 2>/dev/null || echo "000")
+  echo "$http_code"
+}
 
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -X POST "$WEBHOOK" \
-  -H "Content-Type: application/json" \
-  -d "$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}))" "$MESSAGE")" \
-  --connect-timeout 10 --max-time 15 2>/dev/null || echo "000")
+# メッセージ1: KPIダッシュボード
+MSG1="📋 **CEO Morning Brief — ${TODAY}**
 
-if [[ "$HTTP_CODE" == "204" || "$HTTP_CODE" == "200" ]]; then
+\`\`\`
+${KPI_DASHBOARD}
+\`\`\`"
+
+# メッセージ2: 運営状況サマリー
+MSG2="📡 **パイプライン稼働** | 🐦 **X投稿実績**
+\`\`\`
+${PIPELINE_STATUS}
+---
+${X_POST_SUMMARY}
+---
+🎯 本日アクション:
+${POLICY}
+\`\`\`"
+
+CODE1=$(send_discord "$MSG1")
+sleep 1
+CODE2=$(send_discord "$MSG2")
+
+if [[ "$CODE1" == "204" || "$CODE1" == "200" ]]; then
   echo ""
-  echo "✅ Discord送信完了"
+  echo "✅ Discord送信完了 (MSG1: $CODE1, MSG2: $CODE2)"
 else
   echo ""
-  echo "⚠ Discord送信失敗 (HTTP ${HTTP_CODE})"
+  echo "⚠ Discord送信失敗 (HTTP $CODE1 / $CODE2)"
 fi

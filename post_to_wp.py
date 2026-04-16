@@ -49,16 +49,37 @@ def load_env():
 load_env()
 
 WP_URL = os.environ.get("SITE_URL", "https://www.kpopjournal.tokyo") + "/wp-json/wp/v2/posts"
-WP_USER = os.environ.get("WP_USER", "")
-WP_PASS = os.environ.get("WP_PASS", "")
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 FINAL_POST_PATH = os.path.join(REPORTS_DIR, "final_post.md")
 
 
+def _wp_auth_header() -> str:
+    """~/.wp_auth (curl config形式) から Authorization ヘッダ値を読む。
+    フォールバック: WP_USER / WP_PASS 環境変数から生成。
+    戻り値: 'Authorization: Basic xxxx' の文字列。
+    """
+    import re as _re
+    wp_auth_path = os.path.expanduser("~/.wp_auth")
+    if os.path.exists(wp_auth_path):
+        with open(wp_auth_path) as f:
+            for line in f:
+                m = _re.match(r'header\s*=\s*"(Authorization:\s*Basic\s+[^"\\n]+)"?', line.strip())
+                if m:
+                    return m.group(1)  # "Authorization: Basic xxxx"
+    # フォールバック: 環境変数
+    import base64
+    user = os.environ.get("WP_USER", "")
+    passwd = os.environ.get("WP_PASS", "")
+    token = base64.b64encode(f"{user}:{passwd}".encode()).decode()
+    return f"Authorization: Basic {token}"
+
+
 def get_auth_headers():
-    token = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
+    auth_value = _wp_auth_header()
+    _parts = auth_value.split(": ", 1)
+    token_part = _parts[1] if len(_parts) == 2 else auth_value
     return {
-        "Authorization": f"Basic {token}",
+        "Authorization": token_part,
         "Content-Type": "application/json",
     }
 
@@ -234,9 +255,9 @@ def main():
 
     # ── 4. WordPress投稿 ──
     print("\n--- Publishing ---")
-    # メタディスクリプション生成（110-130字、§9準拠）
     plain = re.sub(r'<[^>]+>', '', body).strip()
-    # 最初の文（。で区切り）を収集して110-130字に収める
+
+    # excerpt: 本文冒頭から最大130字（WordPress用抜粋）
     sentences = re.split(r'(?<=[。！？])', plain)
     excerpt = ""
     for s in sentences:
@@ -247,12 +268,27 @@ def main():
             excerpt += s
         else:
             break
-    # 110字未満なら本文先頭から取得
     if len(excerpt) < 110:
         excerpt = plain[:125]
-    # 130字超なら切り詰め
     if len(excerpt) > 130:
         excerpt = excerpt[:127] + "..."
+
+    # meta_description: excerptとは独立したSEO用メタ説明
+    # タイトルを含め「誰が・何を・なぜ読むべきか」を明示した文を生成
+    # 本文コピー禁止（meta_desc_copied エラー再発防止）
+    _title_short = re.sub(r'[【】「」『』\[\]]', '', title)[:20]
+    _plain_words = re.sub(r'\s+', '', plain)
+    # 本文中盤の文（冒頭ではなく2〜4文目）からキーワードを抽出してSEO文を構成
+    _mid_sentences = [s.strip() for s in sentences if len(s.strip()) >= 20]
+    _meta_source = _mid_sentences[1] if len(_mid_sentences) > 1 else (_mid_sentences[0] if _mid_sentences else _plain_words[:80])
+    _meta_source = _meta_source[:60].rstrip('。！？')
+    meta_description = f"{_title_short}について解説。{_meta_source}。K-POPファン必見の最新情報をお届けします。"
+    if len(meta_description) > 130:
+        meta_description = meta_description[:127] + "..."
+    elif len(meta_description) < 80:
+        meta_description = f"{_title_short}の最新情報・詳細をまとめました。{_meta_source}。K-POPファン向けの解説記事です。"
+        if len(meta_description) > 130:
+            meta_description = meta_description[:127] + "..."
 
     result = post_to_wordpress(
         title=title,
@@ -262,7 +298,7 @@ def main():
         tags=tags if tags else None,
         featured_media=media_id,
         excerpt=excerpt,
-        meta_description=excerpt,
+        meta_description=meta_description,
         status=status,
     )
 

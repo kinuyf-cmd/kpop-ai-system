@@ -19,4 +19,35 @@ python3 -c "from lib.audit_72h import audit_x_posts; import json; print(json.dum
 # 4. ctr_rewrite_detector
 python3 lib/ctr_rewrite_detector.py >> "$LOG" 2>&1
 
+# 5. winning_pattern_tracker
+echo "" >> "$LOG"
+echo "## 勝ちパターン学習" >> "$LOG"
+python3 lib/winning_pattern_tracker.py >> "$LOG" 2>&1
+
+# 6. post_publish_evaluator
+echo "" >> "$LOG"
+echo "## 公開後評価 (24h/48h/72h)" >> "$LOG"
+python3 lib/post_publish_evaluator.py >> "$LOG" 2>&1
+
+# 7. regeneration_queue_builder
+echo "" >> "$LOG"
+echo "## 再生成キュー" >> "$LOG"
+python3 lib/regeneration_queue_builder.py >> "$LOG" 2>&1
+
+# 8. template_optimizer
+echo "" >> "$LOG"
+echo "## カテゴリ別テンプレート最適化" >> "$LOG"
+python3 lib/template_optimizer.py >> "$LOG" 2>&1
+
+# 9. auto_rewriter
+echo "" >> "$LOG"
+echo "## 自動リライト実行" >> "$LOG"
+python3 lib/auto_rewriter.py >> "$LOG" 2>&1
+
+# 10. dashboard生成 & オンライン公開
+echo "" >> "$LOG"
+echo "## ダッシュボード更新・公開" >> "$LOG"
+python3 generate_dashboard.py >> "$LOG" 2>&1
+python3 lib/deploy_dashboard.py >> "$LOG" 2>&1
+
 echo "レポート出力: $LOG"

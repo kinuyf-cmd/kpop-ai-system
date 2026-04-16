@@ -91,6 +91,28 @@ ${PORYGON_REPORT}
 来週の重点テーマ・改善すべきエージェント・やめるべきこと・強化すべきカテゴリを決定せよ。
 " 2>/dev/null || echo "ルギア戦略失敗")
 
+# [2.2] ミュウツー（CEO）: 経営判断視点で戦略を検証
+echo "=== [2.2] ミュウツー: CEOレビュー ==="
+MEWTWO_REVIEW=$(claude --agent mewtwo -p "
+あなたはミュウツー（CEO）です。
+ポリゴン分析とルギア戦略をCEO視点で検証し、
+投資判断・経営リスク・部署横断の整合性観点で意見を述べてください。
+（注：記事テーマの編集判断は編集長デオキシス、品質最終承認はアルセウスの権限）
+
+【ポリゴン分析】
+${PORYGON_REPORT}
+
+【ルギア戦略】
+${LUGIA_REPORT}
+
+出力形式：
+【担当】mewtwo
+【戦略への同意・異議】
+【現場実装上の懸念】
+【修正提案】（あれば）
+【編集長デオキシスへの申し送り】（テーマ選定・執筆方針について）
+" 2>/dev/null || echo "ミュウツー代表レビュー失敗")
+
 # レポート保存
 cat > "$REPORT_FILE" << EOF
 # 週次改善レポート: $TODAY
@@ -102,6 +124,11 @@ ${PORYGON_REPORT}
 
 ## ルギア戦略
 ${LUGIA_REPORT}
+
+---
+
+## ミュウツー（CEO）レビュー
+${MEWTWO_REVIEW}
 EOF
 
 echo "  ✓ ルギア戦略完了"
@@ -116,6 +143,9 @@ echo "$LUGIA_REPORT" | python3 "$SCRIPT_DIR/lib/auto_improve.py" extract 2>/dev/
 
 # 勝ちワードも更新
 python3 "$SCRIPT_DIR/lib/auto_improve.py" update-titles 2>/dev/null || true
+
+echo "=== [2.6] イルミーゼ: UIレポート ==="
+python3 "$SCRIPT_DIR/lib/ui_optimizer.py" report 2>/dev/null || echo "  ⚠️ UIレポートスキップ"
 
 echo "  保存先: $REPORT_FILE"
 

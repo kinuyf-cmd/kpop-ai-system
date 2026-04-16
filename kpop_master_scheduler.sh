@@ -81,12 +81,12 @@ PY
 }
 
 POST_COUNT=$(get_today_post_count)
-slog "📊 本日の投稿数: ${POST_COUNT}/8"
+slog "📊 本日の投稿数: ${POST_COUNT}/12"
 
-# 上限チェック（§5: 安定期は最大8本）
-if [ "$POST_COUNT" -ge 8 ]; then
-  slog "🛑 本日の投稿上限（8本）に到達 → 終了"
-  discord "🛑 投稿上限到達（${POST_COUNT}/8）→ 本日の投稿終了"
+# 上限チェック
+if [ "$POST_COUNT" -ge 12 ]; then
+  slog "🛑 本日の投稿上限（12本）に到達 → 終了"
+  discord "🛑 投稿上限到達（${POST_COUNT}/12）→ 本日の投稿終了"
   exit 0
 fi
 
@@ -248,7 +248,13 @@ determine_content() {
       echo "breaking|kpop_pipeline|K-POP夜の速報・コンサート・イベントレポ"
       ;;
     20)
-      echo "lifestyle|kpop_pipeline|ライフスタイル記事：韓国ドラマレビュー・配信視聴ガイド（15時の旅行・カフェ記事とは別ジャンルにすること）"
+      # 映画・ドラマ・ゴシップをローテーション（3日サイクル）
+      _DAY_OF_MONTH=$(date '+%d' | sed 's/^0//')
+      case $((_DAY_OF_MONTH % 3)) in
+        0) echo "drama|kpop_pipeline|韓国ドラマ・Netflixドラマ・韓国映画の最新情報・見どころ・キャスト・あらすじ解説（K-POPアイドル出演作優先）" ;;
+        1) echo "movie|kpop_pipeline|韓国映画・K-POPアイドル出演映画・映画祭受賞情報・日本公開スケジュール（実在する映画のみ）" ;;
+        2) echo "gossip|kpop_pipeline|韓国芸能ゴシップ・熱愛報道・SNS炎上・脱退・移籍情報（確認済み情報のみ・憶測禁止）" ;;
+      esac
       ;;
     *)
       echo "breaking|kpop_pipeline|K-POP最新ニュース"
@@ -300,6 +306,14 @@ PYEOF
           # ライフスタイル系でイベント・ポップアップ要素があればmewtwo_popup
           agent="deoxys_kpop"
           ;;
+        drama|movie)
+          # ドラマ・映画: deoxys_kpopをそのまま使用（FOCUSでテーマ指定）
+          agent="deoxys_kpop"
+          ;;
+        gossip)
+          # ゴシップ: deoxys_kpopをそのまま使用（一次ソース確認ルール厳守）
+          agent="deoxys_kpop"
+          ;;
       esac
 
       TRENDS_JSON=$(python3 ~/google_metrics/fetch_trends.py 2>/dev/null || echo '{"combined":[]}')
@@ -324,7 +338,80 @@ print('YES' if any(e in kw for e in events) else 'NO')
 
       slog "  エージェント: ${agent}"
 
-      cd ~ && claude --dangerously-skip-permissions --allowedTools WebSearch --agent "$agent" -p "
+      # ── gossipは専用強化プロンプトで生成（一次ソース二重確認） ──────────────
+      if [[ "$content_type" == "gossip" ]]; then
+        cd ~ && claude --dangerously-skip-permissions --allowedTools WebSearch --agent "$agent" -p "
+今日は${TODAY}です。現在${HOUR}時です。
+
+【コンテンツ方針】
+${focus}
+
+【★最重要★ ネタ被り絶対禁止】
+直近3日間の投稿と被らないテーマを選べ。
+
+【直近3日間の投稿済み記事（これらと被るテーマは禁止）】
+${RECENT_POSTED}
+
+【今日のトレンドキーワード（参考）】
+${TREND_KEYWORDS}
+
+上記の方針を踏まえて、直近投稿と完全に異なるテーマで記事を1本書いてください。
+
+【★ゴシップ記事の厳格な一次ソース検証ルール（通常記事より厳しい）★】
+ゴシップ・熱愛・炎上・脱退・移籍情報は、以下を必ず守ること：
+
+1. WebSearchで以下のいずれかを確認してから書くこと（両方確認できれば尚良い）：
+   A. 公式発表・公式SNS（Weverse/X/Instagram）・公式プレスリリース・公式声明
+   B. 信頼できる韓国メディア（NAVER/ニュース1/朝鮮日報芸能面等）の複数報道
+
+2. 以下の情報だけでは記事を書いてはいけない（GOSSIP_SOURCE_FAILを出力せよ）：
+   - 「関係者によると」「ネットで話題」「噂」「匿名ソース」のみ
+   - SNSコメントや個人アカウントの投稿のみ
+   - 公式否定がある情報
+   - WebSearchで確認できない情報
+
+3. 記事に以下を含めることは絶対禁止：
+   - 確認されていない人物コメントの直接引用
+   - 「〜と言われている」「〜という噂がある」等の憶測表現
+   - 公式否定情報を事実として記載すること
+
+4. 一次ソースが条件を満たさない場合は、記事を生成せず1行目に「GOSSIP_SOURCE_FAIL」とだけ出力すること
+5. 一次ソースが十分にある場合でも、記事本文の末尾に以下を必ず記載すること：
+   「【情報元】（WebSearchで確認したURL・メディア名を列挙）」
+   「【確認済みソース種別】公式発表/複数報道/その他」
+
+【★通常の一次ソースルール★】
+- WebSearchで一次ソースが確認できなかった場合は「DEOXYS_SOURCE_FAIL」を出力すること
+
+【出力形式・絶対厳守】
+1行目：タイトル文字列のみ（ソース不足の場合は「GOSSIP_SOURCE_FAIL」または「DEOXYS_SOURCE_FAIL」のみ）
+2行目：空行
+3行目以降：<h2>から始まるHTML本文のみ
+末尾に情報元と「※本記事は${TODAY}時点の情報です」を明記
+" > reports/0_breaking.md 2>&1
+
+        # GOSSIP専用SOURCE_FAILチェック
+        if grep -q '^GOSSIP_SOURCE_FAIL' reports/0_breaking.md 2>/dev/null; then
+          slog "❌ ゴシップ記事停止: 一次ソース不足（GOSSIP_SOURCE_FAIL）"
+          slog "  → 公式発表なし、または報道ソースが不十分"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] [GOSSIP_SOURCE_GUARD] FAIL: 一次ソース不足 focus=${focus:0:60}" \
+            >> "$SCRIPT_DIR/logs/gossip_source_guard.log" 2>/dev/null || true
+          rm -f reports/0_breaking.md
+          return 1
+        fi
+        if grep -q '^DEOXYS_SOURCE_FAIL' reports/0_breaking.md 2>/dev/null; then
+          slog "❌ ゴシップ記事停止: 一次ソース未確認（DEOXYS_SOURCE_FAIL）"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S')] [GOSSIP_SOURCE_GUARD] FAIL: DEOXYS_SOURCE_FAIL focus=${focus:0:60}" \
+            >> "$SCRIPT_DIR/logs/gossip_source_guard.log" 2>/dev/null || true
+          rm -f reports/0_breaking.md
+          return 1
+        fi
+        # gossip記事はGOSSIP_MODE=1をexportしてpipelineに渡す
+        GOSSIP_MODE=1 DEOXYS_PREBUILT=1 bash ~/kpop_pipeline.sh >> "$LOG_FILE" 2>&1
+
+      else
+        # ── 通常コンテンツ（breaking/beauty/lifestyle/drama/movie）────────────
+        cd ~ && claude --dangerously-skip-permissions --allowedTools WebSearch --agent "$agent" -p "
 今日は${TODAY}です。現在${HOUR}時です。
 
 【コンテンツ方針】
@@ -350,14 +437,41 @@ ${CTR_INSIGHTS}
 既に本日${POST_COUNT}本投稿済みです。
 昨日のデータで需要が確認されたテーマがあれば積極的に活用してください。
 
+【★一次ソース検証ルール★】
+- 必ずWebSearchで記事のメインテーマ（公演・移籍・受賞・事故等）の一次ソースを確認すること
+- 公式SNS（Weverse・X・Instagram）・公式プレスリリース・信頼できるメディア報道を確認した上で書くこと
+- WebSearchで一次ソースが確認できなかった場合は記事を生成せず、1行目に「DEOXYS_SOURCE_FAIL」とだけ出力すること
+- 架空の人物コメント・未発表の公式声明・未確認のツアー日程・架空の事故を記事に含めることは絶対禁止
+- **記事の主役アーティスト・グループがWebSearchで実在のK-POPアーティストとして確認できない場合も「DEOXYS_SOURCE_FAIL」を出力すること**
+- 架空のアーティスト名・グループ名・レーベル名・メディア名を記事に使うことは絶対禁止
+
 【出力形式・絶対厳守】
-1行目：タイトル文字列のみ
+1行目：タイトル文字列のみ（ソース未確認の場合は「DEOXYS_SOURCE_FAIL」のみ）
 2行目：空行
 3行目以降：<h2>から始まるHTML本文のみ
-末尾に情報元と「※本記事は${TODAY}時点の情報です」を明記
+末尾に情報元（WebSearchで確認したURL・メディア名）と「※本記事は${TODAY}時点の情報です」を明記
 " > reports/0_breaking.md 2>&1
 
-      bash ~/kpop_pipeline.sh >> "$LOG_FILE" 2>&1
+        # SOURCE_FAILチェック（一次ソース未確認なら投稿しない）
+        if grep -q '^DEOXYS_SOURCE_FAIL' reports/0_breaking.md 2>/dev/null; then
+          slog "❌ 記事生成停止: 一次ソース未確認（DEOXYS_SOURCE_FAIL）"
+          rm -f reports/0_breaking.md
+          return 1
+        fi
+        # エラー応答チェック（beautywriter等がエラー文を出力した場合に早期停止）
+        if [[ ! -s reports/0_breaking.md ]]; then
+          slog "❌ 記事生成停止: 出力が空"
+          return 1
+        fi
+        if grep -qE '入力記事が見当たりません|記事を提供してください|記事の元となるコンテンツ|リライトしたい記事の本文|元となる記事の原文|申し訳ありません[がで。、 ]|申し訳ありません$|WebSearchを使用|許可を?いただ|記事の元情報.*貼り付け|このチャットに貼り付け|ドラフト文章.*このチャット|チャットに貼り付けてください|貼り付けられていません|タイトルを入力してください|評価対象がありません' reports/0_breaking.md 2>/dev/null; then
+          slog "❌ 記事生成停止: エージェントがエラー応答を出力（beautywriter/deoxys）"
+          slog "  先頭行: $(head -1 reports/0_breaking.md)"
+          rm -f reports/0_breaking.md
+          return 1
+        fi
+        # DEOXYS_PREBUILTフラグを渡してパイプライン内での再生成をスキップ
+        DEOXYS_PREBUILT=1 bash ~/kpop_pipeline.sh >> "$LOG_FILE" 2>&1
+      fi
       ;;
 
     kpop_strategy)
@@ -426,6 +540,21 @@ fi
 
 # --- 通常スケジュール ---
 CONTENT_INFO=$(determine_content "$HOUR" "$POST_COUNT")
+
+# [2026-04-16] 投稿時刻×PV の実測があれば content_type を自動最適化
+# データ不足時は no-op。決定は logs/timeslot_override.log に記録。
+_TS_OV_SH="$HOME/kpop-ai-system/lib/timeslot_override.sh"
+[[ ! -f "$_TS_OV_SH" ]] && _TS_OV_SH="$(dirname "$(readlink -f "$0")")/lib/timeslot_override.sh"
+if [[ -f "$_TS_OV_SH" ]]; then
+  # shellcheck source=lib/timeslot_override.sh
+  source "$_TS_OV_SH"
+  _NEW_INFO=$(apply_timeslot_override "$HOUR" "$CONTENT_INFO")
+  if [[ "$_NEW_INFO" != "$CONTENT_INFO" ]]; then
+    slog "🎯 timeslot_override 発動: $CONTENT_INFO → $_NEW_INFO"
+    CONTENT_INFO="$_NEW_INFO"
+  fi
+fi
+
 CONTENT_TYPE=$(echo "$CONTENT_INFO" | cut -d'|' -f1)
 PIPELINE=$(echo "$CONTENT_INFO" | cut -d'|' -f2)
 FOCUS=$(echo "$CONTENT_INFO" | cut -d'|' -f3)
@@ -452,6 +581,9 @@ if [ "$DOUBLE" = "YES" ] && [ "$NEW_COUNT" -lt 20 ]; then
     strategy)  ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新速報" ;;
     council)   ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP速報ニュース" ;;
     beauty)    ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新ニュース" ;;
+    drama)     ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新ニュース" ;;
+    movie)     ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新ニュース" ;;
+    gossip)    ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新ニュース" ;;
     *)         ADD_TYPE="breaking"; ADD_PIPE="kpop_pipeline"; ADD_FOCUS="K-POP最新ニュース" ;;
   esac
 
