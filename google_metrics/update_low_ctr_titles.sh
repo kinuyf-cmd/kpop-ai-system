@@ -78,19 +78,27 @@ PY
     continue
   fi
 
-  # 新タイトル生成
+  # 新タイトル生成（2026-04-16 Round8: 必須4要素を明記して score_title_ctr.py の8点以上狙い）
   NEW_TITLE=$(claude -p "
-あなたはK-POPメディアのCTR改善担当です。
+あなたはK-POPメディアのCTR改善担当です。既存タイトルを CTR が上がる形に書き換えよ。
 
-以下の既存タイトルを、SEOを維持しつつCTRが上がる形に改善してください。
+【4つの必須要素 — すべて1つのタイトルに含めよ】
+① 数字（例: 3週連続 / 641,000 / 2026 / 15形態 / 500万人）
+② 固有名詞（BTS / BLACKPINK / aespa / 番組名 / イベント名 — 元タイトルから継承OK）
+③ 感情語・強ワード（衝撃 / 異常 / ついに / まさか / 完全 / 暴露 / 制覇 / 快挙 / 神 / 解禁 / 首位 から1つ）
+④ 対比構造（→ / vs / から / なのに / 空白 / 復帰 / 崩壊 / 逆転 / 週連続 / 年ぶり / 一転 / 塗替 から1つ）
 
-【ルール】
-- タイトル案を内部で3案考え、最も強い1案だけ出力
-- アーティスト名・数字・イベント名を優先
-- 過度な誇張禁止
-- 24〜38文字目安
-- 説明禁止
-- 1行だけ出力
+【プロセス】
+1. 内部で3案考える
+2. 4要素すべてを含む案のうち、最もクリックされやすい1案を選ぶ
+3. 4要素揃う案がない場合でも、最低3要素は含めよ
+
+【制約】
+- 26〜40文字（長すぎない、短すぎない）
+- 誇張や釣り表現（爆速！絶対！神回確定！など）は禁止
+- 記号の乱用禁止（「！！」「？？」禁止）
+- 説明文・前置き・案番号一切出力禁止
+- 出力は新タイトル本体1行のみ
 
 既存タイトル:
 $OLD_TITLE
@@ -122,11 +130,21 @@ PY
     continue
   fi
 
-  # スコア条件
-  if [ "$PASS" != "YES" ]; then
-    echo "新タイトル弱いのでスキップ: $NEW_TITLE (score=$SCORE)" | tee -a "$TMP_OUT"
-    continue
-  fi
+  # スコア条件（2026-04-16 Round8: 二段階判定）
+  #   score >= 8 本採用 / score >= 6 仮採用 / それ以下 reject
+  TIER=$(python3 -c "import json,sys; print(json.loads(sys.argv[1]).get('tier','reject'))" "$SCORE_JSON")
+  case "$TIER" in
+    full)
+      echo "新タイトル本採用: $NEW_TITLE (score=$SCORE tier=full)" | tee -a "$TMP_OUT"
+      ;;
+    provisional)
+      echo "新タイトル仮採用: $NEW_TITLE (score=$SCORE tier=provisional)" | tee -a "$TMP_OUT"
+      ;;
+    *)
+      echo "新タイトル弱いのでスキップ: $NEW_TITLE (score=$SCORE tier=reject)" | tee -a "$TMP_OUT"
+      continue
+      ;;
+  esac
 
   # バックアップ保存
   echo "POST_ID=$POST_ID" >> "$TMP_OUT"
@@ -157,12 +175,19 @@ PY
   if [ -n "$UPDATED" ]; then
     echo "更新成功: $OLD_TITLE -> $UPDATED" | tee -a "$TMP_OUT"
 
-    python3 - << PY
+    # Discord通知（webhook未設定時は skip。set -e を止める）
+    if [ -n "$DISCORD_WEBHOOK" ]; then
+      python3 - << PY || true
 import requests, json
 webhook = """$DISCORD_WEBHOOK"""
 msg = """✏️ タイトル自動更新\nページ: $PAGE\n旧: $OLD_TITLE\n新: $UPDATED\nスコア: $SCORE"""
-requests.post(webhook, json={"content": msg[:1900]}, timeout=20)
+try:
+    if webhook:
+        requests.post(webhook, json={"content": msg[:1900]}, timeout=20)
+except Exception as e:
+    print(f"discord notify skip: {e}")
 PY
+    fi
   else
     echo "更新失敗: $PAGE" | tee -a "$TMP_OUT"
   fi
