@@ -1,6 +1,16 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# パイプライン排他実行ロック（breaking/strategy/chart 共通）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+_GLOBAL_PIPELINE_LOCK="/tmp/kpop_pipeline_global.flock"
+exec 9>"$_GLOBAL_PIPELINE_LOCK"
+if ! flock -n 9; then
+  echo "⏭️  他のパイプラインが実行中のため、この起動はスキップします（chart）"
+  exit 0
+fi
+
 # トークントラッキング（ENABLE_TOKEN_TRACKING=1 で有効化）
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$SCRIPT_DIR/lib/claude_wrapper.sh"
@@ -34,7 +44,7 @@ wp_health_check() {
   echo "=== WordPress 接続確認 ==="
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=1" \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     --connect-timeout 10 --max-time 15)
   if [[ "$HTTP_CODE" != "200" ]]; then
     echo "❌ WordPress API 接続失敗 (HTTP ${HTTP_CODE}) → パイプライン停止"
@@ -103,7 +113,11 @@ ARCHIVE_DIR=~/kpop_archives/chart_$RUN_ID
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPORTS_DIR="$SCRIPT_DIR/reports_${RUN_ID}"
 mkdir -p "$REPORTS_DIR"
-rm -rf "$SCRIPT_DIR/reports"
+if [[ -L "$SCRIPT_DIR/reports" ]]; then
+  rm -f "$SCRIPT_DIR/reports"
+elif [[ -d "$SCRIPT_DIR/reports" ]]; then
+  rm -rf "$SCRIPT_DIR/reports"
+fi
 ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
@@ -183,7 +197,35 @@ if [[ ! -s reports/chart_1_checked.md ]]; then
   cp reports/chart_0_article.md reports/chart_1_checked.md
   log_step "alakazam" "skipped" "reports/chart_1_checked.md" "出力空→フォールバック"
 else
-  log_step "alakazam" "ok" "reports/chart_1_checked.md"
+  # [ガード] アラカザムがAI内部分析文・定型文を出力した場合はフォールバック
+  _ALAKAZAM_CRASH=$(python3 -c "
+import sys, re
+text = open('reports/chart_1_checked.md', encoding='utf-8', errors='replace').read()[:300]
+CRASH_PATTERNS = [
+    r'重大な問題があります',
+    r'ファクトチェックを実施します',
+    r'内部矛盾.*分析',
+    r'ウェブフェッチはできません',
+    r'提供してください',
+    r'確認させてください',
+    r'申し訳ありません',
+    r'権限が付与されていません',
+    r'記事の元情報.*貼り付け',
+]
+for pat in CRASH_PATTERNS:
+    if re.search(pat, text):
+        print('CRASH')
+        sys.exit(1)
+sys.exit(0)
+" 2>/dev/null; echo $?)
+  if [[ "$_ALAKAZAM_CRASH" != "0" ]]; then
+    echo "❌ [アラカザム後ガード] AI内部文・定型文を検出 → ザップドス出力にフォールバック"
+    echo "  内容冒頭: $(head -c 150 reports/chart_1_checked.md)"
+    cp reports/chart_0_article.md reports/chart_1_checked.md
+    log_step "alakazam" "skipped" "reports/chart_1_checked.md" "崩壊文検出→フォールバック"
+  else
+    log_step "alakazam" "ok" "reports/chart_1_checked.md"
+  fi
 fi
 echo "  ✓ reports/chart_1_checked.md"
 
@@ -217,9 +259,16 @@ fi
 echo "✅ 品質OK（${CONTENT_LENGTH}文字）"
 
 # アイキャッチ生成
-THUMB_TITLE=$(echo "$TITLE" | cut -c1-30)
+# [2026-04-16] ライコウで2行コピー生成（旧来は cut -c1-30 だけでタイトル冒頭が切れて表示されていた）
+_CHART_DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=lib/generate_thumb_copy.sh
+source "$_CHART_DIR/lib/generate_thumb_copy.sh"
+_CHART_BODY_FILE="$_CHART_DIR/reports/final_post.md"
+[[ ! -s "$_CHART_BODY_FILE" ]] && _CHART_BODY_FILE=""
+THUMB_TITLE=$(generate_thumb_copy "$TITLE" "ranking" "$_CHART_BODY_FILE")
+echo "  THUMB_TITLE=$THUMB_TITLE"
 THUMB_META_FILE=$(mktemp)
-python3 ~/make_thumbnail.py "$THUMB_TITLE" --genre chart --title "$TITLE" 2>"$THUMB_META_FILE"
+python3 "$_CHART_DIR/make_thumbnail.py" "$THUMB_TITLE" --genre ranking --title "$TITLE" 2>"$THUMB_META_FILE"
 THUMB_META_LINE=$(grep "^THUMB_META: " "$THUMB_META_FILE" | head -1 | sed 's/^THUMB_META: //')
 rm -f "$THUMB_META_FILE"
 [ -n "$THUMB_META_LINE" ] && echo "  thumb_meta: $THUMB_META_LINE"
@@ -227,12 +276,27 @@ rm -f "$THUMB_META_FILE"
 MEDIA_ID=0
 if [[ -f thumbnail.jpg ]]; then
   MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     -H "Content-Disposition: attachment; filename=thumbnail.jpg" \
     -H "Content-Type: image/jpeg" \
     --data-binary @thumbnail.jpg)
   MEDIA_ID=$(echo "$MEDIA_RESPONSE" | python3 -c "import json,sys; print(json.load(sys.stdin).get('id',0))" 2>/dev/null || echo 0)
   echo "  メディアID: $MEDIA_ID"
+  # === ALTテキスト自動設定（再発防止） ===
+  if [[ -n "$MEDIA_ID" && "$MEDIA_ID" != "0" ]]; then
+    ALT_TEXT=$(python3 -c "
+import re
+title = '''$TITLE'''
+alt = re.sub(r'[【】「」『』\|｜]', ' ', title).strip()
+alt = re.sub(r'\s+', ' ', alt)[:100]
+print(alt)
+" 2>/dev/null)
+    curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${MEDIA_ID}" \
+      -K "$HOME/.wp_auth" \
+      -H "Content-Type: application/json" \
+      -d "{\"alt_text\": \"$(echo "$ALT_TEXT" | sed 's/"/\\"/g')\"}" > /dev/null 2>&1
+    echo "  ✅ ALTテキスト設定: ${ALT_TEXT:0:50}..."
+  fi
 fi
 
 DESC=$(echo "$CONTENT" | sed -e 's/<[^>]*>//g' | head -c 120)
@@ -268,7 +332,7 @@ if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ] && [ -f "$TOKEN_LOG" ]; then
 fi
 
 RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
-  -u "$WP_USER:$WP_PASS" \
+  -K "$HOME/.wp_auth" \
   -H "Content-Type: application/json" \
   -d "$JSON")
 
@@ -280,6 +344,42 @@ if [[ "$POST_ID" =~ ^[0-9]+$ ]]; then
 else
   log_step "wordpress_post" "error" "reports/chart_1_checked.md" "POST_ID不正"
 fi
+
+# === AIOSEO description 自動設定（再発防止） ===
+if [[ -n "$POST_ID" && "$POST_ID" =~ ^[0-9]+$ ]]; then
+  echo "=== AIOSEO description 自動設定 ==="
+  AIOSEO_DESC=$(echo "$CONTENT" | sed -e 's/<[^>]*>//g' | python3 -c "
+import sys, re
+text = sys.stdin.read().strip()
+text = re.sub(r'\s+', ' ', text)
+sentences = re.split(r'[。！？]', text)
+for s in sentences:
+    s = s.strip()
+    if len(s) >= 30:
+        print((s + '。')[:120])
+        break
+else:
+    print(text[:120])
+" 2>/dev/null)
+  curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
+    -K "$HOME/.wp_auth" \
+    -H "Content-Type: application/json" \
+    -d "{\"meta\":{\"_aioseo_description\": \"$(echo "$AIOSEO_DESC" | sed 's/"/\\"/g')\"}}" > /dev/null 2>&1 \
+    && echo "  ✅ AIOSEO description設定完了" || echo "  ⚠️ AIOSEO設定スキップ"
+fi
+
+# [追加 2026-04-11] kpop_pipeline.shとの統一: 内部リンク・GSC・Bing登録が欠落していたため追加
+echo "=== 内部リンク自動挿入 ==="
+if [ -n "${POST_URL:-}" ]; then
+  _SLUG_PATH=$(echo "$POST_URL" | sed 's|https://www.kpopjournal.tokyo||' | sed 's|/$||')
+  bash "$SCRIPT_DIR/google_metrics/add_internal_links.sh" "$_SLUG_PATH" 2>&1 || echo "⚠️ 内部リンクスキップ"
+fi
+
+echo "=== Google Indexing API ==="
+bash "$SCRIPT_DIR/google_metrics/request_index.sh" "$POST_URL" 2>&1 || echo "⚠️ Google インデックススキップ"
+
+echo "=== Bing URL Submission ==="
+bash "$SCRIPT_DIR/google_metrics/request_bing_index.sh" "$POST_URL" 2>&1 || echo "⚠️ Bing インデックススキップ"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [4] ペルシアン: SNS拡散戦略
@@ -336,7 +436,11 @@ bash ~/kpop_notify.sh success "チャート" "記事投稿完了: $TITLE" "$POST
 if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
   rm -rf "$REPORTS_DIR"
 fi
-rm -rf "$SCRIPT_DIR/reports"
+if [[ -L "$SCRIPT_DIR/reports" ]]; then
+  rm -f "$SCRIPT_DIR/reports"
+elif [[ -d "$SCRIPT_DIR/reports" ]]; then
+  rm -rf "$SCRIPT_DIR/reports"
+fi
 
 echo ""
 echo "========================================"
@@ -349,5 +453,5 @@ echo "========================================"
 # ─── 投稿後自動監査 ────────────────────────────────────────────────────────
 echo "=== 投稿後自動監査 ==="
 if [[ -n "${POST_ID:-}" ]] && [[ -n "${POST_URL:-}" ]]; then
-  bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "${TITLE:-}" "${RUN_ID:-}" 2>&1 || true
+  env -u AUDIT_LOOP_COUNT bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "${TITLE:-}" "${RUN_ID:-}" 2>&1 || true
 fi

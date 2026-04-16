@@ -3,6 +3,16 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/env_loader.sh"
 source "$SCRIPT_DIR/lib/sanitize_output.sh"
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# パイプライン排他実行ロック（breaking/strategy/chart 共通）
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+_GLOBAL_PIPELINE_LOCK="/tmp/kpop_pipeline_global.flock"
+exec 9>"$_GLOBAL_PIPELINE_LOCK"
+if ! flock -n 9; then
+  echo "⏭️  他のパイプラインが実行中のため、この起動はスキップします（strategy）"
+  exit 0
+fi
+
 # トークントラッキング（ENABLE_TOKEN_TRACKING=1 で有効化）
 if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$SCRIPT_DIR/lib/claude_wrapper.sh"
@@ -371,7 +381,7 @@ $(cat reports/4_reader.md)
 sanitize_output reports/6_structure.md
 check_output reports/6_structure.md "フシギバナ"
 
-echo "[7/15] ミュウツー: 戦略統合・編集長判断..."
+echo "[7/15] ミュウツー: 戦略統合・CEO戦略推奨（最終編集判断は編集長デオキシス）..."
 claude --no-session-persistence --agent mewtwo -p "
 今日は${TODAY}です。
 以下の全レポートを統合し、今日書くべきK-POP記事TOP3を意思決定せよ。
@@ -1207,12 +1217,22 @@ Path("/tmp/ctr_thumb_text.txt").write_text(thumb, encoding="utf-8")
 print(f"  サムネテキスト: {thumb!r}")
 CTR_PY
 
-# サムネテキストを CTR 最適化版から読み込む
+# サムネテキストを CTR 最適化版から読み込む（タイトル短縮版）
+_CTR_THUMB_SHORT=""
 if [[ -f /tmp/ctr_thumb_text.txt ]]; then
-  THUMB_TITLE=$(cat /tmp/ctr_thumb_text.txt)
+  _CTR_THUMB_SHORT=$(cat /tmp/ctr_thumb_text.txt)
   rm -f /tmp/ctr_thumb_text.txt
-  echo "  [14.9] サムネテキスト確定: $THUMB_TITLE"
 fi
+
+# [14.9b] ライコウ（raikou_thumb）で2行×各6〜10文字のサムネコピーを再生成
+# 旧来はタイトル truncate のみだったため汎用/長文でCTRが低かった（2026-04-16改修）
+# shellcheck source=lib/generate_thumb_copy.sh
+source "$(cd "$(dirname "$0")" && pwd)/lib/generate_thumb_copy.sh"
+_SP_THUMB_GENRE="analysis"
+_SP_THUMB_TITLE=$(head -n 1 reports/final_post.md 2>/dev/null)
+[[ -z "$_SP_THUMB_TITLE" ]] && _SP_THUMB_TITLE="${_CTR_THUMB_SHORT:-K-POP分析}"
+THUMB_TITLE=$(generate_thumb_copy "$_SP_THUMB_TITLE" "$_SP_THUMB_GENRE" "reports/final_post.md")
+echo "  [14.9] サムネテキスト確定: $THUMB_TITLE"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # PHASE 5: 品質チェック・投稿・拡散

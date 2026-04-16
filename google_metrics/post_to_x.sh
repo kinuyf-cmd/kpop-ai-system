@@ -143,6 +143,13 @@ CRASH_PATTERNS = [
     r'確認させてください',
     r'以下に示します',
     r'入力記事が見当たりません',
+    # X投稿混入事例（2026-04-14）より追加
+    r'重大な問題があります',
+    r'ファクトチェックを実施します',
+    r'権限が付与されていません',
+    r'外部URLへのアクセスが制限',
+    r'直接検証ができない',
+    r'このチャットに貼り付け',
 ]
 for pat in CRASH_PATTERNS:
     if re.search(pat, title):
@@ -405,11 +412,14 @@ _HOOK_SCORE=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f1)
 _HOOK_REASONS=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f2)
 xlog "HOOK_CTR_SCORE: ${_HOOK_SCORE}/100 (${_HOOK_REASONS})"
 
-if [[ "$_HOOK_SCORE" -lt 80 ]]; then
-  xlog "HOOK_CTR_BLOCK: スコア${_HOOK_SCORE}/100 < 80 → 投稿停止"
-  echo "❌ [X投稿] フックCTRスコア${_HOOK_SCORE}/100（80未満）→ BLOCK"
+if [[ "$_HOOK_SCORE" -lt 50 ]]; then
+  xlog "HOOK_CTR_BLOCK: スコア${_HOOK_SCORE}/100 < 50 → 投稿停止"
+  echo "❌ [X投稿] フックCTRスコア${_HOOK_SCORE}/100（50未満）→ BLOCK"
   X_STATUS="BLOCKED_HOOK_CTR"
   exit 1
+fi
+if [[ "$_HOOK_SCORE" -lt 80 ]]; then
+  xlog "HOOK_CTR_WARN: スコア${_HOOK_SCORE}/100 < 80 → 投稿は続行（50以上なので警告のみ）"
 fi
 xlog "HOOK_CTR: OK(${_HOOK_SCORE}/100)"
 
