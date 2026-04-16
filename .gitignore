@@ -32,3 +32,8 @@ optimization_actions.json
 org_map.json
 hub_article_ready.json
 /metrics_yesterday.json
+
+# ランタイムキャッシュ・バックアップ
+assets/artist_cache/
+backups/
+diffs/
