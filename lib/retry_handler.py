@@ -191,14 +191,38 @@ def _log_retry(category, attempt, message):
 
 
 # ── フォールバックエージェント設定 ──
+#
+# 【責務固定表との対応 — 変更前に必ず確認すること】
+#
+# ❌ arceus のフォールバックを追加しない
+#    理由: 最終投稿承認/却下は arceus のみが行う。2エージェントに判定権を持たせると
+#          架空記事が投稿されるリスクがある。
+#
+# ❌ alakazam_kpop を削除・改名しない
+#    理由: jirachi_kpop の唯一のフォールバック先。削除すると jirachi が失敗した際に
+#          パイプラインが即停止し、chart_pipeline のステップ2も壊れる。
+#
+# ❌ eevee のフォールバックを追加しない
+#    理由: eevee は breaking pipeline 専用。strategy では呼ばれないため
+#          フォールバックを設定するとパイプライン構成が崩れる。
+#
+# ⚠️ deoxys_kpop ↔ metamon_kpop のフォールバックは緊急時のみ有効
+#    理由: metamon はリライト専門のため、ゼロ生成品質は低下する。
+#          継続的にフォールバックが発動している場合はモデル障害を疑うこと。
+#
+# ⚠️ zapdos → deoxys_kpop のフォールバックは緊急時のみ有効
+#    理由: deoxys はチャートデータ構造化専門ではなく、表形式記事の品質が低下する。
 
 FALLBACK_MAP = {
-    "deoxys_kpop": ["metamon_kpop"],
-    "metamon_kpop": ["deoxys_kpop"],
-    "jirachi_kpop": ["alakazam_kpop"],
+    "deoxys_kpop": ["metamon_kpop"],   # 緊急のみ。品質低下を許容して投稿を維持
+    "metamon_kpop": ["deoxys_kpop"],   # 緊急のみ
+    "jirachi_kpop": ["alakazam_kpop"], # FAILゲートが消えるが続行可。alakazam削除禁止
     "beautywriter": ["deoxys_kpop"],
-    "zapdos": ["deoxys_kpop"],
-    "persian": [],  # SNS戦略は失敗許容
+    "zapdos": ["deoxys_kpop"],         # チャート記事フォールバック。品質低下あり
+    "persian": [],                     # SNS戦略は失敗許容。記事は既に公開済み
+    # arceus: 設定しない（最終判定は単一エージェントであるべき）
+    # eevee:  設定しない（breaking・strategy共用。失敗時はmetamon出力タイトルをそのまま使う設計）
+    # gardevoir_hook_critic: 設定しない（刺さり判定は代替不可能な責務。FALLBACK_TARGET_OF=なし。失敗時はERROR扱いで継続しない）
 }
 
 

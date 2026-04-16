@@ -1,7 +1,7 @@
 {
   "emergency_stop": {
     "consecutive_failures": 3,
-    "daily_error_threshold": 5,
+    "daily_error_threshold": 15,
     "post_log_corruption": true,
     "wp_api_5xx_count": 3,
     "token_budget_exceeded": true

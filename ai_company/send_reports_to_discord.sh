@@ -35,7 +35,7 @@ send "戦略会議（butterfree）" "$BASE/butterfree_report.md"
 send "SEO分析（lapras）" "$BASE/lapras_report.md"
 send "競合分析（mimikyu）" "$BASE/mimikyu_report.md"
 send "未来予測（jirachi）" "$BASE/jirachi_report.md"
-send "編集長判断（mewtwo）" "$BASE/mewtwo_decision.md"
+send "CEO戦略判断（mewtwo）" "$BASE/mewtwo_decision.md"
 
 # =========================
 # 夜レポート

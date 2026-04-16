@@ -223,6 +223,24 @@ def validate_final_post(file_path=None, article_type="flow"):
             errors.append(f"question_detected: '{signal}' found")
             break
 
+    # ── 日本語Claudeエラーメッセージ混入チェック ──
+    claude_error_signals_ja = [
+        "重大な問題があります", "ファクトチェックを実施します",
+        "権限が付与されていません", "外部URLへのアクセスが制限",
+        "直接検証ができない", "ソースURLの直接検証",
+        "入力記事が見当たりません", "記事が見当たりません",
+        "記事を提供してください", "元の記事が提供されていません",
+        "入力記事が提供されていない", "元となる記事の原文",
+        "このチャットに貼り付けてください", "元情報を貼り付け",
+        "お手伝いできますか", "AIとして", "言語モデル",
+        "お答えできません", "ウェブフェッチできません",
+        "WebFetch ツール",
+    ]
+    for signal in claude_error_signals_ja:
+        if signal in content:
+            errors.append(f"claude_error_ja_detected: '{signal}' found in content")
+            break
+
     # ── 英語Claudeエラーメッセージ混入チェック ──
     claude_error_signals = [
         "Web tools are currently blocked",

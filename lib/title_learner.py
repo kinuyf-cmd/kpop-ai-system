@@ -56,6 +56,13 @@ def load_records() -> list[dict]:
 
 def save_record(record: dict) -> None:
     PERF_FILE.parent.mkdir(parents=True, exist_ok=True)
+    # post_id が設定されている場合、既存の pending レコードと重複しないか確認
+    post_id = record.get("post_id", "")
+    if post_id:
+        existing = load_records()
+        for r in existing:
+            if r.get("post_id") == post_id and r.get("result") == record.get("result") == "pending":
+                return  # 同じ post_id の pending が既にある場合はスキップ
     with open(PERF_FILE, "a", encoding="utf-8") as f:
         f.write(json.dumps(record, ensure_ascii=False) + "\n")
 

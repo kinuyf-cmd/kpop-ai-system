@@ -1,12 +1,36 @@
 # kpop inc
-## 完全実装指示書 v3.0（収益最適化版）
+## 完全実装指示書 v3.3（AIオーナー型自律運営メディア版）
 
-> v1.3からの主な変更: エージェント削減（9→5コール、-44%コスト削減）、サムネイルv3（固定テンプレ背景+テンプレ文言+WebP）、CTA強制挿入（全記事保証）、X投稿テンプレ化（persian廃止）、並行実行時トピック予約ロック、sanitize強化、スコア記録修正、KPIログJSON安全化、戦略パイプライン投稿失敗検知、CTA HTML破損修正、メタディスクリプションAIOSEO対応。
+> **v3.3変更点（2026-04-12）**:
+> - gardevoir SCOREパース修正（strategy / breaking 両パイプライン）: 7フォーマット対応
+> - gardevoir VERDICTフォールバック実装（VERDICT行欠落時にscoreから自動推定）
+> - gardevoir_hook.jsonl の通常記録（PASS/SOFT_RETRY含む）に run_id / pipeline / title / category を追加
+> - post_audit.sh [11b] href="#" アンカー除去を実装（kairyu生成の空リンクをテキスト変換）
+> - kairyu_kpop.md に href="#" 禁止ルールを明記
+> - post_watchdog.py に通知クールダウン（24h）を実装（check_nameごとの送信頻度制御）
+> - improvement_engine.sh の Discord通知に User-Agent ヘッダ追加（Mozilla/5.0）
+> - kpop_words リスト強化（Coachella/コーチェラ等を両パイプラインに追加）
+> - 「CEOオーナー」表現を「AIオーナー型」運営前提に修正
+> - POST_ID=2272 が未復旧の手動対応案件であることを明記
+> - **post_audit [7b] silent exit 根本原因特定・修正（2026-04-12）**: slug修正後の POST_URL 更新により x_post.log との URL不一致が発生、`grep` exit 1 + `set -euo pipefail` で [7b]〜[13] 全体が silent exit していた。line 1159 に `|| true` を追加して修正。[11b] 等の到達経路を復旧。
+>
+> **v3.2変更点（2026-04-09）**:
+> - SRE部（ポリゴンZ）を正式組織化・watchdog 24h稼働・自動修復3種
+> - サムネイルジャンル拡張（breaking/comeback/chart/live/beauty → + travel/fashion）
+> - サムネイル背景画像ロジック修正（travel/fashion/beautyはwikimedia使用禁止）
+> - X投稿ジャンル対応拡張（travel/fashionフック追加）
+> - run_ai_meeting.sh 改訂（arceus品質監査を会議フローに追加、mewtwo指示強化）
+> - エージェント定義整備（meowth/snorlax/articuno/alakazam を実働プロンプトに強化）
+> - failsafe誤発動修正（X投稿履歴のない記事をカウント除外）
+>
+> **v3.0からの変更**: エージェント削減（9→5コール、-44%コスト削減）、サムネイルv3（固定テンプレ背景+テンプレ文言+WebP）、CTA強制挿入（全記事保証）、X投稿テンプレ化（persian廃止）、並行実行時トピック予約ロック、sanitize強化、スコア記録修正、KPIログJSON安全化、戦略パイプライン投稿失敗検知、CTA HTML破損修正、メタディスクリプションAIOSEO対応。
 
 ---
 
 ### 0. 最重要ミッション
-KPOP JOURNALを、**データドリブンで自律改善する収益最大化AIメディア企業OS**として運用する。
+KPOP JOURNALを、**データドリブンで自律改善する収益最大化AIメディア**として運用する。
+
+> **運営形態**: 人間のオーナーが方針を定め、AIエージェント組織が自律的に投稿・監査・改善を実行する「AIオーナー型メディア」。人間が承認キューを持つが、通常運用は全エージェントが自律判断する。会議体・会議フローもAIエージェントが主体であり、人間の出席や承認は必須ではない。
 
 目的:
 1. 毎日安定して高品質記事が自動投稿される
@@ -59,8 +83,9 @@ KPOP JOURNALを、**データドリブンで自律改善する収益最大化AI�
 
 **【v3.0改訂】エージェント削減後の実稼働組織図**
 
-#### CEO（最終意思決定）
-- アルセウス：全記事の最終承認/却下、経営会議議長、品質監督
+#### 最終承認エージェント
+- アルセウス：全記事の最終承認/却下、AI運営会議議長、品質監督
+  （ロール名: CEO は廃止。「最終承認エージェント」が正式呼称）
 
 #### 編集本部（記事生産の中核）
 - **本部長：ミュウツー（戦略統括）**
@@ -81,6 +106,15 @@ KPOP JOURNALを、**データドリブンで自律改善する収益最大化AI�
 - ポリゴン：週次パフォーマンス分析・エージェント評価
 - ルギア：中長期戦略・来週の方針決定・エージェント改善指示
 
+#### インフラ/SRE部（v3.1新設）
+- **ポリゴンZ（SRE責任者）**：パイプライン全稼働監視・自動修復・障害対応
+  - 担当スクリプト: `lib/post_watchdog.py`（毎時0分・30分・24時間稼働）
+  - **【v3.3】通知クールダウン実装**: check_nameごとに24h通知間隔を制御（`logs/watchdog_notif_cooldown.json`）
+  - 自動修復: フェイルセーフ誤発動解除 / パイプライン自動再実行 / 重複データ除去
+  - 報告先: Discord #urgent_errors（異常時即時）+ 日次会議SREレポート + オーナー朝次ブリーフ
+  - 上位: ミュウツー（編集統括）
+  - KPI: パイプライン稼働率 >= 95%、障害検知→修復着手 <= 30分
+
 #### 【v3.0廃止・テンプレ化したエージェント】
 - ~~イーブイ~~（タイトルA/B選定）→ メタモンに統合
 - ~~ペルシアン~~（X投稿戦略）→ `lib/x_post_templates.py` に置換
@@ -89,8 +123,21 @@ KPOP JOURNALを、**データドリブンで自律改善する収益最大化AI�
 - スラッグ生成 → Python決定的変換に置換
 - サムネ文言生成 → `lib/thumbnail_templates.py` に置換
 
+#### 日次会議部（ai_company/run_ai_meeting.sh、21:00）
+- バタフリー：今日のトレンド収集（WebSearch）
+- ラプラス：SEOキーワード戦略
+- ミミッキュ：競合分析・差別化設計
+- ジラーチ：未来バズ予測
+- **ミュウツー（統括）**：全レポート統合 → 明日の方針決定
+- デオキシス：速報記事制作
+- メタモン：CTR改善
+- **ニャース**：収益導線設計（記事ジャンル別アフィリエイト）
+- **ポリゴンZ（SRE）**：インフラ稼働監査・自動修復実績報告
+- **アルセウス（監査）**：全エージェント採点・品質最終審査
+- ポリゴン：パフォーマンス分析・ルギアへの戦略インプット
+
 #### 予備（必要時に活性化）
-- ニャース（収益導線）、カイリュー（CTA設計）、ラプラス、ミミッキュ、ソーナンス、バタフリー（戦略パイプラインでのみ使用）、アラカザム、アブソル、サンダース、チャンシー
+- カビゴン（レビュー記事）、フリーザー（SNSバズコンテンツ）、フーディン（タイトルCTR最適化）、カイリュー（CTA設計）、アブソル、サンダース、チャンシー
 
 ---
 
@@ -154,13 +201,27 @@ KPOP JOURNALを、**データドリブンで自律改善する収益最大化AI�
 - 背景：カテゴリ別固定テンプレート画像
 
 #### カテゴリ別背景テンプレート（`assets/thumbnails/`）
-| ファイル | 用途 | デザイン |
-|---------|------|---------|
-| news.png | 速報・ニュース・炎上 | 赤×黒、ストライプ、緊急感 |
-| comeback.png | カムバック・デビュー・ファッション | 紫×青、ネオン、スパークル |
-| analysis.png | 解説・考察・チャート・ランキング | 黒×ゴールド、エディトリアル |
-| live.png | ライブ・イベント・旅行 | オレンジ×ピンク、ボケ、光 |
-| beauty.png | 美容・コスメ・スキンケア | 白×ピンク、清潔感 |
+| ファイル | ジャンルキー | 用途 | デザイン |
+|---------|------------|------|---------|
+| news.png | breaking | 速報・ニュース・炎上 | 赤×黒、ストライプ、緊急感 |
+| comeback.png | comeback | カムバック・デビュー | 紫×青、ネオン、スパークル |
+| analysis.png | chart | 解説・考察・チャート・ランキング | 黒×ゴールド、エディトリアル |
+| live.png | live | ライブ・イベント | オレンジ×ピンク、ボケ、光 |
+| beauty.png | beauty | 美容・コスメ・スキンケア | 白×ピンク、清潔感 |
+| live.png | travel | 韓国旅行・ソウル・カフェ・聖地巡礼 | 緑テーマ(#30A064)・TRAVEL バッジ |
+| comeback.png | fashion | K-POPファッション・着用・コーデ | 紫テーマ(#B43280)・FASHION バッジ |
+
+**【v3.2追加】ジャンル自動判定（THUMB_GENRE）**
+- kpop_pipeline.sh がTHEME_INPUT・CATEGORY_HINT・タイトルキーワードからジャンルを自動判定
+- 旅行キーワード（旅行/ソウル/カフェ/聖地巡礼/ポップアップ）→ travel
+- ファッションキーワード（ファッション/着用/ブランド/即完売/コーデ）→ fashion
+- 美容キーワード（コスメ/スキンケア/美容/ガラス肌）→ beauty
+- その他 → breaking（デフォルト）
+
+**【v3.2修正】wikimedia画像使用ルール**
+- travel/fashion/beautyジャンルはwikimedia画像を使用禁止
+- これらのジャンルはグラデーション背景 + ジャンル固定ヒーロー文字（SEOUL/FASHION/BEAUTY）を使用
+- Tier1アーティスト名がタイトルに含まれる場合のみ、そのアーティスト名をヒーロー文字に使用
 
 #### テキストルール（厳守）
 - **最大2行、1行あたり最大10文字**
@@ -279,6 +340,8 @@ URL
 - comeback: "{artist}がついに復活" / "待望のカムバック決定"
 - beauty: "{artist}の美肌の秘密が話題" / "ガラス肌の作り方が判明"
 - chart: "{artist}が{number}冠の快挙" / "Billboard記録更新の衝撃"
+- **【v3.2追加】travel**: "ソウルに行くなら今すぐ保存" / "K-POPファンが選ぶ聖地がある"
+- **【v3.2追加】fashion**: "{artist}の私服が完全判明" / "このコーデ、真似できる？"
 
 #### 生成方式
 - **一次生成：テンプレート**（`lib/x_post_templates.py`）— Claude不要
@@ -390,6 +453,38 @@ BLOCK条件（post_guard.py）:
 - 「情報元」テキストの前で`<p><strong>`タグの途中で切断されるバグを修正
 - ブロック要素の開始タグまで遡ってからCTAを挿入するように変更
 
+**【v3.3修正】gardevoir SCOREパース多フォーマット対応:**
+- kpop_strategy_pipeline.sh / kpop_pipeline.sh 両方で修正済み
+- 修正前: `^SCORE:\s*(\d+)` 同一行のみ対応 → 「総合スコア: 87/100」形式で score=? になるバグ
+- 修正後: 7フォーマット対応（SCORE同一行 / TOTAL: / SCORE:後続行の総合: / 総合スコア: / 総合: 等）
+- VERDICTフォールバック: VERDICT行欠落時、score>=80→PASS / >=65→SOFT_RETRY / <65→HARD_FAIL で自動補完
+- 根拠: run_id=20260411_193036 が 87点を取得したにもかかわらず score=? / hard_fail で停止した事象を確認・修正
+
+**【v3.3修正】gardevoir_hook.jsonl 追跡性強化:**
+- PASS / SOFT_RETRY / HARD_FAIL の全verdictエントリに run_id / pipeline / title / category を追記
+- 修正前: HARD_FAIL時のみ run_id あり。PASS時は ts / agent / score / verdict / retry / must_fix の6フィールドのみ
+- 修正後: 全エントリが 10フィールド記録。run_idによる単ファイル内突合が可能に
+- 既存の improvement_engine / watchdog 集計は verdict / score / retry / must_fix のみ参照 → 互換性あり
+
+**【v3.3修正】post_audit [11b] href="#" 除去:**
+- kairyu_kpop が生成する `<a href="#">テキスト</a>` をテキストのみに変換
+- 対象: post_audit.sh の [11b] チェック項目として実装
+- kairyu_kpop.md にも「href="#" は使わない」禁止ルールを明記（プロンプトレベルで再発防止）
+- **現在ステータス**: 実装済み・本番未観測。ただし [7b] silent exit 修正（下記）により到達経路が復旧したため、次回スラッグ修正ありの記事で発火する可能性が生まれた。
+
+**【v3.3修正】post_audit [7b] silent exit 修正（根本原因特定・2026-04-12）:**
+- **症状**: post_audit.log に `--- [7b] X投稿品質監査 ---` が記録されるが、内部alogも [8]-[13] も一切出力されない。
+- **根本原因**: `set -euo pipefail` 環境下で、[0] slug修正後に更新された POST_URL（新URL）を x_post.log（旧URL記録）に grep すると no-match exit 1 → pipeline exit 1 → `set -e` で silent exit。fallback（タイトル検索）到達前に終了する。
+- **修正箇所**: post_audit.sh line 1159 末尾に `|| true` を追加。
+- **再現確認**: `bash post_audit.sh 2286 "新URL" ...` で [7b]→[8]→[9]→[10]→[11] 到達を確認（2026-04-12）。
+- **影響**: [7b]だけでなく、その後続 [8]GSC登録 / [9]ファクトチェック確認 / [10]文字化け / [11]内部リンク / [11b]href="#"除去 / [12]HTTP / [13]サムネ 全体の到達経路が復旧した。
+- **現在ステータス**: **本番観測済み**。ID=2310（2026-04-12 19:49）: slug修正あり記事（cron本番run）で [7b] 内部ログ + [8] 以降継続をpost_audit.logで確認。
+
+**【v3.3修正】post_watchdog 通知クールダウン:**
+- check_nameごとに Discord通知の最小間隔を設定（デフォルト: 24h）
+- `logs/watchdog_notif_cooldown.json` で状態管理
+- 同一異常の通知スパム防止
+
 ---
 
 ### 20. 実装優先順位
@@ -416,6 +511,28 @@ BLOCK条件（post_guard.py）:
 | 53 | メタディスクリプション | ✅ | AIOSEO _aioseo_description対応 |
 | 54 | CTA HTML修正 | ✅ | 情報元前のタグ切断バグ修正 |
 | 55 | 戦略パイプライン投稿検知 | ✅ | POST_ID空チェック+リトライ+Discord通知 |
+
+#### 【v3.3】Phase 5.5（追跡性・品質ゲート強化）: ✅ 完了（2026-04-12）
+
+| # | 項目 | 状態 | 実装場所 | 本番観測 |
+|---|------|------|---------|---------|
+| 56 | gardevoir SCOREパース多フォーマット対応 | ✅ | kpop_strategy_pipeline.sh / kpop_pipeline.sh | **本番観測済み**（pipeline.jsonlに score=81/88/82/91等の実数値確認・2026-04-12） |
+| 57 | gardevoir VERDICTフォールバック（breaking側） | ✅ | kpop_pipeline.sh | 未観測（VERDICT行欠落条件依存） |
+| 58 | gardevoir_hook.jsonl 全verdict に run_id 追加 | ✅ | 両パイプライン | **本番観測済み**（PASSエントリに `"run_id":` フィールド確認・gardevoir_hook.jsonl 2026-04-12） |
+| 59 | post_audit [11b] href="#" 除去 | ✅ | post_audit.sh | 本番到達済み・発火未観測。未発火理由: 処理済み記事にhref="#"なし（コード正常）。kairyu生成記事にhref="#"が含まれた時に初発火 |
+| 60 | kairyu_kpop.md href="#" 禁止明記 | ✅ | agents/kairyu_kpop.md | 適用済み（次LLM呼び出しから有効） |
+| 61 | post_watchdog 通知クールダウン 24h | ✅ | lib/post_watchdog.py | **本番観測済み**（`logs/watchdog_notif_cooldown.json` 生成・2エントリ確認・2026-04-11） |
+| 62 | improvement_engine User-Agent 追加 | ✅ | improvement_engine.sh | **本番観測済み**（2026-04-12 21:30 cron: Discord通知完了・403なし） |
+| 63 | kpop_words リスト強化（Coachella等） | ✅ | 両パイプライン | 未観測（条件依存） |
+| 64 | post_audit [7b] silent exit 修正（slug修正後URL不一致） | ✅ | post_audit.sh line 1159 | **本番観測済み**（ID=2310 cron run: [7b]内部ログ+[8]以降継続確認・2026-04-12） |
+| 65 | improvement_engine 品質比率集計 syntax error 修正 | ✅ | improvement_engine.sh line 338/344 | 再現確認済み（`set -euo pipefail`環境で`"0\n0"`生成を再現・`\|\| true`パターンで修正）。次回cronでDiscord通知に`📊 品質比率:`が表示されると本番観測済みへ |
+| 66 | post_watchdog external_wp検知 | ✅ | lib/post_watchdog.py | **本番観測済み**（watchdog_alerts.jsonlに pipeline_external_wp_post エントリ複数・2026-04-12 03:00〜05:00 post_id=2234/2241/2249 検知確認） |
+
+**要手動対応（自動解決不可）:**
+
+| 案件 | 状態 | 対応内容 |
+|------|------|---------|
+| POST_ID=2272 draft化 | ❌ 未復旧 | タイトルに「K-POP」等SEOキーワードを手動追加してpublish。自動修正ループ3回失敗済みのため自動解決不可。 |
 
 #### Phase 6（スケール準備）: 未着手
 - 勝ち記事の横展開・再生成
@@ -445,7 +562,7 @@ BLOCK条件（post_guard.py）:
 # ━━━ 毎日 ━━━
 0 6 * * *   fetch_yesterday_metrics.py          # メトリクス取得（GA4/GSC/AdSense + X流入）
 0 7 * * *   kpop_pipeline.sh                     # ニュースパイプライン（6コール）
-0 9 * * *   ceo_morning_brief.sh                 # CEO Morning Brief → #daily-ceo-report
+0 9 * * *   ceo_morning_brief.sh                 # オーナー向け Morning Brief → #daily-ceo-report
 0 10 * * *  measure_initial_performance.py       # 初動24h計測
 0 11 * * *  kpop_pipeline.sh "美容テーマ"         # 韓国コスメ記事（5コール）
 0 12 * * *  kpop_strategy_pipeline.sh             # 戦略パイプライン（15コール）

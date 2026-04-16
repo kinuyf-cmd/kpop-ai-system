@@ -97,7 +97,7 @@ phase0_wp_check() {
 
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=1" \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     --connect-timeout 10 --max-time 15)
 
   if [[ "$HTTP_CODE" != "200" ]]; then
@@ -414,7 +414,7 @@ phase5_mewtwo() {
   arceus_verdict=$(cat "$REPORTS/arceus_verdict.md")
 
   claude --dangerously-skip-permissions --agent mewtwo -p "
-CEO・編集長として最終承認を行え。
+CEOとして最終承認を行え（記事の編集責任は編集長デオキシス、あなたは経営判断として最終承認）。
 
 【最終記事】
 ${article_content}
@@ -504,7 +504,7 @@ c = sys.argv[1]
 ng_words = [
     "申し訳ありません", "お手伝いできますか", "承知しました",
     "以下に示します", "AIとして", "言語モデル", "お答えできません",
-    "修正箇所：", "修正サマリー", "チェック項目：", "【修正内容】", "申し訳",
+    "修正箇所：", "修正サマリー", "チェック項目：", "【修正内容】", "申し訳ありません",
 ]
 hit = [w for w in ng_words if w in c]
 if "```" in c:
@@ -659,7 +659,7 @@ ${RECENT_TITLES}
   if [ -f thumbnail.jpg ]; then
     log "  アイキャッチアップロード..."
     MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
-      -u "$WP_USER:$WP_PASS" \
+      -K "$HOME/.wp_auth" \
       -H "Content-Disposition: attachment; filename=thumbnail.jpg" \
       -H "Content-Type: image/jpeg" \
       --data-binary @thumbnail.jpg)
@@ -848,7 +848,7 @@ PY
   )
 
   RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/posts \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     -H "Content-Type: application/json" \
     -d "$JSON")
 
@@ -1071,3 +1071,14 @@ echo "║  記事ID  : ${POST_ID}                          ║"
 echo "║  URL     : ${POST_URL}                         ║"
 echo "║  経過時間: $(elapsed)                           ║"
 echo "╚════════════════════════════════════════════════╝"
+
+# [追加 2026-04-11] 投稿後自動監査 (kpop_pipeline.sh・strategy_pipeline.shとの統一)
+# agent_council.shには post_audit.sh の呼び出しが欠落していたため追加
+SCRIPT_DIR_COUNCIL="$(cd "$(dirname "$0")/.." && pwd)"
+echo ""
+echo "=== 投稿後自動監査（合議パイプライン）==="
+if [[ -n "${POST_ID:-}" ]] && [[ -n "${POST_URL:-}" ]]; then
+  env -u AUDIT_LOOP_COUNT bash "$SCRIPT_DIR_COUNCIL/post_audit.sh" "${POST_ID}" "${POST_URL}" "${TITLE:-}" "${RUN_ID:-}" 2>&1 || true
+else
+  echo "  ⚠️ POST_IDまたはPOST_URLが未設定 → 監査スキップ"
+fi
