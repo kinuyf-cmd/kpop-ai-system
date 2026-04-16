@@ -1,0 +1,47 @@
+# KpopJournal cron設定
+SHELL=/bin/bash
+HOME=/home/aiuser
+
+# 自動修復
+5  6 * * *   cd ~/kpop-ai-system && bash ai_company/auto_repair.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 週次レビュー（月曜のみ）
+30 6 * * 1   cd ~/kpop-ai-system && bash kpop_weekly_review.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 記事生成
+0  7 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+30 7 * * 1   cd ~/kpop-ai-system && bash kpop_chart_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0  8 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 11 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 12 * * *   cd ~/kpop-ai-system && bash kpop_strategy_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 13 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 15 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 17 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 18 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 19 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 部署別朝会（日次）
+40 6 * * *   cd ~/kpop-ai-system && bash ai_company/meeting_editorial.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+30 7 * * *   cd ~/kpop-ai-system && bash ai_company/meeting_sre.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 部署別週次会議
+0 10 * * 1   cd ~/kpop-ai-system && bash ai_company/meeting_finance.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 22 * * 2   cd ~/kpop-ai-system && bash ai_company/meeting_hr.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 22 * * 3   cd ~/kpop-ai-system && bash ai_company/meeting_analytics.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 22 * * 4   cd ~/kpop-ai-system && bash ai_company/meeting_seo.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 22 * * 5   cd ~/kpop-ai-system && bash ai_company/meeting_audit.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 10 * * 6   cd ~/kpop-ai-system && bash ai_company/meeting_sns.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 月次経営会議（毎月1日 10:00）
+0 10 1 * *   cd ~/kpop-ai-system && bash kpop_monthly_report.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 日次全社会議・改善エンジン
+0  21 * * *  cd ~/kpop-ai-system && bash ai_company/run_ai_meeting.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+30 21 * * *  cd ~/kpop-ai-system && bash improvement_engine.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# watchdog（毎時0・30分）
+0,30 * * * * cd ~/kpop-ai-system && python3 lib/post_watchdog.py >> ~/kpop-ai-system/logs/watchdog.log 2>&1
+
+# ダッシュボード自動更新（agent_monitor + org_map 再構築 + dashboard HTML 再生成 + WP デプロイ）
+# 日中2時間おき + 深夜フル更新。agents/*.md の追加・削除が org_map.json に自動反映される
+0 3,9,11,13,15,17,19,21 * * * cd ~/kpop-ai-system && bash run_dashboard_refresh.sh >> ~/kpop-ai-system/logs/cron.log 2>&1

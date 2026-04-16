@@ -1,0 +1,18 @@
+{
+  "_comment": "財務目標値。revenue_config.jsonと連携。",
+  "daily": {
+    "revenue_jpy":      {"target": 200,  "unit": "円/日",  "note": "AdSense+アフィリエイト合算"},
+    "revenue_articles": {"target": 3,    "unit": "本/日",  "note": "収益寄与記事（CTA設置済み高品質）"},
+    "cta_actions":      {"target": 2,    "unit": "件/日",  "note": "CTA設置・CVR改善アクション"},
+    "error_loss":       {"target": 0,    "unit": "件/日",  "note": "エラーによる機会損失"}
+  },
+  "monthly": {
+    "revenue_jpy":      {"target": 6000, "unit": "円/月",  "note": "200円/日×30日"},
+    "win_articles":     {"target": 20,   "unit": "本/月",  "note": "WIN判定記事数（高収益候補）"},
+    "revenue_articles": {"target": 60,   "unit": "本/月",  "note": "収益寄与記事累計"},
+    "ctr_improvements": {"target": 40,   "unit": "件/月",  "note": "CTR改善アクション数"},
+    "index_sends":      {"target": 120,  "unit": "件/月",  "note": "インデックス申請数"},
+    "error_loss":       {"target": 0,    "unit": "件/月",  "note": "エラー損失件数"},
+    "cta_rate_target":  {"target": 0.80, "unit": "%",      "note": "CTA設置率目標"}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "mode": "SAFE_AUTO",
+  "auto_unlock": false,
+  "auto_apply": false,
+  "auto_rollback": false,
+  "_comment": {
+    "MANUAL": "全て手動（デフォルト）",
+    "SAFE_AUTO": "auto_unlock=HIGH以上のみ / auto_apply=false / auto_rollback=rollback_dispatchのみ",
+    "FULL_AUTO": "auto_unlock=true / auto_apply=true / auto_rollback=true（完全自律）"
+  },
+  "_safety": {
+    "backup_required_override": true,
+    "max_auto_apply_per_run": 1,
+    "invariant_violation_block": true,
+    "escalated_hardening_block": true
+  }
+}

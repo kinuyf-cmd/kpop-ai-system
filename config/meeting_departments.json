@@ -1,0 +1,125 @@
+{
+  "_description": "会議体別の部署定義。dashboard.htmlの組織図（7部署）に準拠。lib/agent_monitor.pyから参照され、org_map.jsonのmeeting_departmentsセクションに反映される。ミュウツー=CEO、デオキシス=編集長(編集制作部長)、アルセウス=CQO(総監督)、ニャース=CFO、ポリゴンZ=CTO、ラプラス=CMO、ルギア=COO。",
+  "_c_suite": {
+    "CEO": {"id": "mewtwo", "scope": "全社・戦略統合・経営意思決定"},
+    "編集長": {"id": "deoxys", "scope": "編集制作部・記事テーマ最終決定"},
+    "CFO": {"id": "meowth", "scope": "財務管理部・収益・ROI"},
+    "CTO": {"id": "porygon_z", "scope": "システム運用部・インフラ・自動修復"},
+    "CMO": {"id": "lapras", "scope": "SEO分析部統括＋SNS広報部管掌・マーケティング全般"},
+    "COO": {"id": "lugia", "scope": "経営企画部・オペレーション戦略・週次改善"},
+    "CQO": {"id": "arceus", "scope": "監査品質部・品質最終承認・コンプライアンス・人事兼任"}
+  },
+  "_source_of_truth": "dashboard.html (7部署31名)",
+  "departments": {
+    "editorial": {
+      "label_ja": "編集制作部",
+      "purpose": "K-POP記事の企画・執筆・公開",
+      "meeting_script": "ai_company/meeting_editorial.sh",
+      "cadence": "日次 06:40 JST",
+      "lead": "deoxys",
+      "lead_title": "編集長（編集制作部長）",
+      "members": ["deoxys", "eevee", "venusaur", "wobbuffet", "zapdos", "snorlax"],
+      "discord_channel": "publishing_log"
+    },
+    "seo": {
+      "label_ja": "SEO分析部",
+      "purpose": "検索流入・キーワード・競合分析・CVR改善",
+      "meeting_script": "ai_company/meeting_seo.sh",
+      "cadence": "週次 木曜 22:00 JST",
+      "lead": "lapras",
+      "lead_title": "CMO（SEO分析部長・SNS広報部管掌）",
+      "members": ["lapras", "metamon", "mimikyu", "butterfree", "kairyu_kpop", "illumise"],
+      "discord_channel": "seo_insights"
+    },
+    "sns": {
+      "label_ja": "SNS広報部",
+      "purpose": "X(Twitter)投稿・SNS拡散・バズコンテンツ",
+      "meeting_script": "ai_company/meeting_sns.sh",
+      "cadence": "週次 土曜 10:00 JST",
+      "lead": "persian",
+      "lead_title": "SNS広報部長（CMO直属）",
+      "members": ["persian", "articuno"],
+      "discord_channel": "publishing_log"
+    },
+    "audit": {
+      "label_ja": "監査品質部",
+      "purpose": "記事品質審査・事実確認・フックゲート",
+      "meeting_script": "ai_company/meeting_audit.sh",
+      "cadence": "週次 金曜 22:00 JST",
+      "lead": "arceus",
+      "lead_title": "CQO（監査品質部長・総監督）",
+      "members": ["arceus", "jirachi_kpop", "gengar", "gardevoir_hook_critic", "alakazam_kpop"],
+      "discord_channel": "urgent_errors"
+    },
+    "sre": {
+      "label_ja": "システム運用部",
+      "purpose": "インフラ監視・システム安定稼働",
+      "meeting_script": "ai_company/meeting_sre.sh",
+      "cadence": "日次 07:30 JST",
+      "lead": "porygon_z",
+      "lead_title": "CTO（システム運用部長）",
+      "members": ["porygon_z"],
+      "discord_channel": "alert_summary"
+    },
+    "finance": {
+      "label_ja": "財務管理部",
+      "purpose": "収益化・マネタイズ・広告・アフィリエイト管理",
+      "meeting_script": "ai_company/meeting_finance.sh",
+      "cadence": "週次 月曜 10:00 JST",
+      "lead": "meowth",
+      "lead_title": "CFO（財務管理部長）",
+      "members": ["meowth", "kairyu_kpop", "persian"],
+      "discord_channel": "sales_monetization"
+    },
+    "strategy": {
+      "label_ja": "経営企画部",
+      "purpose": "週次戦略・パフォーマンス分析・経営判断支援",
+      "meeting_script": "ai_company/meeting_analytics.sh",
+      "cadence": "週次 水曜 22:00 JST",
+      "lead": "lugia",
+      "lead_title": "COO（経営企画部長）",
+      "members": ["lugia", "porygon"],
+      "discord_channel": "seo_insights"
+    },
+    "hr": {
+      "label_ja": "人事部（横断機能）",
+      "purpose": "エージェント評価・配置・処遇・採用監査",
+      "meeting_script": "ai_company/meeting_hr.sh",
+      "cadence": "週次 火曜 22:00 JST",
+      "lead": "arceus",
+      "lead_title": "人事部長（CQO兼務）",
+      "members": ["arceus", "mewtwo", "porygon", "wobbuffet"],
+      "discord_channel": "alert_summary"
+    },
+    "board_daily": {
+      "label_ja": "役員会議（全社日次）",
+      "purpose": "全部署レポート統合・明日の方針決定",
+      "meeting_script": "ai_company/run_ai_meeting.sh",
+      "cadence": "日次 21:00 JST",
+      "lead": "mewtwo",
+      "lead_title": "CEO",
+      "members": ["mewtwo", "deoxys", "lapras", "persian", "arceus", "porygon_z", "meowth", "lugia"],
+      "discord_channel": "daily_ceo_report"
+    },
+    "board_weekly": {
+      "label_ja": "週次改善会議",
+      "purpose": "来週戦略・ディレクティブ更新",
+      "meeting_script": "kpop_weekly_review.sh",
+      "cadence": "週次 月曜 06:30 JST",
+      "lead": "lugia",
+      "lead_title": "COO（経営企画部長）",
+      "members": ["lugia", "porygon", "mewtwo", "deoxys"],
+      "discord_channel": "weekly_board_report"
+    },
+    "board_monthly": {
+      "label_ja": "月次経営会議",
+      "purpose": "月次P&L・KPI達成・次月予算",
+      "meeting_script": "kpop_monthly_report.sh",
+      "cadence": "月次 1日 10:00 JST",
+      "lead": "mewtwo",
+      "lead_title": "CEO",
+      "members": ["mewtwo", "meowth", "deoxys", "arceus", "lugia"],
+      "discord_channel": "monthly_board_report"
+    }
+  }
+}

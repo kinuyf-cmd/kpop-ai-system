@@ -18,3 +18,17 @@ thumbnail.webp
 logs/
 .venv/
 .env.save
+.env.bak
+*.bak
+*.bak2
+
+# ランタイム生成物（毎ビルドで更新されるJSON/HTML）
+agent_metrics.json
+revenue_metrics.json
+dashboard_summary.json
+dashboard.html
+lifecycle_traces.json
+optimization_actions.json
+org_map.json
+hub_article_ready.json
+/metrics_yesterday.json

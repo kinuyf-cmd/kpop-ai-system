@@ -1,0 +1,10 @@
+{
+  "agent_directives": {
+    "x_post_b": {
+      "action": "成功率に有意な変化なし。directive の適用範囲または具体性を見直し、出力フォーマット指定をより明確にする微調整を検討してください。",
+      "set_at": "2026-04-14",
+      "source": "ceo_unlock_executor",
+      "target_agent": "X投稿B"
+    }
+  }
+}
