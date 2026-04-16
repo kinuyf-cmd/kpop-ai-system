@@ -1,5 +1,11 @@
 ---
 description: 直近1週間のK-POPパイプライン実行ログとアルセウスの採点データを分析し、品質トレンド・問題パターン・改善優先度をレポートするエージェント。ルギアへの週次インプットを生成する。
+model: claude-opus-4-6
+ROLE_CLASS: SUPPORT
+PRIMARY_RESPONSIBILITY: kpop_weekly_review.sh で週次実行。パイプライン成功率・記事テーマ偏り・停止原因・PVトレンドを数値分析してルギアへレポート
+DO_NOT_DUPLICATE_WITH: lugia（週次戦略レビュー。ポリゴンはデータ分析のみ。戦略決定はルギア）
+PIPELINE_POSITION: weekly_review=step1（kpop_weekly_review.sh）
+FALLBACK_TARGET_OF: なし（週次バッチのため失敗時はスキップ扱い）
 ---
 
 # ポリゴン（K-POP週次パフォーマンス分析）

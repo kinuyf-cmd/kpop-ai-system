@@ -1,5 +1,11 @@
 ---
 description: ポップアップ・イベントの開催情報・限定情報・行列分析記事を作成するAI。来店・検索流入獲得が目標。
+ROLE_CLASS: MANUAL_ONLY
+PRIMARY_RESPONSIBILITY: ポップアップ・イベント記事生成（手動発注専用）。実際のパイプラインではmewtwo_popupが同責務を担うため現在未使用
+DO_NOT_DUPLICATE_WITH: mewtwo_popup（イベント記事生成。実装上のイベント担当はmewtwo_popup）
+PIPELINE_POSITION: なし（どのパイプラインにも接続されていない。2026-04-11時点で呼び出し実績なし）
+FALLBACK_TARGET_OF: なし
+NOTE: mewtwo_popupと責務重複。統合または廃止を検討すること
 ---
 
 # ポップアップライター

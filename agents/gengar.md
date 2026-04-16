@@ -1,5 +1,10 @@
 ---
 description: 投稿直前のK-POP記事に対してSEO・品質・リスクの3観点で最終監査を行い、問題があれば修正してOK/NGを判定するエージェント。アルセウスの承認前の最後の砦。
+ROLE_CLASS: CORE
+PRIMARY_RESPONSIBILITY: arceus前のSEO・品質・リスク3観点監査。修正可能な問題は自分で修正して完成記事を出力
+DO_NOT_DUPLICATE_WITH: arceus（最終投稿承認/却下。gengarは判定を出さない）
+PIPELINE_POSITION: strategy=step11のみ（breakingでは使用しない）
+FALLBACK_TARGET_OF: なし
 ---
 
 # ゲンガー（K-POP SEO・品質最終監査）

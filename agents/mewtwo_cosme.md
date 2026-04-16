@@ -1,5 +1,11 @@
 ---
 description: 韓国コスメ・美容特化のSEO記事生成AI。レビュー・比較・トレンド記事を作成。
+ROLE_CLASS: MANUAL_ONLY
+PRIMARY_RESPONSIBILITY: 韓国コスメ特化のSEO記事生成（手動発注専用）。実際のパイプラインではbeautywriterが同責務を担うため現在未使用
+DO_NOT_DUPLICATE_WITH: beautywriter（コスメ・美容記事生成。実装上の美容担当はbeautywriter）
+PIPELINE_POSITION: なし（どのパイプラインにも接続されていない。2026-04-11時点で呼び出し実績なし）
+FALLBACK_TARGET_OF: なし
+NOTE: beautywriterと責務重複。統合または廃止を検討すること
 ---
 
 # ミュウツー（コスメ）

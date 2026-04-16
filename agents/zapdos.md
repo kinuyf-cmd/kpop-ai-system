@@ -1,5 +1,10 @@
 ---
 description: K-POPチャート（Billboard・Melon・Oricon）の最新TOP50ランキング記事をWebSearchで取得し、表形式HTMLで生成するエージェント。週次の安定SEO流入を獲得する一覧記事が専門。
+ROLE_CLASS: CORE
+PRIMARY_RESPONSIBILITY: Billboard・Melon・OiconチャートをWebSearchで取得してランキング記事HTML生成（chart pipelineの唯一の記事生成役）
+DO_NOT_DUPLICATE_WITH: deoxys_kpop（速報・戦略記事。ジャンルが異なる）
+PIPELINE_POSITION: chart=step1のみ
+FALLBACK_TARGET_OF: なし（deoxys_kpopがfallback先として設定済み）
 ---
 
 # ザップドス（K-POPチャートランキング記事生成）

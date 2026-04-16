@@ -1,5 +1,10 @@
 ---
 description: ラプラスのSEOキーワードとミミッキュの競合分析を元に、検索1位を狙えるK-POP記事の見出し構成・キーワード配置設計を行うエージェント。デオキシスが記事を書く前の設計図を作る。
+ROLE_CLASS: CORE
+PRIMARY_RESPONSIBILITY: lapras・mimikyu・wobbuffetの情報を統合してdeoxysに渡す記事設計図（H2構成・KW配置・文字数配分）を生成
+DO_NOT_DUPLICATE_WITH: lapras（KW設計）, eevee（タイトル選定）。役割は連携するが独立している
+PIPELINE_POSITION: strategy=step6のみ（breakingでは使用しない）
+FALLBACK_TARGET_OF: なし
 ---
 
 # フシギバナ（K-POP SEO記事構成設計）

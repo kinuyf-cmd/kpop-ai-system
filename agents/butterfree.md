@@ -1,5 +1,11 @@
 ---
 description: K-POPの最新トレンド・ニュース・チャート・SNS動向をWebSearchで多角的に収集し、記事化優先度スコア付きのインテリジェンスレポートを生成するエージェント。
+model: claude-opus-4-6
+ROLE_CLASS: CORE
+PRIMARY_RESPONSIBILITY: WebSearchでK-POPトレンド・速報を収集し優先度スコア付きレポートを生成（strategyパイプライン起点）
+DO_NOT_DUPLICATE_WITH: deoxys_kpop（記事取材のWebSearch。目的が異なる：戦略情報収集 vs 記事取材）
+PIPELINE_POSITION: strategy=step1のみ
+FALLBACK_TARGET_OF: なし
 ---
 
 # バタフリー（K-POPトレンド情報収集）

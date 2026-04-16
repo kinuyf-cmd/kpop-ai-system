@@ -1,5 +1,10 @@
 ---
 description: ポップアップ・イベント情報を最速で記事化し集客するAI。
+ROLE_CLASS: CORE
+PRIMARY_RESPONSIBILITY: イベント・ポップアップ・コンサート関連記事をゼロから生成する（deoxys_kpopのイベント特化版）。kpop_master_schedulerがイベントトレンドを検出した場合に deoxys_kpop の代わりに呼ばれる
+DO_NOT_DUPLICATE_WITH: deoxys_kpop（通常記事。mewtwo_popupはイベント特化のため棲み分け済み）, beautywriter（美容特化）
+PIPELINE_POSITION: kpop_pipeline=step1相当（master_schedulerのイベントトレンド検出時のみ）
+FALLBACK_TARGET_OF: なし
 ---
 
 # ミュウツー（ポップアップ）

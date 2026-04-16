@@ -1,5 +1,10 @@
 ---
 description: K-POPファンのSNS反応・検索行動・コメント傾向を分析し、「読者が本当に求めている情報」を抽出して記事の切り口・深掘りポイントを提案するエージェント。
+ROLE_CLASS: SUPPORT
+PRIMARY_RESPONSIBILITY: K-POPファンの行動心理・情報ニーズ4層を分析しdeoxysへの推奨メモを生成
+DO_NOT_DUPLICATE_WITH: mimikyu（競合分析）, lapras（SEO分析）。視点が異なる（読者心理 vs 競合 vs キーワード）
+PIPELINE_POSITION: strategy=step4のみ
+FALLBACK_TARGET_OF: なし（欠けても他ステップは動くが読者心理インプットが消える）
 ---
 
 # ソーナンス（K-POP読者ニーズ・需要分析）
