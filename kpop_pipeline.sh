@@ -2123,15 +2123,21 @@ rm -f "$THUMB_META_FILE"
 [ -n "$THUMB_META_LINE" ] && echo "  thumb_meta: $THUMB_META_LINE"
 
 echo "=== アイキャッチアップロード ==="
+# [再発防止] filename=thumbnail.webp は audit_helpers.py の NG_GENERIC_FILENAME に毎回ヒットし
+# サムネ再生成ループを常に発火していたため、RUN_IDベースのユニーク名に変更する。
+# RUN_IDは14桁(YYYYMMDD_HHMMSS)で audit 側の NG regex を通過する。
+_THUMB_UPLOAD_FILENAME="kpop-${RUN_ID}.webp"
 MEDIA_RESPONSE=$(curl -s -X POST https://www.kpopjournal.tokyo/wp-json/wp/v2/media \
 -K ~/.wp_auth \
--H "Content-Disposition: attachment; filename=thumbnail.webp" \
+-H "Content-Disposition: attachment; filename=${_THUMB_UPLOAD_FILENAME}" \
 -H "Content-Type: image/webp" \
 --data-binary @thumbnail.webp)
 
 MEDIA_ID=$(echo "$MEDIA_RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('id',''))" 2>/dev/null)
 
 # === アイキャッチ ALTテキスト自動設定（再発防止: ALT空防止） ===
+# [再発防止] ALT設定は「試みるだけ」ではなく、最終的にalt_textが空でないことを検証する。
+# 空なら最大3回リトライ。最終的に空ならWARNログに記録（post_auditが引き継いで再度設定を試みる）。
 if [ -n "$MEDIA_ID" ]; then
   ALT_TEXT=$(python3 -c "
 import sys, re
@@ -2141,11 +2147,29 @@ alt = re.sub(r'[【】「」『』\|｜]', ' ', title).strip()
 alt = re.sub(r'\s+', ' ', alt)[:100]
 print(alt)
 " 2>/dev/null)
-  curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${MEDIA_ID}" \
-    -K ~/.wp_auth \
-    -H "Content-Type: application/json" \
-    -d "{\"alt_text\": \"$(echo "$ALT_TEXT" | sed 's/"/\\"/g')\"}" > /dev/null 2>&1
-  echo "  ✅ ALTテキスト設定: ${ALT_TEXT:0:50}..."
+  _ALT_ATTEMPTS=0
+  _ALT_OK=0
+  while [ "$_ALT_ATTEMPTS" -lt 3 ] && [ "$_ALT_OK" -eq 0 ]; do
+    _ALT_ATTEMPTS=$((_ALT_ATTEMPTS+1))
+    curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${MEDIA_ID}" \
+      -K ~/.wp_auth \
+      -H "Content-Type: application/json" \
+      -d "{\"alt_text\": \"$(echo "$ALT_TEXT" | sed 's/"/\\"/g')\"}" > /dev/null 2>&1
+    # 検証: altが実際に反映されたか
+    _VERIFY_ALT=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${MEDIA_ID}" \
+      -K ~/.wp_auth 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('alt_text',''))" 2>/dev/null || echo "")
+    if [ -n "$_VERIFY_ALT" ]; then
+      _ALT_OK=1
+      echo "  ✅ ALTテキスト設定(試行${_ALT_ATTEMPTS}): ${_VERIFY_ALT:0:50}"
+    else
+      echo "  ⚠️ ALTテキスト未反映(試行${_ALT_ATTEMPTS}) → リトライ"
+      sleep 1
+    fi
+  done
+  if [ "$_ALT_OK" -eq 0 ]; then
+    echo "  ❌ ALTテキスト3回試行後も未反映 → post_auditに引き継ぐ"
+    log_step "thumb_alt_set" "error" "" "media_id=${MEDIA_ID} alt_empty_after_3_retries"
+  fi
 fi
 
 # === サムネイルコピー品質警告（pre-publish thumbnail check） ===

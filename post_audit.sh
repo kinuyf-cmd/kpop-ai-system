@@ -941,11 +941,35 @@ else:
           --data-binary @"$_THUMB_FILE" 2>/dev/null)
         NEW_MEDIA_ID=$(echo "$UPLOAD_RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id',0))" 2>/dev/null || echo "0")
         if [[ "$NEW_MEDIA_ID" != "0" ]] && [[ -n "$NEW_MEDIA_ID" ]]; then
+          # [再発防止] featured_mediaを差し替える前に、新media にalt_textを必ず設定する
+          # 過去バグ: 再生成後のmediaにaltが設定されず、投稿後のalt_textが空になる事故が多発
+          REGEN_ALT=$(echo "$TITLE" | cut -c1-60 | sed 's/"/\\"/g')
+          ALT_SET_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${NEW_MEDIA_ID}" \
+            -K "$HOME/.wp_auth" \
+            -H "Content-Type: application/json" \
+            -d "{\"alt_text\":\"${REGEN_ALT}\"}" 2>/dev/null || echo "000")
+          if [[ "$ALT_SET_CODE" != "200" ]]; then
+            alog "⚠️ 再生成media(${NEW_MEDIA_ID})のalt設定失敗 code=${ALT_SET_CODE} → リトライ"
+            sleep 1
+            curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${NEW_MEDIA_ID}" \
+              -K "$HOME/.wp_auth" \
+              -H "Content-Type: application/json" \
+              -d "{\"alt_text\":\"${REGEN_ALT}\"}" > /dev/null 2>&1
+          fi
+          # featured_media差し替え
           curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
             -K "$HOME/.wp_auth" \
             -H "Content-Type: application/json" \
             -d "{\"featured_media\":${NEW_MEDIA_ID}}" > /dev/null 2>&1
-          alog "✅ サムネイル再生成・差し替え完了: media_id=$NEW_MEDIA_ID"
+          # 検証: 新mediaのalt_textが実際に空でないか確認（空ならISSUESに追加）
+          VERIFY_ALT=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/media/${NEW_MEDIA_ID}" \
+            -K "$HOME/.wp_auth" 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('alt_text',''))" 2>/dev/null || echo "")
+          if [[ -z "$VERIFY_ALT" ]]; then
+            alog "❌ 再生成media(${NEW_MEDIA_ID})のalt検証失敗（空） → ISSUESに記録"
+            ISSUES+=("サムネ再生成後alt空: media=${NEW_MEDIA_ID}")
+          else
+            alog "✅ サムネイル再生成・差し替え完了: media_id=$NEW_MEDIA_ID alt='${VERIFY_ALT:0:40}'"
+          fi
           FIXES+=("サムネイル再生成・差し替え: $FEAT_MEDIA → $NEW_MEDIA_ID")
           FEAT_MEDIA="$NEW_MEDIA_ID"
           THUMB_REGEN_NEEDED=0

@@ -255,9 +255,12 @@ def cmd_thumb_check(media_id: str, post_id: str, title: str) -> None:
             issues.append(f"NG_URLENC:{name}")
 
     # ファイル名が汎用的すぎないか
+    # [再発防止] POST_ID 付きファイル名 (thumbnail-2591.webp) を汎用判定していた過去バグを修正。
+    # 判定は「数字がゼロ桁 or 連番のみ」の純粋な汎用ファイルに限定する。
+    # POST_ID(4桁以上)や複合サフィックス(thumbnail-2591-1.webp, thumb-r8-...)は合格扱い。
     source_url = media.get("source_url", "")
     fname = source_url.split("/")[-1] if source_url else ""
-    if re.match(r"^(image|img|photo|thumbnail|pic|kpop)[-_]?\d*\.(webp|jpg|png)$", fname, re.I):
+    if re.match(r"^(image|img|photo|thumbnail|pic|kpop)(-?\d{1,3})?\.(webp|jpg|png)$", fname, re.I):
         issues.append(f"NG_GENERIC_FILENAME:{fname}")
 
     # thumbnail_performance.jsonlからメタ確認
