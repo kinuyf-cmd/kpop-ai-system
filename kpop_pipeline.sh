@@ -199,11 +199,17 @@ check_output() {
 
 cleanup_reports_dir() {
   # run専用reportsディレクトリを削除し、シンボリックリンクも解除
+  # 防御: シンボリックリンクは必ず「自分のREPORTS_DIRを指している場合のみ」解除する
+  # （flock破れ等の想定外並列実行で他runのsymlinkを消さないため）
   if [[ -n "${REPORTS_DIR:-}" ]] && [[ -d "$REPORTS_DIR" ]]; then
     rm -rf "$REPORTS_DIR"
   fi
   if [[ -L "$SCRIPT_DIR/reports" ]]; then
-    rm -f "$SCRIPT_DIR/reports"
+    local _link_target
+    _link_target=$(readlink "$SCRIPT_DIR/reports" 2>/dev/null || echo "")
+    if [[ -z "${REPORTS_DIR:-}" ]] || [[ "$_link_target" == "$REPORTS_DIR" ]] || [[ ! -e "$_link_target" ]]; then
+      rm -f "$SCRIPT_DIR/reports"
+    fi
   elif [[ -d "$SCRIPT_DIR/reports" ]]; then
     rm -rf "$SCRIPT_DIR/reports"
   fi
