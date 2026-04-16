@@ -107,12 +107,31 @@ def main():
     if not top_artists:
         top_artists = ["BTS", "BLACKPINK", "aespa", "IVE", "TWICE"]
 
+    # --- 勝ちパターン読み込み (winning_title_patterns.json) ---
+    # 2026-04-16: ctr_title_rewriter のscore>=9データ12件から学習した勝ち要素を
+    # タイトルテンプレに反映。4要素同居 (num+emo+con+art) 75% の成功率を狙う。
+    win_path = LOGS / "winning_title_patterns.json"
+    win_emo = ["完全", "解禁", "衝撃", "制覇", "首位"]
+    win_con = ["→", "年ぶり", "一転", "復帰", "週連続"]
+    win_len_target = (33, 43)  # 勝ちパターン実測範囲
+    if win_path.exists():
+        try:
+            wp = json.loads(win_path.read_text())
+            patt = wp.get("patterns", {})
+            win_emo = [e for e, _ in patt.get("emotions_top", [])[:5]] or win_emo
+            win_con = [c for c, _ in patt.get("contrasts_top", [])[:5]] or win_con
+            lmin, lmax = patt.get("length_min", 33), patt.get("length_max", 43)
+            win_len_target = (lmin, lmax)
+        except Exception:
+            pass
+
+    # 勝ちパターンに基づいた angle templates (4要素必須: 数字/固有/感情/対比)
     angles = [
-        ("新曲解説", "{artist}の最新曲を徹底解説｜MV見どころと歌詞の意味【2026年版】"),
-        ("メンバー比較", "{artist}メンバー別の人気ランキングと特徴まとめ【最新版】"),
-        ("ツアー完全ガイド", "{artist}の日本ツアー完全ガイド｜チケット・会場・セトリ予想"),
-        ("ファッション特集", "{artist}のステージ衣装ブランド・私服コーデ徹底解析"),
-        ("チャート記録", "{artist}が更新した歴代記録まとめ｜Billboard・Melon制覇の道のり"),
+        ("新曲解説",    f"{{artist}}新曲ついに{win_emo[0]}｜2026年{win_con[0]}MV見どころ徹底解説"),
+        ("メンバー比較", f"{{artist}}メンバー別人気ランキング2026｜{win_emo[1] if len(win_emo)>1 else '解禁'}の{win_con[0]}特徴全まとめ"),
+        ("ツアー完全ガイド", f"{{artist}}日本ツアー2026{win_con[0]}{win_emo[0]}ガイド｜チケット・会場・セトリ予想"),
+        ("ファッション特集", f"{{artist}}2026年ステージ衣装ブランド{win_emo[1] if len(win_emo)>1 else '解禁'}｜私服コーデ15選徹底解析"),
+        ("チャート記録", f"{{artist}}が更新した歴代記録10選｜Billboard・Melon{win_emo[3] if len(win_emo)>3 else '制覇'}の{win_con[0]}道のり"),
     ]
 
     stock = []
