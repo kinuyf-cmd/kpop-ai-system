@@ -38,3 +38,7 @@ assets/artist_cache/
 backups/
 diffs/
 dashboard_kpi_recovery.json
+logs/gsc_metrics_latest.json
+logs/rewrite_candidates.jsonl
+logs/gsc_index_status.jsonl
+logs/gsc_index_summary.json

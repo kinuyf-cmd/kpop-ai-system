@@ -361,6 +361,11 @@ def generate():
         <div style="font-size:0.68rem;color:#64748b">X投稿(24h)</div>
         <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('x_posts_24h'))}</div>
       </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">インデックス率</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#22c55e">{_val(k.get('gsc_index_rate_pct'))}%</div>
+        <div style="font-size:0.65rem;color:#64748b">ix={k.get('gsc_index_counts',{}).get('indexed',0)} sub={k.get('gsc_index_counts',{}).get('submitted',0)} not={k.get('gsc_index_counts',{}).get('not_indexed',0)}</div>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
       <div style="background:#0d1117;border-radius:6px;padding:8px 10px;font-size:0.75rem">

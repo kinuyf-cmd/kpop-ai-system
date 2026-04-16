@@ -63,21 +63,38 @@ def main():
     if (LOGS / "gsc_resubmit_log.jsonl").exists():
         gsc_total = sum(1 for l in (LOGS / "gsc_resubmit_log.jsonl").read_text(errors="replace").splitlines() if l.strip())
 
-    # 2. CTR / 流入
-    my = BASE / "google_metrics" / "metrics_yesterday.json"
+    # 2. CTR / 流入 — gsc_metrics_latest.json (直近28日) を優先
     ctr_avg = None; total_imp = 0; total_click = 0
-    if my.exists():
+    gsc_latest = LOGS / "gsc_metrics_latest.json"
+    if gsc_latest.exists():
         try:
-            d = json.loads(my.read_text())
-            rows = d.get("rows", d) if isinstance(d, dict) else d
-            if isinstance(rows, list) and rows:
-                clicks = sum(int(r.get("clicks") or 0) for r in rows if isinstance(r, dict))
-                impr = sum(int(r.get("impressions") or 0) for r in rows if isinstance(r, dict))
+            d = json.loads(gsc_latest.read_text())
+            pages = d.get("pages", [])
+            if pages:
+                clicks = sum(int(p.get("clicks") or 0) for p in pages)
+                impr = sum(int(p.get("impressions") or 0) for p in pages)
                 total_click, total_imp = clicks, impr
                 if impr > 0:
                     ctr_avg = round(clicks / impr * 100, 2)
         except Exception:
             pass
+    # Fallback to metrics_yesterday.json (gsc.top_pages or rows)
+    if total_imp == 0:
+        my = BASE / "google_metrics" / "metrics_yesterday.json"
+        if my.exists():
+            try:
+                d = json.loads(my.read_text())
+                rows = d.get("gsc", {}).get("top_pages") if isinstance(d, dict) else None
+                if not rows:
+                    rows = d.get("rows", d) if isinstance(d, dict) else d
+                if isinstance(rows, list) and rows:
+                    clicks = sum(int(r.get("clicks") or 0) for r in rows if isinstance(r, dict))
+                    impr = sum(int(r.get("impressions") or 0) for r in rows if isinstance(r, dict))
+                    total_click, total_imp = clicks, impr
+                    if impr > 0:
+                        ctr_avg = round(clicks / impr * 100, 2)
+            except Exception:
+                pass
 
     # 3. CTA設置率 (直近7日に更新された記事のうち data-cta=top/mid/bottom すべてある率)
     cta_log = LOGS / "cta_updates.jsonl"
@@ -85,6 +102,17 @@ def main():
 
     # 4. 記事数
     posts_publish = wp_post_count()
+
+    # 4.5 GSC インデックス率 (gsc_index_summary.json)
+    idx_rate = None; idx_counts = {}
+    isum = LOGS / "gsc_index_summary.json"
+    if isum.exists():
+        try:
+            s = json.loads(isum.read_text())
+            idx_rate = s.get("indexed_rate_pct")
+            idx_counts = s.get("counts", {})
+        except Exception:
+            pass
 
     # 5. 直近 X 投稿件数 (24h)
     x_log = LOGS / "x_post.log"
@@ -116,6 +144,8 @@ def main():
             "posts_publish":     posts_publish,
             "x_posts_24h":       x_24h,
             "internal_links_added_7d": il_7d,
+            "gsc_index_rate_pct": idx_rate,
+            "gsc_index_counts":   idx_counts,
         },
         "recovery_phase": {
             "phase1_seo_recovery": {
