@@ -15,11 +15,36 @@
 """
 from __future__ import annotations
 import argparse
+import html as _html
 import json
 import re
 import subprocess
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+
+def sanitize_title(raw: str) -> str:
+    """WP REST が返す &#8221; / &#038; / &quot; 等を正規文字へ復元し、
+    タイトル崩壊パターンを除去する。"""
+    if not raw:
+        return ""
+    s = _html.unescape(raw)
+    s = s.replace("\u3000", " ").strip()
+    return s
+
+
+def sanitize_tweet(text: str) -> str:
+    """ツイート本文の最終サニタイズ。内部メトリクス文字列や残存エンティティを除去。"""
+    if not text:
+        return ""
+    s = _html.unescape(text)
+    # 内部メトリクス漏洩パターンを除去
+    s = re.sub(r"\d[\d,]*impr[^|]*\|\s*", "", s)
+    s = re.sub(r"CTR[0-9.]+%\s*\|\s*", "", s)
+    # 不要な連続空白/全角空白を整形
+    s = s.replace("\u3000", " ")
+    s = re.sub(r"[ \t]+\n", "\n", s).strip()
+    return s
 
 BASE = Path(__file__).resolve().parent.parent
 LOGS = BASE / "logs"
@@ -103,10 +128,11 @@ def build_strong_hook(title: str, ctr_pct: float, impr: int, pos: float) -> tupl
         m = re.search(r"[A-Za-z\-]+\d+|[A-Za-z]{3,}", title)
         artist = m.group(0) if m else "K-POP"
 
+    title = sanitize_title(title)
     title_short = re.sub(r"[【】「」『』]", "", title).strip()[:80]
-    # 数字が既にタイトルに含まれていればそれを拾う、なければimpr数を活用
+    # 数字が既にタイトルに含まれていればそれを拾う、なければ自然な数字ヒント（年号）を活用
     has_num = bool(re.search(r"[0-9０-９]", title))
-    num_hint = "" if has_num else f"見た{impr:,}人が気になった"
+    num_hint = "" if has_num else "2026年版"
 
     # 感情語を先頭に必ず入れる
     patterns = [
@@ -130,11 +156,12 @@ def build_strong_hook(title: str, ctr_pct: float, impr: int, pos: float) -> tupl
         has_artist = any(a.lower() in text.lower() for a in ARTISTS) or (artist and artist.lower() in text.lower())
         has_emotion = any(e in text for e in EMOTIONS)
         if not (has_number and has_artist and has_emotion):
-            # 要件不足 → 強制付与
+            # 要件不足 → 自然な強制付与（内部メトリクスは絶対に混ぜない）
             if not has_number:
-                text = f"{impr:,}imprなのにCTR{ctr_pct:.1f}% | " + text
+                text = "【2026最新】" + text
             if not has_emotion:
                 text = "【衝撃】" + text
+        text = sanitize_tweet(text)
         sc = hook_score(text)
         if sc > best[1]:
             best = (text, sc)
