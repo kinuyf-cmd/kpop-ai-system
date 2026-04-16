@@ -305,6 +305,86 @@ def generate():
     except Exception as _e:
         _ck_section_html = f'<div style="color:#ef4444;padding:12px">CTAダッシュボード読み込みエラー: {_e}</div>'
 
+    # CX: 復旧KPI (2026-04-16障害からの回復/成長指標)
+    _cx_recovery_html = ""
+    try:
+        _rkpi_path = BASE / "dashboard_kpi_recovery.json"
+        if _rkpi_path.exists():
+            _rkpi = json.loads(_rkpi_path.read_text())
+            k = _rkpi.get("kpis", {})
+            _phases = _rkpi.get("recovery_phase", {})
+            def _val(v):
+                return "—" if v is None else v
+            def _stat(ok):
+                return ('<span style="color:#22c55e">✅</span>' if ok else
+                        '<span style="color:#eab308">⏳</span>')
+            _p1 = _phases.get("phase1_seo_recovery", {})
+            _p3 = _phases.get("phase3_monetization", {})
+            _p4 = _phases.get("phase4_disaster_prevention", {})
+            _cx_recovery_html = f"""
+<div class="section" id="cx-recovery" style="margin-bottom:14px">
+  <div style="background:linear-gradient(135deg,#0c1629,#0f172a);border:1px solid #1e293b;border-left:4px solid #22d3ee;border-radius:12px;padding:16px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h2 style="font-size:0.95rem;color:#22d3ee;margin:0">🚑 CX — 復旧＆成長KPI</h2>
+      <span style="font-size:0.7rem;color:#64748b">generated: {_rkpi.get('generated_at','')[:19]}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:14px">
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">GSC再送(24h)</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#22d3ee">{_val(k.get('gsc_indexed_24h'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">GSC累計</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('gsc_indexed_total'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">CTR(avg)</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('ctr_avg_pct'))}%</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">表示回数</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('impressions_total'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">CTA更新(7d)</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#22c55e">{_val(k.get('cta_updated_7d'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">内部リンク(7d)</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#22c55e">{_val(k.get('internal_links_added_7d'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">公開記事</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('posts_publish'))}</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.68rem;color:#64748b">X投稿(24h)</div>
+        <div style="font-size:1.25rem;font-weight:900;color:#e2e8f0">{_val(k.get('x_posts_24h'))}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
+      <div style="background:#0d1117;border-radius:6px;padding:8px 10px;font-size:0.75rem">
+        <strong style="color:#22d3ee">P1 SEO復旧</strong><br>
+        {_stat(_p1.get('gsc_resubmit'))} GSC再送TOP30
+        {_stat(_p1.get('internal_links_fixed'))} 内部リンク修復
+        {_stat(_p1.get('x_revival_queue_built'))} X再投稿キュー
+      </div>
+      <div style="background:#0d1117;border-radius:6px;padding:8px 10px;font-size:0.75rem">
+        <strong style="color:#f97316">P3 収益化</strong><br>
+        {_stat(_p3.get('cta_injected_50posts'))} CTA 50記事注入
+        {_stat(_p3.get('cv_articles_drafted'))} CV記事draft生成
+      </div>
+      <div style="background:#0d1117;border-radius:6px;padding:8px 10px;font-size:0.75rem">
+        <strong style="color:#a855f7">P4 再発防止</strong><br>
+        {_stat(_p4.get('backup_script_installed'))} バックアップ自動化
+        {_stat(_p4.get('recovery_snapshot_today'))} 本日スナップショット
+      </div>
+    </div>
+  </div>
+</div>"""
+    except Exception as _e:
+        _cx_recovery_html = f'<div style="color:#ef4444;padding:12px">復旧KPI読み込みエラー: {_e}</div>'
+
     # エージェント表示名マップ読み込み
     try:
         import json as _jj
@@ -6698,6 +6778,9 @@ a{{text-decoration:none}}
   </div>
 </div>
 {_kpi_cd_html}
+
+<!-- ─── CX 復旧＆成長KPI (2026-04-16障害以降の回復指標) ─── -->
+{_cx_recovery_html}
 
 <!-- ─── CJ 財務状況 ─── -->
 {_cj_section_html}

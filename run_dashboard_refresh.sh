@@ -76,6 +76,14 @@ else
     log "WARNING フェーズ1: intraday スナップ追記でエラー (exit=$?) — 続行します"
 fi
 
+# ─── フェーズ1.5: 復旧KPI ビルダー (非致命、失敗しても続行) ───
+log "フェーズ1.5: kpi_recovery_builder.py 実行..."
+if python3 "${BASE_DIR}/lib/kpi_recovery_builder.py" >> "${LOG_FILE}" 2>&1; then
+    log "フェーズ1.5: OK — recovery KPI 更新完了"
+else
+    log "WARNING フェーズ1.5: kpi_recovery_builder でエラー (exit=$?) — 続行します"
+fi
+
 # ─── フェーズ2: ダッシュボードHTML生成 ───
 log "フェーズ2: generate_dashboard.py 実行..."
 if python3 "${BASE_DIR}/generate_dashboard.py" >> "${LOG_FILE}" 2>&1; then
