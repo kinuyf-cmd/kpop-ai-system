@@ -5,6 +5,7 @@ BASE="$HOME/google_metrics"
 LOCK="$BASE/similar_articles_lock.json"
 LOG="$BASE/similar_articles.log"
 TODAY=$(date '+%Y-%m-%d')
+
 MAX_PER_DAY=2
 
 echo "" >> "$LOG"
@@ -49,7 +50,7 @@ print('YES' if '$SLUG' in data.get('generated', []) else 'NO')
   [ "$ALREADY" = "YES" ] && echo "生成済みスキップ: $SLUG" | tee -a "$LOG" && continue
 
   # WPから元記事のタイトル取得
-  POST=$(curl -s -u "$WP_USER:$WP_PASS"     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?slug=$SLUG")
+  POST=$(curl -s -K "$HOME/.wp_auth"     "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?slug=$SLUG")
   ORIG_TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['title']['rendered'] if d else '')")
   [ -z "$ORIG_TITLE" ] && continue
 

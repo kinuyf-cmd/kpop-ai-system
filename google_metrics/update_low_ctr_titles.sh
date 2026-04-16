@@ -8,7 +8,6 @@ TMP_OUT="$BASE/auto_title_updates.log"
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 
 echo "" > "$TMP_OUT"
@@ -53,7 +52,7 @@ PY
 )
 
   # WPから投稿取得
-  POST_JSON=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+  POST_JSON=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG")
   POST_ID=$(python3 - << 'PY' "$POST_JSON"
 import sys, json
 data = json.loads(sys.argv[1])
@@ -141,7 +140,7 @@ PY
 )
 
   RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     -H "Content-Type: application/json" \
     -d "$UPDATE_JSON")
 

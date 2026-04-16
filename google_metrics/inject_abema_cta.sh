@@ -9,15 +9,17 @@ fi
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="${DISCORD_WEBHOOK}"
 
 POST_ID="$1"
 [ -z "$POST_ID" ] && echo "使い方: inject_abema_cta.sh POST_ID" && exit 0
 
-POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API/$POST_ID")
-TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('rendered',''))" 2>/dev/null)
-CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('rendered',''))" 2>/dev/null)
+# 重要: ?context=edit で content.raw を取得する
+# content.rendered を使うと WordPressプラグインが挿入した広告がベイクインされ、
+# 書き戻し時に script タグの中身が wpautop で <br /> 化されてAdSense破壊する
+POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API/$POST_ID?context=edit")
+TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('raw','') or d.get('title',{}).get('rendered',''))" 2>/dev/null)
+CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('raw','') or d.get('content',{}).get('rendered',''))" 2>/dev/null)
 
 [ -z "$TITLE" ] && echo "タイトル取得失敗 → スキップ" && exit 0
 [ -z "$CONTENT" ] && echo "本文取得失敗 → スキップ" && exit 0
@@ -104,7 +106,7 @@ PY
 
 UPDATE=$(CONTENT_IN="$NEW_CONTENT" python3 -c "import json,os; print(json.dumps({'content': os.environ['CONTENT_IN']}, ensure_ascii=False))")
 RESP=$(echo "$UPDATE" | curl -s -X POST "$WP_API/$POST_ID" \
-  -u "$WP_USER:$WP_PASS" \
+  -K "$HOME/.wp_auth" \
   -H "Content-Type: application/json" \
   -d @-)
 

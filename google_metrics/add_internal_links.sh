@@ -9,7 +9,6 @@ fi
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 
 TARGET_PAGE="$1"
@@ -26,7 +25,16 @@ print(page.split("/")[-1])
 PY
 )
 
-POST_JSON=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+# 重要: ?context=edit + content.raw を使う
+# rendered だとテーマ/ウィジェットが注入したAdSenseがベイクインされる
+POST_JSON=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG&context=edit")
+
+# 空レスポンス・無効JSONガード（空またはHTTPエラー文字列の場合は即終了）
+if [[ -z "$POST_JSON" ]] || ! echo "$POST_JSON" | python3 -c "import json,sys; json.load(sys.stdin)" 2>/dev/null; then
+  echo "投稿取得失敗（空レスポンスまたは無効JSON）: slug=$SLUG"
+  exit 0
+fi
+
 POST_ID=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
 data = json.load(sys.stdin)
@@ -41,7 +49,7 @@ TITLE=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
 data = json.load(sys.stdin)
 if isinstance(data, list) and len(data) > 0:
-    print(data[0].get("title",{}).get("rendered",""))
+    print(data[0].get("title",{}).get("raw","") or data[0].get("title",{}).get("rendered",""))
 else:
     print("")
 PY
@@ -51,15 +59,15 @@ CONTENT=$(echo "$POST_JSON" | python3 - << 'PY'
 import sys, json
 data = json.load(sys.stdin)
 if isinstance(data, list) and len(data) > 0:
-    print(data[0].get("content",{}).get("rendered",""))
+    print(data[0].get("content",{}).get("raw","") or data[0].get("content",{}).get("rendered",""))
 else:
     print("")
 PY
 )
 
 if [ -z "$POST_ID" ] || [ -z "$TITLE" ] || [ -z "$CONTENT" ]; then
-  echo "投稿取得失敗"
-  exit 1
+  echo "投稿取得失敗（slug未ヒットまたはコンテンツ空）: slug=$SLUG"
+  exit 0
 fi
 
 # 関連候補抽出用クエリ（日本語タイトルから抽出）
@@ -75,12 +83,16 @@ print(title[:10].strip())
 PY
 )
 
-curl -s -u "$WP_USER:$WP_PASS" "$WP_API?search=$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))' "$SEARCH_WORD")&per_page=6" > /tmp/related_posts.json
+curl -s -K "$HOME/.wp_auth" "$WP_API?search=$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))' "$SEARCH_WORD")&per_page=6" > /tmp/related_posts.json
 
 RELATED_HTML=$(python3 - << 'PY' "$POST_ID"
 import sys, json
-with open("/tmp/related_posts.json") as f:
-    data = json.load(f)
+try:
+    with open("/tmp/related_posts.json") as f:
+        raw = f.read().strip()
+    data = json.loads(raw) if raw else []
+except (json.JSONDecodeError, OSError):
+    data = []
 current_id = str(sys.argv[1])
 
 items = []
@@ -139,7 +151,7 @@ PY
 )
 
 RESP=$(echo "$UPDATE_JSON" | curl -s -X POST "$WP_API/$POST_ID" \
-  -u "$WP_USER:$WP_PASS" \
+  -K "$HOME/.wp_auth" \
   -H "Content-Type: application/json" \
   -d @-)
 

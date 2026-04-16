@@ -4,7 +4,6 @@ set -e
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 OUT="$BASE/noindex_candidates.json"
 LOG="$BASE/noindex_candidates.log"
@@ -86,14 +85,14 @@ APPLIED=0
 while IFS= read -r SLUG; do
   [ -z "$SLUG" ] && continue
 
-  POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+  POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG")
   POST_ID=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['id'] if d else '')")
   TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['title']['rendered'] if d else '')")
 
   [ -z "$POST_ID" ] && continue
 
   # AIOSEO経由でnoindexを設定
-  RESP=$(curl -s -X POST "$WP_API/$POST_ID"     -u "$WP_USER:$WP_PASS"     -H "Content-Type: application/json"     -d '{"meta":{"_aioseo_robots_default":false,"_aioseo_robots_noindex":true}}')
+  RESP=$(curl -s -X POST "$WP_API/$POST_ID"     -K "$HOME/.wp_auth"     -H "Content-Type: application/json"     -d '{"meta":{"_aioseo_robots_default":false,"_aioseo_robots_noindex":true}}')
 
   echo "noindex設定: $TITLE" | tee -a "$LOG"
 

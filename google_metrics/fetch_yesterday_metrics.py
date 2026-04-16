@@ -242,17 +242,131 @@ def get_adsense_data():
 
     return mapped
 
+def get_cta_events():
+    """
+    GA4からCTAクリックイベントを集計する。
+    イベント名: cta_click_top / cta_click_middle / cta_click_bottom /
+               cta_click_fixed_bar / fixed_cta_impression / fixed_cta_close
+    """
+    creds = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE,
+        scopes=["https://www.googleapis.com/auth/analytics.readonly"]
+    )
+    client = BetaAnalyticsDataClient(credentials=creds)
+
+    CTA_EVENTS = [
+        "cta_click_top", "cta_click_middle", "cta_click_bottom",
+        "cta_click_fixed_bar", "fixed_cta_impression", "fixed_cta_close",
+    ]
+
+    try:
+        # イベント名別の合計
+        req = RunReportRequest(
+            property=f"properties/{GA4_PROPERTY_ID}",
+            dimensions=[Dimension(name="eventName")],
+            metrics=[Metric(name="eventCount")],
+            date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+        )
+        res = client.run_report(req)
+        event_counts = {}
+        for row in res.rows:
+            ev  = row.dimension_values[0].value
+            cnt = int(row.metric_values[0].value)
+            if ev in CTA_EVENTS:
+                event_counts[ev] = cnt
+
+        # 記事タイプ別内訳
+        type_req = RunReportRequest(
+            property=f"properties/{GA4_PROPERTY_ID}",
+            dimensions=[
+                Dimension(name="eventName"),
+                Dimension(name="customEvent:article_type"),
+            ],
+            metrics=[Metric(name="eventCount")],
+            date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+        )
+        type_res = client.run_report(type_req)
+        type_breakdown = {}
+        for row in type_res.rows:
+            ev       = row.dimension_values[0].value
+            art_type = row.dimension_values[1].value or "不明"
+            cnt      = int(row.metric_values[0].value)
+            if ev in CTA_EVENTS and "cta_click" in ev:
+                pos = ev.replace("cta_click_", "")
+                if art_type not in type_breakdown:
+                    type_breakdown[art_type] = {}
+                type_breakdown[art_type][pos] = type_breakdown[art_type].get(pos, 0) + cnt
+
+        clicks_top   = event_counts.get("cta_click_top", 0)
+        clicks_mid   = event_counts.get("cta_click_middle", 0)
+        clicks_bot   = event_counts.get("cta_click_bottom", 0)
+        clicks_fixed = event_counts.get("cta_click_fixed_bar", 0)
+        impressions  = event_counts.get("fixed_cta_impression", 0)
+        closes       = event_counts.get("fixed_cta_close", 0)
+        total        = clicks_top + clicks_mid + clicks_bot + clicks_fixed
+
+        return {
+            "cta_click_top":        clicks_top,
+            "cta_click_middle":     clicks_mid,
+            "cta_click_bottom":     clicks_bot,
+            "cta_click_fixed_bar":  clicks_fixed,
+            "fixed_cta_impression": impressions,
+            "fixed_cta_close":      closes,
+            "total_cta_clicks":     total,
+            "fixed_cta_click_rate": round(clicks_fixed / impressions, 4) if impressions > 0 else 0.0,
+            "fixed_cta_close_rate": round(closes / impressions, 4) if impressions > 0 else 0.0,
+            "type_breakdown":       type_breakdown,
+            "source": "ga4_real",
+        }
+
+    except Exception as e:
+        return {"error": str(e), "source": "ga4_error"}
+
 def main():
+    ga4_data = get_ga4_data()
+
+    # CTA実イベント取得（エラーでも全体を止めない）
+    try:
+        cta_data = get_cta_events()
+        # CTA CTR = 総クリック ÷ PV
+        pv = int(ga4_data.get("summary", {}).get("pageviews", 0))
+        total_clicks = cta_data.get("total_cta_clicks", 0)
+        cta_data["cta_ctr_real"] = round(total_clicks / pv, 4) if pv > 0 else None
+        cta_data["pageviews"] = pv
+    except Exception as e:
+        cta_data = {"error": str(e), "source": "ga4_error"}
+
+    # AdSense はトークン失効で落ちやすい。失敗しても GA4/GSC の値は必ず書き出す。
+    try:
+        adsense_data = get_adsense_data()
+    except Exception as e:
+        adsense_data = {"error": str(e)[:200], "source": "adsense_token_expired_or_failed"}
+        print(f"[WARN] AdSense取得失敗（GA4/GSCは書き出し継続）: {e}", flush=True)
+
     result = {
         "date": start_date,
-        "ga4": get_ga4_data(),
+        "ga4": ga4_data,
         "gsc": get_gsc_data(),
-        "adsense": get_adsense_data(),
+        "adsense": adsense_data,
+        "cta_events": cta_data,
     }
 
     out_path = os.path.join(BASE_DIR, "metrics_yesterday.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
+
+    # ui_cta_events.jsonlにも追記
+    try:
+        import sys
+        sys.path.insert(0, os.path.join(os.path.dirname(BASE_DIR), "kpop-ai-system", "lib"))
+        cta_log = os.path.join(os.path.dirname(BASE_DIR), "kpop-ai-system", "logs", "ui_cta_events.jsonl")
+        cta_record = dict(cta_data)
+        cta_record["date"] = start_date
+        cta_record["fetched_at"] = date.today().isoformat() + "T00:00:00+09:00"
+        with open(cta_log, "a", encoding="utf-8") as f:
+            f.write(json.dumps(cta_record, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
 
     print(out_path)
 

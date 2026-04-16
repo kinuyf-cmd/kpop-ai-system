@@ -9,7 +9,6 @@ fi
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 
 TARGET_PAGE="$1"
@@ -24,11 +23,11 @@ fi
 # =========================
 SLUG=$(echo "$TARGET_PAGE" | awk -F/ '{print $NF}')
 
-POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG&context=edit")
 
 POST_ID=$(echo "$POST" | jq '.[0].id')
-TITLE=$(echo "$POST" | jq -r '.[0].title.rendered')
-CONTENT=$(echo "$POST" | jq -r '.[0].content.rendered')
+TITLE=$(echo "$POST" | jq -r '.[0].title.raw // .[0].title.rendered')
+CONTENT=$(echo "$POST" | jq -r '.[0].content.raw // .[0].content.rendered')
 
 [ "$POST_ID" = "null" ] && exit 1
 
@@ -85,7 +84,7 @@ JSON=$(jq -n \
   '{content:$c}')
 
 RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
-  -u "$WP_USER:$WP_PASS" \
+  -K "$HOME/.wp_auth" \
   -H "Content-Type: application/json" \
   -d "$JSON")
 

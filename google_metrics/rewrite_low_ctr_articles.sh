@@ -8,7 +8,6 @@ TMP_OUT="$BASE/rewrite_low_ctr.log"
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 
 echo "" > "$TMP_OUT"
@@ -49,7 +48,7 @@ print(page.split("/")[-1])
 PY
 )
 
-  POST_JSON=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+  POST_JSON=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG&context=edit")
   POST_ID=$(python3 - << 'PY' "$POST_JSON"
 import sys, json
 data = json.loads(sys.argv[1])
@@ -64,7 +63,7 @@ PY
 import sys, json
 data = json.loads(sys.argv[1])
 if isinstance(data, list) and len(data) > 0:
-    print(data[0].get("title",{}).get("rendered",""))
+    print(data[0].get("title",{}).get("raw","") or data[0].get("title",{}).get("rendered",""))
 else:
     print("")
 PY
@@ -74,7 +73,7 @@ PY
 import sys, json
 data = json.loads(sys.argv[1])
 if isinstance(data, list) and len(data) > 0:
-    print(data[0].get("content",{}).get("rendered",""))
+    print(data[0].get("content",{}).get("raw","") or data[0].get("content",{}).get("rendered",""))
 else:
     print("")
 PY
@@ -128,7 +127,7 @@ PY
 )
 
   RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     -H "Content-Type: application/json" \
     -d "$UPDATE_JSON")
 

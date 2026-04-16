@@ -4,7 +4,6 @@ set -e
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 LOCK_FILE="$BASE/strengthen_lock.json"
 LOG="$BASE/strengthen_winners.log"
@@ -54,7 +53,7 @@ while IFS= read -r PAGE; do
   [ "$PROCESSED" -ge "$MAX_PER_DAY" ] && break
 
   SLUG=$(echo "$PAGE" | sed 's|.*/||' | sed 's|/$||')
-  POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+  POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG")
   POST_ID=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['id'] if d else '')")
   TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['title']['rendered'] if d else '')")
 

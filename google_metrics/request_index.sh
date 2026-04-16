@@ -2,6 +2,10 @@
 # Google Indexing API にURL更新を通知するスクリプト
 # Usage: bash ~/google_metrics/request_index.sh "https://example.com/post-slug"
 
+# venv有効化（google-authモジュールのため）
+VENV="$HOME/kpop-ai-system/.venv/bin/activate"
+[ -f "$VENV" ] && source "$VENV"
+
 URL="$1"
 
 if [ -z "$URL" ]; then

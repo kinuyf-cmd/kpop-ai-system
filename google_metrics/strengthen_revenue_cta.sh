@@ -10,7 +10,6 @@ fi
 BASE="$HOME/google_metrics"
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 SITE="https://www.kpopjournal.tokyo"
 LOCK_FILE="$BASE/revenue_cta_lock.json"
 LOG="$BASE/revenue_cta.log"
@@ -36,7 +35,7 @@ if [ "$DONE_TODAY" -ge "$MAX_PER_DAY" ]; then
 fi
 
 # 収益カテゴリの記事を取得（スキンケア・コスメ・旅行・ドラマ）
-REVENUE_POSTS=$(curl -s -u "$WP_USER:$WP_PASS" \
+REVENUE_POSTS=$(curl -s -K "$HOME/.wp_auth" \
   "$WP_API?per_page=30&categories=51,54,52,11,70,8&orderby=modified&order=asc" | \
   python3 -c "
 import json, sys
@@ -66,9 +65,9 @@ PY
 )
   [ "$RECENTLY" = "YES" ] && continue
 
-  POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API/$POST_ID")
-  TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('rendered',''))")
-  CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('rendered',''))")
+  POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API/$POST_ID"?context=edit)
+  TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('raw','') or d.get('title',{}).get('rendered',''))")
+  CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('raw','') or d.get('content',{}).get('rendered',''))")
   CATS=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(','.join(map(str,d.get('categories',[]))))")
 
   # 既にCTAが3つ以上あればスキップ
@@ -197,7 +196,7 @@ PY
   # WordPress更新
   UPDATE=$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1]}, ensure_ascii=False))" "$NEW_CONTENT")
   RESP=$(curl -s -X POST "$WP_API/$POST_ID" \
-    -u "$WP_USER:$WP_PASS" \
+    -K "$HOME/.wp_auth" \
     -H "Content-Type: application/json" \
     -d "$UPDATE")
 

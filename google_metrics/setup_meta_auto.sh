@@ -76,7 +76,6 @@ BASE="$HOME/google_metrics"
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="ここにアプリパスワード"
 DISCORD="ここにWebhook"
 
 PAGES=$(python3 "$BASE/find_low_ctr_pages.py" < "$BASE/metrics_yesterday.json" | jq -r '.[].page')
@@ -85,7 +84,7 @@ for PAGE in $PAGES; do
 
 SLUG=$(echo "$PAGE" | awk -F/ '{print $NF}')
 
-POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API?slug=$SLUG")
+POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API?slug=$SLUG")
 
 ID=$(echo "$POST" | jq '.[0].id')
 TITLE=$(echo "$POST" | jq -r '.[0].title.rendered')
@@ -115,7 +114,7 @@ JSON=$(jq -n \
   '{title:$t, meta:{"_aioseo_description":$m}}')
 
 RESP=$(curl -s -X POST "$WP_API/$ID" \
-  -u "$WP_USER:$WP_PASS" \
+  -K "$HOME/.wp_auth" \
   -H "Content-Type: application/json" \
   -d "$JSON")
 

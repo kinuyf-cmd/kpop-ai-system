@@ -9,7 +9,6 @@ fi
 
 WP_API="https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
 WP_USER="${WP_USER:-kpop-bot}"
-WP_PASS="${WP_PASS}"
 DISCORD_WEBHOOK="${DISCORD_WEBHOOK:-}"
 BASE="$HOME/google_metrics"
 SITE="https://www.kpopjournal.tokyo"
@@ -17,10 +16,10 @@ SITE="https://www.kpopjournal.tokyo"
 POST_ID="$1"
 [ -z "$POST_ID" ] && echo "使い方: inject_revenue_links.sh POST_ID" && exit 1
 
-POST=$(curl -s -u "$WP_USER:$WP_PASS" "$WP_API/$POST_ID")
+POST=$(curl -s -K "$HOME/.wp_auth" "$WP_API/$POST_ID"?context=edit)
 CATS=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(','.join(map(str,d.get('categories',[]))))")
-CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('rendered',''))")
-TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('rendered',''))")
+CONTENT=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('content',{}).get('raw','') or d.get('content',{}).get('rendered',''))")
+TITLE=$(echo "$POST" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('title',{}).get('raw','') or d.get('title',{}).get('rendered',''))")
 
 # 既存CTAチェック
 HAS_CTA=$(echo "$CONTENT" | grep -c "revenue-cta" || true)
@@ -53,6 +52,16 @@ mapping = {
         ("/hongdae-hotel-arex-stay-2025/", "弘大ホテル｜空港鉄道直結で移動ラク"),
         ("/bts-pilgrimage-hongdae-hybe-seongsu/", "BTS聖地巡礼ガイド｜弘大・HYBE"),
         ("/incheon-to-seoul-arex-vs-allstop/", "仁川空港↔ソウル 移動ガイド"),
+    ],
+    # 視聴方法・初心者ガイド（2026-04-13追加）
+    (111, 113): [
+        ("/kpop-streaming-guide-2026/", "K-POP配信サービス比較2026｜無料で見る方法"),
+        ("/kpop-beginner-complete-guide/", "K-POP入門ガイド｜初心者が最初に読むべき完全まとめ"),
+    ],
+    # プロフィール・特集（2026-04-13追加）
+    (112, 31): [
+        ("/kpop-events-japan-april-2026-complete/", "2026年4月 K-POPライブ・来日イベント完全ガイド"),
+        ("/bts-hub/", "BTS最新情報まとめ｜特集ハブ"),
     ],
 }
 
@@ -104,7 +113,7 @@ PY
 
 UPDATE=$(CONTENT_IN="$NEW_CONTENT" python3 -c "import json,os; print(json.dumps({'content': os.environ['CONTENT_IN']}, ensure_ascii=False))")
 
-RESP=$(echo "$UPDATE" | curl -s -X POST "$WP_API/$POST_ID"   -u "$WP_USER:$WP_PASS"   -H "Content-Type: application/json"   -d @-)
+RESP=$(echo "$UPDATE" | curl -s -X POST "$WP_API/$POST_ID"   -K "$HOME/.wp_auth"   -H "Content-Type: application/json"   -d @-)
 
 LINK=$(echo "$RESP" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('link',''))")
 
