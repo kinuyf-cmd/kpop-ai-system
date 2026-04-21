@@ -1,33 +1,45 @@
 {
-  "updated_at": "2026-04-16T14:10:02.088540",
+  "updated_at": "2026-04-21T12:39:13.875062",
   "patterns": {
+    "butterfree_empty_output": {
+      "count": 8,
+      "last_seen": "2026-04-16",
+      "example": "バタフリーがWebSearch失敗時に空出力を返す（成功率80.9%）",
+      "fix": "3段階リトライ+アーカイブフォールバック導入(2026-04-17)。全段階失敗時もパイプライン停止せず最低限出力で続行するよう変更(2026-04-18)",
+      "agent": "butterfree",
+      "resolved_at": "2026-04-18"
+    },
     "wrong_category": {
       "count": 1,
       "last_seen": "2026-04-09",
       "example": "BTSカテゴリが誤設定",
       "fix": "カテゴリ割り当て時にタイトルと記事本文でアーティスト名を照合すること",
-      "agent": "mewtwo"
+      "agent": "mewtwo",
+      "resolved_at": "2026-04-09"
     },
     "missing_alt_text": {
       "count": 0,
       "last_seen": "2026-04-09",
       "example": "ALTテキスト空:アップロード後のALT設定PATCHが未実装",
       "fix": "アイキャッチアップロード時にALTテキストを必ず設定すること",
-      "agent": "pipeline"
+      "agent": "pipeline",
+      "resolved_at": "2026-04-09"
     },
     "meta_desc_copied": {
       "count": 4,
       "last_seen": "2026-04-10",
       "example": "メタ説明が本文冒頭の流用（独立したメタ説明を設定推奨）",
       "fix": "メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）",
-      "agent": "pipeline"
+      "agent": "pipeline",
+      "resolved_at": "2026-04-10"
     },
     "thumbnail_mismatch": {
       "count": 1,
       "last_seen": "2026-04-09",
       "example": "サムネイルテキストと記事タイトルが不一致",
       "fix": "サムネイル生成時にarticle_titleとthumb_textの整合性チェックを強化",
-      "agent": "make_thumbnail"
+      "agent": "make_thumbnail",
+      "resolved_at": "2026-04-09"
     },
     "unknown_2195": {
       "count": 1,
@@ -62,7 +74,8 @@
       "last_seen": "2026-04-13",
       "example": "X投稿スキップ(score=66.0)",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "agent": "persian"
+      "agent": "persian",
+      "resolved_at": "2026-04-13"
     },
     "unknown_8169": {
       "count": 1,
@@ -111,7 +124,8 @@
       "last_seen": "2026-04-11",
       "example": "タイトル文字数問題: 17文字 アイキャッチ画像が設定されていない アイキャッチ画像（サムネイル）が未設定",
       "fix": "投稿前にアイキャッチ画像の存在を必ず確認すること",
-      "agent": "pipeline"
+      "agent": "pipeline",
+      "resolved_at": "2026-04-11"
     },
     "unknown_7097": {
       "count": 1,
@@ -182,16 +196,424 @@
       "example": "h2見出しが3本未満: 0本 h2見出し不足: 0個",
       "fix": "調査が必要",
       "agent": "unknown"
+    },
+    "thumb_artist_name_missing": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "サムネCTRスコアBLOCK(35/100) — JENNIEがartist_wordsに未登録で固有名詞+30点を逸失",
+      "fix": "score_thumbnail_text.pyのartist_wordsにローマ字表記メンバー名(JENNIE,ROSÉ,LISA等)を追加。今後新アーティスト追加時はローマ字・カタカナ両方を登録すること",
+      "agent": "raikou_thumb",
+      "resolved_at": "2026-04-17"
+    },
+    "flock_bad_fd": {
+      "count": 2,
+      "last_seen": "2026-04-17",
+      "example": "flock: 200: Bad file descriptor — 並列パイプライン3種がトピックlockをtruncate競合",
+      "fix": "exec 200>> でプロセス起動時に1回だけFDを開く方式に変更（サブシェルごとの200>>を廃止）。旧fix(>>+事前touch)では並列truncate競合が残っていた",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-17"
+    },
+    "daily_error_threshold_cascade": {
+      "count": 1,
+      "last_seen": "2026-04-16",
+      "example": "Daily error threshold (23/15) でpipeline停止。recoverable=true (品質ゲート発動) も閾値算入",
+      "fix": "post_guard.check_emergency_stop で unrecoverable と recoverable を分離。real errorのみ15件で停止",
+      "agent": "post_guard",
+      "resolved_at": "2026-04-16"
+    },
+    "growth_exclude_missing": {
+      "count": 1,
+      "last_seen": "2026-04-16",
+      "example": "ctr_title_rewriter / cta_ab_runner が about-editor 等の固定ページを対象化",
+      "fix": "config/growth_exclude_urls.json + lib/growth_exclude.py で共通フィルタ化、各runnerから参照",
+      "agent": "ctr_title_rewriter",
+      "resolved_at": "2026-04-16"
+    },
+    "ai_meeting_log_silence": {
+      "count": 1,
+      "last_seen": "2026-04-16",
+      "example": "ai_meeting.log が4/14で更新停止。cron.logに混ざるだけでai_meeting.log単独追記が存在しなかった",
+      "fix": "run_ai_meeting.sh 先頭に `exec > >(tee -a logs/ai_meeting.log) 2>&1` を追加",
+      "agent": "run_ai_meeting",
+      "resolved_at": "2026-04-16"
+    },
+    "learning_coverage_narrow": {
+      "count": 1,
+      "last_seen": "2026-04-16",
+      "example": "apply_learning_to_agents が raikou_thumb / metamon / deoxys の3社員のみに反映",
+      "fix": "gardevoir_hook_critic / arceus / mewtwo にも自動学習サマリを追記する関数を追加",
+      "agent": "apply_learning_to_agents",
+      "resolved_at": "2026-04-16"
+    },
+    "x_backfill_runner_arg_mismatch": {
+      "count": 20,
+      "last_seen": "2026-04-16",
+      "example": "x_backfill_runner.sh が TWEET_TEXT/POST_URL を環境変数で渡すが post_to_x.sh は位置引数 TITLE を要求→空TITLEで exit1 を90秒間隔×20回ループ (22:01〜22:29)",
+      "fix": "(1) 位置引数形式に統一(2026-04-16) (2) JSONの4回パースを1回に統一+tweet_text空チェック追加(2026-04-18)",
+      "agent": "x_boost_selector",
+      "resolved_at": "2026-04-18"
+    },
+    "thumb_sanitize_drops_second_line": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "generate_thumb_copy.sh の _sanitize_thumb_output が1行のみ返す設計のため、raikou_thumbが2行出力(JENNIE/電撃発表)した場合に2行目が最終スコアリングで欠落→65点が35点に劣化しBLOCK",
+      "fix": "_sanitize_thumb_output を v3 化: 8文字以内の行を最大2行保持するよう修正。2026-04-17 修正済み",
+      "agent": "generate_thumb_copy",
+      "resolved_at": "2026-04-17"
+    },
+    "meta_desc_overblock": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "メタディスクリプション候補0文字でBLOCK — 実際には10449文字の正常記事。抽出ロジックが【解説】結論：等のboilerplateを含む最初の文を拾い95文字となり110未満でBLOCK",
+      "fix": "(1) boilerplateパターン(【解説】/結論：)をstrip後に抽出 (2) BLOCK閾値を50文字に引き下げ、50-110文字はWARNに降格 — 2026-04-17 修正済み",
+      "agent": "kpop_strategy_pipeline",
+      "resolved_at": "2026-04-17"
+    },
+    "template_filler_published": {
+      "count": 15,
+      "last_seen": "2026-04-17",
+      "example": "lib/cluster_generator.py が全h2セクションに同一の『本章では◯◯について…3軸で整理…網羅的にカバー…』2段落を機械挿入し、aespa/BTS/BLACKPINK 計15本がfiller-only状態でpublish (post_id 2847-2861)",
+      "fix": "(1) per-h2 keyword interpolation化(2026-04-17) (2) post_guard template_filler_block追加 (3) cluster_generator自己チェック閾値を強化: BLOCK≥3回or40%、WARN≥2回or30%(2026-04-18)",
+      "agent": "cluster_generator",
+      "resolved_at": "2026-04-18"
+    },
+    "x_credential_missing": {
+      "count": 0,
+      "last_seen": "2026-04-18",
+      "example": "~/.x_credentialsが不在でX投稿がexit(1)で失敗",
+      "fix": "post_to_x.sh v3.0: credential不在時はexit(0)でグレースフルスキップ。ログに「SKIP: X credentials未設定」を記録。パイプラインを停止させない",
+      "agent": "post_to_x",
+      "resolved_at": "2026-04-18"
+    },
+    "wp_507_insufficient_storage": {
+      "count": 1,
+      "last_seen": "2026-04-18",
+      "example": "WP API [507] https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?slug=...: Insufficient Storage → フロントエンド500エラー、PM2が71回再起動",
+      "fix": "(1) フロントエンドfetchJSONに5xxリトライ(最大2回,指数バックオフ)追加 (2) パイプラインwp_health_checkに507専用メッセージとWPストレージ警告を追加 (3) auto_improve.pyのPATTERN_RULESに507パターンを登録 (4) PM2をecosystem.config.jsで再起動制限(max_restarts:10,restart_delay:5000ms)",
+      "agent": "frontend/pipeline",
+      "resolved_at": "2026-04-18",
+      "root_cause": "WordPressサーバーのストレージ(DB or ディスク)が一時的に逼迫し507を返却。フロントエンドにリトライ機構がなく、safe()がfallbackを返すがページ全体がデータなしで500化。PM2が無制限再起動を繰り返した",
+      "recurrence_prevention": "フロントエンド5xxリトライ+PM2再起動制限+パイプライン507専用検知の3層防御"
+    },
+    "unknown_524": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "重複メタタグ: canonical 重複メタタグ: og:title",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "grep_c_double_zero": {
+      "count": 20,
+      "last_seen": "2026-04-17",
+      "example": "grep -c || echo 0 でマッチ0件時に stdout に 0 が2行出力され、算術式エラー (0\\n0)",
+      "fix": "grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L299,L1491 修正済み",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-17"
+    },
+    "claude_json_leak_in_article": {
+      "count": 3,
+      "last_seen": "2026-04-17",
+      "example": "ジラーチ(jirachi)出力にClaude APIのraw JSONレスポンス({\"type\":\"result\",...,\"modelUsage\":...})が混入。sanitize_outputの正規表現が深いネストJSONを除去しきれず、ガルデvoirが汚染記事を品質評価→HARD_FAIL→投稿停止の連鎖を起こした",
+      "fix": "sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{\"type\":\"result\"で始まるJSON全体を除去",
+      "agent": "jirachi/sanitize",
+      "resolved_at": "2026-04-17",
+      "root_cause": "claude CLI --no-session-persistence + -p パイプの出力に、稀にJSON diagnosticが混入。旧正規表現[^}]*}は最初の閉じ}で停止するため、modelUsage等のネスト部分が残留"
+    },
+    "article_stuck_in_reports": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "AI会議で生成された4記事(article1-5)がreports/に待機したまま、パイプラインのarchive_and_exitで消去。WP投稿に到達せず",
+      "fix": "品質ゲート(gardevoir/arceus/サムネCTR)連続BLOCK時に元記事が失われる。watchdogで24h以上未投稿を検知→アラート",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-17",
+      "root_cause": "品質ゲート3重直列(gardevoir score<80 + arceus却下 + サムネCTR<60)がすべてexit(1)で終了。記事生成コスト(API費用)が無駄になる"
+    },
+    "triple_gate_cascade_block": {
+      "count": 12,
+      "last_seen": "2026-04-17",
+      "example": "cron.logにサムネCTRスコアBLOCK×3回、投稿却下×3回、HARD_FAIL確認×2回。12件のブロックイベントが1日で発生",
+      "fix": "(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBLOCK時リトライ1回追加(2026-04-17) (4) gardevoir HARD_FAILのkpi_loggerにrecoverable=true追加(2026-04-18)",
+      "agent": "gardevoir/pipeline",
+      "resolved_at": "2026-04-18",
+      "root_cause": "品質ゲート3重直列BLOCKが過剰防衛。gardevoir 74点→HARD_FAIL、サムネ50点→BLOCK、汎用句→BLOCKが全て独立に記事を殺し、投稿率が著しく低下"
+    },
+    "wp_post_pipeline_stall": {
+      "count": 1,
+      "last_seen": "2026-04-17",
+      "example": "記事生成後にWP投稿が実行されない。品質ゲート連続BLOCKにより全記事がarchive_and_exitで退避、reports/は常時空、zero_postsアラートが連続発火",
+      "fix": "品質ゲート過剰BLOCK修正(triple_gate_cascade_block参照) + improvement_engine watchdogでkpop_archives/の未投稿記事も検知 + サムネBLOCK時のリトライ機構追加",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-17",
+      "root_cause": "品質ゲートの直列BLOCKが投稿フローを完全遮断。archive_and_exitで記事が退避されるため、reports/滞留watchdogでは検知できなかった"
+    },
+    "title_typo_entity_mojibake": {
+      "count": 3,
+      "last_seen": "2026-04-18",
+      "example": "タイトルに誤字(スケジュル→スケジュール)、HTMLエンティティ(&amp;等)、文字化け(U+FFFD)、カタカナ内不自然空白(アルバ ム)が残存",
+      "fix": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
+      "agent": "eevee/pipeline",
+      "resolved_at": "2026-04-18",
+      "root_cause": "Claude生成タイトルに稀にHTMLエンティティ・カタカナ分断・文字化けが混入。パイプラインにデコード/検証ステップがなかったため、そのままWPに投稿されCTR低下に直結"
+    },
+    "manual_bulk_post_quality_bypass": {
+      "count": 1,
+      "last_seen": "2026-04-18",
+      "example": "手動一括投稿(scripts/bulk_post_trending.py)がpost_guardをバイパスし、文字数不足・内部リンク不足の記事5本が品質チェック未通過で投稿された",
+      "fix": "post_to_wp.pyにcheck_content_quality()ゲート追加（文字数2000字/h2x4/内部リンク2本）。post_guard.pyにinternal_link/char_count強化。kpop_pipeline.shのpre_publish_gateに純テキスト文字数・内部リンク・h2チェック追加。投稿後60秒でquality_double_check.py自動実行",
+      "agent": "post_to_wp",
+      "resolved_at": "2026-04-18"
+    },
+    "u_fffd_encoding_error": {
+      "count": 3,
+      "last_seen": "2026-04-18",
+      "example": "3記事(ID:3251,3250,3237)でU+FFFD合計43箇所。除隊し�ジン→除隊したジン、第5世��のアイコン→第5世代のアイコン等",
+      "root_cause": "Pythonのopen()にerrors=\"replace\"を使用。Claude CLIの出力バイト列に不正なUTF-8シーケンスが稀に含まれ、errors=\"replace\"がU+FFFDに変換。そのままWPに保存されていた",
+      "fix": "(1) 全lib/*.pyをerrors=\"replace\"に統一(15ファイル) (2) sanitize_output.shでU+FFFDを確実に除去(L70-77) (3) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (4) validate_encoding()関数をWP投稿直前に実行 (5) kpop_pipeline.shにエンコーディング検証ステップあり",
+      "agent": "pipeline/all",
+      "resolved_at": "2026-04-18",
+      "recurrence_prevention": "errors=\"replace\"+sanitize_output.shのU+FFFD除去で二重防御。errors=\"ignore\"は文字消失リスクがあるため使用禁止"
+    },
+    "ai_meta_response_as_article": {
+      "count": 2,
+      "last_seen": "2026-04-18",
+      "example": "AIがHTML記事ではなくメタ応答(以下が改善内容/適用内容のサマリ)を出力し、本文不足で停止",
+      "fix": "final_post.md生成時にAIメタ応答パターンを検出し、HTMLが1タグもない場合は空にしてブロックする",
+      "agent": "kairyu",
+      "resolved_at": "2026-04-18"
+    },
+    "kairyu_meta_explanation_output": {
+      "count": 1,
+      "last_seen": "2026-04-18",
+      "example": "カイリュー(kairyu_kpop)がCVR導線追加指示に対し、記事HTMLではなく「以下が改善内容のまとめです：」というメタ解説(1297bytes)を出力。入力記事(10511bytes)が失われ、投稿時に本文不足(1251bytes)でBLOCK",
+      "root_cause": "カイリューのプロンプトに「記事HTML全文を出力せよ」の明示がなく、LLMが改善内容の説明を返すことがある。check_output()は500bytes以上であれば通過するため、メタ解説が検出されなかった",
+      "fix": "(1) 全パイプライン(5本)のカイリュープロンプトに「改善内容の説明禁止。記事HTML全文をそのまま出力」を追加 (2) カイリュー出力ガードを追加: 出力が入力の50%未満 or HTMLタグ3個未満の場合は入力記事にフォールバック (3) 7箇所のカイリュー呼び出しすべてにガード適用",
+      "agent": "kairyu_kpop",
+      "resolved_at": "2026-04-18",
+      "recurrence_prevention": "カイリュー出力は必ず入力記事サイズとHTMLタグ数で検証。メタ解説出力時はフォールバック"
+    },
+    "missing_featured_media": {
+      "count": 5,
+      "last_seen": "2026-04-18",
+      "example": "strategy_pipeline投稿のfeatured_media=0: make_thumbnail.py失敗時にMEDIA_ID=0のまま投稿が続行される。さらにNEW_MEDIA_ID変数が未初期化のためALTチェックも常にスキップ",
+      "fix": "(1)NEW_MEDIA_ID初期化+代入追加 (2)投稿後featured_media確認→auto_thumbnail.py自動修復 (3)auto_thumbnail.pyのパス・認証修正 (4)kpop_pipeline.shにも同様の投稿後チェック追加",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-18"
+    },
+    "backslash_n_leak": {
+      "count": 0,
+      "last_seen": "2026-04-18",
+      "example": "Claude出力のリテラル\\nがWP本文にそのまま保存される可能性。sanitize_outputはreports/*.mdのみ適用でfinal_post.md/kpop_content.txtは未対象だった",
+      "fix": "sanitize_wp_content()を新設し、kpop_pipeline.sh/kpop_strategy_pipeline.shの投稿直前に/tmp/kpop_content.txtへ適用。scriptタグ内は保持。",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-18"
+    },
+    "json_metadata_leak": {
+      "count": 0,
+      "last_seen": "2026-04-18",
+      "example": "Claude API応答のinput_tokens/stop_reason/session_id等がHTML本文に混入する可能性",
+      "fix": "sanitize_wp_content()でバランスマッチJSONブロブ除去＋HTMLエンティティ版メタデータ除去を投稿直前に適用",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-18"
+    },
+    "internal_link_overblock": {
+      "pattern": "BLOCK:内部リンク不足.*1本 < 2本",
+      "description": "内部リンク1本でBLOCKは過剰 → gate_fatigue連続BLOCKの原因",
+      "fix": "BLOCK閾値を0本に緩和、1本はWARNに変更",
+      "resolved_at": "2026-04-18",
+      "resolved_by": "porygon_z_sre",
+      "file": "kpop_pipeline.sh",
+      "severity": "medium"
+    },
+    "thumb_copy_overblock": {
+      "pattern": "BLOCK:サムネイルコピーに固有名詞.*CTR必須条件未達",
+      "description": "サムネコピーに固有名詞・数字・感情なしでBLOCKは過剰防御 → gate_fatigue原因",
+      "fix": "BLOCK→WARNに緩和。壊滅レベルではないためWARN扱いが適切",
+      "resolved_at": "2026-04-18",
+      "resolved_by": "porygon_z_sre",
+      "file": "kpop_pipeline.sh",
+      "severity": "medium"
+    },
+    "ctr_contrast_encoding_miss": {
+      "pattern": "CTRスコア不足.*対比構造未検出",
+      "description": "CTR対比構造regexがU+2500(─)を検出できず、──を含むタイトルがスコア低下",
+      "fix": "CTR対比構造regexに─(U+2500)と──を追加",
+      "resolved_at": "2026-04-18",
+      "resolved_by": "porygon_z_sre",
+      "file": "kpop_pipeline.sh",
+      "severity": "low"
+    },
+    "x_hook_ctr_overblock": {
+      "pattern": "HOOK_CTR_BLOCK.*< 50",
+      "description": "X投稿HOOK_CTR閾値50は記事CTR閾値40より厳しく、X投稿だけ止まる不整合",
+      "fix": "HOOK_CTR BLOCK閾値を50→40に統一",
+      "resolved_at": "2026-04-18",
+      "resolved_by": "porygon_z_sre",
+      "file": "google_metrics/post_to_x.sh",
+      "severity": "medium"
+    },
+    "unknown_503": {
+      "count": 1,
+      "last_seen": "2026-04-19",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "tweet_body_too_short": {
+      "count": 5,
+      "last_seen": "2026-04-19",
+      "example": "TWEET_QUALITY_BLOCK: 本文45文字（50文字未満）— v12テンプレート出力がURL/ハッシュタグ除去後に50文字閾値を下回る",
+      "fix": "閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）",
+      "agent": "x_post",
+      "resolved_at": "2026-04-19"
+    },
+    "ai_internal_response_in_title": {
+      "count": 2,
+      "last_seen": "2026-04-19",
+      "example": "タイトルにAI内部応答が混入: 'K-POP ウェブフェッチはできませんが…' / excerptにAPIレート制限メッセージ 'You've hit your limit'",
+      "root_cause": "Claude CLIがWebFetch不可時のメタ応答をタイトルとして出力、またはAPIレート制限エラーがexcerptに保存される",
+      "fix": "(1) TITLE_COLLAPSE_PATTERNSに 'hit your limit','resets.*Asia/Tokyo','ウェブフェッチ' パターン追加 (2) post_to_wp.pyのexcerpt/title投稿前にcontamination_check()を実行 (3) agent_monitor.pyのBODY_CONTAMINATION_PATTERNSにレート制限応答パターン追加",
+      "agent": "pipeline/agent_monitor",
+      "resolved_at": "2026-04-19",
+      "recurrence_prevention": "タイトル・excerpt両方でTITLE_COLLAPSE_PATTERNS+rate_limit_patternsを投稿前にチェック。マッチ時はBLOCKして再生成",
+      "filter_patterns": [
+        "ウェブフェッチ(はできません|できません)",
+        "hit your limit",
+        "resets.*\\d+pm",
+        "内部矛盾.*分析します",
+        "以下(が|に)改善内容",
+        "適用内容のサマリ"
+      ]
+    },
+    "thumb_copy_single_line_block": {
+      "count": 3,
+      "last_seen": "2026-04-20",
+      "example": "generate_thumb_copyのプロンプトが1行出力を指示→pre_publish_gateの2行必須BLOCKと矛盾し連続BLOCK",
+      "fix": "generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォールバック追加（2026-04-20）",
+      "agent": "raikou_thumb",
+      "resolved_at": "2026-04-20"
+    },
+    "alakazam_factcheck_title_leak": {
+      "count": 1,
+      "last_seen": "2026-04-20",
+      "example": "アラカザムが'ファクトチェック結果をまとめます'を出力→CRASH_PATTERNSに未登録→X投稿にメタ文字列がリーク",
+      "fix": "kpop_chart_pipeline.sh・post_to_x.shのCRASH_PATTERNSに'ファクトチェック結果'系パターン追加（2026-04-20）",
+      "agent": "alakazam_kpop",
+      "resolved_at": "2026-04-20"
+    },
+    "mewtwo_permission_request_leak": {
+      "count": 1,
+      "last_seen": "2026-04-19",
+      "example": "mewtwo strategyが'ファイル書き込み権限が必要です'とClaude内部メタ応答→step0ガードのregex未対応で通過",
+      "fix": "kpop_pipeline.sh step0ガードに'書き込み権限|許可いただけますか|権限が必要'パターン追加。post_to_x.shにも同様追加（2026-04-20）",
+      "agent": "mewtwo",
+      "resolved_at": "2026-04-20"
+    },
+    "strategy_meta_desc_empty": {
+      "count": 1,
+      "last_seen": "2026-04-18",
+      "example": "メタディスクリプション候補が0文字 — strategy pipeline の AIOSEO_DESC 抽出にフォールバックなし",
+      "fix": "kpop_strategy_pipeline.sh に AIOSEO_DESC フォールバック追加（タイトルから128文字生成）（2026-04-19）",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-19"
+    },
+    "unknown_43": {
+      "count": 1,
+      "last_seen": "2026-04-20",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "thumbnail_text_burned": {
+      "count": 105,
+      "last_seen": "2026-04-20",
+      "example": "サムネイルに文字が焼き込まれている(text_burned>2)。DALL-E生成時に文字が混入しVision検出で確認",
+      "fix": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "agent": "pipeline/make_thumbnail",
+      "resolved_at": "2026-04-20",
+      "root_cause": "DALL-E生成プロンプトに'no text'指定が不十分で、K-POPアーティスト名や記事タイトルの一部が画像に焼き込まれていた",
+      "recurrence_prevention": "pre_publish_hook.pyのthumbnail_text_count BLOCK + 生成後Vision確認の二重防御"
+    },
+    "llm_residue_in_article": {
+      "count": 2,
+      "last_seen": "2026-04-20",
+      "example": "LLM出力残骸(修正箇所リスト、メタ説明文)が記事本文に混入。ID=3280,52でscore=30",
+      "fix": "(1) pre_publish_hook.pyのLLM残骸パターンを6→14に拡張 (2) 内部タグ(<|im_end|>等)検出パターン9個追加 (3) GPT-4o修正時にpost-generation LLM残骸フィルタ適用",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-20",
+      "root_cause": "GPT-4oの校閲出力に'修正箇所'リストが混入。既存のLLM残骸パターンが網羅不足",
+      "recurrence_prevention": "pre_publish_hook.py 14パターン + 内部タグ9パターンの二重検出"
+    },
+    "internal_tag_leak": {
+      "count": 0,
+      "last_seen": "2026-04-20",
+      "example": "<|im_end|>, <|im_start|>, [INST] 等のLLM制御トークンが本文に混入する可能性",
+      "fix": "pre_publish_hook.pyに9パターンの内部タグ検出を追加(BLOCK)",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-20",
+      "recurrence_prevention": "pre_publish_hook.pyで投稿前に自動検出・BLOCK"
+    },
+    "upstream_meta_commentary_leak": {
+      "count": 15,
+      "last_seen": "2026-04-21",
+      "example": "deoxys/metamonがタイトルにメタコメンタリー('記事本文を確認しました','以下のタイトル案を提案します')や英語文('Now I have the context needed')を出力→GardevoirでHARD_FAIL",
+      "root_cause": "LLMが指示を無視してメタ応答をタイトル/本文に混入。入力バリデーションなしでGardevoirに到達し、スコア評価で即HARD_FAIL",
+      "fix": "(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: reject_if_title_containsで'提案します','以下に','Now I have'等を事前拒否 (2) agents/*.mdのプロンプトに英語禁止・メタコメント禁止を明示済み (3) pre_publish_hook.pyのLLM残骸パターンがバックストップとして機能",
+      "agent": "deoxys_kpop/metamon_kpop",
+      "resolved_at": "2026-04-21",
+      "recurrence_prevention": "3層防御: (A) agent_directives.jsonのinput_validation事前拒否 (B) agents/*.mdプロンプト強化 (C) pre_publish_hook.py LLM残骸パターン検出",
+      "filter_patterns": [
+        "提案します",
+        "以下に修正案",
+        "以下のタイトル案",
+        "記事本文を確認",
+        "Now I have",
+        "Here is the",
+        "Here's the",
+        "コンテンツが提供されていません",
+        "Discord通知送信完了",
+        "hit your limit"
+      ]
+    },
+    "unknown_2523": {
+      "count": 1,
+      "last_seen": "2026-04-21",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_8151": {
+      "count": 1,
+      "last_seen": "2026-04-21",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_3302": {
+      "count": 1,
+      "last_seen": "2026-04-21",
+      "example": "X投稿PRE_SCOREが低い: 79.8（閾値80未満）",
+      "fix": "調査が必要",
+      "agent": "unknown"
     }
   },
   "recurring_errors": [
+    {
+      "key": "butterfree_empty_output",
+      "count": 8,
+      "last_seen": "2026-04-16",
+      "example": "バタフリーがWebSearch失敗時に空出力を返す（成功率80.9%）",
+      "fix": "3段階リトライ+アーカイブフォールバック導入(2026-04-17)。全段階失敗時もパイプライン停止せず最低限出力で続行するよう変更(2026-04-18)",
+      "agent": "butterfree",
+      "resolved_at": "2026-04-18"
+    },
     {
       "key": "meta_desc_copied",
       "count": 4,
       "last_seen": "2026-04-10",
       "example": "メタ説明が本文冒頭の流用（独立したメタ説明を設定推奨）",
       "fix": "メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）",
-      "agent": "pipeline"
+      "agent": "pipeline",
+      "resolved_at": "2026-04-10"
     },
     {
       "key": "x_post_failed",
@@ -199,70 +621,117 @@
       "last_seen": "2026-04-13",
       "example": "X投稿スキップ(score=66.0)",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "agent": "persian"
+      "agent": "persian",
+      "resolved_at": "2026-04-13"
+    },
+    {
+      "key": "x_backfill_runner_arg_mismatch",
+      "count": 20,
+      "last_seen": "2026-04-16",
+      "example": "x_backfill_runner.sh が TWEET_TEXT/POST_URL を環境変数で渡すが post_to_x.sh は位置引数 TITLE を要求→空TITLEで exit1 を90秒間隔×20回ループ (22:01〜22:29)",
+      "fix": "(1) 位置引数形式に統一(2026-04-16) (2) JSONの4回パースを1回に統一+tweet_text空チェック追加(2026-04-18)",
+      "agent": "x_boost_selector",
+      "resolved_at": "2026-04-18"
+    },
+    {
+      "key": "template_filler_published",
+      "count": 15,
+      "last_seen": "2026-04-17",
+      "example": "lib/cluster_generator.py が全h2セクションに同一の『本章では◯◯について…3軸で整理…網羅的にカバー…』2段落を機械挿入し、aespa/BTS/BLACKPINK 計15本がfiller-only状態でpublish (post_id 2847-2861)",
+      "fix": "(1) per-h2 keyword interpolation化(2026-04-17) (2) post_guard template_filler_block追加 (3) cluster_generator自己チェック閾値を強化: BLOCK≥3回or40%、WARN≥2回or30%(2026-04-18)",
+      "agent": "cluster_generator",
+      "resolved_at": "2026-04-18"
+    },
+    {
+      "key": "grep_c_double_zero",
+      "count": 20,
+      "last_seen": "2026-04-17",
+      "example": "grep -c || echo 0 でマッチ0件時に stdout に 0 が2行出力され、算術式エラー (0\\n0)",
+      "fix": "grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L299,L1491 修正済み",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-17"
+    },
+    {
+      "key": "claude_json_leak_in_article",
+      "count": 3,
+      "last_seen": "2026-04-17",
+      "example": "ジラーチ(jirachi)出力にClaude APIのraw JSONレスポンス({\"type\":\"result\",...,\"modelUsage\":...})が混入。sanitize_outputの正規表現が深いネストJSONを除去しきれず、ガルデvoirが汚染記事を品質評価→HARD_FAIL→投稿停止の連鎖を起こした",
+      "fix": "sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{\"type\":\"result\"で始まるJSON全体を除去",
+      "agent": "jirachi/sanitize",
+      "resolved_at": "2026-04-17",
+      "root_cause": "claude CLI --no-session-persistence + -p パイプの出力に、稀にJSON diagnosticが混入。旧正規表現[^}]*}は最初の閉じ}で停止するため、modelUsage等のネスト部分が残留"
+    },
+    {
+      "key": "triple_gate_cascade_block",
+      "count": 12,
+      "last_seen": "2026-04-17",
+      "example": "cron.logにサムネCTRスコアBLOCK×3回、投稿却下×3回、HARD_FAIL確認×2回。12件のブロックイベントが1日で発生",
+      "fix": "(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBLOCK時リトライ1回追加(2026-04-17) (4) gardevoir HARD_FAILのkpi_loggerにrecoverable=true追加(2026-04-18)",
+      "agent": "gardevoir/pipeline",
+      "resolved_at": "2026-04-18",
+      "root_cause": "品質ゲート3重直列BLOCKが過剰防衛。gardevoir 74点→HARD_FAIL、サムネ50点→BLOCK、汎用句→BLOCKが全て独立に記事を殺し、投稿率が著しく低下"
+    },
+    {
+      "key": "title_typo_entity_mojibake",
+      "count": 3,
+      "last_seen": "2026-04-18",
+      "example": "タイトルに誤字(スケジュル→スケジュール)、HTMLエンティティ(&amp;等)、文字化け(U+FFFD)、カタカナ内不自然空白(アルバ ム)が残存",
+      "fix": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
+      "agent": "eevee/pipeline",
+      "resolved_at": "2026-04-18",
+      "root_cause": "Claude生成タイトルに稀にHTMLエンティティ・カタカナ分断・文字化けが混入。パイプラインにデコード/検証ステップがなかったため、そのままWPに投稿されCTR低下に直結"
+    },
+    {
+      "key": "u_fffd_encoding_error",
+      "count": 3,
+      "last_seen": "2026-04-18",
+      "example": "3記事(ID:3251,3250,3237)でU+FFFD合計43箇所。除隊し�ジン→除隊したジン、第5世��のアイコン→第5世代のアイコン等",
+      "root_cause": "Pythonのopen()にerrors=\"replace\"を使用。Claude CLIの出力バイト列に不正なUTF-8シーケンスが稀に含まれ、errors=\"replace\"がU+FFFDに変換。そのままWPに保存されていた",
+      "fix": "(1) 全lib/*.pyをerrors=\"replace\"に統一(15ファイル) (2) sanitize_output.shでU+FFFDを確実に除去(L70-77) (3) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (4) validate_encoding()関数をWP投稿直前に実行 (5) kpop_pipeline.shにエンコーディング検証ステップあり",
+      "agent": "pipeline/all",
+      "resolved_at": "2026-04-18",
+      "recurrence_prevention": "errors=\"replace\"+sanitize_output.shのU+FFFD除去で二重防御。errors=\"ignore\"は文字消失リスクがあるため使用禁止"
+    },
+    {
+      "key": "missing_featured_media",
+      "count": 5,
+      "last_seen": "2026-04-18",
+      "example": "strategy_pipeline投稿のfeatured_media=0: make_thumbnail.py失敗時にMEDIA_ID=0のまま投稿が続行される。さらにNEW_MEDIA_ID変数が未初期化のためALTチェックも常にスキップ",
+      "fix": "(1)NEW_MEDIA_ID初期化+代入追加 (2)投稿後featured_media確認→auto_thumbnail.py自動修復 (3)auto_thumbnail.pyのパス・認証修正 (4)kpop_pipeline.shにも同様の投稿後チェック追加",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-18"
+    },
+    {
+      "key": "tweet_body_too_short",
+      "count": 5,
+      "last_seen": "2026-04-19",
+      "example": "TWEET_QUALITY_BLOCK: 本文45文字（50文字未満）— v12テンプレート出力がURL/ハッシュタグ除去後に50文字閾値を下回る",
+      "fix": "閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）",
+      "agent": "x_post",
+      "resolved_at": "2026-04-19"
+    },
+    {
+      "key": "thumb_copy_single_line_block",
+      "count": 3,
+      "last_seen": "2026-04-20",
+      "example": "generate_thumb_copyのプロンプトが1行出力を指示→pre_publish_gateの2行必須BLOCKと矛盾し連続BLOCK",
+      "fix": "generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォールバック追加（2026-04-20）",
+      "agent": "raikou_thumb",
+      "resolved_at": "2026-04-20"
+    },
+    {
+      "key": "thumbnail_text_burned",
+      "count": 105,
+      "last_seen": "2026-04-20",
+      "example": "サムネイルに文字が焼き込まれている(text_burned>2)。DALL-E生成時に文字が混入しVision検出で確認",
+      "fix": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "agent": "pipeline/make_thumbnail",
+      "resolved_at": "2026-04-20",
+      "root_cause": "DALL-E生成プロンプトに'no text'指定が不十分で、K-POPアーティスト名や記事タイトルの一部が画像に焼き込まれていた",
+      "recurrence_prevention": "pre_publish_hook.pyのthumbnail_text_count BLOCK + 生成後Vision確認の二重防御"
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-09",
-      "fix": "誤アーティストカテゴリを除去",
-      "post_id": "2142"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "altテキスト自動設定",
-      "post_id": "2142"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "メタ説明を独立設定",
-      "post_id": "2142"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "サムネイル差し替え(thumbnail-13→2147)",
-      "post_id": "2145"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "タグ追加(ガールズグループ・5世代K-POP)",
-      "post_id": "2145"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "メタ説明を自動生成して設定 誤アーティストカテゴリを除去: [18, 43, 2] → [18, 2] タグを自動生成して設定: [91, 76] アイキャッチaltテキストを自動設定 GSCインデッ",
-      "post_id": "2149"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "カテゴリルールにword boundary check追加",
-      "post_id": "system"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "ALT設定をメディアアップロード直後に自動実行",
-      "post_id": "system"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "validate_post.pyに__trashed検出追加",
-      "post_id": "system"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "jirachi_kpop.mdにBTS兵役確定情報DB追加",
-      "post_id": "system"
-    },
-    {
-      "ts": "2026-04-09",
-      "fix": "全パイプラインにAIOSEO desc自動設定追加",
-      "post_id": "system"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2157"
-    },
     {
       "ts": "2026-04-10",
       "fix": "タグを自動生成して設定: [91, 99, 100] GSCインデックス登録を再送信",
@@ -406,6 +875,116 @@
       "ts": "2026-04-16",
       "fix": "本文補強: 2494 → 3301文字 アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2651 → 2654 GSCインデックス登録送信",
       "post_id": "2647"
+    },
+    {
+      "ts": "2026-04-16",
+      "fix": "本文補強: 2802 → 3248文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "2826"
+    },
+    {
+      "ts": "2026-04-16",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "2967"
+    },
+    {
+      "ts": "2026-04-17",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3045"
+    },
+    {
+      "ts": "2026-04-17",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3122"
+    },
+    {
+      "ts": "2026-04-18",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3168"
+    },
+    {
+      "ts": "2026-04-18",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3173"
+    },
+    {
+      "ts": "2026-04-18",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3185"
+    },
+    {
+      "ts": "2026-04-18",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3280"
+    },
+    {
+      "ts": "2026-04-18",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3286"
+    },
+    {
+      "ts": "2026-04-19",
+      "fix": "本文補強: 2803 → 3249文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3313"
+    },
+    {
+      "ts": "2026-04-19",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3323"
+    },
+    {
+      "ts": "2026-04-19",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3333"
+    },
+    {
+      "ts": "2026-04-19",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3338"
+    },
+    {
+      "ts": "2026-04-19",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3345"
+    },
+    {
+      "ts": "2026-04-20",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3605"
+    },
+    {
+      "ts": "2026-04-20",
+      "fix": "本文補強: 2989 → 3237文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3615"
+    },
+    {
+      "ts": "2026-04-20",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3683"
+    },
+    {
+      "ts": "2026-04-20",
+      "fix": "本文補強: 2936 → 3384文字 GSCインデックス登録送信",
+      "post_id": "3723"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3831"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3840"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3844"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3850"
     }
   ],
   "agent_failure_counts": {
@@ -413,5 +992,31 @@
     "pipeline": 7,
     "make_thumbnail": 1,
     "persian": 8
+  },
+  "phase4_monitors": {
+    "trend_predictor_no_signal": {
+      "count": 0,
+      "description": "トレンド予測AIが3つのシグナルソース全てから0件を返した場合",
+      "fix": "GSC service_account.json/X credentials/ネットワークを確認。Claude CLI応答チェック",
+      "agent": "trend_predictor"
+    },
+    "ab_test_variant_gen_fail": {
+      "count": 0,
+      "description": "A/Bテストのバリアント生成が連続失敗（Claude CLI timeout等）",
+      "fix": "Claude CLI応答確認。タイムアウト延長（120s→180s）またはリトライ追加",
+      "agent": "ab_test_manager"
+    },
+    "roi_metrics_missing": {
+      "count": 0,
+      "description": "ROI計算時にarticle_metrics_latest.jsonが存在しない",
+      "fix": "fetch_yesterday_metrics.py / data_collector.pyの実行順序を確認。ROIはメトリクス取得後に実行",
+      "agent": "article_roi_calculator"
+    },
+    "cost_budget_exceeded": {
+      "count": 0,
+      "description": "月次API予算を超過（$MONTHLY_API_BUDGET環境変数）",
+      "fix": "パイプライン実行頻度の削減。model_tier.jsonでHaiku活用。safety_config.jsonのtoken_budget_exceeded確認",
+      "agent": "cost_optimizer"
+    }
   }
 }

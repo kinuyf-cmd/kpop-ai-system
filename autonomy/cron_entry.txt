@@ -1,0 +1,4 @@
+# Learning loop - runs daily at 2am JST
+0 2 * * * cd /home/aiuser/kpop-ai-system && python3 autonomy/learning_loop.py >> logs/learning.log 2>&1
+# Owner morning report - runs daily at 8am JST
+0 8 * * * cd /home/aiuser/kpop-ai-system && python3 lib/generate_morning_report.py >> logs/morning_report.log 2>&1

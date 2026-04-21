@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "created_at": "2026-04-21",
+  "green_zone_autonomous": {
+    "description": "AI組織が自動実行OK、事後にログ記録のみ",
+    "allowed_actions": [
+      "config/agent_directives.json の既知パターン修正",
+      "auto_directives.json への注入(再発エラー対応)",
+      "プロンプト修正(成功率<60%エージェントのみ)",
+      "draft化(pre_publish_hookのBLOCK基準明確な記事)",
+      "サムネ再生成(score<6かつSEO上位でない記事)",
+      "cron実行順序の最適化",
+      "ログローテーション"
+    ]
+  },
+  "yellow_zone_async_notify": {
+    "description": "実行後Discord通知、Yutaは事後確認",
+    "actions": [
+      "品質基準の閾値調整(±20%まで)",
+      "新規検出パターンの追加",
+      "エラー再発3回以上の自動修復",
+      "公開記事のメタデータ最適化",
+      "削除記事への301/308リダイレクト追加"
+    ]
+  },
+  "red_zone_owner_approval": {
+    "description": "Yuta承認必須(Discord通知して返答待ち)",
+    "actions": [
+      "pm2 restart",
+      "git main マージ",
+      "大量データ削除(10件以上)",
+      "新規APIサービス契約",
+      "月額料金発生する変更",
+      "SEO上位記事(GSC clicks>20)の重大変更",
+      "公開記事の物理削除",
+      "WPユーザー権限変更"
+    ]
+  }
+}

@@ -1,10 +1,46 @@
 {
   "agent_directives": {
+    "butterfree": {
+      "action": "バタフリーのプロンプト修正で改善余地あり。config/agent_directives.jsonまたはagents/butterfree.mdを修正する",
+      "set_at": "2026-04-17",
+      "source": "ceo_config_executor",
+      "target_agent": "バタフリー"
+    },
+    "x_post": {
+      "action": "成功率が低下しました。直前の config 変更をロールバックし、エラーパターンを pipeline.jsonl で再分析してから再計画してください。",
+      "set_at": "2026-04-18",
+      "source": "ceo_config_executor",
+      "target_agent": "X投稿"
+    },
+    "deoxys_kpop": {
+      "action": "出力にはタイトル+HTML本文のみを含めること。メタコメンタリー（'記事本文を確認しました','以下のタイトル案を提案します','タイトル案を提案します'等）は絶対禁止。英語文（'Now I have the context needed','Here is the improved article'等）が出力に含まれた場合はHARD_FAIL。出力は必ず日本語のみ。タイトルにはアーティスト名+感情語+数字を必ず含めること。",
+      "set_at": "2026-04-21",
+      "source": "phase6_gardevoir_hardfail_rca",
+      "target_agent": "デオキシス（K-POP編集長）",
+      "input_validation": {
+        "reject_if_title_contains": ["提案します", "以下に", "以下の", "Now I have", "Here is", "Here's", "確認しました", "コンテンツが提供されていません", "Discord通知", "hit your limit"],
+        "reject_action": "SKIP_GARDEVOIR_AND_LOG"
+      }
+    },
+    "metamon_kpop": {
+      "action": "出力にはタイトル3案+リライトHTML本文のみを含めること。メタコメンタリー（'記事本文を確認','以下のタイトル案を提案','確認させてください'等）は絶対禁止。英語文が混入した場合はHARD_FAIL。出力は必ず日本語のみ。タイトル3案それぞれにアーティスト名+感情語+数字/対比構造を含めること。入力が空の場合は '<!-- INPUT_EMPTY -->' の1行のみ出力。",
+      "set_at": "2026-04-21",
+      "source": "phase6_gardevoir_hardfail_rca",
+      "target_agent": "メタモン（K-POPリライト）",
+      "input_validation": {
+        "reject_if_title_contains": ["提案します", "以下に", "以下の", "Now I have", "Here is", "Here's", "確認しました", "コンテンツが提供されていません", "Discord通知", "hit your limit"],
+        "reject_action": "SKIP_GARDEVOIR_AND_LOG"
+      }
+    }
+  },
+  "_archived": {
     "x_post_b": {
       "action": "成功率に有意な変化なし。directive の適用範囲または具体性を見直し、出力フォーマット指定をより明確にする微調整を検討してください。",
       "set_at": "2026-04-14",
       "source": "ceo_unlock_executor",
-      "target_agent": "X投稿B"
+      "target_agent": "X投稿B",
+      "archived_at": "2026-04-17",
+      "archived_reason": "Phase2 休眠エージェント整理"
     }
   }
 }
