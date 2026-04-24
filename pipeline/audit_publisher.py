@@ -101,9 +101,22 @@ def audit_post(p):
         except Exception:
             pass
 
-    # 4. 本文長
-    if len(content_text) < 100:
-        _record(pid, purl, 'body_short', f'{len(content_text)}字', 'high')
+    # 4. 本文品質 (200字+日本語比率30%)
+    content_core = re.sub(r'※[^<\n]*|情報ソース[\s\S]*', '', content_text).strip()
+    if len(content_core) < 200:
+        _record(pid, purl, 'body_short', f'{len(content_core)}字', 'high')
+        if len(content_core) < 50:
+            _wp_update(pid, {'status': 'draft'})
+            print(f"  [{pid}] 🔴 重大品質違反(本文{len(content_core)}字) → draft化")
+            _record(pid, purl, 'quality_critical', f'{len(content_core)}字で強制draft化', 'high')
+    if len(content_core) > 30:
+        ja_chars = sum(1 for c in content_core if '\u3040' <= c <= '\u30ff' or '\u4e00' <= c <= '\u9fff')
+        ja_ratio = ja_chars / max(len(content_core), 1)
+        if ja_ratio < 0.3:
+            _record(pid, purl, 'body_non_japanese', f'ja_ratio={ja_ratio*100:.0f}%', 'high')
+            if ja_ratio < 0.1:
+                _wp_update(pid, {'status': 'draft'})
+                print(f"  [{pid}] 🔴 日本語比率{ja_ratio*100:.0f}% → draft化")
 
     # 5. サムネ
     if not fm_id:

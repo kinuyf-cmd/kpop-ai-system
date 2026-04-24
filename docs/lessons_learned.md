@@ -36,3 +36,16 @@
 - **title_long**: 7件
 - **gsc_missing**: 4件
 - **no_thumbnail**: 4件
+
+## 教訓 #17 (2026-04-27) 英語1文のみの記事が公開される品質事故
+
+**事象**: /blackpink-jennie-interview-hatsugen/ (post_id=4068) で英語1文のみの本文で記事公開
+
+**原因**:
+- unified_publisher に本文品質チェックが一切なかった
+- 翻訳失敗時にソース記事の英語タイトルがそのまま本文として流用された
+
+**予防策**:
+1. unified_publisher に本文品質ゲート追加（200字以上 + 日本語比率30%以上で投稿許可）
+2. audit_publisher に同条件の厳格チェック + 即draft化（50字未満 or 日本語10%未満）
+3. latest_rules.json に quality_gates セクション新設

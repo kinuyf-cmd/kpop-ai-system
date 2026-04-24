@@ -155,6 +155,27 @@ def unified_publish(
 
     content = f"{attribution_html}{body_html}\n\n{conf_note}\n{sources_html}"
 
+    # 6.5. 本文品質ゲート
+    import re as _re
+    _body_text = _re.sub(r'<[^>]+>', '', body_html).strip()
+    _body_core = _re.sub(r'※[^<\n]*|情報ソース[\s\S]*', '', _body_text).strip()
+    _ja_chars = sum(1 for c in _body_core if '\u3040' <= c <= '\u30ff' or '\u4e00' <= c <= '\u9fff')
+    _ja_ratio = _ja_chars / max(len(_body_core), 1)
+    _quality_fail = None
+    if len(_body_core) < 200:
+        _quality_fail = f'本文が短すぎる ({len(_body_core)}字、最低200字)'
+    elif _ja_ratio < 0.3:
+        _quality_fail = f'日本語比率低すぎる ({_ja_ratio*100:.0f}%、最低30%)'
+    if _quality_fail:
+        log.append(f"🔴 本文品質不合格: {_quality_fail}")
+        _log_publish({
+            'success': False, 'ts': datetime.now().isoformat(),
+            'title': title_final, 'kind': kind,
+            'error': f'quality_fail: {_quality_fail}', 'log': log,
+        })
+        return {'success': False, 'error': f'本文品質: {_quality_fail}', 'log': log}
+    log.append(f"✅ 本文品質OK ({len(_body_core)}字, 日本語{_ja_ratio*100:.0f}%)")
+
     # 7. カテゴリ
     cat_slug = _detect_category_slug(title_final, body_html, kind)
     cat_id = _fetch_category_id(cat_slug)

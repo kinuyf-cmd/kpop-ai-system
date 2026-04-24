@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-27-cfix12b3",
-  "updated_at": "2026-04-24T23:11:06.892941",
+  "version": "2026-04-27-quality-gate",
+  "updated_at": "2026-04-24T23:49:39.730629",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -145,6 +145,23 @@
         "medium": 14,
         "low": 16
       }
+    },
+    "lessons": [
+      {
+        "date": "2026-04-27",
+        "incident": "英語1文のみの記事が公開された (post_id=4068)",
+        "root_cause": "unified_publisher に本文品質チェックなし",
+        "prevention": "本文200字+日本語比率30%+unified_publisher/audit_publisher 両方でゲート"
+      }
+    ]
+  },
+  "quality_gates": {
+    "body": {
+      "min_chars_core": 200,
+      "min_japanese_ratio": 0.3,
+      "critical_threshold_chars": 50,
+      "critical_threshold_ja_ratio": 0.1,
+      "enforcement": "unified_publisher rejects + audit_publisher drafts"
     }
   }
 }
