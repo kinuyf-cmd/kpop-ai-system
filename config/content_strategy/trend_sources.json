@@ -1,0 +1,160 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-23",
+  "note": "trend_collector.pyが参照するトレンドソース定義。trend_predictor.pyとの連携を前提にRSS/API中心の軽量収集。",
+  "sources": {
+    "x_twitter": {
+      "enabled": true,
+      "type": "api",
+      "description": "X(Twitter) K-POPハッシュタグのトレンド監視",
+      "hashtags": [
+        "#KPOP",
+        "#BTS",
+        "#BLACKPINK",
+        "#aespa",
+        "#TWICE",
+        "#LESSERAFIM",
+        "#Stray_Kids",
+        "#NCT",
+        "#SEVENTEEN",
+        "#NewJeans",
+        "#IVE",
+        "#BIGBANG",
+        "#SHINee",
+        "#BABYMONSTER",
+        "#RIIZE",
+        "#kpopjp"
+      ],
+      "api_version": "v2",
+      "endpoint": "https://api.twitter.com/2/tweets/search/recent",
+      "rate_limit_per_15min": 180,
+      "collect_interval_minutes": 60,
+      "min_engagement_threshold": {
+        "retweet_count": 50,
+        "like_count": 100
+      },
+      "credential_path": "~/.x_credentials",
+      "fallback_on_missing_creds": "skip_gracefully"
+    },
+    "rss_feeds": {
+      "enabled": true,
+      "type": "rss",
+      "description": "K-POP主要メディアのRSSフィード",
+      "feeds": [
+        {
+          "id": "soompi",
+          "name": "Soompi",
+          "url": "https://www.soompi.com/feed",
+          "language": "en",
+          "priority": "high",
+          "category_filter": ["K-Pop", "K-Drama"]
+        },
+        {
+          "id": "koreaboo",
+          "name": "Koreaboo",
+          "url": "https://www.koreaboo.com/feed/",
+          "language": "en",
+          "priority": "high",
+          "category_filter": null
+        },
+        {
+          "id": "allkpop",
+          "name": "AllKPop (FeedBurner)",
+          "url": "https://feeds.feedburner.com/allkpop",
+          "language": "en",
+          "priority": "high",
+          "category_filter": null,
+          "note": "allkpop.com/feed が404のためFeedBurner経由に変更 (2026-04-24)"
+        },
+        {
+          "id": "hellokpop",
+          "name": "HelloKPop",
+          "url": "https://www.hellokpop.com/feed/",
+          "language": "en",
+          "priority": "medium",
+          "category_filter": null,
+          "note": "kpopstarz(403)の代替 (2026-04-24)"
+        },
+        {
+          "id": "kpopmap",
+          "name": "KpopMap",
+          "url": "https://www.kpopmap.com/feed/",
+          "language": "en",
+          "priority": "medium",
+          "category_filter": null,
+          "note": "追加 (2026-04-24)"
+        },
+        {
+          "id": "natalie_music",
+          "name": "Natalie Music (JP)",
+          "url": "https://natalie.mu/music/feed/news",
+          "language": "ja",
+          "priority": "medium",
+          "category_filter": ["K-POP"]
+        },
+        {
+          "id": "yonhap_jp",
+          "name": "Yonhap JP",
+          "url": "https://jp.yna.co.kr/RSS/news.xml",
+          "language": "ja",
+          "priority": "high",
+          "category_filter": ["芸能"]
+        }
+      ],
+      "collect_interval_minutes": 30,
+      "max_age_hours": 24
+    },
+    "youtube": {
+      "enabled": true,
+      "type": "api",
+      "description": "YouTube急上昇K-POP MV監視",
+      "method": "search_api",
+      "search_queries": [
+        "K-POP MV 2026",
+        "K-POP comeback MV",
+        "K-POP dance practice"
+      ],
+      "region_code": "JP",
+      "max_results_per_query": 10,
+      "collect_interval_minutes": 120,
+      "min_view_velocity": 100000,
+      "credential_env": "YOUTUBE_API_KEY",
+      "fallback_on_missing_creds": "skip_gracefully"
+    },
+    "gsc_rising": {
+      "enabled": true,
+      "type": "internal",
+      "description": "GSC急上昇クエリ（trend_predictor.pyの_collect_gsc_rising_queries連携）",
+      "delegate_to": "lib/trend_predictor.py",
+      "collect_interval_minutes": 360,
+      "note": "trend_predictor.pyが直接GSC APIを叩く。trend_collector.pyは結果JSONLを読み取るのみ。"
+    }
+  },
+  "output": {
+    "path": "data/trend_signals.jsonl",
+    "format": "jsonl",
+    "max_age_days": 7,
+    "rotation": "daily_append_with_weekly_cleanup",
+    "schema": {
+      "timestamp": "ISO8601",
+      "source": "string (x_twitter|rss|youtube|gsc_rising)",
+      "keyword": "string",
+      "title": "string (nullable)",
+      "url": "string (nullable)",
+      "engagement_score": "number",
+      "language": "string (ja|en|ko)",
+      "raw_data": "object (nullable)"
+    }
+  },
+  "integration": {
+    "trend_predictor": {
+      "reads_from": "data/trend_signals.jsonl",
+      "injects_to": "config/auto_directives.json",
+      "note": "trend_collector.pyの出力をtrend_predictor.pyがスコアリングしてauto_directivesに注入"
+    },
+    "learning_loop": {
+      "feedback_from": "logs/learning_history.jsonl",
+      "note": "バズ予測の的中/外れをlearning_loopがフィードバックし、ソース重み付けを調整"
+    }
+  }
+}
