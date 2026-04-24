@@ -28,8 +28,8 @@ async function loadKPI(){
       :'<tr><td>GA4</td><td style="color:#c00">未接続</td></tr>';
     const ad=d.adsense||{};
     const ad_row=ad.available
-      ?'<tr><td>AdSense</td><td>昨日¥'+ad.yesterday_jpy+' / 7日合計¥'+ad['7d_total_jpy']+'</td></tr>'
-      :'';
+      ?'<tr style="background:#e8e8e8"><th colspan=2 style="text-align:left;padding:4px">💰 AdSense</th></tr><tr><td>昨日</td><td>¥'+(ad.yesterday_jpy||0).toLocaleString()+'</td></tr><tr><td>7日/30日</td><td>¥'+(ad['7d_total_jpy']||0).toLocaleString()+' / ¥'+(ad['30d_total_jpy']||0).toLocaleString()+'</td></tr>'
+      :'<tr style="background:#e8e8e8"><th colspan=2 style="text-align:left;padding:4px">💰 AdSense</th></tr><tr><td colspan=2 style="font-size:11px;color:#888">未連携 (AdSenseでSA招待が必要)</td></tr>';
     document.getElementById('kpi-live-content').innerHTML=
       '<p style="font-size:11px;color:#888;">'+d.generated_at+'</p>'+
       '<table style="width:100%;border-collapse:collapse;">'+

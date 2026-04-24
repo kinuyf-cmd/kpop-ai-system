@@ -5,5 +5,8 @@
   "last_7d_avg_jpy": 0,
   "last_30d_total_jpy": 0,
   "updated_at": "",
-  "source": "manual"
+  "source": "manual",
+  "available": false,
+  "error": "?",
+  "last_check": "2026-04-25T00:20:09.973555"
 }
