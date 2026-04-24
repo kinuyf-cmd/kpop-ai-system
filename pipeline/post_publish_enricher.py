@@ -33,6 +33,11 @@ sys.path.insert(0, str(BASE / "lib"))
 from article_summarizer import generate_summary, insert_summary_into_html
 from artist_profile_inserter import detect_artist_in_text, generate_profile_html
 
+try:
+    from gsc_indexing import notify_url_updated as _idx_notify
+except Exception:
+    _idx_notify = None
+
 LOGS = BASE / "logs"
 JST = timezone(timedelta(hours=9))
 
@@ -67,7 +72,7 @@ def _fetch_post(post_id: int) -> dict | None:
     try:
         resp = requests.get(
             f"{WP_DOMAIN}/wp-json/wp/v2/posts/{post_id}",
-            params={"_fields": "id,title,content,featured_media"},
+            params={"_fields": "id,slug,title,content,featured_media"},
             timeout=15,
         )
         if resp.status_code == 200:
@@ -228,6 +233,22 @@ def enrich_post(post_id: int) -> dict:
     lead_ok, lead_issues = _validate_lead_structure(content)
     if not lead_ok:
         changes.append(f"lead_warn({'; '.join(lead_issues[:2])})")
+
+    # 5. GSC Indexing API 通知
+    if _idx_notify is not None:
+        try:
+            slug = post.get("slug", "")
+            if slug:
+                post_url = f"https://www.kpopjournal.tokyo/{slug}/"
+                idx_r = _idx_notify(post_url)
+                if idx_r.get("status") == "ok":
+                    changes.append("gsc_indexed")
+                    _log(f"GSC Indexing OK: {post_url}")
+                else:
+                    changes.append(f"gsc_idx_{idx_r.get('status', 'err')}")
+                    _log(f"GSC Indexing {idx_r.get('status')}: {post_url} — {idx_r.get('response', {}).get('error', '')[:100]}")
+        except Exception as e:
+            _log(f"GSC Indexing error: {e}")
 
     result["changes"] = changes
     return result

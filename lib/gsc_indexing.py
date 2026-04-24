@@ -118,6 +118,33 @@ def get_access_token() -> str | None:
     return None
 
 
+# ── Quota management ─────────────────────────────────────────
+
+DAILY_LIMIT = 180  # 200 quota with safety margin
+
+
+def _today_count() -> int:
+    """Count today's successful indexing notifications."""
+    if not INDEX_LOG.exists():
+        return 0
+    today = datetime.now(tz=JST).strftime("%Y-%m-%d")
+    cnt = 0
+    for line in INDEX_LOG.read_text(errors="replace").splitlines():
+        try:
+            d = json.loads(line)
+            ts = d.get("timestamp", "")[:10]
+            if ts == today and d.get("status") == "ok":
+                cnt += 1
+        except Exception:
+            pass
+    return cnt
+
+
+def get_quota_remaining() -> int:
+    """Return how many indexing requests remain today."""
+    return max(0, DAILY_LIMIT - _today_count())
+
+
 # ── Logging ───────────────────────────────────────────────────
 
 
@@ -137,6 +164,18 @@ def notify_url_updated(url: str, token: str | None = None) -> dict:
     Returns dict with keys: status, url, timestamp, response
     """
     ts = datetime.now(tz=JST).isoformat()
+
+    # Quota check
+    if _today_count() >= DAILY_LIMIT:
+        result = {
+            "status": "quota_exceeded",
+            "url": url,
+            "timestamp": ts,
+            "response": {"error": f"Daily limit {DAILY_LIMIT} reached"},
+            "method": "skipped",
+        }
+        _log_entry(result)
+        return result
 
     if token is None:
         token = get_access_token()
