@@ -1,0 +1,87 @@
+{
+  "version": "2026-04-27-cfix6",
+  "updated_at": "2026-04-24T19:55:14.016066",
+  "article_type_ratio": {
+    "NEWS": 0.7,
+    "GUIDE": 0.2,
+    "FEATURE": 0.1,
+    "FEATURE_weekly_max": 2,
+    "FEATURE_required_conditions": 5
+  },
+  "banned_title_patterns": [
+    "の全貌",
+    "徹底解剖",
+    "3つの伏線",
+    "完全解説",
+    "の真相",
+    "衝撃の",
+    "必見",
+    "【保存版】",
+    "って知ってる",
+    "のすべて",
+    "ヤバい"
+  ],
+  "visibility_requirements": {
+    "body_font_size_px": 17,
+    "line_height": 1.9,
+    "h2_format": "24px weight 700 + left 4px red bar",
+    "lead_format": "18px weight 500 + bottom border",
+    "mobile_body_px": 16
+  },
+  "thumbnail_requirements": {
+    "forbidden": [
+      "text burn-in",
+      "solid dark background",
+      "logo overlay"
+    ],
+    "required": [
+      "real photo preferred",
+      "1200x675 recommended",
+      "DALL-E 3 fallback"
+    ],
+    "quality_check": "pipeline/post_publish_enricher.py::_check_thumbnail_quality"
+  },
+  "lessons_learned": [
+    "実装完了≠本番反映。必ずGA4 Realtimeで実データ確認",
+    "サムネ検証は _check_thumbnail_quality で自動、違反時 DALL-E 3 fallback",
+    "チャートはSoompiのみ(火曜09:00)。Circle/Billboard/Monthly廃止",
+    "イベント情報は一次ソース(PRTIMES/チケットガイド)優先",
+    "考察記事は週2本まで、会場名・日付は本文で事実確認",
+    "オーナーの時間を奪わない(憲法第7条)、自己判定完遂",
+    "Phase名改変禁止、累積教訓を毎回参照"
+  ],
+  "data_sources": {
+    "rss_primary": [
+      "soompi",
+      "koreaboo",
+      "hellokpop",
+      "natalie_music",
+      "yonhap_jp"
+    ],
+    "press": [
+      "prtimes"
+    ],
+    "trends": [
+      "google_trends_jp",
+      "gsc_rising"
+    ],
+    "tickets": [
+      "pia"
+    ],
+    "youtube": "requires YOUTUBE_API_KEY"
+  },
+  "collector_schedule": {
+    "trend_collector": "*/30 * * * *",
+    "prtimes": "15,45 * * * *",
+    "gtrends": "0 8,20 * * *",
+    "ticket_guide": "0 */2 * * *",
+    "events_json": "0 6 * * *",
+    "comebacks_json": "0 6 * * *"
+  },
+  "forbidden_actions_for_ai_staff": [
+    "Phase名の定義を変更して完了と報告すること",
+    "git HEADの既存実装を確認せずに上書きすること",
+    "ビルド成功だけで本番反映未確認で完了報告すること",
+    "集計前提の検証なしに数字を信じること"
+  ]
+}
