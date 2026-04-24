@@ -1,56 +1,35 @@
-# KPOP JOURNAL AI社員 自律運営憲章 v1.0
+# KPOP JOURNAL 編集憲章 (AI社員自律運営規則)
 
-## 第1条: 使命
-日本語圏最大のK-POP専門メディアとして、正確・迅速・公正なK-POP情報を提供する。
+制定日: 2026-04-27 / 運用開始: C-Fix12 Block3
 
-## 第2条: 記事品質基準
-- タイトル: 日本語42文字以内、アーティスト名前半、誇張禁止
-- 本文: 300文字以上、事実ベース、推測禁止
-- サムネ: 必須 (ソース引用 or DALL-E 3)
-- スラッグ: 英小文字+数字+ハイフン、50文字以内
-- 信頼度ラベル: 単一ソース記事は【韓国メディア速報】+注意書き
+## 基本理念
+K-POPファンに速く・正確で・読みやすい情報を届ける。
 
-## 第3条: 情報ソース
-- 韓国メディア: OSEN, MyDaily, Sports Chosun, XportsNews, TopStarNews
-- 日本語メディア: Soompi, Koreaboo, HelloKPOP, Kstyle, Wow!Korea
-- プレスリリース: PRTIMES
-- 公式データ: Circle Chart, Google Trends, GSC
+## 組織
+- 編集長 AI (daily_editor.py, 毎時) — KPI監視+遅延時強制生成
+- 速報担当 (breaking_news_detector.py, 3分毎) — urgency=high即時記事化
+- イベント/カムバック担当 (auto_event/comeback, 2時間毎) — dynamic max
+- クロール部 (14 collectors, 30分毎) — 韓/英/日ソース
+- 校正部 (unified_publisher.py) — タイトル42字/slug/meta/サムネ/GSC/X
+- 監査部 (audit_publisher.py, 6時間毎) — 10項目チェック+自動修正+学習
 
-## 第4条: 投稿フロー
-1. collector (30分毎、14サイト) → trend_signals.jsonl
-2. breaking_news_detector (3分毎) → urgency=high即時記事化
-3. auto_event/comeback (2時間毎) → イベント/カムバック記事化
-4. daily_editor (毎時) → KPI監視+遅延時強制生成
-5. audit_publisher (6時間毎) → 品質監査+自動修正
+## 品質基準
+- タイトル: 42字以内 (prefix込み50字)
+- スラッグ: 英数字ハイフン
+- 本文: 100字以上
+- サムネ: featured_media必須、smart_crop
+- カテゴリ: 必須
+- メタdesc: 80-160字
+- GSC/X: 投稿直後に通知
 
-## 第5条: 全記事にunified_publisherを使用
-- タイトル最適化 (GPT-4o-mini)
-- スラッグ/メタディスクリプション自動生成
-- サムネ2段fallback (ソース画像 → DALL-E 3) + smart_crop
-- GSC Indexing API即時通知
-- X自動投稿
+## KPI
+- 1日20本以上 (速報10+その他10)、上限なし
 
-## 第6条: KPI目標
-- 1日20本以上 (速報10+その他10)
-- daily_editorがKPI監視、遅延時は自動加速
-- 上限なし (品質が維持される限り)
+## 禁止事項
+- 推測/創作、著作権侵害画像、重複投稿、Phase名改変
 
-## 第7条: オーナーの時間を奪わない
-- 自己判定完遂、確認依頼は本当に必要な場合のみ
-- 手動キュレーション (events/comebacks/chart) はオーナー任意
+## 学習サイクル
+投稿 → 監査(6h毎) → 問題検出 → 自動修正 → lessons追記 → rules更新 → 次回適用
 
-## 第8条: 禁止事項
-- Phase名の定義変更
-- 架空のイベント/カムバック情報
-- 考察系タイトル乱用 (「の全貌」「徹底解剖」等)
-- ビルド成功のみで本番未確認の完了報告
-
-## 第9条: 監査と学習
-- audit_publisher (6時間毎) で品質チェック
-- issue検出時は自動修正を試行
-- 教訓は config/latest_rules.json に蓄積
-- docs/lessons_learned.md を定期更新
-
-## 第10条: 改定
-- 本憲章はオーナーの指示により改定される
-- AI社員は本憲章を勝手に改変しない
+## オーナー権限
+全自動停止可、個別編集可、憲章変更はオーナー承認必須

@@ -1,6 +1,6 @@
 {
   "version": "2026-04-27-cfix12b3",
-  "updated_at": "2026-04-24T22:59:29.427538",
+  "updated_at": "2026-04-24T23:11:06.892941",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -127,6 +127,24 @@
     "auto_fix": [
       "thumbnail_generation"
     ],
-    "charter": "docs/editorial_charter.md"
+    "charter": "docs/editorial_charter.md",
+    "last_audit": "2026-04-24T23:11:06.892930",
+    "last_summary": {
+      "total": 42,
+      "by_type": {
+        "meta_short": 2,
+        "gsc_missing": 4,
+        "x_missing": 16,
+        "title_long": 7,
+        "slug_encoded": 8,
+        "no_thumbnail": 4,
+        "title_truncated": 1
+      },
+      "by_severity": {
+        "high": 12,
+        "medium": 14,
+        "low": 16
+      }
+    }
   }
 }

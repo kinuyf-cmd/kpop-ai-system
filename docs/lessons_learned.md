@@ -27,3 +27,12 @@
 ## 参照
 - 機械可読ルール: config/latest_rules.json (毎朝06:00更新)
 - AI社員向けプロンプト注入: lib/load_latest_rules.py
+
+
+## 監査教訓 (2026-04-24 23:11)
+
+- **x_missing**: 16件
+- **slug_encoded**: 8件
+- **title_long**: 7件
+- **gsc_missing**: 4件
+- **no_thumbnail**: 4件
