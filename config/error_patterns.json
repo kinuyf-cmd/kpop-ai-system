@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-24T19:10:21.210541",
+  "updated_at": "2026-04-24T21:15:30.538710",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -722,6 +722,13 @@
       "example": "OG画像が未設定",
       "fix": "調査が必要",
       "agent": "unknown"
+    },
+    "unknown_1878": {
+      "count": 1,
+      "last_seen": "2026-04-24",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
     }
   },
   "recurring_errors": [
@@ -919,11 +926,6 @@
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-14",
-      "fix": "スラッグを修正: babymonster-3-rd-15-6-20260414 → babymonster-3rd-choom-15-june-tour-2026 タイトルSEO修正: 'BABYMO",
-      "post_id": "2591"
-    },
     {
       "ts": "2026-04-14",
       "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
@@ -1168,6 +1170,11 @@
       "ts": "2026-04-24",
       "fix": "GSCインデックス登録送信",
       "post_id": "4037"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "4044"
     }
   ],
   "agent_failure_counts": {

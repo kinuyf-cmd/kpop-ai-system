@@ -1,0 +1,20 @@
+{
+  "_comment": "週次チャート手動キュレーション。オーナーが週次で更新。",
+  "_source_reference": "Circle Chart / Soompi Music Chart 等の公式データ",
+  "week": "2026-W17",
+  "week_label": "2026年4月第3週",
+  "source": "Circle Chart (Korea Official)",
+  "updated_at": "2026-04-22T00:00:00+09:00",
+  "entries": [
+    {"rank": 1, "prevRank": 2, "title": "Smile", "artist": "NewJeans", "weeksOnChart": 3},
+    {"rank": 2, "prevRank": 1, "title": "SWIM", "artist": "BTS", "weeksOnChart": 4},
+    {"rank": 3, "prevRank": null, "title": "NEW DANCE", "artist": "aespa", "weeksOnChart": 1},
+    {"rank": 4, "prevRank": 3, "title": "God of Music", "artist": "SEVENTEEN", "weeksOnChart": 2},
+    {"rank": 5, "prevRank": 4, "title": "BUBBLE GUM", "artist": "NewJeans", "weeksOnChart": 5},
+    {"rank": 6, "prevRank": null, "title": "Magnetic", "artist": "ILLIT", "weeksOnChart": 1},
+    {"rank": 7, "prevRank": 5, "title": "Super", "artist": "SEVENTEEN", "weeksOnChart": 6},
+    {"rank": 8, "prevRank": 9, "title": "HEYA", "artist": "IVE", "weeksOnChart": 3},
+    {"rank": 9, "prevRank": 7, "title": "Perfect Night", "artist": "LE SSERAFIM", "weeksOnChart": 4},
+    {"rank": 10, "prevRank": null, "title": "EASY", "artist": "LE SSERAFIM", "weeksOnChart": 2}
+  ]
+}
