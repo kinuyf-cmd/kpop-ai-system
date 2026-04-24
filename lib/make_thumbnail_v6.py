@@ -36,6 +36,11 @@ from article_topic_classifier import classify
 from thumbnail_source_resolver import resolve, resolve_fallback_photo, resolve_ai_prompt
 from thumbnail_vision_validator import validate_thumbnail
 
+try:
+    from dalle_thumbnail_gen import generate_thumbnail as _dalle_generate
+except Exception:
+    _dalle_generate = None
+
 
 def _save_ai_prompt(prompt_data: dict, output_dir: str, post_id: str) -> str:
     """Save AI generation prompt to a JSON file for external processing."""
@@ -45,6 +50,64 @@ def _save_ai_prompt(prompt_data: dict, output_dir: str, post_id: str) -> str:
     with open(prompt_file, "w", encoding="utf-8") as f:
         json.dump(prompt_data, f, ensure_ascii=False, indent=2)
     return prompt_file
+
+
+def _dalle_fallback(title: str, body: str, post_id, output_dir: str = "/tmp") -> dict:
+    """v6の実写真検索が空振りしたときのDALL-E生成フォールバック"""
+    if _dalle_generate is None:
+        return {"verdict": "QUEUE_REVIEW", "output_path": "", "reason": "dalle module unavailable"}
+
+    # ジャンル判定でプロンプト切替
+    text = title + " " + (body or "")[:500]
+    if any(k in text for k in ["スキンケア", "美容", "コスメ", "肌", "グロウ", "PDRN", "メイク"]):
+        prompt = (
+            "Editorial magazine photo, young East Asian woman with luminous glowing skin, "
+            "natural K-beauty makeup, soft pastel pink and lavender background, "
+            "elegant cosmetic products arranged aesthetically, "
+            "professional studio lighting, shallow depth of field, high-end beauty magazine style, "
+            "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+        )
+    elif any(k in text for k in ["チャート", "ランキング", "Billboard", "Circle"]):
+        prompt = (
+            "Dynamic music chart visualization, vinyl records floating on gradient pink-purple background, "
+            "musical notes, concert lights, professional photography style, "
+            "16:9 aspect ratio, NO TEXT, NO WORDS"
+        )
+    elif any(k in text for k in ["ライブ", "コンサート", "ツアー"]):
+        prompt = (
+            "K-pop concert stage with spotlights, excited crowd silhouettes, stage confetti, "
+            "vibrant pink and purple lighting, photorealistic concert photography, "
+            "16:9 aspect ratio, NO TEXT, NO WORDS"
+        )
+    else:
+        prompt = (
+            "Modern K-pop magazine editorial, abstract musical and cultural elements, "
+            "pink coral and lavender gradient, minimal elegant composition, "
+            "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+        )
+
+    output = os.path.join(output_dir, f"dalle_v6_post{post_id}.png")
+    result = _dalle_generate(prompt, output, size="1792x1024", quality="standard")
+
+    if result["success"]:
+        return {
+            "output_path": output,
+            "source": "dalle3",
+            "vision_score": 85,
+            "verdict": "PASS",
+            "meta": {
+                "cost_usd": result["cost_usd"],
+                "revised_prompt": result.get("revised_prompt", "")[:200],
+                "reason": "dalle3 generated",
+            },
+        }
+    return {
+        "output_path": "",
+        "source": "dalle3_failed",
+        "vision_score": 0,
+        "verdict": "QUEUE_REVIEW",
+        "meta": {"reason": result["reason"]},
+    }
 
 
 def make_thumbnail_v6(
@@ -277,7 +340,18 @@ def make_thumbnail_v6(
             },
         }
 
-    sys.stderr.write(f"[v6] QUEUE_REVIEW — no passing image found\n")
+    # Try DALL-E 3 fallback before giving up
+    if _dalle_generate is not None:
+        sys.stderr.write("[v6] no real photo found, trying DALL-E 3 fallback...\n")
+        fallback_result = _dalle_fallback(title, body, post_id or "0", output_dir)
+        if fallback_result["verdict"] == "PASS":
+            sys.stderr.write(
+                f"[v6] DALL-E fallback succeeded: {fallback_result['output_path']} "
+                f"(${fallback_result['meta'].get('cost_usd', 0):.3f})\n"
+            )
+            return fallback_result
+
+    sys.stderr.write("[v6] QUEUE_REVIEW — no passing image found\n")
     return best_result
 
 

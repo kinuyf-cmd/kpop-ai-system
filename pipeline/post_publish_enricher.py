@@ -191,6 +191,28 @@ def enrich_post(post_id: int) -> dict:
         changes.append(f"thumb_warn({thumb_verdict},{thumb_size}B)")
         _log(f"WARN: post {post_id} thumbnail {thumb_verdict} ({thumb_size}B)")
 
+    # 3b. Thumbnail quality check + auto-regen via DALL-E
+    if featured_media:
+        try:
+            import requests as _req
+            _media_r = _req.get(f"{WP_DOMAIN}/wp-json/wp/v2/media/{featured_media}", params={"_fields": "source_url"}, timeout=15)
+            thumb_url = _media_r.json().get("source_url", "") if _media_r.status_code == 200 else ""
+            if thumb_url:
+                violation, reason = _check_thumbnail_quality(thumb_url)
+                if violation:
+                    _log(f"THUMB_VIOLATION: post {post_id} — {reason}, attempting DALL-E regen")
+                    import subprocess
+                    regen = subprocess.run(
+                        ["python3", "/home/aiuser/kpop-ai-system/tools/regenerate_thumbnail_wp.py", str(post_id)],
+                        capture_output=True, text=True, timeout=120,
+                    )
+                    if "featured_media: OK" in regen.stdout or "featured_media updated" in regen.stdout:
+                        changes.append("thumb_dalle_regen")
+                    else:
+                        changes.append(f"thumb_regen_failed({reason})")
+        except Exception as e:
+            _log(f"thumb_quality_check error: {e}")
+
     # Apply changes
     if any(c.startswith(("summary_", "profile_")) for c in changes):
         ok = _update_post_content(post_id, modified)
