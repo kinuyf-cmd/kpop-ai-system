@@ -1,79 +1,69 @@
 #!/usr/bin/env python3
-"""X (Twitter) API v2 自動投稿
+"""X投稿ラッパー: google_metrics/post_to_x.py (~/.x_credentials) を直接利用"""
+import sys, os, json
+from datetime import datetime
 
-credentialない場合はskip、エラー出さず継続
-"""
-import os, json, urllib.request, urllib.error, base64, hashlib, hmac, time, secrets
-from urllib.parse import quote
-from dotenv import load_dotenv
-load_dotenv()
+sys.path.insert(0, '/home/aiuser/kpop-ai-system/google_metrics')
 
 LOG = '/home/aiuser/kpop-ai-system/logs/x_posts.jsonl'
 
-
-def _oauth1_sign(method, url, oauth_params, consumer_secret, token_secret):
-    all_params = dict(oauth_params)
-    sorted_params = sorted(all_params.items())
-    param_str = '&'.join(f"{quote(str(k), safe='')}={quote(str(v), safe='')}" for k, v in sorted_params)
-    base_str = f"{method.upper()}&{quote(url, safe='')}&{quote(param_str, safe='')}"
-    signing_key = f"{quote(consumer_secret, safe='')}&{quote(token_secret, safe='')}"
-    return base64.b64encode(
-        hmac.new(signing_key.encode(), base_str.encode(), hashlib.sha1).digest()
-    ).decode()
+# 既存モジュールをimport
+_validate = None
+_post = None
+try:
+    from post_to_x import validate_credentials as _validate, post_tweet as _post
+except Exception as e:
+    print(f"post_to_x import warning: {e}", file=sys.stderr)
 
 
 def post_tweet(text: str, url: str = None) -> dict:
-    ck = os.getenv('X_API_KEY')
-    cs = os.getenv('X_API_SECRET')
-    at = os.getenv('X_ACCESS_TOKEN')
-    ats = os.getenv('X_ACCESS_TOKEN_SECRET')
+    """X投稿 (unified_publisher等から呼ばれる)
 
-    if not all([ck, cs, at, ats]):
-        return {'success': False, 'error': 'X credential未設定、skip'}
+    Args:
+        text: タイトル/本文
+        url: 記事URL (末尾追加、Xで23字短縮)
 
+    Returns:
+        {'success': bool, 'tweet_id': str|None, 'error': str|None}
+    """
+    if _validate is None or _post is None:
+        return {'success': False, 'error': 'post_to_x module import失敗'}
+
+    # credential検証
+    creds, errors = _validate()
+    if errors or creds is None:
+        return {'success': False, 'error': '; '.join(errors[:2]) if errors else 'credential invalid'}
+
+    # テキスト構築
     if url:
-        available = 280 - 24
+        available = 280 - 24  # URL=23字+改行
         if len(text) > available:
             text = text[:available - 1] + '…'
         full_text = f"{text}\n{url}"
     else:
         full_text = text[:280]
 
-    api_url = 'https://api.twitter.com/2/tweets'
-    oauth_params = {
-        'oauth_consumer_key': ck,
-        'oauth_nonce': secrets.token_hex(16),
-        'oauth_signature_method': 'HMAC-SHA1',
-        'oauth_timestamp': str(int(time.time())),
-        'oauth_token': at,
-        'oauth_version': '1.0',
-    }
-    signature = _oauth1_sign('POST', api_url, oauth_params, cs, ats)
-    oauth_params['oauth_signature'] = signature
-
-    auth_header = 'OAuth ' + ', '.join(
-        f'{k}="{quote(v, safe="")}"' for k, v in sorted(oauth_params.items())
-    )
-
-    body = json.dumps({'text': full_text}).encode()
-    req = urllib.request.Request(api_url, data=body, headers={
-        'Authorization': auth_header,
-        'Content-Type': 'application/json',
-    }, method='POST')
-
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            res = json.loads(r.read())
-            tid = res.get('data', {}).get('id', '')
-            _log({'ts': time.strftime('%Y-%m-%dT%H:%M:%S'), 'tweet_id': tid, 'status': 'ok'})
-            return {'success': True, 'tweet_id': tid}
-    except urllib.error.HTTPError as e:
-        err = e.read().decode('utf-8', errors='replace')[:300]
-        _log({'ts': time.strftime('%Y-%m-%dT%H:%M:%S'), 'status': 'http_error', 'error': err})
-        return {'success': False, 'error': f'HTTP {e.code}: {err[:200]}'}
+        tweet_id, attempts = _post(full_text, '', creds)
+        _log({
+            'ts': datetime.now().isoformat(),
+            'tweet_id': tweet_id,
+            'text': full_text[:120],
+            'url': url,
+            'attempts': attempts,
+            'status': 'ok',
+        })
+        return {'success': True, 'tweet_id': tweet_id}
     except Exception as e:
-        _log({'ts': time.strftime('%Y-%m-%dT%H:%M:%S'), 'status': 'error', 'error': str(e)})
-        return {'success': False, 'error': str(e)[:200]}
+        err = str(e)[:200]
+        _log({
+            'ts': datetime.now().isoformat(),
+            'text': full_text[:120],
+            'url': url,
+            'status': 'error',
+            'error': err,
+        })
+        return {'success': False, 'error': err}
 
 
 def _log(d):
@@ -83,7 +73,6 @@ def _log(d):
 
 
 if __name__ == '__main__':
-    import sys
-    t = sys.argv[1] if len(sys.argv) > 1 else 'X API test'
+    t = sys.argv[1] if len(sys.argv) > 1 else 'X連携テスト'
     u = sys.argv[2] if len(sys.argv) > 2 else None
     print(json.dumps(post_tweet(t, u), ensure_ascii=False, indent=2))

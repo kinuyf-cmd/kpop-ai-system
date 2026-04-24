@@ -11,6 +11,11 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.title_optimizer import optimize_title, generate_slug, generate_meta_description
 from lib.thumbnail_resolver import resolve_thumbnail
 
+try:
+    from lib.x_poster import post_tweet as _x_post_tweet
+except Exception:
+    _x_post_tweet = None
+
 AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
 PUBLISH_LOG = '/home/aiuser/kpop-ai-system/logs/unified_publish.jsonl'
 
@@ -196,6 +201,17 @@ def unified_publish(
     # 9. GSC Indexing
     if post_url and _gsc_notify(post_url):
         log.append("GSC OK")
+
+    # 9b. X投稿
+    if post_url and _x_post_tweet is not None:
+        try:
+            x_r = _x_post_tweet(title_final, post_url)
+            if x_r.get('success'):
+                log.append(f"X OK tid={x_r.get('tweet_id', '?')}")
+            else:
+                log.append(f"X skip: {x_r.get('error', '')[:60]}")
+        except Exception as e:
+            log.append(f"X error: {e}")
 
     # 10. ログ
     _log_publish({
