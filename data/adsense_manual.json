@@ -1,0 +1,9 @@
+{
+  "_comment": "AdSense収益手動入力 (API連携困難時の暫定)",
+  "yesterday_revenue_jpy": 0,
+  "last_7d_total_jpy": 0,
+  "last_7d_avg_jpy": 0,
+  "last_30d_total_jpy": 0,
+  "updated_at": "",
+  "source": "manual"
+}

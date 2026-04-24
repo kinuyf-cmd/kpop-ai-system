@@ -100,6 +100,23 @@ def _ga4():
     return result
 
 
+def _adsense():
+    p = '/home/aiuser/kpop-ai-system/data/adsense_manual.json'
+    if os.path.exists(p):
+        try:
+            d = json.load(open(p, encoding='utf-8'))
+            return {
+                'available': bool(d.get('updated_at')),
+                'yesterday_jpy': d.get('yesterday_revenue_jpy', 0),
+                '7d_total_jpy': d.get('last_7d_total_jpy', 0),
+                '30d_total_jpy': d.get('last_30d_total_jpy', 0),
+                'updated_at': d.get('updated_at', ''),
+            }
+        except Exception:
+            pass
+    return {'available': False}
+
+
 def _count_file(path, hours=24):
     if not os.path.exists(path): return 0
     cutoff = datetime.now() - timedelta(hours=hours)
@@ -124,6 +141,7 @@ def main():
     total_all = _wp_total()
     gsc = _gsc()
     ga4 = _ga4()
+    adsense = _adsense()
 
     signals = _count_file('/home/aiuser/kpop-ai-system/data/trend_signals.jsonl', 24)
     x_today = 0
@@ -141,6 +159,7 @@ def main():
         'signals_24h': signals,
         'x_posts_today': x_today,
         'gsc': gsc,
+        'adsense': adsense,
         'ga4': ga4,
         'recent_posts': [
             {'id': p['id'], 'title': (p['title']['rendered'] if isinstance(p['title'], dict) else p['title'])[:70],
