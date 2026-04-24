@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-24T21:15:30.540809",
+  "updated_at": "2026-04-24T21:30:05.378876",
   "focus_themes": [
     {
       "topic": "bts 仲良し 相関図",
@@ -218,16 +218,16 @@
       "promoted_at": "2026-04-18T15:14:06.833105"
     },
     "eevee": {
-      "learned_title_patterns": "【CTR学習(04/23)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
-      "title_learning_date": "2026-04-23"
+      "learned_title_patterns": "【CTR学習(04/24)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
+      "title_learning_date": "2026-04-24"
     },
     "metamon": {
-      "learned_title_patterns": "【CTR学習(04/23)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
-      "title_learning_date": "2026-04-23"
+      "learned_title_patterns": "【CTR学習(04/24)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
+      "title_learning_date": "2026-04-24"
     },
     "arceus": {
       "learned_s_features": "S/A記事共通特徴: 数字入り、固有名詞、対比構造",
-      "quality_learning_date": "2026-04-23",
+      "quality_learning_date": "2026-04-24",
       "recurring_quality_issues": "文字数不足、SEO不備"
     },
     "learn_title_typo_entity_mojibake": {
@@ -448,26 +448,63 @@
       "error_count": 11,
       "set_at": "2026-04-24",
       "source": "audit_feedback"
+    },
+    "inject_x_post_before_audit_draft": {
+      "action": "post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.shのdraft化時にX URLリプライを自動削除。日次リンクチェックcron(03:30)を追加。既存11件はlib/x_404_reply_cleanup.shで削除",
+      "source": "error_pattern_inject",
+      "error_count": 11,
+      "promoted_at": "2026-04-24T21:30:01.645961"
+    },
+    "inject_japanese_slug_in_url": {
+      "action": "x_post_url_validator.pyで日本語slug検出・ブロック。タイトルサニタイゼーション強化が別途必要",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-24T21:30:01.645961"
+    },
+    "inject_gardevoir_empty_output": {
+      "action": "agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバック追加。agent_directives.jsonにretry_on_empty=2設定",
+      "source": "error_pattern_inject",
+      "error_count": 23,
+      "promoted_at": "2026-04-24T21:30:01.645961"
+    },
+    "learn_x_post_before_audit_draft": {
+      "action": "post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.shのdraft化時にX URLリプライを自動削除。日次リンクチェックcron(03:30)を追加。既存11件はlib/x_404_reply_cleanup.shで削除",
+      "source": "auto_learn",
+      "error_count": 11,
+      "promoted_at": "2026-04-24T21:30:01.706279"
+    },
+    "learn_japanese_slug_in_url": {
+      "action": "x_post_url_validator.pyで日本語slug検出・ブロック。タイトルサニタイゼーション強化が別途必要",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-24T21:30:01.706279"
+    },
+    "learn_gardevoir_empty_output": {
+      "action": "agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバック追加。agent_directives.jsonにretry_on_empty=2設定",
+      "source": "auto_learn",
+      "error_count": 23,
+      "promoted_at": "2026-04-24T21:30:01.706279"
     }
   },
   "stop_doing": [
-    "文字数超過(292文字) -5",
+    "X投稿スキップ(score=6",
     "美容/ライフスタイルが停止している原因を調査（専用パイプラインが稼働しているのに11%しかないのは異常）",
     "X投稿スキップ(score=7",
-    "X投稿スキップ(score=6",
+    "OG画像が未設定",
     "メタ説明が本文冒頭の流用（独立",
     "最類似勝ちタイトル: 「K-P",
     "`kpop_beauty_pipeline`（11:00）と`kpop_lifestyle_pipeline`（14:00）は維持",
-    "OG画像が未設定"
+    "文字数超過(292文字) -5",
+    "canonical が正しくな"
   ],
   "keep_doing": [],
   "winning_words": [
-    "なぜ",
     "完全",
-    "決定"
+    "決定",
+    "なぜ"
   ],
   "kpi_context": {
-    "updated_at": "2026-04-23T21:30:01.291268+09:00",
+    "updated_at": "2026-04-24T21:30:01.453905+09:00",
     "date": "2026-04-16",
     "pageviews": 146,
     "sessions": 210,
@@ -479,10 +516,10 @@
     "x_sessions": 2,
     "cta_clicks": 0,
     "low_ctr_pages": 14,
-    "yesterday_posts": 5,
-    "agent_success_rate": 0.764,
-    "morning_brief": "【前日KPIサマリー（2026-04-16）】\n  PV: 146  セッション: 210  ユーザー: 119\n  平均滞在: 38.7秒  X流入: 2セッション\n  GSC: クリック11  表示27  CTR=40.74%\n  AdSense: ¥41  RPM: ¥310\n  CTA: 0クリック (CTR=0.00%)\n  投稿数: 前日5本 / 本日6本\n  低CTRページ: 14件（要リライト候補）\n\n【数字から読む編集方針】\n  ⚠ PV低調 → SEO記事（検索流入重視）を優先。\n  ⚠ 低CTRページ14件 → リライト優先度を上げること。\n  🔍 最多検索キーワード: 「スキズ ost 一覧」",
-    "evening_brief": "【本日の実績レビュー（2026-04-23）】\n  前日PV: 146  GSC CTR: 40.74%\n  本日投稿: 6本  前日投稿: 5本\n  エージェント全体成功率: 76%\n  アクティブ: 43  CRITICAL: 10\n\n【明日への示唆】\n  ⚠ CRITICAL状態のエージェント10件 → 修復を優先。\n  📈 CTR好調 → 現在のタイトル戦略を継続。\n  📈 投稿ペース良好。品質維持に注力。"
+    "yesterday_posts": 6,
+    "agent_success_rate": 0.749,
+    "morning_brief": "【前日KPIサマリー（2026-04-16）】\n  PV: 146  セッション: 210  ユーザー: 119\n  平均滞在: 38.7秒  X流入: 2セッション\n  GSC: クリック11  表示27  CTR=40.74%\n  AdSense: ¥41  RPM: ¥310\n  CTA: 0クリック (CTR=0.00%)\n  投稿数: 前日6本 / 本日5本\n  低CTRページ: 14件（要リライト候補）\n\n【数字から読む編集方針】\n  ⚠ PV低調 → SEO記事（検索流入重視）を優先。\n  ⚠ 低CTRページ14件 → リライト優先度を上げること。\n  🔍 最多検索キーワード: 「スキズ ost 一覧」",
+    "evening_brief": "【本日の実績レビュー（2026-04-24）】\n  前日PV: 146  GSC CTR: 40.74%\n  本日投稿: 5本  前日投稿: 6本\n  エージェント全体成功率: 75%\n  アクティブ: 44  CRITICAL: 11\n\n【明日への示唆】\n  ⚠ CRITICAL状態のエージェント11件 → 修復を優先。\n  📈 CTR好調 → 現在のタイトル戦略を継続。\n  📈 投稿ペース良好。品質維持に注力。"
   },
   "weekly_kpi": {
     "updated_at": "2026-04-20T06:37:37.719911+09:00",

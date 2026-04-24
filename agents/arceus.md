@@ -231,34 +231,34 @@ mewtwo
 -
 
 <!-- AUTO-LEARNED START -->
-## 📊 自己稼働統計（最終更新: 2026-04-23T21:30:06.098874+09:00）
+## 📊 自己稼働統計（最終更新: 2026-04-24T21:30:03.655172+09:00）
 
 **このセクションは `lib/apply_learning_to_agents.py` が毎晩21:30に自動更新します。手動編集は上書きされます。**
 
 - 役割: CQO（監査品質部長・総監督）
-- 成功率: **93.6%**（成功132 / 失敗9 / 合計141）
-- 最終実行: 2026-04-23T10:25:31Z（1.6時間前）
+- 成功率: **93.8%**（成功137 / 失敗9 / 合計146）
+- 最終実行: 2026-04-24T10:09:37Z（1.8時間前）
 - ランク: 🟢 / ステータス: 稼働中 / 危険度: 🟢 低
 - 空出力: 0回 / 再試行: 0回
 - サボりフラグ: False / エラーフラグ: False
-- 週次活動量: [12, 14, 14, 7, 8, 6, 5]（左から7日前→今日）
+- 週次活動量: [14, 14, 7, 8, 6, 6, 4]（左から7日前→今日）
 
 ### 再発防止ガード
 - 現在は健全な稼働状態です。この水準を維持してください。
 
 ---
 
-## 📊 最近の品質逸脱パターン（最終更新: 2026-04-23T21:30:06.098874+09:00）
+## 📊 最近の品質逸脱パターン（最終更新: 2026-04-24T21:30:03.655172+09:00）
 
 **最終監査官として、再発防止の観点で直近の頻発パターンを常に確認してください。**
 
 | パターン | 回数 | 最終発生 | 担当 | 再発防止策 |
 |--------|------|---------|------|----------|
+| `gardevoir_empty_output` | 23 | 2026-04-24 | gardevoir_hook_critic | agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバ |
 | `x_backfill_runner_arg_mismatch` | 20 | 2026-04-16 | x_boost_selector | (1) 位置引数形式に統一(2026-04-16) (2) JSONの4回パースを1回に統一+tweet_text空チェック追加(2026-04-18) |
 | `grep_c_double_zero` | 20 | 2026-04-17 | pipeline | grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L299,L1491 修正済み |
 | `template_filler_published` | 15 | 2026-04-17 | cluster_generator | (1) per-h2 keyword interpolation化(2026-04-17) (2) post_guard template_filler_blo |
 | `upstream_meta_commentary_leak` | 15 | 2026-04-21 | deoxys_kpop/metamon_kpop | (1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: r |
-| `triple_gate_cascade_block` | 12 | 2026-04-17 | gardevoir/pipeline | (1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBL |
 <!-- AUTO-LEARNED END -->
 
 ---
