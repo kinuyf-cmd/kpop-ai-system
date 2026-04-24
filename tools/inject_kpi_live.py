@@ -29,7 +29,7 @@ async function loadKPI(){
     const ad=d.adsense||{};
     const ad_row=ad.available
       ?'<tr style="background:#e8e8e8"><th colspan=2 style="text-align:left;padding:4px">💰 AdSense</th></tr><tr><td>昨日</td><td>¥'+(ad.yesterday_jpy||0).toLocaleString()+'</td></tr><tr><td>7日/30日</td><td>¥'+(ad['7d_total_jpy']||0).toLocaleString()+' / ¥'+(ad['30d_total_jpy']||0).toLocaleString()+'</td></tr>'
-      :'<tr style="background:#e8e8e8"><th colspan=2 style="text-align:left;padding:4px">💰 AdSense</th></tr><tr><td colspan=2 style="font-size:11px;color:#888">未連携 (AdSenseでSA招待が必要)</td></tr>';
+      :'<tr style="background:#e8e8e8"><th colspan=2 style="text-align:left;padding:4px">💰 AdSense</th></tr><tr><td colspan=2 style="font-size:11px;color:#c80">招待承認待ち (通常数時間で有効化) or CSVアップロードで暫定対応可</td></tr>';
     document.getElementById('kpi-live-content').innerHTML=
       '<p style="font-size:11px;color:#888;">'+d.generated_at+'</p>'+
       '<table style="width:100%;border-collapse:collapse;">'+
