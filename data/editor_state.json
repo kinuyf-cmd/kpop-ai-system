@@ -1,19 +1,19 @@
 {
-  "updated_at": "2026-04-24T23:00:01.902849+09:00",
+  "updated_at": "2026-04-25T00:00:02.684500+09:00",
   "stats_today": {
-    "total": 16,
-    "breaking": 10,
-    "other": 6
+    "total": 8,
+    "breaking": 6,
+    "other": 2
   },
-  "hours_left_today": 1.0,
+  "hours_left_today": 24.0,
   "needed_today": {
-    "breaking": 0,
-    "other": 4,
-    "total": 4
+    "breaking": 4,
+    "other": 8,
+    "total": 12
   },
   "recommended_max": {
-    "auto_event": 8,
-    "auto_comeback": 8
+    "auto_event": 2,
+    "auto_comeback": 2
   },
   "urgency": "normal"
 }

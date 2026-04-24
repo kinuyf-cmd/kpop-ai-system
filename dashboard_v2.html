@@ -145,7 +145,7 @@ details summary:hover { opacity: 0.85; }
 <div class="main">
 <div class="header">
   <h1>KpopJournal AI会社 — オーナーダッシュボード</h1>
-  <div class="ts">更新: 2026-04-24 22:00 JST</div>
+  <div class="ts">更新: 2026-04-25 00:00 JST</div>
 </div>
 
 <section id="emergency" class="section">
@@ -347,11 +347,11 @@ details summary:hover { opacity: 0.85; }
 <div class="kpi-card">
   <div class="kpi-label">X投稿数</div>
   <div class="kpi-values">
-    <span class="kpi-actual">11</span>
+    <span class="kpi-actual">5</span>
     <span class="kpi-target">/ 4 件</span>
   </div>
   <div class="bar-bg"><div class="bar-fill bar-over" style="width:100%"></div></div>
-  <div class="pct">275%</div>
+  <div class="pct">125%</div>
 </div>
 <div class="kpi-card">
   <div class="kpi-label">GSCクリック</div>
@@ -384,21 +384,21 @@ details summary:hover { opacity: 0.85; }
 <div style="background:#1e293b;border-radius:12px;padding:16px;margin-top:16px;">
   <div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:8px;">7日間トレンド</div>
   <div class="chart-container">
-    <canvas id="dailyTrend_223f07"></canvas>
+    <canvas id="dailyTrend_0399a2"></canvas>
   </div>
 </div>
 <script>
 (function() {
-  const ctx = document.getElementById('dailyTrend_223f07');
+  const ctx = document.getElementById('dailyTrend_0399a2');
   if (ctx && typeof Chart !== 'undefined') {
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ["04/17", "04/18", "04/19", "04/20", "04/21", "04/22", "04/23"],
+        labels: ["04/18", "04/19", "04/20", "04/21", "04/22", "04/23", "04/24"],
         datasets: [
           {
             label: '記事数',
-            data: [0, 2.0, 9.0, 5.0, 3.0, 9.0, 5.0],
+            data: [2.0, 9.0, 5.0, 3.0, 9.0, 5.0, 6.0],
             borderColor: '#ec4899',
             backgroundColor: 'rgba(236,72,153,0.1)',
             tension: 0.3,
@@ -459,12 +459,12 @@ details summary:hover { opacity: 0.85; }
 <div class="action-guidance">
 <div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
 <div class="action-item">週次トレンドの方向性を確認し、施策の効果を判断してください</div>
-<div class="metric-highlight">33 <span style="font-size:0.9rem;color:#94a3b8;">週間記事</span></div>
+<div class="metric-highlight">39 <span style="font-size:0.9rem;color:#94a3b8;">週間記事</span></div>
 <div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 記事数 / PV / セッション / エラー数</div>
 </div>
 <div class="summary-grid">
 <div class="stat-card">
-  <div class="stat-value">33</div>
+  <div class="stat-value">39</div>
   <div class="stat-label">週間記事数</div>
 </div>
 <div class="stat-card">
@@ -484,15 +484,15 @@ details summary:hover { opacity: 0.85; }
   <div class="stat-label">GSC表示回数(直近)</div>
 </div>
 <div class="stat-card">
-  <div class="stat-value">37</div>
+  <div class="stat-value">38</div>
   <div class="stat-label">週間エラー</div>
 </div>
 </div>
 <details open><summary style="color:#a78bfa;cursor:pointer;font-size:0.88rem;margin:12px 0 8px;">&#x1F50D; 詳細を表示</summary>
 <div class="sparkline-row">
   <span class="spark-label">記事数</span>
-  <div class="spark-bars"><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:6px" title="2"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div><div class="spark-bar" style="height:10px" title="3"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div></div>
-  <span class="spark-total">33</span>
+  <div class="spark-bars"><div class="spark-bar" style="height:6px" title="2"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div><div class="spark-bar" style="height:10px" title="3"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div><div class="spark-bar" style="height:20px" title="6"></div></div>
+  <span class="spark-total">39</span>
 </div>
 <div class="sparkline-row">
   <span class="spark-label">PV</span>
@@ -504,8 +504,8 @@ details summary:hover { opacity: 0.85; }
 </div>
 <div class="sparkline-row">
   <span class="spark-label">エラー</span>
-  <div class="spark-bars"><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:30px" title="12"></div><div class="spark-bar" style="height:27px" title="11"></div><div class="spark-bar" style="height:20px" title="8"></div><div class="spark-bar" style="height:15px" title="6"></div><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:2px" title="0"></div></div>
-  <span class="spark-total">37</span>
+  <div class="spark-bars"><div class="spark-bar" style="height:30px" title="12"></div><div class="spark-bar" style="height:27px" title="11"></div><div class="spark-bar" style="height:20px" title="8"></div><div class="spark-bar" style="height:15px" title="6"></div><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:2px" title="1"></div></div>
+  <span class="spark-total">38</span>
 </div>
 </details>
 </div></div>
@@ -623,11 +623,11 @@ details summary:hover { opacity: 0.85; }
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ["1\u65e5", "2\u65e5", "3\u65e5", "4\u65e5", "5\u65e5", "6\u65e5", "7\u65e5", "8\u65e5", "9\u65e5", "10\u65e5", "11\u65e5", "12\u65e5", "13\u65e5", "14\u65e5", "15\u65e5", "16\u65e5", "17\u65e5", "18\u65e5", "19\u65e5", "20\u65e5", "21\u65e5", "22\u65e5", "23\u65e5", "24\u65e5"],
+        labels: ["1\u65e5", "2\u65e5", "3\u65e5", "4\u65e5", "5\u65e5", "6\u65e5", "7\u65e5", "8\u65e5", "9\u65e5", "10\u65e5", "11\u65e5", "12\u65e5", "13\u65e5", "14\u65e5", "15\u65e5", "16\u65e5", "17\u65e5", "18\u65e5", "19\u65e5", "20\u65e5", "21\u65e5", "22\u65e5", "23\u65e5", "24\u65e5", "25\u65e5"],
         datasets: [
           {
             label: '累積記事数',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.0, 11.0, 16.0, 19.0, 28.0, 33.0, 39.0],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.0, 11.0, 16.0, 19.0, 28.0, 33.0, 39.0, 39.0],
             borderColor: '#ec4899',
             backgroundColor: 'rgba(236,72,153,0.1)',
             tension: 0.3,
@@ -636,7 +636,7 @@ details summary:hover { opacity: 0.85; }
           },
           {
             label: '累積PV',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             borderColor: '#22d3ee',
             backgroundColor: 'rgba(34,211,238,0.1)',
             tension: 0.3,
@@ -751,7 +751,7 @@ details summary:hover { opacity: 0.85; }
 <section id="meetings" class="section">
   <h2 class="section-title">🏢 会議体</h2>
   <div class="section-body"><div style="margin-bottom:24px;">
-<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">🏢 会議体 <span style="display:inline-block;background:#22c55e22;color:#22c55e;border:1px solid #22c55e;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟢 100/100 健全</span></h2>
+<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">🏢 会議体 <span style="display:inline-block;background:#f9731622;color:#f97316;border:1px solid #f97316;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟠 50/100 要改善</span></h2>
 <div class="action-guidance">
 <div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
 <div class="action-item">スタンドアップ結果を確認し、前日比の変動に注目してください</div>
@@ -767,40 +767,27 @@ details summary:hover { opacity: 0.85; }
 <div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">⚙️ 運用部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| ミュウツー</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ポリゴンZ</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ライコウ</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">フシギバナ</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div></div></div>
 </div></div>
 <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;flex:1;min-width:260px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;font-weight:600;">全社朝会 (2026-04-25)</div>
+<div style="color:#64748b;font-size:0.82rem;">スタンドアップ未生成</div>
+</div>
 <div style="background:#1e293b;border-radius:8px;padding:14px 18px;flex:1;min-width:260px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;font-weight:600;">全社朝会 (2026-04-24)</div>
 <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">投稿数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6 件</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均品質スコア</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4.5</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +4.5</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均文字数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4,384 字</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +994.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">サムネイル設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4/6</td><td style="padding:3px 6px;"><span style="color:#94a3b8;">→</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">CTA設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6/6</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">エラー件数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">1 件</td><td style="padding:3px 6px;"><span style="color:#ef4444;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">76.4%</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +0.8</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">53</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">43</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">31</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">2</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">10</td><td style="padding:3px 6px;"><span style="color:#ef4444;">↓ -1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">投稿数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6 件</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均品質スコア</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4.5</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均文字数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4,384 字</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">サムネイル設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4/6</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">CTA設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6/6</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">エラー件数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">1 件</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">76.4%</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">53</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">43</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">31</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">2</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">10</td><td style="padding:3px 6px;"></td></tr>
 </table>
 <div style="margin-top:8px;font-size:0.78rem;color:#f87171;">
 <div>• pipeline_stop: 1 件</div>
 </div>
-</div>
-<div style="background:#1e293b;border-radius:8px;padding:14px 18px;flex:1;min-width:260px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;font-weight:600;">全社朝会 (2026-04-23)</div>
-<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">投稿数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">5 件</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均品質スコア</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">0.0</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均文字数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">3,390 字</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">サムネイル設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4/5</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">CTA設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">5/5</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">エラー件数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">0 件</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">75.6%</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">52</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">42</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">30</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">1</td><td style="padding:3px 6px;"></td></tr>
-<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">11</td><td style="padding:3px 6px;"></td></tr>
-</table>
 </div>
 </div>
 <div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:12px;"><div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:6px;">最新取締役会: 2026-W17.md</div>
@@ -825,15 +812,15 @@ details summary:hover { opacity: 0.85; }
 <div class="action-guidance">
 <div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
 <div class="action-item" style="color:#ef4444;">未解決パターン 37件 を確認してください</div>
-<div class="action-item" style="color:#f97316;">解決済パターンの再発 58件 を確認してください</div>
-<div class="metric-highlight" style="color:#ef4444;">77 <span style="font-size:0.9rem;color:#94a3b8;">今週の新規エラー</span></div>
+<div class="action-item" style="color:#f97316;">解決済パターンの再発 56件 を確認してください</div>
+<div class="metric-highlight" style="color:#ef4444;">75 <span style="font-size:0.9rem;color:#94a3b8;">今週の新規エラー</span></div>
 <div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 新規エラー / フックエラー / 品質問題 / 未解決パターン</div>
 </div>
 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
-<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">今週の新規</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">77</div></div>
-<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">フックエラー(7日)</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">58</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">今週の新規</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">75</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">フックエラー(7日)</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">56</div></div>
 <div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">品質問題(7日)</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">19</div></div>
-<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">解決済の再発</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">58</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">解決済の再発</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">56</div></div>
 <div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">未解決パターン</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">37</div></div>
 </div>
 <div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#f87171;font-size:0.9rem;font-weight:600;margin-bottom:8px;">未解決パターン</div><table style="width:100%;border-collapse:collapse;font-size:0.82rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">パターン</th><th style="padding:4px 8px;">エージェント</th><th style="padding:4px 8px;">件数</th><th style="padding:4px 8px;">最終発生</th><th style="padding:4px 8px;">例</th></tr>
@@ -977,18 +964,18 @@ details summary:hover { opacity: 0.85; }
 </table></details>
 <div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-top:14px;"><div style="color:#22d3ee;font-size:0.9rem;font-weight:600;margin-bottom:10px;">GSC Indexing API</div>
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-<div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日送信</div><div style="color:#38bdf8;font-size:1.1rem;font-weight:700;">138</div></div>
-<div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日成功</div><div style="color:#22c55e;font-size:1.1rem;font-weight:700;">138</div></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日送信</div><div style="color:#38bdf8;font-size:1.1rem;font-weight:700;">0</div></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日成功</div><div style="color:#22c55e;font-size:1.1rem;font-weight:700;">0</div></div>
 <div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日FB</div><div style="color:#eab308;font-size:1.1rem;font-weight:700;">0</div></div>
 <div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">本日エラー</div><div style="color:#94a3b8;font-size:1.1rem;font-weight:700;">0</div></div>
 <div style="background:#0f172a;border-radius:6px;padding:6px 12px;text-align:center;"><div style="color:#64748b;font-size:0.7rem;">累計成功率</div><div style="color:#22c55e;font-size:1.1rem;font-weight:700;">100.0%</div></div>
 </div>
 <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">直近の送信:</div><div style="font-size:0.75rem;font-family:monospace;">
-<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /【速報】人気のsmエンターテインメント男性アイド/ <span style="color:#475569;">2026-04-24T21:45 indexing_api</span></div>
-<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /【速報】視聴-txtが「music-bank」で「stick-with-you」で3回目の勝利-le-... <span style="color:#475569;">2026-04-24T21:45 indexing_api</span></div>
-<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /【速報】キム・ウィヨン「悪い奴、繁盛しろ」/ <span style="color:#475569;">2026-04-24T21:30 indexing_api</span></div>
-<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /kpop-idol-skincare-pdrn-2026/ <span style="color:#475569;">2026-04-24T20:21 indexing_api</span></div>
-<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /kpop-mv-3-2026/ <span style="color:#475569;">2026-04-24T20:21 indexing_api</span></div>
+<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /fromis9-bpm-settlement-7-member-challenge/ <span style="color:#475569;">2026-04-24T23:22 indexing_api</span></div>
+<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /ユ・スンジュン、韓国の地を踏めなくてもテジ/ <span style="color:#475569;">2026-04-24T23:10 indexing_api</span></div>
+<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /bts-rm-paparazzi-report-criticism/ <span style="color:#475569;">2026-04-24T23:10 indexing_api</span></div>
+<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /red-velvet-joy-pitching-ceremony/ <span style="color:#475569;">2026-04-24T23:10 indexing_api</span></div>
+<div style="color:#cbd5e1;margin-bottom:2px;"><span style="color:#22c55e;">[ok]</span> /bts-tae-autumn-2023/ <span style="color:#475569;">2026-04-24T23:10 indexing_api</span></div>
 </div>
 </div>
 </div></div>
@@ -1067,13 +1054,13 @@ details summary:hover { opacity: 0.85; }
 <div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">arceus</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0255</span></div>
 <div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">latias</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0240</span></div>
 </div></details>
-<div style="color:#334155;font-size:0.6rem;margin-top:8px;">※ 推定収益はRPMベースの概算値です。更新: 04/24 22:00 JST</div>
+<div style="color:#334155;font-size:0.6rem;margin-top:8px;">※ 推定収益はRPMベースの概算値です。更新: 04/25 00:00 JST</div>
 </div></div>
 </section>
 
 <footer style="text-align:center;color:#475569;font-size:0.7rem;padding:32px 0 16px">
   Dashboard v2 Phase 7 — 「実装完了 ≠ 完了」原則に基づき、全データはリアルソースから取得<br>
-  生成: 2026-04-24 22:00 JST
+  生成: 2026-04-25 00:00 JST
 </footer>
 </div>
 <script>
