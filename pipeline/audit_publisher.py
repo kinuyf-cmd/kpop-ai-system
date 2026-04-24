@@ -108,6 +108,15 @@ def audit_post(p):
     # 5. サムネ
     if not fm_id:
         _record(pid, purl, 'no_thumbnail', '', 'high')
+    else:
+        try:
+            mr = _wp_get(f'media/{fm_id}')
+            md = mr.get('media_details', {})
+            mw, mh = md.get('width', 0), md.get('height', 0)
+            if mw > 0 and mh > 0 and abs(mw / mh - 16 / 9) > 0.15:
+                _record(pid, purl, 'thumb_aspect', f'{mw}x{mh}', 'medium')
+        except Exception:
+            pass
 
     # 6. カテゴリ
     if not cat_ids:

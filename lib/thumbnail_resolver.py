@@ -5,7 +5,12 @@ from urllib.parse import urlparse
 
 
 def smart_crop(image_path, target_w=1200, target_h=675):
-    """顔検出ベースのスマートクロップ (16:9)"""
+    """顔検出+保護型スマートクロップ (16:9)
+
+    - 顔群を囲むbboxにマージン付与、全顔が入るようクロップ
+    - 小画像(幅<600)はクロップせずリサイズのみ(拡大)
+    - 16:9±0.05なら単純リサイズ
+    """
     try:
         import cv2
         import numpy as np
@@ -15,35 +20,59 @@ def smart_crop(image_path, target_w=1200, target_h=675):
         h, w = img.shape[:2]
         target_ratio = target_w / target_h
 
-        # 既に近いサイズなら リサイズのみ
-        if abs(w / h - target_ratio) < 0.1 and w >= target_w:
+        # 小画像は拡大リサイズのみ (クロップすると情報量ロス)
+        if w < 600:
+            resized = cv2.resize(img, (target_w, target_h))
+            cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
+            return True
+
+        # 16:9±0.05近似ならリサイズのみ
+        if abs(w / h - target_ratio) < 0.05 and w >= target_w:
             resized = cv2.resize(img, (target_w, target_h))
             cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
             return True
 
         # 顔検出
+        faces = []
         try:
             cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = cascade.detectMultiScale(gray, 1.1, 4, minSize=(40, 40))
+            faces = cascade.detectMultiScale(gray, 1.1, 4, minSize=(30, 30))
         except Exception:
-            faces = []
+            pass
 
         if len(faces) > 0:
-            fy = int(np.mean([f[1] + f[3] / 2 for f in faces]))
-            fx = int(np.mean([f[0] + f[2] / 2 for f in faces]))
+            # 全顔のbbox + マージン
+            fx_min = max(0, min(f[0] for f in faces) - int(w * 0.05))
+            fy_min = max(0, min(f[1] for f in faces) - int(h * 0.08))
+            fx_max = min(w, max(f[0] + f[2] for f in faces) + int(w * 0.05))
+            fy_max = min(h, max(f[1] + f[3] for f in faces) + int(h * 0.15))
+            face_cx = (fx_min + fx_max) // 2
+            face_cy = (fy_min + fy_max) // 2
         else:
-            fx, fy = w // 2, h // 3
+            face_cx, face_cy = w // 2, int(h * 0.35)
+            fx_min, fy_min, fx_max, fy_max = 0, 0, w, h
 
+        # クロップサイズ
         if w / h > target_ratio:
             new_w = int(h * target_ratio)
-            left = max(0, min(w - new_w, fx - new_w // 2))
-            cropped = img[0:h, left:left + new_w]
+            new_h = h
         else:
+            new_w = w
             new_h = int(w / target_ratio)
-            top = max(0, min(h - new_h, fy - int(new_h * 0.35)))
-            cropped = img[top:top + new_h, 0:w]
 
+        # 位置: 顔を上40%に配置、全顔が入るよう保護
+        ideal_left = face_cx - new_w // 2
+        ideal_top = face_cy - int(new_h * 0.4)
+
+        if len(faces) > 0:
+            left = max(max(0, fx_max - new_w), min(min(w - new_w, fx_min), ideal_left))
+            top = max(max(0, fy_max - new_h), min(min(h - new_h, fy_min), ideal_top))
+        else:
+            left = max(0, min(w - new_w, ideal_left))
+            top = max(0, min(h - new_h, ideal_top))
+
+        cropped = img[top:top + new_h, left:left + new_w]
         resized = cv2.resize(cropped, (target_w, target_h))
         cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
         return True
