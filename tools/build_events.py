@@ -102,7 +102,7 @@ if os.path.exists(SIGNALS):
                 sig = json.loads(line)
             except Exception:
                 continue
-            if sig.get('source') not in ('ticket_guide', 'prtimes'):
+            if sig.get('source') not in ('ticket_guide',):  # prtimes除外 (誤検出対策)
                 continue
             ev = extract_event(sig.get('title', ''), sig.get('url', ''), sig['source'])
             if ev:
@@ -146,7 +146,36 @@ for it in items:
     seen.add(key)
     unique.append(it)
 
+def _find_related_article(event_title, event_artist):
+    """イベントに該当する記事を検索し、slugを返す"""
+    q_text = event_artist if event_artist else event_title[:20]
+    try:
+        search_url = (
+            f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
+            f"?search={urllib.parse.quote(q_text)}&per_page=3&_fields=slug,title"
+        )
+        req = urllib.request.Request(search_url, headers={'Authorization': f'Basic {auth}'})
+        found = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        for p in found:
+            t = re.sub(r'<[^>]+>', '', p.get('title', {}).get('rendered', ''))
+            if event_artist and event_artist in t:
+                if any(kw in t for kw in ['ライブ', 'ツアー', 'コンサート', 'ファンミ', 'ショーケース']):
+                    return p['slug']
+        if found:
+            return found[0]['slug']
+    except Exception:
+        pass
+    return None
+
+
 unique.sort(key=lambda x: x['date'])
+
+# 各イベントに関連記事slug紐付け (article以外)
+for it in unique:
+    if it.get('source') != 'article' and not it.get('slug'):
+        slug = _find_related_article(it.get('title', ''), it.get('artist', ''))
+        if slug:
+            it['slug'] = slug
 json.dump(
     {'updated_at': datetime.now().isoformat(), 'items': unique[:12]},
     open(OUT, 'w', encoding='utf-8'),

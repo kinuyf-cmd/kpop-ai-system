@@ -40,8 +40,8 @@ if os.path.exists(MANUAL):
     except Exception:
         pass
 
-# trend_signals.jsonl から抽出
-if os.path.exists(SIGNALS):
+# trend_signals.jsonl から抽出 [DISABLED 2026-04-27 ファクト保証不可]
+if False and os.path.exists(SIGNALS):  # 手動キュレーションのみ有効
     with open(SIGNALS, encoding='utf-8') as f:
         for line in f:
             try:
