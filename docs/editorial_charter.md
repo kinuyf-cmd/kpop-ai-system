@@ -52,3 +52,21 @@ K-POPファンに速く・正確で・読みやすい情報を届ける。
 - `data/rewrite_queue.jsonl` — 処理キュー
 - `logs/quarantine.jsonl` — 修復不能記事の記録
 - `logs/rewrite_worker.log` — cron実行ログ
+
+
+## 削除判定AI (quarantine_cleaner.py) — C-Fix12 B4.5+
+
+### 思想
+オーナー介入ゼロ。価値のない記事はサイトから完全排除。
+
+### フロー
+1. quarantine到達 (rewrite_worker 3回失敗)
+2. source_url+原文>=100字? → GPT-4o救済試行
+3. 成功 → 再公開+GSC+X / 失敗 → 即完全削除
+
+### cron
+日次 02:00
+
+### ログ
+- logs/permanently_deleted.jsonl — 完全削除記録
+- logs/rescued.jsonl — GPT-4o救済成功記録
