@@ -2,7 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%9f%93%e5%9b%bd%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e9%80%9f%e5%a0%b1%e3%80%91red-velvet%e3%81%ae%e3%82%b8%e3%83%a7%e3%82%a4%e3%80%81%e5%8a%9b%e5%bc%b7%e3%81%8f%e5%a7%8b%e7%90%83%e5%bc%8f/</loc>
+    <loc>https://www.kpopjournal.tokyo/fromis9-bpm-2024/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-24T14:06:12+00:00</news:publication_date>
+      <news:title>fromis_9、2024年BPM移籍決定の報道</news:title>
+        <news:keywords>fromis9, bpm, 2024</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/blackpink-jennie-interview-hatsugen/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-24T14:03:08+00:00</news:publication_date>
+      <news:title>【速報】BLACKPINK Jennie インタビューでの発言が波紋</news:title>
+        <news:keywords>BLACKPINK, blackpink, jennie, interview, hatsugen</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/bts-tae-autumn-2023/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-24T13:15:10+00:00</news:publication_date>
+      <news:title>【速報】BTSのテテ、秋の男として優しい眼差し</news:title>
+        <news:keywords>BTS, bts, tae, autumn, 2023</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/red-velvet-joy-pitching-ceremony/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
@@ -10,37 +46,35 @@
       </news:publication>
       <news:publication_date>2026-04-24T13:10:35+00:00</news:publication_date>
       <news:title>【韓国メディア速報】Red Velvetのジョイ、力強く始球式を行う</news:title>
-        <news:keywords>%e3%80%90%e9%9f%93%e5%9b%bd%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e9%80%9f%e5%a0%b1%e3%80%91red, velvet%e3%81%ae%e3%82%b8%e3%83%a7%e3%82%a4%e3%80%81%e5%8a%9b%e5%bc%b7%e3%81%8f%e5%a7%8b%e7%90%83%e5%bc%8f</news:keywords>
+        <news:keywords>red, velvet, joy, pitching, ceremony</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%9f%93%e5%9b%bd%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e9%80%9f%e5%a0%b1%e3%80%91bts-rm-%e3%83%91%e3%83%91%e3%83%a9%e3%83%83%e3%83%81%e5%a0%b1%e9%81%93-%e6%97%a5%e6%9c%ac%e3%83%a1%e3%83%87/</loc>
+    <loc>https://www.kpopjournal.tokyo/bts-rm-paparazzi-report-criticism/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T13:10:28+00:00</news:publication_date>
-      <news:title>【韓国メディア速報】BTS RM パパラッチ報道 日本メディアが逆風に…批判が殺到した理由 [Oh!セン Issue]</news:title>
-        <news:keywords>BTS, %e3%80%90%e9%9f%93%e5%9b%bd%e3%83%a1%e3%83%87%e3%82%a3%e3%82%a2%e9%80%9f%e5%a0%b1%e3%80%91bts, %e3%83%91%e3%83%91%e3%83%a9%e3%83%83%e3%83%81%e5%a0%b1%e9%81%93, %e6%97%a5%e6%9c%ac%e3%83%a1%e3%83%87</news:keywords>
+      <news:title>【韓国メディア速報】BTS RM パパラッチ報道 日本メディア逆風</news:title>
+        <news:keywords>BTS, bts, paparazzi, report, criticism</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%83%a6%e3%83%bb%e3%82%b9%e3%83%b3%e3%82%b8%e3%83%a5%e3%83%b3%e3%80%81%e9%9f%93%e5%9b%bd%e3%81%ae%e5%9c%b0%e3%82%92%e8%b8%8f%e3%82%81%e3%81%aa%e3%81%8f%e3%81%a6%e3%82%82%e3%83%86%e3%82%b8/</loc>
+    <loc>https://www.kpopjournal.tokyo/yu-sungjun-tejina-concert-jazzdis-album/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T13:03:28+00:00</news:publication_date>
-      <news:title>ユ・スンジュン、韓国の地を踏めなくても…テジナのコンサート・ジャスディスのアルバム「間接活動」 [エックスのイシュー] 
-
-インタ</news:title>
-        <news:keywords>%e3%83%a6%e3%83%bb%e3%82%b9%e3%83%b3%e3%82%b8%e3%83%a5%e3%83%b3%e3%80%81%e9%9f%93%e5%9b%bd%e3%81%ae%e5%9c%b0%e3%82%92%e8%b8%8f%e3%82%81%e3%81%aa%e3%81%8f%e3%81%a6%e3%82%82%e3%83%86%e3%82%b8</news:keywords>
+      <news:title>ユ・スンジュン、テジナコンサートで間接活動</news:title>
+        <news:keywords>sungjun, tejina, concert, jazzdis, album</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e7%94%b7%e6%80%a7%e3%83%90%e3%83%b3%e3%83%89%e3%81%ab%e3%82%88%e3%81%a3%e3%81%a6%e3%80%8c%e4%be%ae%e8%be%b1%e3%81%95%e3%82%8c%e3%81%9f%e3%80%8d%e5%a5%b3%e6%80%a7hy/</loc>
+    <loc>https://www.kpopjournal.tokyo/dansei-band-ubujou-hybe-idol-shashin/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
@@ -48,11 +82,11 @@
       </news:publication>
       <news:publication_date>2026-04-24T13:03:08+00:00</news:publication_date>
       <news:title>【速報】男性バンドによって「侮辱された」女性HYBEアイドル、憤慨の新写真</news:title>
-        <news:keywords>%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e7%94%b7%e6%80%a7%e3%83%90%e3%83%b3%e3%83%89%e3%81%ab%e3%82%88%e3%81%a3%e3%81%a6%e3%80%8c%e4%be%ae%e8%be%b1%e3%81%95%e3%82%8c%e3%81%9f%e3%80%8d%e5%a5%b3%e6%80%a7hy</news:keywords>
+        <news:keywords>dansei, band, ubujou, hybe, idol</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e7%94%b7%e6%80%a7%e3%83%90%e3%83%b3%e3%83%89%e3%81%ab%e3%80%8c%e4%be%ae%e8%be%b1%e3%81%95%e3%82%8c%e3%81%9f%e3%80%8d%e5%a5%b3%e6%80%a7hybe%e3%82%a2%e3%82%a4/</loc>
+    <loc>https://www.kpopjournal.tokyo/danband-insult-hybe-idol-new-photo/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
@@ -60,23 +94,23 @@
       </news:publication>
       <news:publication_date>2026-04-24T13:03:07+00:00</news:publication_date>
       <news:title>【速報】男性バンドに「侮辱された」女性HYBEアイドル、怒りの新写真公開</news:title>
-        <news:keywords>%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e7%94%b7%e6%80%a7%e3%83%90%e3%83%b3%e3%83%89%e3%81%ab%e3%80%8c%e4%be%ae%e8%be%b1%e3%81%95%e3%82%8c%e3%81%9f%e3%80%8d%e5%a5%b3%e6%80%a7hybe%e3%82%a2%e3%82%a4</news:keywords>
+        <news:keywords>danband, insult, hybe, idol, new</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e8%a6%96%e8%81%b4-%e3%83%91%e3%82%af%e3%83%bb%e3%82%b8%e3%83%95%e3%83%b3%e3%80%81%e3%82%a4%e3%83%bb%e3%82%b5%e3%83%b3%e3%82%a4%e3%80%81%e4%bb%96%e3%81%8c%e3%80%8c/</loc>
+    <loc>https://www.kpopjournal.tokyo/park-jihoon-kitchen-soldier-poster-shoot/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T13:02:59+00:00</news:publication_date>
-      <news:title>【速報】視聴: パク・ジフン、イ・サンイ、他が「キッチンソルジャーの伝説」のポスターボ shootで遊び心満載でクリエイティブに</news:title>
-        <news:keywords>%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e8%a6%96%e8%81%b4, %e3%83%91%e3%82%af%e3%83%bb%e3%82%b8%e3%83%95%e3%83%b3%e3%80%81%e3%82%a4%e3%83%bb%e3%82%b5%e3%83%b3%e3%82%a4%e3%80%81%e4%bb%96%e3%81%8c%e3%80%8c</news:keywords>
+      <news:title>【速報】パク・ジフン、イ・サンイ「キッチンソルジャー」ポスター撮影</news:title>
+        <news:keywords>park, jihoon, kitchen, soldier, poster</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91twice%e3%81%ae%e3%83%80%e3%83%92%e3%83%a7%e3%83%b3%e3%80%81%e6%9d%b1%e4%ba%ac%e5%85%ac%e6%bc%94%e3%81%8b%e3%82%89%e9%99%90%e5%ae%9a%e7%9a%84%e3%81%ab%e3%83%91/</loc>
+    <loc>https://www.kpopjournal.tokyo/twice-dahyun-tokyo-performance/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
@@ -84,45 +118,43 @@
       </news:publication>
       <news:publication_date>2026-04-24T13:02:47+00:00</news:publication_date>
       <news:title>【速報】TWICEのダヒョン、東京公演から限定的にパフォーマンスに復帰</news:title>
-        <news:keywords>TWICE, %e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91twice%e3%81%ae%e3%83%80%e3%83%92%e3%83%a7%e3%83%b3%e3%80%81%e6%9d%b1%e4%ba%ac%e5%85%ac%e6%bc%94%e3%81%8b%e3%82%89%e9%99%90%e5%ae%9a%e7%9a%84%e3%81%ab%e3%83%91</news:keywords>
+        <news:keywords>TWICE, twice, dahyun, tokyo, performance</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e4%ba%ba%e6%b0%97%e3%81%aesm%e3%82%a8%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%86%e3%82%a4%e3%83%b3%e3%83%a1%e3%83%b3%e3%83%88%e7%94%b7%e6%80%a7%e3%82%a2%e3%82%a4%e3%83%89/</loc>
+    <loc>https://www.kpopjournal.tokyo/sm-entertainment-idol-vaping-incident/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T12:45:22+00:00</news:publication_date>
-      <news:title>【速報】人気のSMエンターテインメント男性アイドルが電子タバコを吸っているところを目撃されたとされ、大きな反発を引き起こしている</news:title>
-        <news:keywords>%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e4%ba%ba%e6%b0%97%e3%81%aesm%e3%82%a8%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%86%e3%82%a4%e3%83%b3%e3%83%a1%e3%83%b3%e3%83%88%e7%94%b7%e6%80%a7%e3%82%a2%e3%82%a4%e3%83%89</news:keywords>
+      <news:title>【速報】ルーカス、電子タバコ使用で反発を招く</news:title>
+        <news:keywords>entertainment, idol, vaping, incident</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e8%a6%96%e8%81%b4-txt%e3%81%8c%e3%80%8cmusic-bank%e3%80%8d%e3%81%a7%e3%80%8cstick-with-you%e3%80%8d%e3%81%a73%e5%9b%9e%e7%9b%ae%e3%81%ae%e5%8b%9d%e5%88%a9-le-sse/</loc>
+    <loc>https://www.kpopjournal.tokyo/txt-stick-with-you-3rd-win/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T12:45:09+00:00</news:publication_date>
-      <news:title>【速報】視聴: TXTが「Music Bank」で「Stick With You」で3回目の勝利; LE SSERAFIM、UN</news:title>
-        <news:keywords>TXT, %e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e8%a6%96%e8%81%b4, txt%e3%81%8c%e3%80%8cmusic, bank%e3%80%8d%e3%81%a7%e3%80%8cstick, with</news:keywords>
+      <news:title>【速報】TXT「Stick With You」で3回目の勝利</news:title>
+        <news:keywords>TXT, txt, stick, with, you</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e3%82%ad%e3%83%a0%e3%83%bb%e3%82%a6%e3%82%a3%e3%83%a8%e3%83%b3%e3%80%8c%e6%82%aa%e3%81%84%e5%a5%b4%e3%80%81%e7%b9%81%e7%9b%9b%e3%81%97%e3%82%8d%e3%80%8d/</loc>
+    <loc>https://www.kpopjournal.tokyo/kim-wiyoung-new-song-cake-celebration/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T12:30:07+00:00</news:publication_date>
-      <news:title>【速報】キム・ウィヨン「悪い奴、繁盛しろ」…新曲発売を祝うケーキの近況
-
-キム・ウィヨン「幸運いっぱい」…メイクルームでプレゼン</news:title>
-        <news:keywords>%e3%80%90%e9%80%9f%e5%a0%b1%e3%80%91%e3%82%ad%e3%83%a0%e3%83%bb%e3%82%a6%e3%82%a3%e3%83%a8%e3%83%b3%e3%80%8c%e6%82%aa%e3%81%84%e5%a5%b4%e3%80%81%e7%b9%81%e7%9b%9b%e3%81%97%e3%82%8d%e3%80%8d</news:keywords>
+      <news:title>【速報】キム・ウィヨン「悪い奴、繁盛しろ」新曲祝うケーキ</news:title>
+        <news:keywords>kim, wiyoung, new, song, cake</news:keywords>
     </news:news>
   </url>
   <url>
@@ -133,7 +165,7 @@
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-24T02:11:50+00:00</news:publication_date>
-      <news:title>K-POPアイドルが今一番使っているスキンケア成分「PDRN」とは？インナーグロウ肌を叶える2026年最旬ルーティン</news:title>
+      <news:title>K-POPアイドル注目のスキンケア成分PDRN</news:title>
         <news:keywords>kpop, idol, skincare, pdrn, 2026</news:keywords>
     </news:news>
   </url>
@@ -181,7 +213,7 @@
         <news:language>ja</news:language>
       </news:publication>
       <news:publication_date>2026-04-23T21:11:30+00:00</news:publication_date>
-      <news:title>2026年04月第17週 K-POPチャート速報｜BTS「SWIM」3週連続首位・KISS OF LIFE急浮上・ILLIT新作カウント…</news:title>
+      <news:title>BTS「SWIM」3週連続首位のK-POPチャート速報</news:title>
         <news:keywords>BTS, kpop, chart, pop, bts</news:keywords>
     </news:news>
   </url>
