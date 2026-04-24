@@ -17,7 +17,7 @@ from pipeline.auto_event_article import is_processed, mark_processed
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
-DAILY_BREAKING_LIMIT = 10
+DAILY_BREAKING_LIMIT = 9999  # 上限撤廃(KPI駆動)
 
 
 def load_recent(minutes=5):

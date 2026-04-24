@@ -197,7 +197,18 @@ def fetch_category_id(slug='event'):
         return None
 
 
-def main(dry_run=False, max_articles=5):
+def _read_max_from_state(key, default=3):
+    """daily_editorのeditor_state.jsonから推奨max取得"""
+    try:
+        d = json.load(open('/home/aiuser/kpop-ai-system/data/editor_state.json', encoding='utf-8'))
+        return d.get('recommended_max', {}).get(key, default)
+    except Exception:
+        return default
+
+
+def main(dry_run=False, max_articles=None):
+    if max_articles is None:
+        max_articles = _read_max_from_state('auto_event', 3)
     signals = load_signals(hours_back=24)
     event_sigs = [s for s in signals if is_event_signal(s)]
     print(f"過去24h signals: {len(signals)}, イベント関連: {len(event_sigs)}")
@@ -275,6 +286,6 @@ if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
-    ap.add_argument('--max', type=int, default=5)
+    ap.add_argument('--max', type=int, default=None)
     args = ap.parse_args()
     main(dry_run=args.dry_run, max_articles=args.max)
