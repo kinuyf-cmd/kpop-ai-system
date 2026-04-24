@@ -16,6 +16,32 @@ LESSONS = '/home/aiuser/kpop-ai-system/docs/lessons_learned.md'
 RULES = '/home/aiuser/kpop-ai-system/config/latest_rules.json'
 JST = timezone(timedelta(hours=9))
 ISSUES = []
+REWRITE_QUEUE = '/home/aiuser/kpop-ai-system/data/rewrite_queue.jsonl'
+
+
+def _add_to_rewrite_queue(post_id, post_url, reason):
+    """リライト担当にdraft記事を送る"""
+    existing_pending = False
+    if os.path.exists(REWRITE_QUEUE):
+        with open(REWRITE_QUEUE, encoding='utf-8') as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                    if d.get('post_id') == post_id and d.get('status') == 'pending':
+                        existing_pending = True
+                        break
+                except:
+                    pass
+    if not existing_pending:
+        entry = {
+            'ts': datetime.now().isoformat(),
+            'post_id': post_id, 'post_url': post_url,
+            'reason': reason, 'retry_count': 0, 'status': 'pending',
+        }
+        os.makedirs(os.path.dirname(REWRITE_QUEUE), exist_ok=True)
+        with open(REWRITE_QUEUE, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+        print(f"  [{post_id}] rewrite_queue追加: {reason}")
 
 
 def _wp_get(endpoint):
@@ -109,6 +135,7 @@ def audit_post(p):
             _wp_update(pid, {'status': 'draft'})
             print(f"  [{pid}] 🔴 重大品質違反(本文{len(content_core)}字) → draft化")
             _record(pid, purl, 'quality_critical', f'{len(content_core)}字で強制draft化', 'high')
+            _add_to_rewrite_queue(pid, purl, f'本文{len(content_core)}字(50字未満)')
     if len(content_core) > 30:
         ja_chars = sum(1 for c in content_core if '\u3040' <= c <= '\u30ff' or '\u4e00' <= c <= '\u9fff')
         ja_ratio = ja_chars / max(len(content_core), 1)
@@ -117,6 +144,7 @@ def audit_post(p):
             if ja_ratio < 0.1:
                 _wp_update(pid, {'status': 'draft'})
                 print(f"  [{pid}] 🔴 日本語比率{ja_ratio*100:.0f}% → draft化")
+                _add_to_rewrite_queue(pid, purl, f'日本語比率{ja_ratio*100:.0f}%')
 
     # 5. サムネ
     if not fm_id:

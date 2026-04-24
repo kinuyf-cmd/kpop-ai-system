@@ -49,3 +49,11 @@
 1. unified_publisher に本文品質ゲート追加（200字以上 + 日本語比率30%以上で投稿許可）
 2. audit_publisher に同条件の厳格チェック + 即draft化（50字未満 or 日本語10%未満）
 3. latest_rules.json に quality_gates セクション新設
+
+
+## 監査教訓 (2026-04-25 00:00)
+
+- **gsc_missing**: 4件
+- **meta_short**: 2件
+- **no_thumbnail**: 1件
+- **x_missing**: 1件
