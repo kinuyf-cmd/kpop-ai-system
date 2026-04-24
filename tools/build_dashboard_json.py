@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-"""ダッシュボード用JSON生成 (15分毎)
-
-public/data/dashboard.json にKPI・投稿数・collector状況・監査結果をまとめて出力
-"""
-import os, json, urllib.request, base64
+"""ダッシュボードJSON生成 (全数値を実データから取得)"""
+import os, json, urllib.request, urllib.error, base64
 from datetime import datetime, timedelta, timezone
 
 AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
@@ -11,111 +8,153 @@ OUT = '/home/aiuser/kpopjournal-frontend/public/data/dashboard.json'
 JST = timezone(timedelta(hours=9))
 
 
-def _wp_posts(hours=24):
-    since = (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime('%Y-%m-%dT%H:%M:%S')
-    url = (f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
-           f"?after={since}&per_page=100&_fields=id,title,date")
-    try:
-        req = urllib.request.Request(url, headers={'Authorization': f'Basic {AUTH}'})
-        return json.loads(urllib.request.urlopen(req, timeout=20).read())
-    except Exception:
-        return []
-
-
-def _jsonl_tail(path, n=50):
-    if not os.path.exists(path):
-        return []
-    result = []
-    for l in open(path, encoding='utf-8').readlines()[-n:]:
+def _wp_posts(after_utc, pages=1):
+    all_posts = []
+    for pg in range(1, pages + 1):
+        url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?after={after_utc}&per_page=100&page={pg}&_fields=id,date,title,status"
         try:
-            result.append(json.loads(l))
+            req = urllib.request.Request(url, headers={'Authorization': f'Basic {AUTH}'})
+            posts = json.loads(urllib.request.urlopen(req, timeout=30).read())
+            if not posts: break
+            all_posts.extend(posts)
+            if len(posts) < 100: break
+        except urllib.error.HTTPError:
+            break
         except Exception:
-            pass
+            break
+    return all_posts
+
+
+def _wp_total():
+    try:
+        req = urllib.request.Request(
+            "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=1&_fields=id",
+            headers={'Authorization': f'Basic {AUTH}'})
+        r = urllib.request.urlopen(req, timeout=20)
+        return int(r.headers.get('X-WP-Total', 0))
+    except Exception:
+        return 0
+
+
+def _classify(title):
+    t = title if isinstance(title, str) else title.get('rendered', '') if isinstance(title, dict) else ''
+    return 'breaking' if ('【速報】' in t or '【韓国メディア速報】' in t) else 'other'
+
+
+def _gsc():
+    result = {'available': False, 'clicks': 0, 'impressions': 0, 'ctr': 0, 'error': None}
+    try:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        creds = service_account.Credentials.from_service_account_file(
+            '/home/aiuser/kpop-ai-system/google_metrics/service_account.json',
+            scopes=['https://www.googleapis.com/auth/webmasters.readonly'])
+        sc = build('searchconsole', 'v1', credentials=creds)
+        end = (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')
+        start = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+        resp = sc.searchanalytics().query(
+            siteUrl='https://www.kpopjournal.tokyo/',
+            body={'startDate': start, 'endDate': end, 'dimensions': ['date'], 'rowLimit': 28}
+        ).execute()
+        rows = resp.get('rows', [])
+        clicks = sum(r.get('clicks', 0) for r in rows)
+        imps = sum(r.get('impressions', 0) for r in rows)
+        result.update({'available': True, 'clicks': clicks, 'impressions': imps,
+                       'ctr': round(clicks / imps, 4) if imps else 0,
+                       'latest_date': max(r['keys'][0] for r in rows) if rows else None})
+    except Exception as e:
+        result['error'] = str(e)[:150]
     return result
 
 
-def _signals_24h():
-    p = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
-    if not os.path.exists(p):
-        return {'total': 0, 'by_source': {}}
-    cutoff = datetime.now() - timedelta(hours=24)
-    total = 0
-    by_source = {}
-    for line in open(p, encoding='utf-8'):
+def _ga4():
+    result = {'available': False, 'yesterday_users': 0, 'yesterday_pv': 0,
+              'realtime_users': 0, 'error': None}
+    try:
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/aiuser/kpop-ai-system/google_metrics/service_account.json'
+        from google.analytics.data_v1beta import BetaAnalyticsDataClient
+        from google.analytics.data_v1beta.types import (
+            RunReportRequest, RunRealtimeReportRequest, DateRange, Metric)
+        client = BetaAnalyticsDataClient()
+        prop = 'properties/493983919'
+
+        # 昨日
+        yd = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
+        r = client.run_report(RunReportRequest(
+            property=prop, date_ranges=[DateRange(start_date=yd, end_date=yd)],
+            metrics=[Metric(name='totalUsers'), Metric(name='screenPageViews')]))
+        if r.rows:
+            result['yesterday_users'] = int(r.rows[0].metric_values[0].value)
+            result['yesterday_pv'] = int(r.rows[0].metric_values[1].value)
+
+        # Realtime
+        rr = client.run_realtime_report(RunRealtimeReportRequest(
+            property=prop, metrics=[Metric(name='activeUsers'), Metric(name='screenPageViews')]))
+        if rr.rows:
+            result['realtime_users'] = int(rr.rows[0].metric_values[0].value)
+            result['realtime_pv'] = int(rr.rows[0].metric_values[1].value)
+
+        result['available'] = True
+    except Exception as e:
+        result['error'] = str(e)[:150]
+    return result
+
+
+def _count_file(path, hours=24):
+    if not os.path.exists(path): return 0
+    cutoff = datetime.now() - timedelta(hours=hours)
+    n = 0
+    for line in open(path, encoding='utf-8'):
         try:
-            d = json.loads(line)
-            ts = datetime.fromisoformat(d.get('timestamp', '')[:19])
-            if ts >= cutoff:
-                total += 1
-                src = d.get('source_id', '?')
-                by_source[src] = by_source.get(src, 0) + 1
+            ts = datetime.fromisoformat(json.loads(line).get('timestamp', json.loads(line).get('ts', ''))[:19])
+            if ts >= cutoff: n += 1
         except Exception:
             pass
-    return {'total': total, 'by_source': by_source}
+    return n
 
 
 def main():
     now = datetime.now(JST)
-    posts = _wp_posts(24)
+    today_utc = now.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
+    month_utc = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
 
-    # 速報 vs その他
-    def is_breaking(p):
-        t = p.get('title', {}).get('rendered', '') if isinstance(p.get('title'), dict) else ''
-        return '【速報】' in t or '【韓国メディア速報】' in t
+    posts_today = [p for p in _wp_posts(today_utc) if p.get('status') == 'publish']
+    today_brk = sum(1 for p in posts_today if _classify(p['title']) == 'breaking')
+    posts_month = [p for p in _wp_posts(month_utc, pages=10) if p.get('status') == 'publish']
+    total_all = _wp_total()
+    gsc = _gsc()
+    ga4 = _ga4()
 
-    breaking = sum(1 for p in posts if is_breaking(p))
-    other = len(posts) - breaking
-
-    # 本日 (JST 0時以降)
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    today_posts = [p for p in posts if p['date'][:10] >= today_start.strftime('%Y-%m-%d')]
-    today_breaking = sum(1 for p in today_posts if is_breaking(p))
-
-    # editor_state
-    editor = {}
-    es_path = '/home/aiuser/kpop-ai-system/data/editor_state.json'
-    if os.path.exists(es_path):
-        try:
-            editor = json.load(open(es_path, encoding='utf-8'))
-        except Exception:
-            pass
-
-    # audit
-    audit = _jsonl_tail('/home/aiuser/kpop-ai-system/logs/audit_issues.jsonl', 100)
-    audit_by_type = {}
-    for a in audit:
-        audit_by_type[a.get('issue', '?')] = audit_by_type.get(a.get('issue', '?'), 0) + 1
-
-    # X
-    x_logs = _jsonl_tail('/home/aiuser/kpop-ai-system/logs/x_posts.jsonl', 50)
-    x_today = sum(1 for x in x_logs
-                  if x.get('ts', '')[:10] == now.strftime('%Y-%m-%d') and x.get('status') == 'ok')
+    signals = _count_file('/home/aiuser/kpop-ai-system/data/trend_signals.jsonl', 24)
+    x_today = 0
+    xp = '/home/aiuser/kpop-ai-system/logs/x_posts.jsonl'
+    if os.path.exists(xp):
+        td = now.strftime('%Y-%m-%d')
+        x_today = sum(1 for l in open(xp) if l.strip() and json.loads(l).get('ts', '')[:10] == td and json.loads(l).get('status') == 'ok')
 
     data = {
         'generated_at': now.isoformat(),
         'kpi': {
-            'today': {
-                'total': len(today_posts),
-                'breaking': today_breaking,
-                'other': len(today_posts) - today_breaking,
-                'target': 20,
-            },
-            'last_24h': {'total': len(posts), 'breaking': breaking, 'other': other},
-            'urgency': editor.get('urgency', 'normal'),
-            'hours_left': editor.get('hours_left_today', 0),
+            'today': {'published': len(posts_today), 'breaking': today_brk, 'other': len(posts_today) - today_brk, 'target': 20},
         },
-        'signals_24h': _signals_24h(),
-        'audit': {'total': len(audit), 'by_type': audit_by_type},
-        'x_today': x_today,
+        'content_stats': {'month_total': len(posts_month), 'site_total': total_all},
+        'signals_24h': signals,
+        'x_posts_today': x_today,
+        'gsc': gsc,
+        'ga4': ga4,
         'recent_posts': [
-            {'id': p['id'], 'title': (p['title']['rendered'] if isinstance(p['title'], dict) else p['title'])[:70], 'date': p['date']}
-            for p in today_posts[:10]
+            {'id': p['id'], 'title': (p['title']['rendered'] if isinstance(p['title'], dict) else p['title'])[:70],
+             'date': p['date'], 'classification': _classify(p['title'])}
+            for p in posts_today[:10]
         ],
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump(data, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-    print(f"dashboard.json: today={data['kpi']['today']['total']} signals={data['signals_24h']['total']}")
+
+    print(f"dashboard.json: today={len(posts_today)} month={len(posts_month)} total={total_all}")
+    print(f"  GSC: {'OK clicks=' + str(gsc['clicks']) if gsc['available'] else 'err'}")
+    print(f"  GA4: {'OK rt=' + str(ga4.get('realtime_users', 0)) if ga4['available'] else 'err'}")
 
 
 if __name__ == '__main__':
