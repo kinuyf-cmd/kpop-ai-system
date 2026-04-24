@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-27-cfix6",
-  "updated_at": "2026-04-24T19:55:14.016066",
+  "version": "2026-04-27-cfix9b3",
+  "updated_at": "2026-04-24T21:17:34.953114",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -83,5 +83,27 @@
     "git HEADの既存実装を確認せずに上書きすること",
     "ビルド成功だけで本番反映未確認で完了報告すること",
     "集計前提の検証なしに数字を信じること"
-  ]
+  ],
+  "auto_article_policy": {
+    "single_source_allowed": true,
+    "confidence_labels": {
+      "high": "複数ソース (2+) → 通常公開",
+      "medium": "単一ソース + 公式キーワード → 通常公開",
+      "low": "単一ソースのみ → タイトルに【韓国メディア速報】+注意書き"
+    },
+    "breaking_news": {
+      "detection_window_minutes": 15,
+      "daily_limit": 3,
+      "triggers": [
+        "urgency=high",
+        "multi_source_same_artist_15min"
+      ],
+      "cron": "*/15"
+    },
+    "daily_quotas": {
+      "auto_event_max_per_run": 3,
+      "auto_comeback_max_per_run": 3,
+      "breaking_max_per_day": 3
+    }
+  }
 }
