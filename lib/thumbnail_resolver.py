@@ -4,6 +4,54 @@ import os, json, re, urllib.request
 from urllib.parse import urlparse
 
 
+def smart_crop(image_path, target_w=1200, target_h=675):
+    """顔検出ベースのスマートクロップ (16:9)"""
+    try:
+        import cv2
+        import numpy as np
+        img = cv2.imread(image_path)
+        if img is None:
+            return False
+        h, w = img.shape[:2]
+        target_ratio = target_w / target_h
+
+        # 既に近いサイズなら リサイズのみ
+        if abs(w / h - target_ratio) < 0.1 and w >= target_w:
+            resized = cv2.resize(img, (target_w, target_h))
+            cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
+            return True
+
+        # 顔検出
+        try:
+            cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            faces = cascade.detectMultiScale(gray, 1.1, 4, minSize=(40, 40))
+        except Exception:
+            faces = []
+
+        if len(faces) > 0:
+            fy = int(np.mean([f[1] + f[3] / 2 for f in faces]))
+            fx = int(np.mean([f[0] + f[2] / 2 for f in faces]))
+        else:
+            fx, fy = w // 2, h // 3
+
+        if w / h > target_ratio:
+            new_w = int(h * target_ratio)
+            left = max(0, min(w - new_w, fx - new_w // 2))
+            cropped = img[0:h, left:left + new_w]
+        else:
+            new_h = int(w / target_ratio)
+            top = max(0, min(h - new_h, fy - int(new_h * 0.35)))
+            cropped = img[top:top + new_h, 0:w]
+
+        resized = cv2.resize(cropped, (target_w, target_h))
+        cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
+        return True
+    except Exception as e:
+        print(f"  smart_crop error: {e}")
+        return False
+
+
 def fetch_source_image(source_url, output_path):
     """記事ソースURLから og:image 取得"""
     try:
@@ -42,6 +90,7 @@ def fetch_source_image(source_url, output_path):
 
         urllib.request.urlretrieve(img_url, output_path)
         if os.path.exists(output_path) and os.path.getsize(output_path) > 5000:
+            smart_crop(output_path)
             return {'path': output_path, 'image_url': img_url, 'source_url': source_url}
     except Exception as e:
         print(f"  source image fetch error: {e}")

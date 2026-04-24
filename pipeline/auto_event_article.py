@@ -11,6 +11,7 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 load_dotenv()
 
 from lib.korean_translator import translate_ko_to_ja
+from lib.unified_publisher import unified_publish
 
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 PROCESSED = '/home/aiuser/kpop-ai-system/data/auto_article_processed.jsonl'
@@ -240,7 +241,6 @@ def main(dry_run=False, max_articles=5):
         if not title_r['success']:
             continue
         raw_title = title_r['translated'].strip().strip('「」""')[:65]
-        title_ja = f'【韓国メディア速報】{raw_title}' if confidence == 'low' else raw_title
 
         combined = "\n".join([s['title'] for s in sigs[:3]])
         body_r = translate_ko_to_ja(
@@ -250,15 +250,22 @@ def main(dry_run=False, max_articles=5):
         if not body_r['success']:
             continue
 
-        content = generate_article_content_v2(sigs, body_r['translated'], confidence)
-        best_url = best.get('url', '')
-        result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
-        if result and result.get('id'):
-            print(f"  WP公開 ID={result['id']}")
+        body_html = f"<p>{body_r['translated']}</p>"
+        r = unified_publish(
+            raw_title=raw_title,
+            body_html=body_html,
+            source_url=best.get('url', ''),
+            artist=key.split('-')[0] if '-' in key else key,
+            kind='event',
+            confidence=confidence,
+            source_signals=sigs,
+        )
+        if r and r.get('success'):
+            print(f"  WP公開 ID={r['post_id']}")
             created += 1
             for s in sigs:
                 mark_processed({'ts': datetime.now().isoformat(), 'source_url': s['url'],
-                                'wp_post_id': result['id'], 'kind': 'event', 'confidence': confidence})
+                                'wp_post_id': r['post_id'], 'kind': 'event', 'confidence': confidence})
 
     print(f"\n完了: {created}件記事化")
     return created

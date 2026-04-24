@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from lib.korean_translator import translate_ko_to_ja
+from lib.unified_publisher import unified_publish
 from pipeline.auto_event_article import (
     load_signals, is_processed, mark_processed,
-    generate_article_content_v2, post_to_wp, post_to_wp_with_thumb, fetch_category_id,
     OFFICIAL_KW, CONFIDENCE_HIGH, CONFIDENCE_MEDIUM, CONFIDENCE_LOW,
 )
 from datetime import datetime
@@ -66,7 +66,6 @@ def main(dry_run=False, max_articles=5):
         if not title_r['success']:
             continue
         raw_title = title_r['translated'].strip().strip('「」""')[:65]
-        title_ja = f'【速報】{raw_title}' if confidence == 'low' else raw_title
 
         combined = "\n".join([s['title'] for s in sigs[:3]])
         body_r = translate_ko_to_ja(
@@ -76,15 +75,22 @@ def main(dry_run=False, max_articles=5):
         if not body_r['success']:
             continue
 
-        content = generate_article_content_v2(sigs, body_r['translated'], confidence)
-        best_url = best.get('url', '')
-        result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
-        if result and result.get('id'):
-            print(f"  WP公開 ID={result['id']}")
+        body_html = f"<p>{body_r['translated']}</p>"
+        r = unified_publish(
+            raw_title=raw_title,
+            body_html=body_html,
+            source_url=best.get('url', ''),
+            artist=artist,
+            kind='comeback',
+            confidence=confidence,
+            source_signals=sigs,
+        )
+        if r and r.get('success'):
+            print(f"  WP公開 ID={r['post_id']}")
             created += 1
             for s in sigs:
                 mark_processed({'ts': datetime.now().isoformat(), 'source_url': s['url'],
-                                'wp_post_id': result['id'], 'kind': 'comeback', 'confidence': confidence})
+                                'wp_post_id': r['post_id'], 'kind': 'comeback', 'confidence': confidence})
 
     print(f"\n完了: {created}件")
     return created

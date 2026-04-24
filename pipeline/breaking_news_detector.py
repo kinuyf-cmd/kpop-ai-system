@@ -12,10 +12,8 @@ from datetime import datetime, timedelta
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 from lib.korean_translator import translate_ko_to_ja
-from pipeline.auto_event_article import (
-    is_processed, mark_processed,
-    generate_article_content_v2, post_to_wp, post_to_wp_with_thumb, fetch_category_id,
-)
+from lib.unified_publisher import unified_publish
+from pipeline.auto_event_article import is_processed, mark_processed
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
@@ -84,34 +82,42 @@ def detect_breaking(signals):
 
 
 def publish_breaking(artist, sigs, typ):
+    """unified_publish経由で速報投稿"""
     best = max(sigs, key=lambda s: len(s.get('title', '')))
 
-    title_r = translate_ko_to_ja(best['title'], 'K-POP速報ニュース見出し')
-    if not title_r['success']:
-        return None
-
-    raw_title = title_r['translated'].strip().strip('「」""')[:60]
-    title_ja = f'【速報】{raw_title}'
-
-    combined = "\n".join([s['title'] for s in sigs[:3]])
-    body_r = translate_ko_to_ja(
-        f"以下のK-POP速報を元に、150-250字の日本語記事を事実ベースで。推測禁止:\n\n{combined}",
-        'K-POP速報記事本文',
-    )
-    if not body_r['success']:
-        return None
+    # 翻訳
+    if best.get('language') == 'ko':
+        title_r = translate_ko_to_ja(best['title'], 'K-POP速報見出し')
+        if not title_r.get('success'):
+            return None
+        raw_title = title_r['translated'].strip().strip('「」""')
+        combined = "\n".join([s['title'] for s in sigs[:3]])
+        body_r = translate_ko_to_ja(
+            f"以下のK-POP速報から150-250字の日本語記事を事実ベースで。推測禁止:\n\n{combined}",
+            'K-POP速報記事',
+        )
+        body_html = f"<p>{body_r['translated']}</p>" if body_r.get('success') else f"<p>{best['title']}</p>"
+    else:
+        raw_title = best['title']
+        body_html = f"<p>{best['title']}</p>"
 
     confidence = 'high' if typ == 'multi' else 'medium'
-    content = generate_article_content_v2(sigs, body_r['translated'], confidence)
-    cat_id = fetch_category_id('news')
-    best_url = best.get('url', '')
-    result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
 
-    if result and result.get('id'):
+    r = unified_publish(
+        raw_title=raw_title,
+        body_html=body_html,
+        source_url=best.get('url'),
+        artist=artist,
+        kind='breaking',
+        confidence=confidence,
+        source_signals=sigs,
+    )
+
+    if r and r.get('success'):
         for s in sigs:
             mark_processed({
                 'ts': datetime.now().isoformat(), 'source_url': s['url'],
-                'wp_post_id': result['id'], 'kind': 'breaking',
+                'wp_post_id': r.get('post_id'), 'kind': 'breaking',
                 'confidence': confidence, 'type': typ,
             })
         os.makedirs(os.path.dirname(BREAKING_LOG), exist_ok=True)
@@ -119,22 +125,13 @@ def publish_breaking(artist, sigs, typ):
             f.write(json.dumps({
                 'date': datetime.now().date().isoformat(),
                 'ts': datetime.now().isoformat(),
-                'post_id': result['id'],
-                'title': title_ja,
+                'post_id': r.get('post_id'),
+                'title': r.get('title'),
                 'artist': artist,
                 'type': typ,
             }) + '\n')
-
-        # GSC Indexing通知
-        try:
-            from lib.gsc_indexing import notify_url_updated
-            post_url = result.get('link', '')
-            if post_url:
-                notify_url_updated(post_url)
-        except Exception:
-            pass
-
-    return result
+        return {'id': r.get('post_id'), 'link': r.get('post_url')}
+    return None
 
 
 def main(dry_run=False):
