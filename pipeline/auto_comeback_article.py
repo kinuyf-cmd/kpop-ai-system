@@ -12,7 +12,7 @@ load_dotenv()
 from lib.korean_translator import translate_ko_to_ja
 from pipeline.auto_event_article import (
     load_signals, is_processed, mark_processed,
-    generate_article_content_v2, post_to_wp, fetch_category_id,
+    generate_article_content_v2, post_to_wp, post_to_wp_with_thumb, fetch_category_id,
     OFFICIAL_KW, CONFIDENCE_HIGH, CONFIDENCE_MEDIUM, CONFIDENCE_LOW,
 )
 from datetime import datetime
@@ -77,7 +77,8 @@ def main(dry_run=False, max_articles=5):
             continue
 
         content = generate_article_content_v2(sigs, body_r['translated'], confidence)
-        result = post_to_wp(title_ja, content, cat_id)
+        best_url = best.get('url', '')
+        result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
         if result and result.get('id'):
             print(f"  WP公開 ID={result['id']}")
             created += 1

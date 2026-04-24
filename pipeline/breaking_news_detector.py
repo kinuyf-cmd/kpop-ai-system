@@ -2,9 +2,9 @@
 """速報検出→即時記事化
 
 条件:
-- urgency='high' のsignalが過去15分以内に発生
-- または同一アーティストで過去15分以内に2ソース以上
-- 1日最大3件
+- urgency='high' のsignalが過去5分以内に発生
+- または同一アーティストで過去5分以内に2ソース以上
+- 1日最大10件
 """
 import sys, os, json
 from datetime import datetime, timedelta
@@ -14,15 +14,15 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.korean_translator import translate_ko_to_ja
 from pipeline.auto_event_article import (
     is_processed, mark_processed,
-    generate_article_content_v2, post_to_wp, fetch_category_id,
+    generate_article_content_v2, post_to_wp, post_to_wp_with_thumb, fetch_category_id,
 )
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
-DAILY_BREAKING_LIMIT = 3
+DAILY_BREAKING_LIMIT = 10
 
 
-def load_recent(minutes=15):
+def load_recent(minutes=5):
     if not os.path.exists(SIGNALS_PATH):
         return []
     cutoff = datetime.now() - timedelta(minutes=minutes)
@@ -104,7 +104,8 @@ def publish_breaking(artist, sigs, typ):
     confidence = 'high' if typ == 'multi' else 'medium'
     content = generate_article_content_v2(sigs, body_r['translated'], confidence)
     cat_id = fetch_category_id('news')
-    result = post_to_wp(title_ja, content, cat_id)
+    best_url = best.get('url', '')
+    result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
 
     if result and result.get('id'):
         for s in sigs:
@@ -143,8 +144,8 @@ def main(dry_run=False):
         print("本日の速報上限到達")
         return 0
 
-    signals = load_recent(minutes=15)
-    print(f"過去15分のsignals: {len(signals)}件")
+    signals = load_recent(minutes=5)
+    print(f"過去5分のsignals: {len(signals)}件")
 
     candidates = detect_breaking(signals)
     print(f"速報候補: {len(candidates)}件")

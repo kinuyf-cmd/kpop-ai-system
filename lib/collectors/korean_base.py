@@ -43,11 +43,30 @@ def is_urgent(text):
     return any(kw in text for kw in URGENT_KW)
 
 
+def trigger_breaking_if_urgent(new_signals):
+    """urgency=high検出時に breaking_news_detector を非同期起動"""
+    urgent = [s for s in new_signals if s.get('urgency') == 'high']
+    if not urgent:
+        return
+    try:
+        import subprocess
+        subprocess.Popen(
+            ['python3', '/home/aiuser/kpop-ai-system/pipeline/breaking_news_detector.py'],
+            stdout=open('/home/aiuser/kpop-ai-system/logs/breaking_trigger.log', 'a'),
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        log(f"URGENT detected ({len(urgent)}) -> breaking_news_detector fired")
+    except Exception as e:
+        log(f"trigger fail: {e}")
+
+
 def save_signals(signals):
     with open(SIGNALS, 'a', encoding='utf-8') as f:
         for s in signals:
             f.write(json.dumps(s, ensure_ascii=False) + '\n')
     log(f"saved {len(signals)} signals")
+    trigger_breaking_if_urgent(signals)
 
 
 def make_signal(source_id, title, url, keywords, urgent=False, lang='ko', raw=None):

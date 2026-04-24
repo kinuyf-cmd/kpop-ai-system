@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-27-cfix9b3",
-  "updated_at": "2026-04-24T21:17:34.953114",
+  "version": "2026-04-27-cfix11",
+  "updated_at": "2026-04-24T22:02:27.840525",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -92,18 +92,22 @@
       "low": "単一ソースのみ → タイトルに【韓国メディア速報】+注意書き"
     },
     "breaking_news": {
-      "detection_window_minutes": 15,
-      "daily_limit": 3,
-      "triggers": [
-        "urgency=high",
-        "multi_source_same_artist_15min"
-      ],
-      "cron": "*/15"
+      "detection_window_minutes": 5,
+      "daily_limit": 10,
+      "cron": "*/3",
+      "collector_chain_trigger": true
     },
     "daily_quotas": {
-      "auto_event_max_per_run": 3,
-      "auto_comeback_max_per_run": 3,
-      "breaking_max_per_day": 3
+      "auto_event_runs": "4x/day (8:30,12:30,16:30,20:30)",
+      "auto_comeback_runs": "4x/day (9:00,13:00,17:00,21:00)",
+      "breaking_max_per_day": 10
     }
+  },
+  "thumbnail_policy": {
+    "fallback_order": [
+      "source og:image (attribution)",
+      "DALL-E 3"
+    ],
+    "dalle_budget": "$0.08/pic, 20/day max"
   }
 }

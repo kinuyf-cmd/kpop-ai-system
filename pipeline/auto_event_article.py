@@ -124,6 +124,67 @@ def post_to_wp(title_ja, content_html, category_id=None):
         return None
 
 
+def upload_media_to_wp(image_path, post_id=0):
+    """画像をWPにアップロードしてmedia_idを返す"""
+    try:
+        with open(image_path, 'rb') as f:
+            data = f.read()
+    except Exception:
+        return None
+    ext = os.path.splitext(image_path)[1][1:].lower() or 'jpg'
+    ct = 'image/png' if ext == 'png' else 'image/jpeg'
+    req = urllib.request.Request(
+        "https://www.kpopjournal.tokyo/wp-json/wp/v2/media",
+        data=data,
+        headers={
+            'Authorization': f'Basic {AUTH}',
+            'Content-Type': ct,
+            'Content-Disposition': f'attachment; filename="thumb_post{post_id}.{ext}"',
+        },
+        method='POST',
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return json.loads(r.read()).get('id')
+    except Exception as e:
+        print(f"  upload error: {e}")
+        return None
+
+
+def post_to_wp_with_thumb(title, content, cat_id, source_url=None, post_id=0):
+    """サムネ2段fallback + WP投稿"""
+    from lib.thumbnail_resolver import resolve_thumbnail
+    thumb = resolve_thumbnail(source_url, title, content[:500] if content else '', post_id)
+
+    media_id = None
+    if thumb and thumb.get('path'):
+        media_id = upload_media_to_wp(thumb['path'], post_id)
+        if thumb.get('source') == 'source_site' and thumb.get('source_url'):
+            src = thumb['source_url']
+            content = (f'<p style="font-size:11px;color:#888;text-align:right;margin-top:8px;">'
+                       f'画像: <a href="{src}" target="_blank" rel="noopener">元記事より</a></p>\n') + content
+
+    data = {'title': title, 'content': content, 'status': 'publish'}
+    if cat_id:
+        data['categories'] = [cat_id]
+    if media_id:
+        data['featured_media'] = media_id
+
+    body = json.dumps(data).encode()
+    req = urllib.request.Request(
+        "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts",
+        data=body,
+        headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'},
+        method='POST',
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return json.loads(r.read())
+    except Exception as e:
+        print(f"WP post error: {e}")
+        return None
+
+
 def fetch_category_id(slug='event'):
     try:
         req = urllib.request.Request(
@@ -190,7 +251,8 @@ def main(dry_run=False, max_articles=5):
             continue
 
         content = generate_article_content_v2(sigs, body_r['translated'], confidence)
-        result = post_to_wp(title_ja, content, cat_id)
+        best_url = best.get('url', '')
+        result = post_to_wp_with_thumb(title_ja, content, cat_id, source_url=best_url)
         if result and result.get('id'):
             print(f"  WP公開 ID={result['id']}")
             created += 1
