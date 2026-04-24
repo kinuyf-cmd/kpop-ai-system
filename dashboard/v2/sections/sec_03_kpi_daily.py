@@ -183,6 +183,34 @@ def render():
         if today_str in ts or yesterday_str in ts:
             x_posts_today += 1
 
+    # === 正確値オーバーライド (dashboard.json from build_dashboard_json.py) ===
+    _dash = load_json("../kpopjournal-frontend/public/data/dashboard.json") or {}
+    if not _dash:
+        # fallback path
+        _fp = Path("/home/aiuser/kpopjournal-frontend/public/data/dashboard.json")
+        if _fp.exists():
+            try:
+                _dash = json.loads(_fp.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+    if _dash:
+        _today = _dash.get("kpi", {}).get("today", {})
+        _ga4 = _dash.get("ga4", {})
+        _gsc_d = _dash.get("gsc", {})
+        if _today.get("published") is not None:
+            standup["articles_posted"] = _today["published"]
+        if _ga4.get("available"):
+            if _ga4.get("yesterday_pv"):
+                standup["pageviews"] = _ga4["yesterday_pv"]
+            if _ga4.get("yesterday_users"):
+                standup["sessions"] = _ga4["yesterday_users"]
+        if _gsc_d.get("available"):
+            gsc_summary["clicks"] = _gsc_d.get("clicks", 0)
+            gsc_summary["ctr"] = round(_gsc_d.get("ctr", 0) * 100, 2)
+        x_from_dash = _dash.get("x_posts_today", 0)
+        if x_from_dash > x_posts_today:
+            x_posts_today = x_from_dash
+
     html_parts = [STYLE, '<div class="sec-kpi-daily">']
     _badge = get_score_badge(score_for_section("sec_03"))
     html_parts.append(f'<h2>&#x1F4CA; 本日のKPI {_badge}</h2>')

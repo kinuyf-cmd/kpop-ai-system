@@ -363,6 +363,17 @@ def render() -> str:
 
     adsense = metrics.get("adsense", {})
 
+    # === dashboard.json正確値オーバーライド ===
+    _fp = Path("/home/aiuser/kpopjournal-frontend/public/data/dashboard.json")
+    if _fp.exists():
+        try:
+            _dd = json.loads(_fp.read_text(encoding="utf-8"))
+            _ads = _dd.get("adsense", {})
+            if _ads.get("available"):
+                adsense["ESTIMATED_EARNINGS"] = str(_ads.get("yesterday_jpy", 0))
+        except Exception:
+            pass
+
     # ── revenue_daily からサマリー取得 ──
     summary = {}
     top_articles = []

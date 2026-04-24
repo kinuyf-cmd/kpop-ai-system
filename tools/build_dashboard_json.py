@@ -138,6 +138,8 @@ def main():
     posts_today = [p for p in _wp_posts(today_utc) if p.get('status') == 'publish']
     today_brk = sum(1 for p in posts_today if _classify(p['title']) == 'breaking')
     posts_month = [p for p in _wp_posts(month_utc, pages=10) if p.get('status') == 'publish']
+    week_utc = (now - timedelta(days=7)).astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
+    posts_week = [p for p in _wp_posts(week_utc, pages=3) if p.get('status') == 'publish']
     total_all = _wp_total()
     gsc = _gsc()
     ga4 = _ga4()
@@ -155,7 +157,7 @@ def main():
         'kpi': {
             'today': {'published': len(posts_today), 'breaking': today_brk, 'other': len(posts_today) - today_brk, 'target': 20},
         },
-        'content_stats': {'month_total': len(posts_month), 'site_total': total_all},
+        'content_stats': {'week_total': len(posts_week), 'month_total': len(posts_month), 'site_total': total_all},
         'signals_24h': signals,
         'x_posts_today': x_today,
         'gsc': gsc,
