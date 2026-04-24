@@ -1,12 +1,17 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# ── UTF-8 エンコーディング強制（U+FFFD文字化け根本防止） ──
+export PYTHONIOENCODING=utf-8
+export LANG=${LANG:-en_US.UTF-8}
+export LC_ALL=${LC_ALL:-en_US.UTF-8}
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # パイプライン排他実行ロック（breaking/strategy/chart 共通）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 _GLOBAL_PIPELINE_LOCK="/tmp/kpop_pipeline_global.flock"
 exec 9>"$_GLOBAL_PIPELINE_LOCK"
-if ! flock -n 9; then
+if ! flock -w 300 9; then
   echo "⏭️  他のパイプラインが実行中のため、この起動はスキップします（chart）"
   exit 0
 fi
@@ -119,6 +124,7 @@ elif [[ -d "$SCRIPT_DIR/reports" ]]; then
   rm -rf "$SCRIPT_DIR/reports"
 fi
 ln -sfn "$REPORTS_DIR" "$SCRIPT_DIR/reports"
+ln -sf "$SCRIPT_DIR/static/news-sitemap.xml" "$REPORTS_DIR/news-sitemap.xml" 2>/dev/null || true
 export TOKEN_LOG="$ARCHIVE_DIR/token_usage.jsonl"
 
 echo "========================================"
@@ -136,24 +142,38 @@ echo "[1/4] ザップドス: 最新チャートランキング記事生成..."
 
 claude --no-session-persistence --allowedTools WebSearch --agent zapdos -p "
 今日は${TODAY}（${WEEK}）です。
-以下の手順でK-POPチャートランキング記事を生成せよ。
+以下の手順でK-POP総合チャートランキング記事を生成せよ。
 
-【検索手順】
+【検索手順 — 6チャート横断】
 1.「Billboard K-POP Hot 100 ${TODAY}」で最新ランキング取得
-2.「Melon TOP100 今週 ${TODAY}」で韓国チャート取得
+2.「Melon TOP100 今週 ${TODAY}」で韓国国内チャート取得
 3.「Oricon K-POP 週間ランキング ${TODAY}」で日本チャート取得
-4. 今週の記録更新・初登場・急上昇を確認
+4.「Spotify K-POP top songs this week ${TODAY}」でSpotifyグローバルK-POPランキング取得
+5.「Apple Music K-POP charts ${TODAY}」でApple Musicランキング取得
+6.「YouTube Music K-POP trending ${TODAY}」でYouTube Music/MV再生数ランキング取得
+7. 今週の記録更新・初登場・急上昇・MV再生回数マイルストーンを確認
 
-【記事要件】
-- タイトルに「${WEEK}」と「Billboard・Melon」を含める
-- リード文で今週の最大ハイライトを伝える
-- チャートTOP10以上を表形式で記載（順位・先週比・アーティスト・曲名・注目ポイント）
-- 今週の注目ポイント3選（記録・初登場・急上昇）
-- 来週の注目カムバック情報
+【記事構成（必須H2セクション）】
+1. 今週のK-POPチャート総まとめ — リード文で最大ハイライト
+2. Billboard K-POP Hot 100 — TOP10を表形式（順位・先週比・アーティスト・曲名・注目ポイント）
+3. Melon TOP100 韓国国内チャート — TOP10表形式
+4. Oricon K-POP 週間ランキング — TOP10表形式
+5. Spotify グローバルK-POPランキング — TOP10（ストリーミング数も可能な範囲で）
+6. Apple Music / YouTube Music 注目曲 — 各チャートのトピック
+7. 今週の注目ポイント5選 — 記録・初登場・急上昇・MV再生数・カムバック
+8. 来週の注目カムバック情報 — 予定されているカムバック・リリース
+9. まとめ — 今週のK-POPシーン総括
+
+【品質要件】
+- タイトルに「${WEEK}」と「Billboard・Melon・Spotify」を含める
+- 5000文字以上の充実した内容
+- チャートデータは必ず表（<table>）形式で記載
+- 各チャートの特徴の違い（国内vs海外、ストリーミングvsダウンロード）を解説
 - 末尾に「※本記事は${TODAY}時点の情報です」
+- FAQ「よくある質問」（K-POPチャートの見方等）を3問以上含める
 
 【出力形式・絶対厳守】
-1行目：タイトル文字列のみ（例：${WEEK} K-POPチャートTOP50｜Billboard・Melon最新ランキング）
+1行目：タイトル文字列のみ（例：${WEEK} K-POP総合チャートTOP10｜Billboard・Melon・Spotify最新ランキング）
 2行目：空行
 3行目以降：<h2>から始まるHTML本文のみ
 " > reports/chart_0_article.md
@@ -200,7 +220,7 @@ else
   # [ガード] アラカザムがAI内部分析文・定型文を出力した場合はフォールバック
   _ALAKAZAM_CRASH=$(python3 -c "
 import sys, re
-text = open('reports/chart_1_checked.md', encoding='utf-8', errors='replace').read()[:300]
+text = open('reports/chart_1_checked.md', encoding='utf-8', errors='ignore').read()[:300]
 CRASH_PATTERNS = [
     r'重大な問題があります',
     r'ファクトチェックを実施します',
@@ -211,6 +231,9 @@ CRASH_PATTERNS = [
     r'申し訳ありません',
     r'権限が付与されていません',
     r'記事の元情報.*貼り付け',
+    r'ファクトチェック結果をまとめます',
+    r'ファクトチェック結果',
+    r'以下の問題を発見',
 ]
 for pat in CRASH_PATTERNS:
     if re.search(pat, text):
@@ -304,6 +327,11 @@ echo "$TITLE"   > /tmp/chart_title.txt
 echo "$CONTENT" > /tmp/chart_content.txt
 echo "$DESC"    > /tmp/chart_desc.txt
 
+# [再発防止] WP投稿直前のサニタイズ（リテラル\n・JSONメタデータ除去）
+source "$SCRIPT_DIR/lib/sanitize_output.sh"
+sanitize_wp_content /tmp/chart_content.txt
+sanitize_wp_content /tmp/chart_title.txt
+
 JSON=$(python3 - << 'PY' "$MEDIA_ID"
 import json, sys
 media_id = int(sys.argv[1])
@@ -368,6 +396,9 @@ else:
     && echo "  ✅ AIOSEO description設定完了" || echo "  ⚠️ AIOSEO設定スキップ"
 fi
 
+echo "=== 記事構造補完（3行まとめ + プロフィール） ==="
+python3 "$SCRIPT_DIR/pipeline/post_publish_enricher.py" --post-id "$POST_ID" 2>&1 || echo "⚠️ 構造補完スキップ"
+
 # [追加 2026-04-11] kpop_pipeline.shとの統一: 内部リンク・GSC・Bing登録が欠落していたため追加
 echo "=== 内部リンク自動挿入 ==="
 if [ -n "${POST_URL:-}" ]; then
@@ -398,23 +429,6 @@ X投稿文3パターン・推奨ハッシュタグセット・最適投稿タイ
 " > reports/chart_2_sns.md
 log_step "persian" "ok" "reports/chart_2_sns.md"
 
-echo "=== X/Twitter 自動投稿 ==="
-X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
-X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>&1) || {
-  echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
-  X_POST_RESULT="X投稿失敗"
-}
-X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
-if [ -n "$X_TWEET_URL" ]; then
-  X_STATUS="成功 ($X_TWEET_URL)"
-elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
-  X_STATUS="DRY-RUN（テストモード）"
-elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
-  X_STATUS="スキップ"
-else
-  X_STATUS="失敗"
-fi
-
 # アーカイブ
 mkdir -p "$ARCHIVE_DIR"
 cp reports/chart_* "$ARCHIVE_DIR/" 2>/dev/null
@@ -427,7 +441,7 @@ URL         : $POST_URL
 タイトル    : $TITLE
 文字数      : $CONTENT_LENGTH
 判定        : 投稿OK
-X投稿       : $X_STATUS
+X投稿       : (監査後に実行)
 SUMMARY
 
 bash ~/kpop_notify.sh success "チャート" "記事投稿完了: $TITLE" "$POST_URL" 2>/dev/null
@@ -441,6 +455,9 @@ if [[ -L "$SCRIPT_DIR/reports" ]]; then
 elif [[ -d "$SCRIPT_DIR/reports" ]]; then
   rm -rf "$SCRIPT_DIR/reports"
 fi
+# news-sitemap.xml 復元
+mkdir -p "$SCRIPT_DIR/reports" 2>/dev/null || true
+ln -sf "$SCRIPT_DIR/static/news-sitemap.xml" "$SCRIPT_DIR/reports/news-sitemap.xml" 2>/dev/null || true
 
 echo ""
 echo "========================================"
@@ -454,4 +471,24 @@ echo "========================================"
 echo "=== 投稿後自動監査 ==="
 if [[ -n "${POST_ID:-}" ]] && [[ -n "${POST_URL:-}" ]]; then
   env -u AUDIT_LOOP_COUNT bash "$SCRIPT_DIR/post_audit.sh" "$POST_ID" "$POST_URL" "${TITLE:-}" "${RUN_ID:-}" 2>&1 || true
+fi
+
+# X/Twitter 自動投稿（監査通過後のみ）
+echo "=== X/Twitter 自動投稿 ==="
+X_POST_LOG="/home/aiuser/kpop-ai-system/logs/x_post.log"
+_WP_STATUS_NOW=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
+  -K ~/.wp_auth 2>/dev/null | python3 -c "import json,sys; print(json.load(sys.stdin).get('status','unknown'))" 2>/dev/null || echo "unknown")
+if [[ "$_WP_STATUS_NOW" == "publish" ]]; then
+  X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_URL" "reports/chart_2_sns.md" 2>&1) || {
+    echo "X投稿スキップ (エラーはログ参照: $X_POST_LOG)"
+    X_POST_RESULT="X投稿失敗"
+  }
+  X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
+  if [ -n "$X_TWEET_URL" ]; then
+    echo "X投稿成功: $X_TWEET_URL"
+  elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
+    echo "X投稿: DRY-RUN（テストモード）"
+  fi
+else
+  echo "X投稿スキップ: 記事ステータスが publish ではありません ($_WP_STATUS_NOW)"
 fi

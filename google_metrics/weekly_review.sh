@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BASE="$HOME/google_metrics"
+BASE="$HOME/kpop-ai-system/google_metrics"
 DISCORD_WEBHOOK="$DISCORD_WEBHOOK"
 LOG="$BASE/weekly_review.log"
 
@@ -19,7 +19,7 @@ from datetime import date, timedelta
 import warnings
 warnings.filterwarnings("ignore")
 
-BASE = os.path.expanduser("~/google_metrics")
+BASE = os.path.expanduser("~/kpop-ai-system/google_metrics")
 SA = os.path.join(BASE, "service_account.json")
 
 # GA4 週次

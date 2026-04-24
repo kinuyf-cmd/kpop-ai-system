@@ -18,6 +18,7 @@ ERROR_PATTERNS_PATH = BASE_DIR / "config" / "error_patterns.json"
 AUTONOMY_MATRIX_PATH = BASE_DIR / "config" / "autonomy_matrix.json"
 LEARNING_HISTORY_PATH = BASE_DIR / "logs" / "learning_history.jsonl"
 LEARNING_APPLIED_PATH = BASE_DIR / "logs" / "learning_applied.jsonl"
+ERROR_OWNERSHIP_PATH = BASE_DIR / "config" / "error_ownership.json"
 
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1490413245561831576/qVFL6bUBVxVnqcJxBiwaTGueezDUO8fltoCQbl-_uQ5Om6uTOlyVZ_7UNwomZ_0dFUIv"
 
@@ -416,6 +417,59 @@ def _log_applied(entry):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
+def _load_error_ownership():
+    """Load error_ownership.json for targeted fix routing."""
+    if not ERROR_OWNERSHIP_PATH.exists():
+        return {}
+    try:
+        return json.loads(ERROR_OWNERSHIP_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _find_owner_for_pattern(pattern_key, detail, ownership_map):
+    """
+    パターンキーまたは詳細内容からエラーオーナーを特定する。
+    error_ownership.json のキーと照合し、見つからなければdefaultを返す。
+    """
+    # 直接キーマッチ
+    if pattern_key in ownership_map:
+        info = ownership_map[pattern_key]
+        return info.get("owner", "porygon_z"), info.get("escalation", "mewtwo")
+
+    # パターンキーの正規化マッチ（::の右側を使用）
+    if "::" in pattern_key:
+        suffix = pattern_key.split("::", 1)[1].strip().lower()
+        for key, info in ownership_map.items():
+            if key.startswith("_") or key == "updated_at":
+                continue
+            if key.lower() in suffix or suffix in key.lower():
+                return info.get("owner", "porygon_z"), info.get("escalation", "mewtwo")
+
+    # 詳細内容からのキーワードマッチ
+    detail_lower = detail.lower() if detail else ""
+    keyword_map = {
+        "h2": "h2_insufficient",
+        "内部リンク": "internal_link_insufficient",
+        "サムネ": "thumbnail_text_burned",
+        "thumbnail": "thumbnail_text_burned",
+        "メタ": "upstream_meta_commentary_leak",
+        "x投稿": "x_post_failed",
+        "template": "template_filler_published",
+        "filler": "template_filler_published",
+        "エンコーディング": "u_fffd_encoding_error",
+        "llm残骸": "llm_residue_in_article",
+    }
+    for keyword, error_key in keyword_map.items():
+        if keyword in detail_lower and error_key in ownership_map:
+            info = ownership_map[error_key]
+            return info.get("owner", "porygon_z"), info.get("escalation", "mewtwo")
+
+    # デフォルト
+    default_info = ownership_map.get("default", {})
+    return default_info.get("owner", "porygon_z"), default_info.get("escalation", "mewtwo")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Autonomous Learning Loop")
     parser.add_argument("--shadow-test", action="store_true",
@@ -447,12 +501,24 @@ def main():
         print("  No recurring patterns found. Exiting.")
         return
 
+    # Load error ownership for targeted routing
+    ownership_map = _load_error_ownership()
+
     # Step 3: Generate fix proposals
     for pattern in recurring:
         proposal = generate_fix_proposal(pattern)
+        # Look up error owner for targeted fix
+        owner, escalation = _find_owner_for_pattern(
+            pattern["pattern_key"],
+            pattern.get("detail_sample", ""),
+            ownership_map,
+        )
+        owner_str = ",".join(owner) if isinstance(owner, list) else owner
+
         print(f"\n  Pattern: {pattern['pattern_key']}")
         print(f"    Count: {pattern['count']}")
         print(f"    Category: {proposal['category']}")
+        print(f"    Owner: {owner_str} (escalation: {escalation})")
         print(f"    Fix: {proposal['description']}")
 
         # Step 4: Shadow test
@@ -463,6 +529,20 @@ def main():
             print(f"    Shadow test improvement: {improvement:.0%}")
 
         if args.dry_run:
+            # Log to history even in dry-run mode for tracking
+            _log_history({
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "error_pattern": pattern["pattern_key"],
+                "count": pattern["count"],
+                "proposed_fix": proposal["description"],
+                "fix_type": proposal.get("fix_type"),
+                "shadow_test_result": improvement,
+                "decision": "dry_run",
+                "applied": False,
+                "zone": "dry_run",
+                "owner": owner_str,
+                "escalation": escalation,
+            })
             continue
 
         # Step 5: Auto-apply logic
@@ -480,8 +560,10 @@ def main():
                     "description": proposal["description"],
                     "improvement": improvement,
                     "zone": zone,
+                    "owner": owner_str,
+                    "escalation": escalation,
                 })
-                print(f"    -> AUTO-APPLIED (green_zone, improvement={improvement:.0%})")
+                print(f"    -> AUTO-APPLIED (green_zone, owner={owner_str}, improvement={improvement:.0%})")
             else:
                 decision = "apply_failed"
                 print(f"    -> Apply failed")
@@ -489,20 +571,21 @@ def main():
         elif improvement >= 0.10 and zone == "yellow_zone":
             decision = "notified_pending"
             msg = (
-                f"**[Learning Loop] Fix Proposal (yellow_zone)**\n"
-                f"Pattern: `{pattern['pattern_key']}`\n"
-                f"Count: {pattern['count']} in {args.days} days\n"
-                f"Fix: {proposal['description']}\n"
-                f"Shadow test: {improvement:.0%} improvement\n"
-                f"Action needed: Review and approve"
+                f"**[Learning Loop] 修正提案 (yellow_zone)**\n"
+                f"パターン: `{pattern['pattern_key']}`\n"
+                f"担当: `{owner_str}` (エスカレーション: `{escalation}`)\n"
+                f"発生回数: {pattern['count']}回 ({args.days}日間)\n"
+                f"修正案: {proposal['description']}\n"
+                f"シャドウテスト: {improvement:.0%} 改善\n"
+                f"対応: レビューと承認が必要"
             )
             notify_discord(msg)
-            print(f"    -> NOTIFIED (yellow_zone, improvement={improvement:.0%})")
+            print(f"    -> NOTIFIED (yellow_zone, owner={owner_str}, improvement={improvement:.0%})")
 
         else:
-            print(f"    -> NEEDS REVIEW (zone={zone}, improvement={improvement:.0%})")
+            print(f"    -> NEEDS REVIEW (zone={zone}, owner={owner_str}, improvement={improvement:.0%})")
 
-        # Step 6: Log to history
+        # Step 6: Log to learning_history.jsonl with zone classification
         _log_history({
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "error_pattern": pattern["pattern_key"],
@@ -513,6 +596,8 @@ def main():
             "decision": decision,
             "applied": decision == "auto_applied",
             "zone": zone,
+            "owner": owner_str,
+            "escalation": escalation,
         })
 
     print(f"\n[Learning Loop] Complete. Processed {len(recurring)} patterns.")

@@ -12,7 +12,7 @@ from datetime import date, timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
-METRICS_DIR = os.path.expanduser("~/google_metrics")
+METRICS_DIR = os.path.join(BASE_DIR, "google_metrics")
 
 SERVICE_ACCOUNT_FILE = os.path.join(METRICS_DIR, "service_account.json")
 GA4_PROPERTY_ID = os.environ.get("GA4_PROPERTY_ID", "493983919")

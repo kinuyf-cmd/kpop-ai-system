@@ -1,0 +1,25 @@
+{
+  "updated_at": "2026-04-17",
+  "feeds": [
+    {
+      "name": "kstyle",
+      "url": "https://www.kstyle.com/",
+      "type": "html",
+      "priority": "high",
+      "note": "K-POP/韓流最大手。RSS非公開のためHTMLスクレイピング。"
+    },
+    {
+      "name": "daebak",
+      "url": "https://daebak.tokyo/feed/",
+      "type": "rss",
+      "priority": "medium",
+      "note": "日本語K-POPメディア。SEO競合。"
+    }
+  ],
+  "skip_keywords": [
+    "炎上", "訴訟", "逮捕", "薬物", "暴行",
+    "セクハラ", "パワハラ", "詐欺", "裁判",
+    "脱退", "解散", "死去", "事故"
+  ],
+  "max_queue_per_day": 5
+}

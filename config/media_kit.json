@@ -1,0 +1,152 @@
+{
+  "generated_at": "2026-04-17T17:31:17.577753+09:00",
+  "site": {
+    "name": "K-POP JOURNAL",
+    "url": "https://www.kpopjournal.tokyo",
+    "description": "日本最大級のK-POP専門Webメディア",
+    "established": "2026年4月"
+  },
+  "stats": {
+    "total_articles": 73,
+    "monthly_pv_estimate": 0,
+    "categories": [
+      "K-POPニュース速報",
+      "チャート・ランキング",
+      "カムバック・新曲",
+      "ライブ・コンサート",
+      "美容・コスメ",
+      "旅行・聖地巡礼",
+      "K-POPグッズ・レビュー",
+      "韓国語フレーズ講座",
+      "徹底比較・まとめ"
+    ],
+    "top_artists": [
+      "BTS",
+      "BLACKPINK",
+      "aespa",
+      "NewJeans",
+      "IVE",
+      "LE SSERAFIM",
+      "Stray Kids",
+      "SEVENTEEN",
+      "ENHYPEN",
+      "TWICE"
+    ]
+  },
+  "rate_card": {
+    "last_updated": "2026-04-17",
+    "currency": "JPY",
+    "tax": "税別",
+    "plans": [
+      {
+        "name": "バナー広告（トップ）",
+        "slug": "banner_top",
+        "position": "サイトヘッダー下",
+        "format": "728×90 / レスポンシブ",
+        "period": "1ヶ月",
+        "price": 30000,
+        "impressions_estimate": "30,000〜50,000imp/月",
+        "note": "全ページ表示"
+      },
+      {
+        "name": "バナー広告（サイドバー）",
+        "slug": "banner_sidebar",
+        "position": "サイドバー上部",
+        "format": "300×250",
+        "period": "1ヶ月",
+        "price": 20000,
+        "impressions_estimate": "25,000〜40,000imp/月",
+        "note": "PC表示のみ"
+      },
+      {
+        "name": "記事内ネイティブ広告",
+        "slug": "native_ad",
+        "position": "記事本文中",
+        "format": "記事フォーマット準拠",
+        "period": "1記事",
+        "price": 50000,
+        "impressions_estimate": "3,000〜10,000PV/記事",
+        "note": "PR表記あり・SEO最適化済み"
+      },
+      {
+        "name": "タイアップ記事",
+        "slug": "tieup_article",
+        "position": "通常記事と同フォーマット",
+        "format": "2,000〜5,000文字",
+        "period": "永久掲載",
+        "price": 80000,
+        "impressions_estimate": "5,000〜30,000PV（初月）",
+        "note": "企画・取材・撮影込み・PR表記あり"
+      },
+      {
+        "name": "SNS連動パッケージ",
+        "slug": "sns_package",
+        "position": "記事 + X/Twitter投稿",
+        "format": "記事 + ツイート3本",
+        "period": "1キャンペーン",
+        "price": 100000,
+        "impressions_estimate": "10,000〜50,000リーチ",
+        "note": "記事制作＋X投稿3回＋効果レポート付き"
+      },
+      {
+        "name": "メルマガスポンサー",
+        "slug": "newsletter_sponsor",
+        "position": "週刊ニュースレター内",
+        "format": "バナー + テキスト200字",
+        "period": "1配信",
+        "price": 15000,
+        "impressions_estimate": "配信数に準拠",
+        "note": "週1配信"
+      }
+    ],
+    "bulk_discount": {
+      "3months": 0.1,
+      "6months": 0.15,
+      "12months": 0.2
+    },
+    "contact": {
+      "email": "ad@kpopjournal.tokyo",
+      "form_url": "/advertise/#contact"
+    }
+  },
+  "audience": {
+    "age_distribution": {
+      "18-24": 0.35,
+      "25-34": 0.4,
+      "35-44": 0.15,
+      "other": 0.1
+    },
+    "gender": {
+      "female": 0.75,
+      "male": 0.2,
+      "other": 0.05
+    },
+    "interests": [
+      "K-POP",
+      "韓国コスメ",
+      "韓国旅行",
+      "K-POPグッズ",
+      "韓国ドラマ"
+    ],
+    "device": {
+      "mobile": 0.72,
+      "desktop": 0.25,
+      "tablet": 0.03
+    }
+  },
+  "content_categories": [
+    "K-POPニュース速報",
+    "チャート・ランキング",
+    "カムバック・新曲",
+    "ライブ・コンサート",
+    "美容・コスメ",
+    "旅行・聖地巡礼",
+    "K-POPグッズ・レビュー",
+    "韓国語フレーズ講座",
+    "徹底比較・まとめ"
+  ],
+  "update_frequency": "毎日5〜8本",
+  "sns_accounts": {
+    "x_twitter": "@kpopjournal_jp"
+  }
+}

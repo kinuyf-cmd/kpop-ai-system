@@ -284,3 +284,16 @@ run_post_publish_tasks() {
 
   echo "  ✓ Post-publish tasks done"
 }
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# news-sitemap.xml 保護: reports/ 切り替え後にsymlinkを再配置
+# パイプラインが reports/ を run 専用ディレクトリに差し替えるため、
+# nginx alias (reports/news-sitemap.xml) が壊れる問題の対策。
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+restore_news_sitemap_symlink() {
+  local _static="$SCRIPT_DIR/static/news-sitemap.xml"
+  local _target="${1:-$SCRIPT_DIR/reports/news-sitemap.xml}"
+  if [[ -f "$_static" ]]; then
+    ln -sf "$_static" "$_target" 2>/dev/null || true
+  fi
+}

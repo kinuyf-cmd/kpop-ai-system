@@ -87,6 +87,109 @@ def load_jsonl_safe(fname):
     return records
 
 
+def _build_x_kpi_section():
+    """X KPIセクションHTML生成"""
+    kpi_file = BASE / "logs" / "x_kpi.jsonl"
+    sns_cfg = BASE / "config" / "sns_config.json"
+
+    x_enabled = True
+    if sns_cfg.exists():
+        try:
+            cfg = json.loads(sns_cfg.read_text())
+            x_enabled = cfg.get("twitter", {}).get("enabled", True)
+        except Exception:
+            pass
+
+    if not kpi_file.exists():
+        if not x_enabled:
+            return f"""<div class="section" id="x-kpi">
+  <div class="section-title"><span class="section-title-icon">🐦</span> X(Twitter) KPI</div>
+  <div class="card"><div style="color:#6b7280;padding:12px;text-align:center">Xアカウント停止中 — 凍結解除後に自動取得開始</div></div>
+</div>"""
+        return ""
+
+    records = []
+    try:
+        for line in kpi_file.read_text(errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                records.append(json.loads(line))
+            except Exception:
+                pass
+    except Exception:
+        return ""
+
+    if not records:
+        return ""
+
+    latest = records[-1]
+    prev = records[-2] if len(records) >= 2 else {}
+
+    followers = latest.get("followers", 0)
+    impressions = latest.get("total_impressions", 0)
+    eng_rate = latest.get("engagement_rate", 0)
+    clicks = latest.get("total_clicks", 0)
+    likes = latest.get("total_likes", 0)
+    rts = latest.get("total_retweets", 0)
+    replies = latest.get("total_replies", 0)
+
+    prev_followers = prev.get("followers", followers)
+    f_delta = followers - prev_followers
+    f_sign = "+" if f_delta >= 0 else ""
+    f_color = "#22c55e" if f_delta >= 0 else "#ef4444"
+
+    eng_color = "#22c55e" if eng_rate >= 0.03 else ("#eab308" if eng_rate >= 0.02 else "#ef4444")
+    status_text = "停止中" if not x_enabled else "稼働中"
+    status_color = "#6b7280" if not x_enabled else "#22c55e"
+
+    best_tweet_html = ""
+    bt = latest.get("best_tweet")
+    if bt:
+        best_tweet_html = f"""
+      <div style="background:#0f172a;border-radius:8px;padding:12px;margin-top:10px">
+        <div style="font-size:0.72rem;color:#64748b;margin-bottom:4px">最もバズった投稿</div>
+        <div style="font-size:0.82rem;color:#e2e8f0;line-height:1.5">{bt.get('text','')[:100]}{'...' if len(bt.get('text',''))>100 else ''}</div>
+        <div style="font-size:0.72rem;color:#94a3b8;margin-top:6px">
+          👁 {bt.get('impressions',0):,} | ❤️ {bt.get('likes',0):,} | 🔁 {bt.get('retweets',0):,}
+        </div>
+      </div>"""
+
+    return f"""<div class="section" id="x-kpi">
+  <div class="section-title">
+    <span class="section-title-icon">🐦</span> X(Twitter) KPI
+    <span style="background:{status_color}22;color:{status_color};border:1px solid {status_color}44;padding:2px 8px;border-radius:99px;font-size:0.72rem;font-weight:700;margin-left:8px">{status_text}</span>
+    <span style="font-size:0.68rem;color:#475569;margin-left:auto">{latest.get('date','')}</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+    <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:0.72rem;color:#64748b">フォロワー</div>
+      <div style="font-size:1.6rem;font-weight:800;color:#60a5fa">{followers:,}</div>
+      <div style="font-size:0.72rem;color:{f_color};font-weight:700">{f_sign}{f_delta:,} 前回比</div>
+    </div>
+    <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:0.72rem;color:#64748b">インプレッション</div>
+      <div style="font-size:1.6rem;font-weight:800;color:#818cf8">{impressions:,}</div>
+      <div style="font-size:0.68rem;color:#64748b">直近{latest.get('recent_tweets_analyzed',0)}件合計</div>
+    </div>
+    <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:0.72rem;color:#64748b">エンゲージメント率</div>
+      <div style="font-size:1.6rem;font-weight:800;color:{eng_color}">{eng_rate:.2%}</div>
+      <div style="font-size:0.68rem;color:#64748b">❤️{likes:,} 🔁{rts:,} 💬{replies:,}</div>
+    </div>
+    <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:0.72rem;color:#64748b">サイト流入クリック</div>
+      <div style="font-size:1.6rem;font-weight:800;color:#f472b6">{clicks:,}</div>
+      <div style="font-size:0.68rem;color:#64748b">url_link_clicks</div>
+    </div>
+  </div>
+  <div class="card">
+    {best_tweet_html if best_tweet_html else '<div style="color:#475569;font-size:0.78rem">バズ投稿データなし</div>'}
+  </div>
+</div>"""
+
+
 def generate():
     # ─── 新セクション群ロード (CA-CJ) ───
     import sys as _sys
@@ -127,6 +230,27 @@ def generate():
         _cj_section_html = _build_cj()
     except Exception as _e:
         _cj_section_html = f'<div style="color:#ef4444;padding:12px">財務ダッシュボード読み込みエラー: {_e}</div>'
+
+    # X KPI セクション
+    try:
+        _x_kpi = _build_x_kpi_section()
+        _x_kpi_section_html = _x_kpi
+    except Exception as _e:
+        _x_kpi_section_html = ""
+
+    # CL/CM/CN/CO: リアルタイムAIダッシュボード (Phase5)
+    try:
+        from dashboard_realtime_builder import build_realtime_sections as _build_realtime
+        _rt_parts = _build_realtime()
+        _cl_html = _rt_parts["cl_html"]
+        _cm_html = _rt_parts["cm_html"]
+        _cn_html = _rt_parts["cn_html"]
+        _co_html = _rt_parts["co_html"]
+    except Exception as _e:
+        _cl_html = f'<div style="color:#ef4444;padding:12px">リアルタイムダッシュボード読み込みエラー: {_e}</div>'
+        _cm_html = ""
+        _cn_html = ""
+        _co_html = ""
 
     # CK: イルミーゼ CTA最適化ダッシュボード
     def _build_ck_section():
@@ -6489,6 +6613,76 @@ function filterRQQ(mode) {{
   </table>
 </div>"""
 
+    # ─── セクション BY: 学習フィードバックループ ───
+    try:
+        _sys.path.insert(0, str(BASE / "lib"))
+        from learning_feedback_loop import dashboard_data as _learning_dashboard
+        _ld = _learning_dashboard()
+    except Exception:
+        _ld = {"learning_count_week": 0, "applied_count_week": 0, "recurring_errors_top5": [], "quality_trend": []}
+
+    _ld_learn_cnt = _ld.get("learning_count_week", 0)
+    _ld_applied_cnt = _ld.get("applied_count_week", 0)
+    _ld_errors = _ld.get("recurring_errors_top5", [])
+    _ld_trend = _ld.get("quality_trend", [])
+
+    _ld_error_rows = ""
+    for _e in _ld_errors:
+        _e_cnt = _e.get("count", 0)
+        _e_key = _e.get("key", "?")[:20]
+        _e_ex = _e.get("example", "")[:40]
+        _e_agent = _e.get("agent", "?")
+        _e_ls = _e.get("last_seen", "?")
+        _e_resolved = "✅" if _e.get("resolved") else "🔴"
+        _e_color = "#22c55e" if _e.get("resolved") else ("#ef4444" if _e_cnt >= 5 else "#fbbf24")
+        _ld_error_rows += f'<tr><td style="color:{_e_color};font-weight:700;text-align:center">{_e_cnt}</td><td>{_e_key}</td><td style="font-size:0.65rem;color:#94a3b8">{_e_ex}</td><td style="color:#818cf8">{_e_agent}</td><td style="text-align:center">{_e_ls}</td><td style="text-align:center">{_e_resolved}</td></tr>'
+    if not _ld_error_rows:
+        _ld_error_rows = '<tr><td colspan="6" style="color:#64748b;text-align:center">繰り返しエラーなし</td></tr>'
+
+    _ld_trend_bars = ""
+    if _ld_trend:
+        _trend_max = max((t.get("avg_score", 0) for t in _ld_trend), default=100)
+        for _t in _ld_trend[-6:]:
+            _t_score = _t.get("avg_score", 0)
+            _t_date = _t.get("date", "?")[-5:]
+            _t_cnt = _t.get("article_count", 0)
+            _t_h = max(8, int(_t_score / max(_trend_max, 1) * 60))
+            _t_color = "#22c55e" if _t_score >= 80 else "#fbbf24" if _t_score >= 65 else "#ef4444"
+            _ld_trend_bars += f'<div style="text-align:center;display:inline-block;margin:0 4px"><div style="width:28px;height:{_t_h}px;background:{_t_color};border-radius:3px 3px 0 0;display:inline-block;vertical-align:bottom"></div><div style="font-size:0.58rem;color:#64748b;margin-top:2px">{_t_date}</div><div style="font-size:0.6rem;color:#94a3b8">{_t_score:.0f}</div></div>'
+    else:
+        _ld_trend_bars = '<span style="color:#64748b;font-size:0.72rem">データ蓄積中</span>'
+
+    by_section_html = f"""<div class="section" id="by-learning-loop" style="border:2px solid #10b98155;border-radius:12px;padding:16px;margin-top:16px">
+  <div class="section-title" style="border-bottom-color:#10b98144">
+    <span class="section-title-icon">🧠</span>
+    <span style="color:#10b981">BY. 学習フィードバックループ</span>
+    <span style="margin-left:auto;font-size:0.72rem;color:#94a3b8">今週学習:{_ld_learn_cnt}件 適用:{_ld_applied_cnt}件</span>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+    <div style="background:#064e3b;border:1px solid #10b98144;border-radius:8px;padding:10px 18px;text-align:center">
+      <div style="font-size:1.4rem;font-weight:900;color:#6ee7b7">{_ld_learn_cnt}</div>
+      <div style="font-size:0.65rem;color:#64748b">今週学習件数</div>
+    </div>
+    <div style="background:#064e3b;border:1px solid #22c55e44;border-radius:8px;padding:10px 18px;text-align:center">
+      <div style="font-size:1.4rem;font-weight:900;color:#22c55e">{_ld_applied_cnt}</div>
+      <div style="font-size:0.65rem;color:#64748b">適用改善件数</div>
+    </div>
+    <div style="background:#1e1b4b;border:1px solid #ef444444;border-radius:8px;padding:10px 18px;text-align:center">
+      <div style="font-size:1.4rem;font-weight:900;color:#ef4444">{len([e for e in _ld_errors if not e.get('resolved')])}</div>
+      <div style="font-size:0.65rem;color:#64748b">未解決繰り返しエラー</div>
+    </div>
+  </div>
+  <div style="margin-bottom:12px">
+    <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:4px">品質スコア週次トレンド</div>
+    <div style="display:inline-flex;align-items:flex-end;height:72px;padding:4px;background:#0f172a;border-radius:6px">{_ld_trend_bars}</div>
+  </div>
+  <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:4px">繰り返しエラーTOP5</div>
+  <table style="width:100%;border-collapse:collapse;font-size:0.72rem">
+    <thead><tr style="color:#64748b;border-bottom:1px solid #1e293b"><th style="text-align:center;padding:4px 8px">回数</th><th style="text-align:left;padding:4px 8px">パターン</th><th style="text-align:left;padding:4px 8px">例</th><th style="text-align:left;padding:4px 8px">担当</th><th style="text-align:center;padding:4px 8px">最終発生</th><th style="text-align:center;padding:4px 8px">解決</th></tr></thead>
+    <tbody>{_ld_error_rows}</tbody>
+  </table>
+</div>"""
+
     # ─── HTML生成 ───
     html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -6784,6 +6978,18 @@ a{{text-decoration:none}}
 </div>
 {_kpi_cd_html}
 
+<!-- ─── CL エグゼクティブサマリー（Phase5） ─── -->
+{_cl_html}
+
+<!-- ─── CM エージェント稼働マップ（Phase5） ─── -->
+{_cm_html}
+
+<!-- ─── CO 記事パフォーマンス分析（Phase5） ─── -->
+{_co_html}
+
+<!-- ─── CN PDCA追跡ボード（Phase5） ─── -->
+{_cn_html}
+
 <!-- ─── CX 復旧＆成長KPI (2026-04-16障害以降の回復指標) ─── -->
 {_cx_recovery_html}
 
@@ -6918,6 +7124,9 @@ a{{text-decoration:none}}
     </div>
   </div>
 </div>
+
+<!-- ─── X KPI ─── -->
+{_x_kpi_section_html}
 
 <!-- ─── セクションB: AI社員一覧 ─── -->
 <div class="section" id="agents">
@@ -7069,6 +7278,9 @@ a{{text-decoration:none}}
     </div>
   </div>
 </div>
+
+<!-- ─── BY: 学習フィードバックループ ─── -->
+{by_section_html}
 
 {notif_sections_html}
 

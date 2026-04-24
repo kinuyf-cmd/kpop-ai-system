@@ -13,6 +13,7 @@
     "ctr_improvements": {"target": 40,   "unit": "件/月",  "note": "CTR改善アクション数"},
     "index_sends":      {"target": 120,  "unit": "件/月",  "note": "インデックス申請数"},
     "error_loss":       {"target": 0,    "unit": "件/月",  "note": "エラー損失件数"},
-    "cta_rate_target":  {"target": 0.80, "unit": "%",      "note": "CTA設置率目標"}
+    "cta_rate_target":  {"target": 0.80, "unit": "%",      "note": "CTA設置率目標"},
+    "rpm_target":       {"target": 300,  "unit": "円",     "note": "1000PVあたり収益目標"}
   }
 }

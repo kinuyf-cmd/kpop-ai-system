@@ -16,6 +16,7 @@ v4変更点:
   - 10パターン戦略対応
 """
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import json
 import sys
 import os
 
@@ -23,12 +24,21 @@ import os
 thumb_text = sys.argv[1] if len(sys.argv) > 1 else "K-POP NEWS"
 genre = None
 full_title = ""
+bg_image_path = ""  # Phase 2: 外部画像（resolver経由）を背景に使う
+artist_name = ""    # v4: 1行目のアー名（ASCII）
+copy_text = ""      # v4: 2行目の本文（≤15字）
 
 for i, arg in enumerate(sys.argv):
     if arg == "--genre" and i + 1 < len(sys.argv):
         genre = sys.argv[i + 1]
     if arg == "--title" and i + 1 < len(sys.argv):
         full_title = sys.argv[i + 1]
+    if arg == "--bg-image" and i + 1 < len(sys.argv):
+        bg_image_path = sys.argv[i + 1]
+    if arg == "--artist" and i + 1 < len(sys.argv):
+        artist_name = sys.argv[i + 1]
+    if arg == "--copy" and i + 1 < len(sys.argv):
+        copy_text = sys.argv[i + 1]
 
 # ── Phase 1止血: 編集系プレフィックス除去 ──
 # 【戦略】【速報】等のパイプライン内部マーカーはサムネに不要。
@@ -1018,6 +1028,451 @@ def draw_thumbnail_v2(text, genre_key, full_title=""):
     return img
 
 
+# ────────────────────────────────────────────────────────────────
+# V3: Photo-first minimal（Phase 1 改訂 / kstyle・daebak 風）
+#   - 背景: アーティスト写真 > ジャンルアセット > グラデ（v2と共通の抽出ロジック流用）
+#   - 文字: 下帯1行のみ（8文字以内）、60px Black
+#   - ロゴ: 左上 "K-POP JOURNAL" 14px のみ（大きなカテゴリバッジは廃止）
+#   - 帯: 下1/4、opacity 0.45、アーティスト別アクセントカラー
+# ────────────────────────────────────────────────────────────────
+
+# アーティスト別アクセントカラー（RGB）
+# キーは大文字・スペース無しで比較
+ARTIST_ACCENT_COLORS = {
+    "BTS":          (138, 43, 226),    # 紫（ARMYカラー）
+    "BLACKPINK":    (255, 20, 147),    # ディープピンク
+    "BIGBANG":      (255, 200, 60),    # クラウンイエロー
+    "AESPA":        (0, 120, 160),     # ネイビーティール
+    "IVE":          (200, 30, 80),     # ダークピンク
+    "NEWJEANS":     (120, 180, 255),   # ベビーブルー
+    "SEVENTEEN":    (255, 140, 170),   # ローズ
+    "LESSERAFIM":   (160, 60, 220),    # エレクトリックパープル
+    "LE SSERAFIM":  (160, 60, 220),
+    "TWICE":        (255, 120, 180),   # ピーチピンク
+    "ITZY":         (200, 0, 100),     # ダークマゼンタ
+    "STRAYKIDS":    (0, 0, 0),         # ブラック
+    "STRAY KIDS":   (0, 0, 0),
+    "ENHYPEN":      (80, 20, 120),     # ディープパープル
+    "TXT":          (0, 100, 200),     # ブルー
+    "NCT":          (100, 180, 220),   # ライトブルー
+    "ATEEZ":        (180, 0, 60),      # レッド
+    "BABYMONSTER":  (120, 220, 220),   # ミント
+    "ILLIT":        (255, 180, 200),   # ソフトピンク
+    "RIIZE":        (0, 200, 180),     # ターコイズ
+    "ZEROBASEONE":  (40, 120, 255),    # サファイア
+    "G-DRAGON":     (255, 40, 100),    # PEACEMINUSONE ピンク
+    "T.O.P":        (40, 40, 40),      # ブラック
+    "SHINEE":       (0, 180, 220),     # パールアクア
+    "EXO":          (200, 170, 80),    # ゴールド
+}
+
+
+def _artist_accent(text: str, full_title: str, fallback: tuple) -> tuple:
+    """タイトル/サムネテキストからアーティスト名を探し、アクセントカラーを返す"""
+    combined = (full_title + " " + text).upper().replace(" ", "")
+    for key, color in sorted(ARTIST_ACCENT_COLORS.items(), key=lambda kv: -len(kv[0])):
+        if key.replace(" ", "") in combined:
+            return color
+    # 日本語カタカナ略称
+    _katakana_map = {
+        "ブルピン": ARTIST_ACCENT_COLORS["BLACKPINK"],
+        "スキズ":   ARTIST_ACCENT_COLORS["STRAYKIDS"],
+        "セブチ":   ARTIST_ACCENT_COLORS["SEVENTEEN"],
+        "エスパ":   ARTIST_ACCENT_COLORS["AESPA"],
+        "ニュジ":   ARTIST_ACCENT_COLORS["NEWJEANS"],
+        "ルセラ":   ARTIST_ACCENT_COLORS["LESSERAFIM"],
+        "ベビモン": ARTIST_ACCENT_COLORS["BABYMONSTER"],
+        "エナプ":   ARTIST_ACCENT_COLORS["ENHYPEN"],
+    }
+    original = full_title + " " + text
+    for k, c in _katakana_map.items():
+        if k in original:
+            return c
+    return fallback
+
+
+def draw_thumbnail_v3_photo_first(text, genre_key, full_title="", external_bg=""):
+    """V3: 写真主役・下帯1行のミニマル構図
+
+    external_bg: 外部画像パス（Phase 2 resolver経由）。指定時は最優先で背景に使用。
+    """
+    pat = PATTERNS.get(genre_key, PATTERNS[DEFAULT_PATTERN])
+
+    # ── 背景選択 (Phase 2: external_bg > アー画像 > アセットpng > グラデ) ──
+    artist_img_path = None
+    external_bg_ok = bool(external_bg and os.path.exists(external_bg))
+
+    if not external_bg_ok:
+        eng_hero_early = extract_eng_hero(text, full_title)
+        _skip_wikimedia_genres = {"travel", "fashion", "beauty"}
+        use_image = os.environ.get("THUMB_USE_IMAGE", "1") != "0"
+        if use_image and eng_hero_early and genre_key not in _skip_wikimedia_genres:
+            try:
+                artist_img_path = get_artist_background(eng_hero_early)
+            except Exception:
+                artist_img_path = None
+
+    if external_bg_ok:
+        # Phase 2: resolver で取ってきた画像を背景に
+        pil = Image.open(external_bg).convert("RGB")
+        iw, ih = pil.size
+        scale = max(W / iw, H / ih)
+        pil = pil.resize((int(iw * scale), int(ih * scale)), Image.LANCZOS)
+        left = (pil.size[0] - W) // 2
+        top = (pil.size[1] - H) // 2
+        img = pil.crop((left, top, left + W, top + H))
+        # 下部1/4のみ軽く暗化（文字可読性、写真全体は守る）
+        dark_bottom = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ddraw = ImageDraw.Draw(dark_bottom)
+        for y in range(440, H):
+            alpha = int(110 * ((y - 440) / (H - 440)) ** 1.2)
+            ddraw.line([(0, y), (W, y)], fill=(0, 0, 0, alpha))
+        img = Image.alpha_composite(img.convert("RGBA"), dark_bottom).convert("RGB")
+    elif artist_img_path:
+        # アー画像は写真主役で使うので暗グラデは少なめに
+        pil = Image.open(artist_img_path).convert("RGB")
+        iw, ih = pil.size
+        scale = max(W / iw, H / ih)
+        pil = pil.resize((int(iw * scale), int(ih * scale)), Image.LANCZOS)
+        left = (pil.size[0] - W) // 2
+        top = (pil.size[1] - H) // 2
+        img = pil.crop((left, top, left + W, top + H))
+        # 軽い暗化（文字可読性のため下部のみ）
+        dark_bottom = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ddraw = ImageDraw.Draw(dark_bottom)
+        for y in range(420, H):
+            alpha = int(120 * ((y - 420) / (H - 420)) ** 1.2)
+            ddraw.line([(0, y), (W, y)], fill=(0, 0, 0, alpha))
+        img = Image.alpha_composite(img.convert("RGBA"), dark_bottom).convert("RGB")
+    else:
+        asset_img = load_background(pat)
+        img = asset_img
+
+    draw = ImageDraw.Draw(img)
+
+    # ── 左上: 小さな K-POP JOURNAL ロゴ ──
+    font_kpj = get_font(14)
+    kpj_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    kpjd = ImageDraw.Draw(kpj_overlay)
+    kpjd.rounded_rectangle((28, 24, 172, 50), radius=13, fill=(0, 0, 0, 140))
+    img = Image.alpha_composite(img.convert("RGBA"), kpj_overlay).convert("RGB")
+    draw = ImageDraw.Draw(img)
+    draw.text((40, 29), "K-POP JOURNAL", fill=(255, 255, 255), font=font_kpj)
+
+    # ── アクセントカラー決定 ──
+    accent = _artist_accent(text, full_title, pat.get("highlight_color", (255, 80, 120)))
+    if isinstance(accent, tuple) and len(accent) == 4:
+        accent = accent[:3]
+
+    # ── 下帯（画像下1/4、opacity 0.45）──
+    BAND_TOP = H - 150          # y=480〜H=630 の150px帯
+    BAND_OPACITY = 115           # 0.45 × 255 ≈ 115
+    band_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    bdraw = ImageDraw.Draw(band_layer)
+    # 黒半透明ベース
+    bdraw.rectangle((0, BAND_TOP, W, H), fill=(0, 0, 0, BAND_OPACITY))
+    # 上端にアクセント1pxライン
+    bdraw.rectangle((0, BAND_TOP, W, BAND_TOP + 3), fill=accent + (255,))
+    img = Image.alpha_composite(img.convert("RGBA"), band_layer).convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    # ── 1行コピー描画（60px Black）──
+    # 1行目のみ採用。\n で区切られていても最初の行だけ。
+    first_line = (text.split("\n")[0] if text else "").strip()
+    first_line = first_line[:8]  # 保険: 8字で切る
+
+    if first_line:
+        # 文字数で動的サイズ（短いほど大きく）
+        if len(first_line) <= 4:
+            copy_size = 72
+        elif len(first_line) <= 6:
+            copy_size = 60
+        else:
+            copy_size = 52
+        font_copy = get_font(copy_size)
+        cbbox = draw.textbbox((0, 0), first_line, font=font_copy)
+        cw = cbbox[2] - cbbox[0]
+        ch = cbbox[3] - cbbox[1]
+        cx = 50
+        cy = BAND_TOP + (150 - ch) // 2 - 8
+
+        # 軽いドロップシャドウ（v2ほど強くしない）
+        sh_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        shd = ImageDraw.Draw(sh_layer)
+        shd.text((cx + 2, cy + 3), first_line, font=font_copy, fill=(0, 0, 0, 160))
+        sh_layer = sh_layer.filter(ImageFilter.GaussianBlur(radius=4))
+        img = Image.alpha_composite(img.convert("RGBA"), sh_layer).convert("RGB")
+        draw = ImageDraw.Draw(img)
+
+        # 本文白文字（ストローク最小1px、v2の4pxより大幅縮小）
+        draw.text((cx, cy), first_line, font=font_copy,
+                  fill=(255, 255, 255),
+                  stroke_width=2, stroke_fill=(0, 0, 0))
+
+        # 右側にアクセント細線
+        line_x = min(cx + cw + 36, W - 80)
+        draw.rectangle((line_x, cy + ch // 2 - 1, line_x + 40, cy + ch // 2 + 2),
+                       fill=accent)
+
+    # ── 右下: 日付（小さく）──
+    font_date = get_font(13)
+    today = _dt.now().strftime("%Y.%m.%d")
+    dbbox = draw.textbbox((0, 0), today, font=font_date)
+    dw = dbbox[2] - dbbox[0]
+    draw.text((W - dw - 30, H - 28), today, fill=(220, 220, 220), font=font_date)
+
+    return img
+
+
+# ────────────────────────────────────────────────────────────────
+# V4: 2行・写真主役 / タイポ主役（モデルサイト kstyle/daebak 準拠）
+#   - 1行目: アーティスト名（ASCII 大文字, Bebas Neue 32px, グレー）
+#   - 2行目: 内容（日本語 ≤15字, Black Heavy, 動的48〜76px, 白）
+#   - 下帯: 高さ180px, opacity 0.55, 上端にアクセント3pxライン
+#   - 左上: K-POP JOURNAL ロゴのみ（カテゴリバッジ/日付は撤廃）
+#   - 写真なし時は巨大アー名タイポ主役へ自動切替
+# ────────────────────────────────────────────────────────────────
+
+# カタカナ略称 → Tier1 アー名
+_KATAKANA_TO_ARTIST = {
+    "ブルピン":   "BLACKPINK",
+    "スキズ":     "STRAY KIDS",
+    "セブチ":     "SEVENTEEN",
+    "エスパ":     "AESPA",
+    "ニュジ":     "NEWJEANS",
+    "ルセラ":     "LE SSERAFIM",
+    "ベビモン":   "BABYMONSTER",
+    "エナプ":     "ENHYPEN",
+    "ビッベン":   "BIGBANG",
+    "レドベル":   "RED VELVET",
+}
+
+# Tier1 アー名を高速ルックアップできる形（空白除去・大文字）にキャッシュ
+_ARTISTS_TIER1_LOOKUP = {a.upper().replace(" ", ""): a for a in ARTISTS_TIER1}
+
+
+def extract_eng_hero_strict(text, full_title):
+    """v4 専用: Tier1 アー名のみ返す。ブランド・汎用大文字語は返さない。
+
+    優先順位:
+      1. カタカナ略称（ブルピン等） → マッピング済みアー名
+      2. Tier1 アー名（長い順, 空白無視で比較）
+      3. 見つからなければ None
+    """
+    combined = (full_title + " " + text)
+    # 1) カタカナ略称
+    for kata, artist in _KATAKANA_TO_ARTIST.items():
+        if kata in combined:
+            return artist
+    # 2) Tier1 アー名（空白除去して比較）
+    stripped_upper = combined.upper().replace(" ", "")
+    # 長いものから優先
+    for artist in sorted(ARTISTS_TIER1, key=len, reverse=True):
+        if artist.upper().replace(" ", "") in stripped_upper:
+            return artist
+    return None
+
+
+def _load_photo_bg(path):
+    """写真を 1200x630 にセンタークロップ。下帯領域のみ軽く暗化"""
+    pil = Image.open(path).convert("RGB")
+    iw, ih = pil.size
+    scale = max(W / iw, H / ih)
+    pil = pil.resize((int(iw * scale), int(ih * scale)), Image.LANCZOS)
+    left = (pil.size[0] - W) // 2
+    top = (pil.size[1] - H) // 2
+    img = pil.crop((left, top, left + W, top + H))
+    # 下部220pxのみ軽い追加暗化（帯の下が明るい写真でも文字可読性を確保）
+    dark = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ddraw = ImageDraw.Draw(dark)
+    for y in range(H - 220, H):
+        alpha = int(90 * ((y - (H - 220)) / 220) ** 1.2)
+        ddraw.line([(0, y), (W, y)], fill=(0, 0, 0, alpha))
+    img = Image.alpha_composite(img.convert("RGBA"), dark).convert("RGB")
+    return img
+
+
+def draw_thumbnail_v4_photo_first_two_line(text, genre_key, full_title="",
+                                            external_bg="", artist="", copy=""):
+    """V4: 写真主役 + 下帯2行（kstyle/daebak 準拠）
+
+    Args:
+        text: 後方互換用。--copy 未指定なら text から copy を抽出
+        genre_key: ジャンル（色調整用）
+        full_title: 元記事タイトル（アー名抽出のソース）
+        external_bg: 外部画像パス（resolver 経由）。最優先で背景に使う
+        artist: 1行目アー名（ASCII大文字）。空なら text/full_title から厳格抽出
+        copy: 2行目内容（日本語 ≤15字）。空なら text 先頭行を流用
+    """
+    pat = PATTERNS.get(genre_key, PATTERNS[DEFAULT_PATTERN])
+
+    # ── 入力正規化 ──
+    if not artist:
+        artist = extract_eng_hero_strict(text, full_title) or ""
+    if not copy:
+        lines = [l.strip() for l in (text or "").split("\n") if l.strip()]
+        if artist and len(lines) >= 2:
+            # artist が 1行目に含まれている場合はスキップ
+            if artist.upper().replace(" ", "") in lines[0].upper().replace(" ", ""):
+                copy = lines[1]
+            else:
+                copy = lines[0]
+        else:
+            copy = lines[0] if lines else (text or "")
+    copy = (copy or "").strip()[:15]
+
+    # ── アクセントカラー決定（アー名ベース） ──
+    accent = _artist_accent(text, full_title, pat.get("highlight_color", (255, 80, 120)))
+    if isinstance(accent, tuple) and len(accent) == 4:
+        accent = accent[:3]
+
+    # ── 背景決定 ──
+    external_bg_ok = bool(external_bg and os.path.exists(external_bg))
+    artist_img_path = None
+    if not external_bg_ok and artist:
+        use_image = os.environ.get("THUMB_USE_IMAGE", "1") != "0"
+        _skip_wiki = {"travel", "fashion", "beauty"}
+        # Tier1 アー名のみ wikimedia を叩く（ブランド・フランチャイズ名は誤画像の温床）
+        is_tier1 = artist.upper().replace(" ", "") in _ARTISTS_TIER1_LOOKUP
+        if use_image and genre_key not in _skip_wiki and is_tier1:
+            try:
+                artist_img_path = get_artist_background(artist)
+            except Exception:
+                artist_img_path = None
+
+    has_photo = False
+    if external_bg_ok:
+        img = _load_photo_bg(external_bg)
+        has_photo = True
+    elif artist_img_path:
+        img = _load_photo_bg(artist_img_path)
+        has_photo = True
+    else:
+        # 写真なし: アクセントカラーベースのダークグラデ
+        dark_top = tuple(max(0, int(c * 0.35)) for c in accent)
+        dark_bot = tuple(max(0, int(c * 0.12)) for c in accent)
+        img = create_gradient(W, H, dark_top, dark_bot)
+        img = add_noise_texture(img, intensity=25, opacity_div=14)
+
+    draw = ImageDraw.Draw(img)
+
+    # ── 左上ロゴ（K-POP JOURNAL, 14px, 半透明黒箱） ──
+    font_kpj = get_font(13)
+    kpj_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    kpjd = ImageDraw.Draw(kpj_overlay)
+    kpjd.rounded_rectangle((28, 24, 168, 50), radius=12, fill=(0, 0, 0, 150))
+    img = Image.alpha_composite(img.convert("RGBA"), kpj_overlay).convert("RGB")
+    draw = ImageDraw.Draw(img)
+    draw.text((40, 29), "K-POP JOURNAL", fill=(255, 255, 255), font=font_kpj)
+
+    # ── 写真なし時: 中央上部にアー名ヒーロー（大）──
+    if not has_photo:
+        display = (artist or "K-POP").upper()
+        # サイズ動的調整
+        if len(display) <= 6:
+            hero_size = 230
+        elif len(display) <= 10:
+            hero_size = 180
+        elif len(display) <= 14:
+            hero_size = 140
+        else:
+            hero_size = 105
+        font_hero = get_latin_font(hero_size)
+        hero_bbox = draw.textbbox((0, 0), display, font=font_hero)
+        hero_w = hero_bbox[2] - hero_bbox[0]
+        hero_h = hero_bbox[3] - hero_bbox[1]
+        while hero_w > W - 100 and hero_size > 60:
+            hero_size -= 10
+            font_hero = get_latin_font(hero_size)
+            hero_bbox = draw.textbbox((0, 0), display, font=font_hero)
+            hero_w = hero_bbox[2] - hero_bbox[0]
+            hero_h = hero_bbox[3] - hero_bbox[1]
+        hero_x = (W - hero_w) // 2
+        # 帯領域（y >= H-BAND_H=450）を避けて中央寄せ。文字の実描画下端を使う
+        hero_text_bottom_offset = hero_bbox[3]  # textbbox の下端（y原点からの相対）
+        available_h = H - 180 - 90  # 帯 + ロゴ領域を除いた中央ゾーン
+        hero_y = 100 + (available_h - hero_text_bottom_offset) // 2
+        if hero_y < 100:
+            hero_y = 100
+        # ドロップシャドウ
+        shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        sdraw = ImageDraw.Draw(shadow)
+        sdraw.text((hero_x + 3, hero_y + 5), display, font=font_hero, fill=(0, 0, 0, 140))
+        shadow = shadow.filter(ImageFilter.GaussianBlur(radius=9))
+        img = Image.alpha_composite(img.convert("RGBA"), shadow).convert("RGB")
+        draw = ImageDraw.Draw(img)
+        draw.text((hero_x, hero_y), display, font=font_hero, fill=(255, 255, 255))
+        # ヒーロー下にアクセントバー（実描画下端 + 余白）
+        bar_y = hero_y + hero_text_bottom_offset + 22
+        # 帯に食い込まないようガード
+        if bar_y > H - 180 - 20:
+            bar_y = H - 180 - 20
+        bar_w = min(max(hero_w, 160), 400)
+        bar_x = (W - bar_w) // 2
+        draw.rectangle((bar_x, bar_y, bar_x + bar_w, bar_y + 4), fill=accent)
+
+    # ── 下帯 ──
+    BAND_H = 180
+    BAND_TOP = H - BAND_H
+    band_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    bdraw = ImageDraw.Draw(band_layer)
+    # 半透明黒 (opacity 0.55 = alpha 140)
+    bdraw.rectangle((0, BAND_TOP, W, H), fill=(0, 0, 0, 140))
+    # 上端アクセントライン 3px
+    bdraw.rectangle((0, BAND_TOP, W, BAND_TOP + 3), fill=accent + (255,))
+    img = Image.alpha_composite(img.convert("RGBA"), band_layer).convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    # ── 1行目: アー名（Bebas Neue 32px グレー）──
+    PAD_X = 60
+    has_artist_line = bool(artist)
+    if has_artist_line:
+        artist_display = artist.upper()
+        font_artist = get_latin_font(32)
+        draw.text((PAD_X, BAND_TOP + 22), artist_display,
+                  fill=(220, 220, 220), font=font_artist)
+
+    # ── 2行目: 内容（Black, サイズ動的, 白）──
+    if copy:
+        copy_len = len(copy)
+        if copy_len <= 6:
+            copy_size = 76
+        elif copy_len <= 9:
+            copy_size = 66
+        elif copy_len <= 12:
+            copy_size = 56
+        else:
+            copy_size = 48
+        font_copy = get_font(copy_size)
+        copy_bbox = draw.textbbox((0, 0), copy, font=font_copy)
+        copy_w = copy_bbox[2] - copy_bbox[0]
+        copy_h = copy_bbox[3] - copy_bbox[1]
+        while copy_w > W - 120 and copy_size > 32:
+            copy_size -= 4
+            font_copy = get_font(copy_size)
+            copy_bbox = draw.textbbox((0, 0), copy, font=font_copy)
+            copy_w = copy_bbox[2] - copy_bbox[0]
+            copy_h = copy_bbox[3] - copy_bbox[1]
+        # アー名行がある場合は下に、無い場合は帯中央に
+        if has_artist_line:
+            copy_y = BAND_TOP + 66
+        else:
+            copy_y = BAND_TOP + (BAND_H - copy_h) // 2 - 8
+        # シャドウ
+        sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        shd = ImageDraw.Draw(sh)
+        shd.text((PAD_X + 2, copy_y + 3), copy, font=font_copy, fill=(0, 0, 0, 160))
+        sh = sh.filter(ImageFilter.GaussianBlur(radius=5))
+        img = Image.alpha_composite(img.convert("RGBA"), sh).convert("RGB")
+        draw = ImageDraw.Draw(img)
+        # 本文
+        draw.text((PAD_X, copy_y), copy, font=font_copy,
+                  fill=(255, 255, 255),
+                  stroke_width=2, stroke_fill=(0, 0, 0))
+
+    return img
+
+
 # ── メイン実行 ──
 if genre is None:
     genre = detect_genre(thumb_text, full_title)
@@ -1026,21 +1481,88 @@ if genre is None:
 if genre not in PATTERNS:
     genre = DEFAULT_PATTERN
 
-# レイアウト選択: --layout v1|v2 / 環境変数 THUMB_LAYOUT / デフォルト v2
-layout = "v2"
+# レイアウト選択: --layout v1|v2|v3|v4|v5|v5_legacy|v6 / 環境変数 THUMB_LAYOUT / デフォルト v6（Phase 9.5）
+# v5_legacy = 旧v5。ロールバック: THUMB_LAYOUT=v5_legacy
+layout = "v6"
 for i, arg in enumerate(sys.argv):
     if arg == "--layout" and i + 1 < len(sys.argv):
         layout = sys.argv[i + 1]
 if os.environ.get("THUMB_LAYOUT"):
     layout = os.environ["THUMB_LAYOUT"]
 
-if layout == "v2":
+if layout == "v6":
+    # Phase 9.5: text-zero, real-photo-first (make_thumbnail_v6.py)
+    try:
+        _lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib")
+        if _lib_path not in sys.path:
+            sys.path.insert(0, _lib_path)
+        from make_thumbnail_v6 import make_thumbnail_v6 as _v6_generate
+        _v6_result = _v6_generate(
+            title=full_title or thumb_text,
+            post_id="",
+            output_dir=os.path.dirname(os.path.abspath("thumbnail.jpg")) or ".",
+        )
+        _v6_out = _v6_result.get("output_path", "")
+        if _v6_out and os.path.exists(_v6_out):
+            img = Image.open(_v6_out).convert("RGB")
+            # パイプライン互換: thumbnail.webp / thumbnail.jpg を cwd に書き出す
+            img.save("thumbnail.webp", format="WEBP", quality=85)
+            img.save("thumbnail.jpg", format="JPEG", quality=95)
+            # v6 の meta を stderr に出力
+            sys.stderr.write(json.dumps({
+                "layout": "v6",
+                "source": _v6_result.get("source", ""),
+                "vision_score": _v6_result.get("vision_score", 0),
+                "verdict": _v6_result.get("verdict", ""),
+            }, ensure_ascii=False) + "\n")
+        else:
+            sys.stderr.write(f"[thumbnail] v6 returned no image (verdict={_v6_result.get('verdict')}), falling back to v5\n")
+            layout = "v5"
+    except Exception as _e:
+        sys.stderr.write(f"[thumbnail] v6 failed, falling back to v5: {_e}\n")
+        layout = "v5"
+
+if layout in ("v5", "v5_legacy"):
+    # Phase 8 エンジン: thumbnail_compositor (Yuta原案準拠, ゴールドハイライト)
+    # フォールバック: v4 に自動切替
+    try:
+        _lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib")
+        if _lib_path not in sys.path:
+            sys.path.insert(0, _lib_path)
+        from thumbnail_compositor import compose as _compositor_compose
+        _compositor_meta = _compositor_compose(
+            artist=artist_name,
+            copy_text=copy_text or thumb_text,
+            bg_image=bg_image_path,
+            genre=genre,
+            output_path="thumbnail.webp",
+        )
+        img = Image.open("thumbnail.webp").convert("RGB")
+    except Exception as _e:
+        sys.stderr.write(f"[thumbnail] v5 compositor failed, falling back to v4: {_e}\n")
+        layout = "v4"  # fall through to v4
+        img = draw_thumbnail_v4_photo_first_two_line(
+            thumb_text, genre, full_title,
+            external_bg=bg_image_path,
+            artist=artist_name, copy=copy_text,
+        )
+elif layout == "v4":
+    img = draw_thumbnail_v4_photo_first_two_line(
+        thumb_text, genre, full_title,
+        external_bg=bg_image_path,
+        artist=artist_name, copy=copy_text,
+    )
+elif layout == "v3":
+    img = draw_thumbnail_v3_photo_first(thumb_text, genre, full_title, external_bg=bg_image_path)
+elif layout == "v2":
     img = draw_thumbnail_v2(thumb_text, genre, full_title)
 else:
     img = draw_thumbnail(thumb_text, genre, full_title)
 
-img.save("thumbnail.webp", format="WEBP", quality=85)
-img.save("thumbnail.jpg", format="JPEG", quality=95)
+# v5/v6 では compositor が直接 webp/jpg を書くので、それ以外のみ再保存
+if layout not in ("v5", "v5_legacy", "v6"):
+    img.save("thumbnail.webp", format="WEBP", quality=85)
+    img.save("thumbnail.jpg", format="JPEG", quality=95)
 print(f"thumbnail.webp / thumbnail.jpg を作成しました (layout={layout}, genre={genre}, text='{thumb_text}')")
 
 # 学習用メタ情報をstderrにJSONで出力（パイプライン側がパースして thumbnail_learner に流す）
@@ -1057,7 +1579,33 @@ _meta = {
     "has_image": _has_asset_bg,  # ジャンルアセットpng or wikimediaアー画像がある場合True
     "eng_hero": "",
     "image_source": "asset" if _has_asset_bg else "",
+    "bg_image_path": bg_image_path,  # Phase 2: resolver結果（指定されていれば）
 }
+if bg_image_path and os.path.exists(bg_image_path):
+    _meta["has_image"] = True
+    _meta["image_source"] = "external_resolver"
+if layout == "v4":
+    try:
+        _a = artist_name or (extract_eng_hero_strict(thumb_text, full_title) or "")
+        if _a:
+            _meta["eng_hero"] = _a
+            # 外部背景が無い場合のみ wikimedia キャッシュ有無をチェック
+            if not (bg_image_path and os.path.exists(bg_image_path)):
+                _cache_idx = "/home/aiuser/kpop-ai-system/assets/artist_cache/index.json"
+                if os.path.exists(_cache_idx):
+                    try:
+                        import json as _j3
+                        with open(_cache_idx) as _f:
+                            _idx = _j3.load(_f)
+                        _slug = _re.sub(r"[^a-zA-Z0-9_]+", "_", _a.lower()).strip("_")[:40]
+                        if _slug in _idx and _idx[_slug].get("files"):
+                            _meta["has_image"] = True
+                            _meta["image_source"] = "wikimedia"
+                    except Exception:
+                        pass
+        _meta["copy_text"] = copy_text
+    except Exception:
+        pass
 if layout == "v2":
     try:
         _eng = extract_eng_hero(thumb_text, full_title)

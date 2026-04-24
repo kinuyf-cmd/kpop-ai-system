@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-22",
+  "note": "GA4トラフィックデータ(210sessions/日)とGSC低CTR14件の分析に基づくカテゴリ配分。パイプライン実行頻度との整合性を考慮。",
+  "categories": [
+    {
+      "id": "idol_news",
+      "label": "アイドルニュース",
+      "pipeline": "kpop_pipeline.sh",
+      "target_share": 0.40,
+      "daily_target_articles": 3,
+      "schedule_slots": ["07:00", "15:00", "19:00"],
+      "primary_persona": "core_fan",
+      "rationale": "検索流入の主力。BIGBANG/BTS/MAMA等の速報がトラフィック牽引。1日3回実行で鮮度を確保。",
+      "content_types": ["速報", "カムバック情報", "メンバーニュース", "イベント告知"],
+      "target_word_count": {"min": 1500, "max": 2500},
+      "seo_priority": "high"
+    },
+    {
+      "id": "music_chart",
+      "label": "音楽・チャート分析",
+      "pipeline": "kpop_chart_pipeline.sh",
+      "target_share": 0.10,
+      "weekly_target_articles": 2,
+      "schedule_slots": ["07:30"],
+      "schedule_note": "月曜のみ実行",
+      "primary_persona": "mature_deep_fan",
+      "rationale": "週1の深堀りでチャートデータに基づく分析。長期SEO価値が高いエバーグリーン寄り。",
+      "content_types": ["チャート分析", "楽曲レビュー", "音楽トレンド"],
+      "target_word_count": {"min": 2000, "max": 3000},
+      "seo_priority": "medium"
+    },
+    {
+      "id": "beauty_cosme",
+      "label": "美容・コスメ",
+      "pipeline": "kpop_beauty_pipeline.sh",
+      "target_share": 0.15,
+      "daily_target_articles": 1,
+      "schedule_slots": ["11:00"],
+      "primary_persona": "k_culture_curious",
+      "rationale": "18-24歳層の入口。BTS/aespa愛用ブランド記事がGSCで安定インプレッション。昼休み帯に配信。",
+      "content_types": ["愛用コスメ紹介", "メイクHow-to", "スキンケア", "ブランドコラボ"],
+      "target_word_count": {"min": 1500, "max": 2500},
+      "seo_priority": "medium"
+    },
+    {
+      "id": "k_culture_lifestyle",
+      "label": "K-culture・ライフスタイル",
+      "pipeline": "kpop_lifestyle_pipeline.sh",
+      "target_share": 0.10,
+      "daily_target_articles": 1,
+      "schedule_slots": ["14:00"],
+      "primary_persona": "k_culture_curious",
+      "rationale": "韓ドラ・ファッション・グルメ等の周辺コンテンツ。デーモンハンターズ系がGA4上位。新規ユーザー獲得チャネル。",
+      "content_types": ["韓ドラレビュー", "韓国グルメ", "ファッション", "聖地巡礼"],
+      "target_word_count": {"min": 1500, "max": 2500},
+      "seo_priority": "medium"
+    },
+    {
+      "id": "strategy_deep",
+      "label": "戦略・深堀り分析",
+      "pipeline": "kpop_strategy_pipeline.sh",
+      "target_share": 0.15,
+      "daily_target_articles": 1,
+      "schedule_slots": ["12:00"],
+      "primary_persona": "mature_deep_fan",
+      "rationale": "滞在時間が長い高品質コンテンツ。トップページ経由の4セッション/171秒という数字が示す深堀りニーズに対応。",
+      "content_types": ["業界分析", "グループ比較", "歴史考察", "市場動向"],
+      "target_word_count": {"min": 2000, "max": 3500},
+      "seo_priority": "high"
+    },
+    {
+      "id": "comparison_ranking",
+      "label": "比較・ランキング",
+      "pipeline": "kpop_comparison_pipeline.sh",
+      "target_share": 0.10,
+      "daily_target_articles": 1,
+      "schedule_slots": ["16:00"],
+      "primary_persona": "k_culture_curious",
+      "rationale": "比較クエリはCTR改善余地大。GSC低CTRページの多くが比較/ランキング系。タイトル最適化との相乗効果を狙う。",
+      "content_types": ["グループ比較", "メンバーランキング", "楽曲ランキング", "おすすめリスト"],
+      "target_word_count": {"min": 1500, "max": 2500},
+      "seo_priority": "high"
+    }
+  ],
+  "adjustment_rules": {
+    "rebalance_trigger": "週次レビュー(kpop_weekly_review.sh)でCTR/セッション比が20%以上乖離した場合",
+    "max_single_category": 0.50,
+    "min_single_category": 0.05,
+    "seasonal_overrides": {
+      "music_award_season": {"idol_news": 0.50, "music_chart": 0.15},
+      "comeback_rush": {"idol_news": 0.45, "beauty_cosme": 0.10},
+      "summer_festival": {"k_culture_lifestyle": 0.15, "comparison_ranking": 0.15}
+    }
+  }
+}

@@ -16,15 +16,15 @@
   "zapdos":               {"display_name": "サンダー",           "role": "チャート記事生成",        "department": "編集制作部",   "dept_key": "editorial"},
   "persian":              {"display_name": "ペルシアン",         "role": "X投稿戦略・SNS拡散",      "department": "SNS広報部",    "dept_key": "sns"},
   "カイリュー":           {"display_name": "カイリュー",         "role": "CVR・回遊最適化",         "department": "SEO分析部",    "dept_key": "seo"},
-  "dragonite":            {"display_name": "カイリュー（旧）",   "role": "CVR最適化（旧版）",       "department": "SEO分析部",    "dept_key": "seo"},
+  "dragonite":            {"display_name": "カイリュー（旧）",   "role": "CVR最適化（旧版）",       "department": "ARCHIVED",     "dept_key": "archived", "archived": true},
   "wordpress_post":       {"display_name": "カメックス",         "role": "記事公開担当（WP投稿）",  "department": "システム運用部","dept_key": "system"},
   "x_post":               {"display_name": "ジュペッタ",         "role": "X自動投稿担当",           "department": "SNS広報部",    "dept_key": "sns"},
-  "x_post_b":             {"display_name": "ゾロアーク",         "role": "X投稿（予備担当）",       "department": "SNS広報部",    "dept_key": "sns"},
+  "x_post_b":             {"display_name": "ゾロアーク",         "role": "X投稿（予備・休眠）",     "department": "ARCHIVED",     "dept_key": "archived", "archived": true},
   "porygon":              {"display_name": "ポリゴン",           "role": "週次分析担当",            "department": "経営企画部",   "dept_key": "management"},
   "porygon_z":            {"display_name": "ポリゴンZ",          "role": "インフラ・システム監視",  "department": "システム運用部","dept_key": "system"},
   "lugia":                {"display_name": "ルギア",             "role": "週次戦略立案",            "department": "経営企画部",   "dept_key": "management"},
   "meowth":               {"display_name": "ニャース",           "role": "収益化・財務責任者",      "department": "財務管理部",   "dept_key": "finance"},
-  "alakazam":             {"display_name": "フーディン",         "role": "事実確認（手動専用）",    "department": "監査品質部",   "dept_key": "audit"},
+  "alakazam":             {"display_name": "フーディン",         "role": "事実確認（休眠→archived）","department": "ARCHIVED",     "dept_key": "archived", "archived": true},
   "articuno":             {"display_name": "フリーザー",         "role": "SNSバズコンテンツ生成",   "department": "SNS広報部",    "dept_key": "sns"},
   "beautywriter":         {"display_name": "ニンフィア",         "role": "美容・コスメ記事生成",    "department": "編集制作部",   "dept_key": "editorial"},
   "snorlax":              {"display_name": "カビゴン",           "role": "レビュー・比較記事生成",  "department": "編集制作部",   "dept_key": "editorial"},
@@ -32,5 +32,6 @@
   "mewtwo_cosme":         {"display_name": "ミュウツーX",        "role": "美容戦略統合（手動）",    "department": "経営企画部",   "dept_key": "management"},
   "mewtwo_popup":         {"display_name": "ミュウツーY",        "role": "ポップアップ戦略",        "department": "経営企画部",   "dept_key": "management"},
   "pipeline":             {"display_name": "パイプライン制御",   "role": "処理フロー管理",          "department": "システム運用部","dept_key": "system"},
-  "illumise":             {"display_name": "イルミーゼ",         "role": "UIデザイン・CSS最適化",    "department": "SEO分析部",    "dept_key": "seo"}
+  "illumise":             {"display_name": "イルミーゼ",         "role": "UIデザイン・CSS最適化",    "department": "SEO分析部",    "dept_key": "seo"},
+  "raikou_thumb":         {"display_name": "ライコウ",           "role": "サムネイル2行コピー生成",  "department": "システム運用部","dept_key": "system"}
 }

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KpopJournal AI会社 — オーナーダッシュボード</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: #0f172a; color: #e2e8f0; display: flex; min-height: 100vh;
+}
+/* ── K-POP Pink Gradient Accents ── */
+.kpop-accent { background: linear-gradient(135deg, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* ── Sidebar ── */
+.sidebar {
+  width: 240px; position: fixed; top: 0; left: 0; bottom: 0;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  padding: 0; overflow-y: auto;
+  border-right: 1px solid #334155; z-index: 100;
+}
+.sidebar-logo {
+  font-size: 1.3rem; font-weight: 800; padding: 20px 20px 4px;
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sidebar-subtitle {
+  font-size: 0.72rem; color: #64748b; padding: 0 20px 16px;
+  border-bottom: 1px solid #334155;
+}
+.sidebar .nav-item {
+  display: block; padding: 11px 20px; color: #94a3b8; text-decoration: none;
+  font-size: 0.84rem; border-left: 3px solid transparent; transition: all 0.2s;
+}
+.sidebar .nav-item:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); border-left-color: rgba(236,72,153,0.4); }
+.sidebar .nav-item.active { color: #f472b6; border-left-color: #ec4899; background: rgba(236,72,153,0.08); }
+/* ── Main ── */
+.main { margin-left: 240px; flex: 1; padding: 28px; max-width: 1200px; }
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 16px; border-bottom: 1px solid #334155; margin-bottom: 28px;
+}
+.header h1 { font-size: 1.5rem; font-weight: 700; }
+.header .ts { font-size: 0.8rem; color: #64748b; }
+/* ── Section cards ── */
+.section { margin-bottom: 24px; }
+.section-title {
+  font-size: 1.2rem; font-weight: 700; padding: 14px 0; margin-bottom: 14px;
+  border-bottom: 2px solid #334155;
+  background: linear-gradient(90deg, #e2e8f0, #cbd5e1);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.section-body { }
+/* ── Cards ── */
+.card {
+  background: #1e293b; border-radius: 12px; padding: 18px; margin-bottom: 14px;
+  border: 1px solid #334155; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+.card-red { border-left: 4px solid #ef4444; background: rgba(239,68,68,0.06); }
+.card-yellow { border-left: 4px solid #eab308; background: rgba(234,179,8,0.06); }
+.card-green { border-left: 4px solid #22c55e; background: rgba(34,197,94,0.06); }
+.card-blue { border-left: 4px solid #3b82f6; background: rgba(59,130,246,0.06); }
+/* ── KPI Grid ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.kpi-card {
+  background: #1e293b; border-radius: 12px; padding: 18px; text-align: center;
+  border: 1px solid #334155; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.kpi-value { font-size: 2rem; font-weight: 800; color: #f8fafc; }
+.kpi-label { font-size: 0.78rem; color: #94a3b8; margin-top: 4px; }
+.kpi-target { font-size: 0.72rem; color: #64748b; }
+.progress-bar {
+  background: #334155; border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden;
+}
+.progress-fill { height: 6px; border-radius: 4px; transition: width 0.3s; }
+/* ── Action guidance box (E-2) ── */
+.action-guidance {
+  background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(168,85,247,0.08));
+  border: 1px solid rgba(236,72,153,0.2); border-radius: 12px;
+  padding: 16px 18px; margin-bottom: 16px;
+}
+.action-guidance .action-title {
+  font-size: 0.92rem; font-weight: 700; color: #f472b6; margin-bottom: 8px;
+}
+.action-guidance .action-item {
+  font-size: 0.84rem; color: #e2e8f0; padding: 3px 0;
+}
+.action-guidance .metric-highlight {
+  font-size: 2.2rem; font-weight: 800; color: #f8fafc; margin: 4px 0;
+}
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; padding: 8px 12px; border-bottom: 2px solid #334155; color: #94a3b8; font-weight: 600; }
+td { padding: 8px 12px; border-bottom: 1px solid #1e293b; }
+tr:hover { background: rgba(255,255,255,0.02); }
+/* ── Badges ── */
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  font-size: 0.72rem; font-weight: 700;
+}
+.badge-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+.badge-yellow { background: rgba(234,179,8,0.15); color: #eab308; }
+.badge-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+.badge-blue { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.empty { color: #475569; font-style: italic; padding: 20px; text-align: center; }
+/* ── Collapsible details ── */
+details { border-radius: 12px; }
+details summary { cursor: pointer; user-select: none; }
+details summary:hover { opacity: 0.85; }
+/* ── Chart containers ── */
+.chart-container { position: relative; height: 200px; margin: 12px 0; }
+/* ── Mobile responsive ── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 14px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .kpi-value { font-size: 1.5rem; }
+  .action-guidance .metric-highlight { font-size: 1.6rem; }
+  .chart-container { height: 160px; }
+}
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+<div class="sidebar-logo">KpopJournal</div>
+<div class="sidebar-subtitle">AI会社 オーナーダッシュボード</div>
+<a href="#emergency" class="nav-item">🔴 緊急対応</a>
+<a href="#important" class="nav-item">🟡 重要課題</a>
+<a href="#kpi-daily" class="nav-item">📊 本日のKPI</a>
+<a href="#kpi-weekly" class="nav-item">📈 週次KPI</a>
+<a href="#kpi-monthly" class="nav-item">📅 月次KPI</a>
+<a href="#employees" class="nav-item">👥 社員状況</a>
+<a href="#meetings" class="nav-item">🏢 会議体</a>
+<a href="#errors" class="nav-item">⚠️ エラー監視</a>
+<a href="#seo" class="nav-item">🔍 SEO健全性</a>
+<a href="#revenue" class="nav-item">💰 収益・収益化</a>
+</nav>
+<div class="main">
+<div class="header">
+  <h1>KpopJournal AI会社 — オーナーダッシュボード</h1>
+  <div class="ts">更新: 2026-04-24 18:00 JST</div>
+</div>
+
+<section id="emergency" class="section">
+  <h2 class="section-title">🔴 緊急対応</h2>
+  <div class="section-body">
+<style>
+.sec-emergency { background: #1a0a0a; border: 1px solid #7f1d1d; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.sec-emergency h2 { color: #fca5a5; margin: 0 0 16px 0; font-size: 1.2rem; }
+.sec-emergency .badge { display: inline-block; background: #991b1b; color: #fecaca; padding: 2px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-left: 8px; }
+.sec-emergency .item { background: #2a0f0f; border-left: 4px solid #dc2626; padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; }
+.sec-emergency .item .agent { color: #f87171; font-weight: 700; font-size: 0.95rem; }
+.sec-emergency .item .desc { color: #e2e8f0; font-size: 0.88rem; margin-top: 4px; }
+.sec-emergency .item .ts { color: #94a3b8; font-size: 0.75rem; margin-top: 4px; }
+.sec-emergency .empty { color: #6ee7b7; font-size: 0.95rem; padding: 8px 0; }
+</style>
+
+<div class="sec-emergency">
+<h2>&#x1F534; 緊急対応 — RED zone（オーナー承認必要） <span style="display:inline-block;background:#eab30822;color:#eab308;border:1px solid #eab308;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟡 80/100 注意</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">RED zone項目の承認 or 差し戻し判断が必要です</div>
+<div class="metric-highlight" style="color:#ef4444;">5件</div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 緊急対応待ち件数</div>
+</div>
+<span class="badge">5件</span>
+<details><summary style="color:#fca5a5;cursor:pointer;font-size:0.88rem;margin:8px 0;">&#x1F50D; 詳細を表示</summary>
+<div class="item">
+  <div class="agent">バタフリー</div>
+  <div class="desc">バタフリーの成功率83%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="ts">2026-04-14 00:10</div>
+</div>
+<div class="item">
+  <div class="agent">サーナイト</div>
+  <div class="desc">サーナイトの成功率29%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="ts">2026-04-17 22:00</div>
+</div>
+<div class="item">
+  <div class="agent">サーナイト</div>
+  <div class="desc">サーナイトで空出力11回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="ts">2026-04-17 22:00</div>
+</div>
+<div class="item">
+  <div class="agent">QUALITY::hN不足(N本 &lt; N本)</div>
+  <div class="desc">Register new validation pattern in error_patterns.json: 'h2不足(0本 &lt; 4本)'</div>
+  <div class="ts">2026-04-21 07:40</div>
+</div>
+<div class="item">
+  <div class="agent">QUALITY::内部リンク不足(N本 &lt; N本)</div>
+  <div class="desc">Register new validation pattern in error_patterns.json: '内部リンク不足(0本 &lt; 3本)'</div>
+  <div class="ts">2026-04-21 07:40</div>
+</div>
+</details>
+</div></div>
+</section>
+
+<section id="important" class="section">
+  <h2 class="section-title">🟡 重要課題</h2>
+  <div class="section-body">
+<style>
+.sec-important { background: #1a1708; border: 1px solid #854d0e; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.sec-important h2 { color: #fde68a; margin: 0 0 16px 0; font-size: 1.2rem; }
+.sec-important .badge { display: inline-block; background: #854d0e; color: #fef3c7; padding: 2px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-left: 8px; }
+.sec-important .overdue { background: #422006; border-color: #f59e0b; }
+.sec-important .item { background: #1e1a0a; border-left: 4px solid #eab308; padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; }
+.sec-important .item.overdue { border-left-color: #f97316; background: #271a0a; }
+.sec-important .item .agent { color: #facc15; font-weight: 700; font-size: 0.95rem; }
+.sec-important .item .desc { color: #e2e8f0; font-size: 0.88rem; margin-top: 4px; }
+.sec-important .item .meta { color: #94a3b8; font-size: 0.75rem; margin-top: 4px; }
+.sec-important .item .overdue-tag { display: inline-block; background: #9a3412; color: #fed7aa; padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px; }
+.sec-important .empty { color: #6ee7b7; font-size: 0.95rem; padding: 8px 0; }
+</style>
+
+<div class="sec-important">
+<h2>&#x1F7E1; 重要課題 — YELLOW zone（24h以内確認） <span style="display:inline-block;background:#ef444422;color:#ef4444;border:1px solid #ef4444;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🔴 0/100 危険</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">改善提案 10件 の確認・承認が必要です</div>
+<div class="action-item" style="color:#f97316;">うち 10件 が24時間超過</div>
+<div class="metric-highlight" style="color:#eab308;">10件</div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 確認待ち件数 / 24h超過数</div>
+</div>
+<span class="badge">10件</span>
+<span class="badge overdue">10件 24h超過</span>
+<details><summary style="color:#fde68a;cursor:pointer;font-size:0.88rem;margin:8px 0;">&#x1F50D; 詳細を表示</summary>
+<div class="item overdue">
+  <div class="agent">バタフリー <span style="color:#94a3b8;font-size:0.8rem">[HIGH] prompt_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">バタフリーの成功率83%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="meta">2026-04-14 00:10</div>
+</div>
+<div class="item overdue">
+  <div class="agent">X投稿B <span style="color:#94a3b8;font-size:0.8rem">[HIGH] prompt_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">X投稿Bの成功率0%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="meta">2026-04-14 00:10</div>
+</div>
+<div class="item overdue">
+  <div class="agent">デオキシス <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">デオキシスで空出力3回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">メタモン <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">メタモンで空出力3回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">WP投稿 <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">WP投稿で空出力3回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">X投稿 <span style="color:#94a3b8;font-size:0.8rem">[HIGH] prompt_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">X投稿の成功率56%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">バタフリー <span style="color:#94a3b8;font-size:0.8rem">[HIGH] prompt_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">バタフリーの成功率82%が基準(85%)未満。プロンプト修正で改善余地あり。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">バタフリー <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">バタフリーで空出力8回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">パイプライン <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">パイプラインで空出力81回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+<div class="item overdue">
+  <div class="agent">thumb_ctr_block <span style="color:#94a3b8;font-size:0.8rem">[HIGH] timeout_fix</span><span class="overdue-tag">24h超過</span></div>
+  <div class="desc">thumb_ctr_blockで空出力8回を検出。タイムアウト設定の見直しが必要。</div>
+  <div class="meta">2026-04-17 22:00</div>
+</div>
+</details>
+</div></div>
+</section>
+
+<section id="kpi-daily" class="section">
+  <h2 class="section-title">📊 本日のKPI</h2>
+  <div class="section-body">
+<style>
+.sec-kpi-daily { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.sec-kpi-daily h2 { color: #93c5fd; margin: 0 0 16px 0; font-size: 1.2rem; }
+.sec-kpi-daily .date-label { color: #64748b; font-size: 0.8rem; margin-bottom: 12px; }
+.sec-kpi-daily .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.sec-kpi-daily .kpi-card { background: #1e293b; border-radius: 8px; padding: 14px; }
+.sec-kpi-daily .kpi-label { color: #94a3b8; font-size: 0.8rem; margin-bottom: 6px; }
+.sec-kpi-daily .kpi-values { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.sec-kpi-daily .kpi-actual { color: #e2e8f0; font-size: 1.4rem; font-weight: 700; }
+.sec-kpi-daily .kpi-target { color: #64748b; font-size: 0.85rem; }
+.sec-kpi-daily .bar-bg { background: #334155; border-radius: 4px; height: 8px; width: 100%; overflow: hidden; }
+.sec-kpi-daily .bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.sec-kpi-daily .bar-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.sec-kpi-daily .bar-yellow { background: linear-gradient(90deg, #eab308, #facc15); }
+.sec-kpi-daily .bar-red { background: linear-gradient(90deg, #ef4444, #f87171); }
+.sec-kpi-daily .bar-over { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.sec-kpi-daily .pct { color: #94a3b8; font-size: 0.75rem; text-align: right; margin-top: 2px; }
+.sec-kpi-daily .no-data { color: #64748b; font-style: italic; padding: 8px 0; }
+</style>
+
+<div class="sec-kpi-daily">
+<h2>&#x1F4CA; 本日のKPI <span style="display:inline-block;background:#22c55e22;color:#22c55e;border:1px solid #22c55e;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟢 100/100 健全</span></h2>
+<div class="date-label">2026-04-24 のデータ</div>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">目標未達のKPIがあれば対策を検討してください</div>
+<div class="metric-highlight">210 <span style="font-size:0.9rem;color:#94a3b8;">セッション</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 記事数 / PV / CTR / エラー数</div>
+</div>
+<div class="kpi-grid">
+<div class="kpi-card">
+  <div class="kpi-label">記事公開数</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">6</span>
+    <span class="kpi-target">/ 5 本</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-over" style="width:100%"></div></div>
+  <div class="pct">120%</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">セッション</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">210</span>
+    <span class="kpi-target">/ 500 </span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-yellow" style="width:42%"></div></div>
+  <div class="pct">42%</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">PV</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">146</span>
+    <span class="kpi-target">/ 700 </span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-red" style="width:21%"></div></div>
+  <div class="pct">21%</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">X投稿数</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">10</span>
+    <span class="kpi-target">/ 4 件</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-over" style="width:100%"></div></div>
+  <div class="pct">250%</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">GSCクリック</div>
+  <div class="no-data">データなし</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">平均CTR</div>
+  <div class="no-data">データなし</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">品質スコア</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">87.2</span>
+    <span class="kpi-target">/ 100 点</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-green" style="width:87%"></div></div>
+  <div class="pct">87%</div>
+</div>
+<div class="kpi-card">
+  <div class="kpi-label">エラー件数</div>
+  <div class="kpi-values">
+    <span class="kpi-actual">1</span>
+    <span class="kpi-target">/ 0 件</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill bar-red" style="width:0%"></div></div>
+  <div class="pct">0%</div>
+</div>
+</div>
+
+<div style="background:#1e293b;border-radius:12px;padding:16px;margin-top:16px;">
+  <div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:8px;">7日間トレンド</div>
+  <div class="chart-container">
+    <canvas id="dailyTrend_223f07"></canvas>
+  </div>
+</div>
+<script>
+(function() {
+  const ctx = document.getElementById('dailyTrend_223f07');
+  if (ctx && typeof Chart !== 'undefined') {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ["04/17", "04/18", "04/19", "04/20", "04/21", "04/22", "04/23"],
+        datasets: [
+          {
+            label: '記事数',
+            data: [0, 2.0, 9.0, 5.0, 3.0, 9.0, 5.0],
+            borderColor: '#ec4899',
+            backgroundColor: 'rgba(236,72,153,0.1)',
+            tension: 0.3,
+            fill: true,
+            yAxisID: 'y',
+          },
+          {
+            label: 'セッション',
+            data: [0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56,189,248,0.1)',
+            tension: 0.3,
+            fill: true,
+            yAxisID: 'y1',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+        },
+        scales: {
+          x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(51,65,85,0.5)' } },
+          y: { position: 'left', ticks: { color: '#ec4899', font: { size: 10 } }, grid: { color: 'rgba(51,65,85,0.3)' }, title: { display: true, text: '記事数', color: '#ec4899' } },
+          y1: { position: 'right', ticks: { color: '#38bdf8', font: { size: 10 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'セッション', color: '#38bdf8' } }
+        }
+      }
+    });
+  }
+})();
+</script>
+
+</div></div>
+</section>
+
+<section id="kpi-weekly" class="section">
+  <h2 class="section-title">📈 週次KPI</h2>
+  <div class="section-body">
+<style>
+.sec-kpi-weekly { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.sec-kpi-weekly h2 { color: #a78bfa; margin: 0 0 16px 0; font-size: 1.2rem; }
+.sec-kpi-weekly .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.sec-kpi-weekly .stat-card { background: #1e293b; border-radius: 8px; padding: 14px; text-align: center; }
+.sec-kpi-weekly .stat-value { color: #e2e8f0; font-size: 1.6rem; font-weight: 700; }
+.sec-kpi-weekly .stat-label { color: #94a3b8; font-size: 0.8rem; margin-top: 4px; }
+.sec-kpi-weekly .sparkline-row { display: flex; align-items: center; gap: 12px; background: #1e293b; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+.sec-kpi-weekly .spark-label { color: #94a3b8; font-size: 0.82rem; min-width: 100px; }
+.sec-kpi-weekly .spark-bars { display: flex; align-items: end; gap: 3px; height: 32px; flex: 1; }
+.sec-kpi-weekly .spark-bar { background: #6366f1; border-radius: 2px 2px 0 0; min-width: 8px; flex: 1; transition: height 0.3s; }
+.sec-kpi-weekly .spark-total { color: #c4b5fd; font-size: 0.85rem; font-weight: 600; min-width: 60px; text-align: right; }
+.sec-kpi-weekly .no-data { color: #64748b; font-style: italic; padding: 8px 0; }
+</style>
+
+<div class="sec-kpi-weekly">
+<h2>&#x1F4C8; 週次KPI（過去7日） <span style="display:inline-block;background:#22c55e22;color:#22c55e;border:1px solid #22c55e;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟢 100/100 健全</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">週次トレンドの方向性を確認し、施策の効果を判断してください</div>
+<div class="metric-highlight">33 <span style="font-size:0.9rem;color:#94a3b8;">週間記事</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 記事数 / PV / セッション / エラー数</div>
+</div>
+<div class="summary-grid">
+<div class="stat-card">
+  <div class="stat-value">33</div>
+  <div class="stat-label">週間記事数</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">0</div>
+  <div class="stat-label">週間PV</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">0</div>
+  <div class="stat-label">週間セッション</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">---</div>
+  <div class="stat-label">GSCクリック(直近)</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">---</div>
+  <div class="stat-label">GSC表示回数(直近)</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">37</div>
+  <div class="stat-label">週間エラー</div>
+</div>
+</div>
+<details open><summary style="color:#a78bfa;cursor:pointer;font-size:0.88rem;margin:12px 0 8px;">&#x1F50D; 詳細を表示</summary>
+<div class="sparkline-row">
+  <span class="spark-label">記事数</span>
+  <div class="spark-bars"><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:6px" title="2"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div><div class="spark-bar" style="height:10px" title="3"></div><div class="spark-bar" style="height:30px" title="9"></div><div class="spark-bar" style="height:16px" title="5"></div></div>
+  <span class="spark-total">33</span>
+</div>
+<div class="sparkline-row">
+  <span class="spark-label">PV</span>
+  <span class="no-data">データなし</span>
+</div>
+<div class="sparkline-row">
+  <span class="spark-label">セッション</span>
+  <span class="no-data">データなし</span>
+</div>
+<div class="sparkline-row">
+  <span class="spark-label">エラー</span>
+  <div class="spark-bars"><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:30px" title="12"></div><div class="spark-bar" style="height:27px" title="11"></div><div class="spark-bar" style="height:20px" title="8"></div><div class="spark-bar" style="height:15px" title="6"></div><div class="spark-bar" style="height:2px" title="0"></div><div class="spark-bar" style="height:2px" title="0"></div></div>
+  <span class="spark-total">37</span>
+</div>
+</details>
+</div></div>
+</section>
+
+<section id="kpi-monthly" class="section">
+  <h2 class="section-title">📅 月次KPI</h2>
+  <div class="section-body">
+<style>
+.sec-kpi-monthly { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.sec-kpi-monthly h2 { color: #67e8f9; margin: 0 0 16px 0; font-size: 1.2rem; }
+.sec-kpi-monthly .month-label { color: #64748b; font-size: 0.8rem; margin-bottom: 12px; }
+.sec-kpi-monthly .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.sec-kpi-monthly .metric-card { background: #1e293b; border-radius: 8px; padding: 16px; }
+.sec-kpi-monthly .metric-value { color: #e2e8f0; font-size: 1.5rem; font-weight: 700; }
+.sec-kpi-monthly .metric-sub { color: #94a3b8; font-size: 0.78rem; margin-top: 2px; }
+.sec-kpi-monthly .metric-label { color: #94a3b8; font-size: 0.82rem; margin-top: 6px; }
+.sec-kpi-monthly .target-bar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.sec-kpi-monthly .bar-bg { background: #334155; border-radius: 4px; height: 6px; flex: 1; overflow: hidden; }
+.sec-kpi-monthly .bar-fill { height: 100%; border-radius: 4px; }
+.sec-kpi-monthly .bar-cyan { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.sec-kpi-monthly .bar-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.sec-kpi-monthly .pct-text { color: #67e8f9; font-size: 0.75rem; min-width: 40px; text-align: right; }
+.sec-kpi-monthly .autonomy-section { background: #1e293b; border-radius: 8px; padding: 14px; margin-top: 12px; }
+.sec-kpi-monthly .autonomy-title { color: #a78bfa; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+.sec-kpi-monthly .autonomy-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #334155; }
+.sec-kpi-monthly .autonomy-label { color: #94a3b8; font-size: 0.82rem; }
+.sec-kpi-monthly .autonomy-value { color: #e2e8f0; font-size: 0.85rem; font-weight: 600; }
+</style>
+
+<div class="sec-kpi-monthly">
+<h2>&#x1F4C5; 月次KPI <span style="display:inline-block;background:#ef444422;color:#ef4444;border:1px solid #ef4444;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🔴 20/100 危険</span></h2>
+<div class="month-label">2026年04月 (7日分のデータ)</div>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">月次目標の進捗を確認し、目標未達のKPIに対策を打ってください</div>
+<div class="metric-highlight">¥0 <span style="font-size:0.9rem;color:#94a3b8;">推定月間収益</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 記事数 / PV / セッション / 推定収益 / 自律改善率</div>
+</div>
+<div class="metric-grid">
+<div class="metric-card">
+  <div class="metric-value">39</div>
+  <div class="metric-sub">目標: 150 本</div>
+  <div class="metric-label">月間記事総数</div>
+  <div class="target-bar">
+    <div class="bar-bg"><div class="bar-fill bar-cyan" style="width:26%"></div></div>
+    <span class="pct-text">26%</span>
+  </div>
+</div>
+<div class="metric-card">
+  <div class="metric-value">0</div>
+  <div class="metric-sub">目標: 21,000 </div>
+  <div class="metric-label">月間PV</div>
+  <div class="target-bar">
+    <div class="bar-bg"><div class="bar-fill bar-cyan" style="width:0%"></div></div>
+    <span class="pct-text">0%</span>
+  </div>
+</div>
+<div class="metric-card">
+  <div class="metric-value">0</div>
+  <div class="metric-sub">目標: 15,000 </div>
+  <div class="metric-label">月間セッション</div>
+  <div class="target-bar">
+    <div class="bar-bg"><div class="bar-fill bar-cyan" style="width:0%"></div></div>
+    <span class="pct-text">0%</span>
+  </div>
+</div>
+<div class="metric-card">
+  <div class="metric-value">0</div>
+  <div class="metric-sub">目標: 3,000 円</div>
+  <div class="metric-label">推定収益</div>
+  <div class="target-bar">
+    <div class="bar-bg"><div class="bar-fill bar-cyan" style="width:0%"></div></div>
+    <span class="pct-text">0%</span>
+  </div>
+</div>
+<div class="metric-card">
+  <div class="metric-value">---</div>
+  <div class="metric-label">GSC平均掲載順位</div>
+</div>
+<div class="metric-card">
+  <div class="metric-value">0%</div>
+  <div class="metric-sub">0/38 件適用</div>
+  <div class="metric-label">自律改善適用率</div>
+</div>
+</div>
+<details><summary style="color:#a78bfa;cursor:pointer;font-size:0.88rem;margin:12px 0 8px;">&#x1F50D; 自律改善ゾーン内訳を表示</summary>
+<div class="autonomy-section">
+<div class="autonomy-title">自律改善ゾーン内訳</div>
+<div class="autonomy-row">
+  <span class="autonomy-label" style="color:#22c55e">GREEN（自動実行）</span>
+  <span class="autonomy-value">0件</span>
+</div>
+<div class="autonomy-row">
+  <span class="autonomy-label" style="color:#eab308">YELLOW（事後確認）</span>
+  <span class="autonomy-value">0件</span>
+</div>
+<div class="autonomy-row">
+  <span class="autonomy-label" style="color:#ef4444">RED（承認必須）</span>
+  <span class="autonomy-value">24件</span>
+</div>
+</div>
+</details>
+
+<div style="background:#1e293b;border-radius:12px;padding:16px;margin-top:16px;">
+  <div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:8px;">月次累積トレンド</div>
+  <div class="chart-container">
+    <canvas id="monthlyTrend_202604"></canvas>
+  </div>
+</div>
+<script>
+(function() {
+  const ctx = document.getElementById('monthlyTrend_202604');
+  if (ctx && typeof Chart !== 'undefined') {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ["1\u65e5", "2\u65e5", "3\u65e5", "4\u65e5", "5\u65e5", "6\u65e5", "7\u65e5", "8\u65e5", "9\u65e5", "10\u65e5", "11\u65e5", "12\u65e5", "13\u65e5", "14\u65e5", "15\u65e5", "16\u65e5", "17\u65e5", "18\u65e5", "19\u65e5", "20\u65e5", "21\u65e5", "22\u65e5", "23\u65e5", "24\u65e5"],
+        datasets: [
+          {
+            label: '累積記事数',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.0, 11.0, 16.0, 19.0, 28.0, 33.0, 39.0],
+            borderColor: '#ec4899',
+            backgroundColor: 'rgba(236,72,153,0.1)',
+            tension: 0.3,
+            fill: true,
+            yAxisID: 'y',
+          },
+          {
+            label: '累積PV',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#22d3ee',
+            backgroundColor: 'rgba(34,211,238,0.1)',
+            tension: 0.3,
+            fill: true,
+            yAxisID: 'y1',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+        },
+        scales: {
+          x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(51,65,85,0.5)' } },
+          y: { position: 'left', ticks: { color: '#ec4899', font: { size: 10 } }, grid: { color: 'rgba(51,65,85,0.3)' }, title: { display: true, text: '記事数', color: '#ec4899' } },
+          y1: { position: 'right', ticks: { color: '#22d3ee', font: { size: 10 } }, grid: { drawOnChartArea: false }, title: { display: true, text: 'PV', color: '#22d3ee' } }
+        }
+      }
+    });
+  }
+})();
+</script>
+
+</div></div>
+</section>
+
+<section id="employees" class="section">
+  <h2 class="section-title">👥 社員状況</h2>
+  <div class="section-body"><div style="margin-bottom:24px;">
+  <h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">👥 社員状況 <span style="display:inline-block;background:#eab30822;color:#eab308;border:1px solid #eab308;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟡 75/100 注意</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item" style="color:#ef4444;">&#x1F534; 要注意エージェント 12名 の対応を検討してください</div>
+<div class="metric-highlight">54 <span style="font-size:0.9rem;color:#94a3b8;">名稼働中</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 合計54名 / &#x1F7E2;32 &#x1F7E1;10 &#x1F534;12</div>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-left:4px solid #94a3b8;border-radius:8px;padding:12px 18px;min-width:120px;"><div style="color:#94a3b8;font-size:0.8rem;">合計</div><div style="color:#94a3b8;font-size:1.6rem;font-weight:700;">54</div></div>
+<div style="background:#1e293b;border-left:4px solid #22c55e;border-radius:8px;padding:12px 18px;min-width:120px;"><div style="color:#94a3b8;font-size:0.8rem;">🟢 優秀</div><div style="color:#22c55e;font-size:1.6rem;font-weight:700;">32</div></div>
+<div style="background:#1e293b;border-left:4px solid #eab308;border-radius:8px;padding:12px 18px;min-width:120px;"><div style="color:#94a3b8;font-size:0.8rem;">🟡 注意</div><div style="color:#eab308;font-size:1.6rem;font-weight:700;">10</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 18px;min-width:120px;"><div style="color:#94a3b8;font-size:0.8rem;">🔴 要対応</div><div style="color:#ef4444;font-size:1.6rem;font-weight:700;">12</div></div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:16px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:6px;">自律マトリクス認識率 — 64/64 エージェント (100%)</div><div style="background:#334155;border-radius:6px;height:14px;overflow:hidden;"><div style="background:#22c55e;height:100%;width:100.0%;border-radius:6px;transition:width .3s;"></div></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:16px;"><div style="color:#f87171;font-size:0.9rem;font-weight:600;margin-bottom:8px;">⚠ 要注意エージェント Top5</div><table style="width:100%;border-collapse:collapse;font-size:0.85rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">エージェント</th><th style="padding:4px 8px;">役割</th><th style="padding:4px 8px;">成功率</th><th style="padding:4px 8px;">成功/失敗</th><th style="padding:4px 8px;">フラグ</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">🔴 X投稿B</td><td style="padding:4px 8px;color:#94a3b8;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">X投稿（休眠→archived）</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:4px 8px;">0/2</td><td style="padding:4px 8px;">—</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">🔴 パイプライン</td><td style="padding:4px 8px;color:#94a3b8;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">パイプライン制御</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:4px 8px;">0/106</td><td style="padding:4px 8px;"><span style="color:#f87171;">ERR</span> <span style="color:#fb923c;">IDLE</span></td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">🔴 genre_block</td><td style="padding:4px 8px;color:#94a3b8;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:4px 8px;">0/2</td><td style="padding:4px 8px;">—</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">🔴 thumb_ctr_block</td><td style="padding:4px 8px;color:#94a3b8;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:4px 8px;">0/9</td><td style="padding:4px 8px;"><span style="color:#f87171;">ERR</span> <span style="color:#fb923c;">IDLE</span></td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">🔴 ジラーチ</td><td style="padding:4px 8px;color:#94a3b8;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:4px 8px;">0/1</td><td style="padding:4px 8px;">—</td></tr>
+</table></div>
+<details style="background:#1e293b;border-radius:8px;padding:14px 18px;"><summary style="color:#e2e8f0;cursor:pointer;font-weight:600;font-size:0.9rem;">&#x1F50D; 全社員一覧 (54名) — 成功率順 ▲</summary><table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:10px;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 6px;">ランク</th><th style="padding:4px 6px;">エージェント</th><th style="padding:4px 6px;">役割</th><th style="padding:4px 6px;">成功率</th><th style="padding:4px 6px;">合計</th></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">X投稿B</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">X投稿（休眠→archived）</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">2</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">パイプライン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">パイプライン制御</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">106</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">genre_block</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">2</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">thumb_ctr_block</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">9</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">ジラーチ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">1</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">pre_arceus_guard</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">2</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">mewtwo_strategy</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">2</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">thumb_ctr_retry</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">1</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">sns_draft_guard</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">4</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">publish</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">1</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ポリゴン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">週次パフォーマンス分析</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ポリゴンZ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CTO（システム運用部長）</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ルギア</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">COO（経営企画部長）</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ニャース</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CFO（財務管理部長）</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">フリーザー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SNSバズコンテンツ生成</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ポップアップライター</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ポップアップ記事生成</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ミュウツー（POP）</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ポップアップ戦略</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">イルミーゼ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">UI/UX最適化（A/Bテスト）</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">ライコウ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">サムネイル2行コピー生成</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">0.0%</td><td style="padding:3px 6px;">0</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">サーナイト</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">刺さり品質ゲート</td><td style="padding:3px 6px;color:#ef4444;font-weight:600;">45.1%</td><td style="padding:3px 6px;">215</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🔴</td><td style="padding:3px 6px;">X投稿</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">X(Twitter)自動投稿</td><td style="padding:3px 6px;color:#eab308;font-weight:600;">57.7%</td><td style="padding:3px 6px;">52</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟡</td><td style="padding:3px 6px;">pre_publish_gate</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#eab308;font-weight:600;">62.5%</td><td style="padding:3px 6px;">40</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">バタフリー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">トレンド情報収集</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">85.7%</td><td style="padding:3px 6px;">63</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">カビゴン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">レビュー・比較記事生成</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">85.7%</td><td style="padding:3px 6px;">7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">アラカザム</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">90.9%</td><td style="padding:3px 6px;">22</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">WP投稿</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">WordPress API投稿</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">93.3%</td><td style="padding:3px 6px;">105</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">アルセウス</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CQO（監査品質部長・総監督）</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">93.8%</td><td style="padding:3px 6px;">145</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ゲンガー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">95.0%</td><td style="padding:3px 6px;">20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ペルシアン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SNS拡散・X投稿戦略</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">96.4%</td><td style="padding:3px 6px;">28</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">メタモン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SEOリライト・タイトル生成</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">97.5%</td><td style="padding:3px 6px;">198</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ラプラス</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CMO（SEO分析部長）</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">98.1%</td><td style="padding:3px 6px;">54</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ソーナンス</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">読者ニーズ分析</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">98.1%</td><td style="padding:3px 6px;">53</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">カイリュー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CVR・回遊最適化</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">98.5%</td><td style="padding:3px 6px;">66</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">デオキシス</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">編集長（編集制作部長）</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">98.6%</td><td style="padding:3px 6px;">215</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">イーブイ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">タイトル最終選定</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">99.5%</td><td style="padding:3px 6px;">193</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ジラーチ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ファクトチェック・予測</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">99.5%</td><td style="padding:3px 6px;">187</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ミミッキュ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">競合分析・差別化</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">53</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">フシギバナ</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">記事構成設計</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">52</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ミュウツー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CEO・戦略統合</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">52</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">フーディン</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ファクトチェック（休眠→archived）</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">57</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ゲンガー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SEO・品質監査</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">52</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">カイリュー（旧）</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CVR最適化（旧版→archived）</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">4</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">サンダー</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">チャートランキング記事生成</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">5</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">deoxys_revision_1</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">9</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">start</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">32</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">check</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">6</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">ミュウツー（コスメ）</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">美容戦略統合</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">コスメライター</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">美容・コスメ記事生成</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">sns_cross_post</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">generation</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">4</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">thumbnails</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">4</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">sns</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">complete</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #1e293b;"><td style="padding:3px 6px;">🟢</td><td style="padding:3px 6px;">zapdos_mid</td><td style="padding:3px 6px;color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">不明</td><td style="padding:3px 6px;color:#22c55e;font-weight:600;">100.0%</td><td style="padding:3px 6px;">3</td></tr>
+</table></details>
+</div></div>
+</section>
+
+<section id="meetings" class="section">
+  <h2 class="section-title">🏢 会議体</h2>
+  <div class="section-body"><div style="margin-bottom:24px;">
+<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">🏢 会議体 <span style="display:inline-block;background:#22c55e22;color:#22c55e;border:1px solid #22c55e;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟢 100/100 健全</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item">スタンドアップ結果を確認し、前日比の変動に注目してください</div>
+<div class="metric-highlight" style="color:#ef4444;">36 <span style="font-size:0.9rem;color:#94a3b8;">未解決課題</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 部門別スタンドアップ / 取締役会 / 未解決課題数</div>
+</div>
+<div style="display:inline-block;background:#ef4444;color:#0f172a;border-radius:12px;padding:2px 12px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">未解決課題: 36 件</div>
+<div style="margin-bottom:16px;"><div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:8px;">部門別スタンドアップ (2026-04-24)</div><div style="display:flex;gap:10px;flex-wrap:wrap;">
+<div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">📝 コンテンツ部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| デオキシス</span><span style="color:#22c55e;font-weight:600;">98.6%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">メタモン</span><span style="color:#22c55e;font-weight:600;">97.4%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">バタフリー</span><span style="color:#22c55e;font-weight:600;">85.5%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">イーブイ</span><span style="color:#22c55e;font-weight:600;">99.5%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ジラーチ</span><span style="color:#22c55e;font-weight:600;">99.5%</span></div></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">🔍 品質部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| サーナイト</span><span style="color:#ef4444;font-weight:600;">44.1%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">アルセウス</span><span style="color:#22c55e;font-weight:600;">93.6%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ゲンガー</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ジラーチ</span><span style="color:#22c55e;font-weight:600;">99.5%</span></div></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">🔎 SEO部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| フーディン</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ラプラス</span><span style="color:#22c55e;font-weight:600;">98.1%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ミミッキュ</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">イルミーゼ</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">💰 収益部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| ペルシアン</span><span style="color:#22c55e;font-weight:600;">96.4%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">カビゴン</span><span style="color:#fbbf24;font-weight:600;">83.3%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ニャース</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ポリゴン</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:12px 14px;flex:1;min-width:180px;max-width:220px;"><div style="font-size:0.85rem;font-weight:600;color:#e2e8f0;margin-bottom:6px;">⚙️ 運用部</div><div style="font-size:0.78rem;color:#94a3b8;margin-bottom:4px;">実行: 0件</div><div style="font-size:0.75rem;"><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">| ミュウツー</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ポリゴンZ</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">ライコウ</span><span style="color:#fbbf24;font-weight:600;">0.0%</span></div><div style="display:flex;justify-content:space-between;border-top:1px solid #334155;padding:2px 0;"><span style="color:#cbd5e1;">フシギバナ</span><span style="color:#22c55e;font-weight:600;">100.0%</span></div></div></div>
+</div></div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;flex:1;min-width:260px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;font-weight:600;">全社朝会 (2026-04-24)</div>
+<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">投稿数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6 件</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均品質スコア</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4.5</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +4.5</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均文字数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4,384 字</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +994.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">サムネイル設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4/6</td><td style="padding:3px 6px;"><span style="color:#94a3b8;">→</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">CTA設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">6/6</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">エラー件数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">1 件</td><td style="padding:3px 6px;"><span style="color:#ef4444;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">76.4%</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +0.8</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">53</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">43</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">31</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">2</td><td style="padding:3px 6px;"><span style="color:#22c55e;">↑ +1.0</span></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">10</td><td style="padding:3px 6px;"><span style="color:#ef4444;">↓ -1.0</span></td></tr>
+</table>
+<div style="margin-top:8px;font-size:0.78rem;color:#f87171;">
+<div>• pipeline_stop: 1 件</div>
+</div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;flex:1;min-width:260px;"><div style="color:#94a3b8;font-size:0.85rem;margin-bottom:8px;font-weight:600;">全社朝会 (2026-04-23)</div>
+<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">投稿数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">5 件</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均品質スコア</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">0.0</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">平均文字数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">3,390 字</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">サムネイル設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">4/5</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">CTA設定率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">5/5</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">エラー件数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">0 件</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">75.6%</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">52</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">42</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">30</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">1</td><td style="padding:3px 6px;"></td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">11</td><td style="padding:3px 6px;"></td></tr>
+</table>
+</div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:12px;"><div style="color:#94a3b8;font-size:0.85rem;font-weight:600;margin-bottom:6px;">最新取締役会: 2026-W17.md</div>
+<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">全社成功率</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">76.9%</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">定義済社員数</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">51</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">アクティブ社員</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">41</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">優秀(🟢)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">28</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">要注意(🟡)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">3</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">危険(🔴)</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">10</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">GA4セッション</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">210</td></tr>
+<tr style="border-top:1px solid #334155;"><td style="padding:3px 6px;color:#94a3b8;">GA4ユーザー</td><td style="padding:3px 6px;color:#e2e8f0;font-weight:600;">119</td></tr>
+</table>
+</div>
+</div></div>
+</section>
+
+<section id="errors" class="section">
+  <h2 class="section-title">⚠️ エラー監視</h2>
+  <div class="section-body"><div style="margin-bottom:24px;">
+<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">⚠️ エラー監視 <span style="display:inline-block;background:#ef444422;color:#ef4444;border:1px solid #ef4444;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🔴 0/100 危険</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item" style="color:#ef4444;">未解決パターン 36件 を確認してください</div>
+<div class="action-item" style="color:#f97316;">解決済パターンの再発 57件 を確認してください</div>
+<div class="metric-highlight" style="color:#ef4444;">76 <span style="font-size:0.9rem;color:#94a3b8;">今週の新規エラー</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 新規エラー / フックエラー / 品質問題 / 未解決パターン</div>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">今週の新規</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">76</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">フックエラー(7日)</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">57</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">品質問題(7日)</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">19</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">解決済の再発</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">57</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;min-width:110px;"><div style="color:#94a3b8;font-size:0.78rem;">未解決パターン</div><div style="color:#ef4444;font-size:1.5rem;font-weight:700;">36</div></div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#f87171;font-size:0.9rem;font-weight:600;margin-bottom:8px;">未解決パターン</div><table style="width:100%;border-collapse:collapse;font-size:0.82rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">パターン</th><th style="padding:4px 8px;">エージェント</th><th style="padding:4px 8px;">件数</th><th style="padding:4px 8px;">最終発生</th><th style="padding:4px 8px;">例</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">x_post_failed</td><td style="padding:4px 8px;">persian</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">12</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-24</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: ...</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">gradient_thumbnail_leak</td><td style="padding:4px 8px;">pipeline</td><td style="padding:4px 8px;color:#ef4444;font-weight:600;">3</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-23</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">3/8記事でサムネがグラデーション画像(7KB未満)のまま公開。OPENAI_API_KEY未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2195</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-09</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">カテゴリ誤混入:BTSキーワード単文字マッチ('v','rm','jin')が他グループ記事に誤検知</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_1950</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-09</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">スラッグ__trashed:validate_post.pyに検出ロジックなし</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_9113</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-09</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">ファクト誤り:RMの除隊日2026年6月→正しくは2025年6月10日</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_6493</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-09</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">AKMUレーベル名誤り:Center→Fountain of Inspiration</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_8169</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">最類似勝ちタイトル: 「K-POPアイドルの美肌ルーティン徹底解剖！…」(overlap=0.20)</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_1874</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">コメント誘導なし -5 (§5違反)</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2944</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">最類似勝ちタイトル: 「K-POPアイドルの美肌ルーティン徹底解剖！…」(overlap=0.20)</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_216</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">本文が2000文字未満: 1705文字（推奨3000字以上）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_5983</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">本文が2000文字未満: 1848文字（推奨3000字以上）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_5746</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-10</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">最類似勝ちタイトル: 「K-POPアイドルの美肌ルーティン徹底解剖！…」(overlap=0.40)</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_7097</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-11</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">X投稿v12.0フォーマット違反: NG: フックが完結文</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2499</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-11</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">タイトルSEO: K-POP関連キーワードがタイトルに含まれない</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_4019</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-12</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">K-POP関連ワード(K-POP) +3（アーティスト名代替）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_1428</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-12</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">最類似勝ちタイトル: 「K-POPアイドルの美肌ルーティン徹底解剖！…」(overlap=0.20)</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_1020</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-13</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">文字数超過(292文字) -5</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2506</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-13</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">K-POP関連ワード(KPOP) +3（アーティスト名代替）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_7480</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-13</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">タイトルSEO: 年号なし（SEO検索需要低下の可能性）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2109</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-13</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">文字数超過(292文字) -5</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_8842</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-13</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">K-POP関連ワード(KPOP) +3（アーティスト名代替）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2405</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-14</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">h2見出しが3本未満: 0本 h2見出し不足: 0個</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_524</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-17</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">重複メタタグ: canonical 重複メタタグ: og:title</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_503</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-19</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_43</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-20</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2523</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-21</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_8151</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-21</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_3302</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-21</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">X投稿PRE_SCOREが低い: 79.8（閾値80未満）</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_3282</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-21</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_4137</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-21</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_6564</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-22</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_3181</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-23</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_8918</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-23</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_7938</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-23</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_5556</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-24</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#fb923c;">unknown_2208</td><td style="padding:4px 8px;">unknown</td><td style="padding:4px 8px;color:#eab308;font-weight:600;">1</td><td style="padding:4px 8px;color:#94a3b8;">2026-04-24</td><td style="padding:4px 8px;color:#94a3b8;font-size:0.78rem;">OG画像が未設定</td></tr>
+</table></div>
+<details style="background:#1e293b;border-radius:8px;padding:14px 18px;"><summary style="color:#22c55e;cursor:pointer;font-weight:600;font-size:0.9rem;">解決済パターン (52件)</summary><table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:8px;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:3px 8px;">パターン</th><th style="padding:3px 8px;">エージェント</th><th style="padding:3px 8px;">修正内容</th><th style="padding:3px 8px;">解決日</th></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">butterfree_empty_output</td><td style="padding:3px 8px;">butterfree</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">3段階リトライ+アーカイブフォールバック導入(2026-04-17)。全段階失敗時もパイプライン停止せず最低限出力で続行するよう変更(...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">wrong_category</td><td style="padding:3px 8px;">mewtwo</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">カテゴリ割り当て時にタイトルと記事本文でアーティスト名を照合すること</td><td style="padding:3px 8px;color:#22c55e;">2026-04-09</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">missing_alt_text</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">アイキャッチアップロード時にALTテキストを必ず設定すること</td><td style="padding:3px 8px;color:#22c55e;">2026-04-09</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">meta_desc_copied</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）</td><td style="padding:3px 8px;color:#22c55e;">2026-04-10</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumbnail_mismatch</td><td style="padding:3px 8px;">make_thumbnail</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">サムネイル生成時にarticle_titleとthumb_textの整合性チェックを強化</td><td style="padding:3px 8px;color:#22c55e;">2026-04-09</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">no_featured_image</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">投稿前にアイキャッチ画像の存在を必ず確認すること</td><td style="padding:3px 8px;color:#22c55e;">2026-04-11</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumb_artist_name_missing</td><td style="padding:3px 8px;">raikou_thumb</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">score_thumbnail_text.pyのartist_wordsにローマ字表記メンバー名(JENNIE,ROSÉ,LISA等)...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">flock_bad_fd</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">exec 200>> でプロセス起動時に1回だけFDを開く方式に変更（サブシェルごとの200>>を廃止）。旧fix(>>+事前touc...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">daily_error_threshold_cascade</td><td style="padding:3px 8px;">post_guard</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_guard.check_emergency_stop で unrecoverable と recoverable を分離。r...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-16</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">growth_exclude_missing</td><td style="padding:3px 8px;">ctr_title_rewriter</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">config/growth_exclude_urls.json + lib/growth_exclude.py で共通フィルタ化、各r...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-16</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">ai_meeting_log_silence</td><td style="padding:3px 8px;">run_ai_meeting</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">run_ai_meeting.sh 先頭に `exec > >(tee -a logs/ai_meeting.log) 2>&1` を追加</td><td style="padding:3px 8px;color:#22c55e;">2026-04-16</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">learning_coverage_narrow</td><td style="padding:3px 8px;">apply_learning_to_agents</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">gardevoir_hook_critic / arceus / mewtwo にも自動学習サマリを追記する関数を追加</td><td style="padding:3px 8px;color:#22c55e;">2026-04-16</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">x_backfill_runner_arg_mismatch</td><td style="padding:3px 8px;">x_boost_selector</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) 位置引数形式に統一(2026-04-16) (2) JSONの4回パースを1回に統一+tweet_text空チェック追加(20...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumb_sanitize_drops_second_line</td><td style="padding:3px 8px;">generate_thumb_copy</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">_sanitize_thumb_output を v3 化: 8文字以内の行を最大2行保持するよう修正。2026-04-17 修正済み</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">meta_desc_overblock</td><td style="padding:3px 8px;">kpop_strategy_pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) boilerplateパターン(【解説】/結論：)をstrip後に抽出 (2) BLOCK閾値を50文字に引き下げ、50-11...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">template_filler_published</td><td style="padding:3px 8px;">cluster_generator</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) per-h2 keyword interpolation化(2026-04-17) (2) post_guard templa...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">x_credential_missing</td><td style="padding:3px 8px;">post_to_x</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_to_x.sh v3.0: credential不在時はexit(0)でグレースフルスキップ。ログに「SKIP: X cre...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">wp_507_insufficient_storage</td><td style="padding:3px 8px;">frontend/pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) フロントエンドfetchJSONに5xxリトライ(最大2回,指数バックオフ)追加 (2) パイプラインwp_health_ch...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">grep_c_double_zero</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L29...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">claude_json_leak_in_article</td><td style="padding:3px 8px;">jirachi/sanitize</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{"type":...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">article_stuck_in_reports</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">品質ゲート(gardevoir/arceus/サムネCTR)連続BLOCK時に元記事が失われる。watchdogで24h以上未投稿を検...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">triple_gate_cascade_block</td><td style="padding:3px 8px;">gardevoir/pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">wp_post_pipeline_stall</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">品質ゲート過剰BLOCK修正(triple_gate_cascade_block参照) + improvement_engine wa...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-17</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">title_typo_entity_mojibake</td><td style="padding:3px 8px;">eevee/pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">manual_bulk_post_quality_bypass</td><td style="padding:3px 8px;">post_to_wp</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_to_wp.pyにcheck_content_quality()ゲート追加（文字数2000字/h2x4/内部リンク2本）。p...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">u_fffd_encoding_error</td><td style="padding:3px 8px;">pipeline/all</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) 全lib/*.pyをerrors="replace"に統一(15ファイル) (2) sanitize_output.shでU+...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">ai_meta_response_as_article</td><td style="padding:3px 8px;">kairyu</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">final_post.md生成時にAIメタ応答パターンを検出し、HTMLが1タグもない場合は空にしてブロックする</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">kairyu_meta_explanation_output</td><td style="padding:3px 8px;">kairyu_kpop</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) 全パイプライン(5本)のカイリュープロンプトに「改善内容の説明禁止。記事HTML全文をそのまま出力」を追加 (2) カイリュー...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">missing_featured_media</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1)NEW_MEDIA_ID初期化+代入追加 (2)投稿後featured_media確認→auto_thumbnail.py自動修...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">backslash_n_leak</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">sanitize_wp_content()を新設し、kpop_pipeline.sh/kpop_strategy_pipeline.s...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">json_metadata_leak</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">sanitize_wp_content()でバランスマッチJSONブロブ除去＋HTMLエンティティ版メタデータ除去を投稿直前に適用</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">internal_link_overblock</td><td style="padding:3px 8px;">?</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">BLOCK閾値を0本に緩和、1本はWARNに変更</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumb_copy_overblock</td><td style="padding:3px 8px;">?</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">BLOCK→WARNに緩和。壊滅レベルではないためWARN扱いが適切</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">ctr_contrast_encoding_miss</td><td style="padding:3px 8px;">?</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">CTR対比構造regexに─(U+2500)と──を追加</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">x_hook_ctr_overblock</td><td style="padding:3px 8px;">?</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">HOOK_CTR BLOCK閾値を50→40に統一</td><td style="padding:3px 8px;color:#22c55e;">2026-04-18</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">tweet_body_too_short</td><td style="padding:3px 8px;">x_post</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）</td><td style="padding:3px 8px;color:#22c55e;">2026-04-19</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">ai_internal_response_in_title</td><td style="padding:3px 8px;">pipeline/agent_monitor</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) TITLE_COLLAPSE_PATTERNSに 'hit your limit','resets.*Asia/Tokyo',...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-19</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumb_copy_single_line_block</td><td style="padding:3px 8px;">raikou_thumb</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォー...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">alakazam_factcheck_title_leak</td><td style="padding:3px 8px;">alakazam_kpop</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">kpop_chart_pipeline.sh・post_to_x.shのCRASH_PATTERNSに'ファクトチェック結果'系パター...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">mewtwo_permission_request_leak</td><td style="padding:3px 8px;">mewtwo</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">kpop_pipeline.sh step0ガードに'書き込み権限|許可いただけますか|権限が必要'パターン追加。post_to_x....</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">strategy_meta_desc_empty</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">kpop_strategy_pipeline.sh に AIOSEO_DESC フォールバック追加（タイトルから128文字生成）（20...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-19</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">thumbnail_text_burned</td><td style="padding:3px 8px;">pipeline/make_thumbnail</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">llm_residue_in_article</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) pre_publish_hook.pyのLLM残骸パターンを6→14に拡張 (2) 内部タグ(<|im_end|>等)検出パタ...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">internal_tag_leak</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">pre_publish_hook.pyに9パターンの内部タグ検出を追加(BLOCK)</td><td style="padding:3px 8px;color:#22c55e;">2026-04-20</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">upstream_meta_commentary_leak</td><td style="padding:3px 8px;">deoxys_kpop/metamon_kpop</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_val...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-21</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">h2_insufficient</td><td style="padding:3px 8px;">eevee</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">pre_publish_hook.pyでh2<2本をCRITICAL、h2<4本をWARNINGとして検出。イーブイ(記事構成担当)が...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-21</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">internal_link_insufficient</td><td style="padding:3px 8px;">kairyu_kpop</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">pre_publish_hook.pyで内部リンク0本をCRITICAL、1本をWARNINGとして検出。カイリュー(CVR導線担当)...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-21</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">missing_kpj_summary</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_publish_enricher.pyを新規作成、主要5パイプラインのpost-publishフローに統合</td><td style="padding:3px 8px;color:#22c55e;">2026-04-23</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">missing_kpj_profile</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_publish_enricher.pyに統合。記事からアーティスト名を自動検出しプロフィール挿入</td><td style="padding:3px 8px;color:#22c55e;">2026-04-23</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">x_post_before_audit_draft</td><td style="padding:3px 8px;">persian/post_to_x</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.sh...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-24</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">japanese_slug_in_url</td><td style="padding:3px 8px;">pipeline</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">x_post_url_validator.pyで日本語slug検出・ブロック。タイトルサニタイゼーション強化が別途必要</td><td style="padding:3px 8px;color:#22c55e;">2026-04-24</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">gardevoir_empty_output</td><td style="padding:3px 8px;">gardevoir_hook_critic</td><td style="padding:3px 8px;color:#94a3b8;font-size:0.76rem;">agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_R...</td><td style="padding:3px 8px;color:#22c55e;">2026-04-24</td></tr>
+</table></details>
+</div></div>
+</section>
+
+<section id="seo" class="section">
+  <h2 class="section-title">🔍 SEO健全性</h2>
+  <div class="section-body"><div style="margin-bottom:24px;">
+<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">🔍 SEO健全性 <span style="display:inline-block;background:#eab30822;color:#eab308;border:1px solid #eab308;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🟡 87/100 注意</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item" style="color:#eab308;">低CTRページが 20件 あります。リライト優先順位を決めてください</div>
+<div class="metric-highlight">17 <span style="font-size:0.9rem;color:#94a3b8;">クリック</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: クリック / 表示回数 / CTR / 平均順位</div>
+</div>
+<div style="color:#64748b;font-size:0.78rem;margin-bottom:10px;">GSC date: 2026-04-16 3日前</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-left:4px solid #38bdf8;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">クリック</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:700;">17</div></div>
+<div style="background:#1e293b;border-left:4px solid #a78bfa;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">表示回数</div><div style="color:#a78bfa;font-size:1.3rem;font-weight:700;">176</div></div>
+<div style="background:#1e293b;border-left:4px solid #22c55e;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">平均CTR</div><div style="color:#22c55e;font-size:1.3rem;font-weight:700;">9.66%</div></div>
+<div style="background:#1e293b;border-left:4px solid #fb923c;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">平均順位</div><div style="color:#fb923c;font-size:1.3rem;font-weight:700;">11.2</div></div>
+<div style="background:#1e293b;border-left:4px solid #818cf8;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">セッション</div><div style="color:#818cf8;font-size:1.3rem;font-weight:700;">210</div></div>
+<div style="background:#1e293b;border-left:4px solid #f472b6;border-radius:8px;padding:10px 16px;min-width:100px;"><div style="color:#94a3b8;font-size:0.75rem;">ユーザー</div><div style="color:#f472b6;font-size:1.3rem;font-weight:700;">119</div></div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#38bdf8;font-size:0.9rem;font-weight:600;margin-bottom:8px;">クリック数 Top5 ページ</div><table style="width:100%;border-collapse:collapse;font-size:0.82rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">ページ</th><th style="padding:4px 8px;">クリック</th><th style="padding:4px 8px;">表示</th><th style="padding:4px 8px;">CTR</th><th style="padding:4px 8px;">順位</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="https://www.kpopjournal.tokyo/kpop-demon-hunters-cast-characters/">/kpop-demon-hunters-cast-characters/</td><td style="padding:4px 8px;font-weight:600;">5</td><td style="padding:4px 8px;">65</td><td style="padding:4px 8px;color:#22c55e;">7.7%</td><td style="padding:4px 8px;">10.0</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="https://www.kpopjournal.tokyo/straykids-ost-genie-skz-it-tape-2025/">/straykids-ost-genie-skz-it-tape-2025/</td><td style="padding:4px 8px;font-weight:600;">4</td><td style="padding:4px 8px;">11</td><td style="padding:4px 8px;color:#22c55e;">36.4%</td><td style="padding:4px 8px;">3.7</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="https://www.kpopjournal.tokyo/confidence-man-kr-guide/">/confidence-man-kr-guide/</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">5</td><td style="padding:4px 8px;color:#22c55e;">20.0%</td><td style="padding:4px 8px;">10.2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="https://www.kpopjournal.tokyo/daesung-umbrella-release-2025/">/daesung-umbrella-release-2025/</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">3</td><td style="padding:4px 8px;color:#22c55e;">33.3%</td><td style="padding:4px 8px;">8.0</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="https://www.kpopjournal.tokyo/hearts2hearts-rude-11-ive-4-kpop-2026/">/hearts2hearts-rude-11-ive-4-kpop-2026/</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">1</td><td style="padding:4px 8px;color:#22c55e;">100.0%</td><td style="padding:4px 8px;">4.0</td></tr>
+</table></div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#a78bfa;font-size:0.9rem;font-weight:600;margin-bottom:8px;">検索クエリ Top5</div><table style="width:100%;border-collapse:collapse;font-size:0.82rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">クエリ</th><th style="padding:4px 8px;">クリック</th><th style="padding:4px 8px;">表示</th><th style="padding:4px 8px;">CTR</th><th style="padding:4px 8px;">順位</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">スキズ ost 一覧</td><td style="padding:4px 8px;font-weight:600;">3</td><td style="padding:4px 8px;">3</td><td style="padding:4px 8px;">100.0%</td><td style="padding:4px 8px;">1.0</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">kpopガールズ キャラクター</td><td style="padding:4px 8px;font-weight:600;">2</td><td style="padding:4px 8px;">2</td><td style="padding:4px 8px;">100.0%</td><td style="padding:4px 8px;">4.0</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">4月 k-popライブ 2026</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">11</td><td style="padding:4px 8px;">9.1%</td><td style="padding:4px 8px;">9.4</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">bumsup</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">1</td><td style="padding:4px 8px;">100.0%</td><td style="padding:4px 8px;">1.0</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;">kpopガールズ デーモン・ハンターズ キャラクター</td><td style="padding:4px 8px;font-weight:600;">1</td><td style="padding:4px 8px;">1</td><td style="padding:4px 8px;">100.0%</td><td style="padding:4px 8px;">2.0</td></tr>
+</table></div>
+<details style="background:#1e293b;border-radius:8px;padding:14px 18px;"><summary style="color:#eab308;cursor:pointer;font-weight:600;font-size:0.9rem;">低CTRページ（20件）</summary><table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:8px;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:3px 8px;">Page</th><th style="padding:3px 8px;">Clicks</th><th style="padding:3px 8px;">Impr</th><th style="padding:3px 8px;">CTR</th><th style="padding:3px 8px;">Pos</th></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/bigbang-coachella-2026/</td><td style="padding:3px 8px;">8.0</td><td style="padding:3px 8px;">2,512.0</td><td style="padding:3px 8px;color:#ef4444;">0.32%</td><td style="padding:3px 8px;">4.6</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/kpop-demon-hunters-golden-analysis/</td><td style="padding:3px 8px;">4.0</td><td style="padding:3px 8px;">1,993.0</td><td style="padding:3px 8px;color:#ef4444;">0.20%</td><td style="padding:3px 8px;">4.6</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/bts-jimin-songdaeun-dating-scandal/</td><td style="padding:3px 8px;">1.0</td><td style="padding:3px 8px;">1,732.0</td><td style="padding:3px 8px;color:#ef4444;">0.06%</td><td style="padding:3px 8px;">4.1</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/bts-jimin-relationship-controversy-2025/</td><td style="padding:3px 8px;">2.0</td><td style="padding:3px 8px;">1,441.0</td><td style="padding:3px 8px;color:#ef4444;">0.14%</td><td style="padding:3px 8px;">4.3</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/bigbang-coachella-2026-kpop-festival/</td><td style="padding:3px 8px;">34.0</td><td style="padding:3px 8px;">1,410.0</td><td style="padding:3px 8px;color:#ef4444;">2.41%</td><td style="padding:3px 8px;">9.5</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/mama-awards-2026-osaka/</td><td style="padding:3px 8px;">18.0</td><td style="padding:3px 8px;">713.0</td><td style="padding:3px 8px;color:#ef4444;">2.52%</td><td style="padding:3px 8px;">9.4</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/about-editor/</td><td style="padding:3px 8px;">7.0</td><td style="padding:3px 8px;">606.0</td><td style="padding:3px 8px;color:#ef4444;">1.16%</td><td style="padding:3px 8px;">6.7</td></tr>
+<tr style="color:#cbd5e1;border-top:1px solid #334155;"><td style="padding:3px 8px;">/swf3-osaka-ojo-gang-members/</td><td style="padding:3px 8px;">4.0</td><td style="padding:3px 8px;">456.0</td><td style="padding:3px 8px;color:#ef4444;">0.88%</td><td style="padding:3px 8px;">8.7</td></tr>
+</table></details>
+</div></div>
+</section>
+
+<section id="revenue" class="section">
+  <h2 class="section-title">💰 収益・収益化</h2>
+  <div class="section-body"><div style="margin-bottom:24px;">
+<h2 style="color:#e2e8f0;font-size:1.4rem;margin-bottom:16px;">💰 収益・収益化 <span style="display:inline-block;background:#ef444422;color:#ef4444;border:1px solid #ef4444;padding:1px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;margin-left:8px;vertical-align:middle;">🔴 43/100 危険</span></h2>
+<div class="action-guidance">
+<div class="action-title">&#x1F3AF; Yutaが判断すべきこと</div>
+<div class="action-item" style="color:#ef4444;">月末予測が目標の50%未満です。収益施策の強化を検討してください</div>
+<div class="metric-highlight">¥1,230 <span style="font-size:0.9rem;color:#94a3b8;">月末予測</span></div>
+<div class="action-item" style="color:#94a3b8;">&#x1F4CA; 主要指標: 昨日収益 / 7日平均 / 月累計 / 月末予測 / RPM</div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:10px 14px;min-width:110px;flex:1;"><div style="color:#94a3b8;font-size:0.72rem;">昨日の収益</div><div style="color:#ef4444;font-size:1.3rem;font-weight:700;">¥41</div><div style="color:#64748b;font-size:0.68rem;">目標 ¥200/日</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:10px 14px;min-width:110px;flex:1;"><div style="color:#94a3b8;font-size:0.72rem;">7日平均</div><div style="color:#ef4444;font-size:1.3rem;font-weight:700;">¥41</div><div style="color:#64748b;font-size:0.68rem;">データ不足 <span style="color:#64748b;">&#8212;</span></div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:10px 14px;min-width:110px;flex:1;"><div style="color:#94a3b8;font-size:0.72rem;">30日平均</div><div style="color:#ef4444;font-size:1.3rem;font-weight:700;">¥41</div><div style="color:#64748b;font-size:0.68rem;">データ不足 <span style="color:#64748b;">&#8212;</span></div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:10px 14px;min-width:110px;flex:1;"><div style="color:#94a3b8;font-size:0.72rem;">月累計</div><div style="color:#ef4444;font-size:1.3rem;font-weight:700;">¥41</div><div style="color:#64748b;font-size:0.68rem;">1日経過</div></div>
+<div style="background:#1e293b;border-left:4px solid #ef4444;border-radius:8px;padding:10px 14px;min-width:110px;flex:1;"><div style="color:#94a3b8;font-size:0.72rem;">月末予測</div><div style="color:#ef4444;font-size:1.3rem;font-weight:700;">¥1,230</div><div style="color:#64748b;font-size:0.68rem;">目標 ¥6,000</div></div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#94a3b8;font-size:0.82rem;font-weight:600;margin-bottom:10px;">月次目標進捗</div>
+<div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#94a3b8;margin-bottom:2px;"><span>収益: ¥41 / ¥6,000</span><span style="color:#ef4444;font-weight:700;">1%</span></div><div style="background:#334155;border-radius:6px;height:10px;overflow:hidden;"><div style="background:#ef4444;height:100%;width:0.7%;border-radius:6px;"></div></div></div>
+<div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#94a3b8;margin-bottom:2px;"><span>RPM: ¥310 / ¥300</span><span style="color:#22c55e;font-weight:700;">103%</span></div><div style="background:#334155;border-radius:6px;height:10px;overflow:hidden;"><div style="background:#22c55e;height:100%;width:100.0%;border-radius:6px;"></div></div></div>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+<div style="background:#1e293b;border-radius:8px;padding:10px 14px;flex:1;min-width:160px;"><div style="color:#94a3b8;font-size:0.72rem;">RPM (1000PVあたり収益)</div><div style="color:#22c55e;font-size:1.2rem;font-weight:700;">¥310</div><div style="color:#64748b;font-size:0.68rem;">データ不足 <span style="color:#64748b;">&#8212;</span></div></div>
+<div style="background:#1e293b;border-radius:8px;padding:10px 14px;flex:1;min-width:160px;"><div style="color:#94a3b8;font-size:0.72rem;">CPM (1000インプレッションあたり)</div><div style="color:#a78bfa;font-size:1.2rem;font-weight:700;">¥41,000</div><div style="color:#64748b;font-size:0.68rem;"></div></div>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#22c55e;font-size:0.9rem;font-weight:600;margin-bottom:8px;">推定収益上位記事 Top 10</div><table style="width:100%;border-collapse:collapse;font-size:0.82rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">#</th><th style="padding:4px 8px;">記事</th><th style="padding:4px 8px;">PV</th><th style="padding:4px 8px;">推定収益</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">1</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/">/</td><td style="padding:4px 8px;">20</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥6</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">2</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/kpop-demon-hunters-cast-characters/">/kpop-demon-hunters-cast-characters/</td><td style="padding:4px 8px;">19</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥6</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">3</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/mama-awards-2026-osaka/">/mama-awards-2026-osaka/</td><td style="padding:4px 8px;">15</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥5</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">4</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/bigbang-coachella-2026-kpop-festival/">/bigbang-coachella-2026-kpop-festival/</td><td style="padding:4px 8px;">7</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">5</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/kpop-events-japan-april-2026-complete/">/kpop-events-japan-april-2026-complete/</td><td style="padding:4px 8px;">7</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">6</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/twice-guide-4-25-28-2026/">/twice-guide-4-25-28-2026/</td><td style="padding:4px 8px;">5</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">7</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/kpop-demon-hunters-golden-analysis/">/kpop-demon-hunters-golden-analysis/</td><td style="padding:4px 8px;">4</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">8</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/bts-aespa-worn-brands-kpop-fashion-trends-spring-2026/">/bts-aespa-worn-brands-kpop-fashion-trends-spri...</td><td style="padding:4px 8px;">4</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">9</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/babymonster-3rd-choom-15-june-tour-2026/">/babymonster-3rd-choom-15-june-tour-2026/</td><td style="padding:4px 8px;">3</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;color:#64748b;">10</td><td style="padding:4px 8px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="/straykids-ost-genie-skz-it-tape-2025/">/straykids-ost-genie-skz-it-tape-2025/</td><td style="padding:4px 8px;">0</td><td style="padding:4px 8px;color:#94a3b8;font-weight:600;">¥0</td></tr>
+</table></div>
+<details style="background:#1e293b;border-radius:8px;padding:14px 18px;"><summary style="color:#a78bfa;cursor:pointer;font-weight:600;font-size:0.9rem;">収益チャネル (3)</summary><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+<div style="background:#0f172a;border-radius:6px;padding:8px 14px;min-width:160px;"><div style="color:#e2e8f0;font-size:0.82rem;font-weight:600;">A8.net</div><div style="color:#94a3b8;font-size:0.72rem;">beauty, skincare, cosme</div><div style="color:#38bdf8;font-size:0.78rem;">平均: ¥3,000</div></div>
+<div style="background:#0f172a;border-radius:6px;padding:8px 14px;min-width:160px;"><div style="color:#e2e8f0;font-size:0.82rem;font-weight:600;">Amazon Associates</div><div style="color:#94a3b8;font-size:0.72rem;">album, goods, cosme</div><div style="color:#38bdf8;font-size:0.78rem;">平均: 3%</div></div>
+<div style="background:#0f172a;border-radius:6px;padding:8px 14px;min-width:160px;"><div style="color:#e2e8f0;font-size:0.82rem;font-weight:600;">Qoo10 Affiliate</div><div style="color:#94a3b8;font-size:0.72rem;">kpop_goods, cosme, korean_food</div><div style="color:#38bdf8;font-size:0.78rem;">平均: 5%</div></div>
+</div></details>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;margin-top:18px;"><div style="color:#f59e0b;font-size:0.95rem;font-weight:700;margin-bottom:12px;">収益 vs コスト</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+<div style="background:#0f172a;border-left:3px solid #22c55e;border-radius:6px;padding:8px 14px;flex:1;min-width:90px;"><div style="color:#94a3b8;font-size:0.7rem;">本日収益</div><div style="color:#22c55e;font-size:1.15rem;font-weight:700;">&yen;41</div></div>
+<div style="background:#0f172a;border-left:3px solid #ef4444;border-radius:6px;padding:8px 14px;flex:1;min-width:90px;"><div style="color:#94a3b8;font-size:0.7rem;">本日コスト</div><div style="color:#ef4444;font-size:1.15rem;font-weight:700;">&yen;40</div></div>
+<div style="background:#0f172a;border-left:3px solid #22c55e;border-radius:6px;padding:8px 14px;flex:1;min-width:90px;"><div style="color:#94a3b8;font-size:0.7rem;">本日利益</div><div style="color:#22c55e;font-size:1.15rem;font-weight:700;">&yen;1</div></div>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:0.78rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:3px 8px;">期間</th><th style="padding:3px 8px;">平均コスト/日</th><th style="padding:3px 8px;">USD</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:3px 8px;">7日平均</td><td style="padding:3px 8px;">&yen;40</td><td style="padding:3px 8px;color:#64748b;">$0.2672</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:3px 8px;">30日平均</td><td style="padding:3px 8px;">&yen;40</td><td style="padding:3px 8px;color:#64748b;">$0.2672</td></tr>
+</table>
+</div>
+<div style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><div style="color:#a78bfa;font-size:0.95rem;font-weight:700;margin-bottom:10px;">部署別コスト</div><table style="width:100%;border-collapse:collapse;font-size:0.78rem;"><tr style="color:#94a3b8;text-align:left;"><th style="padding:4px 8px;">部署</th><th style="padding:4px 8px;">コスト (JPY)</th><th style="padding:4px 8px;">コスト (USD)</th><th style="padding:4px 8px;">API呼出</th></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#818cf8;margin-right:6px;"></span>編集部</td><td style="padding:4px 8px;">&yen;10.4</td><td style="padding:4px 8px;color:#64748b;">$0.0690</td><td style="padding:4px 8px;color:#64748b;">3</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:6px;"></span>経営陣</td><td style="padding:4px 8px;">&yen;6.3</td><td style="padding:4px 8px;color:#64748b;">$0.0420</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22d3ee;margin-right:6px;"></span>SEO部</td><td style="padding:4px 8px;">&yen;4.1</td><td style="padding:4px 8px;color:#64748b;">$0.0275</td><td style="padding:4px 8px;color:#64748b;">2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fbbf24;margin-right:6px;"></span>監査部</td><td style="padding:4px 8px;">&yen;3.8</td><td style="padding:4px 8px;color:#64748b;">$0.0255</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#34d399;margin-right:6px;"></span>マーケ・SNS部</td><td style="padding:4px 8px;">&yen;3.6</td><td style="padding:4px 8px;color:#64748b;">$0.0238</td><td style="padding:4px 8px;color:#64748b;">2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a78bfa;margin-right:6px;"></span>経営管理部</td><td style="padding:4px 8px;">&yen;3.1</td><td style="padding:4px 8px;color:#64748b;">$0.0210</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fb923c;margin-right:6px;"></span>パブリッシング部</td><td style="padding:4px 8px;">&yen;3.1</td><td style="padding:4px 8px;color:#64748b;">$0.0208</td><td style="padding:4px 8px;color:#64748b;">2</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f87171;margin-right:6px;"></span>競合・トレンド部</td><td style="padding:4px 8px;">&yen;2.8</td><td style="padding:4px 8px;color:#64748b;">$0.0186</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#facc15;margin-right:6px;"></span>収益化部</td><td style="padding:4px 8px;">&yen;2.5</td><td style="padding:4px 8px;color:#64748b;">$0.0165</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:1px solid #334155;"><td style="padding:4px 8px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;margin-right:6px;"></span>財務管理部</td><td style="padding:4px 8px;">&yen;0.4</td><td style="padding:4px 8px;color:#64748b;">$0.0025</td><td style="padding:4px 8px;color:#64748b;">1</td></tr>
+<tr style="color:#e2e8f0;border-top:2px solid #475569;font-weight:700;"><td style="padding:4px 8px;">合計</td><td style="padding:4px 8px;">&yen;40.1</td><td style="padding:4px 8px;color:#64748b;">$0.2672</td><td style="padding:4px 8px;color:#64748b;">15</td></tr>
+</table></div>
+<details style="background:#1e293b;border-radius:8px;padding:14px 18px;margin-bottom:14px;"><summary style="color:#38bdf8;cursor:pointer;font-weight:600;font-size:0.85rem;">コスト上位エージェント</summary><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">mewtwo</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0420</span></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">fusigidane</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0345</span></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">eevee</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0285</span></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">arceus</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0255</span></div>
+<div style="background:#0f172a;border-radius:6px;padding:6px 12px;"><span style="color:#e2e8f0;font-size:0.78rem;">latias</span> <span style="color:#f59e0b;font-size:0.78rem;font-weight:600;">$0.0240</span></div>
+</div></details>
+<div style="color:#334155;font-size:0.6rem;margin-top:8px;">※ 推定収益はRPMベースの概算値です。更新: 04/24 18:00 JST</div>
+</div></div>
+</section>
+
+<footer style="text-align:center;color:#475569;font-size:0.7rem;padding:32px 0 16px">
+  Dashboard v2 Phase 7 — 「実装完了 ≠ 完了」原則に基づき、全データはリアルソースから取得<br>
+  生成: 2026-04-24 18:00 JST
+</footer>
+</div>
+<script>
+// Active nav highlighting on scroll
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navItems.forEach(n => n.classList.remove('active'));
+      const id = entry.target.id;
+      const active = document.querySelector(`.nav-item[href="#${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

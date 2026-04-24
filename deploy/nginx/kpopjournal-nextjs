@@ -1,0 +1,131 @@
+# ──────────────────────────────────────────────
+# kpopjournal.tokyo — nginx config (LIVE)
+# ──────────────────────────────────────────────
+# Server: 163.44.96.56 (AI server — Next.js)
+# WordPress: 160.251.148.187 (separate server, proxied via external HTTPS)
+# Installed: /etc/nginx/sites-available/kpopjournal
+# Active:    /etc/nginx/sites-enabled/kpopjournal
+# ──────────────────────────────────────────────
+# This is a snapshot of the running config.
+# To update: sudo cp this-file /etc/nginx/sites-available/kpopjournal
+#            sudo nginx -t && sudo systemctl reload nginx
+# ──────────────────────────────────────────────
+
+upstream kpopjournal_next {
+    server 127.0.0.1:3000;
+    keepalive 64;
+}
+
+# ── HTTP server (also handles ACME challenge for certbot) ──
+server {
+    listen 80;
+    listen [::]:80;
+    server_name kpopjournal.tokyo www.kpopjournal.tokyo;
+
+    # Let's Encrypt challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    # Proxy everything to Next.js for now (SSL added later)
+    location / {
+        proxy_pass http://kpopjournal_next;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+    }
+
+    # Next.js static assets — immutable cache
+    location /_next/static/ {
+        proxy_pass http://kpopjournal_next;
+        proxy_cache_valid 200 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Next.js image optimization
+    location /_next/image {
+        proxy_pass http://kpopjournal_next;
+        proxy_cache_valid 200 3600;
+    }
+
+    # WordPress API passthrough (external HTTPS — WP is on separate server)
+    location /wp-json/ {
+        proxy_pass https://www.kpopjournal.tokyo/wp-json/;
+        proxy_set_header Host www.kpopjournal.tokyo;
+        proxy_ssl_server_name on;
+        proxy_ssl_name www.kpopjournal.tokyo;
+        proxy_cache_valid 200 60s;
+        proxy_read_timeout 30s;
+    }
+
+    # WordPress admin passthrough
+    location /wp-admin/ {
+        proxy_pass https://www.kpopjournal.tokyo/wp-admin/;
+        proxy_set_header Host www.kpopjournal.tokyo;
+        proxy_ssl_server_name on;
+        proxy_ssl_name www.kpopjournal.tokyo;
+        proxy_read_timeout 60s;
+    }
+
+    # WordPress uploads (images)
+    location /wp-content/uploads/ {
+        proxy_pass https://www.kpopjournal.tokyo/wp-content/uploads/;
+        proxy_set_header Host www.kpopjournal.tokyo;
+        proxy_ssl_server_name on;
+        proxy_ssl_name www.kpopjournal.tokyo;
+        proxy_cache_valid 200 7d;
+        add_header Cache-Control "public, max-age=604800";
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Gzip
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_min_length 256;
+    gzip_types
+        text/plain
+        text/css
+        application/json
+        application/javascript
+        text/xml
+        application/xml
+        image/svg+xml
+        application/wasm;
+}
+
+# ──────────────────────────────────────────────
+# HTTPS server block (activate after certbot)
+# ──────────────────────────────────────────────
+# After running:
+#   sudo certbot --nginx -d kpopjournal.tokyo -d www.kpopjournal.tokyo
+# certbot will automatically add SSL directives.
+# Then add HSTS and additional security headers:
+#
+# server {
+#     listen 443 ssl http2;
+#     listen [::]:443 ssl http2;
+#     server_name kpopjournal.tokyo www.kpopjournal.tokyo;
+#
+#     ssl_certificate /etc/letsencrypt/live/kpopjournal.tokyo/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/kpopjournal.tokyo/privkey.pem;
+#     include /etc/letsencrypt/options-ssl-nginx.conf;
+#     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+#
+#     add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+#     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+#
+#     # ... (same location blocks as above)
+# }

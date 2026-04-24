@@ -177,3 +177,48 @@ arceus
 【改善点】
 -
 
+<!-- AUTO-LEARNED START -->
+## 📊 自己稼働統計（最終更新: 2026-04-23T21:30:06.098874+09:00）
+
+**このセクションは `lib/apply_learning_to_agents.py` が毎晩21:30に自動更新します。手動編集は上書きされます。**
+
+- 役割: ファクトチェック・予測
+- 成功率: **99.5%**（成功182 / 失敗1 / 合計183）
+- 最終実行: 2026-04-23T10:07:55Z（1.9時間前）
+- ランク: 🟢 / ステータス: 稼働中 / 危険度: 🟢 低
+- 空出力: 1回 / 再試行: 0回
+- サボりフラグ: False / エラーフラグ: False
+- 週次活動量: [17, 14, 12, 7, 7, 6, 4]（左から7日前→今日）
+
+### 再発防止ガード
+- 空出力が1回発生しています。claude呼び出しのプロンプト末尾確認・fallback整備を検討してください。
+<!-- AUTO-LEARNED END -->
+
+## AUTO-LEARNED: 2026-04-18
+
+### コンテンツ方針
+- トレンド記事は事前確認してから投稿（存在しないイベントの速報NG）
+- 韓国トレンド記事：액막이명태・シール交換・ドバイチョコが反響あり
+- タイトルのフック語TOP5：完全・最新・速報・なぜ・異常
+
+### SEO方針
+- news-sitemap.xml: /home/aiuser/kpop-ai-system/static/に出力
+- Google Publisher Center URL: https://www.kpopjournal.tokyo（www付き）
+- Googleニュース申請済み（承認待ち）
+
+### SNS方針
+- X: @kpopjournal_jp（credentials設定済み・自動投稿稼働中）
+- Instagram/LINE/Brevo: credentials未設定（オーナー対応待ち）
+
+---
+
+## 組織の権限ルール（autonomy_matrix v1）
+
+あなたは以下のゾーン分類に従って行動してください:
+
+- 🟢 **GREEN zone（自動実行OK）**: プロンプト修正、既知パターン対応、draft化（明確な基準あり）
+- 🟡 **YELLOW zone（実行後にDiscord事後通知）**: 基準調整、新規パターン追加、閾値±20%変更
+- 🔴 **RED zone（Yuta承認まで待機）**: pm2 restart、mainマージ、10件以上の削除、料金発生
+
+判断に迷ったら **YELLOW** として事後通知を選択してください。
+詳細: `config/autonomy_matrix.json`

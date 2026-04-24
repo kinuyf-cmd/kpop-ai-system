@@ -32,6 +32,7 @@ from lib.post_guard import (
 )
 from lib.kpi_logger import log_post, log_error
 from lib.retry_handler import exponential_backoff
+from lib.seo_structured_data import optimize_meta_description
 
 # ── 設定読み込み ──
 
@@ -63,7 +64,7 @@ def _wp_auth_header() -> str:
     if os.path.exists(wp_auth_path):
         with open(wp_auth_path) as f:
             for line in f:
-                m = _re.match(r'header\s*=\s*"(Authorization:\s*Basic\s+[^"\\n]+)"?', line.strip())
+                m = _re.match(r'header\s*=\s*"(Authorization:\s*Basic\s+[^"]+)"', line.strip())
                 if m:
                     return m.group(1)  # "Authorization: Basic xxxx"
     # フォールバック: 環境変数
@@ -84,13 +85,71 @@ def get_auth_headers():
     }
 
 
+def check_content_quality(title, content):
+    """直接呼び出し時の品質ゲート（パイプライン経由でない投稿を検査）
+
+    Returns:
+        dict: {"pass": bool, "warnings": list[str], "errors": list[str]}
+    """
+    errors = []
+    warnings = []
+
+    plain = re.sub(r'<[^>]+>', '', content).strip()
+    plain = re.sub(r'\s+', ' ', plain)
+    char_count = len(plain)
+    h2_count = len(re.findall(r'<h2', content, re.IGNORECASE))
+    internal_links = len(re.findall(
+        r'<a\s+[^>]*href=["\']https?://(?:www\.)?kpopjournal\.tokyo/',
+        content, re.IGNORECASE))
+
+    if char_count < 2000:
+        errors.append(f"文字数{char_count}字(基準2000字)")
+    if h2_count < 4:
+        errors.append(f"h2タグ{h2_count}本(基準4本)")
+    if internal_links < 2:
+        errors.append(f"内部リンク{internal_links}本(基準2本)")
+    elif internal_links < 3:
+        warnings.append(f"内部リンク{internal_links}本(推奨3本以上)")
+
+    if not title or len(title) < 10:
+        errors.append(f"タイトル短すぎ({len(title or '')}文字)")
+
+    # アイキャッチ画像はWARNのみ（後で設定可能）
+    warnings.append("アイキャッチ画像未チェック(投稿後に設定推奨)")
+
+    return {"pass": len(errors) == 0, "warnings": warnings, "errors": errors,
+            "char_count": char_count, "h2_count": h2_count, "internal_links": internal_links}
+
+
 def post_to_wordpress(title, content, slug="", categories=None, tags=None,
                        featured_media=0, excerpt="", meta_description="",
-                       status="publish"):
+                       status="publish", skip_quality_check=False):
     """
     WordPress REST API で記事を投稿
     指数バックオフ付きリトライ
     """
+    # 品質ゲート（直接呼び出し時の安全弁）
+    if not skip_quality_check:
+        qc = check_content_quality(title, content)
+        if not qc["pass"]:
+            print(f"⚠️ 品質基準未達:")
+            for e in qc["errors"]:
+                print(f"    ❌ {e}")
+            for w in qc["warnings"]:
+                print(f"    ⚠️ {w}")
+            # 非対話環境では投稿しない、対話環境では確認を求める
+            if sys.stdin.isatty():
+                resp = input("続行しますか？ (y/N): ")
+                if resp.strip().lower() != "y":
+                    return {"success": False, "error": "quality_gate_blocked",
+                            "quality": qc}
+            else:
+                return {"success": False, "error": "quality_gate_blocked",
+                        "quality": qc}
+        else:
+            for w in qc["warnings"]:
+                print(f"  ⚠️ {w}")
+
     headers = get_auth_headers()
     data = {
         "title": title,
@@ -273,22 +332,9 @@ def main():
     if len(excerpt) > 130:
         excerpt = excerpt[:127] + "..."
 
-    # meta_description: excerptとは独立したSEO用メタ説明
-    # タイトルを含め「誰が・何を・なぜ読むべきか」を明示した文を生成
-    # 本文コピー禁止（meta_desc_copied エラー再発防止）
-    _title_short = re.sub(r'[【】「」『』\[\]]', '', title)[:20]
-    _plain_words = re.sub(r'\s+', '', plain)
-    # 本文中盤の文（冒頭ではなく2〜4文目）からキーワードを抽出してSEO文を構成
-    _mid_sentences = [s.strip() for s in sentences if len(s.strip()) >= 20]
-    _meta_source = _mid_sentences[1] if len(_mid_sentences) > 1 else (_mid_sentences[0] if _mid_sentences else _plain_words[:80])
-    _meta_source = _meta_source[:60].rstrip('。！？')
-    meta_description = f"{_title_short}について解説。{_meta_source}。K-POPファン必見の最新情報をお届けします。"
-    if len(meta_description) > 130:
-        meta_description = meta_description[:127] + "..."
-    elif len(meta_description) < 80:
-        meta_description = f"{_title_short}の最新情報・詳細をまとめました。{_meta_source}。K-POPファン向けの解説記事です。"
-        if len(meta_description) > 130:
-            meta_description = meta_description[:127] + "..."
+    # meta_description: SEO最適化されたメタ説明（seo_structured_data モジュール）
+    # タイトルのコアキーワードを冒頭に含め、本文コピーを避け、110-130文字に収める
+    meta_description = optimize_meta_description(title, plain)
 
     result = post_to_wordpress(
         title=title,
@@ -300,6 +346,7 @@ def main():
         excerpt=excerpt,
         meta_description=meta_description,
         status=status,
+        skip_quality_check=True,  # パイプライン経由はpost_guard通過済み
     )
 
     elapsed = time.time() - start_time

@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-22",
+  "note": "読者アクセスピーク分析に基づく投稿スケジュール最適化。現行crontab.txtのパイプラインスロットと対応。",
+  "access_peaks": {
+    "weekday": [
+      {"time_range": "07:00-08:00", "label": "朝通勤", "relative_weight": 0.20},
+      {"time_range": "12:00-13:00", "label": "昼休み", "relative_weight": 0.25},
+      {"time_range": "17:00-18:00", "label": "夕方帰宅", "relative_weight": 0.15},
+      {"time_range": "20:00-22:00", "label": "夜ゴールデン", "relative_weight": 0.40}
+    ],
+    "weekend": [
+      {"time_range": "10:00-11:00", "label": "朝ゆっくり", "relative_weight": 0.20},
+      {"time_range": "14:00-16:00", "label": "午後", "relative_weight": 0.30},
+      {"time_range": "20:00-23:00", "label": "夜", "relative_weight": 0.50}
+    ]
+  },
+  "pipeline_schedule": {
+    "daily": [
+      {
+        "time": "07:00",
+        "pipeline": "kpop_pipeline.sh",
+        "category": "idol_news",
+        "peak_alignment": "朝通勤",
+        "persona_target": "core_fan",
+        "note": "朝イチの速報。検索流入のピーク前に公開してインデックスを先取り。"
+      },
+      {
+        "time": "11:00",
+        "pipeline": "kpop_beauty_pipeline.sh",
+        "category": "beauty_cosme",
+        "peak_alignment": "昼休み前",
+        "persona_target": "k_culture_curious",
+        "note": "昼休みにSNS経由で読まれる美容コンテンツ。11時公開で12時ピークに間に合わせる。"
+      },
+      {
+        "time": "12:00",
+        "pipeline": "kpop_strategy_pipeline.sh",
+        "category": "strategy_deep",
+        "peak_alignment": "昼休み",
+        "persona_target": "mature_deep_fan",
+        "note": "昼休みの長文読み層向け。深堀り分析は滞在時間が長いためAdSense効率も高い。"
+      },
+      {
+        "time": "14:00",
+        "pipeline": "kpop_lifestyle_pipeline.sh",
+        "category": "k_culture_lifestyle",
+        "peak_alignment": "午後",
+        "persona_target": "k_culture_curious",
+        "note": "午後のカジュアルブラウジング層向け。韓ドラ・ライフスタイル系。"
+      },
+      {
+        "time": "15:00",
+        "pipeline": "kpop_pipeline.sh",
+        "category": "idol_news",
+        "peak_alignment": "夕方前",
+        "persona_target": "core_fan",
+        "note": "午後の速報ラウンド。韓国時間の午後発表ニュースをキャッチ。"
+      },
+      {
+        "time": "16:00",
+        "pipeline": "kpop_comparison_pipeline.sh",
+        "category": "comparison_ranking",
+        "peak_alignment": "夕方帰宅前",
+        "persona_target": "k_culture_curious",
+        "note": "帰宅時間帯にライトなランキング/比較記事。スマホでのスキャン読みに最適化。"
+      },
+      {
+        "time": "19:00",
+        "pipeline": "kpop_pipeline.sh",
+        "category": "idol_news",
+        "peak_alignment": "夜ゴールデン",
+        "persona_target": "core_fan",
+        "note": "夜のメインラウンド。1日の最大アクセス帯に向けた主力コンテンツ。"
+      }
+    ],
+    "weekly": [
+      {
+        "day": "monday",
+        "time": "07:30",
+        "pipeline": "kpop_chart_pipeline.sh",
+        "category": "music_chart",
+        "persona_target": "mature_deep_fan",
+        "note": "週明けにチャート振り返り。週末のランキング結果を分析。"
+      }
+    ],
+    "proposed_additions": [
+      {
+        "time": "21:00",
+        "pipeline": "kpop_pipeline.sh",
+        "category": "idol_news",
+        "peak_alignment": "夜ゴールデン後半",
+        "persona_target": "core_fan",
+        "note": "提案: 夜のゴールデンタイム後半にもう1本。20-22時がアクセス最大帯のため追加価値あり。",
+        "status": "proposed",
+        "expected_impact": "+15-20 sessions/day"
+      },
+      {
+        "time": "22:00",
+        "day": "friday",
+        "pipeline": "kpop_pipeline.sh",
+        "category": "idol_news",
+        "peak_alignment": "金曜夜バズ狙い",
+        "persona_target": "core_fan",
+        "note": "提案: 金曜夜の追加枠。週末前のバズ記事で土日のオーガニック流入を仕込む。",
+        "status": "proposed",
+        "expected_impact": "+10-15 sessions on Saturday"
+      }
+    ]
+  },
+  "x_post_timing": {
+    "note": "記事公開後のX投稿タイミング。google_metrics/post_to_x.py連携。",
+    "delay_after_publish_minutes": 5,
+    "best_engagement_hours": ["12:00", "18:00", "21:00"],
+    "weekend_boost_hours": ["14:00", "21:00"]
+  }
+}

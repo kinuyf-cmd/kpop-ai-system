@@ -17,6 +17,9 @@ mkdir -p "$REPORTS"
 TODAY=$(date '+%Y年%m月%d日')
 echo "=== SEO分析部会議 開始: $TODAY ==="
 
+# Phase 4: 前週KPI自動注入
+WEEKLY_KPI=$(weekly_kpi_brief seo)
+
 SEO_DATA=$(python3 - <<'PYEOF'
 import json
 from pathlib import Path
@@ -51,6 +54,8 @@ safe_claude lapras "
 
 【SEOデータ】
 ${SEO_DATA}
+
+${WEEKLY_KPI}
 
 出力形式：
 【担当】lapras（部署長）

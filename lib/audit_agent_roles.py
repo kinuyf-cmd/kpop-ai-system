@@ -144,7 +144,7 @@ def grep_agent_calls(file_path: Path) -> list[tuple[int, str]]:
     # claude コマンド行のみを対象とする（行内に claude が含まれ、かつ --agent が続く）
     pattern_claude_agent = re.compile(r'\bclaude\b.*?--agent\s+(["\']?)(\S+)\1')
     try:
-        with open(file_path, encoding="utf-8", errors="ignore") as f:
+        with open(file_path, encoding="utf-8", errors="replace") as f:
             for lineno, line in enumerate(f, 1):
                 # コメント行はスキップ
                 stripped = line.strip()
@@ -167,7 +167,7 @@ def grep_websearch_agent_calls(file_path: Path) -> list[tuple[int, str]]:
         return results
     pattern_agent = re.compile(r'--agent\s+(["\']?)(\S+)\1')
     try:
-        with open(file_path, encoding="utf-8", errors="ignore") as f:
+        with open(file_path, encoding="utf-8", errors="replace") as f:
             for lineno, line in enumerate(f, 1):
                 stripped = line.strip()
                 if stripped.startswith("#"):
@@ -201,7 +201,7 @@ def read_file_text(path: Path) -> str:
     if not path.exists():
         return ""
     try:
-        return path.read_text(encoding="utf-8", errors="ignore")
+        return path.read_text(encoding="utf-8", errors="replace")
     except Exception:
         return ""
 

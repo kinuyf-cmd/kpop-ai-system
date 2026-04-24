@@ -157,17 +157,27 @@ if [ "${{ENABLE_X_POST:-0}}" != "1" ]; then
   exit 0
 fi
 
-echo "=== x_backfill_runner start $(date -Iseconds) ===" >> "$LOG"
+echo "=== x_backfill_runner start $(date -Iseconds) ===" | tee -a "$LOG"
+COUNT=0
 while IFS= read -r line; do
   [ -z "$line" ] && continue
   post_id=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('post_id',''))")
+  title=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('title',''))")
   text=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('tweet_text',''))")
   url=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('reply_url',''))")
-  echo "[backfill] posting post_id=$post_id ..." >> "$LOG"
-  TWEET_TEXT="$text" POST_URL="$url" BACKFILL_MODE=1 bash "$POSTER" >> "$LOG" 2>&1 || true
+  if [ -z "$title" ] || [ -z "$url" ]; then
+    echo "[backfill skip] empty title/url (post_id=$post_id)" | tee -a "$LOG"
+    continue
+  fi
+  COUNT=$((COUNT+1))
+  echo "[backfill $COUNT] posting post_id=$post_id ..." | tee -a "$LOG"
+  PERSIAN_TMP=$(mktemp /tmp/x_backfill_sns.XXXXXX.md)
+  printf 'パターンA（採用推奨）\\n\`\`\`\\n%s\\n\`\`\`\\n' "$text" > "$PERSIAN_TMP"
+  BACKFILL_MODE=1 bash "$POSTER" "$title" "$url" "$PERSIAN_TMP" 2>&1 | tee -a "$LOG" | tail -3 || true
+  rm -f "$PERSIAN_TMP"
   sleep 90
 done < "$QUEUE"
-echo "=== x_backfill_runner done $(date -Iseconds) ===" >> "$LOG"
+echo "=== x_backfill_runner done $(date -Iseconds) (posted=$COUNT) ===" | tee -a "$LOG"
 """
     OUT_RUNNER.write_text(runner)
     OUT_RUNNER.chmod(0o755)

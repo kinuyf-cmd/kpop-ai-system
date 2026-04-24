@@ -55,9 +55,8 @@ print(lead[:200])
 PY
 }
 
-# 出力から前置き・マークダウン装飾・キー行を剥がして最初の2行を取り出す
-# NOTE: python3 <<PY 形式は stdin を heredoc で上書きしてパイプ入力を壊すため、
-# 一時ファイル経由で確実に受け渡す。
+# 出力を正規化（v3: 8文字以内の行を最大2行まで保持）
+# 前置き・マークダウン装飾・キー行を剥がし、有効な行（各8文字以内）を改行区切りで返す
 _sanitize_thumb_output() {
   local _tmp
   _tmp=$(mktemp)
@@ -66,7 +65,7 @@ _sanitize_thumb_output() {
 import sys, re
 raw = open(sys.argv[1], encoding='utf-8').read()
 bad_prefix = re.compile(r'^(はい|了解|承知|以下|こちら|Here|Sure|---+|```|「|"|\*\*|\*)')
-lines = []
+cleaned = []
 for line in raw.splitlines():
     s = line.strip().strip('「」"\'`')
     s = re.sub(r'^\*\*(.+?)\*\*$', r'\1', s)
@@ -79,13 +78,28 @@ for line in raw.splitlines():
     if re.match(r'^[A-Za-z]+:\s', s): continue
     if re.match(r'^(テキスト|スコア|レイアウト|genre|pattern)\s*[:：]', s, re.I): continue
     if re.match(r'^[#>]', s): continue
-    if ' / ' in s and '\n' not in s:
-        parts = [p.strip() for p in s.split(' / ') if p.strip()]
-        lines.extend(parts[:2])
+    if re.match(r'^\s*\{', s): continue          # JSON断片除去（{"type":など）
+    if re.match(r'^(API|Error|ERR|Exception|HTTP\s+[45])', s, re.I): continue  # APIエラーメッセージ除去
+    # スラッシュ区切りは最初の1つだけ採用
+    if ' / ' in s:
+        s = s.split(' / ')[0].strip()
+    cleaned.append(s)
+
+# 8文字以内の行を最大2行保持。9文字超の行は8文字で切る
+kept = []
+for l in cleaned:
+    if len(l) <= 8:
+        kept.append(l)
     else:
-        lines.append(s)
-    if len(lines) >= 2: break
-print("\n".join(lines[:2]))
+        kept.append(l[:8])
+    if len(kept) >= 2:
+        break
+# 2行未満なら、最初の行を分割するか「K-POP」を1行目に補完
+if len(kept) == 1:
+    kept.insert(0, "K-POP")
+elif len(kept) == 0:
+    kept = ["K-POP", "速報"]
+print("\n".join(kept[:2]))
 PY
   rm -f "$_tmp"
 }
@@ -101,12 +115,12 @@ generate_thumb_copy() {
   key_numbers="$(_extract_key_numbers "$body_file")"
   body_lead="$(_extract_body_lead "$body_file")"
 
-  # 行長チェッカ（>10文字の行があれば 1 を返す。描画の切れを防ぐ）
+  # v2 行長チェッカ: >8文字で即不合格（描画崩れ防止）
   _has_overlong_line() {
     python3 -c "
 import sys
 for l in sys.argv[1].split(chr(10)):
-    if len(l.strip()) > 10:
+    if len(l.strip()) > 8:
         sys.exit(1)
 sys.exit(0)
 " "$1"
@@ -121,10 +135,10 @@ sys.exit(0)
     local retry_hint=""
     if [[ "$try" -gt 1 ]] && [[ -n "$attempt1" ]]; then
       retry_hint="
-【再試行 ${try}/${max_try}】前回の出力「${attempt1//$'\n'/ / }」は1行が11文字以上でした。
-描画で末尾が切れます。**必ず各行10文字以内**で核心語のみに削ぎ落としてやり直せ。
-「〜の衝撃」「〜の真相」「〜が示す覚悟」「〜を徹底」「〜が止まらない」など語尾修飾句は全削除。
-アーティスト名＋具体数字 の最小構成を優先せよ。"
+【再試行 ${try}/${max_try}】前回の出力「${attempt1}」は9文字以上でした。
+描画で末尾が切れます。**1行8文字以内**で核心語のみに削ぎ落としてやり直せ。
+「〜の衝撃」「〜の真相」「〜が示す覚悟」「〜を徹底」など語尾修飾句は全削除。
+アーティスト名か具体数字 の最小構成を優先せよ。"
     fi
     local raw
     raw=$(claude --allowedTools "" --no-session-persistence --agent raikou_thumb -p "
@@ -134,8 +148,22 @@ BODY_LEAD: ${body_lead}
 KEY_NUMBERS: ${key_numbers}
 ${retry_hint}
 
-2行のサムネコピーのみ出力せよ。各行**10文字以内**厳守。前置き・マークダウン装飾・ツール呼び出し一切禁止。
+サムネコピー2行で出力せよ。
+1行目: アーティスト名（ASCII大文字、例: BTS / BLACKPINK / AESPA）
+2行目: 記事の核心語（**8文字以内**厳守）
+前置き・マークダウン装飾・JSON・ツール呼び出し一切禁止。2行だけ出力。
 " </dev/null 2>/dev/null)
+    # サニタイズ: リテラル\n除去、JSON断片除去、25文字超を切り詰め
+    # sed1: リテラル\n → スペース  sed2: {" 以降除去  sed3: { で始まる行全体除去（JSON行）
+    raw=$(echo "$raw" | sed 's/\\n/ /g' | sed 's/{".*//g' | sed '/^\s*{/d')
+    raw=$(python3 -c "
+import sys
+for line in sys.stdin:
+    line = line.rstrip('\n')
+    if len(line) > 25:
+        line = line[:25]
+    print(line)
+" <<< "$raw")
     attempt1=$(echo "$raw" | _sanitize_thumb_output)
 
     score1=$(python3 "$_THUMB_SCRIPT_DIR/google_metrics/score_thumbnail_text.py" "$attempt1" 2>/dev/null \

@@ -54,27 +54,26 @@ for t in titles[-10:]:
 PY
 )
 
-# メトリクスファイルを読み込み
-METRICS=""
-if [ -f "$SCRIPT_DIR/google_metrics/metrics_yesterday.json" ]; then
-  METRICS=$(cat "$SCRIPT_DIR/google_metrics/metrics_yesterday.json")
-fi
+# porygon_data_analyzer.py で全データを統合取得（GSC/GA4/archive/winning_patterns）
+echo "  データ分析パイプライン起動..."
+DATA_REPORT=$(python3 "$SCRIPT_DIR/lib/porygon_data_analyzer.py" --days 7 --save 2>/dev/null || echo "データ収集失敗")
 
-PORYGON_REPORT=$(claude --agent porygon -p "
-今日は${TODAY}です。直近1週間のパフォーマンスを分析せよ。
+PORYGON_REPORT=$(claude --no-session-persistence --agent porygon -p "
+今日は${TODAY}です。以下の統合データレポートを分析し、週次パフォーマンスレポートを出力せよ。
 
-【パイプライン実行結果】
+【統合データレポート（porygon_data_analyzer.py 出力）】
+${DATA_REPORT}
+
+【パイプライン実行結果（アーカイブ直接集計）】
 ${ARCHIVE_STATS}
-
-【アクセスデータ（直近）】
-${METRICS:-データなし}
 
 分析観点：
 1. パイプライン成功率のトレンド（改善/悪化）
 2. 記事テーマの偏り（速報ばかりか？カテゴリバランスは？）
 3. 停止原因の傾向（どのエージェントで止まっているか）
-4. PV・検索流入の傾向
-5. 改善が必要なエージェントの特定
+4. PV・検索流入の傾向（GSC/GA4の数字を使って具体的に）
+5. 改善が必要なエージェントの特定（成功率データに基づいて）
+6. 記事品質トレンド（winning_patterns スコアに基づいて）
 " 2>/dev/null || echo "ポリゴン分析失敗")
 
 echo "$PORYGON_REPORT" > "$REPORTS_DIR/porygon_$(date '+%Y%m%d').md"
@@ -143,6 +142,10 @@ echo "$LUGIA_REPORT" | python3 "$SCRIPT_DIR/lib/auto_improve.py" extract 2>/dev/
 
 # 勝ちワードも更新
 python3 "$SCRIPT_DIR/lib/auto_improve.py" update-titles 2>/dev/null || true
+
+# Phase 4: 週次KPI→auto_directives自動反映（週次戦略の自動更新）
+echo "  [Phase 4] 週次KPI→auto_directives更新..."
+python3 "$SCRIPT_DIR/lib/weekly_kpi_context.py" --update-directives 2>/dev/null || echo "  ⚠️ 週次KPI更新スキップ"
 
 echo "=== [2.6] イルミーゼ: UIレポート ==="
 python3 "$SCRIPT_DIR/lib/ui_optimizer.py" report 2>/dev/null || echo "  ⚠️ UIレポートスキップ"

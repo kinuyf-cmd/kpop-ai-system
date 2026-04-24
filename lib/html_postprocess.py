@@ -14,11 +14,14 @@ LLMが指示を一部守らなくても最低限の構造を補正する。
   7. 冒頭付近の数字・記録語への <strong> 最低保証
   8. 主要 <h2> 前の section-hook (2箇所以上)
   9. 画像→説明文の順序保証
+ 10. SEO構造化データ自動挿入 (Article/FAQ/Breadcrumb JSON-LD)
 """
 
 import re
 import sys
 from pathlib import Path
+
+from seo_structured_data import inject_structured_data, guess_category_from_title
 
 # ─────────────────────────────────────────────
 # 設定
@@ -412,6 +415,16 @@ def main():
     body, changed = ensure_image_before_text(body)
     if changed:
         log.append("✅ 画像→テキスト順序を補正")
+
+    # 10. SEO構造化データ自動挿入 (Article/FAQ/BreadcrumbList JSON-LD)
+    cat_name, cat_slug = guess_category_from_title(title)
+    body, seo_log = inject_structured_data(
+        body=body,
+        title=title,
+        category_name=cat_name,
+        category_slug=cat_slug,
+    )
+    log.extend(f"  [SEO] {m}" for m in seo_log)
 
     # 書き戻し
     path.write_text(title + "\n" + body, encoding="utf-8")

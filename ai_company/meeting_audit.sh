@@ -17,6 +17,9 @@ mkdir -p "$REPORTS"
 TODAY=$(date '+%Y年%m月%d日')
 echo "=== 監査品質部会議 開始: $TODAY ==="
 
+# Phase 4: 前週KPI自動注入
+WEEKLY_KPI=$(weekly_kpi_brief audit)
+
 # 直近7日のゲート違反・品質事故を収集
 AUDIT_DATA=$(python3 - <<'PYEOF'
 import json, os

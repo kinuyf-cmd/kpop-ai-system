@@ -1,19 +1,41 @@
 {
-  "updated_at": "2026-04-16T14:10:02.094632",
+  "updated_at": "2026-04-24T19:10:21.212557",
   "focus_themes": [
     {
-      "topic": "액막이명태（厄除けスケトウダラ）",
-      "hint": "韓国でじわじわ人気の開運グッズ。魔除け・厄除け文化としての背景、購入方法、価格帯、K-POPアイドル・芸能人の使用例があれば切り口に。",
-      "category_suggest": "beauty",
-      "added_at": "2026-04-16",
-      "source": "owner_request"
+      "topic": "bts 仲良し 相関図",
+      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "category_suggest": "速報",
+      "added_at": "2026-04-21",
+      "source": "trend_prediction",
+      "buzz_score": 35.0,
+      "expires_at": "2026-04-24"
     },
     {
-      "topic": "ボンボンドロップシール（뽐뽐드롭씰）・シール交換",
-      "hint": "韓国の若年層で流行中のシール文化。K-POP系キャラシール、推し活、交換コミュニティ、ポップアップ。Z世代ムーブメント・日本上陸予測の切り口も。",
-      "category_suggest": "解説",
-      "added_at": "2026-04-16",
-      "source": "owner_request"
+      "topic": "ジミン 熱愛 認める",
+      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "category_suggest": "速報",
+      "added_at": "2026-04-21",
+      "source": "trend_prediction",
+      "buzz_score": 35.0,
+      "expires_at": "2026-04-24"
+    },
+    {
+      "topic": "k journal",
+      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "category_suggest": "速報",
+      "added_at": "2026-04-21",
+      "source": "trend_prediction",
+      "buzz_score": 35.0,
+      "expires_at": "2026-04-24"
+    },
+    {
+      "topic": "bts 仲良し相関図",
+      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "category_suggest": "速報",
+      "added_at": "2026-04-21",
+      "source": "trend_prediction",
+      "buzz_score": 35.0,
+      "expires_at": "2026-04-24"
     }
   ],
   "agent_directives": {
@@ -46,10 +68,10 @@
       "promoted_at": "2026-04-09T18:30:36.616439"
     },
     "persian": {
-      "problem": "X投稿スキップ(score=66.0)",
+      "problem": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish",
       "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "error_count": 8,
-      "set_at": "2026-04-13",
+      "error_count": 13,
+      "set_at": "2026-04-24",
       "source": "audit_feedback"
     },
     "inject_meta_desc_copied": {
@@ -75,18 +97,404 @@
       "source": "auto_learn",
       "error_count": 5,
       "promoted_at": "2026-04-11T16:52:39.577281"
+    },
+    "x_boost_selector": {
+      "problem": "x_backfill_runner.sh が TWEET_TEXT/POST_URL を環境変数で渡すが post_to_x.sh は位置引数 TITLE を要",
+      "action": "lib/x_boost_selector.py および logs/x_backfill_runner.sh の POSTER 呼び出しを `bash $POSTER \"$title\" \"$url\" \"$PERSIAN_TMP\"` の位置引数形式に統一。title/url 空ならskip。2026-04-16 修正済み",
+      "error_count": 20,
+      "set_at": "2026-04-17",
+      "source": "audit_feedback"
+    },
+    "cluster_generator": {
+      "problem": "lib/cluster_generator.py が全h2セクションに同一の『本章では◯◯について…3軸で整理…網羅的にカバー…』2段落を機械挿入し、aespa",
+      "action": "(1) cluster_generator.build_html を per-h2 keyword interpolation 化し段落を多様化 (2) post_guard.validate_final_post に同一段落≥5/比率60%でBLOCKする template_filler_block 検査追加 (3) cluster_generator に --update mode 追加し既存post_idを上書き再生成 (4) 既存15本を上書き済 — 2026-04-17",
+      "error_count": 15,
+      "set_at": "2026-04-17",
+      "source": "audit_feedback"
+    },
+    "butterfree": {
+      "problem": "バタフリーがWebSearch失敗時に空出力を返す（成功率80.9%）",
+      "action": "3段階リトライ導入済み: (1)出力強制プロンプト (2)簡略プロンプト (3)アーカイブフォールバック。agent.mdに空出力禁止・最低500文字ルール追加",
+      "error_count": 8,
+      "set_at": "2026-04-17",
+      "source": "audit_feedback"
+    },
+    "inject_butterfree_empty_output": {
+      "action": "3段階リトライ導入済み: (1)出力強制プロンプト (2)簡略プロンプト (3)アーカイブフォールバック。agent.mdに空出力禁止・最低500文字ルール追加",
+      "source": "error_pattern_inject",
+      "error_count": 8,
+      "promoted_at": "2026-04-17T21:30:01.206112"
+    },
+    "inject_flock_bad_fd": {
+      "action": "exec 200>> でプロセス起動時に1回だけFDを開く方式に変更（サブシェルごとの200>>を廃止）。旧fix(>>+事前touch)では並列truncate競合が残っていた",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-17T21:30:01.206112"
+    },
+    "inject_x_backfill_runner_arg_mismatch": {
+      "action": "lib/x_boost_selector.py および logs/x_backfill_runner.sh の POSTER 呼び出しを `bash $POSTER \"$title\" \"$url\" \"$PERSIAN_TMP\"` の位置引数形式に統一。title/url 空ならskip。2026-04-16 修正済み",
+      "source": "error_pattern_inject",
+      "error_count": 20,
+      "promoted_at": "2026-04-17T21:30:01.206112"
+    },
+    "inject_template_filler_published": {
+      "action": "(1) cluster_generator.build_html を per-h2 keyword interpolation 化し段落を多様化 (2) post_guard.validate_final_post に同一段落≥5/比率60%でBLOCKする template_filler_block 検査追加 (3) cluster_generator に --update mode 追加し既存post_idを上書き再生成 (4) 既存15本を上書き済 — 2026-04-17",
+      "source": "error_pattern_inject",
+      "error_count": 15,
+      "promoted_at": "2026-04-17T21:30:01.206112"
+    },
+    "learn_butterfree_empty_output": {
+      "action": "3段階リトライ導入済み: (1)出力強制プロンプト (2)簡略プロンプト (3)アーカイブフォールバック。agent.mdに空出力禁止・最低500文字ルール追加",
+      "source": "auto_learn",
+      "error_count": 8,
+      "promoted_at": "2026-04-17T21:30:01.256878"
+    },
+    "learn_flock_bad_fd": {
+      "action": "exec 200>> でプロセス起動時に1回だけFDを開く方式に変更（サブシェルごとの200>>を廃止）。旧fix(>>+事前touch)では並列truncate競合が残っていた",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-17T21:30:01.256878"
+    },
+    "learn_x_backfill_runner_arg_mismatch": {
+      "action": "lib/x_boost_selector.py および logs/x_backfill_runner.sh の POSTER 呼び出しを `bash $POSTER \"$title\" \"$url\" \"$PERSIAN_TMP\"` の位置引数形式に統一。title/url 空ならskip。2026-04-16 修正済み",
+      "source": "auto_learn",
+      "error_count": 20,
+      "promoted_at": "2026-04-17T21:30:01.256878"
+    },
+    "learn_template_filler_published": {
+      "action": "(1) cluster_generator.build_html を per-h2 keyword interpolation 化し段落を多様化 (2) post_guard.validate_final_post に同一段落≥5/比率60%でBLOCKする template_filler_block 検査追加 (3) cluster_generator に --update mode 追加し既存post_idを上書き再生成 (4) 既存15本を上書き済 — 2026-04-17",
+      "source": "auto_learn",
+      "error_count": 15,
+      "promoted_at": "2026-04-17T21:30:01.256878"
+    },
+    "jirachi/sanitize": {
+      "problem": "ジラーチ(jirachi)出力にClaude APIのraw JSONレスポンス({\"type\":\"result\",...,\"modelUsage\":...})",
+      "action": "sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{\"type\":\"result\"で始まるJSON全体を除去",
+      "error_count": 3,
+      "set_at": "2026-04-18",
+      "source": "audit_feedback"
+    },
+    "gardevoir/pipeline": {
+      "problem": "cron.logにサムネCTRスコアBLOCK×3回、投稿却下×3回、HARD_FAIL確認×2回。12件のブロックイベントが1日で発生",
+      "action": "(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBLOCK時リトライ1回追加(2026-04-17) (4) gardevoir HARD_FAILのkpi_loggerにrecoverable=true追加(2026-04-18)",
+      "error_count": 12,
+      "set_at": "2026-04-18",
+      "source": "audit_feedback"
+    },
+    "inject_grep_c_double_zero": {
+      "action": "grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L299,L1491 修正済み",
+      "source": "error_pattern_inject",
+      "error_count": 20,
+      "promoted_at": "2026-04-18T15:14:06.780608"
+    },
+    "inject_claude_json_leak_in_article": {
+      "action": "sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{\"type\":\"result\"で始まるJSON全体を除去",
+      "source": "error_pattern_inject",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T15:14:06.780608"
+    },
+    "inject_triple_gate_cascade_block": {
+      "action": "(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBLOCK時リトライ1回追加(2026-04-17) (4) gardevoir HARD_FAILのkpi_loggerにrecoverable=true追加(2026-04-18)",
+      "source": "error_pattern_inject",
+      "error_count": 12,
+      "promoted_at": "2026-04-18T15:14:06.780608"
+    },
+    "learn_grep_c_double_zero": {
+      "action": "grep -c ... || true に変更し、デフォルト値は ${var:-0} で設定。kpop_pipeline.sh L299,L1491 修正済み",
+      "source": "auto_learn",
+      "error_count": 20,
+      "promoted_at": "2026-04-18T15:14:06.833105"
+    },
+    "learn_claude_json_leak_in_article": {
+      "action": "sanitize_output.shの[1]ブロックを正規表現→ブレースバランスマッチ方式に変更。ネスト深度に関わらず{\"type\":\"result\"で始まるJSON全体を除去",
+      "source": "auto_learn",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T15:14:06.833105"
+    },
+    "learn_triple_gate_cascade_block": {
+      "action": "(1) score_thumbnail_text.py v7: BLOCK閾値40→20 (2) gardevoir PASS閾値75→70 (3) サムネBLOCK時リトライ1回追加(2026-04-17) (4) gardevoir HARD_FAILのkpi_loggerにrecoverable=true追加(2026-04-18)",
+      "source": "auto_learn",
+      "error_count": 12,
+      "promoted_at": "2026-04-18T15:14:06.833105"
+    },
+    "eevee": {
+      "learned_title_patterns": "【CTR学習(04/23)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
+      "title_learning_date": "2026-04-23"
+    },
+    "metamon": {
+      "learned_title_patterns": "【CTR学習(04/23)】勝ちパターン: 数字入り、疑問形、疑問符 / フック語: なぜ",
+      "title_learning_date": "2026-04-23"
+    },
+    "arceus": {
+      "learned_s_features": "S/A記事共通特徴: 数字入り、固有名詞、対比構造",
+      "quality_learning_date": "2026-04-23",
+      "recurring_quality_issues": "文字数不足、SEO不備"
+    },
+    "learn_title_typo_entity_mojibake": {
+      "action": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
+      "source": "auto_learn",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T17:14:50.244600"
+    },
+    "learn_u_fffd_encoding_error": {
+      "action": "(1) 全パイプライン(7本)のerrors=\"replace\"→errors=\"ignore\"に変更(計19箇所) (2) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (3) validate_encoding()関数をWP投稿直前に実行 (4) sanitize_output.shにU+FFFD最終安全弁追加",
+      "source": "auto_learn",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T17:14:50.244600"
+    },
+    "learn_ai_meta_response_as_article": {
+      "action": "final_post.md生成時にAIメタ応答パターンを検出し、HTMLが1タグもない場合は空にしてブロックする",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-18T17:14:50.244600"
+    },
+    "inject_title_typo_entity_mojibake": {
+      "action": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
+      "source": "error_pattern_inject",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T17:14:50.301535"
+    },
+    "inject_u_fffd_encoding_error": {
+      "action": "(1) 全パイプライン(7本)のerrors=\"replace\"→errors=\"ignore\"に変更(計19箇所) (2) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (3) validate_encoding()関数をWP投稿直前に実行 (4) sanitize_output.shにU+FFFD最終安全弁追加",
+      "source": "error_pattern_inject",
+      "error_count": 3,
+      "promoted_at": "2026-04-18T17:14:50.301535"
+    },
+    "inject_ai_meta_response_as_article": {
+      "action": "final_post.md生成時にAIメタ応答パターンを検出し、HTMLが1タグもない場合は空にしてブロックする",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-18T17:14:50.301535"
+    },
+    "inject_missing_featured_media": {
+      "action": "(1)NEW_MEDIA_ID初期化+代入追加 (2)投稿後featured_media確認→auto_thumbnail.py自動修復 (3)auto_thumbnail.pyのパス・認証修正 (4)kpop_pipeline.shにも同様の投稿後チェック追加",
+      "source": "error_pattern_inject",
+      "error_count": 5,
+      "promoted_at": "2026-04-18T18:58:34.348582"
+    },
+    "learn_missing_featured_media": {
+      "action": "(1)NEW_MEDIA_ID初期化+代入追加 (2)投稿後featured_media確認→auto_thumbnail.py自動修復 (3)auto_thumbnail.pyのパス・認証修正 (4)kpop_pipeline.shにも同様の投稿後チェック追加",
+      "source": "auto_learn",
+      "error_count": 5,
+      "promoted_at": "2026-04-18T18:58:34.400697"
+    },
+    "eevee/pipeline": {
+      "problem": "タイトルに誤字(スケジュル→スケジュール)、HTMLエンティティ(&amp;等)、文字化け(U+FFFD)、カタカナ内不自然空白(アルバ ム)が残存",
+      "action": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
+      "error_count": 3,
+      "set_at": "2026-04-18",
+      "source": "audit_feedback"
+    },
+    "pipeline/all": {
+      "problem": "3記事(ID:3251,3250,3237)でU+FFFD合計43箇所。除隊し�ジン→除隊したジン、第5世��のアイコン→第5世代のアイコン等",
+      "action": "(1) 全lib/*.pyをerrors=\"replace\"に統一(15ファイル) (2) sanitize_output.shでU+FFFDを確実に除去(L70-77) (3) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (4) validate_encoding()関数をWP投稿直前に実行 (5) kpop_pipeline.shにエンコーディング検証ステップあり",
+      "error_count": 3,
+      "set_at": "2026-04-18",
+      "source": "audit_feedback"
+    },
+    "kairyu": {
+      "problem": "AIがHTML記事ではなくメタ応答(以下が改善内容/適用内容のサマリ)を出力し、本文不足で停止",
+      "action": "final_post.md生成時にAIメタ応答パターンを検出し、HTMLが1タグもない場合は空にしてブロックする",
+      "error_count": 2,
+      "set_at": "2026-04-18",
+      "source": "audit_feedback"
+    },
+    "inject_tweet_body_too_short": {
+      "action": "閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）",
+      "source": "error_pattern_inject",
+      "error_count": 5,
+      "promoted_at": "2026-04-19T21:30:02.079700"
+    },
+    "inject_ai_internal_response_in_title": {
+      "action": "(1) TITLE_COLLAPSE_PATTERNSに 'hit your limit','resets.*Asia/Tokyo','ウェブフェッチ' パターン追加 (2) post_to_wp.pyのexcerpt/title投稿前にcontamination_check()を実行 (3) agent_monitor.pyのBODY_CONTAMINATION_PATTERNSにレート制限応答パターン追加",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-19T21:30:02.079700"
+    },
+    "learn_tweet_body_too_short": {
+      "action": "閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）",
+      "source": "auto_learn",
+      "error_count": 5,
+      "promoted_at": "2026-04-19T21:30:02.137201"
+    },
+    "learn_ai_internal_response_in_title": {
+      "action": "(1) TITLE_COLLAPSE_PATTERNSに 'hit your limit','resets.*Asia/Tokyo','ウェブフェッチ' パターン追加 (2) post_to_wp.pyのexcerpt/title投稿前にcontamination_check()を実行 (3) agent_monitor.pyのBODY_CONTAMINATION_PATTERNSにレート制限応答パターン追加",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-19T21:30:02.137201"
+    },
+    "x_post": {
+      "problem": "TWEET_QUALITY_BLOCK: 本文45文字（50文字未満）— v12テンプレート出力がURL/ハッシュタグ除去後に50文字閾値を下回る",
+      "action": "閾値を50→40に緩和。v12フォーマットは簡潔設計のため40文字で品質十分（2026-04-19）",
+      "error_count": 5,
+      "set_at": "2026-04-20",
+      "source": "audit_feedback"
+    },
+    "pipeline/agent_monitor": {
+      "problem": "タイトルにAI内部応答が混入: 'K-POP ウェブフェッチはできませんが…' / excerptにAPIレート制限メッセージ 'You've hit your",
+      "action": "(1) TITLE_COLLAPSE_PATTERNSに 'hit your limit','resets.*Asia/Tokyo','ウェブフェッチ' パターン追加 (2) post_to_wp.pyのexcerpt/title投稿前にcontamination_check()を実行 (3) agent_monitor.pyのBODY_CONTAMINATION_PATTERNSにレート制限応答パターン追加",
+      "error_count": 2,
+      "set_at": "2026-04-20",
+      "source": "audit_feedback"
+    },
+    "raikou_thumb": {
+      "problem": "generate_thumb_copyのプロンプトが1行出力を指示→pre_publish_gateの2行必須BLOCKと矛盾し連続BLOCK",
+      "action": "generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォールバック追加（2026-04-20）",
+      "error_count": 3,
+      "set_at": "2026-04-20",
+      "source": "audit_feedback"
+    },
+    "pipeline/make_thumbnail": {
+      "problem": "サムネイルに文字が焼き込まれている(text_burned>2)。DALL-E生成時に文字が混入しVision検出で確認",
+      "action": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "error_count": 105,
+      "set_at": "2026-04-20",
+      "source": "audit_feedback"
+    },
+    "inject_thumb_copy_single_line_block": {
+      "action": "generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォールバック追加（2026-04-20）",
+      "source": "error_pattern_inject",
+      "error_count": 3,
+      "promoted_at": "2026-04-20T21:30:02.083837"
+    },
+    "inject_thumbnail_text_burned": {
+      "action": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "source": "error_pattern_inject",
+      "error_count": 105,
+      "promoted_at": "2026-04-20T21:30:02.083837"
+    },
+    "inject_llm_residue_in_article": {
+      "action": "(1) pre_publish_hook.pyのLLM残骸パターンを6→14に拡張 (2) 内部タグ(<|im_end|>等)検出パターン9個追加 (3) GPT-4o修正時にpost-generation LLM残骸フィルタ適用",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-20T21:30:02.083837"
+    },
+    "learn_thumb_copy_single_line_block": {
+      "action": "generate_thumb_copy.shのプロンプトを2行出力に変更＋_sanitize_thumb_outputに2行保証フォールバック追加（2026-04-20）",
+      "source": "auto_learn",
+      "error_count": 3,
+      "promoted_at": "2026-04-20T21:30:02.140254"
+    },
+    "learn_thumbnail_text_burned": {
+      "action": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "source": "auto_learn",
+      "error_count": 105,
+      "promoted_at": "2026-04-20T21:30:02.140254"
+    },
+    "learn_llm_residue_in_article": {
+      "action": "(1) pre_publish_hook.pyのLLM残骸パターンを6→14に拡張 (2) 内部タグ(<|im_end|>等)検出パターン9個追加 (3) GPT-4o修正時にpost-generation LLM残骸フィルタ適用",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-20T21:30:02.140254"
+    },
+    "deoxys_kpop/metamon_kpop": {
+      "problem": "deoxys/metamonがタイトルにメタコメンタリー('記事本文を確認しました','以下のタイトル案を提案します')や英語文('Now I have the",
+      "action": "(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: reject_if_title_containsで'提案します','以下に','Now I have'等を事前拒否 (2) agents/*.mdのプロンプトに英語禁止・メタコメント禁止を明示済み (3) pre_publish_hook.pyのLLM残骸パターンがバックストップとして機能",
+      "error_count": 15,
+      "set_at": "2026-04-21",
+      "source": "audit_feedback"
+    },
+    "inject_upstream_meta_commentary_leak": {
+      "action": "(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: reject_if_title_containsで'提案します','以下に','Now I have'等を事前拒否 (2) agents/*.mdのプロンプトに英語禁止・メタコメント禁止を明示済み (3) pre_publish_hook.pyのLLM残骸パターンがバックストップとして機能",
+      "source": "error_pattern_inject",
+      "error_count": 15,
+      "promoted_at": "2026-04-21T21:30:02.116699"
+    },
+    "learn_upstream_meta_commentary_leak": {
+      "action": "(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: reject_if_title_containsで'提案します','以下に','Now I have'等を事前拒否 (2) agents/*.mdのプロンプトに英語禁止・メタコメント禁止を明示済み (3) pre_publish_hook.pyのLLM残骸パターンがバックストップとして機能",
+      "source": "auto_learn",
+      "error_count": 15,
+      "promoted_at": "2026-04-21T21:30:02.175004"
+    },
+    "inject_missing_kpj_summary": {
+      "action": "post_publish_enricher.pyを新規作成、主要5パイプラインのpost-publishフローに統合",
+      "source": "error_pattern_inject",
+      "error_count": 8,
+      "promoted_at": "2026-04-23T21:30:01.480355"
+    },
+    "inject_missing_kpj_profile": {
+      "action": "post_publish_enricher.pyに統合。記事からアーティスト名を自動検出しプロフィール挿入",
+      "source": "error_pattern_inject",
+      "error_count": 8,
+      "promoted_at": "2026-04-23T21:30:01.480355"
+    },
+    "inject_gradient_thumbnail_leak": {
+      "action": "post_publish_enricher.pyにサムネサイズ検証追加。根本対策: API key設定がPhase10で必要",
+      "source": "error_pattern_inject",
+      "error_count": 3,
+      "promoted_at": "2026-04-23T21:30:01.480355"
+    },
+    "learn_missing_kpj_summary": {
+      "action": "post_publish_enricher.pyを新規作成、主要5パイプラインのpost-publishフローに統合",
+      "source": "auto_learn",
+      "error_count": 8,
+      "promoted_at": "2026-04-23T21:30:01.540617"
+    },
+    "learn_missing_kpj_profile": {
+      "action": "post_publish_enricher.pyに統合。記事からアーティスト名を自動検出しプロフィール挿入",
+      "source": "auto_learn",
+      "error_count": 8,
+      "promoted_at": "2026-04-23T21:30:01.540617"
+    },
+    "learn_gradient_thumbnail_leak": {
+      "action": "post_publish_enricher.pyにサムネサイズ検証追加。根本対策: API key設定がPhase10で必要",
+      "source": "auto_learn",
+      "error_count": 3,
+      "promoted_at": "2026-04-23T21:30:01.540617"
+    },
+    "persian/post_to_x": {
+      "problem": "X投稿(URLリプライ)がpost_audit.shのdraft化より先に実行され、draft化後のURLが404のままXに残存。11件のsoft-404リンク",
+      "action": "post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.shのdraft化時にX URLリプライを自動削除。日次リンクチェックcron(03:30)を追加。既存11件はlib/x_404_reply_cleanup.shで削除",
+      "error_count": 11,
+      "set_at": "2026-04-24",
+      "source": "audit_feedback"
     }
   },
   "stop_doing": [
-    "最類似勝ちタイトル: 「K-P",
-    "メタ説明が本文冒頭の流用（独立",
+    "文字数超過(292文字) -5",
+    "美容/ライフスタイルが停止している原因を調査（専用パイプラインが稼働しているのに11%しかないのは異常）",
     "X投稿スキップ(score=7",
     "X投稿スキップ(score=6",
-    "文字数超過(292文字) -5"
+    "メタ説明が本文冒頭の流用（独立",
+    "最類似勝ちタイトル: 「K-P",
+    "`kpop_beauty_pipeline`（11:00）と`kpop_lifestyle_pipeline`（14:00）は維持",
+    "OG画像が未設定"
   ],
   "keep_doing": [],
   "winning_words": [
+    "なぜ",
     "完全",
     "決定"
-  ]
+  ],
+  "kpi_context": {
+    "updated_at": "2026-04-23T21:30:01.291268+09:00",
+    "date": "2026-04-16",
+    "pageviews": 146,
+    "sessions": 210,
+    "gsc_ctr": 0.4074,
+    "gsc_clicks": 11,
+    "gsc_impressions": 27,
+    "top_query": "スキズ ost 一覧",
+    "adsense_earnings": "41",
+    "x_sessions": 2,
+    "cta_clicks": 0,
+    "low_ctr_pages": 14,
+    "yesterday_posts": 5,
+    "agent_success_rate": 0.764,
+    "morning_brief": "【前日KPIサマリー（2026-04-16）】\n  PV: 146  セッション: 210  ユーザー: 119\n  平均滞在: 38.7秒  X流入: 2セッション\n  GSC: クリック11  表示27  CTR=40.74%\n  AdSense: ¥41  RPM: ¥310\n  CTA: 0クリック (CTR=0.00%)\n  投稿数: 前日5本 / 本日6本\n  低CTRページ: 14件（要リライト候補）\n\n【数字から読む編集方針】\n  ⚠ PV低調 → SEO記事（検索流入重視）を優先。\n  ⚠ 低CTRページ14件 → リライト優先度を上げること。\n  🔍 最多検索キーワード: 「スキズ ost 一覧」",
+    "evening_brief": "【本日の実績レビュー（2026-04-23）】\n  前日PV: 146  GSC CTR: 40.74%\n  本日投稿: 6本  前日投稿: 5本\n  エージェント全体成功率: 76%\n  アクティブ: 43  CRITICAL: 10\n\n【明日への示唆】\n  ⚠ CRITICAL状態のエージェント10件 → 修復を優先。\n  📈 CTR好調 → 現在のタイトル戦略を継続。\n  📈 投稿ペース良好。品質維持に注力。"
+  },
+  "weekly_kpi": {
+    "updated_at": "2026-04-20T06:37:37.719911+09:00",
+    "period": {
+      "start": "2026-04-13",
+      "end": "2026-04-19"
+    },
+    "posts_count": 26,
+    "avg_pv": 0,
+    "avg_ctr": 0,
+    "pv_trend": "flat",
+    "ctr_trend": "flat",
+    "priority_action": "品質維持"
+  }
 }

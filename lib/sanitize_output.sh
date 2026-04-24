@@ -19,14 +19,92 @@ with open(path, encoding="utf-8", errors="replace") as f:
     text = f.read()
 
 # [1] Claude APIレスポンスJSONメタデータの除去
-#     {"type":"result","subtype":"success",...,"terminal_reason":"completed",...} 形式
-text = re.sub(r'\{"type"\s*:\s*"result".*?"terminal_reason"\s*:\s*"[^"]*"[^}]*\}', '', text, flags=re.DOTALL)
+#     {"type":"result","subtype":"success",...} 形式
+#     ネストされた {} を含むためバランスマッチで除去する
+def _strip_claude_json_blob(t):
+    """Find and remove complete JSON blobs starting with {"type":"result" or {"type":"content_block"."""
+    result = []
+    i = 0
+    while i < len(t):
+        # Look for the start of a Claude JSON blob
+        m = re.search(r'\{"type"\s*:\s*"(?:result|content_block)', t[i:])
+        if not m:
+            result.append(t[i:])
+            break
+        start = i + m.start()
+        result.append(t[i:start])
+        # Balance braces to find the complete JSON object
+        depth = 0
+        j = start
+        in_str = False
+        escape = False
+        while j < len(t):
+            c = t[j]
+            if escape:
+                escape = False
+            elif c == '\\' and in_str:
+                escape = True
+            elif c == '"' and not escape:
+                in_str = not in_str
+            elif not in_str:
+                if c == '{':
+                    depth += 1
+                elif c == '}':
+                    depth -= 1
+                    if depth == 0:
+                        j += 1
+                        break
+            j += 1
+        # Skip over the matched JSON blob
+        i = j
+    return ''.join(result)
+
+text = _strip_claude_json_blob(text)
+
 # HTML-encoded版も除去
 text = re.sub(r'\{&#8220;type&#8221;.*?&#8221;terminal_reason&#8221;.*?\}', '', text, flags=re.DOTALL)
-# modelUsage単独でも除去（途中で切れた場合）
-text = re.sub(r'"modelUsage"\s*:\s*\{.*?"costUSD"\s*:\s*[\d.]+[^}]*\}[^}]*\}', '', text, flags=re.DOTALL)
-# session_idダンプ
-text = re.sub(r'"session_id"\s*:\s*"[a-f0-9-]+"[^}]*\}', '', text, flags=re.DOTALL)
+# modelUsage / session_id が単独で残った場合
+text = re.sub(r'"modelUsage"\s*:\s*\{[^{]*(?:\{[^}]*\}[^{]*)*\}', '', text, flags=re.DOTALL)
+text = re.sub(r'"session_id"\s*:\s*"[a-f0-9-]+"', '', text)
+
+# [1b] Claude API token usage JSON（{input_tokens:..., output_tokens:...} 形式）
+#      HTMLエンティティ版（&#8220; = ", &#8221; = "）も対応
+text = re.sub(
+    r'\{["\u201c&#][^{}]*(?:input_tokens|output_tokens|cache_creation_input_tokens|ephemeral_\d+h_input_tokens)[^{}]*\}',
+    '', text)
+# ネストされたtoken JSONブロブ（{...{...}...}形式）をバランスマッチで除去
+def _strip_token_json(t):
+    result = []
+    i = 0
+    while i < len(t):
+        m = re.search(r'\{["\u201c](?:[^{}]|&#\d+;)*(?:input_tokens|output_tokens|cache_creation)', t[i:])
+        if not m:
+            result.append(t[i:])
+            break
+        start = i + m.start()
+        result.append(t[i:start])
+        depth = 0
+        j = start
+        while j < len(t):
+            if t[j] == '{': depth += 1
+            elif t[j] == '}':
+                depth -= 1
+                if depth == 0:
+                    j += 1
+                    break
+            j += 1
+        i = j
+    return ''.join(result)
+text = _strip_token_json(text)
+
+# [1.5] U+FFFD (文字化け置換文字) の除去
+#       errors="replace"によりU+FFFDが挿入される場合があるため、
+#       ここで確実に除去する（全lib/*.pyはerrors="replace"を使用）
+fffd_count = text.count('\ufffd')
+if fffd_count > 0:
+    import sys as _sys
+    print(f"  ⚠️ [sanitize] U+FFFD {fffd_count}箇所検出 → 除去: {path}", file=_sys.stderr)
+    text = text.replace('\ufffd', '')
 
 # [2] リテラル \n の除去
 text = text.replace('\\n', '')
@@ -105,4 +183,101 @@ with open(path, 'w', encoding='utf-8') as f:
 PYEOF
 }
 
+# ─── WP投稿直前の最終サニタイズ ───────────────────────────────────
+# sanitize_output はエージェント出力(reports/*.md)向け。
+# sanitize_wp_content は /tmp/kpop_content.txt に書き出した後の
+# HTML本文を対象とする最終防壁。リテラル\n・JSONメタデータ・空段落を除去。
+sanitize_wp_content() {
+  local file="$1"
+  [[ -f "$file" ]] || return
+  python3 - "$file" <<'SANITIZE_WP_EOF'
+import sys, re
+path = sys.argv[1]
+with open(path, encoding="utf-8", errors="ignore") as f:
+    text = f.read()
+orig_len = len(text)
+
+# [1] リテラル \n の除去（バックスラッシュ+n）
+#     HTML内に残ったClaude出力のリテラル\nを除去
+#     ただし <script> / <style> 内の \n は保持する
+def _strip_literal_backslash_n(html):
+    """Remove literal \\n outside <script>/<style> tags."""
+    # Split by script/style tags, only process non-script parts
+    parts = re.split(r'(<script[^>]*>.*?</script>|<style[^>]*>.*?</style>)', html, flags=re.DOTALL|re.IGNORECASE)
+    for i, part in enumerate(parts):
+        if not re.match(r'<(?:script|style)', part, re.IGNORECASE):
+            parts[i] = part.replace('\\n', '')
+    return ''.join(parts)
+text = _strip_literal_backslash_n(text)
+
+# [2] Claude APIメタデータJSON除去
+#     (a) 通常のJSON: {"type":"result",...} / {..."input_tokens":...}
+#     (b) HTMLエンティティ版: &#8220;type&#8221; etc.
+
+# (a) プレーンJSON
+def _strip_json_blob(t, start_pat):
+    result = []
+    i = 0
+    while i < len(t):
+        m = re.search(start_pat, t[i:])
+        if not m:
+            result.append(t[i:])
+            break
+        start = i + m.start()
+        result.append(t[i:start])
+        depth = 0
+        j = start
+        in_str = False
+        esc = False
+        while j < len(t):
+            c = t[j]
+            if esc:
+                esc = False
+            elif c == '\\' and in_str:
+                esc = True
+            elif c == '"' and not esc:
+                in_str = not in_str
+            elif not in_str:
+                if c == '{': depth += 1
+                elif c == '}':
+                    depth -= 1
+                    if depth == 0:
+                        j += 1
+                        break
+            j += 1
+        i = j
+    return ''.join(result)
+
+text = _strip_json_blob(text, r'\{"type"\s*:\s*"(?:result|content_block)')
+text = _strip_json_blob(text, r'\{["\u201c](?:[^{}]|&#\d+;)*(?:input_tokens|output_tokens|cache_creation|stop_reason|session_id)')
+
+# (b) HTMLエンティティ版（&#8220;=", &#8221;="）
+text = re.sub(
+    r'(?:&#8220;|&#8221;|&\#8220;|&\#8221;|"|")(?:type|stop_reason|session_id|total_cost_usd|usage)(?:&#8220;|&#8221;|&\#8220;|&\#8221;|"|").*?(?:terminal_reason|server_tool_use)(?:&#8220;|&#8221;|&\#8220;|&\#8221;|"|").*?\}',
+    '', text, flags=re.DOTALL)
+# session_id単独残留
+text = re.sub(r'(?:&#8220;|")session_id(?:&#8221;|")\s*:\s*(?:&#8220;|")[a-f0-9-]+(?:&#8221;|")', '', text)
+# stop_reason単独残留
+text = re.sub(r'(?:&#8220;|")stop_reason(?:&#8221;|")\s*:\s*(?:&#8220;|")end_turn(?:&#8221;|")', '', text)
+# total_cost_usd残留
+text = re.sub(r'(?:&#8220;|")total_cost_usd(?:&#8221;|")\s*:\s*[\d.]+', '', text)
+
+# [3] 空段落の整理
+#     <p>\n\n</p> / <p></p> / <p> </p> を除去
+text = re.sub(r'<p>\s*</p>', '', text)
+# 連続空行を2つまでに
+text = re.sub(r'\n{3,}', '\n\n', text)
+
+# [4] U+FFFD除去
+text = text.replace('\ufffd', '')
+
+changed = orig_len - len(text)
+if changed > 0:
+    print(f"  ✅ [sanitize_wp] {changed}文字除去: {path}", file=sys.stderr)
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(text)
+SANITIZE_WP_EOF
+}
+
 export -f sanitize_output 2>/dev/null || true
+export -f sanitize_wp_content 2>/dev/null || true

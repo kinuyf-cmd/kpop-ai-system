@@ -1,0 +1,43 @@
+{
+  "name": "K-POP JOURNAL Premium",
+  "price_monthly": 980,
+  "currency": "JPY",
+  "features": [
+    {
+      "name": "速報先行配信",
+      "description": "最新ニュースを一般公開の1時間前にメール配信",
+      "icon": "⚡"
+    },
+    {
+      "name": "限定コンテンツ",
+      "description": "深掘り分析・チャート裏話・未公開データ",
+      "icon": "🔒"
+    },
+    {
+      "name": "広告非表示",
+      "description": "すべての記事を広告なしで快適に閲覧",
+      "icon": "✨"
+    },
+    {
+      "name": "限定コミュニティ",
+      "description": "Premium会員限定のDiscordチャンネルに参加",
+      "icon": "💬"
+    },
+    {
+      "name": "月1グッズ抽選",
+      "description": "K-POP公式グッズが毎月当たる抽選に参加",
+      "icon": "🎁"
+    }
+  ],
+  "free_trial_days": 7,
+  "target_subscribers": {
+    "month_3": 100,
+    "month_6": 500,
+    "month_12": 2000
+  },
+  "revenue_projection": {
+    "month_3": 98000,
+    "month_6": 490000,
+    "month_12": 1960000
+  }
+}

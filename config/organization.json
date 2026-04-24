@@ -1,0 +1,97 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-04-21",
+  "company": "K-POP Journal AI Company",
+  "departments": {
+    "content": {
+      "name": "コンテンツ部",
+      "icon": "📝",
+      "color": "#818cf8",
+      "manager": {
+        "id": "deoxys_kpop",
+        "name": "デオキシス"
+      },
+      "members": ["deoxys_kpop", "metamon_kpop", "butterfree", "eevee", "jirachi_kpop"],
+      "kpis": [
+        "日次記事投稿数",
+        "平均品質スコア",
+        "平均文字数",
+        "CTA設定率",
+        "LLM残骸混入率"
+      ],
+      "meeting_time": "毎日07:30"
+    },
+    "quality": {
+      "name": "品質部",
+      "icon": "🔍",
+      "color": "#fbbf24",
+      "manager": {
+        "id": "gardevoir_hook_critic",
+        "name": "サーナイト"
+      },
+      "members": ["gardevoir_hook_critic", "arceus", "gengar", "jirachi_kpop"],
+      "kpis": [
+        "品質ゲート通過率",
+        "HARD_FAIL発生件数",
+        "サムネCTRスコア平均",
+        "未解決エラー件数",
+        "品質ダブルチェック合格率"
+      ],
+      "meeting_time": "毎日07:30"
+    },
+    "seo": {
+      "name": "SEO部",
+      "icon": "🔎",
+      "color": "#22d3ee",
+      "manager": {
+        "id": "alakazam_kpop",
+        "name": "アラカザム"
+      },
+      "members": ["alakazam_kpop", "lapras", "mimikyu", "illumise"],
+      "kpis": [
+        "GSCインデックス率",
+        "平均CTR",
+        "検索表示回数",
+        "低CTRページ改善数",
+        "A/Bテスト実施数"
+      ],
+      "meeting_time": "毎日07:30"
+    },
+    "revenue": {
+      "name": "収益部",
+      "icon": "💰",
+      "color": "#facc15",
+      "manager": {
+        "id": "persian",
+        "name": "ペルシアン"
+      },
+      "members": ["persian", "snorlax", "meowth", "porygon"],
+      "kpis": [
+        "月間AdSense収益",
+        "アフィリエイト収益",
+        "X投稿成功率",
+        "CVR導線設置率",
+        "記事あたりROI"
+      ],
+      "meeting_time": "毎日07:30"
+    },
+    "operations": {
+      "name": "運用部",
+      "icon": "⚙️",
+      "color": "#a78bfa",
+      "manager": {
+        "id": "mewtwo",
+        "name": "ミュウツー"
+      },
+      "members": ["mewtwo", "porygon_z", "raikou_thumb", "venusaur"],
+      "kpis": [
+        "パイプライン稼働率",
+        "エラー自動修復率",
+        "cron実行成功率",
+        "WPサーバー可用性",
+        "デプロイ成功率"
+      ],
+      "meeting_time": "毎日07:30"
+    }
+  }
+}

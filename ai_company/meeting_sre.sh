@@ -43,23 +43,74 @@ def count_since(path, since):
 alerts = count_since(base / "watchdog_alerts.jsonl", since)
 repairs = count_since(base / "watchdog_repairs.jsonl", since)
 
-# パイプライン稼働
+# パイプライン稼働 — cron.log の当日マーカーで判定
+# 記事パイプラインは [AUDIT] 投稿後監査開始 + タイムスタンプで時間帯判定
+# インフラ系は === XXX 完了 === マーカーで直接判定
 today = now.strftime("%Y-%m-%d")
+cron_log = base / "cron.log"
+cron_today_lines = []
+if cron_log.exists():
+    import re
+    for line in cron_log.read_text(errors="replace").splitlines():
+        if today in line:
+            cron_today_lines.append(line)
+
+# 記事投稿の監査マーカーからタイムスタンプを収集
+audit_hours = set()
+for line in cron_today_lines:
+    if "投稿後監査開始" in line:
+        ts_match = re.search(r'(\d{2}):(\d{2})', line)
+        if ts_match:
+            audit_hours.add(int(ts_match.group(1)))
+
+# スケジュール定義: (表示名, 予定時刻, 検知方法)
+# type="article" → audit_hours で時間帯判定
+# type="marker"  → cron.log の完了キーワードで判定
 pipelines = [
-    ("速報 07:00", "/home/aiuser/ai_kpop.log"),
-    ("美容 11:00", str(base / "beauty_pipeline.log")),
-    ("戦略 12:00", str(base / "strategy_pipeline.log")),
-    ("AI会議 21:00", str(base / "ai_meeting.log")),
+    {"label": "速報 07:00",          "hour": 7,  "type": "article"},
+    {"label": "速報 08:00",          "hour": 8,  "type": "article"},
+    {"label": "美容 11:00",          "hour": 11, "type": "article"},
+    {"label": "戦略 12:00",          "hour": 12, "type": "article"},
+    {"label": "速報 13:00",          "hour": 13, "type": "article"},
+    {"label": "ライフスタイル 14:00","hour": 14, "type": "article"},
+    {"label": "速報 15:00",          "hour": 15, "type": "article"},
+    {"label": "比較 16:00",          "hour": 16, "type": "article"},
+    {"label": "ダッシュボード",      "hour": -1, "type": "marker", "key": "dashboard_refresh"},
+    {"label": "自動修復 06:05",      "hour": 6,  "type": "marker", "key": "auto_repair"},
+    {"label": "AI会議 21:00",        "hour": 21, "type": "marker", "key": "ai_meeting"},
 ]
+
 status = []
-for label, path in pipelines:
-    p = Path(path)
-    if not p.exists():
-        status.append(f"  ⬜ {label}: ログなし")
+for p in pipelines:
+    label = p["label"]
+    hour = p["hour"]
+
+    if p["type"] == "article":
+        if hour in audit_hours:
+            status.append(f"  ✅ {label}: 投稿確認済")
+        elif now.hour < hour:
+            status.append(f"  ⏳ {label}: 実行予定")
+        else:
+            status.append(f"  🔴 {label}: 未検出")
     else:
-        m = datetime.fromtimestamp(os.path.getmtime(p), tz=JST)
-        d = "✅" if m.strftime("%Y-%m-%d") == today else "🔴"
-        status.append(f"  {d} {label}: {m.strftime('%m/%d %H:%M')}")
+        # marker 型: cron.log から完了マーカーを検索
+        key = p["key"]
+        found = False
+        last_time = ""
+        for line in cron_today_lines:
+            if key in line and "完了" in line:
+                found = True
+                ts_match = re.search(r'(\d{2}:\d{2})', line)
+                if ts_match:
+                    last_time = ts_match.group(1)
+        if found:
+            status.append(f"  ✅ {label}: {last_time or '確認済'}")
+        elif hour >= 0 and now.hour < hour:
+            status.append(f"  ⏳ {label}: 実行予定")
+        elif hour < 0:
+            status.append(f"  ⬜ {label}: 未検出")
+        else:
+            status.append(f"  🔴 {label}: 未実行")
 
 print(f"【自動修復24h】{len(repairs)}件")
 for r in repairs[:5]: print(f"  🔧 {r.get('action','')}: {r.get('message','')[:60]}")

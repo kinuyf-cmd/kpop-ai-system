@@ -2,6 +2,7 @@
   "emergency_stop": {
     "consecutive_failures": 3,
     "daily_error_threshold": 15,
+    "daily_recoverable_cap": 50,
     "post_log_corruption": true,
     "wp_api_5xx_count": 3,
     "token_budget_exceeded": true
@@ -14,8 +15,16 @@
     "content_length_over": 8000,
     "gossip_category": true,
     "controversy_keywords": [
-      "炎上", "訴訟", "脱退", "逮捕", "薬物", "暴行",
-      "セクハラ", "パワハラ", "詐欺", "裁判"
+      "炎上",
+      "訴訟",
+      "脱退",
+      "逮捕",
+      "薬物",
+      "暴行",
+      "セクハラ",
+      "パワハラ",
+      "詐欺",
+      "裁判"
     ]
   },
   "anomaly_detection": {
@@ -25,6 +34,19 @@
     "duplicate_title_similarity": 0.85,
     "abnormal_post_count_daily": 25
   },
+  "feedback_loop": {
+    "ctr_low_threshold": 0.02,
+    "ctr_critical_threshold": 0.005,
+    "quality_score_threshold": 60,
+    "quality_consecutive_low": 3,
+    "max_auto_repair_per_day": 3,
+    "emergency_agenda_cooldown_hours": 6,
+    "auto_stop_exempt_agents": [
+      "arceus",
+      "pipeline",
+      "wordpress_post"
+    ]
+  },
   "block_conditions": {
     "no_title": true,
     "no_body": true,
@@ -32,20 +54,33 @@
     "contains_review_report": true,
     "html_broken": true,
     "wrong_source_file": true,
-    "min_char_count_flow": 1500,
+    "min_char_count_flow": 2000,
     "min_char_count_normal": 2500,
     "min_char_count_analysis": 4000,
-    "min_h2_count": 4
+    "min_h2_count": 4,
+    "min_internal_links": 2,
+    "recommended_internal_links": 3
   },
   "notification_channels": {
-    "critical": ["discord", "line"],
-    "warning": ["discord"],
-    "info": ["discord"]
+    "critical": [
+      "discord",
+      "line",
+      "webpush"
+    ],
+    "warning": [
+      "discord"
+    ],
+    "info": [
+      "discord"
+    ]
   },
   "daily_post_limits": {
-    "max_total": 8,
-    "max_flow": 4,
-    "max_asset": 4,
-    "max_revenue": 2
+    "max_total": 15,
+    "max_flow": 8,
+    "max_asset": 6,
+    "max_revenue": 3
+  },
+  "quality_gates": {
+    "gardevoir_min_score": 60
   }
 }

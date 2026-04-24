@@ -6,11 +6,15 @@
     "allowed_actions": [
       "config/agent_directives.json の既知パターン修正",
       "auto_directives.json への注入(再発エラー対応)",
-      "プロンプト修正(成功率<60%エージェントのみ)",
+      "プロンプト修正(safety_class=SAFEのエージェント全般)",
+      "タイムアウト設定の見直し(safety_class=SAFEかつhard_fail=0の安全な改善)",
       "draft化(pre_publish_hookのBLOCK基準明確な記事)",
       "サムネ再生成(score<6かつSEO上位でない記事)",
       "cron実行順序の最適化",
-      "ログローテーション"
+      "ログローテーション",
+      "error_patterns.json登録済みパターンの自動再適用",
+      "プロンプトテンプレートの軽微修正(±20%の文字数調整)",
+      "agents/*.mdのAUTO-LEARNEDセクション外プロンプト微調整(成功率<60%のみ)"
     ]
   },
   "yellow_zone_async_notify": {

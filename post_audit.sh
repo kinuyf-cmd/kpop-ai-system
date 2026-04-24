@@ -1585,6 +1585,21 @@ if [[ ${#ISSUES[@]} -gt 0 ]]; then
       -d '{"status":"draft"}' >/dev/null 2>&1 || true
     alog "📝 draft化完了: POST_ID=$POST_ID"
 
+    # ── draft化時はX URLリプライを削除（404リンク拡散防止）─────────────
+    _REPLY_TWEET_ID=""
+    if [ -f "$SCRIPT_DIR/logs/x_post.log" ]; then
+      # POST_URLに対応するURL_REPLY成功エントリからtweet_idを取得
+      _REPLY_TWEET_ID=$(grep -A30 "URL: $POST_URL" "$SCRIPT_DIR/logs/x_post.log" 2>/dev/null \
+        | grep "URL_REPLY: 成功" | head -1 \
+        | grep -oP 'status/\K\d+' || true)
+    fi
+    if [[ -n "$_REPLY_TWEET_ID" ]]; then
+      alog "🗑️ draft化に伴いX URLリプライ削除: tweet_id=$_REPLY_TWEET_ID"
+      python3 "$SCRIPT_DIR/google_metrics/post_to_x.py" --delete "$_REPLY_TWEET_ID" 2>/dev/null && \
+        alog "✅ X URLリプライ削除完了: $_REPLY_TWEET_ID" || \
+        alog "⚠️ X URLリプライ削除失敗（手動削除が必要）: $_REPLY_TWEET_ID"
+    fi
+
     # ── draft化時は urgent_errors へ Discord 通知（人間確認必須）─────
     _AUDIT_WH=$(python3 -c "
 import json

@@ -1,0 +1,294 @@
+{
+  "twitter": {
+    "enabled": true,
+    "reason": "",
+    "suspended_at": null,
+    "note": "凍結解除後に enabled: true に戻すこと"
+  },
+  "instagram": {
+    "enabled": true,
+    "api_version": "v19.0",
+    "credentials_file": "~/.instagram_credentials",
+    "posting_rules": {
+      "max_daily_posts": 3,
+      "min_interval_minutes": 120,
+      "caption_max_chars": 2200,
+      "max_hashtags": 30,
+      "optimal_hashtags": 15,
+      "post_types": [
+        "breaking",
+        "comeback",
+        "ranking",
+        "beauty"
+      ]
+    },
+    "hashtag_groups": {
+      "base": [
+        "kpop",
+        "kpopnews",
+        "韓国",
+        "kpopjournal"
+      ],
+      "breaking": [
+        "速報",
+        "kpopbreaking",
+        "芸能ニュース"
+      ],
+      "comeback": [
+        "カムバ",
+        "新曲",
+        "MV",
+        "kpopcomebacks"
+      ],
+      "ranking": [
+        "ランキング",
+        "チャート",
+        "kpopchart"
+      ],
+      "beauty": [
+        "韓国コスメ",
+        "kbeauty",
+        "韓国ファッション"
+      ],
+      "artist_specific": {
+        "BTS": [
+          "BTS",
+          "방탄소년단",
+          "バンタン",
+          "ARMY"
+        ],
+        "BLACKPINK": [
+          "BLACKPINK",
+          "블랙핑크",
+          "ブラピン",
+          "BLINK"
+        ],
+        "aespa": [
+          "aespa",
+          "에스파",
+          "エスパ",
+          "MY"
+        ],
+        "SEVENTEEN": [
+          "SEVENTEEN",
+          "세븐틴",
+          "セブチ",
+          "CARAT"
+        ],
+        "Stray Kids": [
+          "StrayKids",
+          "스트레이키즈",
+          "スキズ",
+          "STAY"
+        ],
+        "NewJeans": [
+          "NewJeans",
+          "뉴진스",
+          "ニュジ",
+          "Bunnies"
+        ],
+        "IVE": [
+          "IVE",
+          "아이브",
+          "アイヴ",
+          "DIVE"
+        ],
+        "LE SSERAFIM": [
+          "LE_SSERAFIM",
+          "르세라핌",
+          "ルセラ",
+          "FEARNOT"
+        ],
+        "ENHYPEN": [
+          "ENHYPEN",
+          "엔하이픈",
+          "エナプ",
+          "ENGENE"
+        ],
+        "TWICE": [
+          "TWICE",
+          "트와이스",
+          "トゥワイス",
+          "ONCE"
+        ]
+      }
+    },
+    "image_specs": {
+      "format": "JPEG",
+      "max_size_mb": 8,
+      "recommended_ratio": "1:1",
+      "min_width": 1080,
+      "min_height": 1080
+    }
+  },
+  "line": {
+    "enabled": true,
+    "credentials_file": "~/.line_credentials",
+    "channel_type": "messaging_api",
+    "push_rules": {
+      "trigger_categories": [
+        "breaking",
+        "comeback"
+      ],
+      "quiet_hours": {
+        "start": "23:00",
+        "end": "07:00"
+      },
+      "max_daily_pushes": 5,
+      "min_interval_minutes": 60,
+      "message_max_chars": 500
+    },
+    "rich_menu": {
+      "enabled": true,
+      "areas": [
+        {
+          "label": "最新ニュース",
+          "action": "latest"
+        },
+        {
+          "label": "ランキング",
+          "action": "ranking"
+        },
+        {
+          "label": "推し設定",
+          "action": "oshi_select"
+        }
+      ]
+    }
+  },
+  "webpush": {
+    "enabled": false,
+    "vapid_credentials_file": "~/.webpush_vapid",
+    "subscription_endpoint": "/wp-json/kpopjournal/v1/webpush/subscribe",
+    "push_rules": {
+      "trigger_categories": [
+        "breaking",
+        "comeback"
+      ],
+      "quiet_hours": {
+        "start": "23:00",
+        "end": "07:00"
+      },
+      "max_daily_pushes": 5,
+      "ttl_seconds": 86400,
+      "urgency": "normal"
+    },
+    "notification_defaults": {
+      "icon": "/wp-content/uploads/kpopjournal-icon-192.png",
+      "badge": "/wp-content/uploads/kpopjournal-badge-72.png",
+      "vibrate": [
+        200,
+        100,
+        200
+      ]
+    }
+  },
+  "newsletter": {
+    "enabled": true,
+    "provider": "brevo",
+    "credentials_file": "~/.brevo_credentials",
+    "schedule": {
+      "day_of_week": "sunday",
+      "send_hour_jst": 10,
+      "timezone": "Asia/Tokyo"
+    },
+    "content_rules": {
+      "max_articles": 7,
+      "min_articles": 3,
+      "selection_criteria": [
+        "highest_pv",
+        "highest_ctr",
+        "editor_pick"
+      ],
+      "include_sections": [
+        "top_stories",
+        "chart_update",
+        "upcoming_events",
+        "editor_pick"
+      ],
+      "subject_prefix": "K-POP Journal Weekly"
+    },
+    "template": {
+      "header_image": "/wp-content/uploads/newsletter-header.png",
+      "footer_text": "K-POP Journal | kpopjournal.tokyo",
+      "unsubscribe_url": "{{unsubscribe_url}}"
+    },
+    "list_id": ""
+  },
+  "comments": {
+    "enabled": false,
+    "provider": "wordpress_native",
+    "moderation": {
+      "auto_approve": false,
+      "require_login": false,
+      "require_name_email": true,
+      "spam_filter": "akismet",
+      "blocked_words": [
+        "広告",
+        "出会い",
+        "副業",
+        "稼ぐ",
+        "LINE@",
+        "即日"
+      ],
+      "max_links_per_comment": 1,
+      "min_comment_length": 5,
+      "max_comment_length": 2000,
+      "rate_limit_per_ip_hour": 10
+    },
+    "engagement": {
+      "show_comment_count": true,
+      "enable_replies": true,
+      "max_reply_depth": 2,
+      "enable_reactions": true,
+      "reaction_types": [
+        "heart",
+        "fire",
+        "laugh",
+        "surprise"
+      ],
+      "highlight_top_comments": true,
+      "ai_response_enabled": false
+    },
+    "notification": {
+      "notify_on_new_comment": true,
+      "notify_channel": "discord",
+      "daily_digest": true
+    }
+  },
+  "cross_post": {
+    "auto_share_on_publish": true,
+    "channels_by_category": {
+      "breaking": [
+        "x",
+        "line",
+        "webpush",
+        "instagram"
+      ],
+      "comeback": [
+        "x",
+        "line",
+        "webpush",
+        "instagram"
+      ],
+      "ranking": [
+        "x",
+        "instagram"
+      ],
+      "beauty": [
+        "x",
+        "instagram"
+      ],
+      "analysis": [
+        "x"
+      ],
+      "beginner": [
+        "x"
+      ],
+      "default": [
+        "x"
+      ]
+    },
+    "delay_between_channels_sec": 30
+  }
+}

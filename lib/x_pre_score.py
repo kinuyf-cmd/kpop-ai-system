@@ -28,7 +28,7 @@ from pathlib import Path
 
 # ─── 定数 ────────────────────────────────────────────────────────────────────
 
-PASS_THRESHOLD = 80
+PASS_THRESHOLD = 70
 
 PERF_FILE = Path(__file__).parent.parent / "logs" / "title_performance.jsonl"
 

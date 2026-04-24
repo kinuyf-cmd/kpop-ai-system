@@ -276,9 +276,18 @@ def validate_final_post(file_path=None, article_type="flow"):
     if not re.search(r'<(h2|h3|p|div|ul|ol)', body, re.IGNORECASE):
         errors.append("no_html: HTML tags not found")
 
+    # ── 内部リンクチェック（最低3本必須、2本以下はBLOCK） ──
+    internal_links = re.findall(r'<a\s+[^>]*href=["\']https?://(?:www\.)?kpopjournal\.tokyo/[^"\']+["\']', body, re.IGNORECASE)
+    internal_link_count = len(internal_links)
+    if internal_link_count < 2:
+        errors.append(f"insufficient_internal_links: {internal_link_count} (min 2)")
+    elif internal_link_count < 3:
+        warnings.append(f"low_internal_links: {internal_link_count} (recommended 3+)")
+
     # ── 文字数チェック（記事タイプ別） ──
-    min_chars = {"flow": 1500, "asset": 2500, "revenue": 2500, "analysis": 4000, "comparison": 5000}
-    required = min_chars.get(article_type, 1500)
+    # 全記事タイプ共通で最低2000字を要求（品質基準 v3.0 2026-04-18）
+    min_chars = {"flow": 2000, "asset": 2500, "revenue": 2500, "analysis": 4000, "comparison": 5000}
+    required = min_chars.get(article_type, 2000)
 
     if char_count < required:
         errors.append(f"char_count_low: {char_count} (min {required} for {article_type})")
@@ -289,15 +298,36 @@ def validate_final_post(file_path=None, article_type="flow"):
     if "```" in body:
         errors.append("codeblock_detected: markdown code block in content")
 
+    # ── テンプレ filler / 同一段落量産チェック (4層防止#3) ──
+    #    cluster_generator系で起きた「全h2セクションが同じ定型2段落」事故の再発防止
+    #    BLOCKは壊滅レベル(>=5重複 or 比率60%超)のみ。3重複はWARN
+    paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', body, re.DOTALL | re.IGNORECASE)
+    plain_paras = []
+    for p in paragraphs:
+        t = re.sub(r'<[^>]+>', '', p)
+        t = re.sub(r'\s+', ' ', t).strip()
+        if 40 <= len(t) <= 600:  # 短文(CTA/note)と巨大段落は除外
+            plain_paras.append(t)
+    if len(plain_paras) >= 4:
+        from collections import Counter
+        # ほぼ同一段落: 先頭60字で署名化(数字や固有名差を許容するため)
+        sig_counter = Counter(p[:60] for p in plain_paras)
+        max_dup = max(sig_counter.values()) if sig_counter else 1
+        dup_ratio = max_dup / len(plain_paras)
+        # 既知 boilerplate トリガ語
+        boiler_phrases = ["本章では", "3軸で整理", "体系的に理解するための", "網羅的にカバー"]
+        boiler_hits = sum(1 for p in plain_paras for kw in boiler_phrases if kw in p)
+        if max_dup >= 5 or dup_ratio >= 0.6:
+            errors.append(f"template_filler_block: 同一段落{max_dup}回({dup_ratio:.0%}) — cluster_generator型filler疑い")
+        elif max_dup >= 3 or boiler_hits >= len(plain_paras) * 0.5:
+            warnings.append(f"template_filler_warn: 同一段落{max_dup}回 / boiler句{boiler_hits}件")
+
     # ── 警告（BLOCKしないが改善推奨） ──
     if not any(w in body for w in ['情報元', '出典', '参照', '引用']):
         warnings.append("no_source: 情報元の記載なし")
 
     if 'revenue-cta' not in body and article_type != "flow":
         warnings.append("no_cta: CTA block not found")
-
-    if not re.search(r'<a\s+href=.*?>', body):
-        warnings.append("no_internal_links: 内部リンクなし")
 
     # ── 判定 ──
     if errors:
@@ -441,9 +471,17 @@ def check_emergency_stop():
                 except (json.JSONDecodeError, KeyError):
                     continue
 
+        # 再発防止: recoverable=True(品質ゲート等の正常防衛)と
+        #   真のシステム障害(unrecoverable)を分離して閾値判定
+        unrecoverable = [e for e in recent_errors if not e.get("recoverable", True)]
         max_errors = stop_config.get("daily_error_threshold", 5)
-        if len(recent_errors) >= max_errors:
-            return {"stop": True, "reason": f"Daily error threshold ({len(recent_errors)}/{max_errors})"}
+        if len(unrecoverable) >= max_errors:
+            return {"stop": True, "reason": f"Unrecoverable daily error threshold ({len(unrecoverable)}/{max_errors})"}
+
+        # recoverable 側も暴走検知のため上限(daily_recoverable_cap)で見る
+        recoverable_cap = stop_config.get("daily_recoverable_cap", 50)
+        if len(recent_errors) >= recoverable_cap:
+            return {"stop": True, "reason": f"Total error cap including recoverable ({len(recent_errors)}/{recoverable_cap})"}
 
         # 連続失敗
         consecutive = stop_config.get("consecutive_failures", 3)

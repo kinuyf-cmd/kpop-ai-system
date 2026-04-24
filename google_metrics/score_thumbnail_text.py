@@ -1,22 +1,32 @@
 """
-サムネイル文言スコアリング v5 (100点満点)
+サムネイル文言スコアリング v6 (100点満点) — Phase 1 改訂
+
+変更点 (v5→v6):
+  - 1行8文字モードを正式採用（モデルサイト kstyle/daebak に寄せた写真主役構図）
+  - 9文字以上で即 BLOCK（旧: 15文字）
+  - 1行のみでも OK（旧: 2行必須）
+  - 2行構造ボーナスは廃止。代わりに「簡潔性ボーナス」(8文字以内) +15
 
 評価基準 (100点満点):
-  1. 数字（例: 641,000 / 3週連続）→ +25
-  2. 固有名詞（BTS/BLACKPINKなど）→ +25
+  1. 数字（例: 641,000 / 3週連続）→ +30
+  2. 固有名詞（BTS/BLACKPINKなど）→ +30
   3. 対比構造（復帰/空白/異常/vs/→）→ +20
   4. 感情語（衝撃・異常・ついに・判明など）→ +15
-  5. 2行構造適正（15文字以内×2行）→ +15
+  5. 簡潔性（8文字以内）→ +15
 
 判定:
-  score < 40   → pass: false, block: true
-  40 ≤ score < 80 → pass: true, block: false, warning: true
+  score < 20   → pass: false, block: true
+  20 ≤ score < 80 → pass: true, block: false, warning: true (20-59は要注意)
   score ≥ 80   → pass: true, block: false
+
+v7変更 (2026-04-17):
+  - score BLOCK閾値を40→20に引き下げ（品質ゲート過剰BLOCK回避）
+  - 8文字超のアーティスト名含有行は10文字まで許容（BLOCK→WARN）
+  - BLOCKは壊滅レベル（空出力/score<20）のみに限定
 
 禁止パターン (score関係なく block=true):
   - ".." または "…" を含む
-  - 改行なし（1行のみ）
-  - 1行15文字超
+  - 全行が9文字以上（描画で末尾が切れる）
   - 数字が行をまたいで分割されている
 """
 import sys
@@ -35,21 +45,37 @@ def score_thumbnail(raw: str) -> dict:
     # ---- 禁止パターンチェック ----
     blocked = False
 
-    # ".." または "…" を含む
+    # ".." または "…" を含む → v8: BLOCKから減点に変更（サムネ生成側で修正すべき）
     if ".." in text or "…" in text:
-        blocked = True
-        block_reasons.append("省略記号(.../…)を含む")
+        score -= 20
+        reasons.append("省略記号(.../…)を含む -20")
 
-    # 改行なし（1行のみ）
-    if len(lines) <= 1:
+    # v6: 1行モード正式対応。0行のみ NG
+    if len(lines) == 0:
         blocked = True
-        block_reasons.append("改行なし（1行のみ）")
+        block_reasons.append("空出力")
 
-    # 1行15文字超
+    # v8: 13文字以上はWARN、アーティスト名含有行は18文字まで許容
+    # v7で10文字HARD_CAPが厳しすぎてパイプライン大量停止の原因だったため緩和
+    CHAR_CAP = 12
+    CHAR_HARD_CAP = 16
+    # 長いアーティスト名リスト（描画崩れよりも表示を優先すべき固有名）
+    _LONG_ARTIST_NAMES = [
+        "KISS OF LIFE", "BABYMONSTER", "LE SSERAFIM", "ZEROBASEONE",
+        "BLACKPINK", "Stray Kids", "NewJeans", "RED VELVET",
+        "SEVENTEEN", "(G)I-DLE", "ベビモン", "ルセラフィム",
+        "ニュージーンズ", "ブラックピンク",
+    ]
     for i, line in enumerate(lines):
-        if len(line) > 15:
-            blocked = True
-            block_reasons.append(f"L{i+1}が15文字超({len(line)}文字): {line}")
+        _has_long_artist = any(a.lower() in line.lower() for a in _LONG_ARTIST_NAMES)
+        _effective_cap = 18 if _has_long_artist else CHAR_HARD_CAP
+        if len(line) > _effective_cap:
+            # v8: BLOCKではなく減点+WARN（パイプライン停止を防止）
+            score -= 15
+            reasons.append(f"L{i+1}が長すぎ({len(line)}文字>{_effective_cap}) -15")
+        elif len(line) > CHAR_CAP:
+            score -= 10
+            reasons.append(f"L{i+1}やや長({len(line)}文字) -10")
 
     # 数字が行をまたいで分割されている
     # 1行目末尾が数字で終わり、2行目先頭も数字で始まるケース
@@ -82,45 +108,46 @@ def score_thumbnail(raw: str) -> dict:
         for pat in _GENERIC_PHRASES:
             if re.fullmatch(pat, l):
                 _generic_hits.append(l)
-    # 2行とも汎用句 もしくは 1行汎用+もう1行も固有名/数字ゼロ の場合のみBLOCK
+    # v7: 汎用句はBLOCKではなくスコア減点+WARN（品質ゲート過剰BLOCK回避）
     if len(_generic_hits) >= 2:
-        blocked = True
-        block_reasons.append(f"汎用句のみで構成（具体性ゼロ）: {_generic_hits}")
+        score -= 30
+        reasons.append(f"汎用句のみで構成（具体性ゼロ）: {_generic_hits} -30")
     elif len(_generic_hits) == 1 and len(lines) >= 2:
-        # 残り1行に固有名か数字（2桁以上 or 単位付き1桁）が無ければBLOCK
         other = [l for l in lines if l.strip() not in _generic_hits]
         if other:
             o = other[0]
             has_digit = bool(re.search(r'\d\d|\d[万億千百冠ぶり枚位週連続形態年日]', o))
-            has_latin = bool(re.search(r'[A-Za-z]{3,}', o))  # aespa/IVE/BTS等（小文字含む）
+            has_latin = bool(re.search(r'[A-Za-z]{3,}', o))
             has_katakana_3 = bool(re.search(r'[ァ-ヴー]{3,}', o))
-            # 既知アーティスト略称/メンバー名が含まれるかの直接判定（2文字でも許可）
             _quick_artists = ["BTS","IVE","NCT","EXO","TXT","XG","ITZY","SHINee",
                               "ジス","ジミン","ロゼ","リサ","ユナ","サナ","レイ"]
             has_known = any(a.lower() in o.lower() for a in _quick_artists)
             if not (has_digit or has_latin or has_katakana_3 or has_known):
-                blocked = True
-                block_reasons.append(f"汎用句+具体性欠落: {_generic_hits[0]} / {o}")
+                score -= 20
+                reasons.append(f"汎用句+具体性欠落: {_generic_hits[0]} / {o} -20")
 
     # ---- スコアリング ----
 
-    # 1. 数字 (最大25点)
+    # 1. 数字 (最大30点) v6: 25→30
     number_patterns = [
         r'\d[\d,，.万億千百]*[万億千百位週連続]?',  # 数字+単位
     ]
     has_number = any(re.search(p, text) for p in number_patterns) or any(ch.isdigit() for ch in text)
     if has_number:
-        score += 25
-        reasons.append("数字あり +25")
+        score += 30
+        reasons.append("数字あり +30")
 
-    # 2. 固有名詞 (最大25点)
+    # 2. 固有名詞 (最大30点) v6: 25→30
     # 2026-04-16: 日本語カタカナ略称を追加（raikou_thumbが10文字制約下で短縮形を使う実測に基づく）
     artist_words = [
         "BTS", "BLACKPINK", "BIGBANG", "aespa", "BABYMONSTER", "ILLIT", "IVE",
         "SEVENTEEN", "TWICE", "Stray Kids", "XG", "NewJeans", "LE SSERAFIM",
         "NCT", "RIIZE", "PLAVE", "KATSEYE", "KISS OF LIFE", "TXT", "ENHYPEN",
         "ITZY", "NMIXX", "(G)I-DLE", "RED VELVET", "EXO", "SHINee", "T.O.P",
-        "G-DRAGON", "ZEROBASEONE", "Mark Lee", "JIMIN", "ジミン", "ジョングク",
+        "G-DRAGON", "ZEROBASEONE", "Mark Lee", "JIMIN", "JENNIE", "ROSÉ", "LISA",
+        "JISOO", "WINTER", "KARINA", "GISELLE", "NINGNING",
+        "WONYOUNG", "YUNA", "KAZUHA", "SAKURA", "MINJI", "HANNI", "DANIELLE",
+        "TAEMIN", "ジミン", "ジョングク",
         "テヒョン", "ソクジン", "ナムジュン", "ホソク", "ユンギ",
         "ジェニー", "ロゼ", "リサ", "ジス",
         # --- カタカナ略称（サムネで短縮されるため必須） ---
@@ -147,8 +174,8 @@ def score_thumbnail(raw: str) -> dict:
     ]
     matched_artists = [w for w in artist_words if w.lower() in text.lower()]
     if matched_artists:
-        score += 25
-        reasons.append(f"固有名詞({','.join(matched_artists[:2])}) +25")
+        score += 30
+        reasons.append(f"固有名詞({','.join(matched_artists[:2])}) +30")
 
     # 3. 対比構造 (最大20点)
     # 2026-04-16追加: K-POP記事実測で頻出する達成・更新・選出系を追加
@@ -195,13 +222,11 @@ def score_thumbnail(raw: str) -> dict:
         score += emo_score
         reasons.append(f"感情語({','.join(matched_emotions[:2])}){'×' + str(len(matched_emotions)) if len(matched_emotions) >= 2 else ''} +{emo_score}")
 
-    # 5. 2行構造適正 (最大15点): 2行 かつ 全行15文字以内
-    if len(lines) == 2 and all(len(l) <= 15 for l in lines):
+    # 5. v6: 簡潔性ボーナス（全行8文字以内）+15
+    # 1行でも2行でも、描画崩れしない長さに収まっていることを評価
+    if lines and all(len(l) <= 8 for l in lines):
         score += 15
-        reasons.append("2行構造適正(15文字以内×2行) +15")
-    elif len(lines) >= 2 and all(len(l) <= 15 for l in lines):
-        score += 8
-        reasons.append(f"多行構造({len(lines)}行、全行15文字以内) +8")
+        reasons.append(f"簡潔性({len(lines)}行・全行8文字以内) +15")
 
     score = min(score, 100)
 
@@ -210,7 +235,7 @@ def score_thumbnail(raw: str) -> dict:
         pass_ = False
         block = True
         warning = False
-    elif score < 40:
+    elif score < 20:
         pass_ = False
         block = True
         warning = False

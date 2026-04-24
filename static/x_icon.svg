@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8547A"/>
+      <stop offset="100%" stop-color="#7B5EA7"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8547A"/>
+      <stop offset="50%" stop-color="#7B5EA7"/>
+      <stop offset="100%" stop-color="#E8547A"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#0F0F14"/>
+
+  <!-- Outer ring glow -->
+  <circle cx="200" cy="200" r="170" fill="none" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.3" filter="url(#glow)"/>
+
+  <!-- Main ring -->
+  <circle cx="200" cy="200" r="170" fill="none" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.9"/>
+
+  <!-- Inner subtle ring -->
+  <circle cx="200" cy="200" r="158" fill="none" stroke="url(#ringGrad)" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Corner accent dots -->
+  <circle cx="200" cy="30" r="3" fill="#E8547A" opacity="0.8"/>
+  <circle cx="200" cy="370" r="3" fill="#7B5EA7" opacity="0.8"/>
+  <circle cx="30" cy="200" r="3" fill="#7B5EA7" opacity="0.8"/>
+  <circle cx="370" cy="200" r="3" fill="#E8547A" opacity="0.8"/>
+
+  <!-- KPJ text -->
+  <text x="200" y="218" text-anchor="middle" dominant-baseline="middle"
+        font-family="'Bebas Neue', 'Impact', 'Arial Black', sans-serif"
+        font-weight="900" font-size="130" letter-spacing="8"
+        fill="url(#textGrad)" filter="url(#textGlow)">KPJ</text>
+
+  <!-- Subtle underline accent -->
+  <line x1="115" y1="265" x2="285" y2="265" stroke="url(#ringGrad)" stroke-width="1.5" opacity="0.5"/>
+</svg>

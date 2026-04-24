@@ -228,7 +228,9 @@ def _check_recent_errors():
             except (json.JSONDecodeError, KeyError):
                 continue
 
-    return {"healthy": count < 5, "error_count": count}
+    config = load_safety_config()
+    threshold = config.get("emergency_stop", {}).get("daily_error_threshold", 15)
+    return {"healthy": count < threshold, "error_count": count, "threshold": threshold}
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

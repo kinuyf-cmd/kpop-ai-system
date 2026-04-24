@@ -17,6 +17,9 @@ mkdir -p "$REPORTS"
 TODAY=$(date '+%Y年%m月%d日')
 echo "=== SNS広報部会議 開始: $TODAY ==="
 
+# Phase 4: 前週KPI自動注入
+WEEKLY_KPI=$(weekly_kpi_brief sns)
+
 SNS_DATA=$(python3 - <<'PYEOF'
 import json
 from pathlib import Path

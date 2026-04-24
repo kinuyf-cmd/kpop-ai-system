@@ -76,14 +76,11 @@ def load_top_candidates(top: int) -> list[dict]:
         return []
     d = json.loads(METRICS.read_text())
     pages = d.get("pages", [])
-    HOME = "https://www.kpopjournal.tokyo/"
+    from growth_exclude import is_excluded
     cand = []
     for p in pages:
         u = p["url"]
-        if "#" in u or "?" in u or u == HOME:
-            continue
-        tail = u[len(HOME):].strip("/")
-        if not tail or "/" in tail:
+        if is_excluded(u)[0]:
             continue
         if p["impressions"] < IMPR_THRESHOLD or p["ctr"] >= CTR_THRESHOLD:
             continue
@@ -133,6 +130,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--top", type=int, default=20)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--strict", action="store_true",
+                    help="score>=8 (full tier) のみ採用。provisional は除外")
+    ap.add_argument("--daily-log", type=str, default="",
+                    help="追加書き込み先 (例: logs/ctr_rewrite_daily.jsonl)")
     args = ap.parse_args()
 
     cand = load_top_candidates(args.top)
@@ -142,6 +143,7 @@ def main():
 
     ts = datetime.now(tz=JST).isoformat()
     stats = {"full": 0, "provisional": 0, "reject": 0, "same": 0, "retry_block": 0, "error": 0}
+    MAX_REGEN = 3
 
     for i, p in enumerate(cand, 1):
         url = p["url"]
@@ -168,19 +170,44 @@ def main():
             stats["error"] += 1
             continue
 
-        new_title = gen_new_title(old_title)
-        if not new_title:
-            print(f"  [{i:2d}] ⚠️ 新タイトル生成失敗: {old_title[:40]}")
-            stats["error"] += 1
-            continue
-        if new_title == old_title:
-            print(f"  [{i:2d}] ⏭ 同一: {new_title[:40]}")
-            stats["same"] += 1
+        # 生成改善ループ: 最大MAX_REGEN回まで再生成して条件満たす案を採る
+        # required_tier: strict時は full のみ、そうでなければ provisional 以上で可
+        best = None
+        attempt_log = []
+        for attempt in range(1, MAX_REGEN + 1):
+            new_title = gen_new_title(old_title)
+            if not new_title:
+                attempt_log.append(f"try{attempt}=empty")
+                continue
+            if new_title == old_title:
+                attempt_log.append(f"try{attempt}=same")
+                continue
+            scored = score_title(new_title)
+            tier = scored.get("tier", "reject")
+            score = scored.get("score", 0)
+            attempt_log.append(f"try{attempt}={tier}(s={score})")
+            passed = (tier == "full") or (tier == "provisional" and not args.strict)
+            if passed:
+                best = {"new_title": new_title, "tier": tier, "score": score}
+                break
+
+        if not best:
+            # NG×MAX_REGEN → skip（書き換えない）
+            print(f"  [{i:2d}] ⏭ NG×{MAX_REGEN} skip [{' '.join(attempt_log)}]: {old_title[:40]}")
+            stats["reject"] += 1
+            fail_record = {
+                "ts": ts, "url": url, "post_id": pid,
+                "impressions": p["impressions"], "ctr_pct": round(p["ctr"] * 100, 2),
+                "old_title": old_title, "new_title": "",
+                "tier": "reject", "attempts": attempt_log, "skipped": True,
+            }
+            with HISTORY.open("a") as fp:
+                fp.write(json.dumps(fail_record, ensure_ascii=False) + "\n")
             continue
 
-        scored = score_title(new_title)
-        tier = scored.get("tier", "reject")
-        score = scored.get("score", 0)
+        new_title = best["new_title"]
+        tier = best["tier"]
+        score = best["score"]
         stats[tier] = stats.get(tier, 0) + 1
 
         record = {
@@ -188,13 +215,8 @@ def main():
             "impressions": p["impressions"], "ctr_pct": round(p["ctr"] * 100, 2),
             "old_title": old_title, "new_title": new_title,
             "score": score, "tier": tier,
+            "attempts": attempt_log,
         }
-
-        if tier == "reject":
-            print(f"  [{i:2d}] ⏭ reject(score={score}): {new_title[:40]}")
-            with HISTORY.open("a") as fp:
-                fp.write(json.dumps(record, ensure_ascii=False) + "\n")
-            continue
 
         mark = "✅" if tier == "full" else "🟡"
         print(f"  [{i:2d}] {mark} {tier}(score={score}): {new_title[:50]}")
@@ -208,6 +230,11 @@ def main():
             record["updated"] = True
             with HISTORY.open("a") as fp:
                 fp.write(json.dumps(record, ensure_ascii=False) + "\n")
+            if args.daily_log:
+                daily_path = BASE / args.daily_log
+                daily_path.parent.mkdir(parents=True, exist_ok=True)
+                with daily_path.open("a") as fp:
+                    fp.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception as e:
             print(f"       ❌ WP update fail: {e}")
             stats["error"] += 1

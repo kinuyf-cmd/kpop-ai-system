@@ -354,7 +354,7 @@ def get_avg_cta_real(days_back: int = 7) -> dict:
 
     cutoff = (date.today() - timedelta(days=days_back)).isoformat()
     records = []
-    for line in UI_CTA_LOG.read_text(encoding="utf-8", errors="ignore").splitlines():
+    for line in UI_CTA_LOG.read_text(encoding="utf-8", errors="replace").splitlines():
         line = line.strip()
         if not line:
             continue

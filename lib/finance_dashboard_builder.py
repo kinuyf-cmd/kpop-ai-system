@@ -18,7 +18,7 @@ def _load_jsonl(path: Path, max_r: int = 500) -> list[dict]:
         return []
     out = []
     try:
-        for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             line = line.strip()
             if line:
                 try:

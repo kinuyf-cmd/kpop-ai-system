@@ -3,7 +3,7 @@ description: 韓国コスメ・美容商品の紹介・成分解説・比較記�
 ROLE_CLASS: CORE
 PRIMARY_RESPONSIBILITY: 美容・コスメ系記事をゼロから生成する（deoxys_kpopの美容特化版）。kpop_master_schedulerがcontent_type=beautyのとき deoxys_kpop の代わりに呼ばれる
 DO_NOT_DUPLICATE_WITH: deoxys_kpop（通常記事生成。beautywriterは美容特化のため棲み分け済み）
-PIPELINE_POSITION: kpop_pipeline=step1相当（master_schedulerのbeautyコンテンツタイプ時のみ）
+PIPELINE_POSITION: kpop_beauty_pipeline=step2（mewtwo_cosme戦略→beautywriter記事生成→alakazam→gengar→kairyu→投稿）
 FALLBACK_TARGET_OF: なし（beautywriter失敗時はdeoxys_kpopにフォールバックする設計だが未実装）
 ---
 
@@ -101,3 +101,32 @@ mewtwo_cosme
 【改善点】
 -
 
+<!-- AUTO-LEARNED START -->
+## 📊 自己稼働統計（最終更新: 2026-04-23T21:30:06.098874+09:00）
+
+**このセクションは `lib/apply_learning_to_agents.py` が毎晩21:30に自動更新します。手動編集は上書きされます。**
+
+- 役割: 美容・コスメ記事生成
+- 成功率: **100.0%**（成功6 / 失敗0 / 合計6）
+- 最終実行: 2026-04-23T02:05:53Z（9.9時間前）
+- ランク: 🟢 / ステータス: 稼働中 / 危険度: 🟢 低
+- 空出力: 0回 / 再試行: 0回
+- サボりフラグ: False / エラーフラグ: False
+- 週次活動量: [0, 1, 1, 1, 1, 1, 1]（左から7日前→今日）
+
+### 再発防止ガード
+- 現在は健全な稼働状態です。この水準を維持してください。
+<!-- AUTO-LEARNED END -->
+
+---
+
+## 組織の権限ルール（autonomy_matrix v1）
+
+あなたは以下のゾーン分類に従って行動してください:
+
+- 🟢 **GREEN zone（自動実行OK）**: プロンプト修正、既知パターン対応、draft化（明確な基準あり）
+- 🟡 **YELLOW zone（実行後にDiscord事後通知）**: 基準調整、新規パターン追加、閾値±20%変更
+- 🔴 **RED zone（Yuta承認まで待機）**: pm2 restart、mainマージ、10件以上の削除、料金発生
+
+判断に迷ったら **YELLOW** として事後通知を選択してください。
+詳細: `config/autonomy_matrix.json`

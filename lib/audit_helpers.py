@@ -581,6 +581,32 @@ def cmd_meta_fix(post_id: str) -> None:
         patch_meta["_aioseo_twitter_description"] = desc[:200]
         print(f"FIXED:twitter_description")
 
+    # Twitter card type: summary_large_image を強制（CTR最大化）
+    tw_card_type = meta.get("_aioseo_twitter_card", "")
+    if tw_card_type != "summary_large_image":
+        patch_meta["_aioseo_twitter_card"] = "summary_large_image"
+        print(f"FIXED:twitter_card=summary_large_image (was: {tw_card_type or 'empty'})")
+
+    # OG type: article を設定（SNSで記事として認識させる）
+    og_type = meta.get("_aioseo_og_object_type", "")
+    if not og_type or og_type == "default":
+        patch_meta["_aioseo_og_object_type"] = "article"
+        print(f"FIXED:og_type=article")
+
+    # OG image: featured imageがあればog:imageにも設定
+    featured_media = post.get("featured_media", 0)
+    og_image = meta.get("_aioseo_og_image_custom_url", "")
+    if not og_image and featured_media:
+        try:
+            media = _wp_get(f"/media/{featured_media}")
+            media_url = media.get("source_url", "")
+            if media_url:
+                patch_meta["_aioseo_og_image_custom_url"] = media_url
+                patch_meta["_aioseo_twitter_image_custom_url"] = media_url
+                print(f"FIXED:og_image={media_url[:60]}...")
+        except Exception:
+            pass  # media取得失敗は無視
+
     if patch_meta:
         try:
             _wp_patch(f"/posts/{post_id}", {"meta": patch_meta})
@@ -919,6 +945,334 @@ def cmd_content_fix(post_id: str, title: str, content_len: str) -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# 9. 重複コンテンツチェック
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _title_similarity(a: str, b: str) -> float:
+    """2つのタイトルの類似度を計算（文字ベースJaccard）"""
+    sa = set(a.lower())
+    sb = set(b.lower())
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
+def cmd_duplicate_check(post_id: str) -> None:
+    """
+    7日以内の投稿と重複チェック。
+    出力:
+      OK
+      NG_TITLE_SIMILAR:<similar_post_id>:<similarity%>:<title>
+      NG_KEYWORD_OVERLAP:<keyword>:<count>件
+    """
+    try:
+        target = _wp_get(f"/posts/{post_id}?context=edit&_fields=id,title,content,date,categories")
+    except Exception as e:
+        print(f"ERROR:{e}")
+        return
+
+    target_title = target.get("title", {}).get("raw", "")
+    target_content = re.sub(r"<[^>]+>", "", target.get("content", {}).get("raw", "")).lower()
+    target_date = target.get("date", "")[:10]
+
+    # 直近7日の記事を取得
+    try:
+        recent = _wp_get(f"/posts?per_page=50&orderby=date&order=desc&_fields=id,title,date")
+    except Exception as e:
+        print(f"ERROR:{e}")
+        return
+
+    issues = []
+
+    for post in recent:
+        pid = post["id"]
+        if str(pid) == str(post_id):
+            continue
+        p_title = post.get("title", {}).get("rendered", "")
+        p_date = post.get("date", "")[:10]
+
+        # 7日以内チェック
+        try:
+            from datetime import datetime
+            t_dt = datetime.fromisoformat(target_date)
+            p_dt = datetime.fromisoformat(p_date)
+            if abs((t_dt - p_dt).days) > 7:
+                continue
+        except Exception:
+            continue
+
+        # タイトル類似度
+        sim = _title_similarity(target_title, p_title)
+        if sim >= 0.8:
+            issues.append(f"NG_TITLE_SIMILAR:{pid}:{sim*100:.0f}%:{p_title[:40]}")
+
+    # メインキーワード重複チェック（タイトルから主要単語を抽出）
+    title_words = re.findall(r"[A-Za-z]{3,}|[\u3040-\u9fff]{2,}", target_title)
+    for word in title_words[:5]:
+        count = 0
+        for post in recent:
+            if str(post["id"]) == str(post_id):
+                continue
+            p_title = post.get("title", {}).get("rendered", "")
+            p_date = post.get("date", "")[:10]
+            try:
+                t_dt = datetime.fromisoformat(target_date)
+                p_dt = datetime.fromisoformat(p_date)
+                if abs((t_dt - p_dt).days) > 7:
+                    continue
+            except Exception:
+                continue
+            if word.lower() in p_title.lower():
+                count += 1
+        if count >= 2:
+            issues.append(f"NG_KEYWORD_OVERLAP:{word}:{count}件")
+
+    if issues:
+        for iss in issues:
+            print(iss)
+    else:
+        print("OK")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 10. E-E-A-Tチェック
+# ─────────────────────────────────────────────────────────────────────────────
+
+def cmd_eeat_check(post_id: str) -> None:
+    """
+    E-E-A-T（経験・専門性・権威性・信頼性）チェック。
+    出力:
+      OK
+      NG_NO_AUTHOR
+      NG_NO_SOURCE
+      NG_NO_DATE
+      SCORE:<0-30>  (E-E-A-Tスコア、30点満点)
+    """
+    try:
+        post = _wp_get(f"/posts/{post_id}?context=edit")
+    except Exception as e:
+        print(f"ERROR:{e}")
+        return
+
+    content = post.get("content", {}).get("raw", "")
+    text = re.sub(r"<[^>]+>", "", content)
+    issues = []
+    score = 0
+
+    # 著者情報チェック
+    author_patterns = ["編集部", "ライター", "著者", "執筆", "writer", "author", "KPOP JOURNAL"]
+    has_author = any(p.lower() in content.lower() for p in author_patterns)
+    if has_author:
+        score += 10
+    else:
+        issues.append("NG_NO_AUTHOR")
+
+    # 情報源チェック
+    source_patterns = [
+        r"情報[元源]", r"出典", r"参[考照]", r"公式", r"発表",
+        r"Billboard", r"Oricon", r"Melon", r"Spotify", r"YouTube",
+        r"https?://[^\s<]+",  # URLリンク
+        r"によると", r"報じた", r"明らかにした",
+    ]
+    source_hits = sum(1 for p in source_patterns if re.search(p, content, re.I))
+    if source_hits >= 2:
+        score += 10
+    elif source_hits >= 1:
+        score += 5
+    else:
+        issues.append("NG_NO_SOURCE")
+
+    # 日付明記チェック
+    date_patterns = [
+        r"20\d{2}年", r"20\d{2}/\d{1,2}", r"\d{1,2}月\d{1,2}日",
+        r"最新", r"速報", r"現在",
+    ]
+    date_hits = sum(1 for p in date_patterns if re.search(p, text))
+    if date_hits >= 2:
+        score += 10
+    elif date_hits >= 1:
+        score += 5
+    else:
+        issues.append("NG_NO_DATE")
+
+    if issues:
+        for iss in issues:
+            print(iss)
+    print(f"SCORE:{score}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 11. 総合品質スコア算出
+# ─────────────────────────────────────────────────────────────────────────────
+
+def cmd_quality_score(post_id: str) -> None:
+    """
+    記事の総合品質スコア(0-100)を算出。
+    出力:
+      SCORE:<score>
+      RANK:<S|A|B|C|D>
+      BREAKDOWN:<json>
+      REWRITE_NEEDED (Bスコア以下の場合)
+    """
+    try:
+        post = _wp_get(f"/posts/{post_id}?context=edit")
+    except Exception as e:
+        print(f"ERROR:{e}")
+        return
+
+    content_raw = post.get("content", {}).get("raw", "")
+    title = post.get("title", {}).get("raw", "")
+    text = re.sub(r"<[^>]+>", "", content_raw).strip()
+    meta = post.get("meta", {})
+    desc = meta.get("_aioseo_description", "")
+    slug = post.get("slug", "")
+
+    breakdown = {}
+    total = 0
+
+    # ── 1. 文字数 (15点) ──
+    char_count = len(text)
+    if char_count >= 3000:
+        breakdown["char_count"] = 15
+    elif char_count >= 2500:
+        breakdown["char_count"] = 12
+    elif char_count >= 2000:
+        breakdown["char_count"] = 8
+    elif char_count >= 1500:
+        breakdown["char_count"] = 5
+    else:
+        breakdown["char_count"] = 0
+    total += breakdown["char_count"]
+
+    # ── 2. H2構造 (10点) ──
+    h2_count = content_raw.count("<h2")
+    if 4 <= h2_count <= 8:
+        breakdown["h2_structure"] = 10
+    elif h2_count >= 2:
+        breakdown["h2_structure"] = 6
+    else:
+        breakdown["h2_structure"] = 0
+    total += breakdown["h2_structure"]
+
+    # ── 3. タイトル品質 (15点) ──
+    title_score = 0
+    title_len = len(title)
+    if 25 <= title_len <= 60:
+        title_score += 5
+    elif 20 <= title_len <= 70:
+        title_score += 3
+    # 感情ワード or 数字
+    emotion_words = ["衝撃", "覚醒", "急変", "判明", "炎上", "完全", "徹底", "まとめ", "最新", "話題", "人気", "大流行", "速報"]
+    has_emotion = any(w in title for w in emotion_words)
+    has_number = bool(re.search(r"\d+[つ選本件位個]|TOP\d|第\d", title))
+    if has_emotion:
+        title_score += 5
+    if has_number:
+        title_score += 5
+    elif not has_emotion and not has_number:
+        title_score += 2  # 最低点
+    breakdown["title_quality"] = min(title_score, 15)
+    total += breakdown["title_quality"]
+
+    # ── 4. SEO (15点) ──
+    seo_score = 0
+    # メタディスクリプション
+    desc_len = len(desc)
+    if 110 <= desc_len <= 140:
+        seo_score += 5
+    elif desc_len >= 80:
+        seo_score += 2
+    # slug英語化
+    if slug and not re.search(r"[\u3040-\u9fff%]", slug):
+        seo_score += 5
+    # タイトルにキーワード
+    kw_list = ["K-POP", "K-pop", "韓国", "アイドル", "BTS", "BLACKPINK", "aespa", "TWICE",
+               "コスメ", "チャート", "ライブ", "ツアー", "カムバック"]
+    if any(kw in title for kw in kw_list):
+        seo_score += 5
+    breakdown["seo"] = min(seo_score, 15)
+    total += breakdown["seo"]
+
+    # ── 5. E-E-A-T (15点) ──
+    eeat = 0
+    # 著者情報
+    author_pats = ["編集部", "ライター", "著者", "KPOP JOURNAL"]
+    if any(p.lower() in content_raw.lower() for p in author_pats):
+        eeat += 5
+    # 情報源
+    source_pats = [r"情報[元源]", r"出典", r"参[考照]", r"公式発表", r"によると", r"報じた"]
+    source_hits = sum(1 for p in source_pats if re.search(p, content_raw))
+    if source_hits >= 2:
+        eeat += 5
+    elif source_hits >= 1:
+        eeat += 3
+    # 日付
+    if re.search(r"20\d{2}年", text):
+        eeat += 5
+    breakdown["eeat"] = min(eeat, 15)
+    total += breakdown["eeat"]
+
+    # ── 6. ユーザー価値 (15点) ──
+    value = 0
+    # 「なぜ/どうやって/いくら」に回答
+    why_pats = ["なぜ", "理由", "原因", "背景", "どうやって", "方法", "手順", "やり方",
+                "いくら", "価格", "料金", "費用", "値段", "円"]
+    why_hits = sum(1 for p in why_pats if p in text)
+    if why_hits >= 3:
+        value += 5
+    elif why_hits >= 1:
+        value += 3
+    # 具体的数字・固有名詞
+    numbers = re.findall(r"\d+[万億千百%年月日時分秒位回件本枚曲]", text)
+    if len(numbers) >= 5:
+        value += 5
+    elif len(numbers) >= 2:
+        value += 3
+    # 結論・まとめ
+    if re.search(r"<h2[^>]*>.*まとめ", content_raw, re.I):
+        value += 5
+    elif re.search(r"まとめ|結論|最後に", text):
+        value += 3
+    breakdown["user_value"] = min(value, 15)
+    total += breakdown["user_value"]
+
+    # ── 7. CTA・内部リンク (15点) ──
+    link_score = 0
+    internal_links = len(re.findall(r'href="https://www\.kpopjournal\.tokyo/', content_raw))
+    if internal_links >= 3:
+        link_score += 5
+    elif internal_links >= 1:
+        link_score += 3
+    # アフィリエイトCTA
+    if "affiliate-cta" in content_raw:
+        link_score += 5
+    # 関連記事
+    if "関連記事" in content_raw:
+        link_score += 5
+    breakdown["cta_links"] = min(link_score, 15)
+    total += breakdown["cta_links"]
+
+    # ── ランク判定 ──
+    if total >= 90:
+        rank = "S"
+    elif total >= 75:
+        rank = "A"
+    elif total >= 60:
+        rank = "B"
+    elif total >= 40:
+        rank = "C"
+    else:
+        rank = "D"
+
+    print(f"SCORE:{total}")
+    print(f"RANK:{rank}")
+    print(f"BREAKDOWN:{json.dumps(breakdown, ensure_ascii=False)}")
+
+    if total < 75:
+        print("REWRITE_NEEDED")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CLI ディスパッチ
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -953,6 +1307,12 @@ if __name__ == "__main__":
             cmd_x_fix(args[0], args[1] if len(args) > 1 else "", args[2] if len(args) > 2 else "news")
         elif cmd == "content_fix":
             cmd_content_fix(args[0], args[1] if len(args) > 1 else "", args[2] if len(args) > 2 else "0")
+        elif cmd == "duplicate_check":
+            cmd_duplicate_check(args[0])
+        elif cmd == "eeat_check":
+            cmd_eeat_check(args[0])
+        elif cmd == "quality_score":
+            cmd_quality_score(args[0])
         else:
             print(f"Unknown command: {cmd}", file=sys.stderr)
             sys.exit(1)

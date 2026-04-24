@@ -10,7 +10,7 @@ from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, Run
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 
-BASE_DIR = os.path.expanduser("~/google_metrics")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 GA4_PROPERTY_ID = os.environ.get("GA4_PROPERTY_ID", "493983919")
 GSC_SITE_URL = os.environ.get("GSC_SITE_URL", "https://www.kpopjournal.tokyo/")

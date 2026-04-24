@@ -39,6 +39,13 @@ meeting_discord_post() {
     -d "$(python3 -c "import json,sys; print(json.dumps({'content': sys.argv[1][:1950]}))" "$msg")" 2>/dev/null || true
 }
 
+# Phase 4: 前週KPIブリーフ取得（部署名を渡すと部署別に最適化）
+# usage: weekly_kpi_brief [dept]
+weekly_kpi_brief() {
+  local dept="${1:-general}"
+  python3 "$MEETING_BASE/lib/weekly_kpi_context.py" --brief --dept "$dept" 2>/dev/null || echo "【前週KPI】取得不可"
+}
+
 # 直近N日の投稿からカテゴリ分布を動的取得（ハードコード議題を回避）
 category_balance_summary() {
   local days="${1:-3}"

@@ -1,0 +1,77 @@
+{
+  "name": "K-POP Journal",
+  "short_name": "KPJ",
+  "description": "K-POP最新ニュース・チャート・ファンダム情報を毎日配信",
+  "start_url": "/?utm_source=pwa&utm_medium=homescreen",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0A0A0F",
+  "theme_color": "#FF2D55",
+  "lang": "ja",
+  "dir": "ltr",
+  "categories": ["entertainment", "news"],
+  "icons": [
+    {
+      "src": "/wp-content/uploads/kpopjournal-icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/wp-content/uploads/kpopjournal-icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/wp-content/uploads/kpopjournal-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/wp-content/uploads/kpopjournal-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/wp-content/uploads/kpopjournal-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/wp-content/uploads/kpj-screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "K-POP Journal - Top Page"
+    },
+    {
+      "src": "/wp-content/uploads/kpj-screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "K-POP Journal - Mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Latest News",
+      "short_name": "News",
+      "description": "K-POP最新ニュース",
+      "url": "/category/kpop-news/?utm_source=pwa_shortcut",
+      "icons": [{"src": "/wp-content/uploads/kpopjournal-icon-96.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Charts",
+      "short_name": "Chart",
+      "description": "チャートランキング",
+      "url": "/category/chart/?utm_source=pwa_shortcut",
+      "icons": [{"src": "/wp-content/uploads/kpopjournal-icon-96.png", "sizes": "96x96"}]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

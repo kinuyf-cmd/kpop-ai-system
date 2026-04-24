@@ -1,0 +1,138 @@
+
+<style>
+.kpj-quiz{font-family:'Noto Sans JP',-apple-system,sans-serif;max-width:600px;margin:32px auto;
+  background:linear-gradient(135deg,#14141F,#1E1E2E);border-radius:20px;padding:28px 24px;
+  border:1px solid #2D2D3F;color:#F1F5F9;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.kpj-quiz h2{font-size:22px;font-weight:800;text-align:center;margin:0 0 6px;
+  background:linear-gradient(135deg,#FF2D55,#7B61FF);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent}
+.kpj-quiz .subtitle{text-align:center;font-size:13px;color:#94A3B8;margin-bottom:20px}
+.kpj-quiz .q-step{display:none}.kpj-quiz .q-step.active{display:block}
+.kpj-quiz .q-title{font-size:16px;font-weight:700;margin-bottom:14px;text-align:center}
+.kpj-quiz .q-progress{height:4px;background:#1E293B;border-radius:2px;margin-bottom:16px;overflow:hidden}
+.kpj-quiz .q-progress-bar{height:4px;background:linear-gradient(90deg,#FF2D55,#7B61FF);
+  border-radius:2px;transition:width 0.4s ease}
+.kpj-quiz .q-options{display:flex;flex-direction:column;gap:10px}
+.kpj-quiz .q-opt{background:#0F172A;border:2px solid #2D2D3F;border-radius:12px;padding:14px 16px;
+  cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s;text-align:left;color:#E2E8F0}
+.kpj-quiz .q-opt:hover{border-color:#FF2D55;background:#1A1A2E;transform:translateX(4px)}
+.kpj-quiz .q-opt.selected{border-color:#FF2D55;background:rgba(255,45,85,0.1)}
+.kpj-quiz .result-card{text-align:center;padding:20px 0}
+.kpj-quiz .result-group{font-size:28px;font-weight:900;margin:12px 0 8px;
+  background:linear-gradient(135deg,#FF2D55,#7B61FF);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent}
+.kpj-quiz .result-desc{font-size:14px;color:#94A3B8;line-height:1.7;margin-bottom:16px}
+.kpj-quiz .result-pct{font-size:48px;font-weight:900;color:#FF2D55}
+.kpj-quiz .share-btn{display:inline-block;padding:10px 24px;border-radius:10px;
+  background:linear-gradient(135deg,#FF2D55,#7B61FF);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;transition:transform 0.2s}
+.kpj-quiz .share-btn:hover{transform:scale(1.05)}
+.kpj-quiz .retry-btn{display:inline-block;margin-top:10px;padding:8px 20px;border-radius:8px;
+  background:transparent;border:1px solid #64748B;color:#94A3B8;font-size:13px;cursor:pointer}
+</style>
+<div class="kpj-quiz" id="kpj-group-quiz">
+  <h2>K-POPグループ診断</h2>
+  <div class="subtitle">あなたにピッタリのK-POPグループは？</div>
+  <div class="q-progress"><div class="q-progress-bar" id="gq-prog" style="width:0%"></div></div>
+  <div id="gq-steps">
+    <div class="q-step active" data-step="0">
+      <div class="q-title">Q1. 休日の過ごし方は？</div>
+      <div class="q-options">
+        <div class="q-opt" data-scores="bts:2,txt:1">友達とカフェで語り合う</div>
+        <div class="q-opt" data-scores="blackpink:2,itzy:1">ショッピング＆自撮り</div>
+        <div class="q-opt" data-scores="seventeen:2,stray:1">スポーツや体を動かすこと</div>
+        <div class="q-opt" data-scores="aespa:2,nj:1">家でゲームや動画鑑賞</div>
+      </div>
+    </div>
+    <div class="q-step" data-step="1">
+      <div class="q-title">Q2. 好きな音楽のジャンルは？</div>
+      <div class="q-options">
+        <div class="q-opt" data-scores="bts:2,seventeen:1">ヒップホップ・ラップ</div>
+        <div class="q-opt" data-scores="blackpink:2,itzy:2">EDM・ダンスミュージック</div>
+        <div class="q-opt" data-scores="txt:2,nj:2">ポップ・R&B</div>
+        <div class="q-opt" data-scores="aespa:2,stray:1">ロック・エレクトロニック</div>
+      </div>
+    </div>
+    <div class="q-step" data-step="2">
+      <div class="q-title">Q3. 推しに求めるものは？</div>
+      <div class="q-options">
+        <div class="q-opt" data-scores="bts:2,txt:2">深い歌詞とメッセージ性</div>
+        <div class="q-opt" data-scores="blackpink:2,aespa:1">圧倒的なビジュアルとカリスマ</div>
+        <div class="q-opt" data-scores="seventeen:2,stray:2">パフォーマンスの完成度</div>
+        <div class="q-opt" data-scores="nj:2,itzy:2">親しみやすさと元気</div>
+      </div>
+    </div>
+    <div class="q-step" data-step="3">
+      <div class="q-title">Q4. SNSの使い方は？</div>
+      <div class="q-options">
+        <div class="q-opt" data-scores="bts:1,nj:2">見る専門（ROM専）</div>
+        <div class="q-opt" data-scores="blackpink:2,itzy:1">おしゃれな写真を投稿</div>
+        <div class="q-opt" data-scores="seventeen:1,stray:2">面白い動画やネタ投稿</div>
+        <div class="q-opt" data-scores="aespa:2,txt:1">考察や感想を長文で書く</div>
+      </div>
+    </div>
+    <div class="q-step" data-step="4">
+      <div class="q-title">Q5. コンサートで一番楽しみなのは？</div>
+      <div class="q-options">
+        <div class="q-opt" data-scores="bts:2,txt:1">メンバーのトーク・MC</div>
+        <div class="q-opt" data-scores="blackpink:2,aespa:2">衣装とステージ演出</div>
+        <div class="q-opt" data-scores="seventeen:2,stray:2">ダンスブレイク・パフォーマンス</div>
+        <div class="q-opt" data-scores="nj:2,itzy:1">ファンとの一体感</div>
+      </div>
+    </div>
+  </div>
+  <div class="result-card" id="gq-result" style="display:none">
+    <div style="font-size:14px;color:#64748B">あなたにピッタリのグループは...</div>
+    <div class="result-group" id="gq-group-name"></div>
+    <div class="result-desc" id="gq-group-desc"></div>
+    <button class="share-btn" id="gq-share">結果をXでシェア</button><br>
+    <button class="retry-btn" id="gq-retry">もう一度やる</button>
+  </div>
+</div>
+<script>
+(function(){
+  var groups={
+    bts:{name:'BTS',desc:'深い歌詞と社会的メッセージに共感できるあなた。ARMYとして世界を変える力を持っています！'},
+    blackpink:{name:'BLACKPINK',desc:'トレンドに敏感でカリスマ性のあるあなた。BLINKとしてファッション・音楽の最前線に！'},
+    seventeen:{name:'SEVENTEEN',desc:'チームワークとパフォーマンスを愛するあなた。CARATとして13人の才能を応援！'},
+    stray:{name:'Stray Kids',desc:'独創的でエネルギッシュなあなた。STAYとして自分だけの道を切り拓く！'},
+    aespa:{name:'aespa',desc:'未来的でクリエイティブなあなた。MYとして次世代K-POPの世界観に没入！'},
+    nj:{name:'NewJeans',desc:'ナチュラルでトレンドに敏感なあなた。Bunnyとして新しいK-POPの風を感じて！'},
+    txt:{name:'TXT',desc:'感受性豊かで物語を愛するあなた。MOAとして青春のストーリーを共に！'},
+    itzy:{name:'ITZY',desc:'自信に満ちてポジティブなあなた。MIDZYとして「自分らしさ」を貫く！'}
+  };
+  var scores={};var step=0;var total=5;
+  var steps=document.querySelectorAll('#gq-steps .q-step');
+  var prog=document.getElementById('gq-prog');
+  document.querySelectorAll('#kpj-group-quiz .q-opt').forEach(function(opt){
+    opt.addEventListener('click',function(){
+      var data=opt.getAttribute('data-scores').split(',');
+      data.forEach(function(d){var p=d.split(':');scores[p[0]]=(scores[p[0]]||0)+parseInt(p[1]);});
+      steps[step].classList.remove('active');
+      step++;
+      prog.style.width=(step/total*100)+'%';
+      if(step<total){steps[step].classList.add('active');}
+      else{showResult();}
+    });
+  });
+  function showResult(){
+    document.getElementById('gq-steps').style.display='none';
+    var best='bts';var max=0;
+    for(var k in scores){if(scores[k]>max){max=scores[k];best=k;}}
+    var g=groups[best]||groups.bts;
+    document.getElementById('gq-group-name').textContent=g.name;
+    document.getElementById('gq-group-desc').textContent=g.desc;
+    document.getElementById('gq-result').style.display='block';
+    document.getElementById('gq-share').onclick=function(){
+      window.open('https://x.com/intent/tweet?text='+encodeURIComponent('K-POPグループ診断の結果、私にピッタリなのは「'+g.name+'」でした！\n\n#KPOP診断 #KPOPJournal')+'&url='+encodeURIComponent(location.href),'_blank');
+    };
+    if(typeof gtag==='function')gtag('event','quiz_complete',{quiz_type:'group_match',result:g.name});
+  }
+  document.getElementById('gq-retry').addEventListener('click',function(){
+    scores={};step=0;prog.style.width='0%';
+    document.getElementById('gq-result').style.display='none';
+    document.getElementById('gq-steps').style.display='block';
+    steps.forEach(function(s,i){s.classList.toggle('active',i===0);});
+  });
+})();
+</script>

@@ -1,0 +1,75 @@
+{
+  "_comment": "Official social media accounts for K-POP artists (YouTube MV sources for thumbnail resolver)",
+  "bts": {
+    "channel_name": "BANGTANTV",
+    "youtube_channel_id": "UCLkAepWjdylmXSltofFvsYQ",
+    "youtube_video_ids": ["MBdVXkSdhwg", "gdZLi9oWNZg", "WMweEpGlu_U"],
+    "instagram": "bts.bighitofficial"
+  },
+  "blackpink": {
+    "channel_name": "BLACKPINK",
+    "youtube_channel_id": "UCOmHUn--16B90oW2L6FRR3A",
+    "youtube_video_ids": ["ioNng23DkIM", "Dxxvo0DGRMo", "pSUydWEqKwE"],
+    "instagram": "blackpinkofficial"
+  },
+  "aespa": {
+    "channel_name": "aespa",
+    "youtube_channel_id": "UCk70PIv3ByxqsZZJFEfFaHQ",
+    "youtube_video_ids": ["WPdWvnAAurg", "OS8taasZl8k"],
+    "instagram": "aespa_official"
+  },
+  "seventeen": {
+    "channel_name": "SEVENTEEN",
+    "youtube_channel_id": "UCy1TJ2M0aNCDfMrVNfLkbJA",
+    "youtube_video_ids": ["9RUeTYIKBEM", "FUkNJsqv78E"],
+    "instagram": "saythename_17"
+  },
+  "riize": {
+    "channel_name": "RIIZE",
+    "youtube_channel_id": "UC4pLrO9fNB18nnJvYfSJCAg",
+    "youtube_video_ids": ["Y4mH7kEsBZw"],
+    "instagram": "riaborosse"
+  },
+  "newjeans": {
+    "channel_name": "NewJeans",
+    "youtube_channel_id": "UC_TMXhayGvFj0BIqrrxyj-A",
+    "youtube_video_ids": ["js1CtxSY38I", "sVTy_wmn5SU"],
+    "instagram": "newjeans_official"
+  },
+  "ive": {
+    "channel_name": "IVE",
+    "youtube_channel_id": "UCE7BGeCAJPm3YFzU0PbNZcg",
+    "youtube_video_ids": ["F0B7HDiY-10", "6ZUIwj3FgUY"],
+    "instagram": "ivestarship"
+  },
+  "le_sserafim": {
+    "channel_name": "LE SSERAFIM",
+    "youtube_channel_id": "UCAKaXjr2ADHJlD0VL5Lw2dQ",
+    "youtube_video_ids": ["pyf8cbqyfPs", "dZs_cLHfnNA"],
+    "instagram": "le_sserafim"
+  },
+  "stray_kids": {
+    "channel_name": "Stray Kids",
+    "youtube_channel_id": "UC0pPRWjGGsUmXugRKwdCfDg",
+    "youtube_video_ids": ["EaswWiwKVs8", "LYJDf9oPQ-0"],
+    "instagram": "realstraykids"
+  },
+  "twice": {
+    "channel_name": "TWICE",
+    "youtube_channel_id": "UCzgxx_DM2Dcb9Y1spb9mUJA",
+    "youtube_video_ids": ["kOHB85vDuow", "mH0_XpSHkZo"],
+    "instagram": "twicetagram"
+  },
+  "bigbang": {
+    "channel_name": "BIGBANG",
+    "youtube_channel_id": "UCh7eJ2Yv0JjceHeyGBZrJnA",
+    "youtube_video_ids": ["2ips2mM7Zqw", "iIPH8LFYFRk"],
+    "instagram": ""
+  },
+  "enhypen": {
+    "channel_name": "ENHYPEN",
+    "youtube_channel_id": "UCx3ygIAME-3mPxPHp54VGwA",
+    "youtube_video_ids": ["p1bjnyDqIX8"],
+    "instagram": "enhypen"
+  }
+}

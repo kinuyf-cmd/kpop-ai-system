@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F0F14"/>
+      <stop offset="40%" stop-color="#12121A"/>
+      <stop offset="100%" stop-color="#0F0F14"/>
+    </linearGradient>
+
+    <!-- Text gradient -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E8547A"/>
+      <stop offset="100%" stop-color="#7B5EA7"/>
+    </linearGradient>
+
+    <!-- Orb gradients -->
+    <radialGradient id="orbPink" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E8547A" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#E8547A" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#E8547A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbPurple" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7B5EA7" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#7B5EA7" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#7B5EA7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbMixed" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#B06090" stop-opacity="0.3"/>
+      <stop offset="70%" stop-color="#7B5EA7" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#7B5EA7" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Neon line gradient -->
+    <linearGradient id="neonLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E8547A" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#E8547A" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#B06090" stop-opacity="1"/>
+      <stop offset="80%" stop-color="#7B5EA7" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#7B5EA7" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="neonGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1500" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03">
+    <line x1="0" y1="100" x2="1500" y2="100" stroke="#E8547A" stroke-width="0.5"/>
+    <line x1="0" y1="200" x2="1500" y2="200" stroke="#E8547A" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1500" y2="300" stroke="#E8547A" stroke-width="0.5"/>
+    <line x1="0" y1="400" x2="1500" y2="400" stroke="#E8547A" stroke-width="0.5"/>
+    <line x1="300" y1="0" x2="300" y2="500" stroke="#7B5EA7" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="500" stroke="#7B5EA7" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="500" stroke="#7B5EA7" stroke-width="0.5"/>
+    <line x1="1200" y1="0" x2="1200" y2="500" stroke="#7B5EA7" stroke-width="0.5"/>
+  </g>
+
+  <!-- Decorative orbs (right side) -->
+  <circle cx="1200" cy="160" r="140" fill="url(#orbPink)" filter="url(#glowStrong)"/>
+  <circle cx="1350" cy="300" r="120" fill="url(#orbPurple)" filter="url(#glowStrong)"/>
+  <circle cx="1100" cy="380" r="90" fill="url(#orbMixed)" filter="url(#glowSoft)"/>
+  <circle cx="1300" cy="100" r="60" fill="url(#orbPurple)" filter="url(#glowSoft)"/>
+  <circle cx="1050" cy="200" r="50" fill="url(#orbPink)" filter="url(#glowSoft)"/>
+
+  <!-- Small floating particles -->
+  <circle cx="950" cy="120" r="2" fill="#E8547A" opacity="0.6"/>
+  <circle cx="1000" cy="350" r="1.5" fill="#7B5EA7" opacity="0.5"/>
+  <circle cx="1150" cy="450" r="2" fill="#E8547A" opacity="0.4"/>
+  <circle cx="1400" cy="180" r="1.5" fill="#B06090" opacity="0.5"/>
+  <circle cx="1250" cy="420" r="2" fill="#7B5EA7" opacity="0.6"/>
+  <circle cx="1080" cy="80" r="1" fill="#E8547A" opacity="0.7"/>
+  <circle cx="1320" cy="350" r="1" fill="#E8547A" opacity="0.5"/>
+
+  <!-- Neon lines (Breaking Ticker style) -->
+  <!-- Top neon line -->
+  <line x1="60" y1="60" x2="1440" y2="60" stroke="url(#neonLine)" stroke-width="1" filter="url(#neonGlow)" opacity="0.6"/>
+
+  <!-- Bottom neon line -->
+  <line x1="60" y1="440" x2="1440" y2="440" stroke="url(#neonLine)" stroke-width="1" filter="url(#neonGlow)" opacity="0.6"/>
+
+  <!-- Accent horizontal lines (ticker feel) -->
+  <line x1="80" y1="340" x2="700" y2="340" stroke="#E8547A" stroke-width="0.5" opacity="0.2"/>
+  <line x1="80" y1="345" x2="500" y2="345" stroke="#7B5EA7" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Diagonal accent line -->
+  <line x1="850" y1="0" x2="950" y2="500" stroke="url(#neonLine)" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Main title: K-POP JOURNAL -->
+  <text x="80" y="235"
+        font-family="'Bebas Neue', 'Impact', 'Arial Black', sans-serif"
+        font-weight="900" font-size="110" letter-spacing="6"
+        fill="url(#titleGrad)" filter="url(#glowSoft)">K-POP JOURNAL</text>
+
+  <!-- Subtitle -->
+  <text x="85" y="300"
+        font-family="'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif"
+        font-weight="500" font-size="28" letter-spacing="4"
+        fill="#FFFFFF" opacity="0.7">日本最大のK-POP専門メディア</text>
+
+  <!-- Small accent bar before subtitle -->
+  <rect x="85" y="258" width="40" height="3" fill="url(#titleGrad)" rx="1.5" opacity="0.8"/>
+
+  <!-- Corner accents -->
+  <path d="M60,80 L60,60 L80,60" fill="none" stroke="#E8547A" stroke-width="1.5" opacity="0.5"/>
+  <path d="M1420,80 L1440,60 L1440,80" fill="none" stroke="#7B5EA7" stroke-width="1.5" opacity="0.5" transform="rotate(0)"/>
+  <path d="M60,420 L60,440 L80,440" fill="none" stroke="#7B5EA7" stroke-width="1.5" opacity="0.5"/>
+  <path d="M1420,440 L1440,440 L1440,420" fill="none" stroke="#E8547A" stroke-width="1.5" opacity="0.5"/>
+</svg>

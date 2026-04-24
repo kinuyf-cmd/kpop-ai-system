@@ -86,7 +86,7 @@ def _read_log_tail(path: Path, max_lines: int = 50) -> list[str]:
     if not path.exists():
         return []
     try:
-        lines = path.read_text(encoding="utf-8", errors="ignore").splitlines()
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         return [l.strip() for l in lines[-max_lines:] if l.strip()]
     except Exception:
         return []
@@ -96,7 +96,7 @@ def _read_jsonl_tail(path: Path, max_records: int = 10) -> list[dict]:
         return []
     records = []
     try:
-        for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             line = line.strip()
             if line:
                 try:

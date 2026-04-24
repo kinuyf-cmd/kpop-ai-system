@@ -17,6 +17,9 @@ mkdir -p "$REPORTS"
 TODAY=$(date '+%Y年%m月%d日')
 echo "=== 人事部会議 開始: $TODAY ==="
 
+# Phase 4: 前週KPI自動注入
+WEEKLY_KPI=$(weekly_kpi_brief hr)
+
 # エージェント人事データ収集（org_map.json + agent_metrics.json + 役割監査ログ）
 HR_DATA=$(python3 - <<'PYEOF'
 import json

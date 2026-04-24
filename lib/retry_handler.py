@@ -28,9 +28,9 @@ class RetryConfig:
     INDEX_API_BASE_DELAY = 3
     INDEX_API_MAX_DELAY = 30
 
-    X_API_MAX_RETRIES = 2
+    X_API_MAX_RETRIES = 3
     X_API_BASE_DELAY = 5
-    X_API_MAX_DELAY = 30
+    X_API_MAX_DELAY = 60
 
 
 def exponential_backoff(attempt, base_delay, max_delay, jitter=True):
@@ -219,6 +219,7 @@ FALLBACK_MAP = {
     "jirachi_kpop": ["alakazam_kpop"], # FAILゲートが消えるが続行可。alakazam削除禁止
     "beautywriter": ["deoxys_kpop"],
     "zapdos": ["deoxys_kpop"],         # チャート記事フォールバック。品質低下あり
+    "butterfree": [],                   # トレンド収集は3段階リトライ+アーカイブフォールバックで対応
     "persian": [],                     # SNS戦略は失敗許容。記事は既に公開済み
     # arceus: 設定しない（最終判定は単一エージェントであるべき）
     # eevee:  設定しない（breaking・strategy共用。失敗時はmetamon出力タイトルをそのまま使う設計）

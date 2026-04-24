@@ -1,0 +1,28 @@
+{
+  "comment": "CTRリライト/CTA差替/クラスター横展開の対象から除外するURLリスト。固定ページや運営系を対象外とする。",
+  "exclude_slugs": [
+    "about-editor",
+    "about",
+    "contact",
+    "privacy-policy",
+    "privacy",
+    "terms",
+    "disclaimer",
+    "sitemap",
+    "category",
+    "tag",
+    "author",
+    "kpop-beginner-hub-2026"
+  ],
+  "exclude_url_patterns": [
+    "/wp-admin/",
+    "/wp-content/",
+    "/feed/",
+    "/comments/",
+    "?s=",
+    "#rtoc",
+    "#toc",
+    "#aioseo"
+  ],
+  "_last_updated": "2026-04-16"
+}

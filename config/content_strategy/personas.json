@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-04-22",
+  "data_source": {
+    "ga4_date": "2026-04-16",
+    "daily_sessions": 210,
+    "daily_users": 119,
+    "top_traffic": ["bing", "google", "direct", "yahoo"],
+    "top_articles": [
+      "/kpop-demon-hunters-cast-characters/",
+      "/mama-awards-2026-osaka/",
+      "/bigbang-coachella-2026-kpop-festival/"
+    ]
+  },
+  "personas": [
+    {
+      "id": "core_fan",
+      "label": "K-POPコアファン",
+      "priority": "primary",
+      "age_range": "25-34",
+      "gender": "female",
+      "description": "最新カムバック・音楽番組・アイドルニュースを日常的に追う層。検索経由（Bing/Google）で速報系記事に流入。推し活が生活の中心。",
+      "content_triggers": [
+        "カムバック速報",
+        "音楽番組出演情報",
+        "メンバー個別ニュース",
+        "コンサート・ファンミ情報",
+        "ファン投票・授賞式"
+      ],
+      "search_behavior": {
+        "primary_engines": ["bing", "google"],
+        "query_examples": [
+          "BIGBANG コーチェラ 2026",
+          "MAMA 2026 大阪",
+          "BTS ジミン 最新ニュース"
+        ],
+        "session_pattern": "目的型検索 → 1-2ページ閲覧 → 離脱"
+      },
+      "preferred_formats": ["速報記事", "まとめ記事", "イベントレポート"],
+      "estimated_share": 0.50,
+      "kpi_focus": "pageviews_per_session"
+    },
+    {
+      "id": "k_culture_curious",
+      "label": "K-culture興味層",
+      "priority": "secondary",
+      "age_range": "18-24",
+      "gender": "female",
+      "description": "韓ドラ・美容・ファッション経由でK-POPに興味を持ち始めた層。デーモンハンターズ等ドラマ系記事や美容コンテンツに反応。SNS（X/Instagram）経由の流入も。",
+      "content_triggers": [
+        "韓ドラ関連K-POPコンテンツ",
+        "K-POP美容・コスメ",
+        "ファッション・スタイル分析",
+        "初心者向けグループ紹介",
+        "推し活入門ガイド"
+      ],
+      "search_behavior": {
+        "primary_engines": ["google", "bing", "sns"],
+        "query_examples": [
+          "デーモンハンターズ キャスト キャラクター",
+          "K-POP アイドル 愛用コスメ",
+          "韓国ファッション 2026 春"
+        ],
+        "session_pattern": "SNSリンク or 検索 → 関連記事回遊 → ブックマーク"
+      },
+      "preferred_formats": ["ガイド記事", "比較・ランキング", "ビジュアル重視記事"],
+      "estimated_share": 0.30,
+      "kpi_focus": "engaged_sessions"
+    },
+    {
+      "id": "mature_deep_fan",
+      "label": "大人の深堀りファン",
+      "priority": "tertiary",
+      "age_range": "35-44",
+      "gender": "female",
+      "description": "長年のK-POPファンで深い知識を持つ層。分析記事・比較コンテンツ・ライブレポートに反応。滞在時間が長く、家族と共有する傾向。",
+      "content_triggers": [
+        "アーティスト分析・考察",
+        "世代比較・歴史振り返り",
+        "ライブレポート・参戦ガイド",
+        "チャート分析・業界動向",
+        "親子で楽しむK-POP"
+      ],
+      "search_behavior": {
+        "primary_engines": ["google", "yahoo"],
+        "query_examples": [
+          "BIGBANG 復活 分析",
+          "K-POP イベント 日本 2026 まとめ",
+          "SHINee コーチェラ レビュー"
+        ],
+        "session_pattern": "検索 → 長文精読 → 関連記事巡回 → 定期訪問化"
+      },
+      "preferred_formats": ["深堀り分析", "比較記事", "年間まとめ"],
+      "estimated_share": 0.20,
+      "kpi_focus": "avg_session_duration"
+    }
+  ]
+}

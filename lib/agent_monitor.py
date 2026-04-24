@@ -36,10 +36,9 @@ AGENT_MASTER = {
     "mimikyu":              ("ミミッキュ",      "競合分析・差別化",           "CORE",         "strategy=step3"),
     "wobbuffet":            ("ソーナンス",      "読者ニーズ分析",             "SUPPORT",      "strategy=step4"),
     "venusaur":             ("フシギバナ",      "記事構成設計",               "CORE",         "strategy=step6"),
-    # alakazam: 設計書=MANUAL_ONLY（手動専用。cronパイプライン未接続）
-    # ただしlog上では alakazam_kpop の--agentをstep名「alakazam」で記録
-    # → ROLE_CLASS は設計書準拠で MANUAL_ONLY。log上の実行は alakazam_kpop 経由
-    "alakazam":             ("フーディン",      "ファクトチェック・時制整合（手動専用）", "MANUAL_ONLY", "手動専用 / log上はalakazam_kpop経由"),
+    # alakazam: Phase2で休眠→archived (2026-04-17)
+    # log上の「alakazam」ステップは alakazam_kpop 経由で引き続き記録される
+    "alakazam":             ("フーディン",      "ファクトチェック（休眠→archived）", "ARCHIVED", "archived 2026-04-17 / eevee+metamonと責務重複"),
     "gengar":               ("ゲンガー",        "SEO・品質監査",              "CORE",         "strategy=step11 / chart=step3"),
     # カイリュー: pipeline.jsonlではstep名「カイリュー」（日本語）で記録
     # kairyu_kpop が --agent 指定名。kairyu との重複カウントを防ぐためカイリューを正とする
@@ -48,8 +47,8 @@ AGENT_MASTER = {
     "zapdos":               ("サンダー",        "チャートランキング記事生成", "CORE",         "chart=step1"),
     "wordpress_post":       ("WP投稿",          "WordPress API投稿",          "INFRA",        "breaking=final / strategy=final"),
     "x_post":               ("X投稿",           "X(Twitter)自動投稿",         "INFRA",        "breaking=final / strategy=final"),
-    "x_post_b":             ("X投稿B",          "X投稿（予備）",              "INFRA",        "deprecated"),
-    "dragonite":            ("カイリュー（旧）", "CVR最適化（旧版）",          "DEPRECATED",   "deprecated"),
+    "x_post_b":             ("X投稿B",          "X投稿（休眠→archived）",     "ARCHIVED",     "archived 2026-04-17"),
+    "dragonite":            ("カイリュー（旧）", "CVR最適化（旧版→archived）", "ARCHIVED",     "archived 2026-04-17"),
     "pipeline":             ("パイプライン",    "パイプライン制御",           "INFRA",        "全体"),
     # ─── agents/定義あり・pipeline未接続 ───
     "porygon":              ("ポリゴン",        "週次パフォーマンス分析",     "SUPPORT",      "weekly_review=step1"),
@@ -179,6 +178,10 @@ TITLE_COLLAPSE_PATTERNS = [
     r"見当たりません",
     r"コンテンツが提供されていません",
     r"記事の元となる",
+    r"hit your limit",
+    r"resets.*\d+pm",
+    r"以下(が|に)改善内容",
+    r"適用内容のサマリ",
 ]
 BODY_CONTAMINATION_PATTERNS = [
     r"申し訳ありません",
@@ -301,7 +304,7 @@ def parse_pipeline_jsonl() -> dict:
 
 
 def parse_gardevoir_jsonl() -> dict:
-    """gardevoir_hook.jsonl を解析"""
+    """gardevoir_hook.jsonl を解析（直近7日のみ集計）"""
     path = LOGS / "gardevoir_hook.jsonl"
     data = {
         "pass": 0, "fail": 0, "soft": 0, "error": 0,
@@ -310,6 +313,8 @@ def parse_gardevoir_jsonl() -> dict:
     }
     if not path.exists():
         return data
+    from datetime import datetime, timedelta, timezone
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
     with path.open() as f:
         for line in f:
             line = line.strip()
@@ -318,6 +323,10 @@ def parse_gardevoir_jsonl() -> dict:
             try:
                 d = json.loads(line)
             except json.JSONDecodeError:
+                continue
+            # 直近7日のみ集計（古いERROR多発期間を除外）
+            ts = d.get("ts", "")
+            if ts and ts < cutoff:
                 continue
             v = d.get("verdict", "")
             s = d.get("score", 0)

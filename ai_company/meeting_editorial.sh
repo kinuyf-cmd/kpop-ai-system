@@ -42,6 +42,9 @@ else:
 PYFT
 )
 
+# Phase 4: KPIブリーフ注入（数字根拠付き編集方針）
+KPI_BRIEF=$(python3 "$BASE/lib/daily_kpi_injector.py" --morning-brief 2>/dev/null || echo "【KPIデータ】取得不可")
+
 # 前夜の役員会議レポート（run_ai_meeting）の明日記事TOP5を参照
 PRIOR_NIGHT_TOPICS=""
 LAST_MEETING="$HOME/ai_company/reports/mewtwo_decision.md"
@@ -108,6 +111,8 @@ ${FOCUS_THEMES}
 
 【前夜の役員会議決定TOP5】
 ${PRIOR_NIGHT_TOPICS}
+
+${KPI_BRIEF}
 
 【イーブイ（タイトル）】
 $(cat "$REPORTS/eevee.md")

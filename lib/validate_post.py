@@ -15,6 +15,7 @@ Usage:
 import json
 import re
 import sys
+from collections import Counter
 
 
 def validate(post):
@@ -54,6 +55,14 @@ def validate(post):
     # [警告] AdSense scriptが本文に保存されている (本来はプラグインで動的挿入されるべき)
     if "googlesyndication.com" in content or "adsbygoogle" in content:
         warnings.append("content: AdSense scriptが本文に保存されている (rendered baked-in疑い)")
+
+    # === 重複文検出 (同一文3回以上 = HARD_FAIL) ===
+    plain_text = re.sub(r'<[^>]+>', '', content)
+    sentences = [s.strip() for s in re.split(r'[。．.！!？?\n]', plain_text) if len(s.strip()) > 20]
+    sentence_counts = Counter(sentences)
+    for sentence, count in sentence_counts.items():
+        if count >= 3:
+            errors.append(f"content: 重複文検出 (HARD_FAIL) — 同一文が{count}回出現: 「{sentence[:50]}...」")
 
     # === Slug検証 ===
     if not slug:

@@ -17,6 +17,9 @@ mkdir -p "$REPORTS"
 TODAY=$(date '+%Y年%m月%d日')
 echo "=== 財務部会議 開始: $TODAY ==="
 
+# Phase 4: 前週KPI自動注入
+WEEKLY_KPI=$(weekly_kpi_brief finance)
+
 # 直近7日の収益関連メトリクス
 FINANCE_DATA=$(python3 - <<'PYEOF'
 import json

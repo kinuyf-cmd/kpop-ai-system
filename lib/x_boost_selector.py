@@ -236,7 +236,7 @@ POSTER="{BASE}/google_metrics/post_to_x.sh"
 
 if [ "${{ENABLE_X_POST:-0}}" != "1" ]; then
   echo "[x_backfill_runner] ENABLE_X_POST=1 が設定されていないため投稿しません (dry-run)"
-  echo "[x_backfill_runner] キュー件数: $(wc -l < \"$QUEUE\")"
+  echo "[x_backfill_runner] キュー件数: $(wc -l < "$QUEUE")"
   exit 0
 fi
 
@@ -244,12 +244,33 @@ echo "=== x_backfill_runner start $(date -Iseconds) ===" | tee -a "$LOG"
 COUNT=0
 while IFS= read -r line; do
   [ -z "$line" ] && continue
-  post_id=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('post_id',''))")
-  text=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('tweet_text',''))")
-  url=$(echo "$line" | python3 -c "import json,sys; print(json.loads(sys.stdin.read()).get('reply_url',''))")
+  # 1回のpython3呼び出しで全フィールドをタブ区切りで抽出（4回パース→1回に統一）
+  _parsed=$(echo "$line" | python3 -c "
+import json, sys
+try:
+    d = json.loads(sys.stdin.read())
+    print(d.get('post_id',''), d.get('title',''), d.get('tweet_text',''), d.get('reply_url',''), sep='\\t')
+except Exception:
+    print('\\t\\t\\t')
+" 2>/dev/null) || continue
+  post_id=$(echo "$_parsed" | cut -f1)
+  title=$(echo "$_parsed" | cut -f2)
+  text=$(echo "$_parsed" | cut -f3)
+  url=$(echo "$_parsed" | cut -f4)
+  if [ -z "$title" ] || [ -z "$url" ]; then
+    echo "[backfill skip] empty title/url (post_id=$post_id)" | tee -a "$LOG"
+    continue
+  fi
+  if [ -z "$text" ]; then
+    echo "[backfill skip] empty tweet_text (post_id=$post_id)" | tee -a "$LOG"
+    continue
+  fi
   COUNT=$((COUNT+1))
   echo "[backfill $COUNT] posting post_id=$post_id ..." | tee -a "$LOG"
-  TWEET_TEXT="$text" POST_URL="$url" BACKFILL_MODE=1 bash "$POSTER" 2>&1 | tee -a "$LOG" | tail -3 || true
+  PERSIAN_TMP=$(mktemp /tmp/x_backfill_sns.XXXXXX.md)
+  printf 'パターンA（採用推奨）\\n```\\n%s\\n```\\n' "$text" > "$PERSIAN_TMP"
+  BACKFILL_MODE=1 bash "$POSTER" "$title" "$url" "$PERSIAN_TMP" 2>&1 | tee -a "$LOG" | tail -3 || true
+  rm -f "$PERSIAN_TMP"
   # Rate limiting: 90s between posts
   sleep 90
 done < "$QUEUE"

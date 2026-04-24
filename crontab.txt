@@ -8,40 +8,209 @@ HOME=/home/aiuser
 # 週次レビュー（月曜のみ）
 30 6 * * 1   cd ~/kpop-ai-system && bash kpop_weekly_review.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 
-# 記事生成
+# 記事生成（日4回に削減 — API消費60%削減、2026-04-20 Round 7.5）
 0  7 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-30 7 * * 1   cd ~/kpop-ai-system && bash kpop_chart_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0  8 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 11 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# [廃止2026-04-27] Circle/Billboard/Monthly チャート → Soompi週次のみに統一
+# 30 7 * * 1   cd ~/kpop-ai-system && bash kpop_chart_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# 30 7 * * 4   cd ~/kpop-ai-system && bash kpop_chart_midweek_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# Soompi Music Chart Weekly (金曜09:00)
+0 9 * * 2   cd ~/kpop-ai-system && python3 pipelines/chart_soompi_weekly.py >> ~/kpop-ai-system/logs/cron_soompi.log 2>&1
+0 11 * * *   cd ~/kpop-ai-system && bash kpop_beauty_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 0 12 * * *   cd ~/kpop-ai-system && bash kpop_strategy_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 13 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 14 * * *   cd ~/kpop-ai-system && bash kpop_lifestyle_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 0 15 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 17 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 18 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 16 * * *   cd ~/kpop-ai-system && bash kpop_comparison_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 0 19 * * *   cd ~/kpop-ai-system && bash kpop_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 
-# 部署別朝会（日次）
-40 6 * * *   cd ~/kpop-ai-system && bash ai_company/meeting_editorial.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-30 7 * * *   cd ~/kpop-ai-system && bash ai_company/meeting_sre.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# 誕生日記事自動生成（毎朝 6:20 — 当日+翌日分）
+20 6 * * *   cd ~/kpop-ai-system && bash kpop_birthday_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 
-# 部署別週次会議
-0 10 * * 1   cd ~/kpop-ai-system && bash ai_company/meeting_finance.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 22 * * 2   cd ~/kpop-ai-system && bash ai_company/meeting_hr.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 22 * * 3   cd ~/kpop-ai-system && bash ai_company/meeting_analytics.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 22 * * 4   cd ~/kpop-ai-system && bash ai_company/meeting_seo.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 22 * * 5   cd ~/kpop-ai-system && bash ai_company/meeting_audit.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
-0 10 * * 6   cd ~/kpop-ai-system && bash ai_company/meeting_sns.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# 韓国語フレーズ講座（火・金 10:00 — 週2本ペース）
+0 10 * * 2   cd ~/kpop-ai-system && bash kpop_phrase_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 10 * * 5   cd ~/kpop-ai-system && bash kpop_phrase_pipeline.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 
-# 月次経営会議（毎月1日 10:00）
-0 10 1 * *   cd ~/kpop-ai-system && bash kpop_monthly_report.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# アーティスト専用ページ生成（毎月1日 3:00 — 未作成分のみ）
+0  3 1 * *   cd ~/kpop-ai-system && bash kpop_artist_page_pipeline.sh --all --skip-existing >> ~/kpop-ai-system/logs/cron.log 2>&1
 
-# 日次全社会議・改善エンジン
+# ━━ 新組織 部門会議スケジュール ━━
+
+# 監査部会議（毎日00:00 — アルセウス主催）
+0  0 * * *   cd ~/kpop-ai-system && python3 lib/quality_double_check.py >> ~/kpop-ai-system/logs/audit_meeting.log 2>&1
+
+# パブリッシング部会議（毎日06:00 — ガーディ主催）
+0  6 * * *   cd ~/kpop-ai-system && python3 lib/daily_audit_report.py >> ~/kpop-ai-system/logs/publishing_meeting.log 2>&1
+
+# 総務部会議（毎週月曜06:00 — ポリゴンZ主催）
+0  6 * * 1   cd ~/kpop-ai-system && python3 lib/management_meeting.py >> ~/kpop-ai-system/logs/general_meeting.log 2>&1
+
+# 経営管理部会議（毎週月曜07:30 — フーディン主催）
+30 7 * * 1   cd ~/kpop-ai-system && python3 lib/management_meeting.py >> ~/kpop-ai-system/logs/management_meeting.log 2>&1
+
+# セッション学習の日次レポート（毎朝9時 — 前日のオーナーセッション学習を全社員に配信）
+0 9 * * *   cd ~/kpop-ai-system && python3 lib/session_learning_logger.py --session-report >> ~/kpop-ai-system/logs/session_learning.log 2>&1
+
+# 素材品質監査（毎日10:00 — 前日公開記事のサムネ+本文+メタデータ監査、CRITICAL→自動draft化）
+0 10 * * *  cd ~/kpop-ai-system && python3 audit/daily_material_audit.py >> ~/kpop-ai-system/logs/daily_material.log 2>&1
+
+# 朝会（毎日07:55 — ルギアCOO主催）
+55 7 * * *   cd ~/kpop-ai-system && python3 lib/daily_standup.py >> ~/kpop-ai-system/logs/standup.log 2>&1
+
+# 週次全社会議（毎週月曜08:00 — ミュウツーCEO主催）
+0  8 * * 1   cd ~/kpop-ai-system && bash kpop_monthly_report.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# SEO部会議（毎週火曜09:00 — ラティアス主催）
+0  9 * * 2   cd ~/kpop-ai-system && python3 lib/seo_meeting.py >> ~/kpop-ai-system/logs/seo_meeting.log 2>&1
+
+# マーケSNS部会議（月・木09:00 — ミミロル主催）
+0  9 * * 1,4 cd ~/kpop-ai-system && python3 lib/marketing_meeting.py >> ~/kpop-ai-system/logs/marketing_meeting.log 2>&1
+
+# 編集部会議（火・金10:00 — イーブイ編集長主催）
+0 10 * * 2,5 cd ~/kpop-ai-system && python3 lib/editorial_meeting.py >> ~/kpop-ai-system/logs/editorial_meeting.log 2>&1
+
+# 収益化部会議（毎週水曜10:00 — カビゴン主催）
+0 10 * * 3   cd ~/kpop-ai-system && python3 lib/revenue_meeting.py >> ~/kpop-ai-system/logs/revenue_meeting.log 2>&1
+
+# 競合・トレンド部会議（毎週木曜10:00 — ゲンガー主催）
+0 10 * * 4   cd ~/kpop-ai-system && python3 lib/competitive_meeting.py >> ~/kpop-ai-system/logs/competitive_meeting.log 2>&1
+
+# デザイン部会議（毎週水曜11:00 — シャワーズ主催）
+0 11 * * 3   cd ~/kpop-ai-system && python3 lib/design_meeting.py >> ~/kpop-ai-system/logs/design_meeting.log 2>&1
+
+# 人事部会議（毎週金曜17:00 — ラッキー主催）
+0 17 * * 5   cd ~/kpop-ai-system && python3 lib/hr_meeting.py >> ~/kpop-ai-system/logs/hr_meeting.log 2>&1
+
+# 学習改善会（毎週日曜23:00 — ポッチャマ主催）
+0 23 * * 0   cd ~/kpop-ai-system && python3 lib/learning_feedback_loop.py >> ~/kpop-ai-system/logs/learning.log 2>&1
+
+# 月次人事評価（毎月25日10:00 — ラッキー主催）
+0 10 25 * *  cd ~/kpop-ai-system && python3 lib/monthly_eval.py >> ~/kpop-ai-system/logs/eval.log 2>&1
+
+# 月次取締役会（毎月1日09:00 — ミュウツーCEO主催）
+0  9 1 * *   cd ~/kpop-ai-system && bash kpop_monthly_report.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# 学習サイクル有効性検証（朝9時 — winning_patterns result更新 + 再発検知 + Discord通知）
+0 9 * * *   cd ~/kpop-ai-system && python3 lib/learning_validator.py validate >> ~/kpop-ai-system/logs/learning_validation.log 2>&1
+
+# 日次全社会議・改善エンジン・監査レポート
 0  21 * * *  cd ~/kpop-ai-system && bash ai_company/run_ai_meeting.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
 30 21 * * *  cd ~/kpop-ai-system && bash improvement_engine.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+45 21 * * *  cd ~/kpop-ai-system && python3 lib/daily_audit_report.py >> ~/kpop-ai-system/logs/audit.log 2>&1
 
-# watchdog（毎時0・30分）
-0,30 * * * * cd ~/kpop-ai-system && python3 lib/post_watchdog.py >> ~/kpop-ai-system/logs/watchdog.log 2>&1
+# イルミーゼ: タイトルA/Bテスト（水曜設計・金曜判定）
+0 4 * * 3   cd ~/kpop-ai-system && python3 lib/title_ab_runner.py design --top 5 && python3 lib/title_ab_runner.py apply >> ~/kpop-ai-system/logs/title_ab.log 2>&1
+0 4 * * 5   cd ~/kpop-ai-system && python3 lib/title_ab_runner.py judge >> ~/kpop-ai-system/logs/title_ab.log 2>&1
+
+# watchdog（9時・21時の1日2回まとめ送信）
+0 9,21 * * * cd ~/kpop-ai-system && python3 lib/post_watchdog.py >> ~/kpop-ai-system/logs/watchdog.log 2>&1
+
+# Google News Sitemap 更新（毎時15分 — 48時間以内の記事を自動収集）
+15 * * * * cd ~/kpop-ai-system && python3 lib/news_sitemap_generator.py --upload >> ~/kpop-ai-system/logs/news_sitemap.log 2>&1
 
 # ダッシュボード自動更新（agent_monitor + org_map 再構築 + dashboard HTML 再生成 + WP デプロイ）
 # 日中2時間おき + 深夜フル更新。agents/*.md の追加・削除が org_map.json に自動反映される
-0 3,9,11,13,15,17,19,21 * * * cd ~/kpop-ai-system && bash run_dashboard_refresh.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+0 3,9,13,15,17,19,21 * * * cd ~/kpop-ai-system && bash run_dashboard_refresh.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+# 11時台は美容パイプラインと競合するため 11:45 に遅延実行
+45 11 * * * cd ~/kpop-ai-system && bash run_dashboard_refresh.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# KPI統合収集（毎日06:30 — GSC/GA4/AdSense → kpi_daily.jsonl + kpi_articles.jsonl）
+30 6 * * * cd ~/kpop-ai-system && GOOGLE_APPLICATION_CREDENTIALS=google_metrics/service_account.json .venv/bin/python3 lib/kpi_store.py collect >> ~/kpop-ai-system/logs/kpi_collect.log 2>&1
+
+# X KPI取得（毎日9時・21時）
+0 9,21 * * * cd ~/kpop-ai-system && python3 lib/x_kpi_fetcher.py >> ~/kpop-ai-system/logs/x_kpi.log 2>&1
+
+# GA4 Realtime人気記事JSON更新（10分おき）
+*/10 * * * * cd ~/kpop-ai-system && .venv/bin/python3 tools/build_ga4_top.py >> ~/kpop-ai-system/logs/cron_ga4.log 2>&1
+
+# イベント予定JSON更新（毎日06:00）
+0 6 * * * cd ~/kpop-ai-system && python3 tools/build_events.py >> ~/kpop-ai-system/logs/cron_events.log 2>&1
+
+# カムバック予定JSON更新（毎日06:00 — Next.js public/data/comebacks.json）
+0 6 * * * cd ~/kpop-ai-system && python3 tools/build_comebacks.py >> ~/kpop-ai-system/logs/cron_comebacks.log 2>&1
+
+# X投稿リンク日次チェック（毎日03:30 — 過去7日のX投稿URLの404/soft-404検出）
+30 3 * * * cd ~/kpop-ai-system && python3 lib/x_daily_link_check.py >> ~/kpop-ai-system/logs/x_link_check.log 2>&1
+
+# ━━ Phase 2: SNS拡張・コミュニティ ━━
+
+# 週刊ニュースレター配信（毎週日曜 10:00 JST）
+0 10 * * 0  cd ~/kpop-ai-system && bash lib/send_newsletter.sh >> ~/kpop-ai-system/logs/newsletter.log 2>&1
+
+# コメントモデレーション（毎時30分 — 未承認コメントの自動スパム判定）
+30 * * * *  cd ~/kpop-ai-system && python3 lib/comment_manager.py --moderate >> ~/kpop-ai-system/logs/comment_moderation.log 2>&1
+
+# コメント日次ダイジェスト（毎日 21:30 — Discord通知）
+30 21 * * * cd ~/kpop-ai-system && python3 lib/comment_manager.py --digest >> ~/kpop-ai-system/logs/comment_moderation.log 2>&1
+
+# ━━ Phase 2: フィードバックループ完全自動化 ━━
+
+# 朝: KPIフィードバック + 異常検知（メトリクス取得直後）
+30 6 * * *  cd ~/kpop-ai-system && python3 lib/feedback_loop_orchestrator.py morning >> ~/kpop-ai-system/logs/feedback_loop.log 2>&1
+
+# 常時監視: 異常検知 + 品質停止チェック（2時間おき）
+0 9,11,13,15,17,19 * * * cd ~/kpop-ai-system && python3 lib/feedback_loop_orchestrator.py monitor >> ~/kpop-ai-system/logs/feedback_loop.log 2>&1
+
+# 夜: 学習→CEOブリッジ（apply_learning 21:30の30分後）
+0 22 * * *  cd ~/kpop-ai-system && python3 lib/feedback_loop_orchestrator.py nightly >> ~/kpop-ai-system/logs/feedback_loop.log 2>&1
+
+# ━━ Phase 3: 成長加速・収益多様化 ━━
+
+# 日次: AdSense最適化 + アフィリエイト自動挿入 + バイラルトラッキング + メディアキット
+30 5 * * *  cd ~/kpop-ai-system && bash run_growth_monetization.sh >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# Premium会員ページ・広告掲載ページ更新（毎月1日 4:00）
+0 4 1 * *   cd ~/kpop-ai-system && python3 lib/premium_membership.py setup && python3 lib/sponsor_portal.py setup >> ~/kpop-ai-system/logs/cron.log 2>&1
+
+# ━━ Phase 4: 高度な自律機能 ━━
+
+# トレンド予測AI（毎朝5:30 — 編集部朝会前にauto_directives注入）
+35 5 * * *  cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh trend >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+
+# Phase 8: トレンド収集（毎朝6:30 — 記事生成07:00の30分前にシグナル収集）
+30 6 * * *  cd ~/kpop-ai-system && python3 lib/trend_collector.py >> logs/trend_collector.log 2>&1
+
+# A/Bテスト完全自動化（水曜4:30設計/金曜4:30判定 — illumise既存cronと連携）
+30 4 * * 3  cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh ab-test >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+30 4 * * 5  cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh ab-test >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+
+# 記事ROI計算（月曜6:15フル / 他日はレポートのみ20:00）
+15 6 * * 1  cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh roi >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+0 20 * * 2-7 cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh roi >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+
+# コスト最適化（毎日20:30日次チェック / 月初に月次レポート+mewtwo注入）
+30 20 * * *  cd ~/kpop-ai-system && bash kpop_phase4_pipeline.sh cost >> ~/kpop-ai-system/logs/phase4_pipeline.log 2>&1
+
+# ━━ Phase 4-真の自律AIメディア: 競合サイト自動監視 ━━
+
+# 競合サイト30分間隔監視（6時〜21時の活動時間帯）
+0,30 6-21 * * * cd ~/kpop-ai-system && python3 lib/competitor_monitor.py >> ~/kpop-ai-system/logs/competitor_monitor.log 2>&1
+
+# パイプライン自己修復監視（毎時 — watchdogと連携）
+45 * * * *  cd ~/kpop-ai-system && python3 lib/pipeline_self_heal.py monitor >> ~/kpop-ai-system/logs/self_heal.log 2>&1
+
+# タイトル品質チェック（毎朝8時 — 直近24時間の記事タイトルの誤字・エンティティ・文字化けを自動修正）
+0 8 * * *   cd ~/kpop-ai-system && source env_loader.sh && python3 lib/title_quality_checker.py >> ~/kpop-ai-system/logs/title_check.log 2>&1
+
+# 品質ダブルチェック（8時・14時・20時 — 直近48時間の全記事を10項目監査）
+0 8,14,20 * * * cd ~/kpop-ai-system && python3 lib/quality_double_check.py >> ~/kpop-ai-system/logs/quality_check.log 2>&1
+
+# 週次品質レポート（月曜9時 — 過去7日の品質スコア分布＋改善提案＋Discord送信）
+0 9 * * 1   cd ~/kpop-ai-system && python3 lib/weekly_quality_report.py >> ~/kpop-ai-system/logs/quality_weekly.log 2>&1
+
+# ━━ Phase 5: 収益KPI自律改善 ━━
+
+# 日次: AdSense監視 + アフィリエイト最適化 + パターン学習（メトリクス取得後）
+0 7 * * *   cd ~/kpop-ai-system && python3 lib/revenue_optimizer.py --analyze --optimize --learn >> ~/kpop-ai-system/logs/revenue_optimizer.log 2>&1
+
+# 週次: 収益レポート Discord送信（月曜朝）
+15 9 * * 1  cd ~/kpop-ai-system && python3 lib/revenue_optimizer.py --report >> ~/kpop-ai-system/logs/revenue_optimizer.log 2>&1
+
+# 週次: メルマガ配信（日曜10:00 — post_to_newsletter.py）
+0 10 * * 0  cd ~/kpop-ai-system && python3 lib/post_to_newsletter.py --send >> ~/kpop-ai-system/logs/newsletter.log 2>&1
+
+# ━━ Phase 7 Track B: 部門別スタンドアップ・取締役会 ━━
+
+# 部門別朝会スタンドアップ（毎日07:30 — 5部門一括生成 → Discord送信）
+30 7 * * *  cd ~/kpop-ai-system && python3 lib/generate_department_standup.py >> ~/kpop-ai-system/logs/dept_standup.log 2>&1
+
+# 週次取締役会（毎週月曜09:00 — CEO ミュウツー主催、5部門レビュー → Discord送信）
+0  9 * * 1  cd ~/kpop-ai-system && python3 lib/generate_board_meeting.py >> ~/kpop-ai-system/logs/board_meeting.log 2>&1

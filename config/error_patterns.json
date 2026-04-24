@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-21T12:39:13.875062",
+  "updated_at": "2026-04-24T19:10:21.210541",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -70,12 +70,14 @@
       "agent": "unknown"
     },
     "x_post_failed": {
-      "count": 8,
-      "last_seen": "2026-04-13",
-      "example": "X投稿スキップ(score=66.0)",
+      "count": 13,
+      "last_seen": "2026-04-24",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
+      "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
-      "resolved_at": "2026-04-13"
+      "pending_manual": "post_id=3911 publish確認+X再投稿",
+      "resolved_at": null
     },
     "unknown_8169": {
       "count": 1,
@@ -524,12 +526,14 @@
       "agent": "unknown"
     },
     "thumbnail_text_burned": {
-      "count": 105,
+      "count": 1,
       "last_seen": "2026-04-20",
       "example": "サムネイルに文字が焼き込まれている(text_burned>2)。DALL-E生成時に文字が混入しVision検出で確認",
-      "fix": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
+      "fix": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) Phase5で104件再生成完了(2026-04-20)",
       "agent": "pipeline/make_thumbnail",
       "resolved_at": "2026-04-20",
+      "phase5_regenerated": 104,
+      "phase5_completed_at": "2026-04-20",
       "root_cause": "DALL-E生成プロンプトに'no text'指定が不十分で、K-POPアーティスト名や記事タイトルの一部が画像に焼き込まれていた",
       "recurrence_prevention": "pre_publish_hook.pyのthumbnail_text_count BLOCK + 生成後Vision確認の二重防御"
     },
@@ -594,6 +598,130 @@
       "example": "X投稿PRE_SCOREが低い: 79.8（閾値80未満）",
       "fix": "調査が必要",
       "agent": "unknown"
+    },
+    "unknown_3282": {
+      "count": 1,
+      "last_seen": "2026-04-21",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_4137": {
+      "count": 1,
+      "last_seen": "2026-04-21",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "h2_insufficient": {
+      "count": 0,
+      "last_seen": "2026-04-21",
+      "pattern": "h2不足.*\\d+本",
+      "example": "h2見出しが2本未満の記事が公開された",
+      "fix": "pre_publish_hook.pyでh2<2本をCRITICAL、h2<4本をWARNINGとして検出。イーブイ(記事構成担当)がh2を最低4本生成するよう指示強化",
+      "agent": "eevee",
+      "resolved_at": "2026-04-21",
+      "severity": "medium"
+    },
+    "internal_link_insufficient": {
+      "count": 0,
+      "last_seen": "2026-04-21",
+      "pattern": "内部リンク不足.*\\d+本",
+      "example": "内部リンクが0本の記事が公開された",
+      "fix": "pre_publish_hook.pyで内部リンク0本をCRITICAL、1本をWARNINGとして検出。カイリュー(CVR導線担当)が内部リンクを最低2本追加するよう指示",
+      "agent": "kairyu_kpop",
+      "resolved_at": "2026-04-21",
+      "severity": "medium"
+    },
+    "unknown_6564": {
+      "count": 1,
+      "last_seen": "2026-04-22",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_3181": {
+      "count": 1,
+      "last_seen": "2026-04-23",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_8918": {
+      "count": 1,
+      "last_seen": "2026-04-23",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "missing_kpj_summary": {
+      "count": 8,
+      "last_seen": "2026-04-23",
+      "example": "48h以内の全8記事でkpj-summary欠如。パイプラインにarticle_summarizer.py未統合",
+      "fix": "post_publish_enricher.pyを新規作成、主要5パイプラインのpost-publishフローに統合",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-23"
+    },
+    "missing_kpj_profile": {
+      "count": 8,
+      "last_seen": "2026-04-23",
+      "example": "48h以内の全8記事でkpj-artist-profile欠如。artist_profile_inserter.pyがスタンドアロン放置",
+      "fix": "post_publish_enricher.pyに統合。記事からアーティスト名を自動検出しプロフィール挿入",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-23"
+    },
+    "gradient_thumbnail_leak": {
+      "count": 3,
+      "last_seen": "2026-04-23",
+      "example": "3/8記事でサムネがグラデーション画像(7KB未満)のまま公開。OPENAI_API_KEY未設定",
+      "fix": "post_publish_enricher.pyにサムネサイズ検証追加。根本対策: API key設定がPhase10で必要",
+      "agent": "pipeline",
+      "resolved_at": null
+    },
+    "unknown_7938": {
+      "count": 1,
+      "last_seen": "2026-04-23",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "x_post_before_audit_draft": {
+      "count": 11,
+      "last_seen": "2026-04-24",
+      "example": "X投稿(URLリプライ)がpost_audit.shのdraft化より先に実行され、draft化後のURLが404のままXに残存。11件のsoft-404リンクが拡散された",
+      "fix": "post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.shのdraft化時にX URLリプライを自動削除。日次リンクチェックcron(03:30)を追加。既存11件はlib/x_404_reply_cleanup.shで削除",
+      "agent": "persian/post_to_x",
+      "resolved_at": "2026-04-24"
+    },
+    "japanese_slug_in_url": {
+      "count": 2,
+      "last_seen": "2026-04-24",
+      "example": "日本語テキスト(AIエラーメッセージ含む)がそのままWP slugに入り、URLエンコードされた日本語slugのURLがXに投稿された",
+      "fix": "x_post_url_validator.pyで日本語slug検出・ブロック。タイトルサニタイゼーション強化が別途必要",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-24"
+    },
+    "gardevoir_empty_output": {
+      "count": 23,
+      "last_seen": "2026-04-24",
+      "example": "gardevoir_hook_criticが空出力/英語メタ応答を返し、score=0/verdict=ERRORになる",
+      "fix": "agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバック追加。agent_directives.jsonにretry_on_empty=2設定",
+      "agent": "gardevoir_hook_critic",
+      "resolved_at": "2026-04-24"
+    },
+    "unknown_5556": {
+      "count": 1,
+      "last_seen": "2026-04-24",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_2208": {
+      "count": 1,
+      "last_seen": "2026-04-24",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
     }
   },
   "recurring_errors": [
@@ -617,12 +745,14 @@
     },
     {
       "key": "x_post_failed",
-      "count": 8,
-      "last_seen": "2026-04-13",
-      "example": "X投稿スキップ(score=66.0)",
+      "count": 13,
+      "last_seen": "2026-04-24",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
+      "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
-      "resolved_at": "2026-04-13"
+      "pending_manual": "post_id=3911 publish確認+X再投稿",
+      "resolved_at": null
     },
     {
       "key": "x_backfill_runner_arg_mismatch",
@@ -720,147 +850,75 @@
       "resolved_at": "2026-04-20"
     },
     {
-      "key": "thumbnail_text_burned",
-      "count": 105,
-      "last_seen": "2026-04-20",
-      "example": "サムネイルに文字が焼き込まれている(text_burned>2)。DALL-E生成時に文字が混入しVision検出で確認",
-      "fix": "(1) pre_publish_hook.pyにthumbnail_text_count>2のBLOCKを追加 (2) DALL-E再生成パイプラインにVision事後チェック(text_count==0のみ通過) (3) 103件をDALL-E 3で再生成(Phase5実行)",
-      "agent": "pipeline/make_thumbnail",
-      "resolved_at": "2026-04-20",
-      "root_cause": "DALL-E生成プロンプトに'no text'指定が不十分で、K-POPアーティスト名や記事タイトルの一部が画像に焼き込まれていた",
-      "recurrence_prevention": "pre_publish_hook.pyのthumbnail_text_count BLOCK + 生成後Vision確認の二重防御"
+      "key": "upstream_meta_commentary_leak",
+      "count": 15,
+      "last_seen": "2026-04-21",
+      "example": "deoxys/metamonがタイトルにメタコメンタリー('記事本文を確認しました','以下のタイトル案を提案します')や英語文('Now I have the context needed')を出力→GardevoirでHARD_FAIL",
+      "root_cause": "LLMが指示を無視してメタ応答をタイトル/本文に混入。入力バリデーションなしでGardevoirに到達し、スコア評価で即HARD_FAIL",
+      "fix": "(1) config/agent_directives.jsonにdeoxys_kpop/metamon_kpop用input_validationを追加: reject_if_title_containsで'提案します','以下に','Now I have'等を事前拒否 (2) agents/*.mdのプロンプトに英語禁止・メタコメント禁止を明示済み (3) pre_publish_hook.pyのLLM残骸パターンがバックストップとして機能",
+      "agent": "deoxys_kpop/metamon_kpop",
+      "resolved_at": "2026-04-21",
+      "recurrence_prevention": "3層防御: (A) agent_directives.jsonのinput_validation事前拒否 (B) agents/*.mdプロンプト強化 (C) pre_publish_hook.py LLM残骸パターン検出",
+      "filter_patterns": [
+        "提案します",
+        "以下に修正案",
+        "以下のタイトル案",
+        "記事本文を確認",
+        "Now I have",
+        "Here is the",
+        "Here's the",
+        "コンテンツが提供されていません",
+        "Discord通知送信完了",
+        "hit your limit"
+      ]
+    },
+    {
+      "key": "missing_kpj_summary",
+      "count": 8,
+      "last_seen": "2026-04-23",
+      "example": "48h以内の全8記事でkpj-summary欠如。パイプラインにarticle_summarizer.py未統合",
+      "fix": "post_publish_enricher.pyを新規作成、主要5パイプラインのpost-publishフローに統合",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-23"
+    },
+    {
+      "key": "missing_kpj_profile",
+      "count": 8,
+      "last_seen": "2026-04-23",
+      "example": "48h以内の全8記事でkpj-artist-profile欠如。artist_profile_inserter.pyがスタンドアロン放置",
+      "fix": "post_publish_enricher.pyに統合。記事からアーティスト名を自動検出しプロフィール挿入",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-23"
+    },
+    {
+      "key": "gradient_thumbnail_leak",
+      "count": 3,
+      "last_seen": "2026-04-23",
+      "example": "3/8記事でサムネがグラデーション画像(7KB未満)のまま公開。OPENAI_API_KEY未設定",
+      "fix": "post_publish_enricher.pyにサムネサイズ検証追加。根本対策: API key設定がPhase10で必要",
+      "agent": "pipeline",
+      "resolved_at": null
+    },
+    {
+      "key": "x_post_before_audit_draft",
+      "count": 11,
+      "last_seen": "2026-04-24",
+      "example": "X投稿(URLリプライ)がpost_audit.shのdraft化より先に実行され、draft化後のURLが404のままXに残存。11件のsoft-404リンクが拡散された",
+      "fix": "post_to_x.sh にURL事前検証(lib/x_post_url_validator.py)を追加。post_audit.shのdraft化時にX URLリプライを自動削除。日次リンクチェックcron(03:30)を追加。既存11件はlib/x_404_reply_cleanup.shで削除",
+      "agent": "persian/post_to_x",
+      "resolved_at": "2026-04-24"
+    },
+    {
+      "key": "gardevoir_empty_output",
+      "count": 23,
+      "last_seen": "2026-04-24",
+      "example": "gardevoir_hook_criticが空出力/英語メタ応答を返し、score=0/verdict=ERRORになる",
+      "fix": "agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバック追加。agent_directives.jsonにretry_on_empty=2設定",
+      "agent": "gardevoir_hook_critic",
+      "resolved_at": "2026-04-24"
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91, 99, 100] GSCインデックス登録を再送信",
-      "post_id": "2161"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2165"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "誤アーティストカテゴリを除去: [44, 3] → [3] GSCインデックス登録を再送信",
-      "post_id": "2169"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2173"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91, 102] GSCインデックス登録を再送信",
-      "post_id": "2177"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2181"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2187"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "メタ説明を自動生成して設定 タグを自動生成して設定: [91, 76] GSCインデックス登録を再送信",
-      "post_id": "2191"
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2194"
-    },
-    {
-      "ts": "2026-04-10",
-      "key": "meta_desc_copied",
-      "fix": "post_to_wp.py + kpop_pipeline.sh AIOSEOセクションを修正: excerpt流用をやめ、タイトル+本文2文目から独立生成するよう変更",
-      "post_id": "system",
-      "prev_count": 4
-    },
-    {
-      "ts": "2026-04-10",
-      "key": "x_post_failed",
-      "fix": "lib/x_post_templates.py HOOKS[\"default\"]を2パターン→6パターンに拡張。強ワード追加でスコア78→82に改善",
-      "post_id": "system",
-      "prev_count": 5
-    },
-    {
-      "ts": "2026-04-10",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録を再送信",
-      "post_id": "2209"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "本文補強: 425 → 574文字 タグを自動生成して設定: [91]",
-      "post_id": "2234"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "本文補強: 1527 → 2989文字 メタ説明を自動生成して設定 タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定",
-      "post_id": "2241"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定",
-      "post_id": "2249"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2259 → 2261 GSCインデックス登録送信",
-      "post_id": "2256"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "2256"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "2256"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "本文補強: 2486 → 3241文字 アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2267 → 2270 GSCインデックス登録送信",
-      "post_id": "2263"
-    },
-    {
-      "ts": "2026-04-11",
-      "fix": "アイキャッチaltテキストを自動設定",
-      "post_id": "2272"
-    },
-    {
-      "ts": "2026-04-13",
-      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "2544"
-    },
-    {
-      "ts": "2026-04-13",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2558 → 2560 GSCインデックス登録送信",
-      "post_id": "2555"
-    },
-    {
-      "ts": "2026-04-13",
-      "fix": "アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2570 → 2572 GSCインデックス登録送信",
-      "post_id": "2568"
-    },
-    {
-      "ts": "2026-04-13",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2577 → 2579 GSCインデックス登録送信",
-      "post_id": "2574"
-    },
-    {
-      "ts": "2026-04-14",
-      "fix": "アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2583 → 2585 GSCインデックス登録送信",
-      "post_id": "2581"
-    },
     {
       "ts": "2026-04-14",
       "fix": "スラッグを修正: babymonster-3-rd-15-6-20260414 → babymonster-3rd-choom-15-june-tour-2026 タイトルSEO修正: 'BABYMO",
@@ -985,13 +1043,138 @@
       "ts": "2026-04-21",
       "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
       "post_id": "3850"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3854"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3860"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3864"
+    },
+    {
+      "ts": "2026-04-21",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3870"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "本文補強: 2895 → 3337文字 GSCインデックス登録送信",
+      "post_id": "3889"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "本文補強: 2881 → 3327文字",
+      "post_id": "3899"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3905"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3911"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3915"
+    },
+    {
+      "ts": "2026-04-22",
+      "fix": "本文補強: 2654 → 3277文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3921"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3932"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "タグを自動生成して設定: [91]",
+      "post_id": "3938"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "3942"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "3952"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3956"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3963"
+    },
+    {
+      "ts": "2026-04-23",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3980"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "スラッグを修正: 0-april-17-kpop-chart-bts-swim-3weeks-kiss-life-illit-2026 → kpop-chart-pop-bts-3992 GSCインデ",
+      "post_id": "3992"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "3998"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "本文補強: 2888 → 3334文字 タグを自動生成して設定: [91]",
+      "post_id": "4003"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "4010"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "4020"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "4027"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
+      "post_id": "4031"
+    },
+    {
+      "ts": "2026-04-24",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "4037"
     }
   ],
   "agent_failure_counts": {
     "mewtwo": 1,
     "pipeline": 7,
     "make_thumbnail": 1,
-    "persian": 8
+    "persian": 13
   },
   "phase4_monitors": {
     "trend_predictor_no_signal": {

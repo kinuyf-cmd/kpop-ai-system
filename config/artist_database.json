@@ -1,0 +1,22 @@
+{
+  "BTS": {"debut_date": "2013-06-13", "agency": "HYBE / BIGHIT MUSIC", "members": ["RM","Jin","Suga","J-Hope","Jimin","V","Jungkook"], "representative_songs": ["Dynamite","Butter","Spring Day"]},
+  "BLACKPINK": {"debut_date": "2016-08-08", "agency": "YG Entertainment", "members": ["Jisoo","Jennie","Rosé","Lisa"], "representative_songs": ["DDU-DU DDU-DU","How You Like That","Pink Venom"]},
+  "TWICE": {"debut_date": "2015-10-20", "agency": "JYP Entertainment", "members": ["Nayeon","Jeongyeon","Momo","Sana","Jihyo","Mina","Dahyun","Chaeyoung","Tzuyu"], "representative_songs": ["TT","Cheer Up","Feel Special"]},
+  "aespa": {"debut_date": "2020-11-17", "agency": "SM Entertainment", "members": ["Karina","Giselle","Winter","Ningning"], "representative_songs": ["Next Level","Savage","Supernova"]},
+  "NewJeans": {"debut_date": "2022-08-01", "agency": "ADOR / HYBE", "members": ["Minji","Hanni","Danielle","Haerin","Hyein"], "representative_songs": ["Attention","Hype Boy","Super Shy"]},
+  "IVE": {"debut_date": "2021-12-01", "agency": "Starship Entertainment", "members": ["Yujin","Gaeul","Rei","Wonyoung","Liz","Leeseo"], "representative_songs": ["ELEVEN","Love Dive","I AM"]},
+  "SEVENTEEN": {"debut_date": "2015-05-26", "agency": "PLEDIS / HYBE", "members": ["S.Coups","Jeonghan","Joshua","Jun","Hoshi","Wonwoo","Woozi","DK","Mingyu","The8","Seungkwan","Vernon","Dino"], "representative_songs": ["Don't Wanna Cry","Super","MAESTRO"]},
+  "Stray Kids": {"debut_date": "2018-03-25", "agency": "JYP Entertainment", "members": ["Bang Chan","Lee Know","Changbin","Hyunjin","Han","Felix","Seungmin","I.N"], "representative_songs": ["God's Menu","MANIAC","S-Class"]},
+  "EXO": {"debut_date": "2012-04-08", "agency": "SM Entertainment", "members": ["Xiumin","Suho","Lay","Baekhyun","Chen","Chanyeol","D.O.","Kai","Sehun"], "representative_songs": ["Growl","Love Shot","Don't Fight the Feeling"]},
+  "Red Velvet": {"debut_date": "2014-08-01", "agency": "SM Entertainment", "members": ["Irene","Seulgi","Wendy","Joy","Yeri"], "representative_songs": ["Red Flavor","Psycho","Feel My Rhythm"]},
+  "ENHYPEN": {"debut_date": "2020-11-30", "agency": "BELIFT LAB / HYBE", "members": ["Heeseung","Jay","Jake","Sunghoon","Sunoo","Jungwon","Ni-ki"], "representative_songs": ["Drunk-Dazed","Bite Me","XO"]},
+  "TXT": {"debut_date": "2019-03-04", "agency": "BIGHIT MUSIC / HYBE", "members": ["Soobin","Yeonjun","Beomgyu","Taehyun","Hueningkai"], "representative_songs": ["0X1=LOVESONG","Sugar Rush Ride","Deja Vu"]},
+  "LE SSERAFIM": {"debut_date": "2022-05-02", "agency": "SOURCE MUSIC / HYBE", "members": ["Sakura","Kim Chaewon","Huh Yunjin","Kazuha","Hong Eunchae"], "representative_songs": ["FEARLESS","ANTIFRAGILE","Perfect Night"]},
+  "(G)I-DLE": {"debut_date": "2018-05-02", "agency": "CUBE Entertainment", "members": ["Miyeon","Minnie","Soyeon","Yuqi","Shuhua"], "representative_songs": ["TOMBOY","Queencard","Super Lady"]},
+  "ILLIT": {"debut_date": "2024-03-25", "agency": "BELIFT LAB / HYBE", "members": ["Yunah","Minju","Moka","Wonhee","Iroha"], "representative_songs": ["Magnetic","Tick-Tack","Lucky Girl Syndrome"]},
+  "RIIZE": {"debut_date": "2023-09-04", "agency": "SM Entertainment", "members": ["Shotaro","Eunseok","Sungchan","Wonbin","Seunghan","Sohee","Anton"], "representative_songs": ["Get A Guitar","Love 119","Boom Boom Bass"]},
+  "NMIXX": {"debut_date": "2022-02-22", "agency": "JYP Entertainment", "members": ["Lily","Haewon","Sullyoon","Jinni","Bae","Jiwoo","Kyujin"], "representative_songs": ["O.O","DASH","Love Me Like This"]},
+  "ATEEZ": {"debut_date": "2018-10-24", "agency": "KQ Entertainment", "members": ["Hongjoong","Seonghwa","Yunho","Yeosang","San","Mingi","Wooyoung","Jongho"], "representative_songs": ["Guerrilla","BOUNCY","WORK"]},
+  "TREASURE": {"debut_date": "2020-08-07", "agency": "YG Entertainment", "members": ["Choi Hyunsuk","Jihoon","Yoshi","Junkyu","Mashiho","Jaehyuk","Asahi","Doyoung","Haruto","Park Jeongwoo","So Junghwan"], "representative_songs": ["JIKJIN","HELLO","BONA BONA"]},
+  "BABYMONSTER": {"debut_date": "2023-11-27", "agency": "YG Entertainment", "members": ["Ruka","Pharita","Asa","Ahyeon","Rami","Rora","Chiquita"], "representative_songs": ["SHEESH","FOREVER","Like That"]}
+}

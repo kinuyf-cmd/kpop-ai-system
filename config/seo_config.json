@@ -69,5 +69,38 @@
   "meta_description": {
     "min_length": 110,
     "max_length": 130
+  },
+  "structured_data": {
+    "article_schema": {
+      "enabled": true,
+      "type": "Article",
+      "news_type": "NewsArticle",
+      "auto_inject": true
+    },
+    "faq_schema": {
+      "enabled": true,
+      "auto_detect": true,
+      "min_pairs": 1
+    },
+    "breadcrumb_schema": {
+      "enabled": true,
+      "auto_inject": true
+    }
+  },
+  "google_news": {
+    "enabled": true,
+    "publication_name": "KPOP JOURNAL",
+    "language": "ja",
+    "news_sitemap": "news-sitemap.xml",
+    "required_pages": [
+      "/contact/",
+      "/privacy-policy/",
+      "/about/"
+    ],
+    "robots_txt_additions": [
+      "User-agent: Googlebot-News",
+      "Allow: /",
+      "Sitemap: https://www.kpopjournal.tokyo/news-sitemap.xml"
+    ]
   }
 }

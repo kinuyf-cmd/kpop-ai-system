@@ -135,12 +135,23 @@ def get_agent_directive(agent: str) -> str:
     # エージェント固有の指示
     ad = directives.get("agent_directives", {}).get(agent)
     if ad:
-        parts.append(f"【週次改善指示（自動適用）】{ad['action']}")
+        action = ad.get("action", "")
+        learned = ad.get("learned_title_patterns", "")
+        if action:
+            parts.append(f"【週次改善指示（自動適用）】{action}")
+        if learned:
+            parts.append(learned)
 
     # 重点テーマ（全エージェント共通）
     themes = directives.get("focus_themes", [])
     if themes:
-        parts.append("【今週の重点テーマ】" + "、".join(themes[:3]))
+        theme_strs = []
+        for t in themes[:3]:
+            if isinstance(t, dict):
+                theme_strs.append(t.get("topic", str(t)))
+            else:
+                theme_strs.append(str(t))
+        parts.append("【今週の重点テーマ】" + "、".join(theme_strs))
 
     # 勝ちワード（メタモン・イーブイ用）
     if agent in ("metamon", "eevee"):
@@ -252,6 +263,8 @@ def audit_feedback(post_id: str, issues: list, fixes: list,
          "deoxys", "記事本文は最低1500文字以上を確保すること"),
         (r"GSC.*登録できず|インデックス.*失敗", "gsc_index_failed",
          "pipeline", "GSCインデックス登録のリトライロジックを確認"),
+        (r"507|Insufficient Storage|ストレージ不足", "wp_507_insufficient_storage",
+         "frontend/pipeline", "WPサーバーストレージ逼迫。DB/ディスク容量を確認し不要リビジョン・メディアを削除"),
         (r"アイキャッチ.*未設定", "no_featured_image",
          "pipeline", "投稿前にアイキャッチ画像の存在を必ず確認すること"),
         (r"ファクトチェック.*不明|架空|検証不能", "factcheck_issue",

@@ -138,6 +138,7 @@ def log_alert(check_name: str, message: str, dry_run: bool, level: str = "error"
         "check": check_name,
         "message": message,
         "dry_run": dry_run,
+        "level": level,
     }
     alert_log = LOGS / "watchdog_alerts.jsonl"
     alert_log.parent.mkdir(parents=True, exist_ok=True)
@@ -147,12 +148,7 @@ def log_alert(check_name: str, message: str, dry_run: bool, level: str = "error"
     icon = "🚨" if level == "error" else "⚠️"
     print(f"  {icon} [{check_name}] {message[:120]}")
 
-    if not dry_run:
-        send_discord_alert(
-            title=f"[自動監査] {check_name} 異常検知",
-            body=message,
-            level=level,
-        )
+    # Discord送信は main() のバッチ送信に委譲（個別送信しない）
     return alert
 
 
@@ -160,12 +156,13 @@ def log_alert(check_name: str, message: str, dry_run: bool, level: str = "error"
 # check_name → 最終Discord送信時刻（JST） を保存するファイル
 _NOTIF_COOLDOWN_FILE = LOGS / "watchdog_notif_cooldown.json"
 
-# check_nameごとのクールダウン秒数（デフォルト: 24h）
+# check_nameごとのクールダウン秒数（デフォルト: 6h — 9時/21時の1日2回まとめ送信に合わせた間隔）
+_DEFAULT_COOLDOWN = 6 * 3600  # 6h
 _NOTIF_COOLDOWN_SECONDS: dict[str, int] = {
-    "recurring_error_patterns":    24 * 3600,  # 24h: 毎回送信を防ぐ
+    "recurring_error_patterns":    24 * 3600,  # 24h: 既知パターンは1日1回で十分
     "recurring_error_accumulation": 24 * 3600,
     "pipeline_external_wp_post":   24 * 3600,  # 24h: テスト記事は既知情報
-    "gate_fatigue":                 6 * 3600,  # 6h: 閾値緩和判断用に即時性重視
+    "gate_fatigue":                 6 * 3600,  # 6h: 閾値緩和判断用
 }
 
 
@@ -185,9 +182,7 @@ def _save_cooldown_state(state: dict) -> None:
 
 def is_discord_throttled(check_name: str) -> bool:
     """指定チェックのDiscord通知がクールダウン中かどうかを返す（送信しない場合True）"""
-    seconds = _NOTIF_COOLDOWN_SECONDS.get(check_name)
-    if seconds is None:
-        return False  # クールダウン設定なし → 常に送信
+    seconds = _NOTIF_COOLDOWN_SECONDS.get(check_name, _DEFAULT_COOLDOWN)
     state = _load_cooldown_state()
     last_str = state.get(check_name)
     if not last_str:
@@ -206,8 +201,6 @@ def is_discord_throttled(check_name: str) -> bool:
 
 def mark_discord_sent(check_name: str) -> None:
     """Discord送信後にクールダウン状態を更新する"""
-    if check_name not in _NOTIF_COOLDOWN_SECONDS:
-        return
     state = _load_cooldown_state()
     state[check_name] = now_jst().isoformat()
     _save_cooldown_state(state)
@@ -735,55 +728,24 @@ def check_error_patterns(dry_run: bool) -> list[dict]:
             f"  • [{h['pattern']}] {h['count']}回発生 最終:{h['last_seen'].strftime('%m/%d %H:%M')} agent={h['agent']}"
             for h in sorted(high_freq, key=lambda x: -x["count"])[:5]
         )
-        # クールダウン確認: 24h以内に送信済みならDiscordをスキップ
-        throttled = is_discord_throttled("recurring_error_patterns")
-        alert = {
-            "ts": now_jst().isoformat(),
-            "check": "recurring_error_patterns",
-            "message": (
-                f"再発エラーパターン {len(high_freq)}件（直近7日）:\n{details}\n"
-                f"確認先: config/error_patterns.json, logs/audit_feedback.jsonl"
-            ),
-            "dry_run": dry_run,
-        }
-        (LOGS / "watchdog_alerts.jsonl").parent.mkdir(parents=True, exist_ok=True)
-        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
-            f.write(json.dumps(alert, ensure_ascii=False) + "\n")
-        print(f"  ⚠️ [recurring_error_patterns] {alert['message'][:120]}")
-        if not dry_run and not throttled:
-            send_discord_alert(
-                title="[自動監査] recurring_error_patterns 異常検知",
-                body=alert["message"],
-                level="warn",
-            )
-            mark_discord_sent("recurring_error_patterns")
-        alerts.append(alert)
-
-    # recurring_errorsに登録済みパターンが3件以上なら昇格推奨
-    if len(recurring) >= 3:
-        throttled_acc = is_discord_throttled("recurring_error_accumulation")
-        rec_names = ", ".join(recurring[:5])
         msg = (
-            f"繰り返しエラーが{len(recurring)}件蓄積: {rec_names}\n"
+            f"再発エラーパターン {len(high_freq)}件（直近7日）:\n{details}\n"
+            f"確認先: config/error_patterns.json, logs/audit_feedback.jsonl"
+        )
+        alerts.append(log_alert("recurring_error_patterns", msg, dry_run, level="warn"))
+
+    # recurring_errorsに登録済みパターンが3件以上なら昇格推奨（解決済みは除外）
+    unresolved = [r for r in recurring if not r.get("resolved_at")]
+    if len(unresolved) >= 3:
+        rec_names = ", ".join(
+            r.get("key", str(r)) if isinstance(r, dict) else str(r)
+            for r in unresolved[:5]
+        )
+        msg = (
+            f"繰り返しエラーが{len(unresolved)}件蓄積(未解決): {rec_names}\n"
             f"→ auto_improve.py report で指令昇格状況を確認してください"
         )
-        alert2 = {
-            "ts": now_jst().isoformat(),
-            "check": "recurring_error_accumulation",
-            "message": msg,
-            "dry_run": dry_run,
-        }
-        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
-            f.write(json.dumps(alert2, ensure_ascii=False) + "\n")
-        print(f"  ⚠️ [recurring_error_accumulation] {msg[:120]}")
-        if not dry_run and not throttled_acc:
-            send_discord_alert(
-                title="[自動監査] recurring_error_accumulation 異常検知",
-                body=msg,
-                level="warn",
-            )
-            mark_discord_sent("recurring_error_accumulation")
-        alerts.append(alert2)
+        alerts.append(log_alert("recurring_error_accumulation", msg, dry_run, level="warn"))
 
     return alerts
 
@@ -974,26 +936,7 @@ def check_pipeline_external_wp_posts(dry_run: bool) -> list[dict]:
             f"確認先: logs/pipeline.jsonl, logs/post_audit.log\n"
             f"[AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY]"
         )
-        # クールダウン確認: 24h以内に送信済みならDiscordをスキップ
-        throttled = is_discord_throttled("pipeline_external_wp_post")
-        alert = {
-            "ts": now_jst().isoformat(),
-            "check": "pipeline_external_wp_post",
-            "message": msg,
-            "dry_run": dry_run,
-        }
-        (LOGS / "watchdog_alerts.jsonl").parent.mkdir(parents=True, exist_ok=True)
-        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
-            f.write(json.dumps(alert, ensure_ascii=False) + "\n")
-        print(f"  ⚠️ [pipeline_external_wp_post] {msg[:120]}")
-        if not dry_run and not throttled:
-            send_discord_alert(
-                title="[自動監査] pipeline_external_wp_post 異常検知",
-                body=msg,
-                level="warn",
-            )
-            mark_discord_sent("pipeline_external_wp_post")
-        alerts.append(alert)
+        alerts.append(log_alert("pipeline_external_wp_post", msg, dry_run, level="warn"))
     return alerts
 
 
@@ -1081,6 +1024,57 @@ CHECKS = {
 }
 
 
+def _send_batch_discord(alerts: list[dict]) -> bool:
+    """全アラートを1通のDiscordメッセージにまとめて送信する。
+    クールダウン中のアラートはスキップし、送信したものだけクールダウンを記録する。"""
+    if not alerts:
+        return False
+
+    # クールダウン判定: 各アラートを送信対象/スキップに分類
+    to_send = []
+    for alert in alerts:
+        check = alert.get("check", "unknown")
+        if is_discord_throttled(check):
+            continue
+        to_send.append(alert)
+
+    if not to_send:
+        print("  ℹ️ 全アラートがクールダウン中 → Discord送信スキップ")
+        return False
+
+    # まとめ本文を構築
+    ts = now_jst().strftime("%Y-%m-%d %H:%M JST")
+    lines = [f"**検知時刻**: {ts}", f"**異常件数**: {len(to_send)}件", ""]
+
+    error_count = sum(1 for a in to_send if a.get("level", "error") == "error")
+    warn_count = len(to_send) - error_count
+
+    for alert in to_send:
+        check = alert.get("check", "unknown")
+        level = alert.get("level", "error")
+        icon = "🚨" if level == "error" else "⚠️"
+        msg = alert.get("message", "")
+        # 各アラートは要約のみ（最初の100文字）
+        summary = msg.split("\n")[0][:100]
+        lines.append(f"{icon} **[{check}]** {summary}")
+
+    body = "\n".join(lines)
+    if len(body) > 1900:
+        body = body[:1900] + "\n…[省略]"
+
+    title = f"📋 監査レポート: {error_count}件エラー / {warn_count}件警告"
+    level = "error" if error_count > 0 else "warn"
+
+    ok = send_discord_alert(title=title, body=body, level=level)
+
+    # 送信成功したアラートのクールダウンを記録
+    if ok:
+        for alert in to_send:
+            mark_discord_sent(alert.get("check", "unknown"))
+
+    return ok
+
+
 def main():
     parser = argparse.ArgumentParser(description="パイプライン自律監査・自動修復エージェント")
     parser.add_argument("--dry-run", action="store_true", help="Discord送信・修復なし、表示のみ")
@@ -1109,8 +1103,12 @@ def main():
             print("✅ 正常")
 
     print(f"\n[watchdog] 完了 — 検知: {len(all_alerts)}件")
+
     if all_alerts and not args.dry_run:
-        print(f"  Discord #urgent_errors に通知済み")
+        # まとめ送信: 全アラートを1通のDiscordメッセージにバッチ送信
+        sent = _send_batch_discord(all_alerts)
+        if sent:
+            print(f"  Discord #urgent_errors にまとめ通知送信済み")
         # auto_repair.sh をバックグラウンドで起動（自律調査・修復ループ）
         auto_repair = BASE / "ai_company" / "auto_repair.sh"
         if auto_repair.exists():

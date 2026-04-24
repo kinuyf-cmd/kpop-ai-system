@@ -1,0 +1,48 @@
+{
+  "_comment": "エージェント別モデルティア設定。コスト最適化のため、タスク複雑度に応じてHaiku/Sonnet/Opusを自動選択する。",
+  "_updated_at": "2026-04-17",
+  "_tier_definition": {
+    "haiku": "単純タスク: ファクトチェック、フォーマット変換、分類、短文生成。コスト最小",
+    "sonnet": "中程度タスク: 記事生成、分析、SEO最適化、A/Bテスト設計。バランス型",
+    "opus": "複雑タスク: 戦略立案、創造的記事生成、WebSearch統合、経営判断。最高品質"
+  },
+  "models": {
+    "haiku": "claude-haiku-4-5-20251001",
+    "sonnet": "claude-sonnet-4-6",
+    "opus": "claude-opus-4-6"
+  },
+  "agent_tiers": {
+    "butterfree":           {"tier": "opus",   "reason": "WebSearch統合+トレンド分析。空出力防止に高性能モデル必要"},
+    "lapras":               {"tier": "sonnet", "reason": "SEOキーワード戦略。定型分析だがドメイン知識要"},
+    "mimikyu":              {"tier": "sonnet", "reason": "競合分析。パターン認識中心"},
+    "wobbuffet":            {"tier": "sonnet", "reason": "読者ニーズ分析。定型分析"},
+    "venusaur":             {"tier": "sonnet", "reason": "記事構成設計。テンプレート型"},
+    "deoxys_kpop":          {"tier": "opus",   "reason": "記事本文生成。創造的品質が必要"},
+    "metamon_kpop":         {"tier": "sonnet", "reason": "タイトル3案生成。パターンベース"},
+    "eevee":                {"tier": "sonnet", "reason": "タイトル最終選定。比較判断"},
+    "jirachi_kpop":         {"tier": "haiku",  "reason": "ファクトチェック。ルールベース検証"},
+    "alakazam_kpop":        {"tier": "haiku",  "reason": "ファクトチェック（フォールバック）。ルールベース"},
+    "gengar":               {"tier": "sonnet", "reason": "品質・SEO監査。チェックリスト型"},
+    "gardevoir_hook_critic":{"tier": "sonnet", "reason": "フック品質判定。パターン分析"},
+    "kairyu_kpop":          {"tier": "sonnet", "reason": "CVR・CTA追加。テンプレート型"},
+    "arceus":               {"tier": "opus",   "reason": "最終承認判定。複合的品質判断"},
+    "persian":              {"tier": "sonnet", "reason": "SNS投稿戦略。定型テンプレート"},
+    "zapdos":               {"tier": "opus",   "reason": "チャート記事生成。データ統合+創造"},
+    "porygon":              {"tier": "opus",   "reason": "週次データ分析。複合データ統合"},
+    "lugia":                {"tier": "opus",   "reason": "週次戦略立案。経営判断"},
+    "mewtwo":               {"tier": "opus",   "reason": "CEO判断。最高品質必要"},
+    "illumise":             {"tier": "sonnet", "reason": "UI/CSS A/Bテスト。データ分析中心"},
+    "articuno":             {"tier": "sonnet", "reason": "SNSバズコンテンツ。テンプレート型"},
+    "snorlax":              {"tier": "sonnet", "reason": "レビュー記事生成"},
+    "beautywriter":         {"tier": "sonnet", "reason": "美容記事生成"},
+    "popupwriter":          {"tier": "sonnet", "reason": "ポップアップ記事生成"},
+    "meowth":               {"tier": "sonnet", "reason": "財務分析。数値処理中心"},
+    "porygon_z":            {"tier": "sonnet", "reason": "システム監視。定型チェック"}
+  },
+  "cost_estimate": {
+    "_note": "1実行あたりの推定コスト比（Opusを1.0として）",
+    "haiku": 0.04,
+    "sonnet": 0.2,
+    "opus": 1.0
+  }
+}

@@ -10,8 +10,42 @@ mkdir -p "$REPORTS"
 REPO_BASE="$(cd "$(dirname "$0")/.." && pwd)"
 source "$REPO_BASE/lib/meeting_helper.sh"
 
-echo "=== 1. 戦略会議 ==="
+# --- ai_meeting.log への tee 記録（再発防止: cron経由で単独ログが更新されない問題の修正） ---
+AI_MEETING_LOG="${AI_MEETING_LOG:-$REPO_BASE/logs/ai_meeting.log}"
+mkdir -p "$(dirname "$AI_MEETING_LOG")" 2>/dev/null || true
+{
+  echo ""
+  echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] run_ai_meeting 開始 ==="
+} >> "$AI_MEETING_LOG" 2>/dev/null
+# 以後の stdout/stderr を ai_meeting.log にも複製
+exec > >(tee -a "$AI_MEETING_LOG") 2>&1
 
+echo "=== 0.5. Phase 4: 競合サイト監視結果取り込み ==="
+COMPETITOR_QUEUE=$(python3 - <<'PYCOMP'
+import json
+from pathlib import Path
+q = []
+p = Path("/home/aiuser/kpop-ai-system/logs/competitor_article_queue.jsonl")
+if p.exists():
+    for line in p.read_text(errors="replace").splitlines()[-10:]:
+        try:
+            r = json.loads(line.strip())
+            if r.get("status") == "pending":
+                q.append(r)
+        except: pass
+if q:
+    print(f"【競合サイト対抗記事キュー {len(q)}件】")
+    for item in q[:5]:
+        print(f"  ■ [{item.get('source','')}] {item.get('competitor_title','')[:50]}")
+        print(f"    提案: {item.get('suggested_angle','')[:60]}")
+else:
+    print("【競合対抗キュー】なし")
+PYCOMP
+)
+
+echo "=== 1. 戦略会議（並列化v2） ==="
+
+# Step 1a: バタフリーのトレンド収集（他3エージェントの入力になるため先行実行）
 claude --dangerously-skip-permissions --agent butterfree -p "
 あなたはトレンド責任者です。
 今日のK-POPトレンドを5つ抽出してください。
@@ -25,6 +59,7 @@ claude --dangerously-skip-permissions --agent butterfree -p "
 【優先度】
 " > "$REPORTS/butterfree_report.md"
 
+# Step 1b: ラプラス・ミミッキュ・ジラーチを並列実行（全てバタフリーレポートを入力とする）
 claude --dangerously-skip-permissions --agent lapras -p "
 あなたはSEO責任者です。
 以下のレポートを読み、検索流入の観点で評価してください。
@@ -38,7 +73,8 @@ $(cat "$REPORTS/butterfree_report.md")
 【課題】
 【提案】
 【優先度】
-" > "$REPORTS/lapras_report.md"
+" > "$REPORTS/lapras_report.md" &
+PID_LAPRAS=$!
 
 claude --dangerously-skip-permissions --agent mimikyu -p "
 あなたは競合分析責任者です。
@@ -53,7 +89,8 @@ $(cat "$REPORTS/butterfree_report.md")
 【課題】
 【提案】
 【優先度】
-" > "$REPORTS/mimikyu_report.md"
+" > "$REPORTS/mimikyu_report.md" &
+PID_MIMIKYU=$!
 
 claude --dangerously-skip-permissions --agent jirachi_kpop -p "
 あなたは未来予測責任者です。
@@ -68,9 +105,14 @@ $(cat "$REPORTS/butterfree_report.md")
 【課題】
 【提案】
 【優先度】
-" > "$REPORTS/jirachi_report.md"
+" > "$REPORTS/jirachi_report.md" &
+PID_JIRACHI=$!
 
-echo "=== 1.5. 記事企画会議（各エージェントからアイデア提案） ==="
+wait $PID_LAPRAS  && echo "  ✓ lapras完了"  || echo "  ⚠ lapras失敗"
+wait $PID_MIMIKYU && echo "  ✓ mimikyu完了" || echo "  ⚠ mimikyu失敗"
+wait $PID_JIRACHI && echo "  ✓ jirachi完了" || echo "  ⚠ jirachi失敗"
+
+echo "=== 1.5. 記事企画会議（各エージェントからアイデア提案・並列実行） ==="
 
 # 直近3日の投稿タイトルを取得（重複回避用）
 # 動的カテゴリ分布検出（偏り ≥40% のカテゴリを自動フラグ）
@@ -87,7 +129,7 @@ ${CATEGORY_BALANCE}
 - タイトル案は具体的なアーティスト名・数字・時事を含めること
 "
 
-# バタフリー：トレンド視点の記事アイデア
+# バタフリー：トレンド視点の記事アイデア（並列）
 claude --dangerously-skip-permissions --agent butterfree -p "
 あなたはトレンド責任者（バタフリー）です。
 以下の状況を踏まえて、明日投稿すべき記事アイデアを提案してください。
@@ -111,9 +153,10 @@ $(cat "$REPORTS/butterfree_report.md")
      根拠：（1〜2行）
 【カテゴリ偏りへの意見】（1〜2行、⚠フラグがあった場合のみ）
 【優先度】高 / 中 / 低
-" > "$REPORTS/planning_butterfree.md"
+" > "$REPORTS/planning_butterfree.md" &
+PID_PL_BUTTERFREE=$!
 
-# ラプラス：SEO視点の記事アイデア
+# ラプラス：SEO視点の記事アイデア（並列）
 claude --dangerously-skip-permissions --agent lapras -p "
 あなたはSEO責任者（ラプラス）です。
 以下の状況を踏まえて、SEO的に勝てる記事アイデアを提案してください。
@@ -140,9 +183,10 @@ $(cat "$REPORTS/lapras_report.md")
      根拠：（1〜2行）
 【カテゴリ偏りへの意見】（SEO観点で1〜2行、⚠フラグ時のみ）
 【優先度】高 / 中 / 低
-" > "$REPORTS/planning_lapras.md"
+" > "$REPORTS/planning_lapras.md" &
+PID_PL_LAPRAS=$!
 
-# ミミッキュ：競合差別化視点の記事アイデア
+# ミミッキュ：競合差別化視点の記事アイデア（並列）
 claude --dangerously-skip-permissions --agent mimikyu -p "
 あなたは競合分析責任者（ミミッキュ）です。
 競合サイトが書いていない、差別化できる記事アイデアを提案してください。
@@ -166,9 +210,10 @@ $(cat "$REPORTS/mimikyu_report.md")
      競合との差別化点：（1〜2行）
 【カテゴリ偏りへの意見】（競合観点で1〜2行、⚠フラグ時のみ）
 【優先度】高 / 中 / 低
-" > "$REPORTS/planning_mimikyu.md"
+" > "$REPORTS/planning_mimikyu.md" &
+PID_PL_MIMIKYU=$!
 
-# ジラーチ：未来予測視点の記事アイデア
+# ジラーチ：未来予測視点の記事アイデア（並列）
 claude --dangerously-skip-permissions --agent jirachi_kpop -p "
 あなたは未来予測責任者（ジラーチ）です。
 これから注目されるテーマを先読みした記事アイデアを提案してください。
@@ -192,9 +237,32 @@ $(cat "$REPORTS/jirachi_report.md")
      先読み根拠：（1〜2行）
 【カテゴリ偏りへの意見】（トレンド観点で1〜2行、⚠フラグ時のみ）
 【優先度】高 / 中 / 低
-" > "$REPORTS/planning_jirachi.md"
+" > "$REPORTS/planning_jirachi.md" &
+PID_PL_JIRACHI=$!
+
+# 4つの企画会議の完了を待機
+wait $PID_PL_BUTTERFREE && echo "  ✓ planning_butterfree完了" || echo "  ⚠ planning_butterfree失敗"
+wait $PID_PL_LAPRAS     && echo "  ✓ planning_lapras完了"     || echo "  ⚠ planning_lapras失敗"
+wait $PID_PL_MIMIKYU    && echo "  ✓ planning_mimikyu完了"    || echo "  ⚠ planning_mimikyu失敗"
+wait $PID_PL_JIRACHI    && echo "  ✓ planning_jirachi完了"    || echo "  ⚠ planning_jirachi失敗"
+
+echo "=== 1.9. Phase 4: 本日KPI実績ブリーフ注入 ==="
+KPI_EVENING_BRIEF=$(python3 "$REPO_BASE/lib/daily_kpi_injector.py" --evening-brief 2>/dev/null || echo "【本日KPIデータ】取得不可")
+echo "  ✓ KPI夜会ブリーフ取得完了"
 
 echo "=== 2. 編集長の意思決定 ==="
+
+# --- 意思決定アーカイブ: 上書き前に前回を保全 ---
+ARCHIVE_BASE="$BASE/reports/archive"
+ARCHIVE_DATE=$(date '+%Y%m%d_%H%M%S')
+ARCHIVE_DIR="$ARCHIVE_BASE/$ARCHIVE_DATE"
+mkdir -p "$ARCHIVE_DIR"
+for _arc_file in mewtwo_decision.md arceus_audit.md porygon_review.md; do
+  [ -f "$REPORTS/$_arc_file" ] && cp "$REPORTS/$_arc_file" "$ARCHIVE_DIR/$_arc_file" 2>/dev/null || true
+done
+echo "  ✓ 前回意思決定をアーカイブ: $ARCHIVE_DIR"
+# 30日超のアーカイブを自動削除（ディスク肥大防止）
+find "$ARCHIVE_BASE" -maxdepth 1 -type d -mtime +30 -exec rm -rf {} + 2>/dev/null || true
 
 RECENT_PIPELINE_STATUS=$(python3 - << 'PYPIPE'
 import os
@@ -270,9 +338,14 @@ $(cat "$REPORTS/planning_jirachi.md")
 【直近パイプライン・投稿状況】
 ${RECENT_PIPELINE_STATUS}
 
+${KPI_EVENING_BRIEF}
+
 【カテゴリバランス自動検出（動的）】
 ${CATEGORY_BALANCE}
 ⚠偏り フラグが付いたカテゴリがあれば、編集長として是正方針を示すこと。
+
+${COMPETITOR_QUEUE}
+※競合が先行報道したトピックがあれば、差別化しつつ対抗記事を優先検討せよ。
 
 出力形式：
 【担当】mewtwo
@@ -314,10 +387,11 @@ def extract_section(text, header):
     out = []
     capture = False
     for line in lines:
-        if line.strip().startswith(header):
+        stripped = line.lstrip("#").strip()
+        if stripped.startswith(header):
             capture = True
             continue
-        if capture and line.startswith("【") and not line.strip().startswith(header):
+        if capture and stripped.startswith("【") and not stripped.startswith(header):
             break
         if capture:
             out.append(line)

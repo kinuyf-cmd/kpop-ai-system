@@ -194,7 +194,7 @@ if __name__ == "__main__":
     action = sys.argv[1]
 
     if action == "analyze":
-        metrics_file = os.path.expanduser("~/google_metrics/metrics_yesterday.json")
+        metrics_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "google_metrics", "metrics_yesterday.json")
         if os.path.exists(metrics_file):
             with open(metrics_file, encoding="utf-8") as f:
                 data = json.load(f)
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         else:
             print('{"error": "No metrics data found"}')
     elif action == "plan":
-        metrics_file = os.path.expanduser("~/google_metrics/metrics_yesterday.json")
+        metrics_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "google_metrics", "metrics_yesterday.json")
         if os.path.exists(metrics_file):
             with open(metrics_file, encoding="utf-8") as f:
                 data = json.load(f)

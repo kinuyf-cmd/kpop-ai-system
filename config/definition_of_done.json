@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "established": "2026-04-21",
+  "established_by": "owner_directive",
+  "principle": "実装完了 ≠ 完了。本番で動いた証拠がある時点で完了。",
+
+  "completion_checklist": {
+    "code_implementation": {
+      "required": true,
+      "evidence": "git commit SHA"
+    },
+    "unit_test_pass": {
+      "required": true,
+      "evidence": "test output log path"
+    },
+    "production_execution": {
+      "required": true,
+      "evidence": "execution log with timestamp, exit code 0",
+      "description": "本番環境で該当機能を最低1回実行"
+    },
+    "output_verification": {
+      "required": true,
+      "evidence": "screenshot or output file path",
+      "description": "ユーザー視点で想定通りの出力を確認"
+    },
+    "log_recording": {
+      "required": true,
+      "evidence": "logs/completion_evidence/<feature>_<date>.json",
+      "description": "完了証跡を永続化"
+    }
+  },
+
+  "completion_evidence_template": {
+    "feature": "string",
+    "commit_sha": "string",
+    "implementation_date": "ISO8601",
+    "production_execution": {
+      "command": "string",
+      "executed_at": "ISO8601",
+      "exit_code": "int",
+      "stdout_excerpt": "string (last 50 lines)"
+    },
+    "verification": {
+      "method": "screenshot | output_file | curl_response | log_grep",
+      "evidence_path": "string",
+      "verified_at": "ISO8601",
+      "verified_by": "agent_name"
+    },
+    "status": "complete | partial | failed"
+  },
+
+  "enforcement": {
+    "all_new_features": "Must have completion_evidence JSON before reporting as done",
+    "all_meetings": "Must reference evidence paths, not just commit SHAs",
+    "dashboard": "Shows completion_evidence status per feature",
+    "violations": "Reporting 完了 without evidence is treated as a defect"
+  }
+}

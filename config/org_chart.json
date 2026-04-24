@@ -1,70 +1,121 @@
 {
-  "_comment": "組織図定義。部署・部署長・所属エージェントを管理。",
   "company": "K-POP Journal AI Company",
-  "ceo": {"id": "mewtwo", "display_name": "ミュウツー", "title": "CEO"},
+  "updated_at": "2026-04-18",
+  "executives": {
+    "ceo": {"id": "mewtwo", "name": "ミュウツー", "file": "mewtwo.md"},
+    "coo": {"id": "rugia", "name": "ルギア", "file": "rugia.md"},
+    "cto": {"id": "rekkuza", "name": "レックウザ", "file": "rekkuza.md"},
+    "cmo": {"id": "jirachi", "name": "ジラーチ", "file": "jirachi_kpop.md"},
+    "cfo": {"id": "laplace", "name": "ラプラス", "file": "laplace.md"}
+  },
   "departments": {
+    "audit": {
+      "label": "監査部",
+      "icon": "🔍",
+      "color": "#fbbf24",
+      "manager": {"id": "arceus", "name": "アルセウス"},
+      "report_to": "ceo",
+      "meeting": "毎日00:00",
+      "agents": ["arceus", "darkrai"]
+    },
+    "general_affairs": {
+      "label": "総務部",
+      "icon": "📋",
+      "color": "#94a3b8",
+      "manager": {"id": "porygon_z", "name": "ポリゴンZ"},
+      "report_to": "coo",
+      "meeting": "毎週月曜06:00",
+      "agents": ["porygon_z"]
+    },
+    "hr": {
+      "label": "人事部",
+      "icon": "👥",
+      "color": "#f472b6",
+      "manager": {"id": "lucky", "name": "ラッキー"},
+      "report_to": "coo",
+      "meeting": "毎週金曜17:00",
+      "agents": ["lucky", "metamon", "pochama"]
+    },
     "editorial": {
-      "label": "編集制作部",
-      "icon": "✍️",
+      "label": "編集部",
+      "icon": "📰",
       "color": "#818cf8",
-      "manager": "デオキシス",
-      "manager_id": "deoxys",
-      "mission": "K-POP記事の企画・執筆・公開",
-      "agents": ["deoxys","eevee","venusaur","wobbuffet","zapdos","beautywriter","snorlax","popupwriter"]
+      "manager": {"id": "eevee", "name": "イーブイ"},
+      "report_to": "cmo",
+      "meeting": "火・金10:00",
+      "agents": ["eevee", "fusigidane", "hitokage", "zenigame", "butterfree", "pichu"]
+    },
+    "publishing": {
+      "label": "パブリッシング部",
+      "icon": "🚀",
+      "color": "#fb923c",
+      "manager": {"id": "gaadi", "name": "ガーディ"},
+      "report_to": "cto",
+      "meeting": "毎日06:00",
+      "agents": ["gaadi", "lizard", "gardevoir"]
+    },
+    "design": {
+      "label": "デザイン部",
+      "icon": "🎨",
+      "color": "#c084fc",
+      "manager": {"id": "showers", "name": "シャワーズ"},
+      "report_to": "cmo",
+      "meeting": "毎週水曜11:00",
+      "agents": ["showers", "sandaas", "buustaa"]
+    },
+    "marketing": {
+      "label": "マーケ・SNS部",
+      "icon": "📣",
+      "color": "#34d399",
+      "manager": {"id": "mimirol", "name": "ミミロル"},
+      "report_to": "cmo",
+      "meeting": "月・木09:00",
+      "agents": ["mimirol", "pikachu", "purin", "togepy", "hapinas"]
     },
     "seo": {
-      "label": "SEO分析部",
+      "label": "SEO部",
       "icon": "🔍",
       "color": "#22d3ee",
-      "manager": "ラプラス",
-      "manager_id": "lapras",
-      "mission": "検索流入・キーワード・競合分析・CVR改善",
-      "agents": ["lapras","metamon","mimikyu","butterfree","カイリュー","illumise"]
+      "manager": {"id": "latias", "name": "ラティアス"},
+      "report_to": "cmo",
+      "meeting": "毎週火曜09:00",
+      "agents": ["latias", "latios", "lukario", "myu", "illumise"]
     },
-    "sns": {
-      "label": "SNS広報部",
-      "icon": "🐦",
-      "color": "#34d399",
-      "manager": "ペルシアン",
-      "manager_id": "persian",
-      "mission": "X(Twitter)投稿・SNS拡散・バズコンテンツ",
-      "agents": ["persian","x_post","x_post_b","articuno"]
-    },
-    "audit": {
-      "label": "監査品質部",
-      "icon": "🛡️",
-      "color": "#fbbf24",
-      "manager": "アルセウス",
-      "manager_id": "arceus",
-      "mission": "記事品質審査・事実確認・フックゲート",
-      "agents": ["arceus","jirachi","gengar","gardevoir_hook_critic","alakazam"]
-    },
-    "system": {
-      "label": "システム運用部",
-      "icon": "⚙️",
-      "color": "#fb923c",
-      "manager": "ポリゴンZ",
-      "manager_id": "porygon_z",
-      "mission": "WP投稿・インフラ監視・システム安定稼働",
-      "agents": ["porygon_z","wordpress_post","pipeline"]
+    "revenue": {
+      "label": "収益化部",
+      "icon": "💰",
+      "color": "#facc15",
+      "manager": {"id": "kabigon", "name": "カビゴン"},
+      "report_to": "cfo",
+      "meeting": "毎週水曜10:00",
+      "agents": ["kabigon", "koikingu", "gyarados", "saanai"]
     },
     "finance": {
       "label": "財務管理部",
-      "icon": "💰",
-      "color": "#a3e635",
-      "manager": "ニャース",
-      "manager_id": "meowth",
-      "mission": "収益化・マネタイズ・広告・アフィリエイト管理",
+      "icon": "💳",
+      "color": "#ec4899",
+      "manager": {"id": "meowth", "name": "ニャース"},
+      "report_to": "cfo",
+      "meeting": "毎週水曜10:00",
       "agents": ["meowth"]
     },
     "management": {
-      "label": "経営企画部",
+      "label": "経営管理部",
       "icon": "📊",
-      "color": "#c084fc",
-      "manager": "ルギア",
-      "manager_id": "lugia",
-      "mission": "週次戦略・パフォーマンス分析・経営判断支援",
-      "agents": ["lugia","porygon","mewtwo_cosme","mewtwo_popup"]
+      "color": "#a78bfa",
+      "manager": {"id": "fuudin", "name": "フーディン"},
+      "report_to": "coo",
+      "meeting": "毎週月曜07:30",
+      "agents": ["fuudin", "absol", "eefi", "burakki"]
+    },
+    "competitive": {
+      "label": "競合・トレンド部",
+      "icon": "🤝",
+      "color": "#f87171",
+      "manager": {"id": "gengar", "name": "ゲンガー"},
+      "report_to": "cmo",
+      "meeting": "毎週木曜10:00",
+      "agents": ["gengar", "muuma", "yorunozuku"]
     }
   }
 }

@@ -1,0 +1,17 @@
+{
+  "positive_template": "Documentary photograph capturing a moment in Seoul daily life. Korean person in their 20s-30s, {gender_desc}. Visible pores, skin imperfections, natural texture. Shot on Fujifilm X-T5, 35mm f/1.4 lens, natural window light. Subtle filmic grain. Background: {location}. Candid, authentic, raw photo, unposed, ordinary moment. Subject context: {topic_context}.",
+  "location_pool": [
+    "Hannam-dong cafe street with afternoon light",
+    "Seongsu-dong warehouse district brick walls",
+    "Apgujeong shopping street storefront",
+    "Ikseon-dong traditional hanok alley",
+    "Han River riverside golden hour",
+    "Itaewon main street dusk neon"
+  ],
+  "gender_patterns": {
+    "female": "natural makeup, no heavy retouching",
+    "male": "natural stubble shadow where applicable",
+    "neutral": "natural appearance"
+  },
+  "negative_prompt": "Masterpiece, Best quality, Cinematic, Perfect skin, Smooth skin, Airbrushed, Plastic-looking, Retouched, Glamour shot, Studio photo, Professional modeling pose, AI art, CGI, Rendered, Overly saturated, Oversaturated, High gloss, Beauty filter, Instagram filter, Fake looking, Uncanny"
+}

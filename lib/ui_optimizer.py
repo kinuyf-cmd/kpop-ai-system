@@ -254,7 +254,92 @@ BASE_CSS_TEMPLATE = """\
 .related-articles li  {{ font-size: 14px; line-height: 1.8; color: #333; }}
 .related-articles li a {{ color: #FF2D55; text-decoration: none; }}
 
-/* ─── SNSシェア ─── */
+/* ─── SNSシェアボタン（記事上部＋記事下部＋フローティング） ─── */
+.kpj-share {{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 24px;
+  padding: 12px 0;
+}}
+.kpj-share-label {{
+  font-size: 13px;
+  font-weight: 700;
+  color: #555;
+  margin-right: 4px;
+  white-space: nowrap;
+}}
+.kpj-share a {{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-decoration: none;
+  color: #fff !important;
+  font-size: 16px;
+  font-weight: 700;
+  transition: opacity 0.15s, transform 0.15s;
+  line-height: 1;
+}}
+.kpj-share a:hover {{
+  opacity: 0.85;
+  transform: scale(1.1);
+}}
+.kpj-share .share-x     {{ background: #000; }}
+.kpj-share .share-line   {{ background: #06C755; }}
+.kpj-share .share-fb     {{ background: #1877F2; }}
+.kpj-share .share-copy   {{ background: #666; cursor: pointer; }}
+
+/* 記事上部のシェアバー（目立つ配色） */
+.kpj-share-top {{
+  background: linear-gradient(135deg, #fff0f3 0%, #fff 100%);
+  border: 1px solid #ffe0e6;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin: 12px 0 20px;
+}}
+.kpj-share-top .kpj-share-label {{
+  color: #FF2D55;
+}}
+
+/* 記事下部のシェアバー */
+.kpj-share-bottom {{
+  background: #f8f8fa;
+  border-top: 2px solid #FF2D55;
+  border-radius: 0 0 10px 10px;
+  padding: 14px 16px;
+  margin: 32px 0 16px;
+}}
+
+/* フローティングサイドシェア（PC: 左サイド固定） */
+.kpj-share-float {{
+  display: none;
+  position: fixed;
+  left: max(calc(50% - 440px), 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9990;
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  padding: 10px 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}}
+.kpj-share-float a {{
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}}
+@media (min-width: 1100px) {{
+  .kpj-share-float {{ display: flex; }}
+}}
+
+/* 旧.share-prompt との互換 */
 .share-prompt {{
   background: #f5f5f5;
   border-radius: 8px;
@@ -308,6 +393,328 @@ img[loading="lazy"].loaded {{ opacity: 1; }}
   }}
   .post-card, article.post {{ margin-bottom: 24px; }}
 }}
+
+/* ============================================================
+   Phase1 UI刷新 — トップページ専用デザイン
+   ============================================================ */
+
+/* ─── トップページ: 不要タイトル・日付非表示 ─── */
+.front-top-page .entry-title {{ display: none !important; }}
+.front-top-page .eye-catch-wrap {{ display: none !important; }}
+.front-top-page .date-tags {{ display: none !important; }}
+.front-top-page .article-header {{ padding: 0 !important; margin: 0 !important; min-height: 0 !important; }}
+.front-top-page .article-footer {{ padding-top: 0 !important; }}
+
+/* ─── ヒーローセクション（最新記事1件目をハイライト） ─── */
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child {{
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 8px;
+}}
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-thumb {{
+  padding-top: 0;
+  height: auto;
+}}
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-thumb img {{
+  position: relative;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+}}
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-content {{
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 20px 18px;
+  border-radius: 0 0 16px 16px;
+}}
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-title {{
+  color: #fff !important;
+  font-size: 20px !important;
+  font-weight: 800;
+  line-height: 1.45;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}}
+.front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .entry-date {{
+  color: rgba(255,255,255,0.7) !important;
+}}
+
+/* ─── カード型グリッドレイアウト ─── */
+.front-top-page .new-entry-cards .swiper-wrapper {{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 14px;
+  transform: none !important;
+}}
+.front-top-page .new-entry-cards .swiper-slide {{
+  flex: 0 0 calc(50% - 7px);
+  max-width: calc(50% - 7px);
+  margin: 0 !important;
+}}
+.front-top-page .new-entry-card-link {{
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}}
+.front-top-page .new-entry-card-link:hover {{
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}}
+.front-top-page .new-entry-card .card-thumb {{
+  position: relative;
+  padding-top: 56.25%;
+  overflow: hidden;
+}}
+.front-top-page .new-entry-card .card-thumb img {{
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}}
+.front-top-page .new-entry-card-link:hover .card-thumb img {{
+  transform: scale(1.04);
+}}
+.front-top-page .new-entry-card .card-content {{
+  padding: 12px 14px 14px;
+}}
+.front-top-page .new-entry-card .card-title {{
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #1a1a2e;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}}
+
+/* ─── 新着記事セクションタイトル ─── */
+.front-top-page .widget-page-content-bottom-title {{
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1a2e;
+  padding: 0 0 10px;
+  margin: 8px 0 16px;
+  border-bottom: 3px solid #FF2D55;
+  position: relative;
+}}
+.front-top-page .widget-page-content-bottom-title::before {{
+  content: "\\1F525";
+  margin-right: 6px;
+}}
+
+/* ─── サイドバー人気記事の強化 ─── */
+.front-top-page .widget_popular_entries .widget-sidebar-title {{
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a2e;
+  border-bottom: 3px solid #FF2D55;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}}
+.front-top-page .popular-entry-card-link {{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  text-decoration: none;
+  transition: background 0.15s;
+}}
+.front-top-page .popular-entry-card-link:hover {{
+  background: #fff8f9;
+}}
+/* ランキング番号バッジ */
+.front-top-page .popular-entry-card-link.no-1::before,
+.front-top-page .popular-entry-card-link.no-2::before,
+.front-top-page .popular-entry-card-link.no-3::before,
+.front-top-page .popular-entry-card-link.no-4::before,
+.front-top-page .popular-entry-card-link.no-5::before {{
+  font-weight: 900;
+  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}}
+.front-top-page .popular-entry-card-link.no-1::before {{ content: "1"; background: #FF2D55; }}
+.front-top-page .popular-entry-card-link.no-2::before {{ content: "2"; background: #FF6B81; }}
+.front-top-page .popular-entry-card-link.no-3::before {{ content: "3"; background: #FFA07A; }}
+.front-top-page .popular-entry-card-link.no-4::before {{ content: "4"; background: #bbb; }}
+.front-top-page .popular-entry-card-link.no-5::before {{ content: "5"; background: #bbb; }}
+
+/* ─── 急上昇ランキングウィジェット（JS注入） ─── */
+#kpj-trending {{
+  background: linear-gradient(135deg, #fff0f3 0%, #fff5f7 50%, #fff 100%);
+  border-radius: 16px;
+  padding: 20px 16px;
+  margin: 0 0 24px;
+  border: 1px solid #ffe0e6;
+}}
+#kpj-trending h2 {{
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 14px;
+  padding: 0;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}}
+#kpj-trending .kpj-trend-list {{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}}
+#kpj-trending .kpj-trend-item {{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  transition: background 0.15s;
+  text-decoration: none;
+  color: #1a1a2e;
+}}
+#kpj-trending .kpj-trend-item:hover {{
+  background: rgba(255,45,85,0.06);
+}}
+#kpj-trending .kpj-trend-rank {{
+  font-size: 16px;
+  font-weight: 900;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}}
+#kpj-trending .kpj-trend-rank.r1 {{ background: #FF2D55; color: #fff; }}
+#kpj-trending .kpj-trend-rank.r2 {{ background: #FF6B81; color: #fff; }}
+#kpj-trending .kpj-trend-rank.r3 {{ background: #FFA07A; color: #fff; }}
+#kpj-trending .kpj-trend-rank.r4,
+#kpj-trending .kpj-trend-rank.r5 {{ background: #f0f0f0; color: #555; }}
+#kpj-trending .kpj-trend-title {{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}}
+#kpj-trending .kpj-trend-badge {{
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #FF2D55;
+  color: #fff;
+  flex-shrink: 0;
+  white-space: nowrap;
+}}
+
+/* ─── ヘッダー強化 ─── */
+.front-top-page .header {{
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%) !important;
+}}
+.front-top-page .site-name-text {{
+  color: #fff !important;
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.06em;
+}}
+
+/* ─── モバイル最適化 (トップページ) ─── */
+@media (max-width: 768px) {{
+  .front-top-page .new-entry-cards .swiper-slide {{
+    flex: 0 0 100%;
+    max-width: 100%;
+  }}
+  .front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-thumb img {{
+    max-height: 220px;
+  }}
+  .front-top-page .new-entry-cards.is-list-horizontal .swiper-slide:first-child .card-title {{
+    font-size: 17px !important;
+  }}
+  .front-top-page .new-entry-card .card-content {{
+    padding: 10px 12px 12px;
+  }}
+  .front-top-page .new-entry-card .card-title {{
+    font-size: 14px;
+  }}
+  #kpj-trending {{
+    padding: 16px 12px;
+    margin: 0 0 18px;
+    border-radius: 12px;
+  }}
+  #kpj-trending h2 {{
+    font-size: 16px;
+  }}
+  #kpj-trending .kpj-trend-item {{
+    padding: 8px 6px;
+    gap: 8px;
+  }}
+  #kpj-trending .kpj-trend-title {{
+    font-size: 13px;
+  }}
+  .front-top-page .site-name-text {{
+    font-size: 22px !important;
+  }}
+  /* タップターゲット44px確保 */
+  .front-top-page .new-entry-card-link {{
+    min-height: 44px;
+  }}
+  .front-top-page .popular-entry-card-link {{
+    min-height: 44px;
+    padding: 12px 0;
+  }}
+}}
+@media (min-width: 769px) {{
+  .front-top-page .new-entry-cards .swiper-slide {{
+    flex: 0 0 calc(33.333% - 10px);
+    max-width: calc(33.333% - 10px);
+  }}
+  #kpj-trending {{
+    padding: 24px 20px;
+  }}
+}}
+
+/* ─── ページ速度改善 ─── */
+/* コンテンツ外の画像はlazy + 非表示で初期描画を高速化 */
+.front-top-page .new-entry-card .card-thumb img {{
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 180px;
+}}
+/* アニメーション軽量化 — will-change指定 */
+.front-top-page .new-entry-card-link {{
+  will-change: transform;
+}}
+/* フォント読み込み最適化 */
+.front-top-page {{
+  text-rendering: optimizeSpeed;
+}}
+/* 広告エリアの高さ確保 (CLS防止) */
+.front-top-page .ad-area {{
+  min-height: 90px;
+  contain: layout style;
+}}
+.front-top-page .ad-responsive {{
+  min-height: 250px;
+}}
 """
 
 # CSSに追記する固定CTAバーHTML + CTA計測JSテンプレート
@@ -317,10 +724,17 @@ img[loading="lazy"].loaded {{ opacity: 1; }}
 # （WP は custom_css を <style> タグで出力するため、その直後にスクリプトが来る構造になる）
 CTA_JS_APPEND = """
 </style>
-<!-- イルミーゼ管理: モバイル固定CTAバー + CTA計測 v3 -->
+<!-- イルミーゼ管理: モバイル固定CTAバー + SNSシェア + CTA計測 v4 -->
 <div id="kpj-fixed-cta" style="display:none;position:fixed;bottom:0;left:0;width:100%;height:56px;background:#FF2D55;z-index:9999;align-items:center;justify-content:center">
   <a href="https://www.kpopjournal.tokyo/" rel="noopener" style="color:#fff!important;font-weight:800;font-size:15px;text-decoration:none;letter-spacing:.04em;flex:1;text-align:center;line-height:56px">📰 {cta_text}</a>
   <button id="kpj-fixed-close" style="background:none;border:none;color:#fff;font-size:18px;padding:0 14px;cursor:pointer;opacity:.75;line-height:56px" aria-label="閉じる">✕</button>
+</div>
+<!-- SNSシェアフローティング（PC左サイド） -->
+<div class="kpj-share-float" id="kpj-share-float">
+  <a class="share-x" id="kpj-float-x" href="#" target="_blank" rel="noopener" aria-label="Xでシェア">X</a>
+  <a class="share-line" id="kpj-float-line" href="#" target="_blank" rel="noopener" aria-label="LINEでシェア">L</a>
+  <a class="share-fb" id="kpj-float-fb" href="#" target="_blank" rel="noopener" aria-label="Facebookでシェア">f</a>
+  <a class="share-copy" id="kpj-float-copy" href="javascript:void(0)" aria-label="URLコピー">&#128279;</a>
 </div>
 <script>
 (function(){{
@@ -328,6 +742,8 @@ CTA_JS_APPEND = """
   if(typeof gtag!=='function'&&typeof dataLayer==='undefined')return;
   var _g=typeof gtag==='function'?gtag:function(){{(window.dataLayer=window.dataLayer||[]).push(arguments);}};
   var pp=window.location.pathname;
+  var pu=window.location.href;
+  var pt=document.title;
   var at='解説';
   var ab=document.querySelector('.article-type');
   if(ab){{if(ab.classList.contains('speed'))at='速報';else if(ab.classList.contains('guide'))at='解説';}}
@@ -337,6 +753,69 @@ CTA_JS_APPEND = """
     var r=(el.getBoundingClientRect().top-c.getBoundingClientRect().top)/(c.offsetHeight||1);
     return r<0.3?'top':r<0.65?'middle':'bottom';
   }}
+
+  /* ─ SNSシェアボタン動的生成（記事上部・下部） ─ */
+  var isSingle=document.body.className.indexOf('single')!==-1;
+  if(isSingle){{
+    var shareHTML='<div class="kpj-share kpj-share-__POS__"><span class="kpj-share-label">__LABEL__</span>'
+      +'<a class="share-x" href="https://x.com/intent/tweet?text='+encodeURIComponent(pt)+'&url='+encodeURIComponent(pu)+'" target="_blank" rel="noopener" aria-label="Xでシェア">X</a>'
+      +'<a class="share-line" href="https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(pu)+'" target="_blank" rel="noopener" aria-label="LINEでシェア">L</a>'
+      +'<a class="share-fb" href="https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(pu)+'" target="_blank" rel="noopener" aria-label="Facebookでシェア">f</a>'
+      +'<a class="share-copy kpj-copy-btn" href="javascript:void(0)" aria-label="URLコピー">&#128279;</a></div>';
+
+    /* 記事上部に挿入 */
+    var entry=document.querySelector('.entry-content');
+    if(entry){{
+      var topDiv=document.createElement('div');
+      topDiv.innerHTML=shareHTML.replace(/__POS__/g,'top').replace(/__LABEL__/g,'Share');
+      entry.insertBefore(topDiv.firstChild,entry.firstChild);
+    }}
+
+    /* 記事下部に挿入 */
+    if(entry){{
+      var botDiv=document.createElement('div');
+      botDiv.innerHTML=shareHTML.replace(/__POS__/g,'bottom').replace(/__LABEL__/g,'この記事をシェア');
+      entry.appendChild(botDiv.firstChild);
+    }}
+
+    /* フローティングのURL設定 */
+    var fl=document.getElementById('kpj-share-float');
+    if(fl){{
+      var fx=document.getElementById('kpj-float-x');
+      if(fx)fx.href='https://x.com/intent/tweet?text='+encodeURIComponent(pt)+'&url='+encodeURIComponent(pu);
+      var fln=document.getElementById('kpj-float-line');
+      if(fln)fln.href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(pu);
+      var ffb=document.getElementById('kpj-float-fb');
+      if(ffb)ffb.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(pu);
+    }}
+
+    /* URLコピー機能 */
+    document.querySelectorAll('.kpj-copy-btn,#kpj-float-copy').forEach(function(btn){{
+      btn.addEventListener('click',function(e){{
+        e.preventDefault();
+        navigator.clipboard.writeText(pu).then(function(){{
+          var orig=btn.innerHTML;btn.innerHTML='&#10003;';
+          setTimeout(function(){{btn.innerHTML=orig;}},1500);
+        }});
+        _g('event','share_click',{{share_method:'copy',article_type:at,page_path:pp}});
+      }});
+    }});
+
+    /* シェアボタンクリック計測 */
+    document.querySelectorAll('.kpj-share a,.kpj-share-float a').forEach(function(l){{
+      if(l.classList.contains('kpj-copy-btn')||l.id==='kpj-float-copy')return;
+      l.addEventListener('click',function(){{
+        var m='unknown';
+        if(l.classList.contains('share-x'))m='x';
+        else if(l.classList.contains('share-line'))m='line';
+        else if(l.classList.contains('share-fb'))m='facebook';
+        var p2=l.closest('.kpj-share-top')?'top':l.closest('.kpj-share-bottom')?'bottom':'float';
+        _g('event','share_click',{{share_method:m,share_position:p2,article_type:at,page_path:pp}});
+      }});
+    }});
+  }}
+
+  /* ─ CTA計測 ─ */
   document.querySelectorAll('.cta-box a,.revenue-cta a,.kpj-cta-btn').forEach(function(l){{
     l.addEventListener('click',function(){{
       var p=pos(l);
@@ -347,22 +826,81 @@ CTA_JS_APPEND = """
     if(i.complete)i.classList.add('loaded');
     else i.addEventListener('load',function(){{i.classList.add('loaded');}});
   }});
-  var isSingle=document.body.className.indexOf('single')!==-1;
-  var bar=document.getElementById('kpj-fixed-cta');
-  if(bar&&isSingle){{
-    bar.style.display='flex';
-    document.body.style.paddingBottom='56px';
-    _g('event','fixed_cta_impression',{{article_type:at,page_path:pp}});
-    var bl=bar.querySelector('a');
-    if(bl)bl.addEventListener('click',function(){{
-      _g('event','cta_click_fixed_bar',{{cta_position:'fixed_bar',article_type:at,page_path:pp,cta_label:bl.textContent.trim().substring(0,50)}});
-    }});
-    var bc=document.getElementById('kpj-fixed-close');
-    if(bc)bc.addEventListener('click',function(){{
-      bar.style.display='none';
-      document.body.style.paddingBottom='0';
-      _g('event','fixed_cta_close',{{article_type:at,page_path:pp}});
-    }});
+
+  /* ─ 固定CTAバー ─ */
+  if(isSingle){{
+    var bar=document.getElementById('kpj-fixed-cta');
+    if(bar){{
+      bar.style.display='flex';
+      document.body.style.paddingBottom='56px';
+      _g('event','fixed_cta_impression',{{article_type:at,page_path:pp}});
+      var bl=bar.querySelector('a');
+      if(bl)bl.addEventListener('click',function(){{
+        _g('event','cta_click_fixed_bar',{{cta_position:'fixed_bar',article_type:at,page_path:pp,cta_label:bl.textContent.trim().substring(0,50)}});
+      }});
+      var bc=document.getElementById('kpj-fixed-close');
+      if(bc)bc.addEventListener('click',function(){{
+        bar.style.display='none';
+        document.body.style.paddingBottom='0';
+        _g('event','fixed_cta_close',{{article_type:at,page_path:pp}});
+      }});
+    }}
+  }}
+
+  /* ─ 急上昇ランキングウィジェット動的注入 ─ */
+  if(document.body.className.indexOf('front-top-page')!==-1){{
+    try{{
+      var trendSrc='{trending_json_escaped}';
+      if(trendSrc && trendSrc!==''){{
+        var trendData=JSON.parse(trendSrc);
+        if(trendData.length>0){{
+          var rankColors=['r1','r2','r3','r4','r5'];
+          var h='<div id="kpj-trending"><h2>\\ud83d\\udcc8 \\u6025\\u4e0a\\u6607\\u30e9\\u30f3\\u30ad\\u30f3\\u30b0</h2><div class="kpj-trend-list">';
+          trendData.forEach(function(item,i){{
+            var badge='';
+            if(item.b)badge='<span class="kpj-trend-badge">'+item.b+'</span>';
+            h+='<a class="kpj-trend-item" href="'+item.u+'">'
+              +'<span class="kpj-trend-rank '+rankColors[i]+'">'+(i+1)+'</span>'
+              +'<span class="kpj-trend-title">'+item.t+'</span>'
+              +badge+'</a>';
+          }});
+          h+='</div></div>';
+          var ec=document.querySelector('.entry-content');
+          if(ec){{ec.innerHTML=h+ec.innerHTML;}}
+        }}
+      }}
+    }}catch(e){{}}
+  }}
+
+  /* ─ トップページ: カード表示数制限（速度改善） ─ */
+  if(document.body.className.indexOf('front-top-page')!==-1){{
+    var allCards=document.querySelectorAll('.new-entry-cards .swiper-slide');
+    var maxCards=window.innerWidth<769?12:18;
+    for(var ci=maxCards;ci<allCards.length;ci++){{
+      allCards[ci].style.display='none';
+    }}
+    if(allCards.length>maxCards){{
+      var moreBtn=document.createElement('div');
+      moreBtn.style.cssText='text-align:center;padding:20px 0;';
+      moreBtn.innerHTML='<a href="/page/2/" style="display:inline-block;padding:12px 32px;background:#FF2D55;color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;min-height:44px;line-height:20px;">\\u3082\\u3063\\u3068\\u898b\\u308b</a>';
+      var cardContainer=document.querySelector('.new-entry-cards');
+      if(cardContainer)cardContainer.parentNode.insertBefore(moreBtn,cardContainer.nextSibling);
+    }}
+  }}
+
+  /* ─ 画像遅延読み込み強化（IntersectionObserver） ─ */
+  if('IntersectionObserver' in window){{
+    var imgObs=new IntersectionObserver(function(entries){{
+      entries.forEach(function(entry){{
+        if(entry.isIntersecting){{
+          var img=entry.target;
+          if(img.dataset.src){{img.src=img.dataset.src;img.removeAttribute('data-src');}}
+          img.classList.add('loaded');
+          imgObs.unobserve(img);
+        }}
+      }});
+    }},{{rootMargin:'200px'}});
+    document.querySelectorAll('img[loading="lazy"]').forEach(function(img){{imgObs.observe(img);}});
   }}
 }})();
 </script>
@@ -419,7 +957,7 @@ def _load_jsonl(path: Path, max_lines: int = 0) -> list:
         return []
     records = []
     try:
-        lines = path.read_text(encoding="utf-8", errors="ignore").splitlines()
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         if max_lines:
             lines = lines[-max_lines:]
         for line in lines:
@@ -457,7 +995,7 @@ def _get_real_cta_avg(days_back: int = 7) -> Optional[float]:
     cutoff = (date.today() - timedelta(days=days_back)).isoformat()
     vals = []
     try:
-        for line in UI_CTA_LOG.read_text(encoding="utf-8", errors="ignore").splitlines():
+        for line in UI_CTA_LOG.read_text(encoding="utf-8", errors="replace").splitlines():
             line = line.strip()
             if not line:
                 continue
@@ -647,6 +1185,35 @@ def _get_best_params() -> dict:
     return params
 
 
+def _build_trending_json() -> str:
+    """急上昇ランキングデータをJS埋め込み用JSON文字列で返す"""
+    trending_cache = LOGS / "trending_ranking.json"
+    if not trending_cache.exists():
+        # trending_widget が未実行なら空
+        return ""
+    try:
+        cache = json.loads(trending_cache.read_text(encoding="utf-8"))
+        ranking = cache.get("ranking", [])
+        if not ranking:
+            return ""
+        # コンパクトなJSONに変換 (u=url, t=title, b=badge)
+        compact = []
+        site = "https://www.kpopjournal.tokyo"
+        for item in ranking[:5]:
+            path = item.get("path", f"/{item.get('slug', '')}/")
+            badge = ""
+            if item.get("gsc_clicks", 0) >= 3:
+                badge = "検索急上昇"
+            elif item.get("engaged_sessions", 0) >= 2:
+                badge = "注目"
+            elif len(compact) == 0:
+                badge = "HOT"
+            compact.append({"u": f"{site}{path}", "t": item.get("title", ""), "b": badge})
+        return json.dumps(compact, ensure_ascii=False).replace("'", "\\'")
+    except Exception:
+        return ""
+
+
 def generate_css(params: dict = None) -> str:
     if params is None:
         params = _get_best_params()
@@ -658,7 +1225,11 @@ def generate_css(params: dict = None) -> str:
     # CTAクリック計測JSをCSSに埋め込む
     # WPはcustom_cssを<style>タグで出力するため、閉じタグを挟んでHTMLを注入する
     cta_text = params.get("cta_text", CSS_PARAMS["cta_text"][1][0])
-    js_block = CTA_JS_APPEND.format(cta_text=cta_text)
+    trending_json = _build_trending_json()
+    js_block = CTA_JS_APPEND.format(
+        cta_text=cta_text,
+        trending_json_escaped=trending_json,
+    )
     return css + js_block
 
 

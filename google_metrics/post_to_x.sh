@@ -115,10 +115,48 @@ if [ -z "$TITLE" ]; then
   exit 1
 fi
 
-if [ ! -f ~/.x_credentials ]; then
-  xlog "SKIP: X認証情報未設定（~/.x_credentials が見つかりません）"
+# ── sns_config.json による X/Twitter 有効・無効チェック ──
+_SNS_CFG="$_SCRIPT_DIR/config/sns_config.json"
+if [ -f "$_SNS_CFG" ]; then
+  _X_ENABLED=$(python3 -c "import json; c=json.load(open('$_SNS_CFG')); print(c.get('twitter',{}).get('enabled','true'))" 2>/dev/null || echo "true")
+  if [ "$_X_ENABLED" = "False" ] || [ "$_X_ENABLED" = "false" ]; then
+    _X_REASON=$(python3 -c "import json; c=json.load(open('$_SNS_CFG')); print(c.get('twitter',{}).get('reason','disabled'))" 2>/dev/null || echo "disabled")
+    xlog "SKIP: Xアカウント停止中 (reason=$_X_REASON)"
+    echo "⏭️ SKIP: Xアカウント停止中 — X投稿をスキップして正常終了 (reason=$_X_REASON)"
+    exit 0
+  fi
+fi
+
+# ── POST_AUDIT_GATE: 記事URLがsoft-404なら投稿全体をスキップ（二重防御）──────
+# P1で呼び出し順序は修正済みだが、並列実行/手動実行時の再発を防ぐ
+# POST_IDは引数にないため、POST_URLのHTTPステータスで判定
+if [[ -n "$POST_URL" ]] && [[ "$POST_URL" != "（"* ]]; then
+  _GATE_CHECK=$(python3 "$_SCRIPT_DIR/lib/x_post_url_validator.py" "$POST_URL" --json 2>/dev/null || echo '{"ok":false,"reason":"validator error"}')
+  _GATE_OK=$(echo "$_GATE_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('ok',False))" 2>/dev/null || echo "False")
+  if [[ "$_GATE_OK" != "True" ]]; then
+    _GATE_REASON=$(echo "$_GATE_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason','unknown'))" 2>/dev/null || echo "unknown")
+    xlog "POST_AUDIT_GATE: X投稿全体スキップ — URL=$POST_URL reason=$_GATE_REASON"
+    echo "  ⏸  POST_AUDIT_GATE: X投稿スキップ (URL: $_GATE_REASON)"
+    exit 0
+  fi
+  xlog "POST_AUDIT_GATE: OK — $POST_URL is accessible"
+fi
+# ─────────────────────────────────────────────────────────────────────
+
+# ── credential事前検証（v3.0: 不在時グレースフルスキップ）──
+if [ ! -f "$HOME/.x_credentials" ]; then
+  xlog "SKIP: X credentials未設定 (~/.x_credentials が存在しません)"
+  echo "⏭️ SKIP: X credentials未設定 — X投稿をスキップして正常終了"
   exit 0
 fi
+_CRED_CHECK=$(python3 "$_SCRIPT_DIR/google_metrics/post_to_x.py" --validate 2>&1) || {
+  xlog "SKIP: X credential検証失敗 — X投稿をスキップ"
+  xlog "  $_CRED_CHECK"
+  echo "⏭️ SKIP: X credential検証失敗 — 詳細:"
+  echo "$_CRED_CHECK"
+  exit 0
+}
+xlog "CRED_CHECK: OK"
 
 xlog "=== X/Twitter 自動投稿開始 ==="
 xlog "TITLE: $TITLE"
@@ -150,6 +188,11 @@ CRASH_PATTERNS = [
     r'外部URLへのアクセスが制限',
     r'直接検証ができない',
     r'このチャットに貼り付け',
+    r'ファクトチェック結果をまとめます',
+    r'ファクトチェック結果',
+    r'以下の問題を発見',
+    r'書き込み権限',
+    r'許可いただけますか',
 ]
 for pat in CRASH_PATTERNS:
     if re.search(pat, title):
@@ -338,7 +381,7 @@ if [[ "$V12_CHECK" == *"URL混入"* ]]; then
   fi
 fi
 
-# ─── URL除去後の品質ゲート（最低50文字・固有名詞/数字/感情語必須） ────────────
+# ─── URL除去後の品質ゲート（最低40文字・固有名詞/数字/感情語必須） ────────────
 _TWEET_QUALITY=$(python3 - << 'TQPY' "$TWEET_TEXT"
 import sys, re
 text = sys.argv[1]
@@ -346,9 +389,9 @@ text = sys.argv[1]
 lines = [l for l in text.strip().split('\n') if l.strip() and not l.strip().startswith('#')]
 body = ' '.join(lines)
 issues = []
-# 最低50文字
-if len(body) < 50:
-    issues.append(f'本文{len(body)}文字（50文字未満）')
+# 最低40文字（v12フォーマットは簡潔設計のため50→40に緩和）
+if len(body) < 40:
+    issues.append(f'本文{len(body)}文字（40文字未満）')
 # 固有名詞 or 数字 or 感情語のいずれか1つ必須
 has_proper = bool(re.search(r'BTS|TWICE|BLACKPINK|IVE|ILLIT|aespa|NewJeans|ENHYPEN|TXT|SEVENTEEN|NCT|ATEEZ|TOP|RIIZE|LE\s*SSERAFIM|EXO|GOT7|MAMAMOO', body, re.IGNORECASE))
 has_number = bool(re.search(r'[0-9]', body))
@@ -412,14 +455,17 @@ _HOOK_SCORE=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f1)
 _HOOK_REASONS=$(echo "$_HOOK_CTR_SCORE" | cut -d'|' -f2)
 xlog "HOOK_CTR_SCORE: ${_HOOK_SCORE}/100 (${_HOOK_REASONS})"
 
-if [[ "$_HOOK_SCORE" -lt 50 ]]; then
-  xlog "HOOK_CTR_BLOCK: スコア${_HOOK_SCORE}/100 < 50 → 投稿停止"
-  echo "❌ [X投稿] フックCTRスコア${_HOOK_SCORE}/100（50未満）→ BLOCK"
+if [[ "$_HOOK_SCORE" -lt 20 ]]; then
+  xlog "HOOK_CTR_BLOCK: スコア${_HOOK_SCORE}/100 < 20 → 投稿停止"
+  echo "❌ [X投稿] フックCTRスコア${_HOOK_SCORE}/100（20未満）→ BLOCK"
   X_STATUS="BLOCKED_HOOK_CTR"
   exit 1
 fi
+if [[ "$_HOOK_SCORE" -lt 40 ]]; then
+  xlog "HOOK_CTR_WARN: スコア${_HOOK_SCORE}/100 < 40 → 警告のみで続行"
+fi
 if [[ "$_HOOK_SCORE" -lt 80 ]]; then
-  xlog "HOOK_CTR_WARN: スコア${_HOOK_SCORE}/100 < 80 → 投稿は続行（50以上なので警告のみ）"
+  xlog "HOOK_CTR_WARN: スコア${_HOOK_SCORE}/100 < 80 → 投稿は続行（警告のみ）"
 fi
 xlog "HOOK_CTR: OK(${_HOOK_SCORE}/100)"
 
@@ -528,10 +574,15 @@ if [ "$DRY_RUN" = "true" ]; then
   exit 0
 fi
 
-xlog "POST: X API呼び出し開始（フックのみ、URLなし）"
+xlog "POST: X API呼び出し開始（v2.0リトライ付き、フックのみ、URLなし）"
 POST_OUTPUT=$(python3 "$_SCRIPT_DIR/google_metrics/post_to_x.py" "$TWEET_TEXT" 2>&1) || {
-  xlog "RESULT: X投稿失敗 - $POST_OUTPUT"
+  xlog "RESULT: X投稿失敗（リトライ${MAX_RETRIES:-3}回後）- $POST_OUTPUT"
   echo "$POST_OUTPUT"
+  # credential診断結果をDiscordに通知（urgent_errorsへ）
+  if echo "$POST_OUTPUT" | grep -qE 'DIAG_401|DIAG_403|CRED_MISSING|CRED_KEY'; then
+    xlog "CRED_ALERT: credential問題検出 → Discord通知"
+    python3 "$_SCRIPT_DIR/lib/discord_notifier.py" --test-critical 2>/dev/null || true
+  fi
   exit 1
 }
 echo "$POST_OUTPUT"
@@ -563,7 +614,22 @@ fi
 # ─── CTOハック: URLリプライを即時挿入（IMP条件なし版）────────────────────
 # §8 本格実装（IMP監視）はX API Pro権限取得後に対応予定
 # 現時点では投稿直後にURLリプライを挿入してインデックス確保
+# ── URL事前検証（soft-404防止）──────────────────────────────────────────
+_URL_VALID=1
 if [[ -n "$POST_URL" ]] && [[ -n "$TWEET_ID" ]]; then
+  _URL_CHECK=$(python3 "$_SCRIPT_DIR/lib/x_post_url_validator.py" "$POST_URL" --json 2>/dev/null || echo '{"ok":false,"reason":"validator error"}')
+  _URL_OK=$(echo "$_URL_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('ok',False))" 2>/dev/null || echo "False")
+  if [[ "$_URL_OK" != "True" ]]; then
+    _URL_REASON=$(echo "$_URL_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason','unknown'))" 2>/dev/null || echo "unknown")
+    xlog "URL_VALIDATION_NG: $POST_URL — $_URL_REASON"
+    xlog "URL_REPLY: スキップ（URLが404/soft-404のためリプライ投稿を中止）"
+    echo "  ⚠️ URLリプライスキップ: $_URL_REASON"
+    _URL_VALID=0
+  else
+    xlog "URL_VALIDATION_OK: $POST_URL"
+  fi
+fi
+if [[ -n "$POST_URL" ]] && [[ -n "$TWEET_ID" ]] && [[ "$_URL_VALID" == "1" ]]; then
   URL_REPLY_TEXT=$(python3 -c "
 import sys; sys.path.insert(0, '$_SCRIPT_DIR/lib')
 from x_post_templates import generate_url_reply
