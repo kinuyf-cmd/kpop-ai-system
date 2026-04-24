@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-27-cfix11",
-  "updated_at": "2026-04-24T22:02:27.840525",
+  "version": "2026-04-27-cfix12b3",
+  "updated_at": "2026-04-24T22:59:29.427538",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -109,5 +109,24 @@
       "DALL-E 3"
     ],
     "dalle_budget": "$0.08/pic, 20/day max"
+  },
+  "editorial_audit": {
+    "cron": "0 */6 * * *",
+    "checks": [
+      "title_42char",
+      "content_300char",
+      "category",
+      "thumbnail",
+      "slug_ascii",
+      "confidence_note",
+      "source_section",
+      "h2_heading",
+      "duplicate_title",
+      "empty_content"
+    ],
+    "auto_fix": [
+      "thumbnail_generation"
+    ],
+    "charter": "docs/editorial_charter.md"
   }
 }
