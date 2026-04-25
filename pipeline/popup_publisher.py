@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""popup_signals.jsonl から記事生成 → WP popup post type に投稿"""
+"""popup_signals.jsonl から記事生成 → WP popup post type に投稿
+   改修: 8項目構造化 + サムネOG取得 + extra_meta"""
 import sys, os, json, re, urllib.request, base64
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from datetime import datetime, timezone, timedelta
@@ -36,7 +37,7 @@ def mark_processed(url, post_id, status):
 
 
 def fetch_full_content(url):
-    """記事URLから全文取得 (簡易)"""
+    """記事URLから全文取得"""
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         html = urllib.request.urlopen(req, timeout=20).read().decode('utf-8', errors='ignore')
@@ -107,50 +108,130 @@ def determine_status(start_date, end_date):
         return 'unknown'
 
 
+# === サムネ取得 ===
+
+def fetch_og_image(url):
+    """記事URLからOG画像取得"""
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        html = urllib.request.urlopen(req, timeout=15).read().decode('utf-8', errors='ignore')
+        m = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html)
+        if not m:
+            m = re.search(r'<meta\s+content=["\']([^"\']+)["\']\s+property=["\']og:image["\']', html)
+        if m:
+            return m.group(1)
+    except:
+        pass
+    return None
+
+
+def upload_image_to_wp(image_url, title):
+    """画像URLをDLしてWP media libraryにアップロード"""
+    try:
+        req = urllib.request.Request(image_url, headers={'User-Agent': 'Mozilla/5.0'})
+        img_data = urllib.request.urlopen(req, timeout=30).read()
+
+        if len(img_data) < 1000 or len(img_data) > 5_000_000:
+            return None
+
+        ext = 'jpg'
+        if '.png' in image_url.lower():
+            ext = 'png'
+        safe_title = re.sub(r'[^\w]', '_', title[:30])
+        filename = f"popup_{safe_title}.{ext}"
+
+        req2 = urllib.request.Request(
+            "https://www.kpopjournal.tokyo/wp-json/wp/v2/media",
+            data=img_data, method='POST',
+            headers={
+                'Authorization': f'Basic {AUTH}',
+                'Content-Type': f'image/{ext}',
+                'Content-Disposition': f'attachment; filename="{filename}"',
+            })
+        r = json.loads(urllib.request.urlopen(req2, timeout=60).read())
+        return r.get('id')
+    except Exception as e:
+        print(f"  upload err: {e}")
+        return None
+
+
+def get_thumbnail(signal):
+    """OG画像取得"""
+    og = fetch_og_image(signal['url'])
+    if og:
+        media_id = upload_image_to_wp(og, signal.get('title', 'popup'))
+        if media_id:
+            print(f"  サムネ: OG画像 media_id={media_id}")
+            return media_id
+    return 0
+
+
+# === 記事生成 ===
+
 def generate_article_with_gpt(signal, full_text):
-    """GPTで記事生成"""
+    """GPTで構造化記事生成 (8項目対応)"""
     key = os.getenv('OPENAI_API_KEY')
     if not key:
         print("  OPENAI_API_KEY未設定")
-        return None
+        return None, {}
 
     prompt = f"""以下のポップアップ情報から、K-POPファン向けのSEO最適化記事を生成してください。
 
 【元情報】
 タイトル: {signal['title']}
-本文抜粋: {full_text[:1500] if full_text else 'なし'}
+本文抜粋: {(full_text[:2000] if full_text else 'なし')}
 都市: {signal.get('city', '不明')}
 情報源: {signal.get('source', '不明')}
 
 【出力要件】
-- HTMLで本文400-800字
-- h2見出し使用 (例: <h2>開催概要</h2>, <h2>見どころ</h2>, <h2>アクセス</h2>)
+- HTMLで本文500-900字
+- 必須h2セクション:
+  <h2>イベント概要</h2> (何のポップアップか、見どころ)
+  <h2>開催詳細</h2> (期間/営業時間/会場)
+  <h2>特典・限定アイテム</h2> (グッズ/購入特典/フォトスポット)
+  <h2>アクセス</h2> (最寄り駅/徒歩時間)
 - 文末バリエーション: ~開催/~オープン/~登場/~実施
-- ポップアップ情報として読者が知りたい: 期間/場所/見どころ/予約要否/アクセス
-- 末尾に必ず以下を入れる:
+- 末尾に必ず:
   <p class="kpj-disclaimer">※情報は変更になる場合があります。最新情報は公式SNSをご確認ください。</p>
 
-【出力】HTML本文のみ (説明・前置き不要)"""
+加えて、以下JSON形式で構造化メタを抽出し、本文末尾に <!--META--> ブロックで埋め込んでください:
+<!--META
+{{"hours": "営業時間", "address": "住所", "reservation": "予約要否", "perks": "特典概要", "sns": "SNS情報"}}
+-->
+
+【出力】HTML本文 + METAブロック (説明・前置き不要)"""
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
         'messages': [{'role': 'user', 'content': prompt}],
         'temperature': 0.7,
-        'max_tokens': 1500,
+        'max_tokens': 1800,
     }).encode()
 
     try:
         req = urllib.request.Request('https://api.openai.com/v1/chat/completions',
             data=body, headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'})
-        r = json.loads(urllib.request.urlopen(req, timeout=60).read())
-        return r['choices'][0]['message']['content'].strip()
+        r = json.loads(urllib.request.urlopen(req, timeout=90).read())
+        content = r['choices'][0]['message']['content'].strip()
+
+        # METAブロック抽出
+        meta_match = re.search(r'<!--META\s*(\{.*?\})\s*-->', content, re.DOTALL)
+        extra_meta = {}
+        if meta_match:
+            try:
+                extra_meta = json.loads(meta_match.group(1))
+            except:
+                pass
+            content = re.sub(r'<!--META.*?-->', '', content, flags=re.DOTALL).strip()
+
+        return content, extra_meta
     except Exception as e:
         print(f"  GPT err: {e}")
-        return None
+        return None, {}
 
 
-def post_to_wp_popup(signal, content, status):
-    """WP popup post type に投稿"""
+def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0):
+    """WP popup post type に投稿 (拡張meta対応)"""
     title = signal.get('title', '')[:60]
 
     meta = {
@@ -163,12 +244,22 @@ def post_to_wp_popup(signal, content, status):
     if signal.get('end_date'):
         meta['_popup_end_date'] = signal['end_date']
 
-    body = json.dumps({
+    if extra_meta:
+        for key in ('hours', 'address', 'reservation', 'perks', 'sns'):
+            val = extra_meta.get(key, '')
+            if val:
+                meta[f'_popup_{key}'] = val
+
+    body_data = {
         'title': title,
         'content': content,
         'status': 'publish',
         'meta': meta,
-    }).encode()
+    }
+    if featured_media:
+        body_data['featured_media'] = featured_media
+
+    body = json.dumps(body_data).encode()
 
     try:
         req = urllib.request.Request(
@@ -211,17 +302,19 @@ def main(max_articles=10):
         if end:
             sig['end_date'] = end
         status = determine_status(start, end)
-        sig['status_label'] = status
 
-        content = generate_article_with_gpt(sig, full_text)
+        content, extra_meta = generate_article_with_gpt(sig, full_text)
         if not content or len(content) < 200:
             print(f"  記事生成失敗、スキップ")
             mark_processed(sig['url'], None, 'gen_failed')
             continue
 
-        post_id = post_to_wp_popup(sig, content, status)
+        featured_id = get_thumbnail(sig)
+
+        post_id = post_to_wp_popup(sig, content, status,
+                                   extra_meta=extra_meta, featured_media=featured_id)
         if post_id:
-            print(f"  post_id={post_id} status={status}")
+            print(f"  post_id={post_id} status={status} thumb={featured_id}")
             mark_processed(sig['url'], post_id, 'published')
             created += 1
         else:
