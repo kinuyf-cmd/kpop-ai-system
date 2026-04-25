@@ -186,6 +186,7 @@ mewtwo
 -
 
 <!-- AUTO-LEARNED START -->
+
 ## 📊 自己稼働統計（最終更新: 2026-04-24T21:30:03.655172+09:00）
 
 **このセクションは `lib/apply_learning_to_agents.py` が毎晩21:30に自動更新します。手動編集は上書きされます。**
@@ -211,6 +212,24 @@ mewtwo
 - 直近7日の判定サンプル: **63件**
 - HARD_FAIL率: **3/63件**
 - 平均スコア: **75.7**
+---
+
+## 📉 CTR改善フィードバック（最終更新: 2026-04-25T06:30:01.340316+09:00）
+
+**GSC実測データに基づく改善対象ページ。次回のリライト・新規記事で以下の傾向に注意。**
+
+- **https://www.kpopjournal.tokyo/bigbang-top-profile-removed/** (CTR: 0.00%, 順位: 11, imp: 318)
+  原因: タイトル訴求力不足 → このページはGoogle検索で上位表示されているのにCTRが低い。タイトルに感情語・具体数字・対比構造を追加し、クリック衝動を刺激するタイトルにリライトすること。
+- **https://www.kpopjournal.tokyo/bts-v-childhood-photo-2025/** (CTR: 0.00%, 順位: 1, imp: 264)
+  原因: タイトル訴求力不足 → このページはGoogle検索で上位表示されているのにCTRが低い。タイトルに感情語・具体数字・対比構造を追加し、クリック衝動を刺激するタイトルにリライトすること。
+- **https://www.kpopjournal.tokyo/bts-jimin-songdaeun-dating-scandal/** (CTR: 0.06%, 順位: 4, imp: 1732)
+  原因: タイトル訴求力不足 → このページはGoogle検索で上位表示されているのにCTRが低い。タイトルに感情語・具体数字・対比構造を追加し、クリック衝動を刺激するタイトルにリライトすること。
+- **https://www.kpopjournal.tokyo/bts-jimin-relationship-controversy-2025/** (CTR: 0.14%, 順位: 4, imp: 1441)
+  原因: タイトル訴求力不足 → このページはGoogle検索で上位表示されているのにCTRが低い。タイトルに感情語・具体数字・対比構造を追加し、クリック衝動を刺激するタイトルにリライトすること。
+- **https://www.kpopjournal.tokyo/kpop-demon-hunters-golden-analysis/** (CTR: 0.20%, 順位: 5, imp: 1993)
+  原因: タイトル訴求力不足 → このページはGoogle検索で上位表示されているのにCTRが低い。タイトルに感情語・具体数字・対比構造を追加し、クリック衝動を刺激するタイトルにリライトすること。
+
+**対応**: リライト時は上記ページのタイトル・メタ・見出しを優先的に改善すること。
 <!-- AUTO-LEARNED END -->
 
 ---

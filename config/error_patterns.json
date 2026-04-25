@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-24T21:15:30.538710",
+  "updated_at": "2026-04-25T11:16:36.488688",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -70,8 +70,8 @@
       "agent": "unknown"
     },
     "x_post_failed": {
-      "count": 13,
-      "last_seen": "2026-04-24",
+      "count": 14,
+      "last_seen": "2026-04-25",
       "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
@@ -752,8 +752,8 @@
     },
     {
       "key": "x_post_failed",
-      "count": 13,
-      "last_seen": "2026-04-24",
+      "count": 14,
+      "last_seen": "2026-04-25",
       "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
@@ -926,21 +926,6 @@
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-14",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "2600"
-    },
-    {
-      "ts": "2026-04-16",
-      "fix": "本文補強: 2494 → 3301文字 アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 2651 → 2654 GSCインデックス登録送信",
-      "post_id": "2647"
-    },
-    {
-      "ts": "2026-04-16",
-      "fix": "本文補強: 2802 → 3248文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "2826"
-    },
     {
       "ts": "2026-04-16",
       "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
@@ -1175,13 +1160,28 @@
       "ts": "2026-04-24",
       "fix": "GSCインデックス登録送信",
       "post_id": "4044"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "4123"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "4146"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "タグを自動生成して設定: [91] サムネイル再生成・差し替え: 4193 → 4194 GSCインデックス登録送信",
+      "post_id": "4186"
     }
   ],
   "agent_failure_counts": {
     "mewtwo": 1,
     "pipeline": 7,
     "make_thumbnail": 1,
-    "persian": 13
+    "persian": 14
   },
   "phase4_monitors": {
     "trend_predictor_no_signal": {

@@ -1,41 +1,50 @@
 {
-  "updated_at": "2026-04-24T21:30:05.378876",
+  "updated_at": "2026-04-25T11:16:36.490691",
   "focus_themes": [
     {
-      "topic": "bts 仲良し 相関図",
-      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "topic": "BTS東京ドーム7年ぶり来日公演",
+      "hint": "ARIRANG WORLD TOUR東京ドーム公演(4/17-18)が7年ぶりの来日で大反響。カメラワーク問題でジミン関連がトレンド入り。関連: BTS。バズ予測スコア: 30.0。シグナル: x",
       "category_suggest": "速報",
-      "added_at": "2026-04-21",
+      "added_at": "2026-04-25",
       "source": "trend_prediction",
-      "buzz_score": 35.0,
-      "expires_at": "2026-04-24"
+      "buzz_score": 30.0,
+      "expires_at": "2026-04-28"
     },
     {
-      "topic": "ジミン 熱愛 認める",
-      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "topic": "TWICE国立競技場単独公演",
+      "hint": "4/25-26に海外アーティスト初の国立競技場公演。16万人動員で歴史的記録。関連: TWICE。バズ予測スコア: 27.0。シグナル: x",
       "category_suggest": "速報",
-      "added_at": "2026-04-21",
+      "added_at": "2026-04-25",
       "source": "trend_prediction",
-      "buzz_score": 35.0,
-      "expires_at": "2026-04-24"
+      "buzz_score": 27.0,
+      "expires_at": "2026-04-28"
     },
     {
-      "topic": "k journal",
-      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
+      "topic": "K-POPスーパーウィークエンド",
+      "hint": "4/25-26に主要グループが日本の大型会場を同時ジャック。推定42万人超動員。関連: TWICE/aespa/TVXQ/DAY6。バズ予測スコア: 27.0。シグナル: x",
       "category_suggest": "速報",
-      "added_at": "2026-04-21",
+      "added_at": "2026-04-25",
       "source": "trend_prediction",
-      "buzz_score": 35.0,
-      "expires_at": "2026-04-24"
+      "buzz_score": 27.0,
+      "expires_at": "2026-04-28"
     },
     {
-      "topic": "bts 仲良し相関図",
-      "hint": "バズ予測スコア: 35.0。シグナル: gsc",
-      "category_suggest": "速報",
-      "added_at": "2026-04-21",
+      "topic": "TWICE 国立競技場",
+      "hint": "4/25-28 MUFG STADIUM(国立競技場)3DAYS開催。海外アーティスト初の国立競技場公演、1日8万人動員。バズ予測スコア: 25.0。シグナル: google_trends",
+      "category_suggest": "来日公演",
+      "added_at": "2026-04-25",
       "source": "trend_prediction",
-      "buzz_score": 35.0,
-      "expires_at": "2026-04-24"
+      "buzz_score": 25.0,
+      "expires_at": "2026-04-28"
+    },
+    {
+      "topic": "TOMORROW X TOGETHER カムバック",
+      "hint": "契約更新後初の8thミニアルバム「7TH YEAR:」リリース(4/13)。タイトル曲「Stick With You」で音楽番組出演中。関連: TXT。バズ予測スコア: 24.0。シグナル: x",
+      "category_suggest": "速報",
+      "added_at": "2026-04-25",
+      "source": "trend_prediction",
+      "buzz_score": 24.0,
+      "expires_at": "2026-04-28"
     }
   ],
   "agent_directives": {
@@ -70,8 +79,8 @@
     "persian": {
       "problem": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish",
       "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "error_count": 13,
-      "set_at": "2026-04-24",
+      "error_count": 14,
+      "set_at": "2026-04-25",
       "source": "audit_feedback"
     },
     "inject_meta_desc_copied": {

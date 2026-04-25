@@ -303,6 +303,16 @@ is_meta = any(re.search(p, first_line) for p in META_PATTERNS)
 if is_meta:
     print(f"  ⚠️ AIメタ応答検出: {first_line[:60]}", file=sys.stderr)
 
+
+# マークダウンコードフェンス除去（```html ... ``` で囲まれた出力への対処）
+stripped = text.strip()
+if stripped.startswith('```'):
+    fence_end = stripped.find('\n')
+    if fence_end != -1:
+        rest = stripped[fence_end+1:]
+        rest = re.sub(r'\n```\s*$', '', rest.rstrip())
+        text = rest + '\n'
+
 lines = text.splitlines()
 html_idx = None
 for i, line in enumerate(lines):
@@ -313,6 +323,7 @@ if html_idx is not None:
     for j in range(html_idx - 1, -1, -1):
         s = lines[j].strip()
         if not s: continue
+        if re.match(r'^`{3}', s): continue  # コードフェンス行はスキップ
         if not s.startswith("<"): title_idx = j; break
     start = title_idx if title_idx is not None else html_idx
     cleaned = "\n".join(lines[start:]).strip() + "\n"

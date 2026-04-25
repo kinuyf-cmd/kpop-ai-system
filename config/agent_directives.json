@@ -2,7 +2,7 @@
   "agent_directives": {
     "butterfree": {
       "action": "バタフリーのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "バタフリー",
       "min_output_chars": 300,
@@ -15,7 +15,7 @@
     },
     "x_post": {
       "action": "X投稿のプロンプト修正で改善余地あり。config/agent_directives.jsonまたはagents/x_post.mdを修正する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "X投稿"
     },
@@ -63,49 +63,49 @@
     },
     "x投稿b": {
       "action": "X投稿BのHARD_FAILパターンを解析し、プロンプトの品質ゲート条件を緩和または修正する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "X投稿B"
     },
     "デオキシス": {
       "action": "デオキシスのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "デオキシス"
     },
     "メタモン": {
       "action": "メタモンのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "メタモン"
     },
     "wp投稿": {
       "action": "WP投稿のタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "WP投稿"
     },
     "パイプライン": {
       "action": "パイプラインのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "パイプライン"
     },
     "thumb_ctr_block": {
       "action": "thumb_ctr_blockのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "thumb_ctr_block"
     },
     "pre_publish_gate": {
       "action": "pre_publish_gateのタイムアウト設定を見直す。空出力時のfallbackを強化する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "pre_publish_gate"
     },
     "アラカザム": {
       "action": "アラカザムのプロンプト修正で改善余地あり。config/agent_directives.jsonまたはagents/アラカザム.mdを修正する",
-      "set_at": "2026-04-23",
+      "set_at": "2026-04-24",
       "source": "auto_executor_green",
       "target_agent": "アラカザム"
     },
@@ -122,6 +122,12 @@
         "Here is"
       ],
       "note": "2026-04-24 P4: 空出力防止+英語応答ブロック+タイムアウト延長"
+    },
+    "sns_draft_guard": {
+      "action": "sns_draft_guardのタイムアウト設定を見直す。空出力時のfallbackを強化する",
+      "set_at": "2026-04-24",
+      "source": "auto_executor_green",
+      "target_agent": "sns_draft_guard"
     }
   },
   "_archived": {

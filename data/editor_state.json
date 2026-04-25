@@ -1,15 +1,15 @@
 {
-  "updated_at": "2026-04-25T01:00:01.894671+09:00",
+  "updated_at": "2026-04-25T11:00:01.461299+09:00",
   "stats_today": {
-    "total": 13,
-    "breaking": 11,
-    "other": 2
-  },
-  "hours_left_today": 23.0,
-  "needed_today": {
+    "total": 1,
     "breaking": 0,
-    "other": 8,
-    "total": 8
+    "other": 1
+  },
+  "hours_left_today": 13.0,
+  "needed_today": {
+    "breaking": 10,
+    "other": 9,
+    "total": 19
   },
   "recommended_max": {
     "auto_event": 2,

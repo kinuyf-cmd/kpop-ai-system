@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-27-quality-gate",
-  "updated_at": "2026-04-25T00:00:12.032993",
+  "version": "2026-04-27-cfix6",
+  "updated_at": "2026-04-25T06:00:09.780828",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -84,81 +84,19 @@
     "ビルド成功だけで本番反映未確認で完了報告すること",
     "集計前提の検証なしに数字を信じること"
   ],
-  "auto_article_policy": {
-    "single_source_allowed": true,
-    "confidence_labels": {
-      "high": "複数ソース (2+) → 通常公開",
-      "medium": "単一ソース + 公式キーワード → 通常公開",
-      "low": "単一ソースのみ → タイトルに【韓国メディア速報】+注意書き"
-    },
-    "breaking_news": {
-      "detection_window_minutes": 5,
-      "daily_limit": 10,
-      "cron": "*/3",
-      "collector_chain_trigger": true
-    },
-    "daily_quotas": {
-      "auto_event_runs": "4x/day (8:30,12:30,16:30,20:30)",
-      "auto_comeback_runs": "4x/day (9:00,13:00,17:00,21:00)",
-      "breaking_max_per_day": 10
-    }
-  },
-  "thumbnail_policy": {
-    "fallback_order": [
-      "source og:image (attribution)",
-      "DALL-E 3"
-    ],
-    "dalle_budget": "$0.08/pic, 20/day max"
-  },
   "editorial_audit": {
-    "cron": "0 */6 * * *",
-    "checks": [
-      "title_42char",
-      "content_300char",
-      "category",
-      "thumbnail",
-      "slug_ascii",
-      "confidence_note",
-      "source_section",
-      "h2_heading",
-      "duplicate_title",
-      "empty_content"
-    ],
-    "auto_fix": [
-      "thumbnail_generation"
-    ],
-    "charter": "docs/editorial_charter.md",
-    "last_audit": "2026-04-25T00:00:12.032986",
+    "last_audit": "2026-04-25T06:00:09.780818",
     "last_summary": {
-      "total": 8,
+      "total": 6,
       "by_type": {
         "meta_short": 2,
-        "gsc_missing": 4,
-        "no_thumbnail": 1,
-        "x_missing": 1
+        "no_thumbnail": 4
       },
       "by_severity": {
-        "high": 1,
-        "medium": 6,
-        "low": 1
+        "high": 4,
+        "medium": 2,
+        "low": 0
       }
-    },
-    "lessons": [
-      {
-        "date": "2026-04-27",
-        "incident": "英語1文のみの記事が公開された (post_id=4068)",
-        "root_cause": "unified_publisher に本文品質チェックなし",
-        "prevention": "本文200字+日本語比率30%+unified_publisher/audit_publisher 両方でゲート"
-      }
-    ]
-  },
-  "quality_gates": {
-    "body": {
-      "min_chars_core": 200,
-      "min_japanese_ratio": 0.3,
-      "critical_threshold_chars": 50,
-      "critical_threshold_ja_ratio": 0.1,
-      "enforcement": "unified_publisher rejects + audit_publisher drafts"
     }
   }
 }

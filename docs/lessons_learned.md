@@ -57,3 +57,9 @@
 - **meta_short**: 2件
 - **no_thumbnail**: 1件
 - **x_missing**: 1件
+
+
+## 監査教訓 (2026-04-25 06:00)
+
+- **no_thumbnail**: 4件
+- **meta_short**: 2件
