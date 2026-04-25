@@ -63,3 +63,10 @@
 
 - **no_thumbnail**: 4件
 - **meta_short**: 2件
+
+
+## 監査教訓 (2026-04-25 12:01)
+
+- **gsc_missing**: 2件
+- **x_missing**: 2件
+- **title_long**: 1件
