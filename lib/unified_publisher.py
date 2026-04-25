@@ -99,6 +99,7 @@ def unified_publish(
     confidence: str = 'high',
     source_signals: list = None,
     force_slug: str = None,
+    is_breaking: bool = False,
 ) -> dict:
     """統一投稿関数"""
     log = []
@@ -162,8 +163,9 @@ def unified_publish(
     _ja_chars = sum(1 for c in _body_core if '\u3040' <= c <= '\u30ff' or '\u4e00' <= c <= '\u9fff')
     _ja_ratio = _ja_chars / max(len(_body_core), 1)
     _quality_fail = None
-    if len(_body_core) < 200:
-        _quality_fail = f'本文が短すぎる ({len(_body_core)}字、最低200字)'
+    _min_len = 150 if is_breaking else 200
+    if len(_body_core) < _min_len:
+        _quality_fail = f'本文が短すぎる ({len(_body_core)}字、最低{_min_len}字)'
     elif _ja_ratio < 0.3:
         _quality_fail = f'日本語比率低すぎる ({_ja_ratio*100:.0f}%、最低30%)'
     if _quality_fail:

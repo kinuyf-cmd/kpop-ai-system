@@ -6,7 +6,7 @@
 - または同一アーティストで過去5分以内に2ソース以上
 - 1日最大10件
 """
-import sys, os, json
+import sys, os, json, urllib.request, base64
 from datetime import datetime, timedelta
 
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
@@ -82,6 +82,20 @@ def detect_breaking(signals):
     return candidates
 
 
+def _mark_breaking_stage(post_id, stage):
+    """WP custom field _breaking_stage を記録 (1=速報、2=加筆済、3=完全版)"""
+    _AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
+    try:
+        url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}"
+        body = json.dumps({'meta': {'_breaking_stage': str(stage)}}).encode()
+        req = urllib.request.Request(url, data=body, method='POST',
+            headers={'Authorization': f'Basic {_AUTH}', 'Content-Type': 'application/json'})
+        urllib.request.urlopen(req, timeout=20).read()
+        print(f"  [breaking_stage={stage}] post_id={post_id}")
+    except Exception as e:
+        print(f"  stage記録失敗 {post_id}: {e}")
+
+
 def publish_breaking(artist, sigs, typ):
     """unified_publish経由で速報投稿"""
     best = max(sigs, key=lambda s: len(s.get('title', '')))
@@ -112,9 +126,11 @@ def publish_breaking(artist, sigs, typ):
         kind='breaking',
         confidence=confidence,
         source_signals=sigs,
+        is_breaking=True,
     )
 
     if r and r.get('success'):
+        _mark_breaking_stage(r.get('post_id'), 1)
         for s in sigs:
             mark_processed({
                 'ts': datetime.now().isoformat(), 'source_url': s['url'],

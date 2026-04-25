@@ -96,6 +96,86 @@ def fetch_source_summary(source_url):
         return ''
 
 
+# ============================================================
+# 速報Stage 1→2 加筆ロジック (2時間後、150字→600字目標)
+# ============================================================
+
+def find_breaking_stage1_to_upgrade():
+    """2時間以上経過したStage 1速報を取得"""
+    from datetime import timedelta, timezone
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S')
+    url = (f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts"
+           f"?meta_key=_breaking_stage&meta_value=1&before={cutoff}"
+           f"&per_page=10&_fields=id,title,content,date&context=edit")
+    try:
+        req = urllib.request.Request(url, headers={'Authorization': f'Basic {AUTH}'})
+        return json.loads(urllib.request.urlopen(req, timeout=20).read())
+    except Exception as e:
+        print(f"  Stage1検索エラー: {e}")
+        return []
+
+
+def upgrade_breaking_to_stage2(post):
+    """Stage 1→Stage 2: GPT-4o-miniで600字以上に加筆"""
+    pid = post['id']
+    title = post['title']['rendered']
+    content_html = post['content']['rendered']
+    plain = re.sub(r'<[^>]+>', '', content_html)
+
+    key = os.getenv('OPENAI_API_KEY')
+    prompt = f"""以下のK-POP速報記事を、600字以上の充実した記事に加筆してください。
+
+【加筆ルール】
+- 既存の事実は完全に保持し、削除・改変しない
+- 背景情報、関連事実、ファンへの含意を追加
+- K-POPメディア読者向けの自然な日本語
+- 文末バリエーション豊富 (~した、~と語った、~と発表した等を混ぜる)
+- HTMLタグ (h2/p等) は適切に使用
+- 注意書きや「以上です」等の蛇足は不要
+
+【元記事】
+タイトル: {title}
+本文: {plain[:2000]}
+
+【加筆版本文】 (HTML、600字以上、以下に出力):"""
+
+    body = json.dumps({
+        'model': 'gpt-4o-mini',
+        'messages': [{'role': 'user', 'content': prompt}],
+        'temperature': 0.7,
+        'max_tokens': 1800,
+    }).encode()
+
+    try:
+        req = urllib.request.Request('https://api.openai.com/v1/chat/completions',
+            data=body, headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'})
+        r = json.loads(urllib.request.urlopen(req, timeout=90).read())
+        new_content = r['choices'][0]['message']['content'].strip()
+
+        new_plain = re.sub(r'<[^>]+>', '', new_content)
+        # 既に十分長い記事はスキップ (速報の加筆対象は短い記事のみ)
+        if len(plain) >= 500:
+            print(f"  ⚠️ post_id={pid} 既に{len(plain)}字あるためスキップ")
+            return False
+        if len(new_plain) < 400:
+            print(f"  ⚠️ post_id={pid} 加筆結果が短い ({len(new_plain)}字)、スキップ")
+            return False
+
+        upd_url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}"
+        upd_body = json.dumps({
+            'content': new_content,
+            'meta': {'_breaking_stage': '2'}
+        }).encode()
+        req2 = urllib.request.Request(upd_url, data=upd_body, method='POST',
+            headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
+        urllib.request.urlopen(req2, timeout=20).read()
+        print(f"  ✅ Stage 1→2 完了 post_id={pid} ({len(plain)}→{len(new_plain)}字)")
+        return True
+    except Exception as e:
+        print(f"  🔴 post_id={pid} 加筆失敗: {str(e)[:120]}")
+        return False
+
+
 def rewrite_body(title, original_body, source_url=None):
     """GPT-4o-mini で本文を再生成"""
     key = os.getenv('OPENAI_API_KEY')
@@ -254,12 +334,24 @@ def process_entry(entry):
 
 
 def main(max_items=MAX_PER_RUN):
+    # 速報Stage 1→2 加筆 (2時間以上経過)
+    print("\n=== 速報Stage 1→2 加筆処理 ===")
+    breaking_stage1 = find_breaking_stage1_to_upgrade()
+    print(f"対象: {len(breaking_stage1)}件 (2時間以上経過したStage 1速報)")
+    upgraded = 0
+    for post in breaking_stage1[:5]:
+        if upgrade_breaking_to_stage2(post):
+            upgraded += 1
+    if breaking_stage1:
+        print(f"加筆完了: {upgraded}/{min(len(breaking_stage1), 5)}件")
+
+    # 通常リライト処理
     entries = load_queue()
     retryable = {'pending', 'gpt_failed', 'quality_failed', 'wp_update_failed', 'fetch_failed'}
     pending = [e for e in entries if e.get('status') in retryable
                and e.get('retry_count', 0) < MAX_RETRIES]
 
-    print(f"=== リライト担当 開始 ===")
+    print(f"\n=== リライト担当 開始 ===")
     print(f"全キュー: {len(entries)}件 / 処理対象: {len(pending)}件 / "
           f"本回処理: {min(len(pending), max_items)}件")
 
