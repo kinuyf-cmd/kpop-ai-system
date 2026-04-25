@@ -1,6 +1,6 @@
 {
   "version": "2026-04-27-cfix6",
-  "updated_at": "2026-04-25T12:01:09.742449",
+  "updated_at": "2026-04-25T18:00:32.122072",
   "article_type_ratio": {
     "NEWS": 0.7,
     "GUIDE": 0.2,
@@ -85,18 +85,19 @@
     "集計前提の検証なしに数字を信じること"
   ],
   "editorial_audit": {
-    "last_audit": "2026-04-25T12:01:09.742443",
+    "last_audit": "2026-04-25T18:00:32.122065",
     "last_summary": {
-      "total": 5,
+      "total": 23,
       "by_type": {
-        "title_long": 1,
-        "gsc_missing": 2,
-        "x_missing": 2
+        "body_short": 1,
+        "meta_short": 6,
+        "x_missing": 8,
+        "gsc_missing": 8
       },
       "by_severity": {
         "high": 1,
-        "medium": 2,
-        "low": 2
+        "medium": 14,
+        "low": 8
       }
     }
   }

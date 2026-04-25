@@ -1,7 +1,7 @@
 {
-  "level": "info",
-  "used": 236,
+  "level": "warning",
+  "used": 241,
   "limit": 300,
-  "pct": 78.7,
-  "updated_at": "2026-04-25T16:30:01.321962"
+  "pct": 80.3,
+  "updated_at": "2026-04-25T20:00:01.362099"
 }

@@ -2,6 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://www.kpopjournal.tokyo/kpop-2-kpop-3-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T10:08:02+00:00</news:publication_date>
+      <news:title>なぜ2万円でも買う？K-POPライトスティックが生む年間3兆円の熱狂を完全解剖</news:title>
+        <news:keywords>kpop, 2026</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/iu-renai-kan-lee-jung-suk/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T07:45:16+00:00</news:publication_date>
+      <news:title>【速報】IU、イ・ジョンソクとの恋愛観を明かす</news:title>
+        <news:keywords>renai, kan, lee, jung, suk</news:keywords>
+    </news:news>
+  </url>
+  <url>
     <loc>https://www.kpopjournal.tokyo/iu-byunwoseok-daikun-fujin-2digit-ratings/</loc>
     <news:news>
       <news:publication>
@@ -143,18 +167,6 @@
       <news:publication_date>2026-04-23T21:11:30+00:00</news:publication_date>
       <news:title>BTS「SWIM」3週連続首位のK-POPチャート速報</news:title>
         <news:keywords>BTS, kpop, chart, pop, bts</news:keywords>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-idol-7-2026/</loc>
-    <news:news>
-      <news:publication>
-        <news:name>KPOP JOURNAL</news:name>
-        <news:language>ja</news:language>
-      </news:publication>
-      <news:publication_date>2026-04-23T00:07:10+00:00</news:publication_date>
-      <news:title>なぜ喉を壊さない？K-POPアイドル専属トレーナーが初告白する7つの声帯ケア極意</news:title>
-        <news:keywords>kpop, idol, 2026</news:keywords>
     </news:news>
   </url>
 </urlset>
