@@ -63,9 +63,9 @@ def compute_state():
     # auto_event/comeback は 2時間毎実行想定
     auto_max = max(2, min(8, int(per_hour_other * 2.5)))
 
-    if hours_left <= 6 and needed_total >= 10:
+    if needed_total >= 10:
         urgency = 'high'
-    elif hours_left <= 12 and needed_total >= 8:
+    elif needed_total >= 5:
         urgency = 'medium'
     else:
         urgency = 'normal'
@@ -118,6 +118,10 @@ def force_generate(state):
         print(f"  MEDIUM urgency -> supplemental generation")
         subprocess.run(
             ['python3', 'pipeline/auto_event_article.py', '--max', '2'],
+            cwd='/home/aiuser/kpop-ai-system', timeout=400,
+        )
+        subprocess.run(
+            ['python3', 'pipeline/auto_comeback_article.py', '--max', '2'],
             cwd='/home/aiuser/kpop-ai-system', timeout=400,
         )
 
