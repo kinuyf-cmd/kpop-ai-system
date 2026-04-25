@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-25T12:48:53.941969",
+  "updated_at": "2026-04-25T16:20:42.878064",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -70,9 +70,9 @@
       "agent": "unknown"
     },
     "x_post_failed": {
-      "count": 14,
+      "count": 15,
       "last_seen": "2026-04-25",
-      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ: 記事ステータス=draft — pub",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
@@ -729,6 +729,20 @@
       "example": "OG画像が未設定",
       "fix": "調査が必要",
       "agent": "unknown"
+    },
+    "unknown_5772": {
+      "count": 1,
+      "last_seen": "2026-04-25",
+      "example": "サムネ再生成後alt空: media=4250",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_7690": {
+      "count": 1,
+      "last_seen": "2026-04-25",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
     }
   },
   "recurring_errors": [
@@ -752,9 +766,9 @@
     },
     {
       "key": "x_post_failed",
-      "count": 14,
+      "count": 15,
       "last_seen": "2026-04-25",
-      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ: 記事ステータス=draft — pub",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
@@ -926,21 +940,6 @@
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-17",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3045"
-    },
-    {
-      "ts": "2026-04-17",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3122"
-    },
-    {
-      "ts": "2026-04-18",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3168"
-    },
     {
       "ts": "2026-04-18",
       "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
@@ -1175,13 +1174,28 @@
       "ts": "2026-04-25",
       "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
       "post_id": "4209"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 4248 → 4250 GSCインデックス登録送信",
+      "post_id": "4241"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 サムネイル再生成・差し替え: 4271 → 4272 GSCインデックス登録送信",
+      "post_id": "4265"
+    },
+    {
+      "ts": "2026-04-25",
+      "fix": "GSCインデックス登録送信",
+      "post_id": "4292"
     }
   ],
   "agent_failure_counts": {
     "mewtwo": 1,
     "pipeline": 7,
     "make_thumbnail": 1,
-    "persian": 14
+    "persian": 15
   },
   "phase4_monitors": {
     "trend_predictor_no_signal": {

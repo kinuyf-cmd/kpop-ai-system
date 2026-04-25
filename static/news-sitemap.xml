@@ -2,6 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://www.kpopjournal.tokyo/iu-byunwoseok-daikun-fujin-2digit-ratings/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T05:01:01+00:00</news:publication_date>
+      <news:title>【韓国メディア速報】IUとビョンウソク『大君夫人』再び二桁視聴率</news:title>
+        <news:keywords>byunwoseok, daikun, fujin, 2digit, ratings</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/gummy-daughter-birth-new-song-live/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T05:00:12+00:00</news:publication_date>
+      <news:title>【韓国メディア速報】Gummy、娘誕生の幸せと新曲ライブ披露</news:title>
+        <news:keywords>IVE, gummy, daughter, birth, new</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/iu-byun-usok-21seiki-dai-kun-fujin-waltz-party/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T04:50:13+00:00</news:publication_date>
+      <news:title>【速報】IU・ビョン・ウソク「21世紀の大君夫人」ワルツパーティー</news:title>
+        <news:keywords>byun, usok, 21seiki, dai, kun</news:keywords>
+    </news:news>
+  </url>
+  <url>
     <loc>https://www.kpopjournal.tokyo/twice-60-2026/</loc>
     <news:news>
       <news:publication>
@@ -119,18 +155,6 @@
       <news:publication_date>2026-04-23T00:07:10+00:00</news:publication_date>
       <news:title>なぜ喉を壊さない？K-POPアイドル専属トレーナーが初告白する7つの声帯ケア極意</news:title>
         <news:keywords>kpop, idol, 2026</news:keywords>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-10-kpop-2026/</loc>
-    <news:news>
-      <news:publication>
-        <news:name>KPOP JOURNAL</news:name>
-        <news:language>ja</news:language>
-      </news:publication>
-      <news:publication_date>2026-04-22T22:09:47+00:00</news:publication_date>
-      <news:title>舞台で輝く10秒に数百時間——K-POP振付師が初告白したフォーメーション設計の全真実</news:title>
-        <news:keywords>kpop, 2026</news:keywords>
     </news:news>
   </url>
 </urlset>

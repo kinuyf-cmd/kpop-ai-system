@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-25T12:48:53.944059",
+  "updated_at": "2026-04-25T16:20:42.880145",
   "focus_themes": [
     {
       "topic": "BTS東京ドーム7年ぶり来日公演",
@@ -77,9 +77,9 @@
       "promoted_at": "2026-04-09T18:30:36.616439"
     },
     "persian": {
-      "problem": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish",
+      "problem": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ:",
       "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "error_count": 14,
+      "error_count": 15,
       "set_at": "2026-04-25",
       "source": "audit_feedback"
     },
