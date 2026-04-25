@@ -6,7 +6,7 @@ load_dotenv()
 
 API = "https://api.openai.com/v1/chat/completions"
 LOG = '/home/aiuser/kpop-ai-system/logs/translation.jsonl'
-DAILY_LIMIT = 100
+DAILY_LIMIT = 300
 
 
 def _count_today():

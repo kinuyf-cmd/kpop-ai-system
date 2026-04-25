@@ -3,7 +3,7 @@
 
 条件緩和 (C-Fix9 Block3): 単一ソースも許可、信頼度ラベル付与
 """
-import sys, os
+import sys, os, json
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 from dotenv import load_dotenv
@@ -63,7 +63,6 @@ def main(dry_run=False, max_articles=None):
         qualified.append((artist, sigs, confidence))
 
     print(f"記事化候補: {len(qualified)}")
-    cat_id = fetch_category_id('news')
     created = 0
 
     for artist, sigs, confidence in qualified[:max_articles]:
