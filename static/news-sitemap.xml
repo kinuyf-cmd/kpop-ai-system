@@ -2,6 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://www.kpopjournal.tokyo/twice-60-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T03:46:24+00:00</news:publication_date>
+      <news:title>ついにTWICEが国立競技場に——60年の聖域が開いた夜</news:title>
+        <news:keywords>TWICE, twice, 2026</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/cats-eye-uk-single-chart-2-songs/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T03:43:19+00:00</news:publication_date>
+      <news:title>【韓国メディア速報】CAT’S EYE、英シングルチャートに2曲同時ランクイン</news:title>
+        <news:keywords>cats, eye, single, chart, songs</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/gummy-seventeen-sungkwan-music-live/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-25T03:42:32+00:00</news:publication_date>
+      <news:title>【韓国メディア速報】Gummy・SEVENTEENスングァンら「耳を癒す彼氏」ライブ</news:title>
+        <news:keywords>SEVENTEEN, IVE, gummy, seventeen, sungkwan</news:keywords>
+    </news:news>
+  </url>
+  <url>
     <loc>https://www.kpopjournal.tokyo/kpop-idol-cica-pdrn-skincare-2026/</loc>
     <news:news>
       <news:publication>
