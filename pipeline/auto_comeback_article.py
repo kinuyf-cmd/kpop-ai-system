@@ -11,6 +11,7 @@ load_dotenv()
 
 from lib.korean_translator import translate_ko_to_ja
 from lib.unified_publisher import unified_publish
+from lib.signal_deduplicator import deduplicate
 from pipeline.auto_event_article import (
     load_signals, is_processed, mark_processed,
     OFFICIAL_KW, CONFIDENCE_HIGH, CONFIDENCE_MEDIUM, CONFIDENCE_LOW,
@@ -35,9 +36,10 @@ def _read_max_from_state(key, default=3):
 def main(dry_run=False, max_articles=None):
     if max_articles is None:
         max_articles = _read_max_from_state('auto_comeback', 3)
-    signals = load_signals(hours_back=24)
+    signals_raw = load_signals(hours_back=24)
+    signals, _dup_n, _ = deduplicate(signals_raw)
     cb_sigs = [s for s in signals if is_comeback_signal(s)]
-    print(f"カムバック関連: {len(cb_sigs)}")
+    print(f"カムバック関連: {len(cb_sigs)} (dedup: -{_dup_n})")
 
     from lib.collectors.korean_base import is_kpop_related
     groups = {}

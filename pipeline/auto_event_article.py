@@ -12,6 +12,7 @@ load_dotenv()
 
 from lib.korean_translator import translate_ko_to_ja
 from lib.unified_publisher import unified_publish
+from lib.signal_deduplicator import deduplicate
 
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 PROCESSED = '/home/aiuser/kpop-ai-system/data/auto_article_processed.jsonl'
@@ -209,9 +210,10 @@ def _read_max_from_state(key, default=3):
 def main(dry_run=False, max_articles=None):
     if max_articles is None:
         max_articles = _read_max_from_state('auto_event', 3)
-    signals = load_signals(hours_back=24)
+    signals_raw = load_signals(hours_back=24)
+    signals, _dup_n, _ = deduplicate(signals_raw)
     event_sigs = [s for s in signals if is_event_signal(s)]
-    print(f"過去24h signals: {len(signals)}, イベント関連: {len(event_sigs)}")
+    print(f"過去24h signals: {len(signals_raw)}, dedup後: {len(signals)} (-{_dup_n}), イベント関連: {len(event_sigs)}")
 
     from lib.collectors.korean_base import is_kpop_related
     groups = {}

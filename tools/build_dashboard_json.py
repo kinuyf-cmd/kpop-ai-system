@@ -240,6 +240,17 @@ def _agents():
     return result
 
 
+def _dedup_stats():
+    """signal重複排除統計"""
+    try:
+        import sys
+        sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+        from lib.signal_deduplicator import load_signals_24h, stats
+        return stats(load_signals_24h())
+    except Exception as e:
+        return {'error': str(e)[:100]}
+
+
 def _translation_status():
     """翻訳API使用状況"""
     p = '/home/aiuser/kpop-ai-system/data/translation_threshold.json'
@@ -314,6 +325,7 @@ def main():
         'articles_daily_7d': ad7l,
         'signals_24h': sig, 'x_posts_today': xp,
         'translation': _translation_status(),
+        'dedup': _dedup_stats(),
         'gsc': gsc, 'ga4': ga4, 'adsense': ads,
         'costs_24h': costs, 'errors': errors, 'agents': agents,
         'recent_posts': [

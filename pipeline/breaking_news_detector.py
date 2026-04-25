@@ -13,6 +13,7 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 from lib.korean_translator import translate_ko_to_ja
 from lib.unified_publisher import unified_publish
+from lib.signal_deduplicator import deduplicate
 from pipeline.auto_event_article import is_processed, mark_processed
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
@@ -141,8 +142,9 @@ def main(dry_run=False):
         print("本日の速報上限到達")
         return 0
 
-    signals = load_recent(minutes=5)
-    print(f"過去5分のsignals: {len(signals)}件")
+    signals_raw = load_recent(minutes=5)
+    signals, _dup_n, _ = deduplicate(signals_raw)
+    print(f"過去5分のsignals: {len(signals_raw)}件 (dedup: -{_dup_n})")
 
     candidates = detect_breaking(signals)
     print(f"速報候補: {len(candidates)}件")
