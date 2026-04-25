@@ -1,8 +1,281 @@
 {
   "_metadata": {
-    "format": "internal_key -> {html_material, raw_url, registered_at}",
-    "description": "A8管理画面でコピーしたHTML素材を保存するマスター",
-    "instruction": "オーナーがA8マイページから各プログラムのHTMLをコピーして登録"
+    "format": "internal_key -> {html_material, raw_url, a8mat, registered_at}",
+    "updated_at": "2026-04-25T17:02:23.655012+00:00",
+    "total_registered": 34
   },
-  "programs": {}
+  "programs": {
+    "amazon_prime_video": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5YJRM\" rel=\"nofollow\">映画、TV番組、ライブTV、スポーツを観る【Amazon Prime Video】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5YJRM",
+      "link_text_default": "映画、TV番組、ライブTV、スポーツを観る【Amazon Prime Video】",
+      "a8mat": "457NRV+AABNTM+5NWU+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654584+00:00"
+    },
+    "kvillage_korean_school": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+36WPAY+4GDM+639IQ\" rel=\"nofollow\">自由テキスト</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+36WPAY+4GDM+639IQ\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+36WPAY+4GDM+639IQ",
+      "link_text_default": "自由テキスト",
+      "a8mat": "457NRV+36WPAY+4GDM+639IQ",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654626+00:00"
+    },
+    "kvillage_skincare": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3E1WKA+4GDM+HV7V6\" rel=\"nofollow\">韓国エステサロンで100店舗以上導入のハーブピーリングがセルフでできるダーマスキンピーリング</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+3E1WKA+4GDM+HV7V6\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3E1WKA+4GDM+HV7V6",
+      "link_text_default": "韓国エステサロンで100店舗以上導入のハーブピーリングがセルフでできるダーマスキンピーリング",
+      "a8mat": "457NRV+3E1WKA+4GDM+HV7V6",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654642+00:00"
+    },
+    "kvillage_facial_drtengle": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3CV1CQ+4GDM+NTRMQ\" rel=\"nofollow\">人気韓国インフルエンサーとのコラボ販売にて販売開始から 15分で約5,000台が完売した韓国美顔器</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+3CV1CQ+4GDM+NTRMQ\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3CV1CQ+4GDM+NTRMQ",
+      "link_text_default": "人気韓国インフルエンサーとのコラボ販売にて販売開始から 15分で約5,000台が完売した韓国美顔器",
+      "a8mat": "457NRV+3CV1CQ+4GDM+NTRMQ",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654655+00:00"
+    },
+    "kvillage_facial_pro": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3ENC62+4GDM+TRVYQ\" rel=\"nofollow\">EMS×マイクロカレント同時出力。韓国発本格フェイスケア美顔器</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+3ENC62+4GDM+TRVYQ\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3ENC62+4GDM+TRVYQ",
+      "link_text_default": "EMS×マイクロカレント同時出力。韓国発本格フェイスケア美顔器",
+      "a8mat": "457NRV+3ENC62+4GDM+TRVYQ",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654667+00:00"
+    },
+    "dholic_fashion": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+BWVTE\" rel=\"nofollow\">DHOLIC</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3PYKNU+3GIS+BWVTE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+BWVTE",
+      "link_text_default": "DHOLIC",
+      "a8mat": "457NRV+3PYKNU+3GIS+BWVTE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654694+00:00"
+    },
+    "olens_poplens": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+5YJRM\" rel=\"nofollow\">韓国カラコンおすすめ通販【POPLENS】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+3O69UI+4XSA+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+5YJRM",
+      "link_text_default": "韓国カラコンおすすめ通販【POPLENS】",
+      "a8mat": "457NRV+3O69UI+4XSA+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654705+00:00"
+    },
+    "matilda_dept": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3I7XSQ+5PQ4+5YJRM\" rel=\"nofollow\">K-POPアーティストも愛用のアクセサリーブランド【MATILDA　DEPT.】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3I7XSQ+5PQ4+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3I7XSQ+5PQ4+5YJRM",
+      "link_text_default": "K-POPアーティストも愛用のアクセサリーブランド【MATILDA　DEPT.】",
+      "a8mat": "457NRV+3I7XSQ+5PQ4+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654716+00:00"
+    },
+    "sazo_purchase_agent": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=4B1THU+6NXQCA+5TN8+5YJRM\" rel=\"nofollow\">欲しい韓国商品のURLを入力するだけ！簡単購入代行【SAZO】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=4B1THU+6NXQCA+5TN8+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=4B1THU+6NXQCA+5TN8+5YJRM",
+      "link_text_default": "欲しい韓国商品のURLを入力するだけ！簡単購入代行【SAZO】",
+      "a8mat": "4B1THU+6NXQCA+5TN8+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654727+00:00"
+    },
+    "qoo10_official": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+32QO2I+4QYG+5YJRM\" rel=\"nofollow\">eBay公式ショッピングサイト Qoo10（キューテン）</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+32QO2I+4QYG+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+32QO2I+4QYG+5YJRM",
+      "link_text_default": "eBay公式ショッピングサイト Qoo10（キューテン）",
+      "a8mat": "457NRV+32QO2I+4QYG+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654740+00:00"
+    },
+    "rakuten_affiliate": {
+      "html_material": "<a href=\"https://rpx.a8.net/svt/ejp?a8mat=457LFT+8F1OGQ+2HOM+6DC6A&rakuten=y&a8ejpredirect=http%3A%2F%2Fhb.afl.rakuten.co.jp%2Fhgc%2F0ea62065.34400275.0ea62066.204f04c0%2Fa25061789095_457LFT_8F1OGQ_2HOM_6DC6A%3Fpc%3Dhttp%253A%252F%252Fwww.rakuten.co.jp%252F%26m%3Dhttp%253A%252F%252Fm.rakuten.co.jp%252F\" rel=\"nofollow\">あのブランド品が毎日激安特価！お買い物なら楽天市場</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457LFT+8F1OGQ+2HOM+6DC6A\" alt=\"\">",
+      "raw_url": "https://rpx.a8.net/svt/ejp?a8mat=457LFT+8F1OGQ+2HOM+6DC6A&rakuten=y&a8ejpredirect=http%3A%2F%2Fhb.afl.rakuten.co.jp%2Fhgc%2F0ea62065.34400275.0ea62066.204f04c0%2Fa25061789095_457LFT_8F1OGQ_2HOM_6DC6A%3Fpc%3Dhttp%253A%252F%252Fwww.rakuten.co.jp%252F%26m%3Dhttp%253A%252F%252Fm.rakuten.co.jp%252F",
+      "link_text_default": "あのブランド品が毎日激安特価！お買い物なら楽天市場",
+      "a8mat": "457LFT+8F1OGQ+2HOM+6DC6A",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654753+00:00"
+    },
+    "korea_data_wifi": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30YD96+2ZBM+HXD0Y\" rel=\"nofollow\">海外インターネット</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+30YD96+2ZBM+HXD0Y\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+30YD96+2ZBM+HXD0Y",
+      "link_text_default": "海外インターネット",
+      "a8mat": "457NRV+30YD96+2ZBM+HXD0Y",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654767+00:00"
+    },
+    "saily_esim": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+43NJKQ+5L2C+5YJRM\" rel=\"nofollow\">海外旅行のためのお得なeSIM【Saily】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+43NJKQ+5L2C+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+43NJKQ+5L2C+5YJRM",
+      "link_text_default": "海外旅行のためのお得なeSIM【Saily】",
+      "a8mat": "457NRV+43NJKQ+5L2C+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654777+00:00"
+    },
+    "kkday_korea": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+42GOD6+52F8+60WN6\" rel=\"nofollow\">購入はこちらから【KKday】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+42GOD6+52F8+60WN6\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+42GOD6+52F8+60WN6",
+      "link_text_default": "購入はこちらから【KKday】",
+      "a8mat": "457NRV+42GOD6+52F8+60WN6",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654787+00:00"
+    },
+    "buyma_travel": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+4DRWUY+54RO+BWVTE\" rel=\"nofollow\">現地在住ガイドが日本語で案内するプライベートツアー予約サイト【BUYMA TRAVEL】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www19.a8.net/0.gif?a8mat=457NRV+4DRWUY+54RO+BWVTE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+4DRWUY+54RO+BWVTE",
+      "link_text_default": "現地在住ガイドが日本語で案内するプライベートツアー予約サイト【BUYMA TRAVEL】",
+      "a8mat": "457NRV+4DRWUY+54RO+BWVTE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654797+00:00"
+    },
+    "airtori_intl": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+64RJ6\" rel=\"nofollow\">エアトリ</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+64RJ6\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+64RJ6",
+      "link_text_default": "エアトリ",
+      "a8mat": "457NRV+3MZEMY+2YGS+64RJ6",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654807+00:00"
+    },
+    "global_wifi": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2WSC0Q+2JMM+64C3M\" rel=\"nofollow\">グローバルWiFi公式サイトを見てみる</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+2WSC0Q+2JMM+64C3M\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+2WSC0Q+2JMM+64C3M",
+      "link_text_default": "グローバルWiFi公式サイトを見てみる",
+      "a8mat": "457NRV+2WSC0Q+2JMM+64C3M",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654817+00:00"
+    },
+    "codibook_fashion": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+33XJA2+47JU+5YRHE\" rel=\"nofollow\">韓国ファッション通販のまとめ買いCodibook</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www14.a8.net/0.gif?a8mat=457NRV+33XJA2+47JU+5YRHE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+33XJA2+47JU+5YRHE",
+      "link_text_default": "韓国ファッション通販のまとめ買いCodibook",
+      "a8mat": "457NRV+33XJA2+47JU+5YRHE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654827+00:00"
+    },
+    "styleonme": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+354EHM+3AI4+61JSI\" rel=\"nofollow\">オフィスレディが選ぶ韓国通販サイト【Styleonme】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+354EHM+3AI4+61JSI\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+354EHM+3AI4+61JSI",
+      "link_text_default": "オフィスレディが選ぶ韓国通販サイト【Styleonme】",
+      "a8mat": "457NRV+354EHM+3AI4+61JSI",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654836+00:00"
+    },
+    "nugu_fashion": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3QK09M+5NOI+5Z6WY\" rel=\"nofollow\">韓国ファッションならNUGU</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+3QK09M+5NOI+5Z6WY\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3QK09M+5NOI+5Z6WY",
+      "link_text_default": "韓国ファッションならNUGU",
+      "a8mat": "457NRV+3QK09M+5NOI+5Z6WY",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654846+00:00"
+    },
+    "karapara007": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3MDZ16+5EUQ+5YJRM\" rel=\"nofollow\">カラコン通販【 カラパラ007】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+3MDZ16+5EUQ+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3MDZ16+5EUQ+5YJRM",
+      "link_text_default": "カラコン通販【 カラパラ007】",
+      "a8mat": "457NRV+3MDZ16+5EUQ+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654860+00:00"
+    },
+    "xexymix_yoga": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3ORPGA+5BZY+5YJRM\" rel=\"nofollow\">韓国No.1ヨガウェアブランド【XEXYMIX】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3ORPGA+5BZY+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3ORPGA+5BZY+5YJRM",
+      "link_text_default": "韓国No.1ヨガウェアブランド【XEXYMIX】",
+      "a8mat": "457NRV+3ORPGA+5BZY+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654875+00:00"
+    },
+    "voyageesim": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30CXNE+5FXM+5YJRM\" rel=\"nofollow\">VOYAGEESIM</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+30CXNE+5FXM+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+30CXNE+5FXM+5YJRM",
+      "link_text_default": "VOYAGEESIM",
+      "a8mat": "457NRV+30CXNE+5FXM+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654886+00:00"
+    },
+    "tora_esim": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+4KX44A+5NG6+5YRHE\" rel=\"nofollow\">【TORA eSIM】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www19.a8.net/0.gif?a8mat=457NRV+4KX44A+5NG6+5YRHE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+4KX44A+5NG6+5YRHE",
+      "link_text_default": "【TORA eSIM】",
+      "a8mat": "457NRV+4KX44A+5NG6+5YRHE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654895+00:00"
+    },
+    "japan_global_esim": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+40ODJU+5HZI+5YJRM\" rel=\"nofollow\">JAPAN &GLOBALeSIM</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+40ODJU+5HZI+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+40ODJU+5HZI+5YJRM",
+      "link_text_default": "JAPAN &GLOBALeSIM",
+      "a8mat": "457NRV+40ODJU+5HZI+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654905+00:00"
+    },
+    "newt_travel": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+41V8RE+5GQS+5YRHE\" rel=\"nofollow\">【NEWT(ニュート)】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+41V8RE+5GQS+5YRHE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+41V8RE+5GQS+5YRHE",
+      "link_text_default": "【NEWT(ニュート)】",
+      "a8mat": "457NRV+41V8RE+5GQS+5YRHE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654914+00:00"
+    },
+    "airtori_hotel": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+53DJVE+AD2+3B34F6\" rel=\"nofollow\">【エアトリ】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+53DJVE+AD2+3B34F6\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+53DJVE+AD2+3B34F6",
+      "link_text_default": "【エアトリ】",
+      "a8mat": "457NRV+53DJVE+AD2+3B34F6",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654930+00:00"
+    },
+    "airtori_plus": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+419T5M+AD2+2N9KIA\" rel=\"nofollow\">キャッチコピーやサービス内容＋【サービス名】をご入力下さい。</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+419T5M+AD2+2N9KIA\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+419T5M+AD2+2N9KIA",
+      "link_text_default": "キャッチコピーやサービス内容＋【サービス名】をご入力下さい。",
+      "a8mat": "457NRV+419T5M+AD2+2N9KIA",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654940+00:00"
+    },
+    "korean_college": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+39VVBU+51XQ+609HU\" rel=\"nofollow\">韓国語オンラインスクールはコリアンカレッジ</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www14.a8.net/0.gif?a8mat=457NRV+39VVBU+51XQ+609HU\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+39VVBU+51XQ+609HU",
+      "link_text_default": "韓国語オンラインスクールはコリアンカレッジ",
+      "a8mat": "457NRV+39VVBU+51XQ+609HU",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654952+00:00"
+    },
+    "whippy_dating": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+39AFQ2+5PVE+5YJRM\" rel=\"nofollow\">マッチングアプリ！友だちから始まる恋愛【ウィッピー】</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+39AFQ2+5PVE+5YJRM\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+39AFQ2+5PVE+5YJRM",
+      "link_text_default": "マッチングアプリ！友だちから始まる恋愛【ウィッピー】",
+      "a8mat": "457NRV+39AFQ2+5PVE+5YJRM",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654962+00:00"
+    },
+    "animate_goods": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+A1E5QY+4ADS+64C3M\" rel=\"nofollow\">アニメイトオンラインショップ</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+A1E5QY+4ADS+64C3M\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+A1E5QY+4ADS+64C3M",
+      "link_text_default": "アニメイトオンラインショップ",
+      "a8mat": "457NRV+A1E5QY+4ADS+64C3M",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654971+00:00"
+    },
+    "amnibus_collab": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+6J69I2+41ZK+5YRHE\" rel=\"nofollow\">アニメのコラボグッズならアムニバス</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+6J69I2+41ZK+5YRHE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+6J69I2+41ZK+5YRHE",
+      "link_text_default": "アニメのコラボグッズならアムニバス",
+      "a8mat": "457NRV+6J69I2+41ZK+5YRHE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654980+00:00"
+    },
+    "soim_maternity": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3LSJFE+48IU+5YRHE\" rel=\"nofollow\">マタニティ服ファッション通販SOIM</a>\n<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+3LSJFE+48IU+5YRHE\" alt=\"\">",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3LSJFE+48IU+5YRHE",
+      "link_text_default": "マタニティ服ファッション通販SOIM",
+      "a8mat": "457NRV+3LSJFE+48IU+5YRHE",
+      "has_img_pixel": true,
+      "registered_at": "2026-04-25T17:02:23.654992+00:00"
+    },
+    "italki_languages": {
+      "html_material": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3C9LQY+5NSE+5YJRM\" rel=\"nofollow\">150以上の言語に対応！外国語を学ぶなら【italki(アイトーキー)】</a>",
+      "raw_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3C9LQY+5NSE+5YJRM",
+      "link_text_default": "150以上の言語に対応！外国語を学ぶなら【italki(アイトーキー)】",
+      "a8mat": "457NRV+3C9LQY+5NSE+5YJRM",
+      "has_img_pixel": false,
+      "registered_at": "2026-04-25T17:02:23.655000+00:00"
+    }
+  }
 }

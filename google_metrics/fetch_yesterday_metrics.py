@@ -206,18 +206,19 @@ def get_adsense_credentials():
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
+            with open(ADSENSE_TOKEN_FILE, "w") as f:
+                f.write(creds.to_json())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                ADSENSE_CLIENT_SECRET_FILE, scopes
-            )
-            creds = flow.run_local_server(port=0)
-        with open(ADSENSE_TOKEN_FILE, "w") as f:
-            f.write(creds.to_json())
+            print("🔴 AdSenseトークン無効。再認証が必要です:")
+            print("  python3 tools/oauth_exchange.py --auth-url")
+            return None
 
     return creds
 
 def get_adsense_data():
     creds = get_adsense_credentials()
+    if creds is None:
+        return {}
     service = build("adsense", "v2", credentials=creds)
 
     report = service.accounts().reports().generate(
