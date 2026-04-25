@@ -92,7 +92,14 @@ def rewrite_with_gpt(post, issues, post_type):
             data=body, headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'})
         r = json.loads(urllib.request.urlopen(req, timeout=90).read())
         result = r['choices'][0]['message']['content'].strip()
-        return re.sub(r'^```html\s*\n?|```\s*$', '', result, flags=re.MULTILINE)
+        # コードブロック除去 (複数パターン対応)
+        result = re.sub(r'```html\s*\n?', '', result, flags=re.IGNORECASE)
+        result = re.sub(r'\n?```\s*$', '', result)
+        result = re.sub(r'^```\s*\n', '', result)
+        # markdown見出しリーク対応
+        result = re.sub(r'^##\s+(.+?)$', r'<h2>\1</h2>', result, flags=re.MULTILINE)
+        result = re.sub(r'^###\s+(.+?)$', r'<h3>\1</h3>', result, flags=re.MULTILINE)
+        return result.strip()
     except Exception as e:
         print(f"  GPT err: {e}")
         return None

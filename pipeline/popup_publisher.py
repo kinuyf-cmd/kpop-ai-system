@@ -250,6 +250,27 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
             if val:
                 meta[f'_popup_{key}'] = val
 
+    # 住所から緯度経度を自動取得
+    if meta.get('_popup_address') and not meta.get('_popup_lat'):
+        try:
+            import urllib.parse as _up
+            import time as _t
+            city_prefix = {'tokyo': '東京 ', 'osaka': '大阪 ', 'nagoya': '名古屋 ',
+                           'fukuoka': '福岡 ', 'seoul-gangnam': '서울 강남 ',
+                           'seoul-seongsu': '서울 성수 ', 'seoul-hongdae': '서울 홍대 ',
+                           'seoul-myeongdong': '서울 명동 '}.get(signal.get('city', ''), '')
+            addr = city_prefix + meta['_popup_address']
+            geo_url = f"https://nominatim.openstreetmap.org/search?q={_up.quote(addr)}&format=json&limit=1"
+            geo_req = urllib.request.Request(geo_url, headers={'User-Agent': 'KPOPJournal-Pub/1.0'})
+            geo_data = json.loads(urllib.request.urlopen(geo_req, timeout=15).read())
+            if geo_data:
+                meta['_popup_lat'] = str(float(geo_data[0]['lat']))
+                meta['_popup_lng'] = str(float(geo_data[0]['lon']))
+                print(f"  geocode: ({geo_data[0]['lat']}, {geo_data[0]['lon']})")
+            _t.sleep(1.2)
+        except Exception as e:
+            print(f"  geocode err: {e}")
+
     body_data = {
         'title': title,
         'content': content,
