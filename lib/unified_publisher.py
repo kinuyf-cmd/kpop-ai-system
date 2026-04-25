@@ -7,6 +7,7 @@ import os, sys, json, urllib.request, base64
 from datetime import datetime
 
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+from lib.cta_injector import inject_cta_into_content
 
 from lib.title_optimizer import optimize_title, generate_slug, generate_meta_description
 from lib.thumbnail_resolver import resolve_thumbnail
@@ -155,6 +156,12 @@ def unified_publish(
         sources_html = f'\n<h2>情報ソース</h2>\n<p>元記事: <a href="{source_url}" target="_blank" rel="noopener">{source_url[:60]}</a></p>'
 
     content = f"{attribution_html}{body_html}\n\n{conf_note}\n{sources_html}"
+
+    # 6.3. CTA自動挿入 (Phase 14)
+    try:
+        content = inject_cta_into_content(title_final, content)
+    except Exception as e:
+        log.append(f"CTA inject err: {e}")
 
     # 6.5. 本文品質ゲート
     import re as _re

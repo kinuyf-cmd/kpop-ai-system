@@ -5,6 +5,7 @@ import sys, os, json, re, urllib.request, base64
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
+from lib.cta_injector import inject_cta_into_content
 load_dotenv()
 
 WP_USER = os.getenv('WP_USER', '')
@@ -325,6 +326,11 @@ def main(max_articles=10):
         status = determine_status(start, end)
 
         content, extra_meta = generate_article_with_gpt(sig, full_text)
+        if content:
+            try:
+                content = inject_cta_into_content(sig.get('title', ''), content)
+            except Exception as e:
+                print(f"  CTA inject err: {e}")
         if not content or len(content) < 200:
             print(f"  記事生成失敗、スキップ")
             mark_processed(sig['url'], None, 'gen_failed')

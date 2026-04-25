@@ -314,6 +314,23 @@ def main():
                 if d.get('ts', '')[:10] == td and d.get('status') == 'ok': xp += 1
             except Exception: pass
 
+    # Phase 14: アフィリ収益サマリ枠
+    aff_summary = {
+        'a8': {'click_24h': 0, 'estimated_24h': 0, 'note': 'A8レポートAPI未実装'},
+        'amazon': {'click_24h': 0, 'estimated_24h': 0, 'note': 'Amazon Reports API未実装'},
+        'rakuten': {'click_24h': 0, 'estimated_24h': 0, 'note': 'A8経由'},
+        'qoo10': {'click_24h': 0, 'estimated_24h': 0, 'note': 'Qoo10 manual'},
+    }
+    cta_log = '/home/aiuser/kpop-ai-system/logs/cta_inject.jsonl'
+    if os.path.exists(cta_log):
+        try:
+            lines = open(cta_log).readlines()
+            if lines:
+                last = json.loads(lines[-1])
+                aff_summary['last_inject'] = last
+        except Exception:
+            pass
+
     data = {
         'generated_at': now.isoformat(), 'targets': KPI_TARGETS,
         'kpi': {
@@ -327,7 +344,7 @@ def main():
         'translation': _translation_status(),
         'dedup': _dedup_stats(),
         'gsc': gsc, 'ga4': ga4, 'adsense': ads,
-        'costs_24h': costs, 'errors': errors, 'agents': agents,
+        'costs_24h': costs, 'errors': errors, 'agents': agents, 'affiliate': aff_summary,
         'recent_posts': [
             {'id': p['id'], 'title': (p['title']['rendered'] if isinstance(p['title'], dict) else p['title'])[:80],
              'date': p['date'], 'classification': _cls(p['title'])} for p in pt[:10]

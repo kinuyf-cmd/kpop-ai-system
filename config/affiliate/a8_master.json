@@ -1,0 +1,394 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "updated_at": "2026-04-26",
+    "total_programs": 38,
+    "categories": ["kpop_goods", "korean_cosme", "korean_fashion", "korean_language", "travel_korea", "esim_wifi", "vod", "lifestyle", "shopping_mall"]
+  },
+  "programs": {
+    "amazon_prime_video": {
+      "pid": "s00000026427001",
+      "name": "Amazon Prime Video",
+      "advertiser": "アマゾンジャパン合同会社",
+      "categories": ["vod"],
+      "tier": 1,
+      "estimated_reward": "1500-2000円/件",
+      "ctr": 1.5,
+      "best_for": ["全アーティスト記事", "カムバック", "MV解説"]
+    },
+    "kvillage_korean_school": {
+      "pid": "s00000020785001",
+      "name": "K Village 韓国語教室",
+      "advertiser": "株式会社K_Village",
+      "categories": ["korean_language"],
+      "tier": 1,
+      "estimated_reward": "8000円/件",
+      "ctr": 0.5,
+      "best_for": ["韓国語学習", "歌詞解説", "推し言語"]
+    },
+    "kvillage_skincare": {
+      "pid": "s00000020785003",
+      "name": "K Village ハーブピーリング",
+      "advertiser": "株式会社K_Village",
+      "categories": ["korean_cosme", "skincare"],
+      "tier": 1,
+      "estimated_reward": "5%-10%料率",
+      "ctr": 1.2,
+      "best_for": ["スキンケア", "美容", "韓国コスメ"]
+    },
+    "kvillage_facial_drtengle": {
+      "pid": "s00000020785004",
+      "name": "K Village 韓国美顔器 Dr.tengle",
+      "advertiser": "株式会社K_Village",
+      "categories": ["beauty_device"],
+      "tier": 1,
+      "estimated_reward": "高単価",
+      "ctr": 0.8,
+      "best_for": ["美容機器", "美容記事"]
+    },
+    "kvillage_facial_pro": {
+      "pid": "s00000020785005",
+      "name": "K Village メイクさんが使う美顔器",
+      "advertiser": "株式会社K_Village",
+      "categories": ["beauty_device"],
+      "tier": 1,
+      "estimated_reward": "高単価",
+      "ctr": 0.8,
+      "best_for": ["プロメイク", "アイドル風"]
+    },
+    "dholic_fashion": {
+      "pid": "s00000016138002",
+      "name": "DHOLIC 韓国ファッション",
+      "advertiser": "株式会社DHOLIC_FBL",
+      "categories": ["korean_fashion"],
+      "tier": 1,
+      "estimated_reward": "4-6%料率",
+      "ctr": 2.0,
+      "best_for": ["ファッション", "推しコーデ"]
+    },
+    "codibook_fashion": {
+      "pid": "s00000019641001",
+      "name": "Codibook 韓国ファッションまとめ買い",
+      "advertiser": "YDEA_Inc.",
+      "categories": ["korean_fashion"],
+      "tier": 2,
+      "estimated_reward": "5%料率",
+      "ctr": 1.8,
+      "best_for": ["ファッション", "プチプラ"]
+    },
+    "styleonme": {
+      "pid": "s00000015358001",
+      "name": "styleonme 韓国アナウンサー愛用",
+      "advertiser": "ONME_CO.,LTD.",
+      "categories": ["korean_fashion"],
+      "tier": 2,
+      "estimated_reward": "5%料率",
+      "ctr": 1.5,
+      "best_for": ["大人ファッション"]
+    },
+    "nugu_fashion": {
+      "pid": "s00000026397001",
+      "name": "NUGU 韓国ファッション",
+      "advertiser": "株式会社CREATE",
+      "categories": ["korean_fashion"],
+      "tier": 2,
+      "estimated_reward": "5%料率",
+      "ctr": 1.5,
+      "best_for": ["トレンドファッション"]
+    },
+    "soim_maternity": {
+      "pid": "s00000019767001",
+      "name": "SOIM 韓国マタニティ服",
+      "advertiser": "C&K_INSIGHT_GROUP",
+      "categories": ["korean_fashion", "maternity"],
+      "tier": 3,
+      "estimated_reward": "5%料率",
+      "ctr": 0.5,
+      "best_for": ["マタニティ", "妊娠中の推し活"]
+    },
+    "olens_poplens": {
+      "pid": "s00000023041001",
+      "name": "OLENS POPLENS カラコン50%OFF",
+      "advertiser": "STARVISION_CO.,LTD.",
+      "categories": ["color_contact"],
+      "tier": 1,
+      "estimated_reward": "800円/件",
+      "ctr": 3.0,
+      "best_for": ["メイク", "推しメイク", "カラコン"]
+    },
+    "karapara007": {
+      "pid": "s00000025253001",
+      "name": "カラパラ007 老舗カラコンEC",
+      "advertiser": "gf.I株式会社",
+      "categories": ["color_contact"],
+      "tier": 2,
+      "estimated_reward": "600円/件",
+      "ctr": 2.0,
+      "best_for": ["カラコン", "メイク"]
+    },
+    "matilda_dept": {
+      "pid": "s00000026662001",
+      "name": "MATILDA DEPT. KPOP愛用アクセ",
+      "advertiser": "株式会社マルコローナ",
+      "categories": ["kpop_goods", "accessory"],
+      "tier": 1,
+      "estimated_reward": "5-10%料率",
+      "ctr": 4.0,
+      "best_for": ["全KPOP記事", "推し活アクセ"]
+    },
+    "xexymix_yoga": {
+      "pid": "s00000024883001",
+      "name": "XEXYMIX 韓国No.1ヨガウェア",
+      "advertiser": "株式会社XEXYMIX_JAPAN",
+      "categories": ["sportswear", "korean_fashion"],
+      "tier": 2,
+      "estimated_reward": "5%料率",
+      "ctr": 1.0,
+      "best_for": ["ヨガ", "ボディメイク"]
+    },
+    "sazo_purchase_agent": {
+      "pid": "s00000027170001",
+      "name": "SAZO 韓国商品購入代行",
+      "advertiser": "株式会社SAZO",
+      "categories": ["shopping_mall"],
+      "tier": 1,
+      "estimated_reward": "中単価",
+      "ctr": 2.5,
+      "best_for": ["韓国ショッピング", "限定品"]
+    },
+    "qoo10_official": {
+      "pid": "s00000022156001",
+      "name": "Qoo10 公式ショッピング",
+      "advertiser": "Qoo10",
+      "categories": ["shopping_mall"],
+      "tier": 1,
+      "estimated_reward": "クーポン経由",
+      "ctr": 3.0,
+      "best_for": ["全KPOP物販", "メガ割期間"]
+    },
+    "rakuten_affiliate": {
+      "pid": "s00000011623001",
+      "name": "楽天アフィリエイト (A8経由)",
+      "advertiser": "楽天株式会社",
+      "categories": ["shopping_mall", "general"],
+      "tier": 1,
+      "estimated_reward": "1-10%料率",
+      "ctr": 2.0,
+      "best_for": ["CD/Blu-ray", "書籍", "ホテル"]
+    },
+    "korea_data_wifi": {
+      "pid": "s00000013909003",
+      "name": "韓国データ 韓国専用WiFiルーター",
+      "advertiser": "株式会社インバウンドプラットフォーム",
+      "categories": ["wifi", "travel_korea"],
+      "tier": 1,
+      "estimated_reward": "1500円/件",
+      "ctr": 1.5,
+      "best_for": ["韓国旅行", "聖地巡礼"]
+    },
+    "global_wifi": {
+      "pid": "s00000011875001",
+      "name": "グローバルWiFi 海外レンタル",
+      "advertiser": "株式会社ビジョン",
+      "categories": ["wifi", "travel"],
+      "tier": 2,
+      "estimated_reward": "1000円/件",
+      "ctr": 1.2,
+      "best_for": ["海外旅行"]
+    },
+    "saily_esim": {
+      "pid": "s00000026058001",
+      "name": "Saily 海外旅行eSIM",
+      "advertiser": "Saily_Inc.",
+      "categories": ["esim", "travel"],
+      "tier": 1,
+      "estimated_reward": "中単価",
+      "ctr": 1.5,
+      "best_for": ["韓国旅行", "海外"]
+    },
+    "voyageesim": {
+      "pid": "s00000025393001",
+      "name": "VOYAGEESIM 海外eSIM",
+      "advertiser": "株式会社クレメンテック",
+      "categories": ["esim", "travel"],
+      "tier": 2,
+      "estimated_reward": "中単価",
+      "ctr": 1.0,
+      "best_for": ["海外旅行"]
+    },
+    "tora_esim": {
+      "pid": "s00000026367001",
+      "name": "TORA eSIM 海外向け",
+      "advertiser": "株式会社食源",
+      "categories": ["esim", "travel"],
+      "tier": 2,
+      "estimated_reward": "中単価",
+      "ctr": 1.0,
+      "best_for": ["海外旅行"]
+    },
+    "japan_global_esim": {
+      "pid": "s00000025659001",
+      "name": "JAPAN&GLOBAL eSIM",
+      "advertiser": "イン・プラス株式会社",
+      "categories": ["esim", "travel"],
+      "tier": 2,
+      "estimated_reward": "中単価",
+      "ctr": 1.0,
+      "best_for": ["海外出張・旅行"]
+    },
+    "kkday_korea": {
+      "pid": "s00000023642001",
+      "name": "KKday 海外アクティビティ予約",
+      "advertiser": "KKday",
+      "categories": ["travel_korea", "activity"],
+      "tier": 1,
+      "estimated_reward": "1500-3000円/件",
+      "ctr": 2.0,
+      "best_for": ["韓国体験", "聖地巡礼", "ポップアップ"]
+    },
+    "buyma_travel": {
+      "pid": "s00000023946002",
+      "name": "BUYMA TRAVEL 現地ガイド",
+      "advertiser": "株式会社BUYMA_TRAVEL",
+      "categories": ["travel_korea", "guide"],
+      "tier": 1,
+      "estimated_reward": "高単価",
+      "ctr": 1.0,
+      "best_for": ["韓国旅行", "プライベートツアー"]
+    },
+    "newt_travel": {
+      "pid": "s00000025498001",
+      "name": "NEWT(ニュート) 旅行アプリ",
+      "advertiser": "株式会社令和トラベル",
+      "categories": ["travel"],
+      "tier": 2,
+      "estimated_reward": "中単価",
+      "ctr": 1.5,
+      "best_for": ["海外旅行検索"]
+    },
+    "airtori_intl": {
+      "pid": "s00000013798001",
+      "name": "エアトリ 海外旅行・航空券",
+      "advertiser": "株式会社エアトリ",
+      "categories": ["travel"],
+      "tier": 1,
+      "estimated_reward": "2500円/件",
+      "ctr": 1.5,
+      "best_for": ["韓国行き航空券"]
+    },
+    "airtori_domestic": {
+      "pid": "s00000001343001",
+      "name": "エアトリ 国内格安航空券",
+      "advertiser": "株式会社エアトリ",
+      "categories": ["travel_domestic"],
+      "tier": 2,
+      "estimated_reward": "1500円/件",
+      "ctr": 1.0,
+      "best_for": ["国内ライブ", "コンサート遠征"]
+    },
+    "airtori_hotel": {
+      "pid": "s00000001343020",
+      "name": "エアトリ 国内ホテル予約",
+      "advertiser": "株式会社エアトリ",
+      "categories": ["travel_domestic", "hotel"],
+      "tier": 2,
+      "estimated_reward": "1200円/件",
+      "ctr": 1.0,
+      "best_for": ["コンサート会場周辺ホテル"]
+    },
+    "airtori_plus": {
+      "pid": "s00000001343016",
+      "name": "エアトリプラス 航空券+ホテル",
+      "advertiser": "株式会社エアトリ",
+      "categories": ["travel_domestic", "package"],
+      "tier": 2,
+      "estimated_reward": "2000円/件",
+      "ctr": 1.0,
+      "best_for": ["ライブ遠征パッケージ"]
+    },
+    "ikkyu_hotel": {
+      "pid": "01-1025",
+      "alt_pid_search": "一休.com",
+      "name": "一休.com 厳選ホテル予約",
+      "advertiser": "株式会社一休",
+      "categories": ["hotel", "luxury"],
+      "tier": 2,
+      "estimated_reward": "1500円/件",
+      "ctr": 0.8,
+      "best_for": ["ライブ後の高級ホテル"]
+    },
+    "yahoo_travel": {
+      "pid": "s00000023050001",
+      "alt_pid_search": "Yahoo!トラベル",
+      "name": "Yahoo!トラベル 国内最大級宿泊",
+      "advertiser": "Yahoo!トラベル",
+      "categories": ["hotel", "travel_domestic"],
+      "tier": 2,
+      "estimated_reward": "1000円/件",
+      "ctr": 1.0,
+      "best_for": ["国内ホテル"]
+    },
+    "dekiru_korean": {
+      "pid": "s00000024248001",
+      "name": "できる韓国語オンライン",
+      "advertiser": "新大久保語学院",
+      "categories": ["korean_language"],
+      "tier": 2,
+      "estimated_reward": "5000円/件",
+      "ctr": 0.5,
+      "best_for": ["韓国語学習"]
+    },
+    "korean_college": {
+      "pid": "s00000023579001",
+      "name": "コリアンカレッジ 韓国語オンライン",
+      "advertiser": "KoreanCollege",
+      "categories": ["korean_language"],
+      "tier": 2,
+      "estimated_reward": "5000円/件",
+      "ctr": 0.5,
+      "best_for": ["韓国語学習"]
+    },
+    "italki_languages": {
+      "pid": "s00000026505001",
+      "alt_pid_search": "italki",
+      "name": "italki 150言語オンライン講師",
+      "advertiser": "italki",
+      "categories": ["language_general", "korean_language"],
+      "tier": 3,
+      "estimated_reward": "中単価",
+      "ctr": 0.5,
+      "best_for": ["語学全般"]
+    },
+    "whippy_dating": {
+      "pid": "s00000026681001",
+      "name": "ウィッピー 韓国No.1マッチング",
+      "advertiser": "株式会社NRISE_Japan",
+      "categories": ["dating", "adult"],
+      "tier": 3,
+      "estimated_reward": "中単価",
+      "ctr": 1.0,
+      "best_for": ["18+ 恋愛・婚活記事のみ"],
+      "warning": "18歳以上向け、子供向け記事には絶対挿入禁止"
+    },
+    "animate_goods": {
+      "pid": "s00000020008001",
+      "name": "アニメイト 日本最大級アニメグッズ",
+      "advertiser": "株式会社アニメイト",
+      "categories": ["anime_goods"],
+      "tier": 3,
+      "estimated_reward": "5%料率",
+      "ctr": 1.0,
+      "best_for": ["アニメコラボ記事"]
+    },
+    "amnibus_collab": {
+      "pid": "s00000018920001",
+      "name": "AMNIBUS アニメ・漫画・ゲームコラボグッズ",
+      "advertiser": "株式会社arma_bianca",
+      "categories": ["anime_goods", "collab"],
+      "tier": 3,
+      "estimated_reward": "5%料率",
+      "ctr": 1.0,
+      "best_for": ["アニメコラボ記事"]
+    }
+  }
+}
