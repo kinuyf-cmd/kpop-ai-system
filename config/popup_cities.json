@@ -1,0 +1,42 @@
+{
+  "tokyo": {
+    "name": "東京", "name_ko": "도쿄", "country": "JP",
+    "lat": 35.6762, "lng": 139.6503, "sub_areas": []
+  },
+  "osaka": {
+    "name": "大阪", "name_ko": "오사카", "country": "JP",
+    "lat": 34.6937, "lng": 135.5023, "sub_areas": []
+  },
+  "nagoya": {
+    "name": "名古屋", "name_ko": "나고야", "country": "JP",
+    "lat": 35.1815, "lng": 136.9066, "sub_areas": []
+  },
+  "fukuoka": {
+    "name": "福岡", "name_ko": "후쿠오카", "country": "JP",
+    "lat": 33.5904, "lng": 130.4017, "sub_areas": []
+  },
+  "seoul-gangnam": {
+    "name": "ソウル江南エリア", "name_ko": "강남 지역", "country": "KR",
+    "lat": 37.5172, "lng": 127.0473,
+    "sub_areas": ["江南", "新沙", "狎鴎亭", "蚕室"],
+    "tag": "ハイブランド+大型モール"
+  },
+  "seoul-seongsu": {
+    "name": "ソウル聖水エリア", "name_ko": "성수 지역", "country": "KR",
+    "lat": 37.5446, "lng": 127.0560,
+    "sub_areas": ["聖水", "城水洞"],
+    "tag": "トレンドカフェ+SM社屋"
+  },
+  "seoul-hongdae": {
+    "name": "ソウル弘大エリア", "name_ko": "홍대 지역", "country": "KR",
+    "lat": 37.5563, "lng": 126.9226,
+    "sub_areas": ["弘大", "新村", "合井", "延南洞"],
+    "tag": "若者文化+ナイトライフ"
+  },
+  "seoul-myeongdong": {
+    "name": "ソウル明洞・龍山エリア", "name_ko": "명동 지역", "country": "KR",
+    "lat": 37.5407, "lng": 126.9904,
+    "sub_areas": ["明洞", "東大門", "龍山", "汝矣島"],
+    "tag": "都心観光+コンサート会場"
+  }
+}
