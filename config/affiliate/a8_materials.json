@@ -1,0 +1,8 @@
+{
+  "_metadata": {
+    "format": "internal_key -> {html_material, raw_url, registered_at}",
+    "description": "A8管理画面でコピーしたHTML素材を保存するマスター",
+    "instruction": "オーナーがA8マイページから各プログラムのHTMLをコピーして登録"
+  },
+  "programs": {}
+}

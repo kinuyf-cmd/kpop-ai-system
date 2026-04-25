@@ -1,0 +1,18 @@
+{
+  "_metadata": {
+    "format": "GW/5月の韓国系イベント手動登録",
+    "instruction": "オーナーが各イベント情報をここに追加。titleが空や(で始まる行はスキップされる"
+  },
+  "events": [
+    {
+      "id": "2026_05_sample",
+      "title": "(オーナー登録待ち)",
+      "date_start": "2026-05-01",
+      "date_end": "2026-05-06",
+      "venue": "",
+      "artist": "",
+      "url": "",
+      "category": "concert/fanmeeting/popup/exhibition"
+    }
+  ]
+}

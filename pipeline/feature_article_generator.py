@@ -186,6 +186,12 @@ def generate_article_content(title, category):
 - 「AI」「ChatGPT」等のメタ言及禁止
 - 末尾に <p class="kpj-disclaimer">※情報は変更になる場合があります。最新情報は公式サイトをご確認ください。</p>
 
+【絶対厳禁】
+- kpopjournal.tokyo への内部リンクを絶対に書かない
+- 「あわせて読みたい」「関連記事」「詳しくはこちら」セクション禁止
+- 架空のURLやページへのリンク禁止
+- 全ての <a> タグ禁止 (リンクは別工程で挿入されるため一切不要)
+
 【出力】HTML本文のみ。前置き・後書き不要"""
 
     body = json.dumps({
