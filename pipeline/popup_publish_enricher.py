@@ -47,10 +47,10 @@ def gsc_indexing_notify(post):
         return False
 
     try:
-        from lib.gsc_indexing import notify_url
+        from lib.gsc_indexing import notify_url_updated
         city = post.get('meta', {}).get('_popup_city', '')
         url = f"https://www.kpopjournal.tokyo/popup/{city}/{pid}/"
-        result = notify_url(url, action='URL_UPDATED')
+        result = notify_url_updated(url)
         os.makedirs(os.path.dirname(log_file), exist_ok=True)
         with open(log_file, 'a', encoding='utf-8') as f:
             f.write(json.dumps({
@@ -72,7 +72,7 @@ def x_post_popup(post):
         return False
 
     try:
-        from lib.x_poster import post_to_x
+        from lib.x_poster import post_tweet
         title = post['title']['rendered']
         city_id = post.get('meta', {}).get('_popup_city', '')
         url = f"https://www.kpopjournal.tokyo/popup/{city_id}/{pid}/"
@@ -85,7 +85,7 @@ def x_post_popup(post):
         if len(text) > 280:
             text = text[:277] + '...'
 
-        result = post_to_x(text)
+        result = post_tweet(text, url)
         with open(log_file, 'a', encoding='utf-8') as f:
             f.write(json.dumps({
                 'post_id': pid, 'text': text[:100],
