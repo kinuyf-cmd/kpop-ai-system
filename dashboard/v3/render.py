@@ -88,6 +88,12 @@ def build(d):
     cost_h = f'''<tr><td>24hコスト</td><td>{fy(co.get("total_jpy"))} ({co.get("calls",0)}呼出) {bysvc}</td></tr>
 <tr><td>推定日次利益</td><td style="color:{"#080" if profit>=0 else "#c00"}"><b>{fy(profit)}</b></td></tr>'''
 
+    # Translation
+    tr = d.get('translation', {})
+    tr_lvl = tr.get('level', 'normal')
+    tr_c = '#c00' if tr_lvl == 'critical' else '#c80' if tr_lvl == 'warning' else '#080'
+    tr_h = f'<tr><td>翻訳API</td><td><b>{tr.get("used",0)}</b> / {tr.get("limit",300)} ({tr.get("pct",0):.0f}%) <span style="color:{tr_c};font-size:11px">{tr_lvl}</span>{bar(tr.get("used",0), tr.get("limit",300))}</td></tr>'
+
     # Agents
     hc = sum(1 for a in ag if a.get('healthy'))
     ag_h = ''.join(f'<tr><td>{"🟢" if a.get("healthy") else "🔴"} {a["name"]}</td><td>{a.get("count_24h",0)}件 <small style="color:#888">{a.get("last","—")}</small></td></tr>' for a in ag)
@@ -114,7 +120,7 @@ def build(d):
 <h2>📈 GA4</h2><table>{ga4_h}</table>
 <h2>🔍 GSC</h2><table>{gsc_h}</table>
 <h2>💰 AdSense</h2><table>{ads_h}</table>
-<h2>💴 コスト</h2><table>{cost_h}</table>
+<h2>💴 コスト</h2><table>{cost_h}{tr_h}</table>
 <h2>👥 AI社員 ({hc}/{len(ag)}稼働)</h2><table>{ag_h}</table>
 
 <h2>⚠️ エラー (24h: {er.get("today_total",0)}件, 重大{er.get("today_critical",0)})</h2>

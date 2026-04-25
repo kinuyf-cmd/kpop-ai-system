@@ -17,11 +17,41 @@ def _count_today():
                if line.strip() and json.loads(line).get('date') == today)
 
 
+THRESHOLD_PATH = '/home/aiuser/kpop-ai-system/data/translation_threshold.json'
+
+
+def _update_threshold(used):
+    """使用率閾値でフラグファイル更新"""
+    pct = used / DAILY_LIMIT * 100
+    if pct >= 90:
+        level = 'critical'
+    elif pct >= 80:
+        level = 'warning'
+    elif pct >= 60:
+        level = 'info'
+    else:
+        level = 'normal'
+    flag = {
+        'level': level,
+        'used': used,
+        'limit': DAILY_LIMIT,
+        'pct': round(pct, 1),
+        'updated_at': datetime.datetime.now().isoformat(),
+    }
+    os.makedirs(os.path.dirname(THRESHOLD_PATH), exist_ok=True)
+    with open(THRESHOLD_PATH, 'w', encoding='utf-8') as f:
+        json.dump(flag, f, ensure_ascii=False, indent=2)
+    if level in ('warning', 'critical'):
+        print(f"  [translation] {level.upper()}: {used}/{DAILY_LIMIT} ({pct:.0f}%)")
+
+
 def translate_ko_to_ja(text, context='K-POP entertainment news'):
     key = os.getenv('OPENAI_API_KEY')
     if not key:
         return {'success': False, 'translated': text, 'reason': 'OPENAI_API_KEY未設定'}
-    if _count_today() >= DAILY_LIMIT:
+    used = _count_today()
+    _update_threshold(used)
+    if used >= DAILY_LIMIT:
         return {'success': False, 'translated': text, 'reason': f'1日上限{DAILY_LIMIT}到達'}
 
     system = ("あなたはK-POP専門の韓国語→日本語翻訳者。"

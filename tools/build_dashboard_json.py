@@ -240,6 +240,17 @@ def _agents():
     return result
 
 
+def _translation_status():
+    """翻訳API使用状況"""
+    p = '/home/aiuser/kpop-ai-system/data/translation_threshold.json'
+    if os.path.exists(p):
+        try:
+            return json.load(open(p, encoding='utf-8'))
+        except Exception:
+            pass
+    return {'used': 0, 'limit': 300, 'pct': 0, 'level': 'normal'}
+
+
 def _delta(a, b):
     if not b: return None
     return round((a - b) / b * 100, 1)
@@ -302,6 +313,7 @@ def main():
         'content_stats': {'week_total': len(wp), 'month_total': len(pm), 'site_total': ta},
         'articles_daily_7d': ad7l,
         'signals_24h': sig, 'x_posts_today': xp,
+        'translation': _translation_status(),
         'gsc': gsc, 'ga4': ga4, 'adsense': ads,
         'costs_24h': costs, 'errors': errors, 'agents': agents,
         'recent_posts': [
