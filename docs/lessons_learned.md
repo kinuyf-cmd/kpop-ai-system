@@ -1,4 +1,4 @@
-# 累積教訓 (2026-04-27 現在、14項目)
+# 累積教訓 (2026-04-26 現在、17項目)
 
 ## 一般教訓
 1. 実装完了≠完了 (本番動作+実データ検証必須)
@@ -102,3 +102,61 @@
 - **gsc_missing**: 8件
 - **meta_short**: 6件
 - **body_short**: 1件
+
+
+## 教訓 #23 (2026-04-26) feedback_loop の検知windowは余裕を持つ
+
+**事象**: post_audit_feedback_loop が10-20分window固定だったため、4/26投稿6件を全件取りこぼした
+- cron起動タイミング(10分・40分)と投稿タイミングが合わず、20分超過で検知漏れ
+
+**対策**: windowを5-60分に拡大。cron周期との不一致を許容する設計にする
+
+## 教訓 #24 (2026-04-26) 通常記事はGSC/X配信パイプラインが未接続
+
+**事象**: popup 20件はGSC+X配信されたが、通常記事6件は全件未配信
+- popup_publish_enricherはpopup専用、通常記事を配信するパイプラインが存在しない
+
+**対策**: unified_publisher or 専用enricher で通常記事のGSC+X配信を自動化する
+
+## 教訓 #26 (2026-04-26) GPT生成テンプレートのラベル露出は正規表現+パイプライン処理で封じる
+
+**事象**: 「リード文：」ラベルが80件の記事本文冒頭に露出していた
+- GPTがセクション識別子（リード文:, 導入文:, セクション1: 等）をそのまま出力
+- LLM校閲でも検出困難（形態素一致で自然な日本語に見える）
+- 441件中80件(18%)に影響
+
+**対策**: 3層防御
+1. `lib/text_sanitizer.py` の `strip_template_labels()` で投稿前にラベル除去
+2. unified_publisher / feature_article_generator / popup_publisher に組み込み
+3. GPTプロンプトに「ラベルを含めない」明示的指示を追加
+
+## 教訓 #25 (2026-04-26) LLM校閲は恒常化してこそ価値がある
+
+**事象**: 手動実行のLLM校閲で critical 0 / high 2 を検出 → 恒常パイプライン(llm_proofreader)として組み込み
+- 4時間毎cron + audit_state.jsonlへのキュー連携で、検出→修正の自動サイクルを実現
+
+**対策**: pipeline/llm_proofreader.py を4時間毎cronで運用、full_audit_engine に項目17として統合
+
+## 教訓 #27 (2026-04-26) 教訓蓄積だけでは同じエラーが繰り返される
+
+**事象**: agent_lessonsに教訓を蓄積しても、GPT生成プロンプトに注入されなければ次回も同じ失敗が発生
+- text_casual_question が9回、slug_encoded が91回と繰り返し検出
+
+**対策**: lib/agent_learning_loop.py の inject_lessons_to_prompt() で教訓→プロンプト自動注入を実装。4つの生成パイプラインに組込済
+
+## 教訓 #28 (2026-04-26) 通常記事のGSC配信パイプラインは既存enricherのcron化で解決
+
+**事象**: post_publish_enricher.py にGSC通知機能があったがcron未登録で稼働していなかった
+- 通常記事18件分のGSC通知が未送信状態だった
+
+**対策**: post_publish_enricher を毎時50分cronに登録。既存機能の活用で新規開発不要
+
+## 教訓 #29 (2026-04-27) cron稼働=機能稼働ではない
+
+**事象**: auto_comeback_article のNameErrorが24h検知されず、cron起動記録のみで正常と誤判断
+**対策**: pipeline_health_monitor (毎時20分) でNameError/ImportError等を自動検知
+
+## 教訓 #30 (2026-04-27) draft滞留はKPI直撃
+
+**事象**: 品質ゲートでdraftに落とされた30記事が review待ちで放置 → 日次KPI未達
+**対策**: high<3かつ200字以上の記事は自動publish。それ以外はrewrite_worker即時投入
