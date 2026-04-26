@@ -1,0 +1,142 @@
+{
+  "slug": "twice",
+  "name": "TWICE",
+  "name_kr": "트와이스",
+  "name_en": "TWICE",
+  "debut_date": "2015-10-20",
+  "agency": "JYP Entertainment",
+  "members": [
+    {
+      "name": "Nayeon",
+      "name_kr": "나연",
+      "birth": "1995-09-22"
+    },
+    {
+      "name": "Jeongyeon",
+      "name_kr": "정연",
+      "birth": "1996-11-01"
+    },
+    {
+      "name": "Momo",
+      "name_kr": "모모",
+      "birth": "1996-11-09"
+    },
+    {
+      "name": "Sana",
+      "name_kr": "사나",
+      "birth": "1996-12-29"
+    },
+    {
+      "name": "Jihyo",
+      "name_kr": "지효",
+      "birth": "1997-02-01"
+    },
+    {
+      "name": "Mina",
+      "name_kr": "미나",
+      "birth": "1997-03-24"
+    },
+    {
+      "name": "Dahyun",
+      "name_kr": "다현",
+      "birth": "1998-05-28"
+    },
+    {
+      "name": "Chaeyoung",
+      "name_kr": "채영",
+      "birth": "1999-04-23"
+    },
+    {
+      "name": "Tzuyu",
+      "name_kr": "쯔위",
+      "birth": "1999-06-14"
+    }
+  ],
+  "official_links": {
+    "website": "https://twice.jype.com",
+    "twitter": "https://twitter.com/JYPETWICE",
+    "instagram": "https://www.instagram.com/twiceglobal/",
+    "youtube": "https://www.youtube.com/c/TWICE",
+    "weverse": "https://weverse.io/twice"
+  },
+  "events": [
+    {
+      "date": "2015-10-20",
+      "type": "debut",
+      "title": "TWICE debut",
+      "note": "Release of mini-album 'The Story Begins'"
+    },
+    {
+      "date": "2016-04-25",
+      "type": "album",
+      "title": "Page Two",
+      "note": "Release of the mini-album containing 'Cheer Up'"
+    },
+    {
+      "date": "2016-10-24",
+      "type": "comeback",
+      "title": "TWICEcoaster: LANE 1",
+      "note": "Release of the mini-album featuring 'TT'"
+    },
+    {
+      "date": "2017-06-28",
+      "type": "album",
+      "title": "SIGNAL",
+      "note": "Release of the mini-album with title track 'Signal'"
+    },
+    {
+      "date": "2018-04-06",
+      "type": "comeback",
+      "title": "What is Love?",
+      "note": "Release of the mini-album with the title track 'What is Love?'"
+    },
+    {
+      "date": "2019-09-23",
+      "type": "comeback",
+      "title": "Feel Special",
+      "note": "Release of the mini-album featuring 'Feel Special'"
+    },
+    {
+      "date": "2020-06-15",
+      "type": "comeback",
+      "title": "More & More",
+      "note": "Release of the mini-album with the title track 'More & More'"
+    },
+    {
+      "date": "2021-11-12",
+      "type": "album",
+      "title": "Formula of Love: O+T=<3",
+      "note": "Release of the full album"
+    },
+    {
+      "date": "2022-08-26",
+      "type": "comeback",
+      "title": "BETWEEN 1&2",
+      "note": "Release of the mini-album"
+    },
+    {
+      "date": "2023-11-10",
+      "type": "comeback",
+      "title": "READY TO BE",
+      "note": "Release of the new full album"
+    },
+    {
+      "date": "2024-05-01",
+      "type": "tour",
+      "title": "TWICE 5th World Tour",
+      "note": "Announcement for the fifth world tour"
+    },
+    {
+      "date": "2025-07-08",
+      "type": "award",
+      "title": "MMA Awards",
+      "note": "WIN for Best Female Group"
+    },
+    {
+      "date": "2026-04-20",
+      "type": "album",
+      "title": "TBD",
+      "note": "Upcoming album release"
+    }
+  ]
+}

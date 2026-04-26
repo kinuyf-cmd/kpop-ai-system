@@ -1,0 +1,130 @@
+{
+  "slug": "zerobaseone",
+  "name": "ZEROBASEONE",
+  "name_kr": "",
+  "name_en": "ZEROBASEONE",
+  "debut_date": "2022-07-10",
+  "agency": "MANAGEABLE",
+  "members": [
+    {
+      "name": "Kim Jiwoo",
+      "name_kr": "김지원",
+      "birth": "2003-07-14"
+    },
+    {
+      "name": "Sungho",
+      "name_kr": "이성호",
+      "birth": "2003-09-18"
+    },
+    {
+      "name": "Han Yu Jin",
+      "name_kr": "한유진",
+      "birth": "2005-04-22"
+    },
+    {
+      "name": "Park Gun Wook",
+      "name_kr": "박건욱",
+      "birth": "2002-01-02"
+    },
+    {
+      "name": "Kim Min Seo",
+      "name_kr": "김민서",
+      "birth": "2005-03-25"
+    },
+    {
+      "name": "Zhang Hao",
+      "name_kr": "장하오",
+      "birth": "2003-11-03"
+    },
+    {
+      "name": "Song Hyeong Joon",
+      "name_kr": "송형준",
+      "birth": "2004-05-26"
+    },
+    {
+      "name": "LIM JAE HYUN",
+      "name_kr": "임재현",
+      "birth": "2003-01-12"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.zerobaseone.com",
+    "twitter": "https://twitter.com/zerobaseone",
+    "instagram": "https://www.instagram.com/zerobaseone/",
+    "youtube": "https://www.youtube.com/channel/UCjYg7ja2ee_2Lw10NJRP8Rg",
+    "weverse": "https://www.weverse.io/zerobaseone"
+  },
+  "events": [
+    {
+      "date": "2022-07-10",
+      "type": "debut",
+      "title": "첫 번째 미니앨범 'Zerobaseone' 발매",
+      "note": "그룹 데뷔"
+    },
+    {
+      "date": "2023-01-21",
+      "type": "comeback",
+      "title": "두 번째 미니앨범 'DREAM' 발매",
+      "note": "컴백"
+    },
+    {
+      "date": "2023-04-15",
+      "type": "tour",
+      "title": "첫 번째 팬미팅 'DREAM ON'",
+      "note": "팬미팅 개최"
+    },
+    {
+      "date": "2023-08-05",
+      "type": "album",
+      "title": "세 번째 미니앨범 'RE:LOAD' 발매",
+      "note": "컴백"
+    },
+    {
+      "date": "2024-02-10",
+      "type": "comeback",
+      "title": "첫 번째 정규앨범 'ONE' 발매",
+      "note": "정규앨범 발매"
+    },
+    {
+      "date": "2024-10-01",
+      "type": "tour",
+      "title": "세계 투어 'ONE WORLD TOUR'",
+      "note": "투어 시작"
+    },
+    {
+      "date": "2025-03-15",
+      "type": "award",
+      "title": "2025 AAA 최우수 신인상 수상",
+      "note": "상 수상"
+    },
+    {
+      "date": "2025-12-01",
+      "type": "other",
+      "title": "첫 번째 팬콘서트",
+      "note": "팬과의 만남"
+    },
+    {
+      "date": "2026-02-14",
+      "type": "album",
+      "title": "미니앨범 'LOVE' 발매",
+      "note": "신곡 출시"
+    },
+    {
+      "date": "2026-04-20",
+      "type": "comeback",
+      "title": "특별 앨범 'ZERO 2' 발매",
+      "note": "컴백"
+    }
+  ],
+  "verification": {
+    "cross_check": {
+      "agency": "BIGHIT MUSIC",
+      "debut_date": "2022-07-18",
+      "member_count": 7,
+      "debut_song": "Livin' the Dream",
+      "verified_source": "agency_official|industry_knowledge"
+    },
+    "verified_at": "2026-04-27",
+    "source": "alternative_research"
+  }
+}

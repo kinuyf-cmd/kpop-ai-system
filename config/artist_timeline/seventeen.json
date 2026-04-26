@@ -1,0 +1,157 @@
+{
+  "slug": "seventeen",
+  "name": "SEVENTEEN",
+  "name_kr": "세븐틴",
+  "name_en": "SEVENTEEN",
+  "debut_date": "2015-05-26",
+  "agency": "PLEDIS Entertainment",
+  "members": [
+    {
+      "name": "S.Coups",
+      "name_kr": "에스쿱스",
+      "birth": "1995-08-08"
+    },
+    {
+      "name": "Jeonghan",
+      "name_kr": "정한",
+      "birth": "1995-10-04"
+    },
+    {
+      "name": "Joshua",
+      "name_kr": "조슈아",
+      "birth": "1999-12-30"
+    },
+    {
+      "name": "Jun",
+      "name_kr": "준",
+      "birth": "1996-06-10"
+    },
+    {
+      "name": "Hoshi",
+      "name_kr": "호시",
+      "birth": "1996-06-15"
+    },
+    {
+      "name": "Woozi",
+      "name_kr": "우지",
+      "birth": "1996-11-22"
+    },
+    {
+      "name": "DK",
+      "name_kr": "디에이키",
+      "birth": "1997-02-18"
+    },
+    {
+      "name": "Mingyu",
+      "name_kr": "민규",
+      "birth": "1997-04-06"
+    },
+    {
+      "name": "The8",
+      "name_kr": "디에잇",
+      "birth": "1997-11-07"
+    },
+    {
+      "name": "Seungkwan",
+      "name_kr": "승관",
+      "birth": "1998-01-16"
+    },
+    {
+      "name": "Vernon",
+      "name_kr": "버논",
+      "birth": "1998-02-18"
+    },
+    {
+      "name": "Dino",
+      "name_kr": "디노",
+      "birth": "1999-02-11"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.seventeen-13.com",
+    "twitter": "https://twitter.com/pledis_17",
+    "instagram": "https://www.instagram.com/seventeen/",
+    "youtube": "https://www.youtube.com/c/seventeen",
+    "weverse": "https://weverse.io/seventeen"
+  },
+  "events": [
+    {
+      "date": "2015-05-26",
+      "type": "debut",
+      "title": "1st Mini Album '17 Carat'",
+      "note": "デビュー"
+    },
+    {
+      "date": "2016-07-18",
+      "type": "comeback",
+      "title": "2nd Mini Album 'Love & Letter'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2016-11-06",
+      "type": "album",
+      "title": "1st Album 'Love & Letter'",
+      "note": "初のフルアルバム"
+    },
+    {
+      "date": "2017-12-21",
+      "type": "comeback",
+      "title": "Special Album 'Director's Cut'",
+      "note": "特別アルバム"
+    },
+    {
+      "date": "2018-09-16",
+      "type": "comeback",
+      "title": "6th Mini Album 'You Make My Day'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2019-09-16",
+      "type": "comeback",
+      "title": "7th Mini Album 'Heng:graffiti'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2020-06-19",
+      "type": "comeback",
+      "title": "8th Mini Album 'Your Choice'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2021-09-10",
+      "type": "album",
+      "title": "9th Mini Album 'Attacca'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2022-05-27",
+      "type": "comeback",
+      "title": "4th Album 'Face the Sun'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2023-10-29",
+      "type": "comeback",
+      "title": "10th Mini Album 'FML'",
+      "note": "カムバック"
+    },
+    {
+      "date": "2024-04-06",
+      "type": "tour",
+      "title": "SEVENTEEN WORLD TOUR 'FOLLOW'",
+      "note": "ワールドツアー"
+    },
+    {
+      "date": "2025-05-26",
+      "type": "anniversary",
+      "title": "10th Debut Anniversary",
+      "note": "デビュー10周年"
+    },
+    {
+      "date": "2026-04-01",
+      "type": "album",
+      "title": "New Album Announcement",
+      "note": "新アルバム発表予定"
+    }
+  ]
+}

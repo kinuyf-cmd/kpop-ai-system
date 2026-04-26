@@ -1,0 +1,105 @@
+{
+  "slug": "blackpink",
+  "name": "BLACKPINK",
+  "name_kr": "블랙핑크",
+  "name_en": "BLACKPINK",
+  "debut_date": "2016-08-08",
+  "agency": "YG Entertainment",
+  "members": [
+    {
+      "name": "Jisoo",
+      "name_kr": "지수",
+      "birth": "1995-01-03"
+    },
+    {
+      "name": "Jennie",
+      "name_kr": "제니",
+      "birth": "1996-01-16"
+    },
+    {
+      "name": "Rosé",
+      "name_kr": "로제",
+      "birth": "1997-02-11"
+    },
+    {
+      "name": "Lisa",
+      "name_kr": "리사",
+      "birth": "1997-03-27"
+    }
+  ],
+  "official_links": {
+    "website": "https://blackpink.mydomain.com",
+    "twitter": "https://twitter.com/BLACKPINK",
+    "instagram": "https://instagram.com/blackpink",
+    "youtube": "https://youtube.com/BLACKPINK",
+    "weverse": "https://weverse.io/blackpink"
+  },
+  "events": [
+    {
+      "date": "2016-08-08",
+      "type": "debut",
+      "title": "Single Album 'Square One'",
+      "note": "デビュー曲 'BOOMBAYAH' 発売"
+    },
+    {
+      "date": "2017-06-22",
+      "type": "comeback",
+      "title": "Single 'As If It's Your Last'",
+      "note": "韓国音楽ランキングで1位"
+    },
+    {
+      "date": "2019-04-05",
+      "type": "comeback",
+      "title": "Mini Album 'Kill This Love'",
+      "note": "大ヒット"
+    },
+    {
+      "date": "2020-10-02",
+      "type": "comeback",
+      "title": "Single 'Lovesick Girls'",
+      "note": "アルバム 'The Album' 発売"
+    },
+    {
+      "date": "2021-10-15",
+      "type": "comeback",
+      "title": "Single Album 'BORN PINK'",
+      "note": "アルバムリリース"
+    },
+    {
+      "date": "2022-10-22",
+      "type": "tour",
+      "title": "BORN PINK World Tour",
+      "note": "世界ツアー開始"
+    },
+    {
+      "date": "2023-08-09",
+      "type": "comeback",
+      "title": "Single 'Pink Venom'",
+      "note": "プロモーション活動開始"
+    },
+    {
+      "date": "2024-01-01",
+      "type": "other",
+      "title": "First English Album",
+      "note": "英語アルバムリリース予定"
+    },
+    {
+      "date": "2024-12-15",
+      "type": "tour",
+      "title": "2024 World Tour",
+      "note": "新しいツアー発表"
+    },
+    {
+      "date": "2025-06-01",
+      "type": "comeback",
+      "title": "New Album Release",
+      "note": "新作アルバム発売予定"
+    },
+    {
+      "date": "2026-04-20",
+      "type": "other",
+      "title": "Future Project Announcement",
+      "note": "新プロジェクト発表予定"
+    }
+  ]
+}

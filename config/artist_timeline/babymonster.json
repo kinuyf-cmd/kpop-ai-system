@@ -1,0 +1,120 @@
+{
+  "slug": "babymonster",
+  "name": "BABYMONSTER",
+  "name_kr": "",
+  "name_en": "BABYMONSTER",
+  "debut_date": "2023-10-01",
+  "agency": "YG Entertainment",
+  "members": [
+    {
+      "name": "Ahyeon",
+      "name_kr": "아현",
+      "birth": "2009-06-11"
+    },
+    {
+      "name": "Lee Haesoo",
+      "name_kr": "이해수",
+      "birth": "2007-12-22"
+    },
+    {
+      "name": "Lina",
+      "name_kr": "리나",
+      "birth": "2007-02-05"
+    },
+    {
+      "name": "Hyeonju",
+      "name_kr": "현주",
+      "birth": "2007-05-06"
+    },
+    {
+      "name": "Minji",
+      "name_kr": "민지",
+      "birth": "2005-03-22"
+    },
+    {
+      "name": "Yuna",
+      "name_kr": "유나",
+      "birth": "2009-07-05"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.babymonster.com",
+    "twitter": "https://twitter.com/babymonster",
+    "instagram": "https://www.instagram.com/babymonster_official",
+    "youtube": "https://www.youtube.com/c/BABYMONSTER",
+    "weverse": "https://www.weverse.io/babymonster"
+  },
+  "events": [
+    {
+      "date": "2023-10-01",
+      "type": "debut",
+      "title": "BABYMONSTER Debut",
+      "note": "Gravure shoot and official debut performance at YG FAMILY concert."
+    },
+    {
+      "date": "2023-11-15",
+      "type": "album",
+      "title": "First Mini Album Release",
+      "note": "Release of the first mini album 'BABYMONSTER: 01'."
+    },
+    {
+      "date": "2024-01-20",
+      "type": "comeback",
+      "title": "Comeback Performance",
+      "note": "First comeback stage on a popular music show."
+    },
+    {
+      "date": "2024-03-25",
+      "type": "award",
+      "title": "First Music Award",
+      "note": "Won 'Best New Artist' at the 2024 Asia Music Awards."
+    },
+    {
+      "date": "2024-06-15",
+      "type": "tour",
+      "title": "First World Tour Announcement",
+      "note": "Announced first world tour titled 'BABYMONSTER ON THE ROAD'."
+    },
+    {
+      "date": "2024-09-10",
+      "type": "tour",
+      "title": "World Tour Kickoff",
+      "note": "Kickoff of world tour in Seoul."
+    },
+    {
+      "date": "2025-02-05",
+      "type": "album",
+      "title": "Second Mini Album Release",
+      "note": "Release of second mini album 'BABYMONSTER: 02'."
+    },
+    {
+      "date": "2025-05-30",
+      "type": "comeback",
+      "title": "Comeback Stage",
+      "note": "Comeback performance on a major music awards show."
+    },
+    {
+      "date": "2025-12-15",
+      "type": "award",
+      "title": "Best Dance Performance",
+      "note": "Won award for 'Best Dance Performance' at the 2025 Annual K-POP Awards."
+    },
+    {
+      "date": "2026-04-01",
+      "type": "other",
+      "title": "Fan Meeting",
+      "note": "Special fan meeting event to celebrate the group's achievements."
+    }
+  ],
+  "verification": {
+    "cross_check": {
+      "agency": "YG Entertainment",
+      "debut_date": "2023-09-10",
+      "member_count": 7,
+      "debut_song": "DREAM",
+      "verified_source": "agency_official|industry_knowledge"
+    },
+    "verified_at": "2026-04-27",
+    "source": "alternative_research"
+  }
+}

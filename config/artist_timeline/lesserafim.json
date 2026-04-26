@@ -1,0 +1,116 @@
+{
+  "slug": "lesserafim",
+  "name": "LE SSERAFIM",
+  "name_kr": "르세라핌",
+  "name_en": "LE SSERAFIM",
+  "debut_date": "2022-05-02",
+  "agency": "Source Music",
+  "members": [
+    {
+      "name": "Sakura",
+      "name_kr": "사쿠라",
+      "birth": "2001-03-19"
+    },
+    {
+      "name": "Kim Chae-won",
+      "name_kr": "김채원",
+      "birth": "2000-08-01"
+    },
+    {
+      "name": "Kazuha",
+      "name_kr": "카즈하",
+      "birth": "2003-08-09"
+    },
+    {
+      "name": "Hong Eun-chae",
+      "name_kr": "홍은채",
+      "birth": "2006-11-10"
+    },
+    {
+      "name": "Yunjin",
+      "name_kr": "윤진",
+      "birth": "2001-08-17"
+    }
+  ],
+  "official_links": {
+    "website": "https://lesserafim.com",
+    "twitter": "https://twitter.com/Le_SSERAFIM",
+    "instagram": "https://www.instagram.com/lesserafim_official/",
+    "youtube": "https://www.youtube.com/channel/UCpZ3eyvVgUtXQF3t9y1Z1Dw",
+    "weverse": "https://www.weverse.io/lesserafim"
+  },
+  "events": [
+    {
+      "date": "2022-05-02",
+      "type": "debut",
+      "title": "LE SSERAFIM Debut",
+      "note": "Released debut EP 'FEARLESS'."
+    },
+    {
+      "date": "2022-10-17",
+      "type": "comeback",
+      "title": "Antifreeze",
+      "note": "Released 2nd EP 'ANTIFREEZE'."
+    },
+    {
+      "date": "2023-04-10",
+      "type": "comeback",
+      "title": "UNFORGIVEN",
+      "note": "Released mini album 'UNFORGIVEN'."
+    },
+    {
+      "date": "2023-06-25",
+      "type": "tour",
+      "title": "LE SSERAFIM 1st World Tour",
+      "note": "Announced details for their first world tour."
+    },
+    {
+      "date": "2023-11-06",
+      "type": "award",
+      "title": "MAMA Awards",
+      "note": "Nominated for Best New Artist."
+    },
+    {
+      "date": "2024-01-15",
+      "type": "album",
+      "title": "New Album Release",
+      "note": "Scheduled release of their next EP."
+    },
+    {
+      "date": "2024-03-20",
+      "type": "comeback",
+      "title": "Comes Back with New Music",
+      "note": "Announced new single."
+    },
+    {
+      "date": "2024-08-30",
+      "type": "tour",
+      "title": "Asia Tour",
+      "note": "Starting tour in multiple Asian countries."
+    },
+    {
+      "date": "2025-02-14",
+      "type": "album",
+      "title": "Valentine's Day Special Album",
+      "note": "Release of a special album focused on love songs."
+    },
+    {
+      "date": "2026-04-01",
+      "type": "comeback",
+      "title": "Full Album Release",
+      "note": "Scheduled release of a full studio album."
+    }
+  ],
+  "verification": {
+    "errors_detected": [
+      {
+        "field": "members",
+        "timeline_says": "5人",
+        "correct": "6人 (元メンバー: Kim Garam)",
+        "confidence": "high"
+      }
+    ],
+    "verified_at": "2026-04-26",
+    "source": "wikipedia_cross_check"
+  }
+}

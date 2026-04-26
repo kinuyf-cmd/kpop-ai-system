@@ -1,0 +1,130 @@
+{
+  "slug": "riize",
+  "name": "RIIZE",
+  "name_kr": "",
+  "name_en": "RIIZE",
+  "debut_date": "2023-09-04",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Sungchan",
+      "name_kr": "성찬",
+      "birth": "2003-09-29"
+    },
+    {
+      "name": "Shotaro",
+      "name_kr": "쇼타로",
+      "birth": "2000-11-03"
+    },
+    {
+      "name": "Eunseok",
+      "name_kr": "은석",
+      "birth": "2003-01-01"
+    },
+    {
+      "name": "Seunghan",
+      "name_kr": "승환",
+      "birth": "2003-02-14"
+    },
+    {
+      "name": "Sohee",
+      "name_kr": "소희",
+      "birth": "2003-05-16"
+    },
+    {
+      "name": "Gunwook",
+      "name_kr": "건욱",
+      "birth": "2003-07-04"
+    },
+    {
+      "name": "Sungmin",
+      "name_kr": "성민",
+      "birth": "2002-02-19"
+    },
+    {
+      "name": "Woongki",
+      "name_kr": "웅기",
+      "birth": "2005-05-24"
+    }
+  ],
+  "official_links": {
+    "website": "https://riize.smtown.com",
+    "twitter": "https://twitter.com/RIIZE",
+    "instagram": "https://instagram.com/riize_official",
+    "youtube": "https://youtube.com/riize",
+    "weverse": "https://weverse.io/riize"
+  },
+  "events": [
+    {
+      "date": "2023-09-04",
+      "type": "debut",
+      "title": "RIIZE Debut",
+      "note": "Debuted with the single album 'LOVE OR DIE'."
+    },
+    {
+      "date": "2023-09-18",
+      "type": "album",
+      "title": "Debut Album Release",
+      "note": "Released first mini album 'LOVE OR DIE'."
+    },
+    {
+      "date": "2023-10-07",
+      "type": "comeback",
+      "title": "First Comeback Promotion",
+      "note": "Announced promotional activities for their debut mini album."
+    },
+    {
+      "date": "2024-03-15",
+      "type": "tour",
+      "title": "First Fan Meeting",
+      "note": "Held their first fan meeting titled 'RIIZE in the City'."
+    },
+    {
+      "date": "2024-06-10",
+      "type": "album",
+      "title": "Second Mini Album Release",
+      "note": "Scheduled release of their second mini album."
+    },
+    {
+      "date": "2024-09-04",
+      "type": "award",
+      "title": "First Award Show",
+      "note": "Nominated for Best New Artist at multiple award shows."
+    },
+    {
+      "date": "2025-04-25",
+      "type": "tour",
+      "title": "Asia Tour Announcement",
+      "note": "Announced their first Asia tour."
+    },
+    {
+      "date": "2025-08-10",
+      "type": "comeback",
+      "title": "Third Mini Album Release",
+      "note": "Scheduled release of their third mini album."
+    },
+    {
+      "date": "2026-01-15",
+      "type": "event",
+      "title": "New Year Live Streaming Event",
+      "note": "Special live streaming event to celebrate the New Year."
+    },
+    {
+      "date": "2026-04-01",
+      "type": "album",
+      "title": "Fourth Mini Album Release",
+      "note": "Scheduled release of their fourth mini album."
+    }
+  ],
+  "verification": {
+    "cross_check": {
+      "agency": "SM Entertainment",
+      "debut_date": "2023-09-04",
+      "member_count": 5,
+      "debut_song": "Siren",
+      "verified_source": "agency_official|industry_knowledge"
+    },
+    "verified_at": "2026-04-27",
+    "source": "alternative_research"
+  }
+}

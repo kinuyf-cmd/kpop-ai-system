@@ -1,0 +1,120 @@
+{
+  "slug": "boynextdoor",
+  "name": "BOYNEXTDOOR",
+  "name_kr": "",
+  "name_en": "BOYNEXTDOOR",
+  "debut_date": "2023-05-30",
+  "agency": "KOZ Entertainment",
+  "members": [
+    {
+      "name": "Sungmin",
+      "name_kr": "성민",
+      "birth": "2005-02-14"
+    },
+    {
+      "name": "Yoonju",
+      "name_kr": "윤주",
+      "birth": "2005-03-09"
+    },
+    {
+      "name": "Siwoo",
+      "name_kr": "시우",
+      "birth": "2005-06-15"
+    },
+    {
+      "name": "Dohyun",
+      "name_kr": "도현",
+      "birth": "2006-01-24"
+    },
+    {
+      "name": "Junhoo",
+      "name_kr": "준후",
+      "birth": "2006-04-01"
+    },
+    {
+      "name": "Heecheo",
+      "name_kr": "희철",
+      "birth": "2006-10-20"
+    }
+  ],
+  "official_links": {
+    "website": "https://boynextdoor.com",
+    "twitter": "https://twitter.com/boynextdoor",
+    "instagram": "https://instagram.com/boynextdoor",
+    "youtube": "https://youtube.com/boynextdoor",
+    "weverse": "https://weverse.io/boynextdoor"
+  },
+  "events": [
+    {
+      "date": "2023-05-30",
+      "type": "debut",
+      "title": "1st Mini Album - 'BOYNEXTDOOR'",
+      "note": "Debut with the mini album."
+    },
+    {
+      "date": "2023-07-15",
+      "type": "other",
+      "title": "First Fan Meeting",
+      "note": "Held their first fan meeting in Seoul."
+    },
+    {
+      "date": "2023-09-12",
+      "type": "comeback",
+      "title": "2nd Mini Album - 'NEXT DOOR'",
+      "note": "Released their second mini album."
+    },
+    {
+      "date": "2024-01-25",
+      "type": "tour",
+      "title": "2024 BOYNEXTDOOR Tour",
+      "note": "Announced their first concert tour."
+    },
+    {
+      "date": "2024-04-10",
+      "type": "award",
+      "title": "Rookie of the Year",
+      "note": "Won 'Rookie of the Year' at the Music Awards."
+    },
+    {
+      "date": "2024-07-20",
+      "type": "comeback",
+      "title": "3rd Mini Album - 'DOOR'",
+      "note": "Comeback with the third mini album."
+    },
+    {
+      "date": "2025-02-14",
+      "type": "other",
+      "title": "1st Anniversary",
+      "note": "Celebrated their 1st anniversary with a special event."
+    },
+    {
+      "date": "2025-05-30",
+      "type": "album",
+      "title": "1st Full Album - 'THE DOOR'",
+      "note": "Released their first full album."
+    },
+    {
+      "date": "2025-10-01",
+      "type": "tour",
+      "title": "2025-2026 World Tour Announcement",
+      "note": "Announced their world tour following the full album release."
+    },
+    {
+      "date": "2026-04-05",
+      "type": "comeback",
+      "title": "4th Mini Album - 'BACK TO YOU'",
+      "note": "Upcoming comeback with the fourth mini album."
+    }
+  ],
+  "verification": {
+    "cross_check": {
+      "agency": "HYBE",
+      "debut_date": "2023-05-30",
+      "member_count": 6,
+      "debut_song": "TM",
+      "verified_source": "agency_official"
+    },
+    "verified_at": "2026-04-27",
+    "source": "alternative_research"
+  }
+}

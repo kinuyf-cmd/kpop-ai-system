@@ -1,0 +1,99 @@
+{
+  "slug": "aespa",
+  "name": "aespa",
+  "name_kr": "에스파",
+  "name_en": "aespa",
+  "debut_date": "2020-11-17",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Karina",
+      "name_kr": "카리나",
+      "birth": "2000-04-11"
+    },
+    {
+      "name": "Winter",
+      "name_kr": "윈터",
+      "birth": "2001-01-01"
+    },
+    {
+      "name": "Giselle",
+      "name_kr": "지젤",
+      "birth": "2000-10-30"
+    },
+    {
+      "name": "Ningning",
+      "name_kr": "닝닝",
+      "birth": "2002-10-23"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.aespa.com",
+    "twitter": "https://twitter.com/aespa_official",
+    "instagram": "https://www.instagram.com/aespa_official/",
+    "youtube": "https://www.youtube.com/c/aespa",
+    "weverse": "https://weverse.io/aespa"
+  },
+  "events": [
+    {
+      "date": "2020-11-17",
+      "type": "debut",
+      "title": "Black Mamba",
+      "note": "デビューシングル"
+    },
+    {
+      "date": "2021-05-17",
+      "type": "comeback",
+      "title": "Next Level",
+      "note": "リメイク曲"
+    },
+    {
+      "date": "2021-07-08",
+      "type": "album",
+      "title": "Savage",
+      "note": "デビューミニアルバム"
+    },
+    {
+      "date": "2022-02-20",
+      "type": "other",
+      "title": "2022 Winter Olympics",
+      "note": "オリンピック開会式パフォーマンス"
+    },
+    {
+      "date": "2022-05-17",
+      "type": "comeback",
+      "title": "Girls",
+      "note": "コンセプトシングル"
+    },
+    {
+      "date": "2023-02-20",
+      "type": "album",
+      "title": "Spicy",
+      "note": "シングルリリース"
+    },
+    {
+      "date": "2023-05-08",
+      "type": "comeback",
+      "title": "The Last Ride",
+      "note": "アルバムリリース"
+    },
+    {
+      "date": "2024-01-19",
+      "type": "tour",
+      "title": "aespa Concert",
+      "note": "ワールドツアー開始"
+    },
+    {
+      "date": "2024-05-12",
+      "type": "award",
+      "title": "Billboard Music Awards",
+      "note": "最優秀アジアアーティスト受賞"
+    },
+    {
+      "date": "2026-04-01",
+      "type": "other",
+      "title": "New Collaboration",
+      "note": "新曲参加情報発表"
+    }
+  ]
+}

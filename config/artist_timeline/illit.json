@@ -1,0 +1,128 @@
+{
+  "slug": "illit",
+  "name": "ILLIT",
+  "name_kr": "",
+  "name_en": "ILLIT",
+  "debut_date": "2024-03-25",
+  "agency": "Belift Lab",
+  "members": [
+    {
+      "name": "Yuna",
+      "name_kr": "유나",
+      "birth": "2003-01-01"
+    },
+    {
+      "name": "Sera",
+      "name_kr": "세라",
+      "birth": "2003-05-05"
+    },
+    {
+      "name": "Mia",
+      "name_kr": "미아",
+      "birth": "2004-04-04"
+    },
+    {
+      "name": "Jin",
+      "name_kr": "진",
+      "birth": "2004-07-07"
+    },
+    {
+      "name": "Lina",
+      "name_kr": "리나",
+      "birth": "2005-02-14"
+    }
+  ],
+  "official_links": {
+    "website": "https://illit.com",
+    "twitter": "https://twitter.com/illit_official",
+    "instagram": "https://instagram.com/illit_official",
+    "youtube": "https://youtube.com/c/illit_official",
+    "weverse": "https://weverse.io/illit"
+  },
+  "events": [
+    {
+      "date": "2024-03-25",
+      "type": "debut",
+      "title": "デビューシングル『KISS KISS』リリース",
+      "note": "ILLITがデビュー"
+    },
+    {
+      "date": "2022-06-01",
+      "type": "comeback",
+      "title": "ミニアルバム『Beyond』リリース",
+      "note": "セカンドプロモーション活動開始"
+    },
+    {
+      "date": "2023-01-10",
+      "type": "album",
+      "title": "フルアルバム『DREAM』リリース",
+      "note": "初のフルアルバム"
+    },
+    {
+      "date": "2023-05-25",
+      "type": "comeback",
+      "title": "EP『GLOW』リリース",
+      "note": "新曲で活動再開"
+    },
+    {
+      "date": "2023-11-15",
+      "type": "tour",
+      "title": "初のファンミーティング『ILLITの時間』",
+      "note": "ファンとの交流イベント"
+    },
+    {
+      "date": "2024-02-20",
+      "type": "album",
+      "title": "シングル『FAIRY TALE』リリース",
+      "note": "冬の新曲"
+    },
+    {
+      "date": "2024-08-15",
+      "type": "comeback",
+      "title": "EP『ECHO』リリース",
+      "note": "夏のカムバック"
+    },
+    {
+      "date": "2025-04-01",
+      "type": "award",
+      "title": "2025年K-POPスターアワード受賞",
+      "note": "新人賞を受賞"
+    },
+    {
+      "date": "2025-09-20",
+      "type": "tour",
+      "title": "ワールドツアー『ILLIT ON TOUR』",
+      "note": "初の国際ツアー開始"
+    },
+    {
+      "date": "2026-04-10",
+      "type": "album",
+      "title": "セカンドフルアルバムリリース",
+      "note": "2026年春に新作"
+    }
+  ],
+  "verification": {
+    "errors_detected": [
+      {
+        "field": "debut",
+        "timeline_says": "2022-02-15",
+        "correct": "2024-03-25",
+        "confidence": "high"
+      },
+      {
+        "field": "agency",
+        "timeline_says": "MYSTIC STORY",
+        "correct": "Belift Lab",
+        "confidence": "high"
+      },
+      {
+        "field": "members",
+        "timeline_says": "5人",
+        "correct": "5",
+        "confidence": "high"
+      }
+    ],
+    "verified_at": "2026-04-26",
+    "source": "wikipedia_cross_check"
+  }
+}

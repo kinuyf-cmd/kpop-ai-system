@@ -1,0 +1,36 @@
+{
+  "slug":"bts","name":"BTS","name_kr":"방탄소년단","name_en":"BTS",
+  "debut_date":"2013-06-13","agency":"BIGHIT MUSIC",
+  "members":[
+    {"name":"RM","name_kr":"RM","birth":"1994-09-12"},
+    {"name":"Jin","name_kr":"진","birth":"1992-12-04"},
+    {"name":"SUGA","name_kr":"슈가","birth":"1993-03-09"},
+    {"name":"j-hope","name_kr":"제이홉","birth":"1994-02-18"},
+    {"name":"Jimin","name_kr":"지민","birth":"1995-10-13"},
+    {"name":"V","name_kr":"뷔","birth":"1995-12-30"},
+    {"name":"Jungkook","name_kr":"정국","birth":"1997-09-01"}
+  ],
+  "official_links":{
+    "website":"https://ibighit.com/bts/",
+    "twitter":"https://twitter.com/BTS_twt",
+    "instagram":"https://www.instagram.com/bts.bighitofficial/",
+    "youtube":"https://www.youtube.com/@BANGTANTV",
+    "weverse":"https://weverse.io/bts"
+  },
+  "events":[
+    {"date":"2013-06-13","type":"debut","title":"デビュー：2 COOL 4 SKOOL","note":"7人組ボーイズグループ・デビュー"},
+    {"date":"2014-08-19","type":"album","title":"DARK&WILD (1st正規アルバム)"},
+    {"date":"2015-04-29","type":"album","title":"花様年華 pt.1 (mini)","note":"I NEED U でブレイク"},
+    {"date":"2016-10-10","type":"album","title":"WINGS (2nd正規アルバム)","note":"初Billboard 200 #26"},
+    {"date":"2017-05-21","type":"award","title":"Billboard Music Awards Top Social Artist 受賞","note":"K-POPアーティスト初"},
+    {"date":"2018-05-18","type":"album","title":"LOVE YOURSELF 轉 'Tear'","note":"K-POP史上初Billboard 200 #1"},
+    {"date":"2018-09-24","type":"other","title":"国連総会スピーチ","note":"UNICEF Love Myself キャンペーン"},
+    {"date":"2019-04-12","type":"album","title":"MAP OF THE SOUL : PERSONA (mini)"},
+    {"date":"2020-02-21","type":"album","title":"MAP OF THE SOUL : 7 (4th正規アルバム)"},
+    {"date":"2020-08-21","type":"comeback","title":"Dynamite","note":"K-POP史上初Billboard Hot 100 #1"},
+    {"date":"2020-11-20","type":"album","title":"BE (5th正規アルバム)"},
+    {"date":"2021-05-21","type":"comeback","title":"Butter","note":"Hot 100で10週#1"},
+    {"date":"2022-06-10","type":"album","title":"Proof (アンソロジー)","note":"デビュー9周年記念"},
+    {"date":"2022-12-13","type":"other","title":"Jin入隊開始","note":"メンバー順次兵役"}
+  ]
+}

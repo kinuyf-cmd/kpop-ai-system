@@ -1,0 +1,30 @@
+{
+  "created": "2026-04-26",
+  "reason": "X CreditsDepleted",
+  "queue": [
+    {
+      "pid": 4392,
+      "type": "post"
+    },
+    {
+      "pid": 4521,
+      "type": "post"
+    },
+    {
+      "pid": 4522,
+      "type": "post"
+    },
+    {
+      "pid": 4314,
+      "type": "popup"
+    },
+    {
+      "pid": 4315,
+      "type": "popup"
+    },
+    {
+      "pid": 4316,
+      "type": "popup"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "slug": "newjeans",
+  "name": "NewJeans",
+  "name_kr": "뉴진스",
+  "name_en": "NewJeans",
+  "debut_date": "2022-08-01",
+  "agency": "ADOR",
+  "members": [
+    {
+      "name": "Minji",
+      "name_kr": "민지",
+      "birth": "2004-05-07"
+    },
+    {
+      "name": "Hanni",
+      "name_kr": "하니",
+      "birth": "2004-10-06"
+    },
+    {
+      "name": "Daniel",
+      "name_kr": "다니엘",
+      "birth": "2005-05-16"
+    },
+    {
+      "name": "Haerin",
+      "name_kr": "해린",
+      "birth": "2006-05-15"
+    },
+    {
+      "name": "Hyein",
+      "name_kr": "혜인",
+      "birth": "2008-05-15"
+    }
+  ],
+  "official_links": {
+    "website": "https://newjeans.squarespace.com/",
+    "twitter": "https://twitter.com/NewJeans_ADOR",
+    "instagram": "https://www.instagram.com/newjeans_official/",
+    "youtube": "https://www.youtube.com/channel/UCMhr4NkeMbTGWI0mVyo1GJQ",
+    "weverse": "https://weverse.io/newjeans"
+  },
+  "events": [
+    {
+      "date": "2022-08-01",
+      "type": "debut",
+      "title": "Debut EP 'New Jeans'",
+      "note": ""
+    },
+    {
+      "date": "2022-10-31",
+      "type": "comeback",
+      "title": "Single 'Cookie'",
+      "note": ""
+    },
+    {
+      "date": "2023-01-02",
+      "type": "album",
+      "title": "EP 'New Jeans (First EP)'",
+      "note": ""
+    },
+    {
+      "date": "2023-07-21",
+      "type": "comeback",
+      "title": "Single 'ETA'",
+      "note": ""
+    },
+    {
+      "date": "2023-10-20",
+      "type": "album",
+      "title": "EP 'Get Up'",
+      "note": ""
+    },
+    {
+      "date": "2024-05-15",
+      "type": "concert",
+      "title": "First World Tour",
+      "note": "Kickoff in Seoul"
+    },
+    {
+      "date": "2024-09-01",
+      "type": "comeback",
+      "title": "New Single Release",
+      "note": ""
+    },
+    {
+      "date": "2025-01-01",
+      "type": "award",
+      "title": "Won Best New Artist at XX Awards",
+      "note": ""
+    },
+    {
+      "date": "2025-06-15",
+      "type": "album",
+      "title": "Second Studio Album",
+      "note": ""
+    },
+    {
+      "date": "2025-12-10",
+      "type": "tour",
+      "title": "Asia Tour",
+      "note": "Starting in Tokyo"
+    },
+    {
+      "date": "2026-02-14",
+      "type": "comeback",
+      "title": "Valentine's Day Special Release",
+      "note": ""
+    },
+    {
+      "date": "2026-04-01",
+      "type": "album",
+      "title": "Mini Album",
+      "note": ""
+    }
+  ]
+}

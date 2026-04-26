@@ -1,0 +1,126 @@
+{
+  "slug": "enhypen",
+  "name": "ENHYPEN",
+  "name_kr": "엔하이픈",
+  "name_en": "ENHYPEN",
+  "debut_date": "2020-11-30",
+  "agency": "BELIFT LAB",
+  "members": [
+    {
+      "name": "HEESEUNG",
+      "name_kr": "희승",
+      "birth": "2001-10-15"
+    },
+    {
+      "name": "JUNGWON",
+      "name_kr": "정원",
+      "birth": "2004-02-09"
+    },
+    {
+      "name": "NI-KI",
+      "name_kr": "니키",
+      "birth": "2005-12-09"
+    },
+    {
+      "name": "SUNGHYUN",
+      "name_kr": "성현",
+      "birth": "2003-11-30"
+    },
+    {
+      "name": "SUNOO",
+      "name_kr": "선우",
+      "birth": "2003-06-24"
+    },
+    {
+      "name": "HEEHYUN",
+      "name_kr": "희현",
+      "birth": "2003-09-15"
+    },
+    {
+      "name": "JAEWON",
+      "name_kr": "재원",
+      "birth": "2003-04-20"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.enhypen.com",
+    "twitter": "https://twitter.com/enhypen",
+    "instagram": "https://www.instagram.com/enhypen/",
+    "youtube": "https://www.youtube.com/enhypen",
+    "weverse": "https://weverse.io/enhypen"
+  },
+  "events": [
+    {
+      "date": "2020-11-30",
+      "type": "debut",
+      "title": "ENHYPEN Debut",
+      "note": "Debut mini album 'BORDER: DAY ONE' released."
+    },
+    {
+      "date": "2021-01-11",
+      "type": "album",
+      "title": "BORDER: CARNIVAL",
+      "note": "Second mini album released."
+    },
+    {
+      "date": "2021-07-6",
+      "type": "comeback",
+      "title": "DARK BLOOD",
+      "note": "First studio album released."
+    },
+    {
+      "date": "2021-10-12",
+      "type": "other",
+      "title": "ENHYPEN World Tour 'DARK BLOOD'",
+      "note": "Start of their first World Tour."
+    },
+    {
+      "date": "2022-03-31",
+      "type": "album",
+      "title": "DIMENSION: SENQU",
+      "note": "Third mini album released."
+    },
+    {
+      "date": "2022-10-22",
+      "type": "comeback",
+      "title": "BORDER: CARNIVAL",
+      "note": "Repackage album released."
+    },
+    {
+      "date": "2023-11-08",
+      "type": "album",
+      "title": "DARK BLOOD - Repackage",
+      "note": "Republished album in Japan."
+    },
+    {
+      "date": "2024-05-18",
+      "type": "tour",
+      "title": "ENHYPEN World Tour 'HEESEUNG'",
+      "note": "Second World Tour begins."
+    },
+    {
+      "date": "2025-01-15",
+      "type": "other",
+      "title": "First Awards",
+      "note": "Won various awards at '2025 K-Pop Awards'."
+    },
+    {
+      "date": "2026-04-10",
+      "type": "comeback",
+      "title": "New Album Release",
+      "note": "Scheduled release of the upcoming album."
+    }
+  ],
+  "verification": {
+    "errors_detected": [
+      {
+        "field": "members",
+        "timeline_says": "7人",
+        "correct": "6人 (Heeseungが2026年に脱退)",
+        "confidence": "high"
+      }
+    ],
+    "verified_at": "2026-04-26",
+    "source": "wikipedia_cross_check"
+  }
+}

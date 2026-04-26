@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "predictions": [],
+  "ai_predictions": [
+    {
+      "slug": "bts",
+      "name": "BTS",
+      "last_comeback": "2022-06-10",
+      "last_title": "Proof (アンソロジー)",
+      "avg_interval_days": 316,
+      "predicted_next": "2023-04-22",
+      "confidence": "medium",
+      "sample_size": 9
+    },
+    {
+      "slug": "aespa",
+      "name": "aespa",
+      "last_comeback": "2023-05-08",
+      "last_title": "The Last Ride",
+      "avg_interval_days": 180,
+      "predicted_next": "2023-11-04",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
+      "slug": "ive",
+      "name": "IVE",
+      "last_comeback": "2024-02-14",
+      "last_title": "정규 1집 'I Have It' 발매",
+      "avg_interval_days": 170,
+      "predicted_next": "2024-08-02",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
+      "slug": "babymonster",
+      "name": "BABYMONSTER",
+      "last_comeback": "2025-05-30",
+      "last_title": "Comeback Stage",
+      "avg_interval_days": 187,
+      "predicted_next": "2025-12-03",
+      "confidence": "medium",
+      "sample_size": 3
+    },
+    {
+      "slug": "straykids",
+      "name": "Stray Kids",
+      "last_comeback": "2025-07-05",
+      "last_title": "新アルバムタイトル",
+      "avg_interval_days": 246,
+      "predicted_next": "2026-03-08",
+      "confidence": "medium",
+      "sample_size": 9
+    },
+    {
+      "slug": "newjeans",
+      "name": "NewJeans",
+      "last_comeback": "2026-04-01",
+      "last_title": "Mini Album",
+      "avg_interval_days": 178,
+      "predicted_next": "2026-09-26",
+      "confidence": "medium",
+      "sample_size": 7
+    },
+    {
+      "slug": "riize",
+      "name": "RIIZE",
+      "last_comeback": "2026-04-01",
+      "last_title": "Fourth Mini Album Release",
+      "avg_interval_days": 231,
+      "predicted_next": "2026-11-18",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
+      "slug": "lesserafim",
+      "name": "LE SSERAFIM",
+      "last_comeback": "2026-04-01",
+      "last_title": "Full Album Release",
+      "avg_interval_days": 252,
+      "predicted_next": "2026-12-09",
+      "confidence": "medium",
+      "sample_size": 5
+    },
+    {
+      "slug": "blackpink",
+      "name": "BLACKPINK",
+      "last_comeback": "2025-06-01",
+      "last_title": "New Album Release",
+      "avg_interval_days": 580,
+      "predicted_next": "2027-01-02",
+      "confidence": "medium",
+      "sample_size": 5
+    },
+    {
+      "slug": "illit",
+      "name": "ILLIT",
+      "last_comeback": "2026-04-10",
+      "last_title": "セカンドフルアルバムリリース",
+      "avg_interval_days": 281,
+      "predicted_next": "2027-01-16",
+      "confidence": "medium",
+      "sample_size": 5
+    },
+    {
+      "slug": "zerobaseone",
+      "name": "ZEROBASEONE",
+      "last_comeback": "2026-04-20",
+      "last_title": "특별 앨범 'ZERO 2' 발매",
+      "avg_interval_days": 296,
+      "predicted_next": "2027-02-10",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
+      "slug": "boynextdoor",
+      "name": "BOYNEXTDOOR",
+      "last_comeback": "2026-04-05",
+      "last_title": "4th Mini Album - 'BACK TO YOU'",
+      "avg_interval_days": 312,
+      "predicted_next": "2027-02-11",
+      "confidence": "medium",
+      "sample_size": 3
+    },
+    {
+      "slug": "enhypen",
+      "name": "ENHYPEN",
+      "last_comeback": "2026-04-10",
+      "last_title": "New Album Release",
+      "avg_interval_days": 383,
+      "predicted_next": "2027-04-28",
+      "confidence": "medium",
+      "sample_size": 5
+    },
+    {
+      "slug": "seventeen",
+      "name": "SEVENTEEN",
+      "last_comeback": "2026-04-01",
+      "last_title": "New Album Announcement",
+      "avg_interval_days": 393,
+      "predicted_next": "2027-04-29",
+      "confidence": "medium",
+      "sample_size": 9
+    },
+    {
+      "slug": "twice",
+      "name": "TWICE",
+      "last_comeback": "2026-04-20",
+      "last_title": "TBD",
+      "avg_interval_days": 405,
+      "predicted_next": "2027-05-30",
+      "confidence": "medium",
+      "sample_size": 9
+    }
+  ],
+  "last_updated": "2026-04-26"
+}

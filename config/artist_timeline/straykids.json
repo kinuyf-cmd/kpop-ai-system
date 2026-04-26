@@ -1,0 +1,131 @@
+{
+  "slug": "straykids",
+  "name": "Stray Kids",
+  "name_kr": "스트레이 키즈",
+  "name_en": "Stray Kids",
+  "debut_date": "2018-03-25",
+  "agency": "JYP Entertainment",
+  "members": [
+    {
+      "name": "Bang Chan",
+      "name_kr": "방찬",
+      "birth": "1997-10-03"
+    },
+    {
+      "name": "Lee Know",
+      "name_kr": "리노",
+      "birth": "1998-10-25"
+    },
+    {
+      "name": "Changbin",
+      "name_kr": "창빈",
+      "birth": "1999-08-11"
+    },
+    {
+      "name": "Hyunjin",
+      "name_kr": "현진",
+      "birth": "2000-03-20"
+    },
+    {
+      "name": "Han",
+      "name_kr": "한",
+      "birth": "2001-09-14"
+    },
+    {
+      "name": "Felix",
+      "name_kr": "필릭스",
+      "birth": "2001-09-15"
+    },
+    {
+      "name": "Seungmin",
+      "name_kr": "승민",
+      "birth": "2000-09-22"
+    },
+    {
+      "name": "I.N",
+      "name_kr": "아이엔",
+      "birth": "2001-02-08"
+    }
+  ],
+  "official_links": {
+    "website": "https://straykids.jype.com",
+    "twitter": "https://twitter.com/Stray_Kids",
+    "instagram": "https://www.instagram.com/straykids/",
+    "youtube": "https://www.youtube.com/c/STRAYKIDS",
+    "weverse": "https://weverse.io/straykids"
+  },
+  "events": [
+    {
+      "date": "2018-03-25",
+      "type": "debut",
+      "title": "I Am NOT",
+      "note": "デビューEP"
+    },
+    {
+      "date": "2019-06-10",
+      "type": "comeback",
+      "title": "Clé 1: MIROH",
+      "note": "EP"
+    },
+    {
+      "date": "2019-10-09",
+      "type": "album",
+      "title": "Clé 2: Yellow Wood",
+      "note": "EP"
+    },
+    {
+      "date": "2020-03-18",
+      "type": "comeback",
+      "title": "GO生",
+      "note": "EP"
+    },
+    {
+      "date": "2020-06-17",
+      "type": "album",
+      "title": "IN LIFE",
+      "note": "フルアルバム"
+    },
+    {
+      "date": "2020-11-30",
+      "type": "comeback",
+      "title": "Christmas EveL",
+      "note": "ミニアルバム"
+    },
+    {
+      "date": "2021-03-18",
+      "type": "comeback",
+      "title": "Step Out",
+      "note": "デジタルシングル"
+    },
+    {
+      "date": "2021-12-03",
+      "type": "album",
+      "title": "NOEASY",
+      "note": "フルアルバム"
+    },
+    {
+      "date": "2022-08-23",
+      "type": "comeback",
+      "title": "MAXIDENT",
+      "note": "フルアルバム"
+    },
+    {
+      "date": "2023-03-03",
+      "type": "comeback",
+      "title": "OMPHALOS",
+      "note": "ミニアルバム"
+    },
+    {
+      "date": "2024-01-01",
+      "type": "tour",
+      "title": "Stray Kids 2nd World Tour",
+      "note": "ワールドツアー開始"
+    },
+    {
+      "date": "2025-07-05",
+      "type": "album",
+      "title": "新アルバムタイトル",
+      "note": "未発表"
+    }
+  ]
+}

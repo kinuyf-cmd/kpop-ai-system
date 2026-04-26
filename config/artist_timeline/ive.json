@@ -1,0 +1,145 @@
+{
+  "slug": "ive",
+  "name": "IVE",
+  "name_kr": "아이브",
+  "name_en": "IVE",
+  "debut_date": "2021-12-01",
+  "agency": "Starship Entertainment",
+  "members": [
+    {
+      "name": "Yujin",
+      "name_kr": "유진",
+      "birth": "2003-08-01"
+    },
+    {
+      "name": "Gaeul",
+      "name_kr": "가을",
+      "birth": "2002-09-24"
+    },
+    {
+      "name": "Rei",
+      "name_kr": "레이",
+      "birth": "2004-02-03"
+    },
+    {
+      "name": "Wonyoung",
+      "name_kr": "원영",
+      "birth": "2004-08-31"
+    },
+    {
+      "name": "Liz",
+      "name_kr": "리즈",
+      "birth": "2004-11-21"
+    },
+    {
+      "name": "Leeseo",
+      "name_kr": "리세오",
+      "birth": "2006-02-21"
+    }
+  ],
+  "official_links": {
+    "website": "https://ive.style",
+    "twitter": "https://twitter.com/IVEstarship",
+    "instagram": "https://www.instagram.com/ivestarship/",
+    "youtube": "https://www.youtube.com/c/IVE",
+    "weverse": "https://weverse.io/ive"
+  },
+  "events": [
+    {
+      "date": "2021-12-01",
+      "type": "debut",
+      "title": "첫 번째 싱글 앨범 'ELEVEN' 발매",
+      "note": "IVE 데뷔"
+    },
+    {
+      "date": "2022-04-05",
+      "type": "comeback",
+      "title": "두 번째 싱글 앨범 'LOVE DIVE' 발매",
+      "note": "사랑에 빠진 소녀를 주제로 한 곡"
+    },
+    {
+      "date": "2022-10-20",
+      "type": "comeback",
+      "title": "세 번째 싱글 앨범 'AFTER LIKE' 발매",
+      "note": "대중성과 차트 성적 모두에서 호평받음"
+    },
+    {
+      "date": "2022-12-30",
+      "type": "award",
+      "title": "2022 KBS Song Festival 수상",
+      "note": "신인상 수상"
+    },
+    {
+      "date": "2023-01-18",
+      "type": "other",
+      "title": "첫 번째 일본 싱글 'ENERGY' 발매",
+      "note": "일본 진출"
+    },
+    {
+      "date": "2023-04-10",
+      "type": "comeback",
+      "title": "네 번째 싱글 앨범 'Kitsch' 발매",
+      "note": "스타일 변화로 화제"
+    },
+    {
+      "date": "2023-07-08",
+      "type": "tour",
+      "title": "IVE 첫 번째 팬미팅 'IVE in the Summer'",
+      "note": "팬들과의 소통의 시간"
+    },
+    {
+      "date": "2023-10-07",
+      "type": "comeback",
+      "title": "다섯 번째 싱글 앨범 'I've Mine' 발매",
+      "note": "다양한 장르 시도"
+    },
+    {
+      "date": "2024-02-14",
+      "type": "album",
+      "title": "정규 1집 'I Have It' 발매",
+      "note": "첫 정규 앨범"
+    },
+    {
+      "date": "2025-05-01",
+      "type": "tour",
+      "title": "두 번째 월드투어 시작",
+      "note": "아시아 및 북미 투어"
+    },
+    {
+      "date": "2026-04-15",
+      "type": "other",
+      "title": "컴백 예정",
+      "note": "내년 앨범 발매 anticipation"
+    }
+  ],
+  "verification": {
+    "errors_detected": [
+      {
+        "field": "debut",
+        "timeline_says": "2021-12-01",
+        "correct": "2021-12-01",
+        "confidence": "high"
+      },
+      {
+        "field": "agency",
+        "timeline_says": "Starship Entertainment",
+        "correct": "Starship Entertainment",
+        "confidence": "high"
+      },
+      {
+        "field": "members",
+        "timeline_says": "6人",
+        "correct": "6人",
+        "confidence": "high"
+      },
+      {
+        "field": "events",
+        "timeline_says": "11件",
+        "correct": "11件",
+        "confidence": "high"
+      }
+    ],
+    "verified_at": "2026-04-26",
+    "source": "wikipedia_cross_check"
+  }
+}

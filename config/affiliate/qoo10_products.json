@@ -1,8 +1,86 @@
-{
-  "_metadata": {
-    "version": "v1",
-    "updated_at": "2026-04-26",
-    "note": "オーナー手動管理。月15分程度の更新作業"
+[
+  {
+    "name": "ETUDE HOUSE アイドルアイブロウペンシル",
+    "category": "コスメ",
+    "price_range": "1000-2000円",
+    "qoo10_search_query": "ETUDE HOUSE アイブロウ",
+    "recommend_reason": "推しのアイメイクにぴったりです！"
   },
-  "products": []
-}
+  {
+    "name": "TONYMOLY シルクエッセンスマスク",
+    "category": "コスメ",
+    "price_range": "1000-1500円",
+    "qoo10_search_query": "TONYMOLY マスク",
+    "recommend_reason": "肌の潤いを保つマスク！"
+  },
+  {
+    "name": "Innisfree グリーンティー Seedセラム",
+    "category": "コスメ",
+    "price_range": "2000-3000円",
+    "qoo10_search_query": "Innisfree セラム",
+    "recommend_reason": "K-POPアイドル肌を目指せる！"
+  },
+  {
+    "name": "BTS LOGO ホワイトTシャツ",
+    "category": "ファッション",
+    "price_range": "2000-3000円",
+    "qoo10_search_query": "BTS Tシャツ",
+    "recommend_reason": "ファン必見！普段使いにもおすすめ！"
+  },
+  {
+    "name": "BLACKPINK ロゴ パーカー",
+    "category": "ファッション",
+    "price_range": "3000円以上",
+    "qoo10_search_query": "BLACKPINK パーカー",
+    "recommend_reason": "冬の必需品！ファンアピールも◎"
+  },
+  {
+    "name": "SEVENTEEN ストリート風キャップ",
+    "category": "ファッション",
+    "price_range": "1500-2500円",
+    "qoo10_search_query": "SEVENTEEN キャップ",
+    "recommend_reason": "オシャレとファン活動両方楽しめる！"
+  },
+  {
+    "name": "キムチラーメン",
+    "category": "食品",
+    "price_range": "500-1000円",
+    "qoo10_search_query": "ラーメン キムチ",
+    "recommend_reason": "K-POP観ながら手軽に楽しめる！"
+  },
+  {
+    "name": "韓国のりセット",
+    "category": "食品",
+    "price_range": "1000-2000円",
+    "qoo10_search_query": "韓国のり セット",
+    "recommend_reason": "友達とシェアしやすいおつまみ！"
+  },
+  {
+    "name": "バブルティーキット",
+    "category": "食品",
+    "price_range": "1000-2000円",
+    "qoo10_search_query": "バブルティー キット",
+    "recommend_reason": "自宅で本格的なタピオカ体験が！"
+  },
+  {
+    "name": "BTSフォトカード",
+    "category": "グッズ",
+    "price_range": "1500-2500円",
+    "qoo10_search_query": "BTS フォトカード",
+    "recommend_reason": "コレクター心をくすぐる！"
+  },
+  {
+    "name": "TWICE 缶バッジセット",
+    "category": "グッズ",
+    "price_range": "1000-2000円",
+    "qoo10_search_query": "TWICE 缶バッジ",
+    "recommend_reason": "お気に入りメンバーを身近に！"
+  },
+  {
+    "name": "Stray Kids アクリルスタンド",
+    "category": "グッズ",
+    "price_range": "2000-3000円",
+    "qoo10_search_query": "Stray Kids アクリルスタンド",
+    "recommend_reason": "部屋のインテリアにぴったり！"
+  }
+]
