@@ -200,7 +200,10 @@ def generate_article_with_gpt(signal, full_text):
 {{"hours": "営業時間", "address": "住所", "reservation": "予約要否", "perks": "特典概要", "sns": "SNS情報"}}
 -->
 
-【出力】HTML本文 + METAブロック (説明・前置き不要)"""
+【出力】HTML本文 + METAブロック (説明・前置き不要)。セクション識別子ラベル（リード文:, 導入文:, 本文:, セクション1: 等）は絶対に含めないこと"""
+
+    from lib.agent_learning_loop import inject_lessons_to_prompt
+    prompt = inject_lessons_to_prompt('popup_writer', prompt)
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
@@ -233,7 +236,9 @@ def generate_article_with_gpt(signal, full_text):
 
 def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0):
     """WP popup post type に投稿 (拡張meta対応)"""
-    title = signal.get('title', '')[:60]
+    from lib.text_sanitizer import strip_template_labels
+    title = strip_template_labels(signal.get('title', ''))[:60]
+    content = strip_template_labels(content)
 
     meta = {
         '_popup_city': signal.get('city', ''),

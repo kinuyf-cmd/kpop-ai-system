@@ -78,7 +78,10 @@ def rewrite_with_gpt(post, issues, post_type):
 - {structure}
 - 800-1200字
 
-【出力】HTML本文のみ"""
+【出力】HTML本文のみ。セクション識別子ラベル（リード文:, 導入文:, 本文: 等）は含めないこと"""
+
+    from lib.agent_learning_loop import inject_lessons_to_prompt
+    prompt = inject_lessons_to_prompt('unknown', prompt)
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
@@ -187,3 +190,29 @@ def main(max_fixes=15):
 
 if __name__ == '__main__':
     main()
+
+
+# --- Top11-30 fix helpers (4/26夜追加) ---
+def fix_meta_desc_bounds(meta_desc, content=''):
+    """メタ説明の長さを80-160字に調整"""
+    import re
+    if not meta_desc and content:
+        plain = re.sub(r'<[^>]+>', '', content[:500]).strip()
+        meta_desc = plain[:158]
+    if len(meta_desc) > 160:
+        return meta_desc[:157] + '...'
+    return meta_desc
+
+def fix_title_bounds(title, max_len=42):
+    """タイトル長を上限に収める"""
+    if len(title) > max_len:
+        return title[:max_len - 1] + '…'
+    return title
+
+def fix_unclosed_tags(html):
+    """<p>/<h2>の開閉数を合わせる"""
+    for tag in ['p', 'h2', 'h3']:
+        open_n = html.count(f'<{tag}') - html.count(f'</{tag}>')
+        if open_n > 0:
+            html += f'</{tag}>' * open_n
+    return html

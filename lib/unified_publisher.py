@@ -157,6 +157,11 @@ def unified_publish(
 
     content = f"{attribution_html}{body_html}\n\n{conf_note}\n{sources_html}"
 
+    # 6.2. テンプレートラベル除去
+    from lib.text_sanitizer import strip_template_labels
+    title_final = strip_template_labels(title_final)
+    content = strip_template_labels(content)
+
     # 6.3. CTA自動挿入 (Phase 14)
     try:
         content = inject_cta_into_content(title_final, content)
@@ -184,6 +189,19 @@ def unified_publish(
         })
         return {'success': False, 'error': f'本文品質: {_quality_fail}', 'log': log}
     log.append(f"✅ 本文品質OK ({len(_body_core)}字, 日本語{_ja_ratio*100:.0f}%)")
+
+    # 6.7. 薬機法チェック (コスメ/美容記事のみ)
+    try:
+        from lib.yakkihou_checker import check as _yakki_check, is_cosmetic_article as _is_cosme
+        if _is_cosme(title_final):
+            _yakki_issues = _yakki_check(title_final + ' ' + _body_text)
+            _yakki_high = [i for i in _yakki_issues if i['severity'] == 'high']
+            if _yakki_high:
+                log.append(f"⚠️ 薬機法リスク: {len(_yakki_high)}件 ({', '.join(i['pattern'] for i in _yakki_high[:3])})")
+            if len(_yakki_issues) > 0:
+                log.append(f"薬機法チェック: {len(_yakki_issues)}件検出")
+    except Exception as e:
+        log.append(f"薬機法チェックskip: {e}")
 
     # 7. カテゴリ
     cat_slug = _detect_category_slug(title_final, body_html, kind)

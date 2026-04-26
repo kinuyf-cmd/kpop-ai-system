@@ -126,13 +126,13 @@ FEATURE_SCHEDULES = {
 
 # 週次スケジュール (週14本=毎日2本)
 WEEKLY_SCHEDULE = {
-    0: ['korea_travel', 'beauty_tutorial'],     # 月
-    1: ['oshikatsu_guide', 'kdrama_movie'],     # 火
-    2: ['korean_language', 'korea_travel'],      # 水
-    3: ['beauty_tutorial', 'kdrama_movie'],      # 木
-    4: ['korea_travel', 'oshikatsu_guide'],      # 金
-    5: ['beauty_tutorial', 'korean_language'],   # 土
-    6: ['kdrama_movie', 'korea_travel'],         # 日
+    0: ['korea_travel', 'beauty_tutorial', 'oshikatsu_guide', 'kdrama_movie', 'korean_language', 'kpop_news'],  # 月
+    1: ['oshikatsu_guide', 'kdrama_movie', 'korea_travel', 'beauty_tutorial', 'korean_language', 'kpop_news'],  # 火
+    2: ['korean_language', 'korea_travel', 'beauty_tutorial', 'kdrama_movie', 'oshikatsu_guide', 'kpop_news'],  # 水
+    3: ['beauty_tutorial', 'kdrama_movie', 'korea_travel', 'oshikatsu_guide', 'korean_language', 'kpop_news'],  # 木
+    4: ['korea_travel', 'oshikatsu_guide', 'beauty_tutorial', 'kdrama_movie', 'korean_language', 'kpop_news'],  # 金
+    5: ['beauty_tutorial', 'korean_language', 'korea_travel', 'kdrama_movie', 'oshikatsu_guide', 'kpop_news'],  # 土
+    6: ['kdrama_movie', 'korea_travel', 'beauty_tutorial', 'oshikatsu_guide', 'korean_language', 'kpop_news'],  # 日
 }
 
 
@@ -192,7 +192,10 @@ def generate_article_content(title, category):
 - 架空のURLやページへのリンク禁止
 - 全ての <a> タグ禁止 (リンクは別工程で挿入されるため一切不要)
 
-【出力】HTML本文のみ。前置き・後書き不要"""
+【出力】HTML本文のみ。前置き・後書き不要。セクション識別子ラベル（リード文:, 導入文:, 本文:, セクション1: 等）は絶対に含めないこと"""
+
+    from lib.agent_learning_loop import inject_lessons_to_prompt
+    prompt = inject_lessons_to_prompt('feature_article_writer', prompt)
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
@@ -215,6 +218,9 @@ def generate_article_content(title, category):
 
 
 def post_to_wp(title, content, category_id):
+    from lib.text_sanitizer import strip_template_labels
+    title = strip_template_labels(title)
+    content = strip_template_labels(content)
     body_data = {
         'title': title,
         'content': content,

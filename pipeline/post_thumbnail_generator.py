@@ -12,9 +12,11 @@ OPENAI_KEY = os.getenv('OPENAI_API_KEY', '')
 MAX_PER_RUN = 3
 
 
-def get_posts_without_thumbnail(per_page=20):
+def get_posts_without_thumbnail(per_page=20, post_types=None):
+    if post_types is None:
+        post_types = ['posts']
     posts = []
-    for endpoint in ['posts']:
+    for endpoint in post_types:
         try:
             url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/{endpoint}?per_page={per_page}&_fields=id,title,featured_media,date&orderby=date&order=desc"
             req = urllib.request.Request(url, headers={'Authorization': f'Basic {AUTH}'})
@@ -113,9 +115,18 @@ def generate_and_attach(post):
 
 
 def main():
-    print(f"=== post_thumbnail_generator {datetime.now(timezone.utc).isoformat()} ===")
-    posts = get_posts_without_thumbnail(per_page=20)
-    targets = posts[:MAX_PER_RUN]
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--post-type', default=None, help='posts or popup')
+    parser.add_argument('--limit', type=int, default=MAX_PER_RUN)
+    args = parser.parse_args()
+
+    post_types = [args.post_type] if args.post_type else ['posts']
+    limit = args.limit
+
+    print(f"=== post_thumbnail_generator {datetime.now(timezone.utc).isoformat()} types={post_types} limit={limit} ===")
+    posts = get_posts_without_thumbnail(per_page=50, post_types=post_types)
+    targets = posts[:limit]
 
     if not targets:
         print("  対象なし")

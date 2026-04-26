@@ -78,6 +78,10 @@ def detect_breaking(signals):
         if len(sources) >= 2 and not any(is_processed(s['url']) for s in sigs):
             seen.add(artist)
             candidates.append((artist, sigs, 'multi'))
+        # 4/27緩和: 単一ソースでも記事が2件以上あれば候補化 (confidence=medium)
+        elif len(sigs) >= 2 and not any(is_processed(s['url']) for s in sigs):
+            seen.add(artist)
+            candidates.append((artist, sigs, 'single_multi'))
 
     return candidates
 
@@ -116,7 +120,7 @@ def publish_breaking(artist, sigs, typ):
         raw_title = best['title']
         body_html = f"<p>{best['title']}</p>"
 
-    confidence = 'high' if typ == 'multi' else 'medium'
+    confidence = 'high' if typ == 'multi' else ('medium' if typ in ('urgent', 'single_multi') else 'low')
 
     r = unified_publish(
         raw_title=raw_title,

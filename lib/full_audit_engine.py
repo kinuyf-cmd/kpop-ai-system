@@ -244,6 +244,14 @@ def full_audit(post, post_type='post'):
     issues.extend(check_distribution(post, post_type, criteria))
     issues.extend(check_internal_links(post, criteria))
 
+    # F. LLM校閲結果の統合 (直近24h)
+    llm_result = _get_recent_llm_result(post['id'])
+    if llm_result:
+        for c in llm_result.get('critical', []):
+            issues.append({'type': 'llm_critical', 'severity': 'high', 'detail': c})
+        for h in llm_result.get('high', []):
+            issues.append({'type': 'llm_high', 'severity': 'high', 'detail': h})
+
     # E. 自動回復判定
     high_count = sum(1 for i in issues if i.get('severity') == 'high')
     if high_count >= 3:
@@ -252,6 +260,24 @@ def full_audit(post, post_type='post'):
         issues.append({'type': 'quarantine_target', 'severity': 'info', 'reason': f'high_issues={high_count}'})
 
     return issues
+
+
+def _get_recent_llm_result(post_id):
+    """直近のLLM校閲結果を取得 (24h以内)"""
+    llm_dir = '/home/aiuser/kpop-ai-system/logs/llm_audit'
+    if not os.path.exists(llm_dir):
+        return None
+    for fname in sorted(os.listdir(llm_dir), reverse=True)[:6]:
+        if not fname.endswith('.json'):
+            continue
+        try:
+            data = json.load(open(os.path.join(llm_dir, fname)))
+            for r in data.get('results', []):
+                if r.get('id') == post_id:
+                    return r
+        except:
+            pass
+    return None
 
 
 def fetch_posts(post_type='post', hours=12, per_page=20):

@@ -36,7 +36,7 @@ def detect_agent(title, content, post_type='posts'):
     return 'unknown'
 
 
-def get_recent_posts(minutes_ago=10, max_age_minutes=20):
+def get_recent_posts(minutes_ago=5, max_age_minutes=60):
     now = datetime.now(timezone.utc)
     after = (now - timedelta(minutes=max_age_minutes)).isoformat()
     before = (now - timedelta(minutes=minutes_ago)).isoformat()
@@ -126,6 +126,21 @@ def update_agent_lessons(audit_results):
     agent_errors = {}
     for r in audit_results:
         agent_errors.setdefault(r['agent'], []).extend(r['issues'])
+
+    # LLM校閲結果があれば統合
+    llm_dir = '/home/aiuser/kpop-ai-system/logs/llm_audit'
+    if os.path.exists(llm_dir):
+        import glob
+        for fp in sorted(glob.glob(f'{llm_dir}/*.json'))[-1:]:
+            try:
+                data = json.load(open(fp))
+                for lr in data.get('results', []):
+                    for c in lr.get('critical', []):
+                        agent_errors.setdefault('unknown', []).append({'kind': f'llm_critical: {c[:40]}', 'severity': 'high'})
+                    for h in lr.get('high', []):
+                        agent_errors.setdefault('unknown', []).append({'kind': f'llm_high: {h[:40]}', 'severity': 'high'})
+            except:
+                pass
 
     for agent, errors in agent_errors.items():
         if not errors:

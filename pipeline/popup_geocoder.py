@@ -15,7 +15,7 @@ CITY_PREFIX = {
 }
 
 
-def geocode(address):
+def geocode_nominatim(address):
     """OpenStreetMap Nominatim geocoding (1 req/sec rate limit)"""
     if not address or len(address) < 5:
         return None, None
@@ -29,8 +29,37 @@ def geocode(address):
         if data:
             return float(data[0]['lat']), float(data[0]['lon'])
     except Exception as e:
-        print(f"  geocode err: {e}")
+        print(f"  nominatim err: {e}")
     return None, None
+
+
+def geocode_photon(address):
+    """Photon API (OSMベース、認証不要) geocoding"""
+    if not address or len(address) < 3:
+        return None, None
+    address = address.replace('〒', '').strip()
+    url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(address)}&limit=1"
+    try:
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'KPOPJournal-Geocoder/1.0',
+        })
+        data = json.loads(urllib.request.urlopen(req, timeout=15).read())
+        if data.get('features'):
+            coords = data['features'][0]['geometry']['coordinates']
+            return float(coords[1]), float(coords[0])  # [lng, lat] → (lat, lng)
+    except Exception as e:
+        print(f"  photon err: {e}")
+    return None, None
+
+
+def geocode(address):
+    """Nominatim → Photon fallback"""
+    lat, lng = geocode_nominatim(address)
+    if lat and lng:
+        return lat, lng
+    time.sleep(0.5)
+    lat, lng = geocode_photon(address)
+    return lat, lng
 
 
 def main():

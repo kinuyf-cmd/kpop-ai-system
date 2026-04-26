@@ -6,7 +6,7 @@ load_dotenv()
 
 API = "https://api.openai.com/v1/chat/completions"
 LOG = '/home/aiuser/kpop-ai-system/logs/translation.jsonl'
-DAILY_LIMIT = 300
+DAILY_LIMIT = 500
 
 
 def _count_today():
@@ -54,6 +54,12 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
     if used >= DAILY_LIMIT:
         return {'success': False, 'translated': text, 'reason': f'1日上限{DAILY_LIMIT}到達'}
 
+    # Lv2: agent_lessonsから最新教訓を自動注入
+    try:
+        from lib.agent_learning_loop import inject_lessons_to_prompt
+    except ImportError:
+        inject_lessons_to_prompt = lambda a, p: p
+
     system = ("あなたはK-POP専門メディアの韓国語→日本語翻訳者です。以下のガイドラインで自然な日本語に翻訳してください。\n\n"
               "【アーティスト名】日本で定着した英語表記を使用\n"
               "- 뉴진스→NewJeans / 르세라핌→LE SSERAFIM / 아이브→IVE\n"
@@ -74,7 +80,16 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
               "5. 韓国語独特の比喩は日本語的に意訳\n"
               "6. 数字・日付・曲名・アルバム名は原文通り維持\n"
               "7. 「~を引き寄せた」「~を集めた」など過度な韓国語直訳を避ける\n\n"
-              "【出力】自然で読みやすい日本語のみ。説明・注釈・前置き・引用符は不要。本文のみ返す。")
+              "【出力】自然で読みやすい日本語のみ。説明・注釈・前置き・引用符は不要。本文のみ返す。\n\n"
+              "【Lv2追加ルール】\n"
+              "- アーティスト名は初出時のみ「BTS (방탄소년단)」のように韓国語併記、以降は英語のみ\n"
+              "- 楽曲名: 英語=\"引用符\"、日本語=「鉤括弧」、韓国語=初出時のみ括弧併記\n"
+              "- 文末は連続3文以上同じ語尾を禁止 (です/ます/でした/とのことを分散)\n"
+              "- 年度は半角4桁、順位は半角、序数は英数 (1st/2nd)\n"
+              "- 「いかがでしょうか」「最後に」セクション禁止\n"
+              "- テンプレートラベル (リード文:/導入文:/セクション1:) は出力に含めない")
+
+    system = inject_lessons_to_prompt('breaking_news_writer', system)
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
