@@ -295,8 +295,8 @@ def generate_article_content(title, category_slug, trend_context=None):
 
 【要件】
 - 本文中に必ず現在の年月({year_month})を含めること
-- 1500-2500字
-- HTMLで記述、h2セクション最低3つ
+- 2000-3000字（HTMLタグ込み。短すぎると不採用になるため必ず2000字以上書くこと）
+- HTMLで記述、h2セクション最低4つ
 - リード文 (5W1H骨子) → 詳細展開 → まとめ の三段構成
 - 文末バリエーション (~した/~紹介する/~始まった/~人気/~注目)
 - 「以上」「いかがでしょうか」「皆さん」等の口語的表現禁止
@@ -327,7 +327,7 @@ def generate_article_content(title, category_slug, trend_context=None):
         'model': 'gpt-4o-mini',
         'messages': [{'role': 'user', 'content': prompt}],
         'temperature': 0.7,
-        'max_tokens': 2500,
+        'max_tokens': 4000,
     }).encode()
 
     try:
