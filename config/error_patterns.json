@@ -1872,28 +1872,28 @@
     }
   },
   "no_gsc_indexing": {
-    "count": 40,
+    "count": 41,
     "first_seen": "2026-04-30T17:50:05.969655+09:00",
-    "last_seen": "2026-05-01T10:54:41.158283+09:00",
+    "last_seen": "2026-05-01T16:15:52.744929+09:00",
     "example_post_ids": [
-      6065,
       6058,
       6115,
       6113,
-      6184
+      6184,
+      6217
     ],
     "prevention": "no_gsc_indexing: パターン分析して共通lib化で再発防止"
   },
   "x_missing": {
-    "count": 44,
+    "count": 49,
     "first_seen": "2026-04-30T17:50:05.972874+09:00",
-    "last_seen": "2026-05-01T10:55:55.529090+09:00",
+    "last_seen": "2026-05-01T16:15:52.747789+09:00",
     "example_post_ids": [
-      6065,
-      6185,
-      6184,
-      6115,
-      6113
+      6242,
+      6240,
+      6234,
+      6232,
+      6217
     ],
     "prevention": "x_missing: パターン分析して共通lib化で再発防止"
   },
@@ -1908,56 +1908,63 @@
     "prevention": "text_meta_phrase: パターン分析して共通lib化で再発防止"
   },
   "few_internal_links": {
-    "count": 10,
+    "count": 12,
     "first_seen": "2026-04-30T17:50:08.710307+09:00",
-    "last_seen": "2026-05-01T10:55:55.520206+09:00",
+    "last_seen": "2026-05-01T16:15:31.942267+09:00",
     "example_post_ids": [
-      6056,
       6054,
       6185,
-      6174,
-      6172
-    ],
-    "prevention": "post_publish_enricher で内部リンク2本以上を保証"
-  },
-  "unclosed_p": {
-    "count": 22,
-    "first_seen": "2026-04-30T17:50:10.379386+09:00",
-    "last_seen": "2026-05-01T10:03:11.580231+09:00",
-    "example_post_ids": [
-      6178,
-      6176,
       6174,
       6172,
       6170
     ],
+    "prevention": "post_publish_enricher で内部リンク2本以上を保証"
+  },
+  "unclosed_p": {
+    "count": 39,
+    "first_seen": "2026-04-30T17:50:10.379386+09:00",
+    "last_seen": "2026-05-01T16:15:52.741873+09:00",
+    "example_post_ids": [
+      6240,
+      6234,
+      6232,
+      6230,
+      6217
+    ],
     "prevention": "unclosed_p: パターン分析して共通lib化で再発防止"
   },
   "slug_short": {
-    "count": 9,
+    "count": 25,
     "first_seen": "2026-05-01T01:50:08.320104+09:00",
-    "last_seen": "2026-05-01T10:55:55.523319+09:00",
+    "last_seen": "2026-05-01T16:12:41.513939+09:00",
     "example_post_ids": [
-      6125
+      6281,
+      6280,
+      6279,
+      6278,
+      6277
     ],
     "prevention": "slug_short: パターン分析して共通lib化で再発防止"
   },
   "title_long": {
-    "count": 3,
+    "count": 4,
     "first_seen": "2026-05-01T10:00:44.645093+09:00",
-    "last_seen": "2026-05-01T10:54:23.118854+09:00",
+    "last_seen": "2026-05-01T16:15:05.366191+09:00",
     "example_post_ids": [
       6185
     ],
     "prevention": "title_long: パターン分析して共通lib化で再発防止"
   },
   "content_short": {
-    "count": 4,
+    "count": 20,
     "first_seen": "2026-05-01T10:00:59.184987+09:00",
-    "last_seen": "2026-05-01T10:54:41.149202+09:00",
+    "last_seen": "2026-05-01T16:12:41.525161+09:00",
     "example_post_ids": [
-      6184,
-      6113
+      6281,
+      6280,
+      6279,
+      6278,
+      6277
     ],
     "prevention": "LLM生成時の最低文字数指定を2000字以上に"
   },
@@ -1981,5 +1988,108 @@
       6184
     ],
     "prevention": "text_repeated_char: パターン分析して共通lib化で再発防止"
+  },
+  "title_short": {
+    "count": 12,
+    "first_seen": "2026-05-01T16:07:13.769701+09:00",
+    "last_seen": "2026-05-01T16:12:41.510593+09:00",
+    "example_post_ids": [
+      6283,
+      6282,
+      6280,
+      6279,
+      6277
+    ],
+    "prevention": "title_short: パターン分析して共通lib化で再発防止"
+  },
+  "no_thumbnail": {
+    "count": 16,
+    "first_seen": "2026-05-01T16:07:13.775499+09:00",
+    "last_seen": "2026-05-01T16:12:41.516807+09:00",
+    "example_post_ids": [
+      6281,
+      6280,
+      6279,
+      6278,
+      6277
+    ],
+    "prevention": "post_thumbnail_generator で自動生成。生成失敗時は DALL-E フォールバック"
+  },
+  "no_artist_category": {
+    "count": 14,
+    "first_seen": "2026-05-01T16:07:13.778151+09:00",
+    "last_seen": "2026-05-01T16:12:41.519636+09:00",
+    "example_post_ids": [
+      6281,
+      6280,
+      6279,
+      6278,
+      6277
+    ],
+    "prevention": "no_artist_category: パターン分析して共通lib化で再発防止"
+  },
+  "no_og_image": {
+    "count": 16,
+    "first_seen": "2026-05-01T16:07:13.780824+09:00",
+    "last_seen": "2026-05-01T16:12:41.522412+09:00",
+    "example_post_ids": [
+      6281,
+      6280,
+      6279,
+      6278,
+      6277
+    ],
+    "prevention": "no_og_image: パターン分析して共通lib化で再発防止"
+  },
+  "rewrite_target": {
+    "count": 12,
+    "first_seen": "2026-05-01T16:07:13.786630+09:00",
+    "last_seen": "2026-05-01T16:12:41.527918+09:00",
+    "example_post_ids": [
+      6283,
+      6282,
+      6280,
+      6279,
+      6277
+    ],
+    "prevention": "rewrite_target: パターン分析して共通lib化で再発防止"
+  },
+  "text_ai_mention": {
+    "count": 1,
+    "first_seen": "2026-05-01T16:10:17.759930+09:00",
+    "last_seen": "2026-05-01T16:10:17.759942+09:00",
+    "example_post_ids": [
+      6283
+    ],
+    "prevention": "text_sanitizer のAIメンション除去パターン強化"
+  },
+  "llm_high": {
+    "count": 1,
+    "first_seen": "2026-05-01T16:10:43.285501+09:00",
+    "last_seen": "2026-05-01T16:10:43.285513+09:00",
+    "example_post_ids": [
+      6282
+    ],
+    "prevention": "LLM校閲のhigh検出時にaudit_fixer_universalキューに追加"
+  },
+  "text_casual_address": {
+    "count": 1,
+    "first_seen": "2026-05-01T16:13:20.576212+09:00",
+    "last_seen": "2026-05-01T16:13:20.576263+09:00",
+    "example_post_ids": [
+      6242
+    ],
+    "prevention": "text_casual_address: パターン分析して共通lib化で再発防止"
+  },
+  "x_missing_url": {
+    "count": 3,
+    "first_seen": "2026-05-01T16:15:05.369397+09:00",
+    "last_seen": "2026-05-01T16:15:05.378850+09:00",
+    "example_post_ids": [
+      6185,
+      6174,
+      6172
+    ],
+    "prevention": "x_missing_url: パターン分析して共通lib化で再発防止"
   }
 }

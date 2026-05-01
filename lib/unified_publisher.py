@@ -150,17 +150,56 @@ def unified_publish(
     # 4. 信頼度注意書き
     conf_note = CONFIDENCE_NOTES.get(confidence, '')
 
-    # 5. サムネ解決
+    # 5. サムネ解決 — artistが未指定でもタイトルから自動検出
     thumb = None
     media_id = None
     attribution_html = ''
-    if source_url or artist:
+    if not artist:
+        _known_groups = [
+            'BTS', 'BLACKPINK', 'TWICE', 'aespa', 'NewJeans', 'IVE',
+            'LE SSERAFIM', 'Stray Kids', 'SEVENTEEN', 'ENHYPEN', 'NMIXX',
+            'ITZY', 'TXT', 'EXO', '2PM', 'BABYMONSTER', 'RIIZE', 'ILLIT',
+            'NCT', 'Red Velvet', 'BIGBANG', 'SHINee', 'GOT7', 'ASTRO',
+            '(G)I-DLE', 'ATEEZ', 'TREASURE', 'MONSTA X', 'DAY6',
+        ]
+        _search = (title_final + ' ' + (body_html or '')[:300]).lower()
+        for _g in _known_groups:
+            if _g.lower() in _search:
+                artist = _g
+                log.append(f"artist auto-detected: {artist}")
+                break
+
+    # アーティスト検出済みならthumbnail_source_resolverで本人画像を取得
+    if artist:
+        try:
+            from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
+            _artist_thumb = _resolve_artist_thumb(artist_name=artist, article_type='concrete')
+            if _artist_thumb and _artist_thumb.get('image_path') and os.path.exists(_artist_thumb['image_path']):
+                from PIL import Image as _PILImage
+                import tempfile as _tf
+                with _tf.TemporaryDirectory(prefix='up_artist_') as _td:
+                    _resized = os.path.join(_td, 'artist_thumb.jpg')
+                    _PILImage.open(_artist_thumb['image_path']).convert('RGB').resize((1200, 675), _PILImage.LANCZOS).save(_resized, 'JPEG', quality=85)
+                    _thumb_alt = f"{title_final}のサムネイル画像"
+                    media_id = _upload_media(_resized, alt_text=_thumb_alt)
+                    if media_id:
+                        log.append(f"media_id: {media_id} (artist_resolver: {_artist_thumb.get('source')})")
+                        if _artist_thumb.get('source') == 'source_site' and _artist_thumb.get('source_url'):
+                            attribution_html = (
+                                f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
+                                f'画像: <a href="{_artist_thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
+                            )
+        except Exception as e:
+            log.append(f"artist_resolver error: {e}")
+
+    # source_url経由のサムネ取得（artistで取得できなかった場合のフォールバック）
+    if not media_id and source_url:
         try:
             thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
         except Exception as e:
             log.append(f"thumb error: {e}")
 
-    if thumb and thumb.get('path'):
+    if not media_id and thumb and thumb.get('path'):
         _src_alt = f"{title_final}のサムネイル画像"
         media_id = _upload_media(thumb['path'], alt_text=_src_alt)
         log.append(f"media_id: {media_id} ({thumb.get('source')})")

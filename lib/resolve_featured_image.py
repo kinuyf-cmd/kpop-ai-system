@@ -253,6 +253,18 @@ def resolve(body: str, title: str, out_path: str = "",
         else:
             _log("wikimedia: no safe image")
 
+    # --- 2.5. thumbnail_source_resolver — YouTube公式MV等から本人画像取得 ---
+    if artist:
+        try:
+            from lib.thumbnail_source_resolver import resolve as _tsr_resolve
+            _tsr = _tsr_resolve(artist_name=artist, article_type='concrete')
+            if _tsr and _tsr.get('image_path') and os.path.exists(_tsr['image_path']):
+                if _resize_to_thumbnail(_tsr['image_path'], out_path):
+                    _log(f"artist_resolver ({_tsr.get('source')}) → {out_path}")
+                    return out_path, f"artist_{_tsr.get('source', 'unknown')}"
+        except Exception as e:
+            _log(f"artist_resolver error: {e}")
+
     # --- 3. WP Media アーティスト検索（フォールバック） ---
     if artist:
         _log(f"searching WP Media for artist='{artist}'")
