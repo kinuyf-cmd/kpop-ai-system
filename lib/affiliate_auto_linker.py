@@ -27,6 +27,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+load_dotenv(BASE / '.env')
 LOGS = BASE / "logs"
 CONFIG = BASE / "config"
 

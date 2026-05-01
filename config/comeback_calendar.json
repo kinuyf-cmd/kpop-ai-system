@@ -23,6 +23,26 @@
       "sample_size": 4
     },
     {
+      "slug": "fromis_9",
+      "name": "fromis_9",
+      "last_comeback": "2023-03-08",
+      "last_title": "6th Mini Album 'Re:CONNECT'",
+      "avg_interval_days": 336,
+      "predicted_next": "2024-02-07",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
+      "slug": "txt",
+      "name": "TXT",
+      "last_comeback": "2023-10-13",
+      "last_title": "Release of 'The Name Chapter: TEMPTATION'",
+      "avg_interval_days": 207,
+      "predicted_next": "2024-05-07",
+      "confidence": "medium",
+      "sample_size": 6
+    },
+    {
       "slug": "ive",
       "name": "IVE",
       "last_comeback": "2024-02-14",
@@ -31,6 +51,26 @@
       "predicted_next": "2024-08-02",
       "confidence": "medium",
       "sample_size": 4
+    },
+    {
+      "slug": "exo",
+      "name": "EXO",
+      "last_comeback": "2023-09-14",
+      "last_title": "EXO - The 7th Album",
+      "avg_interval_days": 626,
+      "predicted_next": "2025-06-01",
+      "confidence": "medium",
+      "sample_size": 6
+    },
+    {
+      "slug": "itzy",
+      "name": "ITZY",
+      "last_comeback": "2025-02-25",
+      "last_title": "New Chapter",
+      "avg_interval_days": 272,
+      "predicted_next": "2025-11-24",
+      "confidence": "medium",
+      "sample_size": 8
     },
     {
       "slug": "babymonster",
@@ -53,6 +93,16 @@
       "sample_size": 9
     },
     {
+      "slug": "gidle",
+      "name": "(G)I-DLE",
+      "last_comeback": "2025-10-10",
+      "last_title": "NEW ALBUM",
+      "avg_interval_days": 345,
+      "predicted_next": "2026-09-20",
+      "confidence": "medium",
+      "sample_size": 7
+    },
+    {
       "slug": "newjeans",
       "name": "NewJeans",
       "last_comeback": "2026-04-01",
@@ -73,6 +123,26 @@
       "sample_size": 4
     },
     {
+      "slug": "ateez",
+      "name": "ATEEZ",
+      "last_comeback": "2026-04-01",
+      "last_title": "New EP Release",
+      "avg_interval_days": 239,
+      "predicted_next": "2026-11-26",
+      "confidence": "medium",
+      "sample_size": 11
+    },
+    {
+      "slug": "nct_wish",
+      "name": "NCT WISH",
+      "last_comeback": "2026-04-10",
+      "last_title": "Third Mini Album",
+      "avg_interval_days": 234,
+      "predicted_next": "2026-11-30",
+      "confidence": "medium",
+      "sample_size": 4
+    },
+    {
       "slug": "lesserafim",
       "name": "LE SSERAFIM",
       "last_comeback": "2026-04-01",
@@ -81,6 +151,16 @@
       "predicted_next": "2026-12-09",
       "confidence": "medium",
       "sample_size": 5
+    },
+    {
+      "slug": "nmixx",
+      "name": "NMIXX",
+      "last_comeback": "2026-04-15",
+      "last_title": "Latest Album Release",
+      "avg_interval_days": 248,
+      "predicted_next": "2026-12-19",
+      "confidence": "medium",
+      "sample_size": 6
     },
     {
       "slug": "blackpink",
@@ -123,6 +203,16 @@
       "sample_size": 3
     },
     {
+      "slug": "red_velvet",
+      "name": "Red Velvet",
+      "last_comeback": "2026-04-15",
+      "last_title": "Spring Again",
+      "avg_interval_days": 367,
+      "predicted_next": "2027-04-17",
+      "confidence": "medium",
+      "sample_size": 11
+    },
+    {
       "slug": "enhypen",
       "name": "ENHYPEN",
       "last_comeback": "2026-04-10",
@@ -151,7 +241,17 @@
       "predicted_next": "2027-05-30",
       "confidence": "medium",
       "sample_size": 9
+    },
+    {
+      "slug": "hearts2hearts",
+      "name": "Hearts2Hearts",
+      "last_comeback": "2027-05-05",
+      "last_title": "Fourth Mini Album 'Dance with Hearts'",
+      "avg_interval_days": 283,
+      "predicted_next": "2028-02-12",
+      "confidence": "low",
+      "sample_size": 2
     }
   ],
-  "last_updated": "2026-04-26"
+  "last_updated": "2026-05-01"
 }

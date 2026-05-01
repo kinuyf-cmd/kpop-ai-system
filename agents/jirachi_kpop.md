@@ -207,7 +207,7 @@ arceus
 - Googleニュース申請済み（承認待ち）
 
 ### SNS方針
-- X: @kpopjournal_jp（credentials設定済み・自動投稿稼働中）
+- X: @lovekpopjournal（credentials設定済み・自動投稿稼働中）
 - Instagram/LINE/Brevo: credentials未設定（オーナー対応待ち）
 
 ---

@@ -1,31 +1,31 @@
 {
-  "_comment": "役員会議決定目標値 v1.0 (2026-04-09策定)",
-  "_philosophy": "現状ベース×成長率。月次目標はQ2終了(6月末)の最終目標から逆算した中間マイルストーン。",
+  "_comment": "KPI目標値 v2.1 (2026-04-30改定 — 記事15本/日+X連動+総監査3回/日)",
+  "_philosophy": "4月は量産フェーズ完了(702本)。5月は質×回遊×収益の転換月。記事15本/日(popup除く)+X全記事連動。総監査10/16/21時。",
   "daily": {
     "sessions": {
-      "target": 500,
+      "target": 600,
       "unit": "セッション/日",
-      "note": "現状203→2.5倍。記事蓄積で自然検索が伸びる水準"
+      "note": "4月実績236→直帰率改善+内部リンク強化で2.5倍"
     },
     "pageviews": {
-      "target": 700,
+      "target": 1000,
       "unit": "PV/日",
-      "note": "PV/session=1.4想定"
+      "note": "4月実績552→記事蓄積700本+回遊改善で1000PV/日"
     },
     "revenue_jpy": {
-      "target": 200,
+      "target": 300,
       "unit": "円/日",
-      "note": "現状42円→5倍。RPM維持＋PV増で達成可能"
+      "note": "5月末までに¥300/日達成。PV1000×RPM¥300=¥300"
     },
     "articles_posted": {
-      "target": 5,
+      "target": 15,
       "unit": "本/日",
-      "note": "現行スケジュール通り4-6本/日"
+      "note": "ポップアップ記事を除く記事投稿数。2026-04-30改定: 10→15本/日"
     },
     "x_posts": {
-      "target": 4,
+      "target": 15,
       "unit": "件/日",
-      "note": "記事投稿数と同数が理想"
+      "note": "=記事投稿数(popup除く)。全記事にX投稿を連動。2026-04-30改定"
     },
     "pipeline_uptime": {
       "target": 95,
@@ -33,51 +33,51 @@
       "note": "SRE KPI。5%以内の失敗は許容"
     },
     "gsc_clicks": {
-      "target": 50,
+      "target": 500,
       "unit": "クリック/日",
-      "note": "現状推定18件/日→3倍。検索表示回数増で達成"
+      "note": "4月実績327→CTRリライト+構造化データで500"
     },
     "avg_ctr": {
-      "target": 3.0,
+      "target": 4.0,
       "unit": "%",
-      "note": "現状GSC全体CTR約5%（少数サンプル）→3%維持目標"
+      "note": "4月実績5.0%→CTRリライトで維持向上"
     },
     "rpm": {
-      "target": 400,
+      "target": 300,
       "unit": "円",
-      "note": "現状327円→記事品質向上で400円を狙う"
+      "note": "4月実績¥225→CTA最適化+A8案件マッチングで¥300"
     }
   },
   "monthly": {
     "sessions": {
-      "target": 15000,
+      "target": 18000,
       "unit": "セッション/月",
-      "note": "500/日×30日"
+      "note": "600/日×30日"
     },
     "pageviews": {
-      "target": 21000,
+      "target": 30000,
       "unit": "PV/月",
-      "note": "700/日×30日"
+      "note": "1000/日×30日"
     },
     "revenue_jpy": {
-      "target": 6000,
+      "target": 9000,
       "unit": "円/月",
-      "note": "200/日×30日"
+      "note": "¥300/日×30日。5月末到達目標なので月平均は¥5,000-6,000見込み"
     },
     "articles_total": {
-      "target": 150,
-      "unit": "本（累計）",
-      "note": "現在28本+5本/日×24日≒148本"
+      "target": 450,
+      "unit": "本/月",
+      "note": "15本/日×30日 (popup除く)"
     },
     "x_posts": {
-      "target": 120,
+      "target": 450,
       "unit": "件/月",
-      "note": "4件/日×30日"
+      "note": "=記事投稿数×30日 (popup除く)"
     },
     "gsc_clicks": {
-      "target": 1500,
+      "target": 15000,
       "unit": "クリック/月",
-      "note": "50/日×30日"
+      "note": "500/日×30日"
     },
     "pipeline_uptime": {
       "target": 95,
@@ -85,9 +85,19 @@
       "note": "SRE KPI（月間稼働率）"
     },
     "avg_position": {
-      "target": 15,
+      "target": 12,
       "unit": "位",
-      "note": "GSC平均掲載順位。現状～20位→15位以内を目指す"
+      "note": "GSC平均掲載順位。4月推定~20位→CTRリライトで12位以内"
+    },
+    "ctr_rewrites": {
+      "target": 30,
+      "unit": "件/月",
+      "note": "GSC CTR下位記事のタイトル/meta desc改善"
+    },
+    "bounce_rate": {
+      "target": 80,
+      "unit": "%以下",
+      "note": "4月実績91.9%→関連記事+内部リンク強化で80%以下"
     }
   },
   "ultimate": {
@@ -124,6 +134,11 @@
     }
   },
   "pipeline_kpis": {
+    "daily_error_rate": {
+      "target": 20,
+      "unit": "%以下",
+      "note": "1日の公開記事のうち監査issueが1件以上ある記事の割合。4月は62.3%→5月は20%以下"
+    },
     "arceus_score_pass_rate": {
       "target": 90,
       "unit": "%",

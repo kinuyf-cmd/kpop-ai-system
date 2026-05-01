@@ -2,6 +2,7 @@
 """タイトル最適化: 日本語42文字厳守、SEO/CTR最適"""
 import os, json, re, urllib.request
 from dotenv import load_dotenv
+from lib.agent_learning_loop import inject_lessons_to_prompt
 load_dotenv()
 
 API = "https://api.openai.com/v1/chat/completions"
@@ -31,7 +32,7 @@ def optimize_title(raw_title: str, body: str = '') -> str:
     body_req = json.dumps({
         'model': 'gpt-4o-mini',
         'messages': [
-            {'role': 'system', 'content': system},
+            {'role': 'system', 'content': inject_lessons_to_prompt('feature_article_writer', system)},
             {'role': 'user', 'content': user},
         ],
         'temperature': 0.3,
@@ -55,18 +56,47 @@ def optimize_title(raw_title: str, body: str = '') -> str:
         return raw_title[:MAX_TITLE]
 
 
+def _fallback_slug(title: str) -> str:
+    """GPT不使用のフォールバックスラッグ生成。英語部分を抽出+タイムスタンプ"""
+    parts = re.findall(r'[a-zA-Z0-9]+', title)
+    base = '-'.join(p.lower() for p in parts if len(p) > 1)[:40]
+    if len(base) < 20:
+        from datetime import datetime
+        base = f"kpop-article-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    return re.sub(r'-+', '-', base).strip('-')
+
+
+def validate_slug(slug: str) -> str:
+    """スラッグがASCII/適切長であることを検証。不合格なら空文字を返す"""
+    if not slug:
+        return ''
+    slug = slug.lower().strip()
+    slug = re.sub(r'[^a-z0-9-]', '-', slug)
+    slug = re.sub(r'-+', '-', slug).strip('-')
+    # 不正パターンの検出
+    if '%' in slug:
+        return ''  # エンコード文字が残っている
+    if re.match(r'^post-\d+$', slug) or re.match(r'^popup-\d+$', slug):
+        return ''  # 自動生成スラッグ
+    if '__trashed' in slug:
+        return ''
+    if len(slug) < 15:
+        return ''  # 短すぎる（監査基準に合わせ最低15文字）
+    return slug[:60]
+
+
 def generate_slug(title: str) -> str:
     key = os.getenv('OPENAI_API_KEY')
     if not key:
-        return ''
+        return _fallback_slug(title)
 
     body_req = json.dumps({
         'model': 'gpt-4o-mini',
         'messages': [
             {'role': 'system', 'content': (
                 "記事タイトルからURLスラッグ生成:\n"
-                "1. 英小文字+数字+ハイフンのみ\n"
-                "2. 最大50文字\n"
+                "1. 英小文字+数字+ハイフンのみ（日本語禁止）\n"
+                "2. 20-50文字\n"
                 "3. アーティスト名+キーワード2-3語\n"
                 "4. 出力はスラッグ1行のみ"
             )},
@@ -85,11 +115,13 @@ def generate_slug(title: str) -> str:
         r = urllib.request.urlopen(req, timeout=20)
         res = json.loads(r.read())
         slug = res['choices'][0]['message']['content'].strip().lower().split('\n')[0].strip()
-        slug = re.sub(r'[^a-z0-9\-]', '-', slug)
-        slug = re.sub(r'-+', '-', slug).strip('-')[:50]
-        return slug
+        slug = validate_slug(slug)
+        if slug:
+            return slug
     except Exception:
-        return ''
+        pass
+    # GPT失敗時のフォールバック
+    return _fallback_slug(title)
 
 
 def generate_meta_description(title: str, body: str) -> str:

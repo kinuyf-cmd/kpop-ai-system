@@ -1,3 +1,4 @@
+from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 #!/usr/bin/env python3
 """過去24時間の記事サムネを v4 レイアウトで再生成し featured_media を差し替える
 

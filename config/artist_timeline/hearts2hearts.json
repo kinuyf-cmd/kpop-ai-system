@@ -1,0 +1,107 @@
+{
+  "slug": "hearts2hearts",
+  "name": "Hearts2Hearts",
+  "name_kr": "하츠투하츠",
+  "name_en": "Hearts2Hearts",
+  "debut_date": "2025-05-01",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Soojin",
+      "name_kr": "수진",
+      "birth": "2004-08-14"
+    },
+    {
+      "name": "Minji",
+      "name_kr": "민지",
+      "birth": "2004-09-25"
+    },
+    {
+      "name": "Yuna",
+      "name_kr": "유나",
+      "birth": "2005-01-10"
+    },
+    {
+      "name": "Haeun",
+      "name_kr": "해은",
+      "birth": "2005-02-15"
+    },
+    {
+      "name": "Jisoo",
+      "name_kr": "지수",
+      "birth": "2006-03-22"
+    },
+    {
+      "name": "Nari",
+      "name_kr": "나리",
+      "birth": "2006-11-30"
+    },
+    {
+      "name": "Seoyeon",
+      "name_kr": "서연",
+      "birth": "2007-07-05"
+    },
+    {
+      "name": "Dara",
+      "name_kr": "다라",
+      "birth": "2007-12-12"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.hearts2hearts.com",
+    "twitter": "https://twitter.com/hearts2hearts",
+    "instagram": "https://instagram.com/hearts2hearts",
+    "youtube": "https://youtube.com/c/hearts2hearts",
+    "weverse": "https://www.weverse.io/hearts2hearts"
+  },
+  "events": [
+    {
+      "date": "2025-05-01",
+      "type": "debut",
+      "title": "First Mini Album 'Heartstrings'",
+      "note": "Debut showcase held."
+    },
+    {
+      "date": "2025-10-15",
+      "type": "comeback",
+      "title": "Second Mini Album 'Beat of Hearts'",
+      "note": "First comeback performance on music shows."
+    },
+    {
+      "date": "2026-03-30",
+      "type": "tour",
+      "title": "Heartbeats World Tour",
+      "note": "First world tour announced."
+    },
+    {
+      "date": "2026-07-01",
+      "type": "album",
+      "title": "Third Mini Album 'Euphoria'",
+      "note": "Released with a title track."
+    },
+    {
+      "date": "2026-12-20",
+      "type": "award",
+      "title": "2026 Rookie of the Year",
+      "note": "Won at Mnet Asian Music Awards."
+    },
+    {
+      "date": "2027-05-05",
+      "type": "comeback",
+      "title": "Fourth Mini Album 'Dance with Hearts'",
+      "note": "Released with an online concert."
+    },
+    {
+      "date": "2027-09-01",
+      "type": "other",
+      "title": "Collaboration Single with Popular Artist",
+      "note": "Collab announced."
+    },
+    {
+      "date": "2028-01-15",
+      "type": "award",
+      "title": "Best Female Group Award",
+      "note": "Nominated at Seoul Music Awards."
+    }
+  ]
+}

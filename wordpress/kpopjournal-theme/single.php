@@ -34,6 +34,32 @@
     </div>
     <?php endif; ?>
 
+    <!-- Breadcrumb -->
+    <nav class="kpj-breadcrumb" aria-label="パンくずリスト">
+        <div class="kpj-container">
+            <ol class="kpj-breadcrumb__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="kpj-breadcrumb__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="<?php echo home_url('/'); ?>" itemprop="item"><span itemprop="name">ホーム</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <?php
+                $cats = get_the_category();
+                if ($cats):
+                    $cat = $cats[0];
+                ?>
+                <li class="kpj-breadcrumb__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="<?php echo get_category_link($cat->term_id); ?>" itemprop="item"><span itemprop="name"><?php echo esc_html($cat->name); ?></span></a>
+                    <meta itemprop="position" content="2" />
+                </li>
+                <?php endif; ?>
+                <li class="kpj-breadcrumb__item kpj-breadcrumb__item--current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span itemprop="name"><?php the_title(); ?></span>
+                    <meta itemprop="position" content="3" />
+                </li>
+            </ol>
+        </div>
+    </nav>
+
     <!-- Content Area -->
     <div class="kpj-container kpj-layout">
         <div class="kpj-content kpj-single__content">
@@ -80,23 +106,21 @@
                 </div>
             </div>
 
-            <!-- Related Posts -->
+            <!-- Related Posts (multi-factor scoring) -->
             <?php
-            $cats = wp_get_post_categories(get_the_ID());
-            $related = new WP_Query([
-                'category__in'        => $cats,
-                'post__not_in'        => [get_the_ID()],
-                'posts_per_page'      => 4,
-                'ignore_sticky_posts' => 1,
-            ]);
-            if ($related->have_posts()):
+            $related_data = kpj_api_related(new WP_REST_Request('GET', '/kpopjournal/v1/posts/' . get_the_ID() . '/related'));
+            $related_posts = $related_data->get_data()['related'] ?? [];
+            if (!empty($related_posts)):
             ?>
             <section class="kpj-related">
-                <h2 class="kpj-related__title">Related Articles</h2>
+                <h2 class="kpj-related__title">関連記事</h2>
                 <div class="kpj-grid kpj-grid--2col">
-                    <?php while ($related->have_posts()): $related->the_post(); ?>
-                        <?php kpj_post_card('kpj-card', 'kpj-card--related'); ?>
-                    <?php endwhile; wp_reset_postdata(); ?>
+                    <?php foreach ($related_posts as $rp):
+                        $rpost = get_post($rp['id']);
+                        if ($rpost): setup_postdata($rpost);
+                            kpj_post_card('kpj-card', 'kpj-card--related');
+                        endif;
+                    endforeach; wp_reset_postdata(); ?>
                 </div>
             </section>
             <?php endif; ?>

@@ -566,6 +566,22 @@ fi
 
 xlog "FINAL_TWEET: ${TWEET_TEXT:0:100}..."
 
+# ─── レート制限: 1時間あたり最大3投稿 ──────────────────
+MAX_POSTS_PER_HOUR=3
+RECENT_COUNT=$(grep -c "$(date -d '1 hour ago' '+%Y-%m-%d %H')\|$(date '+%Y-%m-%d %H')" "$X_LOG" 2>/dev/null | grep -c "RESULT: フック投稿成功" || echo 0)
+# 正確なカウント: 直近1時間のフック投稿成功数
+RECENT_COUNT=$(grep "RESULT: フック投稿成功" "$X_LOG" 2>/dev/null | tail -20 | while read line; do
+  ts=$(echo "$line" | grep -oP '^\[\K[0-9-]+ [0-9:]+')
+  if [ -n "$ts" ] && [ "$(date -d "$ts" +%s 2>/dev/null)" -gt "$(date -d '1 hour ago' +%s 2>/dev/null)" ] 2>/dev/null; then
+    echo "1"
+  fi
+done | wc -l)
+if [ "${RECENT_COUNT:-0}" -ge "$MAX_POSTS_PER_HOUR" ]; then
+  xlog "RATE_LIMIT: 直近1時間に${RECENT_COUNT}件投稿済み (上限${MAX_POSTS_PER_HOUR}件)。スキップ"
+  echo "レート制限: 投稿をスキップしました"
+  exit 0
+fi
+
 if [ "$DRY_RUN" = "true" ]; then
   xlog "RESULT: DRY-RUN（ENABLE_X_POST=1 で有効化）"
   echo "[DRY-RUN] X投稿をスキップしました（ENABLE_X_POST=1 で有効化）"
@@ -578,9 +594,11 @@ xlog "POST: X API呼び出し開始（v2.0リトライ付き、フックのみ�
 POST_OUTPUT=$(python3 "$_SCRIPT_DIR/google_metrics/post_to_x.py" "$TWEET_TEXT" 2>&1) || {
   xlog "RESULT: X投稿失敗（リトライ${MAX_RETRIES:-3}回後）- $POST_OUTPUT"
   echo "$POST_OUTPUT"
-  # credential診断結果をDiscordに通知（urgent_errorsへ）
-  if echo "$POST_OUTPUT" | grep -qE 'DIAG_401|DIAG_403|CRED_MISSING|CRED_KEY'; then
-    xlog "CRED_ALERT: credential問題検出 → Discord通知"
+  # credential/アカウント問題をDiscordに通知（urgent_errorsへ）
+  # DIAG_DUPLICATE(重複投稿)は一時的問題なので除外
+  if echo "$POST_OUTPUT" | grep -qE 'DIAG_401|DIAG_LOCKED|CRED_MISSING|CRED_KEY' || \
+     (echo "$POST_OUTPUT" | grep -qE 'DIAG_403' && ! echo "$POST_OUTPUT" | grep -qE 'DIAG_DUPLICATE|DIAG_LOCKED'); then
+    xlog "CRED_ALERT: credential/アカウント問題検出 → Discord通知"
     python3 "$_SCRIPT_DIR/lib/discord_notifier.py" --test-critical 2>/dev/null || true
   fi
   exit 1

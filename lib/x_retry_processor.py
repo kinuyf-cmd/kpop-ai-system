@@ -38,27 +38,29 @@ def main():
 
     print(f"  queue: {len(queue)}件")
     item = queue[0]
-    pid = item['pid']
-    ptype = item['type']
+    # queue format: {id, title, url} or {pid, type}
+    pid = item.get('pid') or item.get('id')
+    ptype = item.get('type', 'post')
+    title = item.get('title', '')
+    url = item.get('url', '')
 
-    # Fetch post info
-    import requests
-    endpoint = 'posts' if ptype == 'post' else 'popup'
-    try:
-        p = requests.get(f'https://www.kpopjournal.tokyo/wp-json/wp/v2/{endpoint}/{pid}?_fields=id,title,link,meta',
-                         timeout=10).json()
-    except Exception as e:
-        print(f"  fetch err {pid}: {e}")
-        return
+    if not title or not url:
+        # Fetch post info from WP API
+        import requests
+        endpoint = 'posts' if ptype == 'post' else 'popup'
+        try:
+            p = requests.get(f'https://www.kpopjournal.tokyo/wp-json/wp/v2/{endpoint}/{pid}?_fields=id,title,link,meta',
+                             timeout=10).json()
+        except Exception as e:
+            print(f"  fetch err {pid}: {e}")
+            return
+        title = p['title']['rendered'] if isinstance(p.get('title'), dict) else p.get('title', '')
+        url = p.get('link', '')
 
-    title = p['title']['rendered'] if isinstance(p.get('title'), dict) else p.get('title', '')
     if ptype == 'popup':
-        city = p.get('meta', {}).get('_popup_city', 'seoul-seongsu')
-        url = f'https://www.kpopjournal.tokyo/popup/{city}/{pid}/'
         emoji = '📌'
         hashtags = '#ポップアップ #KPOP #韓国'
     else:
-        url = p.get('link', '')
         emoji = '📰'
         hashtags = '#KPOPJOURNAL #KPOP'
 

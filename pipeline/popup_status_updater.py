@@ -159,6 +159,20 @@ def main():
 
     print(f"\nサマリ: 期間回復={stats['date_recovered']} status修正={stats['status_updated']} archive={stats['archived']} draft={stats['drafted']}")
 
+    # 追加: popup_status_manager の統合処理
+    try:
+        from lib.popup_status_manager import (
+            force_archive_ended, inject_pending_card, remove_pending_card_when_confirmed,
+        )
+        arch = force_archive_ended()
+        print(f"archive移動: {arch.get('moved', 0)}件")
+        inj = inject_pending_card()
+        print(f"予告カード挿入: {inj.get('injected', 0)}件")
+        rem = remove_pending_card_when_confirmed()
+        print(f"予告カード除去: {rem.get('removed', 0)}件")
+    except Exception as e:
+        print(f"popup_status_manager統合処理err: {e}")
+
 
 if __name__ == '__main__':
     main()

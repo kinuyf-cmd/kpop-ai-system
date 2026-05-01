@@ -3,8 +3,12 @@
 # Usage: bash ~/google_metrics/request_index.sh "https://example.com/post-slug"
 
 # venv有効化（google-authモジュールのため）
-VENV="$HOME/kpop-ai-system/.venv/bin/activate"
+VENV_DIR="$HOME/kpop-ai-system/.venv"
+VENV="$VENV_DIR/bin/activate"
 [ -f "$VENV" ] && source "$VENV"
+# cron環境ではsource後もPATHが通らない場合があるため明示指定
+PYTHON3="${VENV_DIR}/bin/python3"
+[ ! -x "$PYTHON3" ] && PYTHON3="python3"
 
 URL="$1"
 
@@ -17,7 +21,7 @@ fi
 echo "=== Google Indexing API リクエスト ==="
 echo "  URL: $URL"
 
-python3 - "$URL" << 'PY'
+$PYTHON3 - "$URL" << 'PY'
 import sys, json, time
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request

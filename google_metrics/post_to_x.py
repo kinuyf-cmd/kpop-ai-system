@@ -104,10 +104,17 @@ def diagnose_http_error(status_code: int, response_body: str) -> list[str]:
             diag.append("  原因: OAuth署名の不一致 — キーの先頭・末尾に空白がないか確認")
             diag.append("  修復: ~/.x_credentials の全キーをコピー＆ペーストし直してください")
     elif status_code == 403:
-        diag.append("DIAG_403: アクセス権限不足")
         if "duplicate" in response_body.lower():
-            diag.append("  原因: 同一内容の重複投稿")
-            diag.append("  対策: 投稿テキストを変更してリトライしてください")
+            diag.append("DIAG_DUPLICATE: 同一内容の重複投稿")
+            diag.append("  原因: 投稿テキストが既存ツイートと同一または酷似")
+            diag.append("  対策: テキストにユニーク要素を追加してリトライ")
+            return diag  # credential問題ではないので早期リターン
+        diag.append("DIAG_403: アクセス権限不足")
+        if "temporarily locked" in response_body.lower():
+            diag.append("DIAG_LOCKED: アカウントが一時ロック中")
+            diag.append("  原因: スパム検知による一時ロック（大量投稿・duplicate連発が原因の可能性）")
+            diag.append("  修復: https://twitter.com にログインしてアカウントロックを解除してください")
+            return diag
         elif "suspended" in response_body.lower():
             diag.append("  原因: アカウントが停止されている可能性")
             diag.append("  修復: X Developer Portalでアカウント状態を確認してください")
@@ -225,6 +232,17 @@ def post_tweet(text: str, reply_to_id: str, creds: dict) -> tuple[str, int]:
                 pass
 
             _log_retry(attempt, e.code, f"HTTP {e.code}: {resp_body[:200]}")
+
+            # duplicate content: テキスト変更してリトライ可能
+            if e.code == 403 and "duplicate" in resp_body.lower():
+                diag = diagnose_http_error(e.code, resp_body)
+                _log_diag("duplicate_content", diag)
+                # テキストにタイムスタンプを付加して重複回避
+                now_str = datetime.now(JST).strftime("%H:%M")
+                body["text"] = text.rstrip() + f" ({now_str})"
+                _log_retry(attempt, 403, "duplicate content → テキスト変更してリトライ")
+                time.sleep(2)
+                continue
 
             # リトライ不可: credential問題
             if e.code in NO_RETRY_STATUS:

@@ -295,7 +295,7 @@ def generate_article_content(title, category_slug, trend_context=None):
 
 【要件】
 - 本文中に必ず現在の年月({year_month})を含めること
-- 1200-1800字
+- 1500-2500字
 - HTMLで記述、h2セクション最低3つ
 - リード文 (5W1H骨子) → 詳細展開 → まとめ の三段構成
 - 文末バリエーション (~した/~紹介する/~始まった/~人気/~注目)
@@ -571,7 +571,7 @@ def run_topic_mode(topic_ids, as_draft=False):
 
         print(f"\n生成中: [{cat_slug}] {title}")
         content = generate_article_content(title, cat_slug)
-        if not content or len(content) < 800:
+        if not content or len(content) < 1500:
             print(f"  生成失敗 or 短すぎ ({len(content) if content else 0}字)")
             continue
 
@@ -668,7 +668,7 @@ def main():
 
         print(f"\n  [{plan['source']}] {title}")
         content = generate_article_content(title, category_slug, trend_context=plan.get('context'))
-        if not content or len(content) < 800:
+        if not content or len(content) < 1500:
             print(f"    生成失敗 or 短すぎ ({len(content) if content else 0}字)")
             continue
 
@@ -732,7 +732,7 @@ def main():
 
         print(f"\n  [template] {title}")
         content = generate_article_content(title, cat_slug)
-        if not content or len(content) < 800:
+        if not content or len(content) < 1500:
             print(f"    生成失敗 or 短すぎ ({len(content) if content else 0}字)")
             continue
 

@@ -26,6 +26,39 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 W, H = 1200, 630
 
+
+def _smart_crop_top(img, target_w, target_h):
+    """顔焦点スマートクロップ: 上部1/3にエッジ密度が高い場合は上寄せ、それ以外は中央"""
+    iw, ih = img.size
+    if ih <= target_h:
+        left = (iw - target_w) // 2
+        return img.crop((left, 0, left + target_w, target_h))
+
+    # 上部1/3と下部1/3のエッジ密度を比較して顔位置を推定
+    try:
+        from PIL import ImageFilter
+        edges = img.convert('L').filter(ImageFilter.FIND_EDGES)
+        third = ih // 3
+        top_region = list(edges.crop((0, 0, iw, third)).getdata())
+        bottom_region = list(edges.crop((0, third * 2, iw, ih)).getdata())
+        top_density = sum(top_region) / max(len(top_region), 1)
+        bottom_density = sum(bottom_region) / max(len(bottom_region), 1)
+
+        # 上部のエッジが多い → 顔が上にある → 上寄せクロップ
+        if top_density > bottom_density * 1.3:
+            top = 0
+        # 下部のエッジが多い → 下寄せ
+        elif bottom_density > top_density * 1.3:
+            top = ih - target_h
+        else:
+            top = (ih - target_h) // 2
+    except Exception:
+        top = (ih - target_h) // 2
+
+    left = (iw - target_w) // 2
+    top = max(0, min(top, ih - target_h))
+    return img.crop((left, top, left + target_w, top + target_h))
+
 # ── Font paths ──
 FONT_DIR = "/home/aiuser/.local/share/fonts"
 FONT_JP_BLACK = None
@@ -186,9 +219,7 @@ def _load_photo_bg(path: str) -> Image.Image:
     scale = max(W / iw, H / ih)
     nw, nh = int(iw * scale), int(ih * scale)
     img = img.resize((nw, nh), Image.LANCZOS)
-    left = (nw - W) // 2
-    top = (nh - H) // 2
-    return img.crop((left, top, left + W, top + H))
+    return _smart_crop_top(img, W, H)
 
 
 def _create_gradient_bg(accent: tuple = (80, 20, 60)) -> Image.Image:
@@ -368,23 +399,22 @@ def compose_v6(image_path: str, output_path: str) -> str:
     """v6 compositor: text-zero, photo-only processing.
 
     No text overlay, no gradient band, no logo badge.
-    Just clean photo processing: resize/crop to 1200x630 with subtle enhancement.
+    Just clean photo processing: resize/crop to 1200x675 (16:9) with subtle enhancement.
     """
+    V6_W, V6_H = 1200, 675
     img = Image.open(image_path).convert("RGB")
-    # Resize/crop to 1200x630
-    target_ratio = W / H  # 1200/630
+    # Resize/crop to 1200x675 (16:9)
+    target_ratio = V6_W / V6_H
     img_ratio = img.width / img.height
     if img_ratio > target_ratio:
-        new_h = H
-        new_w = int(H * img_ratio)
+        new_h = V6_H
+        new_w = int(V6_H * img_ratio)
     else:
-        new_w = W
-        new_h = int(W / img_ratio)
+        new_w = V6_W
+        new_h = int(V6_W / img_ratio)
     img = img.resize((new_w, new_h), Image.LANCZOS)
-    # Center crop
-    left = (new_w - W) // 2
-    top = (new_h - H) // 2
-    img = img.crop((left, top, left + W, top + H))
+    # Smart crop (顔焦点: 上部にエッジが多ければ上寄せ)
+    img = _smart_crop_top(img, V6_W, V6_H)
     # Subtle enhancement
     from PIL import ImageEnhance
     img = ImageEnhance.Contrast(img).enhance(1.05)

@@ -42,6 +42,33 @@ except Exception:
     _dalle_generate = None
 
 
+def _try_dalle_from_prompt(prompt_data: dict, output_dir: str, post_id: str) -> str:
+    """ai_prompt結果からDALL-Eで画像を即時生成する。成功時はパスを返す。"""
+    if _dalle_generate is None:
+        return ""
+    positive = prompt_data.get("ai_positive_prompt", "")
+    if not positive:
+        positive = (
+            "Modern K-pop magazine editorial, abstract musical and cultural elements, "
+            "pink coral and lavender gradient, minimal elegant composition, "
+            "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+        )
+    output = os.path.join(output_dir, f"dalle_v6_post{post_id}_v6.jpg")
+    raw_output = os.path.join(output_dir, f"dalle_v6_post{post_id}.png")
+    result = _dalle_generate(positive[:4000], raw_output, size="1792x1024", quality="standard")
+    if result.get("success") and os.path.exists(raw_output):
+        try:
+            from thumbnail_compositor import compose_v6
+            compose_v6(raw_output, output)
+            sys.stderr.write(f"[v6] DALL-E fallback succeeded: {output} (${result.get('cost_usd', 0):.3f})\n")
+            return output
+        except Exception as e:
+            sys.stderr.write(f"[v6] DALL-E compose_v6 failed: {e}\n")
+            return raw_output
+    sys.stderr.write(f"[v6] DALL-E fallback failed: {result.get('reason', '?')}\n")
+    return ""
+
+
 def _save_ai_prompt(prompt_data: dict, output_dir: str, post_id: str) -> str:
     """Save AI generation prompt to a JSON file for external processing."""
     prompt_dir = os.path.join(output_dir, "ai_prompts")
@@ -90,15 +117,24 @@ def _dalle_fallback(title: str, body: str, post_id, output_dir: str = "/tmp") ->
     result = _dalle_generate(prompt, output, size="1792x1024", quality="standard")
 
     if result["success"]:
+        # DALL-E出力を1200x675にリサイズ/クロップ (v6準拠)
+        try:
+            from thumbnail_compositor import compose_v6
+            v6_output = os.path.join(output_dir, f"dalle_v6_post{post_id}_v6.jpg")
+            compose_v6(output, v6_output)
+            final_output = v6_output
+        except Exception as e:
+            sys.stderr.write(f"[v6] dalle compose_v6 failed: {e}, using raw\n")
+            final_output = output
         return {
-            "output_path": output,
+            "output_path": final_output,
             "source": "dalle3",
             "vision_score": 85,
             "verdict": "PASS",
             "meta": {
                 "cost_usd": result["cost_usd"],
                 "revised_prompt": result.get("revised_prompt", "")[:200],
-                "reason": "dalle3 generated",
+                "reason": "dalle3 generated + v6 composed",
             },
         }
     return {
@@ -212,28 +248,36 @@ def make_thumbnail_v6(
             f"image={image_path or '(none)'}\n"
         )
 
-        # Handle AI prompt source (no actual image yet)
+        # Handle AI prompt source — try DALL-E generation immediately
         if source_type == "ai_prompt":
             prompt_file = _save_ai_prompt(source_result, output_dir, post_id)
             sys.stderr.write(f"[v6] AI prompt saved to {prompt_file}\n")
 
-            # If we have no image at all, queue for review
-            if not best_result:
-                best_result = {
-                    "output_path": "",
-                    "source": "ai_prompt",
-                    "vision_score": 0,
-                    "verdict": "QUEUE_REVIEW",
-                    "meta": {
-                        "classification": classification,
-                        "ai_prompt_file": prompt_file,
-                        "ai_positive_prompt": source_result.get("ai_positive_prompt", ""),
-                        "ai_negative_prompt": source_result.get("ai_negative_prompt", ""),
-                        "attempts": attempt + 1,
-                        "reason": "AI prompt generated, awaiting image generation",
-                    },
-                }
-            continue
+            # Attempt DALL-E generation from the prompt
+            dalle_path = _try_dalle_from_prompt(source_result, output_dir, post_id)
+            if dalle_path and os.path.exists(dalle_path):
+                image_path = dalle_path
+                source_type = "dalle3"
+                sys.stderr.write(f"[v6] DALL-E fallback succeeded: {dalle_path}\n")
+                # Fall through to compose_v6 below
+            else:
+                # If we have no image at all, queue for review
+                if not best_result:
+                    best_result = {
+                        "output_path": "",
+                        "source": "ai_prompt",
+                        "vision_score": 0,
+                        "verdict": "QUEUE_REVIEW",
+                        "meta": {
+                            "classification": classification,
+                            "ai_prompt_file": prompt_file,
+                            "ai_positive_prompt": source_result.get("ai_positive_prompt", ""),
+                            "ai_negative_prompt": source_result.get("ai_negative_prompt", ""),
+                            "attempts": attempt + 1,
+                            "reason": "AI prompt generated, DALL-E unavailable",
+                        },
+                    }
+                continue
 
         # No image file available
         if not image_path or not os.path.exists(image_path):

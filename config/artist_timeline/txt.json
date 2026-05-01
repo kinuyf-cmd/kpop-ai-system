@@ -1,0 +1,104 @@
+{
+  "slug": "txt",
+  "name": "TXT",
+  "name_kr": "투모로우바이투게더",
+  "name_en": "Tomorrow X Together",
+  "debut_date": "2019-03-04",
+  "agency": "Big Hit Entertainment",
+  "members": [
+    {
+      "name": "Soobin",
+      "name_kr": "수빈",
+      "birth": "2000-12-05"
+    },
+    {
+      "name": "Yeonjun",
+      "name_kr": "연준",
+      "birth": "1999-09-13"
+    },
+    {
+      "name": "Beomgyu",
+      "name_kr": "범규",
+      "birth": "2001-03-13"
+    },
+    {
+      "name": "Taehyun",
+      "name_kr": "태현",
+      "birth": "2002-02-05"
+    },
+    {
+      "name": "Huening Kai",
+      "name_kr": "휴닝카이",
+      "birth": "2002-08-14"
+    }
+  ],
+  "official_links": {
+    "website": "https://txt.ibighit.com",
+    "twitter": "https://twitter.com/TXT_bighit",
+    "instagram": "https://www.instagram.com/TXTofficial",
+    "youtube": "https://www.youtube.com/c/TXT_official",
+    "weverse": "https://weverse.io/txt"
+  },
+  "events": [
+    {
+      "date": "2019-03-04",
+      "type": "debut",
+      "title": "Debut with 'The Dream Chapter: STAR'",
+      "note": "First EP and debut showcase."
+    },
+    {
+      "date": "2020-05-18",
+      "type": "comeback",
+      "title": "Release of 'The Dream Chapter: ETERNITY'",
+      "note": "Second EP of TXT."
+    },
+    {
+      "date": "2020-10-26",
+      "type": "comeback",
+      "title": "Release of 'minisode1: Blue Hour'",
+      "note": "First mini album."
+    },
+    {
+      "date": "2021-05-31",
+      "type": "comeback",
+      "title": "Release of 'The Chaos Chapter: FREEZE'",
+      "note": "Third EP."
+    },
+    {
+      "date": "2021-11-17",
+      "type": "comeback",
+      "title": "Release of 'The Chaos Chapter: FIGHT OR ESCAPE'",
+      "note": "Repackage of their earlier EP."
+    },
+    {
+      "date": "2022-05-09",
+      "type": "comeback",
+      "title": "Release of 'minisode 2: Thursday's Child'",
+      "note": "Second mini album."
+    },
+    {
+      "date": "2022-10-13",
+      "type": "comeback",
+      "title": "Release of 'TXT's 2nd studio album 'CHAOS'",
+      "note": "Key addition to their discography."
+    },
+    {
+      "date": "2023-01-27",
+      "type": "tour",
+      "title": "Begin 'TOMORROW X TOGETHER WORLD TOUR",
+      "note": "Start of the world tour."
+    },
+    {
+      "date": "2023-10-13",
+      "type": "comeback",
+      "title": "Release of 'The Name Chapter: TEMPTATION'",
+      "note": "Latest EP."
+    },
+    {
+      "date": "2024-04-01",
+      "type": "other",
+      "title": "Scheduled comeback announcement.",
+      "note": "Anticipated summer release."
+    }
+  ]
+}

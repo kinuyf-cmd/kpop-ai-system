@@ -80,8 +80,29 @@ JSON出力のみ: {{"score":0-100,"critical":["致命的問題"],"high":["重要
             'Authorization': f'Bearer {OPENAI_KEY}',
             'Content-Type': 'application/json',
         })
-    r = json.loads(urllib.request.urlopen(req, timeout=60).read())
-    return json.loads(r['choices'][0]['message']['content'])
+
+    # リトライ+指数バックオフ（429対策）
+    import time as _time
+    last_err = None
+    for attempt in range(3):
+        try:
+            r = json.loads(urllib.request.urlopen(req, timeout=60).read())
+            return json.loads(r['choices'][0]['message']['content'])
+        except urllib.error.HTTPError as e:
+            last_err = e
+            if e.code == 429:
+                wait = (2 ** attempt) * 5  # 5s, 10s, 20s
+                print(f"  [factcheck] 429 rate limit, retry in {wait}s (attempt {attempt+1}/3)")
+                _time.sleep(wait)
+                # リクエストを再構築（bodyが消費されるため）
+                req = urllib.request.Request('https://api.openai.com/v1/chat/completions',
+                    data=body, headers={
+                        'Authorization': f'Bearer {OPENAI_KEY}',
+                        'Content-Type': 'application/json',
+                    })
+            else:
+                raise
+    raise last_err
 
 
 def queue_to_audit_state(post_id, post_type, llm_issues):

@@ -1,3 +1,4 @@
+from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 #!/usr/bin/env python3
 """対象post_idのサムネをDALL-E 3で再生成し、WPのfeatured_mediaを差し替え"""
 import sys

@@ -1,0 +1,22 @@
+{
+  "note": "サムネイルに不適切な動画ID。resolverが自動スキップする。",
+  "updated_at": "2026-04-27",
+  "blocked": [
+    "wu6bA3zKVcg",
+    "fIce5diB5-c",
+    "FDk-IwuBgSY",
+    "z_4Te60IBFs",
+    "vo9xM-MThgg",
+    "iNikp3se0jc",
+    "guOmiRODekU"
+  ],
+  "reasons": {
+    "fIce5diB5-c": "KEEPSWIMMING — BTS無関係のランニング動画",
+    "wu6bA3zKVcg": "BTSヒーリング旅行ショート — 縦型",
+    "FDk-IwuBgSY": "Run BTS ショート (POV:演技少年団) — 縦型",
+    "z_4Te60IBFs": "Run BTS ショート (部屋配定) — 縦型",
+    "vo9xM-MThgg": "Run BTS ショート — 縦型",
+    "iNikp3se0jc": "Run BTS ショート (合宿) — 縦型",
+    "guOmiRODekU": "V(テテ)の誤チャンネル — インドの集会動画。K-POP完全無関係"
+  }
+}

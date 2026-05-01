@@ -1,0 +1,60 @@
+{
+  "topics": [
+    {
+      "id": "gw_seoul_2026",
+      "title": "GW韓国旅行ガイド2026",
+      "category": "korea_travel",
+      "priority": "S",
+      "keywords": ["GW", "韓国旅行", "ソウル", "明洞", "江南", "弘大"]
+    },
+    {
+      "id": "kcon_japan_2026_preview",
+      "title": "KCON JAPAN 2026完全攻略",
+      "category": "oshikatsu_guide",
+      "priority": "S",
+      "keywords": ["KCON", "幕張メッセ", "&TEAM", "JO1", "INI", "TWS"]
+    },
+    {
+      "id": "kstyle_party_2026_preview",
+      "title": "Kstyle PARTY 2026出演者ガイド",
+      "category": "oshikatsu_guide",
+      "priority": "S",
+      "keywords": ["Kstyle PARTY", "Kアリーナ横浜", "SAY MY NAME"]
+    },
+    {
+      "id": "may_comeback_calendar",
+      "title": "5月カムバック完全カレンダー2026",
+      "category": "kdrama_movie",
+      "priority": "A",
+      "keywords": ["5月", "カムバック", "BLACKPINK", "aespa"]
+    },
+    {
+      "id": "may_makeup_kpop",
+      "title": "2026春K-POPメイクトレンド",
+      "category": "beauty_tutorial",
+      "priority": "A",
+      "keywords": ["春メイク", "K-POPメイク", "韓国コスメ", "OLIVE YOUNG"]
+    },
+    {
+      "id": "may_popup_tokyo_osaka",
+      "title": "5月開催K-POPポップアップ完全マップ",
+      "category": "oshikatsu_guide",
+      "priority": "A",
+      "keywords": ["ポップアップ", "LE SSERAFIM", "原宿", "東京", "大阪"]
+    },
+    {
+      "id": "gw_kdrama_binge",
+      "title": "GW一気見おすすめKドラマ10選",
+      "category": "kdrama_movie",
+      "priority": "A",
+      "keywords": ["GW", "Kドラマ", "一気見", "Netflix"]
+    },
+    {
+      "id": "kcon_olive_young_fest",
+      "title": "OLIVE YOUNG FEST 2026完全ガイド",
+      "category": "beauty_tutorial",
+      "priority": "A",
+      "keywords": ["OLIVE YOUNG", "KCON", "コスメ"]
+    }
+  ]
+}

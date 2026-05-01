@@ -176,7 +176,7 @@ CEO直轄（全部署を統括）
 - アフィリエイト: Amazon(amazon0d7a-22) / A8net(a25061789095)
 
 ### X投稿方針（確定）
-- アカウント: @kpopjournal_jp
+- アカウント: @lovekpopjournal
 - credentials: /home/aiuser/.x_credentials
 - 記事投稿後に自動でX投稿
 

@@ -1,12 +1,76 @@
 """draft自動publish — 品質ゲートPASS記事を自動公開 (毎時20分)"""
-import requests, os, json, re, sys
+import requests, os, json, re, sys, unicodedata, hashlib
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from dotenv import load_dotenv
 load_dotenv('/home/aiuser/kpop-ai-system/.env')
 from datetime import datetime
+from pathlib import Path
 from lib.full_audit_engine import full_audit
 
+BLOCK_HISTORY_PATH = Path('/home/aiuser/kpop-ai-system/data/draft_block_history.json')
+MAX_BLOCK_COUNT = 3  # この回数BLOCKされたらアーカイブ
+
 AUTH = (os.getenv('WP_USER', ''), os.getenv('WP_PASS', ''))
+
+
+def _load_block_history() -> dict:
+    if BLOCK_HISTORY_PATH.exists():
+        try:
+            return json.loads(BLOCK_HISTORY_PATH.read_text(encoding='utf-8'))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def _save_block_history(history: dict):
+    BLOCK_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    BLOCK_HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding='utf-8')
+
+
+def _archive_draft(pid: int, reasons: list):
+    """MAX_BLOCK_COUNT超過のドラフトをゴミ箱に移動"""
+    try:
+        r = requests.delete(
+            f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}',
+            auth=AUTH, timeout=15)
+        if r.status_code == 200:
+            print(f"  draft {pid} AUTO-ARCHIVE: {MAX_BLOCK_COUNT}回BLOCK超過 reasons={reasons[:2]}")
+        else:
+            print(f"  draft {pid} archive失敗: HTTP {r.status_code}")
+    except Exception as e:
+        print(f"  draft {pid} archive失敗: {e}")
+
+
+def _fix_slug_if_needed(pid, slug, title):
+    """slugが汎用的/短すぎる場合にタイトルから意味あるslugを生成して更新"""
+    # 意味のあるslugかチェック: 英単語3語以上あればOK
+    words = re.findall(r'[a-z]{2,}', slug.lower())
+    if len(words) >= 3:
+        return slug
+
+    # タイトルからslugを生成
+    # 日本語タイトルからアーティスト名・英語キーワードを抽出
+    en_words = re.findall(r'[A-Za-z][A-Za-z0-9]+', title)
+    if not en_words:
+        # 日本語のみ → romanize は難しいのでそのまま
+        return slug
+
+    new_slug = '-'.join(w.lower() for w in en_words[:6])
+    new_slug = re.sub(r'-+', '-', new_slug).strip('-')
+    if len(new_slug) < 10:
+        new_slug += '-' + datetime.now().strftime('%Y%m%d')
+
+    try:
+        r = requests.post(
+            f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}',
+            json={'slug': new_slug}, auth=AUTH, timeout=15)
+        if r.status_code == 200:
+            actual = r.json().get('slug', new_slug)
+            print(f"  slug修正: {slug} → {actual}")
+            return actual
+    except Exception:
+        pass
+    return slug
 
 def main():
     all_drafts = []
@@ -22,26 +86,62 @@ def main():
         print(f"[{datetime.now().isoformat()}] draft: 0件")
         return
 
-    pub = rew = err = 0
+    from lib.pre_publish_gate import pre_publish_gate
+
+    block_history = _load_block_history()
+    pub = rew = archived = err = 0
     for d in all_drafts:
         pid = d['id']
+        pid_str = str(pid)
         try:
-            issues = full_audit(d, 'post')
-            high = sum(1 for i in issues if i.get('severity') == 'high')
+            title = d.get('title', {}).get('rendered', '')
             content = d.get('content', {}).get('rendered', '')
-            plain = re.sub(r'<[^>]+>', '', content).strip()
-            if high < 3 and len(plain) >= 150:
+            excerpt = d.get('excerpt', {}).get('rendered', '')
+            slug = d.get('slug', '')
+            fm = d.get('featured_media', 0)
+            cats = d.get('categories', [])
+
+            # カテゴリからkindを推定: 速報(2)以外はfeatureとして扱う
+            NEWS_CATS = {2, 7, 58}  # 速報記事, 出演情報, 今日話題のニュース
+            _kind = 'news' if set(cats) & NEWS_CATS else 'feature'
+            gate = pre_publish_gate(
+                title=title, body_html=content,
+                post_type='post', kind=_kind,
+                slug=slug, featured_media=fm,
+                categories=cats, excerpt=excerpt,
+                status='publish',
+            )
+            if gate['verdict'] != 'BLOCK':
+                # publish前にslugを検証・修正
+                slug = _fix_slug_if_needed(pid, slug, title)
                 u = requests.post(
                     f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}',
                     json={'status': 'publish'}, auth=AUTH, timeout=15)
                 if u.status_code == 200:
                     pub += 1
+                    # publishできたらblock履歴から削除
+                    block_history.pop(pid_str, None)
             else:
-                rew += 1
-        except:
+                reasons = gate.get('block_reasons', [])
+                # BLOCK履歴を記録
+                if pid_str not in block_history:
+                    block_history[pid_str] = {'count': 0, 'first_seen': datetime.now().isoformat(), 'reasons': []}
+                block_history[pid_str]['count'] += 1
+                block_history[pid_str]['last_seen'] = datetime.now().isoformat()
+                block_history[pid_str]['reasons'] = reasons[:3]
+
+                if block_history[pid_str]['count'] >= MAX_BLOCK_COUNT:
+                    _archive_draft(pid, reasons)
+                    block_history.pop(pid_str, None)
+                    archived += 1
+                else:
+                    print(f"  draft {pid} BLOCK ({block_history[pid_str]['count']}/{MAX_BLOCK_COUNT}): {reasons[:2]}")
+                    rew += 1
+        except Exception:
             err += 1
 
-    print(f"[{datetime.now().isoformat()}] draft={len(all_drafts)} publish={pub} rewrite={rew} err={err}")
+    _save_block_history(block_history)
+    print(f"[{datetime.now().isoformat()}] draft={len(all_drafts)} publish={pub} block={rew} archived={archived} err={err}")
 
 if __name__ == '__main__':
     main()

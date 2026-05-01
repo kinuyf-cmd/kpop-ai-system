@@ -89,12 +89,24 @@ def main():
 
     with_city = [i for i in uniq if i['city']]
 
+    # 既存signals重複チェック (PR TIMESコレクターと同等)
+    existing_urls = set()
+    if os.path.exists(OUTPUT):
+        with open(OUTPUT, encoding='utf-8') as f:
+            for line in f:
+                try:
+                    existing_urls.add(json.loads(line).get('url', ''))
+                except:
+                    pass
+
+    new_items = [i for i in with_city if i['url'] not in existing_urls]
+
     os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
     with open(OUTPUT, 'a', encoding='utf-8') as f:
-        for item in with_city:
+        for item in new_items:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
 
-    print(f"kbuzzlab: {len(uniq)}件中、都市判定{len(with_city)}件保存")
+    print(f"kbuzzlab: {len(uniq)}件中、都市判定{len(with_city)}件、新規{len(new_items)}件保存")
 
 
 if __name__ == '__main__':

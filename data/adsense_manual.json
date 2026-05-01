@@ -1,9 +1,9 @@
 {
   "available": true,
-  "yesterday_revenue_jpy": 34.0,
-  "last_7d_total_jpy": 307.0,
-  "last_7d_avg_jpy": 43.86,
-  "last_30d_total_jpy": 1452.0,
-  "updated_at": "2026-04-25T06:30:07.492926",
+  "yesterday_revenue_jpy": 59.0,
+  "last_7d_total_jpy": 320.0,
+  "last_7d_avg_jpy": 45.71,
+  "last_30d_total_jpy": 1559.0,
+  "updated_at": "2026-04-29T03:12:46.071207",
   "source": "adsense_api_oauth"
 }

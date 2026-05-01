@@ -65,7 +65,7 @@ check_duplicate() {
   echo "=== 重複投稿チェック（過去${days}日）==="
 
   RECENT_TITLES=$(python3 - "$days" <<'PYEOF'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 from datetime import datetime, timedelta, timezone
 days = int(sys.argv[1])
 cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%S")

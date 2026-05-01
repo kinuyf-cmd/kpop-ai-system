@@ -74,6 +74,16 @@ def audit_post(post):
     if len(plain) < 200:
         issues.append({'kind': 'too_short', 'severity': 'high'})
 
+
+    # アーティストカテゴリ漏れ自動修正
+    try:
+        from lib.auto_category import ensure_artist_categories
+        title = post.get('title', {}).get('rendered', '') if isinstance(post.get('title'), dict) else ''
+        content_text = post.get('content', {}).get('rendered', '') if isinstance(post.get('content'), dict) else ''
+        existing_cats = post.get('categories', [])
+        ensure_artist_categories(post['id'], title, content_text, existing_cats)
+    except: pass
+
     return {
         'post_id': pid,
         'title': title[:60],
@@ -159,9 +169,29 @@ def update_agent_lessons(audit_results):
             f.write(existing + section)
 
 
+SEEN_PATH = '/home/aiuser/kpop-ai-system/data/feedback_loop_seen.json'
+
+def _load_seen() -> set:
+    if os.path.exists(SEEN_PATH):
+        try:
+            data = json.load(open(SEEN_PATH))
+            return set(data.get('ids', []))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return set()
+
+def _save_seen(seen: set):
+    # 直近200件のみ保持
+    ids = sorted(seen)[-200:]
+    with open(SEEN_PATH, 'w') as f:
+        json.dump({'ids': ids}, f)
+
+
 def main():
     print(f"=== post_audit_feedback_loop {datetime.now(JST).strftime('%Y-%m-%d %H:%M')} ===")
-    posts = get_recent_posts(minutes_ago=10, max_age_minutes=20)
+    posts = get_recent_posts(minutes_ago=5, max_age_minutes=40)
+    seen = _load_seen()
+    posts = [p for p in posts if p['id'] not in seen]
     if not posts:
         print("  対象投稿なし")
         return
@@ -184,6 +214,10 @@ def main():
             print(f"  OK id={result['post_id']} クリーン")
 
     update_agent_lessons(audit_results)
+
+    # 監査済みIDを記録（重複防止）
+    seen.update(r['post_id'] for r in audit_results)
+    _save_seen(seen)
 
     log = '/home/aiuser/kpop-ai-system/logs/post_audit_feedback.jsonl'
     os.makedirs(os.path.dirname(log), exist_ok=True)

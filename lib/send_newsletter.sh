@@ -7,7 +7,7 @@
 #   bash lib/send_newsletter.sh              # 本番配信
 #   bash lib/send_newsletter.sh --build-only # HTMLビルドのみ
 #   bash lib/send_newsletter.sh --dry-run    # プレビュー
-#   bash lib/send_newsletter.sh --test kinu.yf@gmail.com  # テスト配信
+#   bash lib/send_newsletter.sh --test kpopjournal.biz@gmail.com  # テスト配信
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 set -euo pipefail

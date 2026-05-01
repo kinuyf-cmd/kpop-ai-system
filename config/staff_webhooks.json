@@ -1,0 +1,187 @@
+{
+  "KPJ-EXE-001-exec": {
+    "url": "https://discord.com/api/webhooks/1497990269671444583/W_V3ILjFu55XKg32d2fGbG_ZGb19iQGCytV20FBijxdrUtniJeFuW813QPo_EG0cYFxI",
+    "channel": "👔-役員会議室",
+    "name": "ミュウツー(CEO)"
+  },
+  "KPJ-EXE-001-morning": {
+    "url": "https://discord.com/api/webhooks/1497990470465490984/X58hc3SiT7Zb1B_EeRQDtpgEGzFjMXTOXqBtmmLlEAW9G-MjicmYVDDPNfUb46A2MHFw",
+    "channel": "📅-朝会-終礼",
+    "name": "ミュウツー(CEO)"
+  },
+  "KPJ-EXE-001-all": {
+    "url": "https://discord.com/api/webhooks/1497990773294108754/1Qx4NwQ61daCFusMB4E-0CxsCKW5JmdYDcgu2sesqK4kYHADjtv5TpVmGQjlVT6Jbf-k",
+    "channel": "💬-全社コミュニケーション",
+    "name": "ミュウツー(CEO)"
+  },
+  "KPJ-EXE-001-board": {
+    "url": "https://discord.com/api/webhooks/1497991074751447130/S8YnwrRK4FaviDwHOTNfHLwwjYU5ikHhy-wrHCQCiVSCYwsXEmPLhVicLVTjpsXFUfV4",
+    "channel": "📊-経営指標-board",
+    "name": "ミュウツー(CEO)"
+  },
+  "KPJ-EXE-002-exec": {
+    "url": "https://discord.com/api/webhooks/1497991376716169246/nTQrbpPaWhmOv-XxnXHKP1zPdtaWlZK9d2wjJTYJixkYbuUATOh4oAvm2jTmQWqyLd1Z",
+    "channel": "👔-役員会議室",
+    "name": "イーブイ(COO)"
+  },
+  "KPJ-EXE-002-morning": {
+    "url": "https://discord.com/api/webhooks/1497991677410017341/wY4fL1L5CXKgoffCEatmsUkcwMBwuqPKgLNMHXoU-x2rt--syDczqXJ4zIAiLe-rS-fY",
+    "channel": "📅-朝会-終礼",
+    "name": "イーブイ(COO)"
+  },
+  "KPJ-EXE-002-all": {
+    "url": "https://discord.com/api/webhooks/1497991980481904752/zaVM7BFULJHARyTY1Xw7_4Mj4G1GeV7A4VwGL3lHDF2OrXind0dsqQ4iDHdm739sw-ZK",
+    "channel": "💬-全社コミュニケーション",
+    "name": "イーブイ(COO)"
+  },
+  "KPJ-EXE-002-board": {
+    "url": "https://discord.com/api/webhooks/1497992282677317874/IsSqHMqDJm1TZHn-uZM3ZnYeertlq11Cv0vqx3DJsIgy7jhNm9iICOXAGPDhED_du3vH",
+    "channel": "📊-経営指標-board",
+    "name": "イーブイ(COO)"
+  },
+  "KPJ-EXE-002-alert": {
+    "url": "https://discord.com/api/webhooks/1497992585581432842/vVtbRbJ6XhiGQ86HZ61V8orEJXu5Jv-m6k79AenTAJQ3Ltwl2_9U3wf-yXJqlD_9cy5z",
+    "channel": "🚨-緊急アラート",
+    "name": "イーブイ(COO)"
+  },
+  "KPJ-EXE-003-exec": {
+    "url": "https://discord.com/api/webhooks/1497992919485780289/TgO2Jj61qEH_Stjytel9phySdOX-MV5PJjy3q9vYgVQbTKcPZ7J7T0EyB13aZUdb6Aga",
+    "channel": "👔-役員会議室",
+    "name": "アルセウス(CTO)"
+  },
+  "KPJ-EXE-003-morning": {
+    "url": "https://discord.com/api/webhooks/1497993188571615444/1E8q69k7A1dgnKC_y1xWAgjra-Ss8KhaEE2MJNGl3U6aMp0UQ6N6rxDWqb4fOcf3MjOX",
+    "channel": "📅-朝会-終礼",
+    "name": "アルセウス(CTO)"
+  },
+  "KPJ-EXE-003-all": {
+    "url": "https://discord.com/api/webhooks/1497993490200662238/-8cUujIaeYag0RevdLc2Gfg6PyXXIVPt4lQixxHH0mWESn6KKDqn9I_JxxHU_F9vg_4D",
+    "channel": "💬-全社コミュニケーション",
+    "name": "アルセウス(CTO)"
+  },
+  "KPJ-EXE-003-alert": {
+    "url": "https://discord.com/api/webhooks/1497993791767056474/BRlyuuyOOqvrNNRUGwHTWTsCHFP9_3LZntVqzrJEQFFhtbYHVLuD7xLZ7FGb1oQ9uIMm",
+    "channel": "🚨-緊急アラート",
+    "name": "アルセウス(CTO)"
+  },
+  "KPJ-EXE-004-exec": {
+    "url": "https://discord.com/api/webhooks/1497994094167982311/fKXQKFTEWn3KlBaOokRUCqD7--APzY2BTG2dfxvIBOSSh-G1Is1gkwxkoEp5CwAZv7gy",
+    "channel": "👔-役員会議室",
+    "name": "カビゴン(CFO)"
+  },
+  "KPJ-EXE-004-morning": {
+    "url": "https://discord.com/api/webhooks/1497994398783246346/8FAazI2UszjlxPfRL0KVeE5Pi4DpfrdALPCIEyLxB6695K9cVqe-HphyoFr9GxwLk1zG",
+    "channel": "📅-朝会-終礼",
+    "name": "カビゴン(CFO)"
+  },
+  "KPJ-EXE-004-all": {
+    "url": "https://discord.com/api/webhooks/1497994698294431766/oJQmHdRcDZEhr0mn-Fd1-sS984QxP0atD2AwHfzPAj4QBTPCMWBN1RUt_c2D5E2t4_5j",
+    "channel": "💬-全社コミュニケーション",
+    "name": "カビゴン(CFO)"
+  },
+  "KPJ-EXE-004-board": {
+    "url": "https://discord.com/api/webhooks/1497995000687104071/FSs-Tsh00S4Bws1NNzNIYXjfVeL9yUPPgtYgqz7UFU5PLOkPwe9X9kasYHQXQQjHj_xg",
+    "channel": "📊-経営指標-board",
+    "name": "カビゴン(CFO)"
+  },
+  "KPJ-EXE-005-exec": {
+    "url": "https://discord.com/api/webhooks/1497995603370705086/z7HEsuSBYU_x_bvE6W42wT-5lV1A_heQkj6XMr5wma7wst0Gv7adQ-uFLdyUix7Iam-Z",
+    "channel": "👔-役員会議室",
+    "name": "ラティアス(CMO)"
+  },
+  "KPJ-EXE-005-morning": {
+    "url": "https://discord.com/api/webhooks/1497995907361411192/xeHaZspuTAsF1d6mzhUdoit0Lq8UYnnndIetpHmAToya_WXECIEroCuEpnCIKfYP6Cte",
+    "channel": "📅-朝会-終礼",
+    "name": "ラティアス(CMO)"
+  },
+  "KPJ-EXE-005-all": {
+    "url": "https://discord.com/api/webhooks/1497996207392292864/dR-vgmj4BGVDsJZOr-aIYeS7vpaQC_XWyT2348pTZb_4k_5ySjKimsx0GErIyNaFK9J2",
+    "channel": "💬-全社コミュニケーション",
+    "name": "ラティアス(CMO)"
+  },
+  "KPJ-DEP-101": {
+    "url": "https://discord.com/api/webhooks/1497996510162583682/OAnGQGgbA03DblNCNbZJLvu3l7pijb53HP0SgYKpLf_sq-U80oww2idu5aawWjRCVaDB",
+    "channel": "📝-コンテンツ部",
+    "name": "デオキシス"
+  },
+  "KPJ-DEP-102": {
+    "url": "https://discord.com/api/webhooks/1497996811300770024/rEOjOkE3Y952jGmrkIwG-w47UjfX2SvL0jN06SM3mU-6iFF8TJ7gW50Ov9I7Cnl2jgia",
+    "channel": "📝-コンテンツ部",
+    "name": "メタモン"
+  },
+  "KPJ-DEP-103": {
+    "url": "https://discord.com/api/webhooks/1497997114381303860/awe81Il_0hzhJ0z8-LwWxP5q8qWrEuBE2arbDhc5llwHuGLOnQgTrAjuiiu3f6Q8G8eE",
+    "channel": "📝-コンテンツ部",
+    "name": "バタフリー"
+  },
+  "KPJ-DEP-104": {
+    "url": "https://discord.com/api/webhooks/1497997416442368054/Z1dWa2uZ3xBlLGbNxFEimwgmhEMc6F_yhW5whNNV5wnhT0hxxlBtU8oq-Sbo0YUyp1Ws",
+    "channel": "📝-コンテンツ部",
+    "name": "ジラーチ"
+  },
+  "KPJ-DEP-201": {
+    "url": "https://discord.com/api/webhooks/1497997718419931207/h6T8Gto_pM-lBXhFQFQmDK_fRsPBzNDwFVAiaebAauOv8BrShZzMpgHf_OyffLbPM3V6",
+    "channel": "🔍-品質部",
+    "name": "サーナイト"
+  },
+  "KPJ-DEP-202": {
+    "url": "https://discord.com/api/webhooks/1497998019272900749/2dJnpqmqMhd7HjchwGrM_zLmV25ANGk1KZ70X9A_EeLh_gH238mVyK3frmMJe5Ymski7",
+    "channel": "🔍-品質部",
+    "name": "ゲンガー"
+  },
+  "KPJ-DEP-203": {
+    "url": "https://discord.com/api/webhooks/1497998321367646338/3tFr010BPCkC6k0JG6O9jj8r2OI4kxABwO11dlSrErE-E-MmoZLPzBxV0xdvZm242g8o",
+    "channel": "🔍-品質部",
+    "name": "イーブイJr"
+  },
+  "KPJ-DEP-301": {
+    "url": "https://discord.com/api/webhooks/1497998624443994192/WaZHtbDWwz6AiBu28eRZWdsZxa3ussBtNS6fusB69onJPmAMbDzLvOwTArpY_gTsYOQ8",
+    "channel": "🔎-seo部",
+    "name": "フーディン"
+  },
+  "KPJ-DEP-302": {
+    "url": "https://discord.com/api/webhooks/1497998925565792468/C2s4Qfl0bcW3GY2nyYbcUC49sbCsegDiHEJOylKOMZ8jMk5h3w_h8dlZBpjlo5lbTA2i",
+    "channel": "🔎-seo部",
+    "name": "ラプラス"
+  },
+  "KPJ-DEP-303": {
+    "url": "https://discord.com/api/webhooks/1497999228599799921/Lx1Ka5UMNckZlJeq_5NMb7bA-97f3fkG1NxqpNdFSBIx5u7ExMyRW2VUyge2n6A7iPjw",
+    "channel": "🔎-seo部",
+    "name": "ミミッキュ"
+  },
+  "KPJ-DEP-304": {
+    "url": "https://discord.com/api/webhooks/1497999530187030548/GthQ5S1Wh0zzW77KWvc3YTbXb48NvJUPYUuxK807tEQm5fEQebHZz7F5bhYt20eXmIW2",
+    "channel": "🔎-seo部",
+    "name": "イルミーゼ"
+  },
+  "KPJ-DEP-401": {
+    "url": "https://discord.com/api/webhooks/1497999832567251189/OTtiSeVfBY5X87awS48nIDflFPE-FqON4noki_R2itasQwrLWFCQ3LAGUlJGHMLYhUni",
+    "channel": "💰-収益部",
+    "name": "ペルシアン"
+  },
+  "KPJ-DEP-402": {
+    "url": "https://discord.com/api/webhooks/1498000134209011812/aOL-VYa2k7dtaDcXOkr06mroedWzvA8FqdYx461YgLCsb_VqymAMByNvHQax2PGtoM92",
+    "channel": "💰-収益部",
+    "name": "ニャース"
+  },
+  "KPJ-DEP-403": {
+    "url": "https://discord.com/api/webhooks/1498000435414302832/NxTtouAqnAF7pbcG88n4_cE2iP5agOKMiBttzhdiQaIlPryBluCB2tFgbcmAbbQaCDF0",
+    "channel": "💰-収益部",
+    "name": "ポリゴン"
+  },
+  "KPJ-DEP-501": {
+    "url": "https://discord.com/api/webhooks/1498000738134003902/eSlXJvFTYYwUKP-Z1a7F4W86uHRA2TLAK1nmUqgvRjYaFvOq7r1w2P9EsdWXEShYLtTV",
+    "channel": "⚙️-運用部",
+    "name": "フシギバナ"
+  },
+  "KPJ-DEP-502": {
+    "url": "https://discord.com/api/webhooks/1498001039238893790/ZT5F95xsFZPtsOqcqvyrLg1zmrC7rsLOvOROZm7OeBTrD1dtoAyN15tiww3i01khQspY",
+    "channel": "⚙️-運用部",
+    "name": "ポリゴンZ"
+  },
+  "KPJ-DEP-503": {
+    "url": "https://discord.com/api/webhooks/1498001341119860747/ex9ztOSyTPrUmBdLiUF0XJWy3sGcHjH21ZLz8BzOSkUN7TpCeoYC1Y2HOEbD2kRG5KK1",
+    "channel": "⚙️-運用部",
+    "name": "ライコウ"
+  }
+}

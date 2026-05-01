@@ -1,5 +1,207 @@
 {
-  "events": [],
-  "last_updated": "2026-04-26",
+  "events": [
+    {
+      "id": "kcon_japan_2026",
+      "type": "festival",
+      "title": "KCON JAPAN 2026",
+      "date_start": "2026-05-08",
+      "date_end": "2026-05-10",
+      "venue": "幕張メッセ",
+      "city": "千葉",
+      "lineup": [
+        "&TEAM",
+        "ALPHA DRIVE ONE",
+        "CORTIS",
+        "INI",
+        "JO1",
+        "TWS",
+        "Hearts2Hearts",
+        "izna",
+        "KISS OF LIFE",
+        "P1Harmony",
+        "ME:I",
+        "NiziU",
+        "EVNNE",
+        "KickFlip",
+        "キム・ジェファン",
+        "MODYSSEY",
+        "IS:SUE"
+      ],
+      "official_url": "https://kconjapan.com",
+      "priority": "S",
+      "tags": [
+        "KCON",
+        "K-BEAUTY",
+        "K-FOOD",
+        "OLIVE YOUNG"
+      ]
+    },
+    {
+      "id": "kstyle_party_2026",
+      "type": "festival",
+      "title": "Kstyle PARTY 2026",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-10",
+      "venue": "Kアリーナ横浜",
+      "city": "横浜",
+      "lineup": [
+        "SAY MY NAME (オープニング)",
+        "TBA"
+      ],
+      "official_url": "https://www.kstyle.com/m/article/event/k-style-party-2026",
+      "priority": "S",
+      "tags": [
+        "Kstyle",
+        "お見送り会"
+      ]
+    },
+    {
+      "id": "le_sserafim_dicon_popup_tokyo",
+      "type": "popup",
+      "title": "LE SSERAFIM D'ICON POP-UP IN TOKYO",
+      "date_start": "2026-04-03",
+      "date_end": "2026-05-31",
+      "venue": "原宿",
+      "city": "東京",
+      "priority": "A",
+      "tags": [
+        "LE SSERAFIM",
+        "DICON",
+        "原宿"
+      ]
+    },
+    {
+      "id": "itzy_world_tour_japan_may",
+      "type": "concert",
+      "title": "ITZY 3RD WORLD TOUR TUNNEL VISION",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-10",
+      "venue": "TBA",
+      "city": "TBA",
+      "priority": "A",
+      "tags": [
+        "ITZY"
+      ]
+    },
+    {
+      "id": "igin_popup_2026_tokyo",
+      "type": "popup",
+      "title": "IGIN PARK 東京 (BTS Jin アンバサダー)",
+      "date_start": "2026-04-11",
+      "date_end": "2026-04-16",
+      "venue": "渋谷PARCO 10F PBOX",
+      "city": "東京",
+      "priority": "B",
+      "tags": [
+        "IGIN",
+        "BTS",
+        "Jin",
+        "フレグランス",
+        "終了済"
+      ]
+    },
+    {
+      "id": "igin_popup_2026_osaka",
+      "type": "popup",
+      "title": "IGIN PARK 大阪 (BTS Jin アンバサダー)",
+      "date_start": "2026-04-20",
+      "date_end": "2026-04-26",
+      "venue": "あべのハルカス展望台 ハルカス300",
+      "city": "大阪",
+      "priority": "B",
+      "tags": [
+        "IGIN",
+        "BTS",
+        "Jin",
+        "終了済"
+      ]
+    },
+    {
+      "id": "auto_bts_20260429",
+      "type": "concert",
+      "title": "BTSのワールドツアー北米公演",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "BTS"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-04-29T15:03:05.709364"
+    },
+    {
+      "id": "auto_ive_20260429",
+      "type": "event",
+      "title": "IVE 第4回ファンコンサート 〈DIVE into IVE〉",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ive"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 3,
+      "collected_at": "2026-04-29T15:03:18.996988"
+    },
+    {
+      "id": "auto_le_sserafim_20260429",
+      "type": "concert",
+      "title": "LE SSERAFIM 2026 ワールドツアー “PUREFLOW”",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "LE SSERAFIM"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 1,
+      "collected_at": "2026-04-29T15:03:26.837020"
+    },
+    {
+      "id": "auto_bts_20260430",
+      "type": "concert",
+      "title": "BTSワールドツアー ARIRANG タンパ公演",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "タンパ",
+      "priority": "A",
+      "tags": [
+        "bts"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-04-30T11:38:02.494936"
+    },
+    {
+      "id": "auto_twice_20260501",
+      "type": "event",
+      "title": "TWICE コンサート",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "TWICE"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 1,
+      "collected_at": "2026-05-01T06:30:04.759569"
+    }
+  ],
+  "updated_at": "2026-05-01T06:30:14.259168",
   "note": "AI生成(confidence=medium)と手動(confidence=high)の混在。auto_event_articleはhighのみ優先参照"
 }

@@ -57,6 +57,54 @@ add_action('wp_enqueue_scripts', function () {
         'nonce'   => wp_create_nonce('kpj_nonce'),
         'siteUrl' => home_url('/'),
     ]);
+
+    // パンくず・関連記事・著者・シェア・投票のCSS
+    $inline_css = '
+    /* Breadcrumb */
+    .kpj-breadcrumb{padding:12px 0;font-size:13px;color:#aaa;border-bottom:1px solid rgba(255,255,255,.06)}
+    .kpj-breadcrumb__list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+    .kpj-breadcrumb__item::after{content:"›";margin-left:8px;color:#666}
+    .kpj-breadcrumb__item:last-child::after{content:""}
+    .kpj-breadcrumb__item a{color:#e491d4;text-decoration:none}
+    .kpj-breadcrumb__item a:hover{text-decoration:underline}
+    .kpj-breadcrumb__item--current{color:#fff;font-weight:500;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    /* Related Posts */
+    .kpj-related{margin-top:48px;padding-top:32px;border-top:2px solid rgba(228,145,212,.2)}
+    .kpj-related__title{font-size:20px;font-weight:700;margin-bottom:20px;color:#fff;position:relative;padding-left:16px}
+    .kpj-related__title::before{content:"";position:absolute;left:0;top:4px;width:4px;height:22px;background:linear-gradient(180deg,#e491d4,#9b59b6);border-radius:2px}
+
+    /* Author Box */
+    .kpj-single__author{display:flex;gap:16px;align-items:center;padding:24px;margin-top:32px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+    .kpj-single__author-avatar{border-radius:50%;width:48px;height:48px}
+    .kpj-single__author-name{color:#fff;font-size:15px}
+    .kpj-single__author-bio{color:#aaa;font-size:13px;margin-top:4px;line-height:1.5}
+
+    /* Share Buttons */
+    .kpj-single__share{display:flex;align-items:center;gap:12px;margin-top:24px;padding:16px 0;border-top:1px solid rgba(255,255,255,.06)}
+    .kpj-single__share-label{color:#888;font-size:13px;font-weight:500}
+    .kpj-single__share-btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .2s}
+    .kpj-single__share-btn--x{background:#000;color:#fff;border:1px solid #333}
+    .kpj-single__share-btn--x:hover{background:#1a1a2e;border-color:#e491d4}
+    .kpj-single__share-btn--copy{background:rgba(228,145,212,.15);color:#e491d4;border:1px solid rgba(228,145,212,.3)}
+    .kpj-single__share-btn--copy:hover{background:rgba(228,145,212,.25)}
+
+    /* Fan Poll */
+    .kpj-poll{margin:32px 0;padding:24px;background:linear-gradient(135deg,rgba(228,145,212,.08),rgba(155,89,182,.08));border-radius:16px;border:1px solid rgba(228,145,212,.2)}
+    .kpj-poll__title{font-size:17px;font-weight:700;color:#fff;margin-bottom:16px}
+    .kpj-poll__options{display:flex;flex-direction:column;gap:8px}
+    .kpj-poll__option{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.04);border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:all .2s}
+    .kpj-poll__option:hover{border-color:rgba(228,145,212,.4);background:rgba(228,145,212,.08)}
+    .kpj-poll__option--selected{border-color:#e491d4;background:rgba(228,145,212,.12)}
+    .kpj-poll__bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;flex:1;overflow:hidden}
+    .kpj-poll__bar-fill{height:100%;background:linear-gradient(90deg,#e491d4,#9b59b6);border-radius:3px;transition:width .5s ease}
+    .kpj-poll__count{color:#aaa;font-size:12px;min-width:40px;text-align:right}
+    .kpj-poll__total{text-align:center;color:#888;font-size:12px;margin-top:12px}
+
+    /* AdSense Ad Slot */
+    .kpj-ad{margin:24px 0;text-align:center}
+    ';
+    wp_add_inline_style('kpj-main', $inline_css);
 });
 
 /* ── Widgets ─────────────────────────────────────────────── */
@@ -304,13 +352,13 @@ function kpj_api_home(WP_REST_Request $request): WP_REST_Response {
     ]);
     $latest = array_map('kpj_api_format_post', $latest_q->posts);
 
-    // Trending 5 (most commented in last 7 days)
+    // Trending 5 (most commented in last 2 days)
     $trending_q = new WP_Query([
         'posts_per_page' => 5,
         'post_status'    => 'publish',
         'orderby'        => 'comment_count',
         'order'          => 'DESC',
-        'date_query'     => [['after' => '7 days ago']],
+        'date_query'     => [['after' => '2 days ago']],
     ]);
     $trending = array_map('kpj_api_format_post', $trending_q->posts);
 
@@ -441,7 +489,118 @@ function kpj_api_trending(WP_REST_Request $request): WP_REST_Response {
     return $response;
 }
 
-/* ── 6. Ensure categories/tags/media are exposed in REST ── */
+/* ── 6. /wp-json/kpopjournal/v1/posts/<id>/related ──────── */
+add_action('rest_api_init', function () {
+    register_rest_route('kpopjournal/v1', '/posts/(?P<id>\d+)/related', [
+        'methods'             => 'GET',
+        'callback'            => 'kpj_api_related',
+        'permission_callback' => '__return_true',
+        'args' => [
+            'id' => [
+                'validate_callback' => fn($v) => is_numeric($v),
+                'sanitize_callback' => 'absint',
+            ],
+            'count' => [
+                'default'           => 4,
+                'sanitize_callback' => fn($v) => min(absint($v), 8),
+            ],
+        ],
+    ]);
+});
+
+function kpj_api_related(WP_REST_Request $request): WP_REST_Response {
+    $post_id = $request['id'];
+    $count   = $request->get_param('count') ?: 4;
+    $post    = get_post($post_id);
+
+    if (!$post || $post->post_status !== 'publish') {
+        return new WP_REST_Response(['error' => 'Post not found'], 404);
+    }
+
+    $cache_key = "kpj_related_{$post_id}_v1";
+    $cached    = get_transient($cache_key);
+    if ($cached !== false) {
+        $response = new WP_REST_Response($cached);
+        $response->header('X-KPJ-Cache', 'HIT');
+        return $response;
+    }
+
+    // 元記事のカテゴリ・タグ・タイトルトークンを取得
+    $cats     = wp_get_post_categories($post_id);
+    $tags     = wp_get_post_tags($post_id, ['fields' => 'ids']);
+    $title    = get_the_title($post);
+    $title_tokens = kpj_tokenize_title($title);
+
+    // 候補取得: 同カテゴリ記事を最大40件
+    $candidates = new WP_Query([
+        'category__in'        => $cats,
+        'post__not_in'        => [$post_id],
+        'posts_per_page'      => 40,
+        'ignore_sticky_posts' => 1,
+        'post_status'         => 'publish',
+    ]);
+
+    $scored = [];
+    while ($candidates->have_posts()) {
+        $candidates->the_post();
+        $cand_id = get_the_ID();
+        $score   = 0;
+
+        // カテゴリ一致 (max 25)
+        $cand_cats = wp_get_post_categories($cand_id);
+        $cat_overlap = count(array_intersect($cats, $cand_cats));
+        $score += min($cat_overlap * 12, 25);
+
+        // タグ一致 (max 30)
+        $cand_tags = wp_get_post_tags($cand_id, ['fields' => 'ids']);
+        $tag_overlap = count(array_intersect($tags ?: [], $cand_tags ?: []));
+        $score += min($tag_overlap * 10, 30);
+
+        // タイトルキーワード共起 (max 25)
+        $cand_tokens = kpj_tokenize_title(get_the_title());
+        $token_overlap = count(array_intersect($title_tokens, $cand_tokens));
+        $score += min($token_overlap * 8, 25);
+
+        // 鮮度ボーナス: 7日以内 +10, 30日以内 +5
+        $days_old = (time() - get_post_time('U', true)) / 86400;
+        if ($days_old <= 7) $score += 10;
+        elseif ($days_old <= 30) $score += 5;
+
+        // サムネあり +10
+        if (has_post_thumbnail($cand_id)) $score += 10;
+
+        $scored[] = ['score' => $score, 'post' => get_post()];
+    }
+    wp_reset_postdata();
+
+    // スコア降順ソート
+    usort($scored, fn($a, $b) => $b['score'] - $a['score']);
+    $top = array_slice($scored, 0, $count);
+
+    $related = array_map(fn($item) => array_merge(
+        kpj_api_format_post($item['post']),
+        ['relevance_score' => $item['score']]
+    ), $top);
+
+    $data = [
+        'post_id'   => $post_id,
+        'related'   => $related,
+        'generated' => current_time('c'),
+    ];
+
+    set_transient($cache_key, $data, 2 * HOUR_IN_SECONDS);
+
+    $response = new WP_REST_Response($data);
+    $response->header('X-KPJ-Cache', 'MISS');
+    return $response;
+}
+
+function kpj_tokenize_title(string $title): array {
+    preg_match_all('/[a-zA-Z]{2,}|[\x{3041}-\x{3093}\x{30A1}-\x{30F6}\x{30FC}]{2,}|[\x{4E00}-\x{9FFF}]{2,}/u', mb_strtolower($title), $matches);
+    return array_values(array_unique($matches[0] ?? []));
+}
+
+/* ── 7. Ensure categories/tags/media are exposed in REST ── */
 add_action('init', function () {
     global $wp_taxonomies;
     if (isset($wp_taxonomies['category'])) {
@@ -457,4 +616,268 @@ add_action('save_post', function ($post_id, WP_Post $post) {
     if ($post->post_status !== 'publish') return;
     delete_transient('kpj_api_home_v1');
     delete_transient('kpj_api_trending_v1');
+    delete_transient("kpj_related_{$post_id}_v1");
 }, 10, 2);
+
+/* ── 8. ポップアップボタンから件数表示を削除 ─────────────── */
+add_action('template_redirect', function () {
+    if (!is_front_page()) return;
+    ob_start(function ($html) {
+        // 「(開催中N件 / 予定N件)」の件数表示を除去
+        return preg_replace(
+            '/(\全ポップアップ情報はこちら)\s*\(開催中\d+件\s*\/\s*予定\d+件\)/',
+            '$1',
+            $html
+        );
+    });
+});
+
+/* ═══════════════════════════════════════════════════════════
+ *  PAGE SPEED — WebP変換 & Google Fonts最適化
+ * ═══════════════════════════════════════════════════════════ */
+
+/* ── 9. WebP変換: アップロード時にWebPコピーを自動生成 ──── */
+function kpj_convert_to_webp($upload) {
+    if (!in_array($upload['type'], ['image/jpeg', 'image/png'], true)) {
+        return $upload;
+    }
+    if (!function_exists('imagewebp')) {
+        return $upload; // GDライブラリWebP未対応時はスキップ
+    }
+
+    $file    = $upload['file'];
+    $webp    = preg_replace('/\.(jpe?g|png)$/i', '.webp', $file);
+    $quality = 80;
+
+    if ($upload['type'] === 'image/jpeg') {
+        $img = @imagecreatefromjpeg($file);
+    } else {
+        $img = @imagecreatefrompng($file);
+        if ($img) {
+            imagepalettetotruecolor($img);
+            imagealphablending($img, true);
+            imagesavealpha($img, true);
+        }
+    }
+
+    if ($img) {
+        imagewebp($img, $webp, $quality);
+        imagedestroy($img);
+    }
+
+    return $upload;
+}
+add_filter('wp_handle_upload', 'kpj_convert_to_webp');
+
+/* ── 10. WebP srcset: <img>を<picture>+<source type=webp>に変換 */
+function kpj_webp_srcset($content) {
+    if (is_admin() || empty($content)) {
+        return $content;
+    }
+
+    return preg_replace_callback(
+        '/<img\b([^>]*)\bsrc=["\']([^"\']+\.(jpe?g|png))["\']([^>]*)>/i',
+        function ($m) {
+            $before  = $m[1];
+            $src     = $m[2];
+            $ext     = $m[3];
+            $after   = $m[4];
+            $img_tag = $m[0];
+
+            $webp_src = preg_replace('/\.(jpe?g|png)$/i', '.webp', $src);
+
+            // srcset属性があればWebP版も生成
+            $webp_srcset = '';
+            if (preg_match('/srcset=["\']([^"\']+)["\']/i', $before . $after, $ss)) {
+                $webp_srcset = preg_replace('/\.(jpe?g|png)\b/i', '.webp', $ss[1]);
+                $webp_srcset = ' srcset="' . $webp_srcset . '"';
+            }
+
+            // sizes属性を引き継ぎ
+            $sizes = '';
+            if (preg_match('/sizes=["\']([^"\']+)["\']/i', $before . $after, $sz)) {
+                $sizes = ' sizes="' . $sz[1] . '"';
+            }
+
+            return '<picture>'
+                . '<source type="image/webp" srcset="' . esc_attr($webp_src) . '"' . $webp_srcset . $sizes . '>'
+                . $img_tag
+                . '</picture>';
+        },
+        $content
+    );
+}
+add_filter('the_content', 'kpj_webp_srcset', 99);
+add_filter('post_thumbnail_html', 'kpj_webp_srcset', 99);
+
+/* ═══════════════════════════════════════════════════════════
+ *  AdSense — 記事内広告自動挿入
+ * ═══════════════════════════════════════════════════════════ */
+
+/* ── 12. AdSense広告スロットをh2前・記事末尾に自動挿入 ──── */
+function kpj_adsense_ad_unit() {
+    $client = defined('ADSENSE_CLIENT_ID') ? ADSENSE_CLIENT_ID : (getenv('ADSENSE_CLIENT_ID') ?: 'ca-pub-XXXXXXXX');
+    $slot   = defined('ADSENSE_AD_SLOT')   ? ADSENSE_AD_SLOT   : (getenv('ADSENSE_AD_SLOT')   ?: 'XXXXXXXX');
+
+    return '<div class="kpj-ad">'
+        . '<ins class="adsbygoogle" style="display:block"'
+        . ' data-ad-client="' . esc_attr($client) . '"'
+        . ' data-ad-slot="' . esc_attr($slot) . '"'
+        . ' data-ad-format="auto"'
+        . ' data-full-width-responsive="true"></ins>'
+        . '<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'
+        . '</div>';
+}
+
+function kpj_insert_ads_in_content($content) {
+    // 管理画面・フィード・固定ページではスキップ
+    if (is_admin() || is_feed() || !is_singular('post')) {
+        return $content;
+    }
+
+    // 1000字未満の短い記事には広告を入れない（UX保護）
+    $text_length = mb_strlen(strip_tags($content));
+    if ($text_length < 1000) {
+        return $content;
+    }
+
+    $ad = kpj_adsense_ad_unit();
+
+    // h2タグの位置をすべて検出
+    $h2_pattern = '/<h2[\s>]/i';
+    preg_match_all($h2_pattern, $content, $matches, PREG_OFFSET_CAPTURE);
+
+    if (empty($matches[0])) {
+        // h2がない場合は末尾にのみ広告追加
+        return $content . $ad;
+    }
+
+    $h2_positions = $matches[0];
+    $insert_positions = [];
+
+    // 最初のh2の直前に広告1つ
+    if (isset($h2_positions[0])) {
+        $insert_positions[] = $h2_positions[0][1];
+    }
+
+    // 3番目のh2の直前に広告1つ
+    if (isset($h2_positions[2])) {
+        $insert_positions[] = $h2_positions[2][1];
+    }
+
+    // 後ろから挿入（オフセットがずれないように）
+    rsort($insert_positions);
+    foreach ($insert_positions as $pos) {
+        $content = substr($content, 0, $pos) . $ad . substr($content, $pos);
+    }
+
+    // 記事末尾に広告1つ（関連記事の前 = the_content の末尾）
+    $content .= $ad;
+
+    return $content;
+}
+// WebP変換(priority 99)より前に実行
+add_filter('the_content', 'kpj_insert_ads_in_content', 20);
+
+/* ── 11. Google Fonts preconnect & preload最適化 ────────── */
+add_action('wp_head', function () {
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+}, 1);
+
+/* ═══════════════════════════════════════════════════════════
+ *  FAN POLL — ファン投票機能
+ *  ショートコード: [kpj_poll question="質問" options="選択肢1,選択肢2,選択肢3"]
+ * ═══════════════════════════════════════════════════════════ */
+
+function kpj_poll_shortcode($atts) {
+    $atts = shortcode_atts([
+        'question' => '',
+        'options'  => '',
+        'id'       => '',
+    ], $atts, 'kpj_poll');
+
+    if (!$atts['question'] || !$atts['options']) return '';
+
+    $poll_id = $atts['id'] ?: 'poll_' . md5($atts['question']);
+    $options = array_map('trim', explode(',', $atts['options']));
+    if (count($options) < 2) return '';
+
+    $votes = get_option("kpj_poll_{$poll_id}", []);
+    $total = array_sum($votes);
+    $voted = isset($_COOKIE["kpj_voted_{$poll_id}"]);
+
+    $html = '<div class="kpj-poll" data-poll-id="' . esc_attr($poll_id) . '">';
+    $html .= '<h3 class="kpj-poll__title">' . esc_html($atts['question']) . '</h3>';
+    $html .= '<div class="kpj-poll__options">';
+
+    foreach ($options as $i => $opt) {
+        $count = $votes[$i] ?? 0;
+        $pct = $total > 0 ? round(($count / $total) * 100) : 0;
+        $selected = $voted ? ' kpj-poll__option--voted' : '';
+        $html .= '<div class="kpj-poll__option' . $selected . '" data-index="' . $i . '">'
+            . '<span class="kpj-poll__label">' . esc_html($opt) . '</span>'
+            . '<div class="kpj-poll__bar"><div class="kpj-poll__bar-fill" style="width:' . $pct . '%"></div></div>'
+            . '<span class="kpj-poll__count">' . ($voted ? "{$pct}%" : '') . '</span>'
+            . '</div>';
+    }
+    $html .= '</div>';
+    if ($total > 0) {
+        $html .= '<p class="kpj-poll__total">' . number_format($total) . '票</p>';
+    }
+    $html .= '</div>';
+    return $html;
+}
+add_shortcode('kpj_poll', 'kpj_poll_shortcode');
+
+/* ── 投票AJAXハンドラー ────────────────────────────────────── */
+add_action('wp_ajax_kpj_vote', 'kpj_handle_vote');
+add_action('wp_ajax_nopriv_kpj_vote', 'kpj_handle_vote');
+function kpj_handle_vote() {
+    check_ajax_referer('kpj_nonce', 'nonce');
+    $poll_id = sanitize_text_field($_POST['poll_id'] ?? '');
+    $index = intval($_POST['index'] ?? -1);
+    if (!$poll_id || $index < 0) wp_send_json_error('Invalid');
+    if (isset($_COOKIE["kpj_voted_{$poll_id}"])) wp_send_json_error('Already voted');
+
+    $votes = get_option("kpj_poll_{$poll_id}", []);
+    $votes[$index] = ($votes[$index] ?? 0) + 1;
+    update_option("kpj_poll_{$poll_id}", $votes);
+    setcookie("kpj_voted_{$poll_id}", '1', time() + 86400 * 30, '/');
+
+    $total = array_sum($votes);
+    $results = [];
+    foreach ($votes as $i => $c) {
+        $results[$i] = $total > 0 ? round(($c / $total) * 100) : 0;
+    }
+    wp_send_json_success(['results' => $results, 'total' => $total]);
+}
+
+/* ── 投票UIのJS ────────────────────────────────────────────── */
+add_action('wp_footer', function () {
+    if (!is_single()) return;
+    ?>
+    <script>
+    document.addEventListener('click',function(e){
+        var o=e.target.closest('.kpj-poll__option');
+        if(!o||o.classList.contains('kpj-poll__option--voted'))return;
+        var p=o.closest('.kpj-poll');if(!p)return;
+        fetch(kpjData.ajaxUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            body:'action=kpj_vote&nonce='+kpjData.nonce+'&poll_id='+p.dataset.pollId+'&index='+o.dataset.index})
+        .then(function(r){return r.json()}).then(function(d){
+            if(!d.success)return;
+            p.querySelectorAll('.kpj-poll__option').forEach(function(opt){
+                opt.classList.add('kpj-poll__option--voted');
+                var pct=d.data.results[opt.dataset.index]||0;
+                var f=opt.querySelector('.kpj-poll__bar-fill');if(f)f.style.width=pct+'%';
+                var c=opt.querySelector('.kpj-poll__count');if(c)c.textContent=pct+'%';
+            });
+            var t=p.querySelector('.kpj-poll__total');
+            if(t)t.textContent=d.data.total.toLocaleString()+'票';
+            else{var np=document.createElement('p');np.className='kpj-poll__total';
+                np.textContent=d.data.total.toLocaleString()+'票';p.querySelector('.kpj-poll__options').after(np);}
+        });
+    });
+    </script>
+    <?php
+});

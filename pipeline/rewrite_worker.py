@@ -22,6 +22,8 @@ MAX_PER_RUN = 5
 MAX_RETRIES = 3
 
 
+from lib.agent_learning_loop import inject_lessons_to_prompt
+
 def load_queue():
     if not os.path.exists(QUEUE):
         return []
@@ -97,7 +99,7 @@ def fetch_source_summary(source_url):
 
 
 # ============================================================
-# 速報Stage 1→2 加筆ロジック (2時間後、150字→600字目標)
+# 速報Stage 1→2 加筆ロジック (2時間後、800字目標)
 # ============================================================
 
 def find_breaking_stage1_to_upgrade():
@@ -116,14 +118,14 @@ def find_breaking_stage1_to_upgrade():
 
 
 def upgrade_breaking_to_stage2(post):
-    """Stage 1→Stage 2: GPT-4o-miniで600字以上に加筆"""
+    """Stage 1→Stage 2: GPT-4o-miniで800字以上に加筆"""
     pid = post['id']
     title = post['title']['rendered']
     content_html = post['content']['rendered']
     plain = re.sub(r'<[^>]+>', '', content_html)
 
     key = os.getenv('OPENAI_API_KEY')
-    prompt = f"""以下のK-POP速報記事を、600字以上の充実した記事に加筆してください。
+    prompt = f"""以下のK-POP速報記事を、800字以上の充実した記事に加筆してください。
 
 【加筆ルール】
 - 既存の事実は完全に保持し、削除・改変しない
@@ -137,11 +139,11 @@ def upgrade_breaking_to_stage2(post):
 タイトル: {title}
 本文: {plain[:2000]}
 
-【加筆版本文】 (HTML、600字以上、以下に出力):"""
+【加筆版本文】 (HTML、800字以上、以下に出力):"""
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
-        'messages': [{'role': 'user', 'content': prompt}],
+        'messages': [{'role': 'user', 'content': inject_lessons_to_prompt('feature_article_writer', prompt)}],
         'temperature': 0.7,
         'max_tokens': 1800,
     }).encode()
@@ -229,8 +231,8 @@ def check_quality(body_html):
     """品質ゲート (unified_publisher と同一基準)"""
     text = re.sub(r'<[^>]+>', '', body_html).strip()
     core = re.sub(r'※[^<\n]*|情報ソース[\s\S]*', '', text).strip()
-    if len(core) < 200:
-        return False, f'本文{len(core)}字(200字未満)'
+    if len(core) < 800:
+        return False, f'本文{len(core)}字(800字未満)'
     ja = sum(1 for c in core if '\u3040' <= c <= '\u30ff' or '\u4e00' <= c <= '\u9fff')
     ratio = ja / len(core)
     if ratio < 0.3:

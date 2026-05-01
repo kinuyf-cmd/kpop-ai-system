@@ -34,9 +34,20 @@ def fetch_html(url, timeout=20):
         return r.read().decode('utf-8', errors='replace')
 
 
+# 事務所名のみでのクラスタリングは誤マッチの原因になるため、
+# アーティスト名と区別して扱う
+AGENCY_ONLY_KW = {'SM', 'YG', 'JYP', 'HYBE'}
+
+
 def is_kpop_related(text):
     tl = text.lower()
-    return [kw for kw in KPOP_KW if kw.lower() in tl]
+    # アーティスト名を優先的に返す（事務所名のみのマッチは後回し）
+    artist_matches = [kw for kw in KPOP_KW if kw not in AGENCY_ONLY_KW and kw.lower() in tl]
+    if artist_matches:
+        return artist_matches
+    # アーティスト名がなく事務所名のみマッチした場合も返す（ただしクラスタリング精度は低い）
+    agency_matches = [kw for kw in KPOP_KW if kw in AGENCY_ONLY_KW and kw.lower() in tl]
+    return agency_matches
 
 
 def is_urgent(text):

@@ -2,171 +2,447 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-2-kpop-3-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/kankoku-ryokou-denatsu-220v-consento-cf/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T10:08:02+00:00</news:publication_date>
-      <news:title>なぜ2万円でも買う？K-POPライトスティックが生む年間3兆円の熱狂を完全解剖</news:title>
-        <news:keywords>kpop, 2026</news:keywords>
+      <news:publication_date>2026-05-01T04:41:18+00:00</news:publication_date>
+      <news:title>韓国旅行 電圧220V・コンセントC/F型ガイド</news:title>
+        <news:keywords>kankoku, ryokou, denatsu, 220v, consento</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/iu-renai-kan-lee-jung-suk/</loc>
+    <loc>https://www.kpopjournal.tokyo/bts-cctv-eizou-hanbai-mondai-fan-hanpatsu/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T07:45:16+00:00</news:publication_date>
-      <news:title>【速報】IU、イ・ジョンソクとの恋愛観を明かす</news:title>
-        <news:keywords>renai, kan, lee, jung, suk</news:keywords>
+      <news:publication_date>2026-05-01T04:40:32+00:00</news:publication_date>
+      <news:title>BTS CCTV映像販売問題にファン反発続出</news:title>
+        <news:keywords>BTS, bts, cctv, eizou, hanbai</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/iu-byunwoseok-daikun-fujin-2digit-ratings/</loc>
+    <loc>https://www.kpopjournal.tokyo/2pm-taekyung-drama-movie-guide/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T05:01:01+00:00</news:publication_date>
-      <news:title>【韓国メディア速報】IUとビョンウソク『大君夫人』再び二桁視聴率</news:title>
-        <news:keywords>byunwoseok, daikun, fujin, 2digit, ratings</news:keywords>
+      <news:publication_date>2026-05-01T04:32:54+00:00</news:publication_date>
+      <news:title>2PMテギョン主演ドラマ映画見どころガイド</news:title>
+        <news:keywords>2pm, taekyung, drama, movie, guide</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/gummy-daughter-birth-new-song-live/</loc>
+    <loc>https://www.kpopjournal.tokyo/soul-trip-kpop-fan-plan/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T05:00:12+00:00</news:publication_date>
-      <news:title>【韓国メディア速報】Gummy、娘誕生の幸せと新曲ライブ披露</news:title>
-        <news:keywords>IVE, gummy, daughter, birth, new</news:keywords>
+      <news:publication_date>2026-05-01T04:32:08+00:00</news:publication_date>
+      <news:title>ソウル旅行モデルコース K-POPファン向けプラン</news:title>
+        <news:keywords>soul, trip, kpop, fan, plan</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/iu-byun-usok-21seiki-dai-kun-fujin-waltz-party/</loc>
+    <loc>https://www.kpopjournal.tokyo/aespa-win-sm-youtuber-lawsuit-reason/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T04:50:13+00:00</news:publication_date>
-      <news:title>【速報】IU・ビョン・ウソク「21世紀の大君夫人」ワルツパーティー</news:title>
-        <news:keywords>byun, usok, 21seiki, dai, kun</news:keywords>
+      <news:publication_date>2026-05-01T04:31:14+00:00</news:publication_date>
+      <news:title>aespaが勝利！SMがYouTuberに勝訴した理由</news:title>
+        <news:keywords>aespa, win, youtuber, lawsuit, reason</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/twice-60-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/kpop-bts-twice-blackpink-2026/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T03:46:24+00:00</news:publication_date>
-      <news:title>ついにTWICEが国立競技場に——60年の聖域が開いた夜</news:title>
-        <news:keywords>TWICE, twice, 2026</news:keywords>
+      <news:publication_date>2026-05-01T00:16:15+00:00</news:publication_date>
+      <news:title>【2026年最新】K-POP公式ライトスティック比較ランキング｜BTS・TWICE・BLACKPINK おすすめ3選</news:title>
+        <news:keywords>BTS, BLACKPINK, TWICE, kpop, bts</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/cats-eye-uk-single-chart-2-songs/</loc>
+    <loc>https://www.kpopjournal.tokyo/popup-roundup-2026-07/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T03:43:19+00:00</news:publication_date>
-      <news:title>【韓国メディア速報】CAT’S EYE、英シングルチャートに2曲同時ランクイン</news:title>
-        <news:keywords>cats, eye, single, chart, songs</news:keywords>
+      <news:publication_date>2026-05-01T00:00:08+00:00</news:publication_date>
+      <news:title>2026年7月 K-POPポップアップ完全マップ</news:title>
+        <news:keywords>popup, roundup, 2026</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/gummy-seventeen-sungkwan-music-live/</loc>
+    <loc>https://www.kpopjournal.tokyo/korean-idol-fan-service-language-guide/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T03:42:32+00:00</news:publication_date>
-      <news:title>【韓国メディア速報】Gummy・SEVENTEENスングァンら「耳を癒す彼氏」ライブ</news:title>
-        <news:keywords>SEVENTEEN, IVE, gummy, seventeen, sungkwan</news:keywords>
+      <news:publication_date>2026-04-30T23:04:30+00:00</news:publication_date>
+      <news:title>韓国アイドルのファンサ理解に役立つ韓国語</news:title>
+        <news:keywords>korean, idol, fan, service, language</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-idol-cica-pdrn-skincare-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/running-man-korean-variety-shows/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T02:11:35+00:00</news:publication_date>
-      <news:title>K-POPアイドルの美肌「CICA×PDRN」術</news:title>
-        <news:keywords>kpop, idol, cica, pdrn, skincare</news:keywords>
+      <news:publication_date>2026-04-30T23:03:47+00:00</news:publication_date>
+      <news:title>ランニングマンなど韓国バラエティ5選紹介</news:title>
+        <news:keywords>running, man, korean, variety, shows</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-seoul-67-20-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/kpop-idol-lip-cosmetics-7-selection/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-25T00:10:31+00:00</news:publication_date>
-      <news:title>K-POP なぜ2026年ソウルに日本人67%が殺到？推しゆかり厳選20スポット完全攻略ガイド</news:title>
-        <news:keywords>kpop, seoul, 2026</news:keywords>
+      <news:publication_date>2026-04-30T23:02:48+00:00</news:publication_date>
+      <news:title>K-POPアイドル愛用リップコスメ7選紹介</news:title>
+        <news:keywords>kpop, idol, lip, cosmetics, selection</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-idol-skincare-pdrn-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/oshi-katsu-ouen-board-hikaku-10sen/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-24T02:11:50+00:00</news:publication_date>
-      <news:title>K-POPアイドル注目のスキンケア成分PDRN</news:title>
-        <news:keywords>kpop, idol, skincare, pdrn, 2026</news:keywords>
+      <news:publication_date>2026-04-30T23:01:48+00:00</news:publication_date>
+      <news:title>推し活応援ボード選び方10選比較</news:title>
+        <news:keywords>oshi, katsu, ouen, board, hikaku</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-mv-3-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/k-pop-fan-essential-korea-travel-list/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-24T00:05:06+00:00</news:publication_date>
-      <news:title>なぜK-POP MVに3億円？2026年制作費・監督選定の裏側を完全解剖</news:title>
-        <news:keywords>kpop, 2026</news:keywords>
+      <news:publication_date>2026-04-30T23:00:56+00:00</news:publication_date>
+      <news:title>K-POPファン必携 韓国旅行持ち物リスト</news:title>
+        <news:keywords>pop, fan, essential, korea, travel</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/blackpink-4-yg-2026/</loc>
+    <loc>https://www.kpopjournal.tokyo/kpop-bts-5-2026/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-24T00:03:36+00:00</news:publication_date>
-      <news:title>なぜBLACKPINK 4人はソロ天下でも完全にグループ復帰するのか——YG”解散不能”設計の正体</news:title>
-        <news:keywords>BLACKPINK, blackpink, 2026</news:keywords>
+      <news:publication_date>2026-04-30T12:15:14+00:00</news:publication_date>
+      <news:title>なぜBTSのダンスは世界に刺さるのか？振付師5人が込めた5つの秘密</news:title>
+        <news:keywords>BTS, kpop, bts, 2026</news:keywords>
     </news:news>
   </url>
   <url>
-    <loc>https://www.kpopjournal.tokyo/kpop-chart-pop-bts-3992/</loc>
+    <loc>https://www.kpopjournal.tokyo/kpop-idol-glass-skin-5-2026-2/</loc>
     <news:news>
       <news:publication>
         <news:name>KPOP JOURNAL</news:name>
         <news:language>ja</news:language>
       </news:publication>
-      <news:publication_date>2026-04-23T21:11:30+00:00</news:publication_date>
-      <news:title>BTS「SWIM」3週連続首位のK-POPチャート速報</news:title>
-        <news:keywords>BTS, kpop, chart, pop, bts</news:keywords>
+      <news:publication_date>2026-04-30T12:05:35+00:00</news:publication_date>
+      <news:title>なぜK-POPアイドルの肌だけ光る？2026年ガラス肌5ステップ完全公開</news:title>
+        <news:keywords>kpop, idol, glass, skin, 2026</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kpop-idol-glass-skin-5-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-30T02:53:11+00:00</news:publication_date>
+      <news:title>なぜK-POPアイドルはガラス肌を捨てた？2026年ブルーム肌5ステップ</news:title>
+        <news:keywords>kpop, idol, glass, skin, 2026</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/stray-kids-fashion-style-analysis-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-30T00:07:09+00:00</news:publication_date>
+      <news:title>K-POP なぜスキズの私服はあんなに「こなれてる」？8人の共通軸を徹底解剖</news:title>
+        <news:keywords>Stray Kids, stray, kids, fashion, style</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kankoku-konsato-fanchant-20sen/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T23:04:53+00:00</news:publication_date>
+      <news:title>韓国コンサートで使えるファンチャント20選</news:title>
+        <news:keywords>kankoku, konsato, fanchant, 20sen</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/twice-oshi-katsu-goods-15-selection/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T23:04:03+00:00</news:publication_date>
+      <news:title>TWICE推し活グッズ15選 公式から自作まで</news:title>
+        <news:keywords>TWICE, twice, oshi, katsu, goods</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/social-korean-drama-masterpieces-5-selection/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T23:02:03+00:00</news:publication_date>
+      <news:title>社会派韓国ドラマ名作5選、一気見必至</news:title>
+        <news:keywords>social, korean, drama, masterpieces, selection</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/korean-idol-skin-pores-care-guide/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T23:01:07+00:00</news:publication_date>
+      <news:title>毛穴ケアステップ完全ガイド 韓国アイドル肌</news:title>
+        <news:keywords>korean, idol, skin, pores, care</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/newjeans-minji-birthday-ideas-7/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T11:04:24+00:00</news:publication_date>
+      <news:title>NewJeansミンジ誕生日（5月7日）企画アイデア7選</news:title>
+        <news:keywords>NewJeans, newjeans, minji, birthday, ideas</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/exo-dio-drama-movie-highlights-guide/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T11:03:34+00:00</news:publication_date>
+      <news:title>EXOディオ主演ドラマ・映画見どころガイド</news:title>
+        <news:keywords>EXO, exo, dio, drama, movie</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kpop-idol-eyeshadow-recommendations-5/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T11:02:46+00:00</news:publication_date>
+      <news:title>K-POPアイドル愛用アイシャドウおすすめ5選</news:title>
+        <news:keywords>kpop, idol, eyeshadow, recommendations</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kpop-fan-korean-cafe-guide/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T11:02:00+00:00</news:publication_date>
+      <news:title>韓国カフェ巡り K-POPファン必見の選び方</news:title>
+        <news:keywords>kpop, fan, korean, cafe, guide</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/k-pop-korean-words-explanation/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T11:01:14+00:00</news:publication_date>
+      <news:title>K-POP歌詞に出る韓国語30単語解説</news:title>
+        <news:keywords>pop, korean, words, explanation</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/gdragon-giselle-shotaro-verdy-dinner-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T09:35:23+00:00</news:publication_date>
+      <news:title>【速報】G-Dragon・Giselle・Shotaro Verdyディナーで話題</news:title>
+        <news:keywords>gdragon, giselle, shotaro, verdy, dinner</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/korea-trip-voltage-guide/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T08:07:02+00:00</news:publication_date>
+      <news:title>韓国旅行の電圧・コンセント完全ガイド｜変換プラグのおすすめ</news:title>
+        <news:keywords>korea, trip, voltage, guide</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kpop-demon-hunters-season2-sequel-latest-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T07:05:39+00:00</news:publication_date>
+      <news:title>KPop Demon Hunters続編考察｜シーズン2の予想</news:title>
+        <news:keywords>kpop, demon, hunters, season2, sequel</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/newjeans-daniel-house-ador-seizure/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T03:05:12+00:00</news:publication_date>
+      <news:title>【速報】NewJeansダニエル母所有の家をADORが押収</news:title>
+        <news:keywords>NewJeans, newjeans, daniel, house, ador</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/jennie-dracula-remix-spotify-2/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T02:05:31+00:00</news:publication_date>
+      <news:title>【速報】JENNIE「Dracula Remix」Spotifyで記録的ストリーミング達成</news:title>
+        <news:keywords>jennie, dracula, remix, spotify</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/ateez-rock-in-roma-2026/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T01:35:14+00:00</news:publication_date>
+      <news:title>【速報】ATEEZが「Rock In Roma 2026」参加決定</news:title>
+        <news:keywords>ATEEZ, ateez, rock, roma, 2026</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/bts-arirang-concert-special-gift/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T01:05:18+00:00</news:publication_date>
+      <news:title>【速報】BTS「Arirang」コンサート参加者に特別ギフト</news:title>
+        <news:keywords>BTS, bts, arirang, concert, special</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/popup-artist-aespa/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-29T01:00:05+00:00</news:publication_date>
+      <news:title>aespa ポップアップ完全ガイド</news:title>
+        <news:keywords>aespa, popup, artist</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/lilmoon-brown-color-contact-lenses/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-28T23:02:44+00:00</news:publication_date>
+      <news:title>LILMOONブラウンカラコン推し活に最適</news:title>
+        <news:keywords>lilmoon, brown, color, contact, lenses</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/soul-3nights-4days-kpop-fans-guide/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-28T23:01:52+00:00</news:publication_date>
+      <news:title>ソウル3泊4日K-POPファン向けモデルコース</news:title>
+        <news:keywords>soul, 3nights, 4days, kpop, fans</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/kankoku-idol-yobikata-kankokugo-kihon/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-28T23:00:52+00:00</news:publication_date>
+      <news:title>韓国アイドル呼び方解説 韓国語の基本</news:title>
+        <news:keywords>kankoku, idol, yobikata, kankokugo, kihon</news:keywords>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.kpopjournal.tokyo/hipnosismike-project-origin-event/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>KPOP JOURNAL</news:name>
+        <news:language>ja</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-28T21:00:11+00:00</news:publication_date>
+      <news:title>ヒプノシスマイクゲームアプリイベント「プロジェクト・オリジン」開催</news:title>
+        <news:keywords>hipnosismike, project, origin, event</news:keywords>
     </news:news>
   </url>
 </urlset>

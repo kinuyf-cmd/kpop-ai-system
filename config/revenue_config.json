@@ -88,8 +88,8 @@
     "max_links_per_article": 3,
     "providers": ["amazon", "a8net", "qoo10"],
     "amazon_tag": "amazon0d7a-22",
-    "a8net_site_id": "",
-    "qoo10_affiliate_id": "",
+    "a8net_site_id": "a25061789095",
+    "qoo10_affiliate_id": "a8net_via_qoo10",
     "min_keyword_hits": 1
   },
   "premium_membership": {
@@ -106,7 +106,7 @@
   },
   "sponsor_portal": {
     "enabled": true,
-    "contact_email": "ad@kpopjournal.tokyo",
+    "contact_email": "kpopjournal.biz@gmail.com",
     "advertise_page_slug": "advertise",
     "media_kit_update_interval": "monthly"
   }

@@ -202,6 +202,50 @@ def _title_matches_keywords(article_title: str, keywords: list[str]) -> bool:
     return False
 
 
+def _tokenize_title(title: str) -> set[str]:
+    """タイトルからスコアリング用トークンを抽出する。"""
+    return set(re.findall(
+        r"[a-zA-Z]{2,}|[ぁ-んァ-ヶー]{2,}|[一-龥]{2,}", title.lower()
+    ))
+
+
+def _score_relevance(
+    new_title_tokens: set[str],
+    new_keywords: list[str],
+    candidate_title: str,
+) -> float:
+    """
+    新記事と候補記事のSEO関連性スコアを計算（0-100）。
+
+    スコア構成:
+      - タイトルキーワード共起: 最大40点 (8pt × トークン重複数, cap=5)
+      - アーティスト/ジャンルキーワード一致: 最大40点 (13pt × 一致数, cap=3)
+      - タイトル長バランス: 最大20点 (短すぎ/長すぎにペナルティ)
+    """
+    score = 0.0
+
+    # 1. タイトルキーワード共起（重み: 40）
+    cand_tokens = _tokenize_title(candidate_title)
+    token_overlap = len(new_title_tokens & cand_tokens)
+    score += min(token_overlap * 8, 40)
+
+    # 2. アーティスト/ジャンルキーワード一致（重み: 40）
+    kw_matches = sum(
+        1 for kw in new_keywords
+        if re.search(re.escape(kw), candidate_title, re.IGNORECASE)
+    )
+    score += min(kw_matches * 13, 40)
+
+    # 3. タイトル長バランス（重み: 20）— 適度な長さの記事を優先
+    title_len = len(candidate_title)
+    if 15 <= title_len <= 60:
+        score += 20
+    elif 10 <= title_len < 15 or 60 < title_len <= 80:
+        score += 10
+
+    return score
+
+
 def _find_related_articles(
     html_body: str,
     post_title: str,
@@ -209,7 +253,7 @@ def _find_related_articles(
     current_url: Optional[str] = None,
 ) -> list[dict]:
     """
-    本文・タイトルのキーワードにマッチする関連記事を最大MAX_LINKS件返す。
+    本文・タイトルのキーワードにマッチする関連記事を、関連度スコア順に最大MAX_LINKS件返す。
 
     Parameters
     ----------
@@ -220,7 +264,7 @@ def _find_related_articles(
 
     Returns
     -------
-    [{"title": str, "url": str}, ...]  最大MAX_LINKS件
+    [{"title": str, "url": str, "score": float}, ...]  最大MAX_LINKS件（スコア降順）
     """
     # 本文とタイトルを合わせてキーワード抽出
     plain_text = re.sub(r"<[^>]+>", " ", html_body)
@@ -231,24 +275,26 @@ def _find_related_articles(
         return []
 
     seen_urls: set[str] = {current_url} if current_url else set()
-    results: list[dict] = []
+    new_title_tokens = _tokenize_title(post_title)
 
+    # 全候補をスコアリング
+    scored: list[tuple[float, dict]] = []
     for article in article_index:
         url = article.get("url", "")
         title = article.get("title", "")
 
         if url in seen_urls:
             continue
-        if not url or not title:
+        if not url or not title or len(title) < MIN_TITLE_LEN:
             continue
 
-        if _title_matches_keywords(title, keywords):
-            seen_urls.add(url)
-            results.append({"title": title, "url": url})
-            if len(results) >= MAX_LINKS:
-                break
+        score = _score_relevance(new_title_tokens, keywords, title)
+        if score > 15:  # 最低関連度閾値
+            scored.append((score, {"title": title, "url": url, "score": score}))
 
-    return results
+    # スコア降順でソートし上位MAX_LINKS件を返す
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [item for _, item in scored[:MAX_LINKS]]
 
 
 # ── HTMLへのリンク挿入 ────────────────────────────────────────────────────────

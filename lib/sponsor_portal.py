@@ -107,7 +107,7 @@ RATE_CARD = {
         "12months": 0.20,
     },
     "contact": {
-        "email": "ad@kpopjournal.tokyo",
+        "email": "kpopjournal.biz@gmail.com",
         "form_url": "/advertise/#contact",
     },
 }
@@ -363,7 +363,7 @@ def save_media_kit():
         "content_categories": stats["categories"],
         "update_frequency": "毎日5〜8本",
         "sns_accounts": {
-            "x_twitter": "@kpopjournal_jp",
+            "x_twitter": "@lovekpopjournal",
         },
     }
     path = CONFIG / "media_kit.json"

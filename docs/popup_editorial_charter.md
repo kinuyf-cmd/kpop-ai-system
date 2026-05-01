@@ -22,7 +22,7 @@
 ### SHOULD (推奨)
 - 期間 (_popup_start_date, _popup_end_date)
 - 営業時間 (_popup_hours)
-- ��所 (_popup_address)
+- 場所 (_popup_address)
 - 公式URL (_popup_official_url)
 - 事前予約要否 (_popup_reservation)
 - 特典 (_popup_perks)
@@ -76,7 +76,7 @@
 
 ## 7. 掲載希望対応
 
-- /popup/contact/ でメールフォーム受付
-- ��集部判断 (編集長AI=daily_editor)
+- kpopjournal.biz@gmail.com でメール受付
+- 編集部判断 (編集長AI=daily_editor)
 - 掲載決定後2-5営業日で公開
 - お断りする場合の理由提示

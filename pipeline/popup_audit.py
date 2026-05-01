@@ -39,7 +39,7 @@ def audit_popup(p):
 
     # 2. 本文長
     plain = re.sub(r'<[^>]+>', '', content)
-    if len(plain) < 200:
+    if len(plain) < 500:
         issues.append({'type': 'content_short', 'severity': 'high', 'len': len(plain)})
 
     # 3. 都市必須

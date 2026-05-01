@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "mode_by_category": {
+    "breaking": "latest", "news": "latest", "comeback": "latest",
+    "event": "latest", "kpop-news": "latest",
+    "feature": "popular", "artist_intro": "popular",
+    "korea-travel": "popular", "kdrama": "popular",
+    "beauty": "popular", "popup": "popular"
+  },
+  "default": "latest",
+  "title_rules": {
+    "カムバック": "latest", "速報": "latest", "新曲": "latest", "新アルバム": "latest",
+    "特集": "popular", "歴代": "popular", "まとめ": "popular", "ランキング": "popular"
+  }
+}

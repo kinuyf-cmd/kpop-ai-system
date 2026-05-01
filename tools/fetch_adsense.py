@@ -22,9 +22,17 @@ def main():
         token_uri=token['token_uri'], client_id=token['client_id'], client_secret=token['client_secret'],
     )
     if creds.expired:
-        creds.refresh(Request())
-        token['access_token'] = creds.token
-        json.dump(token, open(TOKEN, 'w'), indent=2)
+        try:
+            creds.refresh(Request())
+            token['access_token'] = creds.token
+            json.dump(token, open(TOKEN, 'w'), indent=2)
+        except Exception as e:
+            err_msg = str(e)
+            print(f"⚠️ AdSense token refresh失敗: {err_msg}")
+            if 'invalid_grant' in err_msg:
+                print("❌ refresh_tokenが失効。Google Cloud Console → OAuth同意画面を「本番」に変更後:")
+                print("   python3 tools/oauth_exchange.py --auth-url")
+            sys.exit(1)
 
     ads = build('adsense', 'v2', credentials=creds)
     accs = ads.accounts().list().execute().get('accounts', [])

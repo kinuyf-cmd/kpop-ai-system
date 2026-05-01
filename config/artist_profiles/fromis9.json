@@ -1,0 +1,88 @@
+{
+  "members": [
+    {
+      "name_en": "Lee Serom",
+      "name_kr": "이서롬",
+      "name_ja": "イ・セロム",
+      "position": "リーダー、メインボーカル",
+      "birth": "1999-03-07",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": "元I.O.I"
+    },
+    {
+      "name_en": "Song Hayoung",
+      "name_kr": "송하영",
+      "name_ja": "ソン・ハヨン",
+      "position": "センター、リードボーカル",
+      "birth": "2000-05-29",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    },
+    {
+      "name_en": "Chang Gyuri",
+      "name_kr": "장규리",
+      "name_ja": "チャン・ギュリ",
+      "position": "メインラッパー、サブボーカル",
+      "birth": "1999-05-14",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    },
+    {
+      "name_en": "Park Jiwon",
+      "name_kr": "박지원",
+      "name_ja": "パク・ジウォン",
+      "position": "リードボーカル",
+      "birth": "2003-03-20",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    },
+    {
+      "name_en": "Noh Jisun",
+      "name_kr": "노지선",
+      "name_ja": "ノ・ジソン",
+      "position": "リードボーカル",
+      "birth": "2001-02-20",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    },
+    {
+      "name_en": "Lee Suyoung",
+      "name_kr": "이수영",
+      "name_ja": "イ・スヨン",
+      "position": "サブボーカル",
+      "birth": "2001-09-14",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    },
+    {
+      "name_en": "Baek Jiheon",
+      "name_kr": "백지헌",
+      "name_ja": "ペク・ジホン",
+      "position": "サブボーカル",
+      "birth": "2003-02-27",
+      "nationality": "韓国",
+      "height": null,
+      "blood_type": null,
+      "mbti": null,
+      "note": null
+    }
+  ]
+}

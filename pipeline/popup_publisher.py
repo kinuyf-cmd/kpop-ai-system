@@ -6,6 +6,7 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 from lib.cta_injector import inject_cta_into_content
+from lib.popup_keyword_filter import KEYWORDS_2026_MAY
 load_dotenv()
 
 WP_USER = os.getenv('WP_USER', '')
@@ -56,6 +57,29 @@ def fetch_full_content(url):
     except Exception as e:
         print(f"  fetch err: {e}")
         return None
+
+
+POPUP_HUB_CTA = (
+    '<div class="kpj-popup-hub-cta" style="margin:30px 0 20px;padding:16px 20px;'
+    'background:linear-gradient(135deg,#fff0f3,#f8f0ff);border-radius:12px;'
+    'text-align:center;border:1px solid #ffd6e0;">'
+    '<p style="margin:0;font-size:1.05em;font-weight:700;">'
+    '<a href="https://www.kpopjournal.tokyo/popup/" '
+    'style="color:#FF1B6B;text-decoration:none;">'
+    '\u2728 開催中の全ポップアップ情報はこちら \u2728</a></p></div>'
+)
+
+
+def inject_popup_hub_cta(content):
+    """ポップアップ一覧ページへの動線CTAを記事末尾（disclaimer直前）に挿入"""
+    if 'kpj-popup-hub-cta' in content:
+        return content
+    # disclaimer直前に挿入
+    disclaimer_pat = '<p class="kpj-disclaimer">'
+    if disclaimer_pat in content:
+        return content.replace(disclaimer_pat, POPUP_HUB_CTA + '\n' + disclaimer_pat, 1)
+    # disclaimerがない場合は末尾に追加
+    return content.rstrip() + '\n' + POPUP_HUB_CTA
 
 
 def extract_dates(text):
@@ -138,7 +162,10 @@ def upload_image_to_wp(image_url, title):
         ext = 'jpg'
         if '.png' in image_url.lower():
             ext = 'png'
-        safe_title = re.sub(r'[^\w]', '_', title[:30])
+        # ASCII-safeなファイル名 (日本語はlatin-1でエンコード不可)
+        safe_title = re.sub(r'[^a-zA-Z0-9_-]', '_', re.sub(r'[^\x00-\x7F]', '', title[:30]))
+        if not safe_title:
+            safe_title = f"popup_{int(datetime.now(JST).timestamp())}"
         filename = f"popup_{safe_title}.{ext}"
 
         req2 = urllib.request.Request(
@@ -176,12 +203,23 @@ def generate_article_with_gpt(signal, full_text):
         print("  OPENAI_API_KEY未設定")
         return None, {}
 
+    city = signal.get('city', '不明')
+    country = '日本' if city in ('tokyo', 'osaka', 'nagoya', 'fukuoka', 'yokohama',
+                                  'sapporo', 'sendai', 'hiroshima', 'kyoto', 'kobe') else '韓国'
+    city_label = {
+        'tokyo': '東京', 'osaka': '大阪', 'nagoya': '名古屋', 'fukuoka': '福岡',
+        'yokohama': '横浜', 'sapporo': '札幌', 'sendai': '仙台', 'hiroshima': '広島',
+        'kyoto': '京都', 'kobe': '神戸',
+        'seoul-gangnam': 'ソウル江南', 'seoul-seongsu': 'ソウル聖水',
+        'seoul-hongdae': 'ソウル弘大', 'seoul-myeongdong': 'ソウル明洞',
+    }.get(city, city)
+
     prompt = f"""以下のポップアップ情報から、K-POPファン向けのSEO最適化記事を生成してください。
 
 【元情報】
 タイトル: {signal['title']}
 本文抜粋: {(full_text[:2000] if full_text else 'なし')}
-都市: {signal.get('city', '不明')}
+開催地: {city_label} ({country})
 情報源: {signal.get('source', '不明')}
 
 【出力要件】
@@ -234,11 +272,37 @@ def generate_article_with_gpt(signal, full_text):
         return None, {}
 
 
+def _clean_prtimes_title(title):
+    """PR TIMESタイトルから日時・プレスリリースID等のゴミを除去"""
+    # 末尾の「2026年4月15日 10時49分」「6分前」等
+    title = re.sub(r'\d{4}年\d{1,2}月\d{1,2}日\s*\d{1,2}時\d{1,2}分.*$', '', title).strip()
+    title = re.sub(r'\d+分前$', '', title).strip()
+    title = re.sub(r'\d+時間前$', '', title).strip()
+    # 末尾の「…」で切れている場合はそのまま
+    return title
+
+
 def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0):
     """WP popup post type に投稿 (拡張meta対応)"""
-    from lib.text_sanitizer import strip_template_labels
-    title = strip_template_labels(signal.get('title', ''))[:60]
-    content = strip_template_labels(content)
+    from lib.text_sanitizer import strip_template_labels, sanitize_gpt_html
+    from lib.title_optimizer import generate_slug, validate_slug
+    title = _clean_prtimes_title(strip_template_labels(signal.get('title', '')))
+    # 長すぎるタイトルは末尾を自然な区切りで切る (省略記号なし)
+    if len(title) > 80:
+        # 句読点・括弧・スペースで区切れる位置を探す
+        for sep in ['。', '！', '、', '）', '」', ' ', '　']:
+            idx = title.rfind(sep, 40, 80)
+            if idx > 0:
+                title = title[:idx + 1].rstrip()
+                break
+        else:
+            title = title[:80]
+    content = sanitize_gpt_html(strip_template_labels(content))
+
+    # ASCIIスラッグ生成 (日本語エンコード防止 + 検証ゲート)
+    slug = validate_slug(generate_slug(title))
+    if not slug:
+        slug = validate_slug(generate_slug(content[:200])) or f"popup-event-{int(datetime.now(JST).timestamp())}"
 
     meta = {
         '_popup_city': signal.get('city', ''),
@@ -261,10 +325,14 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
         try:
             import urllib.parse as _up
             import time as _t
-            city_prefix = {'tokyo': '東京 ', 'osaka': '大阪 ', 'nagoya': '名古屋 ',
-                           'fukuoka': '福岡 ', 'seoul-gangnam': '서울 강남 ',
-                           'seoul-seongsu': '서울 성수 ', 'seoul-hongdae': '서울 홍대 ',
-                           'seoul-myeongdong': '서울 명동 '}.get(signal.get('city', ''), '')
+            city_prefix = {
+                'tokyo': '東京都 ', 'osaka': '大阪府 ', 'nagoya': '名古屋市 ',
+                'fukuoka': '福岡市 ', 'yokohama': '横浜市 ', 'sapporo': '札幌市 ',
+                'sendai': '仙台市 ', 'hiroshima': '広島市 ', 'kyoto': '京都市 ',
+                'kobe': '神戸市 ',
+                'seoul-gangnam': '서울 강남 ', 'seoul-seongsu': '서울 성수 ',
+                'seoul-hongdae': '서울 홍대 ', 'seoul-myeongdong': '서울 명동 ',
+            }.get(signal.get('city', ''), '')
             addr = city_prefix + meta['_popup_address']
             geo_url = f"https://nominatim.openstreetmap.org/search?q={_up.quote(addr)}&format=json&limit=1"
             geo_req = urllib.request.Request(geo_url, headers={'User-Agent': 'KPOPJournal-Pub/1.0'})
@@ -277,9 +345,27 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
         except Exception as e:
             print(f"  geocode err: {e}")
 
+    # 公開前ゲート
+    try:
+        from lib.pre_publish_gate import pre_publish_gate
+        _gate = pre_publish_gate(
+            title=title, body_html=content,
+            post_type='popup', kind='popup',
+            slug=slug, featured_media=featured_media,
+            status='publish',
+        )
+        if _gate['verdict'] == 'BLOCK':
+            print(f"  Gate BLOCK: {_gate['block_reasons']}")
+            return None
+        if _gate['verdict'] == 'WARN':
+            print(f"  Gate WARN ({len(_gate['warn_reasons'])}件)")
+    except Exception as e:
+        print(f"  Gate skip: {e}")
+
     body_data = {
         'title': title,
         'content': content,
+        'slug': slug,
         'status': 'publish',
         'meta': meta,
     }
@@ -301,24 +387,55 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
 
 
 def main(max_articles=10):
+    try:
+        from lib.staff_task_manager import begin_task, end_task as _end_task
+        _STF_ID, _TSK_ID = "KPJ-0040", begin_task("KPJ-0040", "popup_publisher")
+    except: _STF_ID = _TSK_ID = None
     if not os.path.exists(SIGNALS):
         print("popup_signals.jsonl なし")
         return
 
     signals = []
+    seen_urls = set()
+    seen_titles = set()
     with open(SIGNALS, encoding='utf-8') as f:
         for line in f:
             try:
                 s = json.loads(line)
-                if not is_processed(s['url']):
+                url = s['url']
+                title_key = s.get('title', '').strip()[:40]  # タイトル先頭40字で重複判定
+                if url not in seen_urls and title_key not in seen_titles and not is_processed(url):
+                    seen_urls.add(url)
+                    if title_key:
+                        seen_titles.add(title_key)
                     signals.append(s)
             except:
                 pass
 
-    print(f"未処理signals: {len(signals)}件")
+    print(f"未処理signals: {len(signals)}件 (重複URL+タイトル除外済)")
+
+    # K-POP/韓国関連度でソート (関連度低い記事は後回し)
+    _RELEVANCE_KW = ['K-POP', 'KPOP', 'BTS', 'BLACKPINK', 'NewJeans', 'aespa', 'TWICE',
+                     'SEVENTEEN', 'Stray Kids', 'IVE', 'LE SSERAFIM', 'ENHYPEN', 'ITZY',
+                     'TXT', 'ATEEZ', 'NCT', 'RIIZE', '韓国', 'OLIVE YOUNG', 'BT21',
+                     'LINE FRIENDS', 'ポップアップ', 'POP-UP', 'コスメ', 'ビューティー']
+    def _relevance(s):
+        return sum(1 for k in _RELEVANCE_KW if k.upper() in s.get('title', '').upper())
+    signals.sort(key=_relevance, reverse=True)
 
     created = 0
-    for sig in signals[:max_articles]:
+    skipped_ended = 0
+    skipped_irrelevant = 0
+    for sig in signals[:max_articles * 2]:  # 候補を多めに見てフィルタ後max_articles件
+        if created >= max_articles:
+            break
+
+        # K-POP関連度チェック (score=0はスキップ)
+        if _relevance(sig) == 0:
+            skipped_irrelevant += 1
+            mark_processed(sig['url'], None, 'irrelevant')
+            continue
+
         print(f"\n処理中: {sig['title'][:50]}")
 
         full_text = fetch_full_content(sig['url'])
@@ -330,12 +447,27 @@ def main(max_articles=10):
             sig['end_date'] = end
         status = determine_status(start, end)
 
+        # 終了済みイベントはスキップ
+        if status == 'ended':
+            print(f"  スキップ: ended")
+            skipped_ended += 1
+            mark_processed(sig['url'], None, 'ended_skip')
+            continue
+
         content, extra_meta = generate_article_with_gpt(sig, full_text)
         if content:
             try:
                 content = inject_cta_into_content(sig.get('title', ''), content)
             except Exception as e:
                 print(f"  CTA inject err: {e}")
+            # 内部リンク自動挿入
+            try:
+                from lib.internal_links import insert_internal_links
+                content = insert_internal_links(content, post_title=sig.get('title', ''))
+            except Exception as e:
+                print(f"  internal_links err: {e}")
+            # ポップアップ一覧ページへの動線CTA
+            content = inject_popup_hub_cta(content)
         if not content or len(content) < 200:
             print(f"  記事生成失敗、スキップ")
             mark_processed(sig['url'], None, 'gen_failed')
@@ -352,8 +484,12 @@ def main(max_articles=10):
         else:
             mark_processed(sig['url'], None, 'wp_failed')
 
-    print(f"\n公開: {created}件")
+    print(f"\n公開: {created}件 (ended skip: {skipped_ended}, irrelevant skip: {skipped_irrelevant})")
 
+
+try:
+    if _TSK_ID and _STF_ID: _end_task(_STF_ID, _TSK_ID, "success")
+except: pass
 
 if __name__ == '__main__':
     main(max_articles=10)

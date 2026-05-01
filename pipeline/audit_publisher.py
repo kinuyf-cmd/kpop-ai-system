@@ -127,9 +127,9 @@ def audit_post(p):
         except Exception:
             pass
 
-    # 4. 本文品質 (200字+日本語比率30%)
+    # 4. 本文品質 (800字+日本語比率30%)
     content_core = re.sub(r'※[^<\n]*|情報ソース[\s\S]*', '', content_text).strip()
-    if len(content_core) < 200:
+    if len(content_core) < 800:
         _record(pid, purl, 'body_short', f'{len(content_core)}字', 'high')
         if len(content_core) < 50:
             _wp_update(pid, {'status': 'draft'})

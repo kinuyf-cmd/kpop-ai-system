@@ -1,0 +1,302 @@
+{
+  "5690": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529255+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5689": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529291+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5688": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529301+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5687": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529308+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5686": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529316+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5695": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529324+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5692": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529332+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5681": {
+    "attempts": 4,
+    "skipped": true,
+    "skipped_at": "2026-04-30T03:30:01.529344+00:00",
+    "reason": "audit_fixed.jsonlに4回記録済み"
+  },
+  "5903": {
+    "attempts": 2,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:06.033868+00:00"
+  },
+  "5849": {
+    "attempts": 2,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:06.921414+00:00"
+  },
+  "5742": {
+    "attempts": 2,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:07.475181+00:00"
+  },
+  "5868": {
+    "attempts": 2,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:07.787515+00:00"
+  },
+  "5866": {
+    "attempts": 2,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:08.598990+00:00"
+  },
+  "5847": {
+    "attempts": 2,
+    "issues": [
+      "slug_encoded",
+      "text_repeated_char",
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:08.931542+00:00"
+  },
+  "5843": {
+    "attempts": 2,
+    "issues": [
+      "slug_encoded",
+      "text_repeated_char",
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-04-30T09:30:09.586354+00:00"
+  },
+  "6056": {
+    "attempts": 3,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-04-30T21:31:06.466893+00:00",
+    "skipped_at": "2026-04-30T21:31:06.466899+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6054": {
+    "attempts": 3,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-04-30T21:31:06.466913+00:00",
+    "skipped_at": "2026-04-30T21:31:06.466917+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6052": {
+    "attempts": 3,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-04-30T21:31:06.466927+00:00",
+    "skipped_at": "2026-04-30T21:31:06.466930+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6048": {
+    "attempts": 3,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-04-30T21:31:06.466938+00:00",
+    "skipped_at": "2026-04-30T21:31:06.466940+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "5923": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560418+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5921": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560453+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5919": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560464+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5917": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560473+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5915": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560481+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5871": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560511+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5852": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560519+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5754": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560556+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5737": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560583+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5735": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560590+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "5714": {
+    "attempts": 3,
+    "skipped": true,
+    "skipped_at": "2026-04-30T09:30:01.560603+00:00",
+    "reason": "audit_fixed.jsonlに3回記録済み"
+  },
+  "6058": {
+    "attempts": 3,
+    "issues": [
+      "text_meta_phrase"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-05-01T03:33:19.506944+00:00",
+    "skipped_at": "2026-05-01T03:33:19.506951+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6115": {
+    "attempts": 3,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-05-01T03:33:19.506966+00:00",
+    "skipped_at": "2026-05-01T03:33:19.506970+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6113": {
+    "attempts": 3,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": true,
+    "last_attempt": "2026-05-01T03:33:19.506980+00:00",
+    "skipped_at": "2026-05-01T03:33:19.506983+00:00",
+    "reason": "3回リライト試行後も未解決"
+  },
+  "6185": {
+    "attempts": 1,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:30:01.230493+00:00"
+  },
+  "6178": {
+    "attempts": 1,
+    "issues": [
+      "text_meta_phrase"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:30:31.390779+00:00"
+  },
+  "6176": {
+    "attempts": 1,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:30:53.969090+00:00"
+  },
+  "6174": {
+    "attempts": 1,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:31:28.966621+00:00"
+  },
+  "6172": {
+    "attempts": 1,
+    "issues": [
+      "few_internal_links"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:31:56.500662+00:00"
+  },
+  "6170": {
+    "attempts": 1,
+    "issues": [
+      "unclosed_p"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:32:25.379916+00:00"
+  },
+  "6184": {
+    "attempts": 1,
+    "issues": [
+      "text_repeated_char"
+    ],
+    "skipped": false,
+    "last_attempt": "2026-05-01T03:32:55.131762+00:00"
+  }
+}

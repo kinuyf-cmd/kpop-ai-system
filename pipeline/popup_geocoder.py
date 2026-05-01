@@ -23,7 +23,7 @@ def geocode_nominatim(address):
     url = f"https://nominatim.openstreetmap.org/search?q={urllib.parse.quote(address)}&format=json&limit=1&accept-language=ja"
     try:
         req = urllib.request.Request(url, headers={
-            'User-Agent': 'KPOPJournal-Geocoder/1.0 (kinu.yf@gmail.com)',
+            'User-Agent': 'KPOPJournal-Geocoder/1.0 (kpopjournal.biz@gmail.com)',
         })
         data = json.loads(urllib.request.urlopen(req, timeout=15).read())
         if data:

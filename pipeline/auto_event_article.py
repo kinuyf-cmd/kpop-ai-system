@@ -208,6 +208,10 @@ def _read_max_from_state(key, default=3):
 
 
 def main(dry_run=False, max_articles=None):
+    try:
+        from lib.staff_task_manager import begin_task, end_task as _end_task
+        _STF_ID, _TSK_ID = "KPJ-0010", begin_task("KPJ-0010", "auto_event_article")
+    except: _STF_ID = _TSK_ID = None
     if max_articles is None:
         max_articles = _read_max_from_state('auto_event', 3)
     signals_raw = load_signals(hours_back=24)
@@ -283,6 +287,10 @@ def main(dry_run=False, max_articles=None):
     print(f"\n完了: {created}件記事化")
     return created
 
+
+try:
+    if _TSK_ID and _STF_ID: _end_task(_STF_ID, _TSK_ID, "success")
+except: pass
 
 if __name__ == '__main__':
     import argparse

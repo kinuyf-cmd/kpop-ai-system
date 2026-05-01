@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-25T19:09:04.864645",
+  "updated_at": "2026-05-01T09:16:44.731097",
   "focus_themes": [
     {
       "topic": "BTS東京ドーム7年ぶり来日公演",
@@ -77,10 +77,10 @@
       "promoted_at": "2026-04-09T18:30:36.616439"
     },
     "persian": {
-      "problem": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ:",
+      "problem": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish",
       "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "error_count": 15,
-      "set_at": "2026-04-25",
+      "error_count": 16,
+      "set_at": "2026-04-30",
       "source": "audit_feedback"
     },
     "inject_meta_desc_copied": {
@@ -493,6 +493,83 @@
       "source": "auto_learn",
       "error_count": 23,
       "promoted_at": "2026-04-24T21:30:01.706279"
+    },
+    "thumbnail_source_resolver": {
+      "problem": "aespa記事にBTS YouTube画像、K-POP一般記事にBTS YouTube画像がOGPとして設定。thumbnail_source_resolver",
+      "action": "4層対策: (1) _resolve_channel_idからAPI検索フォールバック廃止→official_accounts.json登録済みのみ使用。(2) resolve()でattribution/アーティスト名の不一致を検出しBLOCK。(3) full_audit_engineにcheck_ogp_image_relevance追加（alt内アーティスト名vsタイトル照合）。(4) error_patterns.jsonに登録。",
+      "error_count": 4,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "unified_publisher": {
+      "problem": "X投稿がcredential期限切れで失敗するが記事は公開済。x_retry_queueに入るがretry処理が未実装",
+      "action": "x_retry_queue.jsonに13件登録。retry処理の実装は別タスクで対応予定",
+      "error_count": 13,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "popup_publisher": {
+      "problem": "popup記事のslugがWPデフォルトの日本語URLエンコード(%e3%83%9d%e3%83%83%e3%83%97...)",
+      "action": "popup_publisher.pyにgenerate_slug()呼び出し追加。body_dataにslugフィールドを設定",
+      "error_count": 5,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "text_sanitizer": {
+      "problem": "GPT生成HTMLにunclosed <p>タグが1-2個残存。sanitize_gpt_htmlが閾値>2でスキップしていた",
+      "action": "sanitizerは閾値なしで常に修正。監査では>2をmedium、1-2をlowに分離(wpautop仕様考慮)",
+      "error_count": 6,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "unified_publisher/popup_publisher": {
+      "problem": "lib/internal_links.pyが存在するがunified_publisher/popup_publisherに統合されておらず、全記事で内部リンクが",
+      "action": "unified_publisher.pyのCTA挿入直後にinsert_internal_links()呼び出しを追加。popup_publisher.pyにも同様に追加",
+      "error_count": 18,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "audit_remediation": {
+      "problem": "予防コード修正を入れたが、既存記事の実データは古いまま放置。slug_encoded/no_artist_category/meta_desc_short等が残",
+      "action": "WP REST API PATCHによる一括修正スクリプト実行。25件のslug/cat/meta_desc/content/titleを修正。内部リンクも17件に挿入",
+      "error_count": 25,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "breaking_news_detector": {
+      "problem": "GPT出力が<p>...<h2>...</h2><p>...</p>を含むのにbreaking_news_detectorが更にf'<p>{text}</p>'",
+      "action": "breaking_news_detector.pyに_wrap_body()ヘルパー追加。GPT出力が既にHTMLブロック要素を含む場合は<p>ラップしない。text_sanitizer.pyにPhase1(ブロック要素前の自動閉じ)+Phase3(孤児</p>除去)を追加",
+      "error_count": 16,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "operations": {
+      "problem": "4/25のcrontab刷新でcrontab.txtの旧エントリ68本がライブcrontabから脱落。監査レポート/GA4/KPI/フィードバック/競合監視等が",
+      "action": "脱落ジョブ22本(監査5+GSC2+運用15)をライブcrontabに復旧。crontab.txtをライブcrontabから再生成(2026-04-29)",
+      "error_count": 68,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "revenue": {
+      "problem": "Google Cloud OAuthが「Testing」モードのためrefresh_tokenが7日で失効。invalid_grantエラーが周期的に発生",
+      "action": "kpi_store.py/fetch_adsense.pyにinvalid_grant時の明確なエラーメッセージと再認証手順を追加(2026-04-29)。根本修正はGCP Console「Testing→本番」変更",
+      "error_count": 3,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "audit_fixer_universal": {
+      "problem": "ID 4299(IU記事)が12回リライトされても content_short が解消しない。344回のGPT呼び出しのうち258回が重複リライト",
+      "action": "1. _load_already_fixed()で3回以上リライト済みをスキップ 2. content_shortをGPT_REWRITE_TYPESから除外 3. 新しい記事を優先するソート 4. max_fixes=15→30に引き上げ",
+      "error_count": 77,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
+    },
+    "feature_article_generator": {
+      "problem": "「明洞おすすめ韓国カフェ7選」で架空のカフェ名（カフェ・ド・ルーヴル、ヤギカフェ等）を列挙。住所・営業時間・地図なし。読者が訪問不可能な記事を公開していた",
+      "action": "4層再発防止: (1)カフェ/レストラン/グルメ○選テンプレートをfeature_article_generatorから削除 (2)GPTプロンプトに架空店舗禁止+4点セット必須ルール追加 (3)pre_publish_gateにshop_no_practical_info BLOCKチェック追加 (4)agent_lessons/feature_article_writer.mdに警告#10追加",
+      "error_count": 3,
+      "set_at": "2026-04-30",
+      "source": "audit_feedback"
     }
   },
   "stop_doing": [

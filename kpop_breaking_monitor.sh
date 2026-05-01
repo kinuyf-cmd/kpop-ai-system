@@ -49,7 +49,7 @@ trap "rm -f '$LOCK_FILE'" EXIT
 # 本日投稿数チェック
 # ============================================================
 POST_COUNT=$(python3 - "$TODAY_ISO" << 'PY'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 today = sys.argv[1]
 after = today + "T00:00:00"
 url = "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts?per_page=50&after=" + urllib.parse.quote(after) + "&status=publish"
@@ -141,7 +141,7 @@ done
 
 # 投稿済みタイトルと重複しないかチェック
 ALREADY_COVERED=$(python3 - "$TODAY_ISO" "$NEW_BREAKING" << 'PY'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 
 today = sys.argv[1]
 new_keywords = sys.argv[2].strip().split("\n")

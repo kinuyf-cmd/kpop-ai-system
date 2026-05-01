@@ -75,11 +75,18 @@ def fetch_category(url):
 
 
 def is_popup_and_kpop(item):
-    """ポップアップかつK-POP/韓国関連か"""
+    """ポップアップかつK-POP/韓国関連か (OR条件も許容)"""
     text = f"{item.get('title', '')} {item.get('desc', '')}"
     has_popup = any(k in text for k in POPUP_KW)
     has_kpop = any(k in text for k in KPOP_KW)
-    return has_popup and has_kpop
+    # 韓国コスメ・ブランド名も判定対象に追加
+    BRAND_KW = ['OLIVE YOUNG', 'オリーブヤング', 'innisfree', 'イニスフリー',
+                'ETUDE', 'エチュード', 'MISSHA', 'ミシャ', 'rom&nd', 'ロムアンド',
+                'LANEIGE', 'ラネージュ', 'GENTLE MONSTER', 'ジェントルモンスター',
+                'MUSINSA', 'ムシンサ', 'BT21', 'LINE FRIENDS', 'KAKAO',
+                'カカオフレンズ', '韓国コスメ', '韓国ブランド']
+    has_brand = any(k in text for k in BRAND_KW)
+    return has_popup and (has_kpop or has_brand)
 
 
 def detect_city(text):

@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "updated_at": "2026-04-21",
+  "version": "2.0",
+  "updated_at": "2026-04-27",
   "company": "K-POP Journal AI Company",
   "departments": {
     "content": {
@@ -11,7 +11,13 @@
         "id": "deoxys_kpop",
         "name": "デオキシス"
       },
-      "members": ["deoxys_kpop", "metamon_kpop", "butterfree", "eevee", "jirachi_kpop"],
+      "members": [
+        "deoxys_kpop",
+        "metamon_kpop",
+        "butterfree",
+        "eevee",
+        "jirachi_kpop"
+      ],
       "kpis": [
         "日次記事投稿数",
         "平均品質スコア",
@@ -29,7 +35,12 @@
         "id": "gardevoir_hook_critic",
         "name": "サーナイト"
       },
-      "members": ["gardevoir_hook_critic", "arceus", "gengar", "jirachi_kpop"],
+      "members": [
+        "gardevoir_hook_critic",
+        "arceus",
+        "gengar",
+        "jirachi_kpop"
+      ],
       "kpis": [
         "品質ゲート通過率",
         "HARD_FAIL発生件数",
@@ -47,7 +58,12 @@
         "id": "alakazam_kpop",
         "name": "アラカザム"
       },
-      "members": ["alakazam_kpop", "lapras", "mimikyu", "illumise"],
+      "members": [
+        "alakazam_kpop",
+        "lapras",
+        "mimikyu",
+        "illumise"
+      ],
       "kpis": [
         "GSCインデックス率",
         "平均CTR",
@@ -65,7 +81,12 @@
         "id": "persian",
         "name": "ペルシアン"
       },
-      "members": ["persian", "snorlax", "meowth", "porygon"],
+      "members": [
+        "persian",
+        "snorlax",
+        "meowth",
+        "porygon"
+      ],
       "kpis": [
         "月間AdSense収益",
         "アフィリエイト収益",
@@ -83,7 +104,12 @@
         "id": "mewtwo",
         "name": "ミュウツー"
       },
-      "members": ["mewtwo", "porygon_z", "raikou_thumb", "venusaur"],
+      "members": [
+        "mewtwo",
+        "porygon_z",
+        "raikou_thumb",
+        "venusaur"
+      ],
       "kpis": [
         "パイプライン稼働率",
         "エラー自動修復率",
@@ -92,6 +118,74 @@
         "デプロイ成功率"
       ],
       "meeting_time": "毎日07:30"
+    },
+    "audit_v2": {
+      "name": "総監査部",
+      "icon": "🛡️",
+      "color": "#ef4444",
+      "manager": {
+        "id": "arceus",
+        "name": "アルセウス"
+      },
+      "members": [
+        "arceus",
+        "gardevoir_hook_critic"
+      ],
+      "pipeline_agents": [
+        "llm_proofreader_bot",
+        "full_audit_runner_bot",
+        "audit_fixer_universal_bot"
+      ],
+      "kpis": [
+        "17項目監査合格率",
+        "LLM校閲high件数",
+        "自動修正成功率"
+      ]
+    },
+    "hr": {
+      "name": "人事部",
+      "icon": "👥",
+      "color": "#f472b6",
+      "manager": {
+        "id": "chansey",
+        "name": "ラッキー"
+      },
+      "members": [
+        "chansey"
+      ],
+      "pipeline_agents": [
+        "hr_manager_bot",
+        "staff_evaluator_bot"
+      ],
+      "kpis": [
+        "全社員稼働率",
+        "100%発揮率",
+        "教訓蓄積数",
+        "頻出エラー改善率"
+      ]
+    },
+    "distribution": {
+      "name": "配信部",
+      "icon": "📡",
+      "color": "#06b6d4",
+      "manager": {
+        "id": "porygon",
+        "name": "ポリゴン"
+      },
+      "members": [
+        "porygon",
+        "porygon_z"
+      ],
+      "pipeline_agents": [
+        "post_publish_enricher_bot",
+        "x_retry_processor_bot",
+        "internal_link_injector_bot"
+      ],
+      "kpis": [
+        "GSC通知率",
+        "X投稿成功率",
+        "内部リンク平均数"
+      ]
     }
   }
 }

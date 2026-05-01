@@ -100,6 +100,18 @@ def _mark_breaking_stage(post_id, stage):
         print(f"  stage記録失敗 {post_id}: {e}")
 
 
+def _wrap_body(translated: str, fallback_title: str, success: bool) -> str:
+    """GPT出力をbody_htmlにラップ。既にHTMLブロック要素を含む場合は二重<p>を避ける"""
+    import re as _re
+    if not success or not translated:
+        return f"<p>{fallback_title}</p>"
+    text = translated.strip()
+    # GPT出力が既に<p>や<h2>等のブロック要素を含む場合はそのまま返す
+    if _re.search(r'<(?:p|h[2-6]|div|ul|ol|table)[ >]', text):
+        return text
+    return f"<p>{text}</p>"
+
+
 def publish_breaking(artist, sigs, typ):
     """unified_publish経由で速報投稿"""
     best = max(sigs, key=lambda s: len(s.get('title', '')))
@@ -112,13 +124,32 @@ def publish_breaking(artist, sigs, typ):
         raw_title = title_r['translated'].strip().strip('「」""')
         combined = "\n".join([s['title'] for s in sigs[:3]])
         body_r = translate_ko_to_ja(
-            f"以下のK-POP速報から150-250字の日本語記事を事実ベースで。推測禁止:\n\n{combined}",
+            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下のK-POP速報から800-1200字の日本語記事を事実ベースで。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
             'K-POP速報記事',
         )
-        body_html = f"<p>{body_r['translated']}</p>" if body_r.get('success') else f"<p>{best['title']}</p>"
-    else:
+        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
+    elif best.get('language') == 'ja':
         raw_title = best['title']
-        body_html = f"<p>{best['title']}</p>"
+        combined = "\n".join([s['title'] for s in sigs[:3]])
+        # 日本語ソース: translate_ko_to_jaの汎用LLM機能で速報本文を生成
+        body_r = translate_ko_to_ja(
+            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下のK-POP速報見出しから800-1200字の日本語速報記事を事実ベースで書いてください。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
+            'K-POP速報記事（日本語ソース）',
+        )
+        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
+    else:
+        # 英語ソース: 翻訳+本文生成
+        combined = "\n".join([s['title'] for s in sigs[:3]])
+        title_r = translate_ko_to_ja(best['title'], 'K-POP速報見出し（英語→日本語）')
+        if title_r.get('success'):
+            raw_title = title_r['translated'].strip().strip('「」""')
+        else:
+            raw_title = best['title']
+        body_r = translate_ko_to_ja(
+            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下の英語K-POP速報から800-1200字の日本語記事を事実ベースで。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
+            'K-POP速報記事',
+        )
+        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
 
     confidence = 'high' if typ == 'multi' else ('medium' if typ in ('urgent', 'single_multi') else 'low')
 
@@ -152,6 +183,16 @@ def publish_breaking(artist, sigs, typ):
                 'type': typ,
             }) + '\n')
         return {'id': r.get('post_id'), 'link': r.get('post_url')}
+
+    # fact-checkブロック等でも同じURLの無限リトライを防止
+    if r and not r.get('success'):
+        for s in sigs:
+            mark_processed({
+                'ts': datetime.now().isoformat(), 'source_url': s['url'],
+                'kind': 'breaking_blocked',
+                'reason': r.get('error', 'unknown'),
+                'type': typ,
+            })
     return None
 
 

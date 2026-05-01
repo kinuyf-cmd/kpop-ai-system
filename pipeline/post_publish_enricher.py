@@ -305,19 +305,18 @@ def enrich_recent(hours: int = 6) -> list[dict]:
 def main():
     parser = argparse.ArgumentParser(description="記事公開後の構造自動補完")
     parser.add_argument("--post-id", type=int, help="特定の記事IDを処理")
-    parser.add_argument("--recent-hours", type=int, default=0, help="直近N時間以内の記事を一括処理")
+    parser.add_argument("--recent-hours", type=int, default=2, help="直近N時間以内の記事を一括処理 (default: 2)")
     args = parser.parse_args()
 
     if args.post_id:
         result = enrich_post(args.post_id)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-    elif args.recent_hours:
-        results = enrich_recent(args.recent_hours)
+    else:
+        hours = args.recent_hours
+        results = enrich_recent(hours)
         for r in results:
             print(json.dumps(r, ensure_ascii=False))
         print(f"\nTotal: {len(results)} posts processed")
-    else:
-        parser.print_help()
 
 
 if __name__ == "__main__":

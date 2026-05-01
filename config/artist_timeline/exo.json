@@ -1,0 +1,124 @@
+{
+  "slug": "exo",
+  "name": "EXO",
+  "name_kr": "엑소",
+  "name_en": "EXO",
+  "debut_date": "2012-04-08",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Xiumin",
+      "name_kr": "시우민",
+      "birth": "1990-03-26"
+    },
+    {
+      "name": "Suho",
+      "name_kr": "수호",
+      "birth": "1991-05-22"
+    },
+    {
+      "name": "Lay",
+      "name_kr": "레이",
+      "birth": "1991-10-07"
+    },
+    {
+      "name": "Baekhyun",
+      "name_kr": "백현",
+      "birth": "1992-05-06"
+    },
+    {
+      "name": "Chen",
+      "name_kr": "첸",
+      "birth": "1992-09-21"
+    },
+    {
+      "name": "Chanyeol",
+      "name_kr": "찬열",
+      "birth": "1992-11-27"
+    },
+    {
+      "name": "D.O.",
+      "name_kr": "디오",
+      "birth": "1993-01-12"
+    },
+    {
+      "name": "Kai",
+      "name_kr": "카이",
+      "birth": "1994-01-14"
+    },
+    {
+      "name": "Sehun",
+      "name_kr": "세훈",
+      "birth": "1994-04-12"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.exo.smtown.com/",
+    "twitter": "https://twitter.com/EXO",
+    "instagram": "https://www.instagram.com/exo/",
+    "youtube": "https://www.youtube.com/user/exo",
+    "weverse": "https://weverse.io/exo"
+  },
+  "events": [
+    {
+      "date": "2012-04-08",
+      "type": "debut",
+      "title": "EXO-CBX Debut",
+      "note": "EXOの初披露"
+    },
+    {
+      "date": "2013-05-30",
+      "type": "album",
+      "title": "XOXO",
+      "note": "1st album release"
+    },
+    {
+      "date": "2014-03-21",
+      "type": "comeback",
+      "title": "Overdose",
+      "note": "2nd mini album release"
+    },
+    {
+      "date": "2015-06-03",
+      "type": "album",
+      "title": "EXODUS",
+      "note": "EXOの第三のミニアルバム"
+    },
+    {
+      "date": "2017-11-10",
+      "type": "comeback",
+      "title": "Universe",
+      "note": "冬のアルバムリリース"
+    },
+    {
+      "date": "2019-11-27",
+      "type": "comeback",
+      "title": "Obsession",
+      "note": "6th album release"
+    },
+    {
+      "date": "2020-06-22",
+      "type": "other",
+      "title": "Don't Fight The Feeling",
+      "note": "特別アルバムリリース"
+    },
+    {
+      "date": "2021-06-25",
+      "type": "tour",
+      "title": "EXO Planet #5",
+      "note": "5回目のコンサートツアー"
+    },
+    {
+      "date": "2022-05-05",
+      "type": "comeback",
+      "title": "Bambi",
+      "note": "第6枚目のミニアルバムリリース"
+    },
+    {
+      "date": "2023-09-14",
+      "type": "album",
+      "title": "EXO - The 7th Album",
+      "note": "7枚目のフルアルバムリリース"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "slug": "nmixx",
+  "name": "NMIXX",
+  "name_kr": "",
+  "name_en": "NMIXX",
+  "debut_date": "2021-02-22",
+  "agency": "JYP Entertainment",
+  "members": [
+    {
+      "name": "Lily",
+      "name_kr": "릴리",
+      "birth": "2002-10-23"
+    },
+    {
+      "name": "Sullyoon",
+      "name_kr": "설윤",
+      "birth": "2003-05-01"
+    },
+    {
+      "name": "Hayun",
+      "name_kr": "하윤",
+      "birth": "2004-05-17"
+    },
+    {
+      "name": "Jiwoo",
+      "name_kr": "지원",
+      "birth": "2003-08-31"
+    },
+    {
+      "name": "Kyujin",
+      "name_kr": "규진",
+      "birth": "2006-05-26"
+    },
+    {
+      "name": "Bae",
+      "name_kr": "배",
+      "birth": "2004-03-07"
+    },
+    {
+      "name": "Minji",
+      "name_kr": "민지",
+      "birth": "2004-02-11"
+    }
+  ],
+  "official_links": {
+    "website": "https://www.jype.com/nmixx",
+    "twitter": "https://twitter.com/nmixx",
+    "instagram": "https://www.instagram.com/nmixx/",
+    "youtube": "https://www.youtube.com/channel/UCN8Y5kNTn3aBg1FrVq2I2OA",
+    "weverse": "https://www.weverse.io/nmixx"
+  },
+  "events": [
+    {
+      "date": "2021-02-22",
+      "type": "debut",
+      "title": "NMIXX Debut",
+      "note": "Debuted with the single 'AD MARE'."
+    },
+    {
+      "date": "2022-03-15",
+      "type": "comeback",
+      "title": "First Comeback",
+      "note": "Released EP 'expérgo'."
+    },
+    {
+      "date": "2022-06-24",
+      "type": "album",
+      "title": "Second Album",
+      "note": "Released album 'ENTWURF'."
+    },
+    {
+      "date": "2022-11-14",
+      "type": "comeback",
+      "title": "Third Comeback",
+      "note": "Released digital single 'DICE'."
+    },
+    {
+      "date": "2023-02-15",
+      "type": "comeback",
+      "title": "Fourth Comeback",
+      "note": "Released EP 'A change of the mood'."
+    },
+    {
+      "date": "2023-05-29",
+      "type": "album",
+      "title": "New Album Release",
+      "note": "Released the single 'Love Me Like This'."
+    },
+    {
+      "date": "2023-09-01",
+      "type": "tour",
+      "title": "First World Tour",
+      "note": "Kickstarted their first world tour titled 'NMIXX FIRST TOUR'."
+    },
+    {
+      "date": "2024-01-18",
+      "type": "award",
+      "title": "Award Ceremony",
+      "note": "Won 'Best New Artist' at the AAA."
+    },
+    {
+      "date": "2025-08-12",
+      "type": "comeback",
+      "title": "Fifth Comeback",
+      "note": "Scheduled comeback with a new album."
+    },
+    {
+      "date": "2026-04-15",
+      "type": "comeback",
+      "title": "Latest Album Release",
+      "note": "Expected release of a new EP."
+    }
+  ]
+}

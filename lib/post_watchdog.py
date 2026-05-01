@@ -48,11 +48,11 @@ JST = timezone(timedelta(hours=9))
 X_POST_SILENCE_HOURS = 26   # 旧4h → パイプライン停止多発で誤検知。1日1投稿保証ベースに緩和
 ARTICLE_SILENCE_HOURS = 26  # 旧6h → 同上
 ACTIVE_HOUR_START = 7
-ACTIVE_HOUR_END = 21
+ACTIVE_HOUR_END = 22  # fix: 21:00 cron実行時に h<21 がFalseになり全silence検査がスキップされていたバグを修正
 
 # パイプライン定義: (ログパス, 実行時刻JST, スクリプト, 引数, ラベル)
 PIPELINES = [
-    (BASE / "logs" / "morning_brief.log",    9,  BASE / "ceo_morning_brief.sh",     [],         "CEOモーニングブリーフ"),
+    (BASE / "logs" / "morning_meeting.log",  9,  None,     [],         "CEOモーニングブリーフ"),
     (Path("/home/aiuser/ai_kpop.log"),        7,  BASE / "kpop_pipeline.sh",         [],         "速報パイプライン"),
     (BASE / "logs" / "beauty_pipeline.log",  11,  BASE / "kpop_pipeline.sh",
         ["韓国コスメ・K-POPアイドルの美容法・スキンケアルーティン・ガラス肌"],                      "美容パイプライン"),
@@ -100,6 +100,15 @@ def _clean_discord_body(body: str) -> str:
     return cleaned
 
 
+def _post_discord(url: str, payload: bytes) -> bool:
+    req = urllib.request.Request(
+        url, data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}, method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=10) as res:
+        return res.status in (200, 204)
+
+
 def send_discord_alert(title: str, body: str, level: str = "error") -> bool:
     url = get_discord_webhook("urgent_errors")
     if not url:
@@ -121,14 +130,18 @@ def send_discord_alert(title: str, body: str, level: str = "error") -> bool:
     }).encode()
 
     try:
-        req = urllib.request.Request(
-            url, data=payload,
-            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}, method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=10) as res:
-            return res.status in (200, 204)
+        return _post_discord(url, payload)
     except Exception as e:
-        print(f"  [watchdog] Discord送信失敗: {e}")
+        print(f"  [watchdog] Discord送信失敗(urgent_errors): {e}")
+        # フォールバック: alert_summary チャネルに送信
+        fallback_url = get_discord_webhook("alert_summary")
+        if fallback_url and fallback_url != url:
+            try:
+                _post_discord(fallback_url, payload)
+                print(f"  [watchdog] フォールバック(alert_summary)で送信成功")
+                return True
+            except Exception as e2:
+                print(f"  [watchdog] フォールバックも失敗: {e2}")
         return False
 
 
@@ -566,7 +579,7 @@ def check_pipeline_log_staleness(dry_run: bool) -> list[dict]:
             mtime_str = f"最終更新: {mtime.strftime('%m/%d %H:%M JST')} ({elapsed_h}h前)"
 
         # ── 自動修復: パイプライン再実行 ──
-        if not dry_run and script.exists() and label not in restarted:
+        if not dry_run and script and script.exists() and label not in restarted:
             # 既に同スクリプトが動いていれば再実行しない
             if _pipeline_is_running(script):
                 print(f"  ⏳ [{label}] 既に実行中のため再実行スキップ")
@@ -1007,6 +1020,47 @@ def check_gate_fatigue(dry_run: bool) -> list[dict]:
     return alerts
 
 
+def check_bounce_rate_anomaly(dry_run: bool) -> list[dict]:
+    """GA4 bounce_rateの急騰検知: 前回比で50%以上上昇した場合に警告。
+
+    ボット流入やGA4トラッキング破損の早期発見が目的。
+    kpi_daily.jsonl の直近2件を比較する。
+    """
+    alerts = []
+    kpi_file = LOGS / "kpi_daily.jsonl"
+    if not kpi_file.exists():
+        return alerts
+
+    lines = kpi_file.read_text(errors="replace").strip().splitlines()
+    if len(lines) < 2:
+        return alerts
+
+    try:
+        prev = json.loads(lines[-2])
+        curr = json.loads(lines[-1])
+    except (json.JSONDecodeError, IndexError):
+        return alerts
+
+    prev_br = prev.get("ga4_bounce_rate", 0)
+    curr_br = curr.get("ga4_bounce_rate", 0)
+    curr_engaged = curr.get("ga4_engaged_sessions", 0)
+    curr_sessions = curr.get("ga4_sessions", 0)
+    curr_date = curr.get("date", "?")
+    prev_date = prev.get("date", "?")
+
+    # bounce_rate が 50% を超え、かつ前回比で 30ポイント以上上昇
+    if curr_br > 0.5 and (curr_br - prev_br) > 0.3:
+        engagement_pct = round(curr_engaged / curr_sessions * 100, 1) if curr_sessions > 0 else 0
+        body = (
+            f"bounce_rate急騰: {prev_date}={round(prev_br*100,1)}% → {curr_date}={round(curr_br*100,1)}%\n"
+            f"engaged_sessions: {curr_engaged}/{curr_sessions} ({engagement_pct}%)\n"
+            f"原因候補: ボット/スパム流入、GA4トラッキング破損、リファラスパム\n"
+            f"対応: GA4コンソールでトラフィックソース別engagement確認"
+        )
+        alerts.append(log_alert("bounce_rate", body, dry_run, level="warning"))
+    return alerts
+
+
 CHECKS = {
     "x_post":        check_x_post_silence,
     "x_errors":      check_x_post_errors,
@@ -1021,6 +1075,7 @@ CHECKS = {
     "draft_x_guard": check_draft_x_posted,        # 逆監査: draft記事X投稿事故検知
     "external_wp":   check_pipeline_external_wp_posts,  # pipeline外WP記事検知（HUMAN_REVIEW_ONLY）
     "gate_fatigue":  check_gate_fatigue,          # 品質ゲート連続BLOCK検知（2026-04-16事故再発防止）
+    "bounce_rate":   check_bounce_rate_anomaly,    # GA4 bounce_rate急騰検知（ボット/トラッキング破損）
 }
 
 

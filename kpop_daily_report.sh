@@ -76,7 +76,7 @@ echo ""
 echo "=== [2] WordPress 本日投稿データ取得 ==="
 
 WP_DATA=$(python3 - "$TODAY_KEY" <<'PYEOF'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 from datetime import datetime, timezone
 
 today_str = sys.argv[1]

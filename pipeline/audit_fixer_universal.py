@@ -6,6 +6,9 @@ from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 load_dotenv('/home/aiuser/kpop-ai-system/.env')
 
+SKIP_LIST_PATH = '/home/aiuser/kpop-ai-system/data/audit_fixer_skip.json'
+MAX_REWRITE_ATTEMPTS = 3
+
 WP_USER = os.getenv('WP_USER', '')
 WP_PASS = os.getenv('WP_PASS', '')
 AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
@@ -120,13 +123,75 @@ def generate_meta_description(post):
     return plain[:150]
 
 
-def main(max_fixes=15):
+def _load_already_fixed():
+    """audit_fixed.jsonl からリライト済みpost_idを取得"""
+    fixed_path = '/home/aiuser/kpop-ai-system/logs/audit_fixed.jsonl'
+    already = {}  # post_id -> count
+    if os.path.exists(fixed_path):
+        with open(fixed_path, encoding='utf-8') as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                    pid = d.get('post_id')
+                    if pid:
+                        already[pid] = already.get(pid, 0) + 1
+                except:
+                    pass
+    return already
+
+
+def _load_skip_list():
+    """永続スキップリストを読み込む (post_id -> {reason, skipped_at, attempts})"""
+    if os.path.exists(SKIP_LIST_PATH):
+        try:
+            with open(SKIP_LIST_PATH, encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def _save_skip_list(skip_list):
+    """永続スキップリストを保存"""
+    os.makedirs(os.path.dirname(SKIP_LIST_PATH), exist_ok=True)
+    with open(SKIP_LIST_PATH, 'w', encoding='utf-8') as f:
+        json.dump(skip_list, f, ensure_ascii=False, indent=2)
+
+
+def _record_attempt(skip_list, post_id, issue_types):
+    """リライト試行を記録し、上限超えならスキップリストに追加。Trueならスキップ対象"""
+    pid_key = str(post_id)
+    entry = skip_list.get(pid_key, {'attempts': 0, 'issues': [], 'skipped': False})
+    entry['attempts'] = entry.get('attempts', 0) + 1
+    entry['issues'] = issue_types
+    entry['last_attempt'] = datetime.now(timezone.utc).isoformat()
+    if entry['attempts'] >= MAX_REWRITE_ATTEMPTS:
+        entry['skipped'] = True
+        entry['skipped_at'] = datetime.now(timezone.utc).isoformat()
+        entry['reason'] = f"{MAX_REWRITE_ATTEMPTS}回リライト試行後も未解決"
+    skip_list[pid_key] = entry
+    return entry.get('skipped', False)
+
+
+# content_short はGPTリライトでは解決できない（ソース情報不足）
+# GPTリライト対象から除外し、別のアプローチ（手動補強）に回す
+GPT_REWRITE_TYPES = FIXABLE_TYPES - {'content_short'}
+
+
+def main(max_fixes=30):
+    try:
+        from lib.staff_task_manager import begin_task, end_task as _end_task
+        _STF_ID, _TSK_ID = "KPJ-0034", begin_task("KPJ-0034", "audit_fixer_universal")
+    except: _STF_ID = _TSK_ID = None
     audit_log = '/home/aiuser/kpop-ai-system/data/audit_state.jsonl'
     if not os.path.exists(audit_log):
         print("audit_state.jsonl なし")
         return
 
     cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    already_fixed = _load_already_fixed()
+    skip_list = _load_skip_list()
+    skipped_count = 0
     targets = {}
 
     with open(audit_log, encoding='utf-8') as f:
@@ -136,23 +201,58 @@ def main(max_fixes=15):
                 audited = datetime.fromisoformat(rec['audited_at'].replace('Z', '+00:00'))
                 if audited < cutoff:
                     continue
-                fixable = [i for i in rec['issues'] if i['type'] in FIXABLE_TYPES]
+                pid = rec['post_id']
+                # 永続スキップリストに登録済みならスキップ
+                pid_key = str(pid)
+                if skip_list.get(pid_key, {}).get('skipped', False):
+                    skipped_count += 1
+                    continue
+                # 3回以上リライト済みはスキップ（無限ループ防止）
+                if already_fixed.get(pid, 0) >= MAX_REWRITE_ATTEMPTS:
+                    skip_list[pid_key] = {
+                        'attempts': already_fixed[pid],
+                        'skipped': True,
+                        'skipped_at': datetime.now(timezone.utc).isoformat(),
+                        'reason': f"audit_fixed.jsonlに{already_fixed[pid]}回記録済み",
+                    }
+                    skipped_count += 1
+                    continue
+                # BUG FIX: content_short のみの記事はGPTでは解決不能なので対象外
+                # GPT_REWRITE_TYPES を使ってフィルタリング
+                fixable = [i for i in rec['issues'] if i['type'] in GPT_REWRITE_TYPES
+                           or i['type'] in ('slug_encoded', 'meta_desc_short', 'no_meta_description')]
                 if fixable:
-                    key = (rec['post_id'], rec.get('post_type', 'post'))
+                    key = (pid, rec.get('post_type', 'post'))
                     targets[key] = fixable
             except:
                 pass
 
-    print(f"自動修正対象: {len(targets)}件")
+    # 新しい記事（未リライト）を優先するソート
+    sorted_targets = sorted(
+        targets.items(),
+        key=lambda x: already_fixed.get(x[0][0], 0)
+    )
+
+    print(f"自動修正対象: {len(sorted_targets)}件 (スキップ済: {skipped_count}件)")
 
     fixed = 0
-    for (pid, ptype), issues in list(targets.items())[:max_fixes]:
+    for (pid, ptype), issues in sorted_targets[:max_fixes]:
+        issue_types = [i['type'] for i in issues]
+
+        # 試行回数チェック＆記録
+        should_skip = _record_attempt(skip_list, pid, issue_types)
+        if should_skip:
+            attempts = skip_list[str(pid)]['attempts']
+            print(f"  SKIP id={pid}: {MAX_REWRITE_ATTEMPTS}回試行済み、永続スキップに追加 (issues: {issue_types})")
+            continue
+
         post = fetch_post(pid, ptype)
         if not post:
             continue
 
         title = post.get('title', {}).get('rendered', '') if isinstance(post.get('title'), dict) else ''
-        print(f"\n[{ptype}] id={pid}: {title[:40]}")
+        rewrite_count = already_fixed.get(pid, 0)
+        print(f"\n[{ptype}] id={pid} (rewrite#{rewrite_count+1}): {title[:40]}")
 
         update_payload = {}
 
@@ -160,9 +260,9 @@ def main(max_fixes=15):
         if any(i['type'] == 'slug_encoded' for i in issues):
             update_payload['slug'] = f"{ptype}-{pid}"
 
-        # 本文修正
+        # 本文修正 (content_shortはGPT_REWRITE_TYPESから除外済み)
         text_issues = [i for i in issues if i['type'].startswith('text_')
-                       or i['type'] in ('unclosed_h2', 'unclosed_p', 'content_short', 'few_internal_links')]
+                       or i['type'] in ('unclosed_h2', 'unclosed_p', 'few_internal_links')]
         if text_issues:
             new_content = rewrite_with_gpt(post, text_issues, ptype)
             if new_content and len(new_content) > 200:
@@ -185,8 +285,14 @@ def main(max_fixes=15):
                         'fixed_at': datetime.now(timezone.utc).isoformat(),
                     }, ensure_ascii=False) + '\n')
 
-    print(f"\n{fixed}/{len(targets)}件 自動修正完了")
+    # 永続スキップリストを保存
+    _save_skip_list(skip_list)
+    print(f"\n{fixed}/{len(sorted_targets)}件 自動修正完了")
 
+
+try:
+    if _TSK_ID and _STF_ID: _end_task(_STF_ID, _TSK_ID, "success")
+except: pass
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,128 @@
+{
+  "slug": "red_velvet",
+  "name": "Red Velvet",
+  "name_kr": "레드벨벳",
+  "name_en": "Red Velvet",
+  "debut_date": "2014-08-01",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Irene",
+      "name_kr": "아이린",
+      "birth": "1991-03-29"
+    },
+    {
+      "name": "Seulgi",
+      "name_kr": "슬기",
+      "birth": "1994-02-10"
+    },
+    {
+      "name": "Wendy",
+      "name_kr": "웬디",
+      "birth": "1994-02-21"
+    },
+    {
+      "name": "Joy",
+      "name_kr": "조이",
+      "birth": "1996-09-03"
+    },
+    {
+      "name": "Yeri",
+      "name_kr": "예리",
+      "birth": "1999-03-05"
+    }
+  ],
+  "official_links": {
+    "website": "http://www.redvelvet.smtown.com",
+    "twitter": "https://twitter.com/RVsmtown",
+    "instagram": "https://www.instagram.com/redvelvet.smtown/",
+    "youtube": "https://www.youtube.com/channel/UC2b8ZK2Ff4X_H7cGz10vccw",
+    "weverse": "https://weverse.io/redvelvet"
+  },
+  "events": [
+    {
+      "date": "2014-08-01",
+      "type": "debut",
+      "title": "Happiness",
+      "note": "デビューシングルのリリース"
+    },
+    {
+      "date": "2015-03-17",
+      "type": "album",
+      "title": "The Red",
+      "note": "1stフルアルバム"
+    },
+    {
+      "date": "2015-08-03",
+      "type": "comeback",
+      "title": "Magic",
+      "note": "サマーアルバムリリース"
+    },
+    {
+      "date": "2016-09-01",
+      "type": "album",
+      "title": "Russian Roulette",
+      "note": "4thミニアルバム"
+    },
+    {
+      "date": "2017-03-31",
+      "type": "comeback",
+      "title": "Rookie",
+      "note": "5thミニアルバム"
+    },
+    {
+      "date": "2018-08-06",
+      "type": "comeback",
+      "title": "Summertime Breach",
+      "note": "ビート曲リリース"
+    },
+    {
+      "date": "2019-04-15",
+      "type": "album",
+      "title": "The ReVe Festival: Day 1",
+      "note": "6thミニアルバム"
+    },
+    {
+      "date": "2020-06-15",
+      "type": "album",
+      "title": "The ReVe Festival: Finale",
+      "note": "アルバムリリース"
+    },
+    {
+      "date": "2021-08-16",
+      "type": "comeback",
+      "title": "Queendom",
+      "note": "サマー特別アルバム"
+    },
+    {
+      "date": "2022-10-11",
+      "type": "album",
+      "title": "Birthday",
+      "note": "シングルリリース"
+    },
+    {
+      "date": "2023-07-20",
+      "type": "comeback",
+      "title": "California",
+      "note": "新曲リリース"
+    },
+    {
+      "date": "2024-09-30",
+      "type": "tour",
+      "title": "Red Velvet World Tour",
+      "note": "ワールドツアー開催"
+    },
+    {
+      "date": "2025-05-01",
+      "type": "album",
+      "title": "Red Velvet 5th Album",
+      "note": "5thフルアルバムリリース"
+    },
+    {
+      "date": "2026-04-15",
+      "type": "comeback",
+      "title": "Spring Again",
+      "note": "新曲リリース"
+    }
+  ]
+}

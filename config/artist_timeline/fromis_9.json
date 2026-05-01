@@ -1,0 +1,124 @@
+{
+  "slug": "fromis_9",
+  "name": "fromis_9",
+  "name_kr": "프로미스나인",
+  "name_en": "fromis_9",
+  "debut_date": "2018-01-24",
+  "agency": "BPM Entertainment",
+  "members": [
+    {
+      "name": "Soyoung",
+      "name_kr": "소영",
+      "birth": "1999-08-28"
+    },
+    {
+      "name": "Jiwon",
+      "name_kr": "지원",
+      "birth": "2000-02-14"
+    },
+    {
+      "name": "Saerom",
+      "name_kr": "새롬",
+      "birth": "1999-11-03"
+    },
+    {
+      "name": "Nakyung",
+      "name_kr": "나경",
+      "birth": "2001-01-13"
+    },
+    {
+      "name": "Chaeyoung",
+      "name_kr": "채영",
+      "birth": "2001-05-14"
+    },
+    {
+      "name": "Hayoung",
+      "name_kr": "하영",
+      "birth": "2001-05-20"
+    },
+    {
+      "name": "Jisun",
+      "name_kr": "지선",
+      "birth": "2001-10-04"
+    },
+    {
+      "name": "Yebin",
+      "name_kr": "예빈",
+      "birth": "1999-09-14"
+    },
+    {
+      "name": "Seoyeon",
+      "name_kr": "서연",
+      "birth": "2002-08-12"
+    }
+  ],
+  "official_links": {
+    "website": "https://fromis-9.com",
+    "twitter": "https://twitter.com/fromis_9",
+    "instagram": "https://instagram.com/fromis_9",
+    "youtube": "https://youtube.com/c/fromis9_official",
+    "weverse": "https://weverse.io/fromis9"
+  },
+  "events": [
+    {
+      "date": "2018-01-24",
+      "type": "debut",
+      "title": "fromis_9 Debut",
+      "note": "Debut with the mini-album 'To. Heart'."
+    },
+    {
+      "date": "2019-07-01",
+      "type": "comeback",
+      "title": "2nd Mini Album 'To. Day'",
+      "note": "Released with title track 'Love Rumor'."
+    },
+    {
+      "date": "2020-07-01",
+      "type": "comeback",
+      "title": "3rd Mini Album 'My Little Society'",
+      "note": "Released with title track 'Feel Good'."
+    },
+    {
+      "date": "2021-05-17",
+      "type": "comeback",
+      "title": "4th Mini Album '9 Way Ticket'",
+      "note": "Released with title track 'WE GO'."
+    },
+    {
+      "date": "2022-11-01",
+      "type": "comeback",
+      "title": "5th Mini Album 'From Our Memento Box'",
+      "note": "Released with title track 'DM'."
+    },
+    {
+      "date": "2023-03-08",
+      "type": "comeback",
+      "title": "6th Mini Album 'Re:CONNECT'",
+      "note": "Released with title track 'Talk & Talk'."
+    },
+    {
+      "date": "2024-07-01",
+      "type": "other",
+      "title": "1st Full Album 'Fromis_9: The 1st Story'",
+      "note": "Anticipated full album release."
+    },
+    {
+      "date": "2025-08-12",
+      "type": "tour",
+      "title": "Fromis_9 World Tour",
+      "note": "The group's first world tour announcement."
+    },
+    {
+      "date": "2026-04-01",
+      "type": "award",
+      "title": "Mnet Asian Music Awards",
+      "note": "Nominated for Best New Artist."
+    },
+    {
+      "date": "2026-04-01",
+      "type": "other",
+      "title": "日本デビュー JAPAN 1st EP「LIKE YOU BETTER」",
+      "note": "活動9年目で念願の日本デビュー"
+    }
+  ]
+}

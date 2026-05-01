@@ -1,0 +1,317 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-04-28T22:30:00+09:00",
+  "description": "全pipelineのcron期待頻度。pipeline_health_monitorがこの定義を元に沈黙検知。",
+  "pipelines": {
+    "breaking_news_detector": {
+      "cron": "*/5 * * * *",
+      "max_silence_min": 15,
+      "category": "critical",
+      "log": "logs/breaking_news.log",
+      "module": "pipeline.breaking_news_detector"
+    },
+    "trend_collector": {
+      "cron": "*/30 * * * *",
+      "max_silence_min": 90,
+      "category": "critical",
+      "log": "logs/trend_collector.log",
+      "module": "lib.trend_collector",
+      "run_cmd": "python3 lib/trend_collector.py"
+    },
+    "draft_auto_publisher": {
+      "cron": "20 * * * *",
+      "max_silence_min": 90,
+      "category": "critical",
+      "log": "logs/draft_auto_publisher.log",
+      "module": "pipeline.draft_auto_publisher"
+    },
+    "pipeline_health_monitor": {
+      "cron": "0 7-21/2 * * *",
+      "max_silence_min": 150,
+      "category": "critical",
+      "log": "logs/pipeline_health.log",
+      "module": "tools.pipeline_health_monitor",
+      "run_cmd": "python3 tools/pipeline_health_monitor.py"
+    },
+    "popup_prtimes": {
+      "cron": "5 * * * *",
+      "max_silence_min": 70,
+      "category": "high",
+      "log": "logs/popup_prtimes.log",
+      "module": "lib.collectors.popup_prtimes_collector"
+    },
+    "popup_kbuzz": {
+      "cron": "15 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/popup_kbuzz.log",
+      "module": "lib.collectors.popup_kbuzz_collector"
+    },
+    "popup_publisher": {
+      "cron": "0 */2 * * *",
+      "max_silence_min": 240,
+      "category": "high",
+      "log": "logs/popup_publisher.log",
+      "module": "pipeline.popup_publisher"
+    },
+    "popup_status_updater": {
+      "cron": "0 6 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/popup_status_updater.log",
+      "module": "pipeline.popup_status_updater"
+    },
+    "auto_comeback_article": {
+      "cron": "10 */3 * * *",
+      "max_silence_min": 240,
+      "category": "high",
+      "log": "logs/auto_comeback_article.log",
+      "module": "pipeline.auto_comeback_article"
+    },
+    "auto_event_article": {
+      "cron": "20 */3 * * *",
+      "max_silence_min": 240,
+      "category": "high",
+      "log": "logs/auto_event_article.log",
+      "module": "pipeline.auto_event_article"
+    },
+    "feature_article_generator": {
+      "cron": "0 8,20 * * *",
+      "max_silence_min": 720,
+      "category": "high",
+      "log": "logs/feature_article_generator.log",
+      "module": "pipeline.feature_article_generator"
+    },
+    "rewrite_worker": {
+      "cron": "REMOVED",
+      "max_silence_min": 99999,
+      "category": "low",
+      "log": "logs/rewrite_worker.log",
+      "module": "pipeline.rewrite_worker",
+      "disabled": true,
+      "note": "audit_fixer_universalに統合済み (2026-04-29)"
+    },
+    "llm_proofreader": {
+      "cron": "0 */4 * * *",
+      "max_silence_min": 300,
+      "category": "high",
+      "log": "logs/llm_proofreader.log",
+      "module": "pipeline.llm_proofreader"
+    },
+    "full_audit_runner": {
+      "cron": "0 5 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/full_audit_runner.log",
+      "module": "pipeline.full_audit_runner"
+    },
+    "audit_fixer_universal": {
+      "cron": "30 */6 * * *",
+      "max_silence_min": 420,
+      "category": "high",
+      "log": "logs/audit_fixer_universal.log",
+      "module": "pipeline.audit_fixer_universal"
+    },
+    "post_publish_enricher": {
+      "cron": "40 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/post_publish_enricher.log",
+      "module": "pipeline.post_publish_enricher",
+      "run_cmd": "python3 -m pipeline.post_publish_enricher --recent-hours 2"
+    },
+    "post_thumbnail_generator": {
+      "cron": "25 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/post_thumbnail_generator.log",
+      "module": "pipeline.post_thumbnail_generator"
+    },
+    "post_audit_feedback_loop": {
+      "cron": "10,40 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/post_audit_feedback_loop.log",
+      "module": "pipeline.post_audit_feedback_loop"
+    },
+    "internal_link_injector": {
+      "cron": "0 3 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/internal_link_injector.log",
+      "module": "pipeline.internal_link_injector"
+    },
+    "popup_audit": {
+      "cron": "0 */6 * * *",
+      "max_silence_min": 420,
+      "category": "medium",
+      "log": "logs/popup_audit.log",
+      "module": "pipeline.popup_audit"
+    },
+    "quarantine_cleaner": {
+      "cron": "0 4 * * *",
+      "max_silence_min": 1500,
+      "category": "low",
+      "log": "logs/quarantine_cleaner.log",
+      "module": "pipeline.quarantine_cleaner"
+    },
+    "staff_dispatcher": {
+      "cron": "0 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/staff_dispatcher.log",
+      "module": "pipeline.staff_dispatcher"
+    },
+    "morning_meeting": {
+      "cron": "30 7 * * *",
+      "max_silence_min": 1500,
+      "category": "high",
+      "log": "logs/morning_meeting.log",
+      "module": "pipeline.morning_meeting"
+    },
+    "evening_closing": {
+      "cron": "0 23 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/evening_closing.log",
+      "module": "pipeline.evening_closing"
+    },
+    "board_daily_report": {
+      "cron": "0 21 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/board_daily_report.log",
+      "module": "pipeline.board_daily_report"
+    },
+    "hr_manager": {
+      "cron": "0 9 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/hr_manager.log",
+      "module": "pipeline.hr_manager"
+    },
+    "dept_chatter": {
+      "cron": "20 */2 * * *",
+      "max_silence_min": 180,
+      "category": "low",
+      "log": "logs/dept_chatter.log",
+      "module": "pipeline.dept_chatter"
+    },
+    "daily_editor": {
+      "cron": "*/30 * * * *",
+      "max_silence_min": 90,
+      "category": "high",
+      "log": "logs/daily_editor.log",
+      "module": "pipeline.daily_editor"
+    },
+    "comeback_predictor": {
+      "cron": "0 4 * * *",
+      "max_silence_min": 1500,
+      "category": "low",
+      "log": "logs/comeback_predictor.log",
+      "module": "pipeline.comeback_predictor"
+    },
+    "korea_official_collector": {
+      "cron": "35 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/korea_official.log",
+      "module": "pipeline.korea_official_collector"
+    },
+    "japan_popup_collector": {
+      "cron": "45 * * * *",
+      "max_silence_min": 120,
+      "category": "medium",
+      "log": "logs/japan_popup.log",
+      "module": "pipeline.japan_popup_collector"
+    },
+    "japan_venue_collector": {
+      "cron": "50 * * * *",
+      "max_silence_min": 120,
+      "category": "low",
+      "log": "logs/japan_venue.log",
+      "module": "pipeline.japan_venue_collector"
+    },
+    "prtimes_collector": {
+      "cron": "55 * * * *",
+      "max_silence_min": 120,
+      "category": "medium",
+      "log": "logs/prtimes_collector.log",
+      "module": "lib.collectors.prtimes_collector"
+    },
+    "gtrends_collector": {
+      "cron": "0 */2 * * *",
+      "max_silence_min": 180,
+      "category": "medium",
+      "log": "logs/gtrends_collector.log",
+      "module": "lib.collectors.gtrends_collector"
+    },
+    "ticket_collector": {
+      "cron": "10 */2 * * *",
+      "max_silence_min": 180,
+      "category": "low",
+      "log": "logs/ticket_collector.log",
+      "module": "lib.collectors.ticket_collector"
+    },
+    "chart_compare": {
+      "cron": "0 10 * * 2",
+      "max_silence_min": 10080,
+      "category": "low",
+      "log": "logs/chart_compare.log",
+      "module": "pipeline.chart_compare"
+    },
+    "popup_monthly_roundup": {
+      "cron": "0 9 1 * *",
+      "max_silence_min": 44640,
+      "category": "low",
+      "log": "logs/popup_roundup.log",
+      "module": "pipeline.popup_monthly_roundup"
+    },
+    "popup_region_pages": {
+      "cron": "0 10 * * 2",
+      "max_silence_min": 10080,
+      "category": "low",
+      "log": "logs/popup_region.log",
+      "module": "pipeline.popup_region_pages"
+    },
+    "popup_artist_pages": {
+      "cron": "0 10 * * 3",
+      "max_silence_min": 10080,
+      "category": "low",
+      "log": "logs/popup_artist.log",
+      "module": "pipeline.popup_artist_pages"
+    },
+    "popup_anniversary_predictor": {
+      "cron": "0 10 1 * *",
+      "max_silence_min": 44640,
+      "category": "low",
+      "log": "logs/popup_prediction.log",
+      "module": "pipeline.popup_anniversary_predictor"
+    },
+    "buzzlab_full_publisher": {
+      "cron": "35 * * * *",
+      "max_silence_min": 120,
+      "category": "high",
+      "log": "logs/buzzlab_full_publisher.log",
+      "module": "pipeline.buzzlab_full_publisher"
+    },
+    "dashboard_refresh": {
+      "cron": "0 8,10,12,14,16,18,20 * * *",
+      "max_silence_min": 150,
+      "category": "high",
+      "log": "logs/dashboard_refresh.log"
+    },
+    "event_calendar_refresh": {
+      "cron": "0 7 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/event_calendar_refresh.log"
+    },
+    "event_auto_collector": {
+      "cron": "30 6 * * *",
+      "max_silence_min": 1500,
+      "category": "medium",
+      "log": "logs/event_auto_collector.log"
+    }
+  }
+}

@@ -32,6 +32,13 @@ CONFIG = BASE / "config" / "content_strategy"
 DATA = BASE / "data"
 LOGS = BASE / "logs"
 
+# .envから環境変数ロード (YOUTUBE_API_KEY, X_BEARER_TOKEN等)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE / ".env")
+except ImportError:
+    pass
+
 TREND_SOURCES_PATH = CONFIG / "trend_sources.json"
 OUTPUT_PATH = DATA / "trend_signals.jsonl"
 COLLECTOR_LOG = LOGS / "trend_collector.log"
@@ -119,6 +126,9 @@ def collect_rss(config: dict) -> list[dict]:
         feed_url = feed_info.get("url", "")
         feed_id = feed_info.get("id", "unknown")
         if not feed_url:
+            continue
+        if feed_info.get("enabled") is False:
+            _log(f"  Skipping RSS: {feed_id} (disabled)")
             continue
 
         _log(f"  Fetching RSS: {feed_id} ({feed_url})")
@@ -302,23 +312,21 @@ def collect_x_trends(config: dict) -> list[dict]:
         _log("X(Twitter) collection disabled")
         return []
 
-    # Check credentials
-    cred_path = os.path.expanduser(x_config.get("credential_path", "~/.x_credentials"))
-    if not os.path.exists(cred_path):
-        _log("  X credentials not found -> graceful skip")
-        return []
-
-    try:
-        with open(cred_path, "r") as f:
-            creds = json.load(f)
-    except (json.JSONDecodeError, OSError):
-        _log("  X credentials invalid -> graceful skip")
-        return []
-
-    bearer_token = creds.get("bearer_token", "")
+    # Check credentials: prefer .env X_BEARER_TOKEN, fallback to credential file
+    bearer_token = os.environ.get("X_BEARER_TOKEN", "")
     if not bearer_token:
-        _log("  X bearer_token not found in credentials -> graceful skip")
+        cred_path = os.path.expanduser(x_config.get("credential_path", "~/.x_credentials"))
+        if os.path.exists(cred_path):
+            try:
+                with open(cred_path, "r") as f:
+                    creds = json.load(f)
+                bearer_token = creds.get("bearer_token", "")
+            except (json.JSONDecodeError, OSError):
+                pass
+    if not bearer_token:
+        _log("  X bearer_token not found (env/credentials) -> graceful skip")
         return []
+    _log(f"  X bearer_token loaded ({len(bearer_token)} chars)")
 
     hashtags = x_config.get("hashtags", ["#KPOP"])
     min_rt = x_config.get("min_engagement_threshold", {}).get("retweet_count", 50)
@@ -327,7 +335,7 @@ def collect_x_trends(config: dict) -> list[dict]:
 
     # Query top 3 hashtags to stay within rate limits
     for tag in hashtags[:3]:
-        query = f"{tag} lang:ja -is:retweet"
+        query = f"{tag} -is:retweet"
         endpoint = (
             f"https://api.twitter.com/2/tweets/search/recent"
             f"?query={_url_encode(query)}"
@@ -454,7 +462,13 @@ def collect_youtube(config: dict) -> list[dict]:
 
             _log(f"    -> YouTube '{query}': {len(data.get('items', []))} results")
 
-        except (HTTPError, URLError, OSError) as e:
+        except HTTPError as e:
+            if e.code == 403:
+                _log(f"    WARN: YouTube API quota exceeded for '{query}' (403) — skipping remaining queries")
+                break  # 配額超過なら残りクエリも無駄なのでループ終了
+            _log(f"    WARN: YouTube API error for '{query}': {e}")
+            continue
+        except (URLError, OSError) as e:
             _log(f"    WARN: YouTube API error for '{query}': {e}")
             continue
 

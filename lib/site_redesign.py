@@ -812,7 +812,7 @@ ins.adsbygoogle[data-ad-format="auto"]:not(.kpopj-ad ins) {{
   display: none !important;
 }}
 
-/* 人気記事TOP5 ウィジェット */
+/* 今日読まれている記事 ウィジェット */
 #kpj-popular-posts {{
   background: var(--kpj-surface);
   border-radius: var(--kpj-radius);
@@ -1334,19 +1334,20 @@ def _get_redesign_js() -> str:
     },2000);
   }
 
-  /* ─ Phase6: サイドバー動的生成（人気記事TOP5 + アーティスト別カテゴリ） ─ */
+  /* ─ Phase6: サイドバー動的生成（今日読まれている記事 + アーティスト別カテゴリ） ─ */
   (function buildSidebar(){
     var sidebar=document.querySelector('#sidebar,.sidebar');
     if(!sidebar)return;
 
-    /* 人気記事TOP5 */
+    /* 今日読まれている記事 */
     try{
       var xhr=new XMLHttpRequest();
-      xhr.open('GET','""" + WP_BASE + """/posts?per_page=5&orderby=date&order=desc&_fields=id,title,link,featured_media,date&_embed',true);
+      var d2=new Date();d2.setDate(d2.getDate()-2);var afterDate=d2.toISOString();
+      xhr.open('GET','""" + WP_BASE + """/posts?per_page=5&orderby=comment_count&order=desc&after='+afterDate+'&_fields=id,title,link,featured_media,date&_embed',true);
       xhr.onload=function(){
         if(xhr.status!==200)return;
         var posts=JSON.parse(xhr.responseText);
-        var h='<div id="kpj-popular-posts"><h3>\\ud83d\\udcf0 \\u4eba\\u6c17\\u8a18\\u4e8bTOP5</h3>';
+        var h='<div id="kpj-popular-posts"><h3>\\ud83d\\udcf0 \\u4eca\\u65e5\\u8aad\\u307e\\u308c\\u3066\\u3044\\u308b\\u8a18\\u4e8b</h3>';
         posts.forEach(function(p,i){
           var title=p.title.rendered.replace(/<[^>]+>/g,'');
           var thumb='';

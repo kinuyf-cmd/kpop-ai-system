@@ -30,7 +30,7 @@ KPI_DAILY = LOGS / "kpi_daily.jsonl"
 KPI_ARTICLES = LOGS / "kpi_articles.jsonl"
 
 SA_FILE = GMETRICS / "service_account.json"
-ADSENSE_TOKEN_FILE = GMETRICS / "adsense_token.json"
+ADSENSE_TOKEN_FILE = GMETRICS / "oauth_token.json"
 ADSENSE_CLIENT_SECRET = GMETRICS / "adsense_client_secret.json"
 ARTICLE_INDEX = LOGS / "article_index.json"
 
@@ -241,23 +241,28 @@ def _collect_ga4(days: int = 1) -> dict:
             "ga4_bounce_rate": round(float(row.metric_values[3].value), 4),
         })
 
-    # トラフィックソース（X流入計測用）
+    # トラフィックソース（X流入計測用 + 全ソース記録）
     x_sessions = 0
+    traffic_sources = {}
     try:
         src_req = RunReportRequest(
             property=f"properties/{GA4_PROPERTY_ID}",
             dimensions=[Dimension(name="sessionSource")],
-            metrics=[Metric(name="sessions")],
+            metrics=[Metric(name="sessions"), Metric(name="engagedSessions")],
             date_ranges=[DateRange(start_date=start.isoformat(), end_date=end.isoformat())],
         )
         src_res = client.run_report(src_req)
         for row in src_res.rows:
             src = row.dimension_values[0].value
+            sess = int(row.metric_values[0].value)
+            engaged = int(row.metric_values[1].value)
             if src in ("t.co", "x.com", "twitter.com"):
-                x_sessions += int(row.metric_values[0].value)
+                x_sessions += sess
+            traffic_sources[src] = {"sessions": sess, "engaged": engaged}
     except Exception:
         pass
     summary["ga4_x_sessions"] = x_sessions
+    summary["ga4_traffic_sources"] = traffic_sources
 
     return {
         "period": {"start": start.isoformat(), "end": end.isoformat(), "days": days},
@@ -281,8 +286,17 @@ def _get_adsense_creds():
         creds = Credentials.from_authorized_user_file(str(ADSENSE_TOKEN_FILE), scopes)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            ADSENSE_TOKEN_FILE.write_text(creds.to_json())
+            try:
+                creds.refresh(Request())
+                ADSENSE_TOKEN_FILE.write_text(creds.to_json())
+            except Exception as e:
+                err_msg = str(e)
+                print(f"⚠️ AdSense token refresh失敗: {err_msg}")
+                if 'invalid_grant' in err_msg:
+                    print("❌ refresh_tokenが失効しています。Google Cloud Consoleで")
+                    print("   OAuth同意画面を「Testing」→「本番」に変更し、再認証してください:")
+                    print("   python3 tools/oauth_exchange.py --auth-url")
+                return None
         else:
             return None  # 再認証が必要 — バッチでは不可
     return creds

@@ -1,0 +1,99 @@
+{
+  "slug": "nct_wish",
+  "name": "NCT WISH",
+  "name_kr": "",
+  "name_en": "NCT WISH",
+  "debut_date": "2023-06-10",
+  "agency": "SM Entertainment",
+  "members": [
+    {
+      "name": "Johnny",
+      "name_kr": "존ny",
+      "birth": "1995-02-09"
+    },
+    {
+      "name": "Mark",
+      "name_kr": "마크",
+      "birth": "1999-08-02"
+    },
+    {
+      "name": "Doyoung",
+      "name_kr": "도영",
+      "birth": "1996-02-01"
+    },
+    {
+      "name": "Haechan",
+      "name_kr": "해찬",
+      "birth": "2001-06-06"
+    }
+  ],
+  "official_links": {
+    "website": "https://nctwish.smtown.com",
+    "twitter": "https://twitter.com/NCTWISH",
+    "instagram": "https://instagram.com/NCTWISH",
+    "youtube": "https://youtube.com/NCTWISH",
+    "weverse": "https://weverse.io/NCTWISH"
+  },
+  "events": [
+    {
+      "date": "2023-06-10",
+      "type": "debut",
+      "title": "NCT WISH Debut",
+      "note": "NCT WISH officially debuted with the single 'Wish Upon a Star'."
+    },
+    {
+      "date": "2023-09-15",
+      "type": "comeback",
+      "title": "First Comeback",
+      "note": "Released the mini-album 'Next Wish'."
+    },
+    {
+      "date": "2024-02-20",
+      "type": "album",
+      "title": "First Full Album",
+      "note": "Released their first full studio album titled 'WISHFULL'."
+    },
+    {
+      "date": "2024-06-01",
+      "type": "tour",
+      "title": "WISH World Tour",
+      "note": "Announced their first world tour 'WISH ON THE ROAD'."
+    },
+    {
+      "date": "2024-11-02",
+      "type": "award",
+      "title": "MTV Europe Music Awards",
+      "note": "Won Best New Artist."
+    },
+    {
+      "date": "2025-03-05",
+      "type": "comeback",
+      "title": "Second Mini Album",
+      "note": "Released second mini-album 'Dreaming'."
+    },
+    {
+      "date": "2025-08-12",
+      "type": "tour",
+      "title": "Asia Tour",
+      "note": "Kicked off their Asia leg of the 'WISH ON THE ROAD' tour."
+    },
+    {
+      "date": "2025-11-21",
+      "type": "album",
+      "title": "Holiday Special Album",
+      "note": "Released a holiday themed album 'Wish of the Season'."
+    },
+    {
+      "date": "2026-01-15",
+      "type": "other",
+      "title": "Collaborative Single",
+      "note": "Released a collaborative single with a popular Western artist."
+    },
+    {
+      "date": "2026-04-10",
+      "type": "comeback",
+      "title": "Third Mini Album",
+      "note": "Announced their third mini-album 'Eternal Wishes'."
+    }
+  ]
+}

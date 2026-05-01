@@ -63,7 +63,7 @@ fi
 # ============================================================
 get_today_post_count() {
   python3 - "$TODAY_ISO" << 'PY'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 from datetime import datetime, timezone
 
 today = sys.argv[1]
@@ -94,7 +94,7 @@ fi
 # 最終投稿時刻チェック（連投防止: 最低20分間隔）
 # ============================================================
 LAST_POST_MINUTES=$(python3 - "$TODAY_ISO" << 'PY'
-import sys, json, urllib.request, base64, urllib.parse
+import sys, json, os, urllib.request, base64, urllib.parse
 from datetime import datetime, timezone
 
 today = sys.argv[1]

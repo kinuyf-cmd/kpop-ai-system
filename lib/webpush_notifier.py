@@ -20,7 +20,7 @@ Usage:
   {
     "private_key": "VAPID秘密鍵（Base64 URL-safe）",
     "public_key": "VAPID公開鍵（Base64 URL-safe）",
-    "claims_email": "mailto:kinu.yf@gmail.com"
+    "claims_email": "mailto:kpopjournal.biz@gmail.com"
   }
 
   VAPID鍵ペア生成:

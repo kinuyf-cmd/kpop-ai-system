@@ -1,0 +1,165 @@
+{
+  "_comment": "アーティスト別まとめページ用プロフィール情報。artist_master.json を補完する表示用データ。",
+  "profiles": {
+    "bts": {
+      "display_name": "BTS（防弾少年団）",
+      "name_en": "BTS",
+      "agency": "BIGHIT MUSIC / HYBE",
+      "debut_year": 2013,
+      "members": ["RM", "JIN", "SUGA", "J-HOPE", "JIMIN", "V", "JUNGKOOK"],
+      "description": "2013年デビューの7人組ボーイズグループ。世界的な人気を誇り、Billboard Hot 100で1位を獲得するなど数々の記録を樹立。",
+      "wp_category_id": 18,
+      "category_slug": "bts"
+    },
+    "blackpink": {
+      "display_name": "BLACKPINK",
+      "name_en": "BLACKPINK",
+      "agency": "YG Entertainment",
+      "debut_year": 2016,
+      "members": ["JISOO", "JENNIE", "ROSE", "LISA"],
+      "description": "2016年デビューの4人組ガールズグループ。YouTube再生回数やSpotifyリスナー数で世界記録を更新し続ける。",
+      "wp_category_id": 23,
+      "category_slug": "blackpink"
+    },
+    "aespa": {
+      "display_name": "aespa",
+      "name_en": "aespa",
+      "agency": "SM Entertainment",
+      "debut_year": 2020,
+      "members": ["KARINA", "GISELLE", "WINTER", "NINGNING"],
+      "description": "2020年デビューの4人組ガールズグループ。メタバースの世界観とパワフルなパフォーマンスが特徴。",
+      "wp_category_id": 25,
+      "category_slug": "aespa"
+    },
+    "twice": {
+      "display_name": "TWICE",
+      "name_en": "TWICE",
+      "agency": "JYP Entertainment",
+      "debut_year": 2015,
+      "members": ["NAYEON", "JEONGYEON", "MOMO", "SANA", "JIHYO", "MINA", "DAHYUN", "CHAEYOUNG", "TZUYU"],
+      "description": "2015年デビューの9人組ガールズグループ。日本でも圧倒的な人気を誇り、数々のヒット曲を持つ。",
+      "wp_category_id": 22,
+      "category_slug": "twice"
+    },
+    "ive": {
+      "display_name": "IVE",
+      "name_en": "IVE",
+      "agency": "Starship Entertainment",
+      "debut_year": 2021,
+      "members": ["Yujin", "Gaeul", "Rei", "Wonyoung", "Liz", "Leeseo"],
+      "description": "2021年デビューの6人組ガールズグループ。デビュー曲から連続ヒットを記録し、第4世代を代表するグループ。",
+      "wp_category_id": 68,
+      "category_slug": "ive"
+    },
+    "newjeans": {
+      "display_name": "NewJeans",
+      "name_en": "NewJeans",
+      "agency": "ADOR",
+      "debut_year": 2022,
+      "members": ["Minji", "Hanni", "Danielle", "Haerin", "Hyein"],
+      "description": "2022年デビューの5人組ガールズグループ。Y2Kを取り入れた独自のスタイルで社会現象を巻き起こした。",
+      "wp_category_id": 32,
+      "category_slug": "newjeans"
+    },
+    "le_sserafim": {
+      "display_name": "LE SSERAFIM",
+      "name_en": "LE SSERAFIM",
+      "agency": "SOURCE MUSIC / HYBE",
+      "debut_year": 2022,
+      "members": ["SAKURA", "CHAEWON", "YUNJIN", "KAZUHA", "EUNCHAE"],
+      "description": "2022年デビューの5人組ガールズグループ。HYBE傘下SOURCE MUSIC所属で、パワフルなパフォーマンスが魅力。",
+      "wp_category_id": 41,
+      "category_slug": "le-sserafim"
+    },
+    "stray_kids": {
+      "display_name": "Stray Kids",
+      "name_en": "Stray Kids",
+      "agency": "JYP Entertainment",
+      "debut_year": 2018,
+      "members": ["Bang Chan", "Lee Know", "Changbin", "Hyunjin", "HAN", "Felix", "Seungmin", "I.N"],
+      "description": "2018年デビューの8人組ボーイズグループ。自主制作アイドルとして知られ、Billboard 200で1位を獲得。",
+      "wp_category_id": 43,
+      "category_slug": "stray-kids"
+    },
+    "seventeen": {
+      "display_name": "SEVENTEEN",
+      "name_en": "SEVENTEEN",
+      "agency": "PLEDIS Entertainment / HYBE",
+      "debut_year": 2015,
+      "members": ["S.COUPS", "JEONGHAN", "JOSHUA", "JUN", "HOSHI", "WONWOO", "WOOZI", "THE8", "MINGYU", "DK", "SEUNGKWAN", "VERNON", "DINO"],
+      "description": "2015年デビューの13人組ボーイズグループ。ヒップホップ・ボーカル・パフォーマンスの3ユニット制で活動。",
+      "wp_category_id": 24,
+      "category_slug": "seventeen"
+    },
+    "enhypen": {
+      "display_name": "ENHYPEN",
+      "name_en": "ENHYPEN",
+      "agency": "BELIFT LAB / HYBE",
+      "debut_year": 2020,
+      "members": ["JUNGWON", "HEESEUNG", "JAY", "JAKE", "SUNGHOON", "SUNOO", "NI-KI"],
+      "description": "2020年デビューの7人組ボーイズグループ。オーディション番組I-LANDから誕生し、急速に人気を拡大。",
+      "wp_category_id": 14,
+      "category_slug": "enhypen"
+    },
+    "itzy": {
+      "display_name": "ITZY",
+      "name_en": "ITZY",
+      "agency": "JYP Entertainment",
+      "debut_year": 2019,
+      "members": ["YEJI", "LIA", "RYUJIN", "CHAERYEONG", "YUNA"],
+      "description": "2019年デビューの5人組ガールズグループ。「自分らしさ」をテーマにした楽曲とパフォーマンスが特徴。",
+      "wp_category_id": 37,
+      "category_slug": "itzy"
+    },
+    "nmixx": {
+      "display_name": "NMIXX",
+      "name_en": "NMIXX",
+      "agency": "JYP Entertainment",
+      "debut_year": 2022,
+      "members": ["LILY", "HAEWON", "SULLYOON", "BAE", "JIWOO", "KYUJIN"],
+      "description": "2022年デビューの6人組ガールズグループ。ミクスポップという独自のジャンルで新境地を開拓。",
+      "wp_category_id": 19,
+      "category_slug": "nmixx"
+    },
+    "babymonster": {
+      "display_name": "BABYMONSTER",
+      "name_en": "BABYMONSTER",
+      "agency": "YG Entertainment",
+      "debut_year": 2024,
+      "members": ["RUKA", "PHARITA", "ASA", "AHYEON", "RAMI", "CHIQUITA", "HARAM"],
+      "description": "2024年デビューの7人組ガールズグループ。YG Entertainment期待の新世代グループ。",
+      "wp_category_id": 38,
+      "category_slug": "babymonster"
+    },
+    "exo": {
+      "display_name": "EXO",
+      "name_en": "EXO",
+      "agency": "SM Entertainment",
+      "debut_year": 2012,
+      "members": ["XIUMIN", "SUHO", "BAEKHYUN", "CHEN", "CHANYEOL", "D.O.", "KAI", "SEHUN"],
+      "description": "2012年デビューの8人組ボーイズグループ。第2世代を代表するグループで、ソロ活動でも大きな成功を収める。",
+      "wp_category_id": 60,
+      "category_slug": "exo"
+    },
+    "nct": {
+      "display_name": "NCT",
+      "name_en": "NCT",
+      "agency": "SM Entertainment",
+      "debut_year": 2016,
+      "members": ["TAEYONG", "MARK", "JAEHYUN", "DOYOUNG", "HAECHAN"],
+      "description": "2016年活動開始のボーイズグループ。NCT 127、NCT DREAM、WayVなど複数ユニットで構成される革新的なコンセプト。",
+      "wp_category_id": 40,
+      "category_slug": "nct"
+    },
+    "bigbang": {
+      "display_name": "BIGBANG",
+      "name_en": "BIGBANG",
+      "agency": "YG Entertainment",
+      "debut_year": 2006,
+      "members": ["G-DRAGON", "T.O.P", "TAEYANG", "DAESUNG"],
+      "description": "2006年デビューの4人組ボーイズグループ。K-POPの世界進出の礎を築いたレジェンドグループ。",
+      "wp_category_id": 19,
+      "category_slug": "bigbang"
+    }
+  }
+}

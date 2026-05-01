@@ -6,6 +6,7 @@ quarantine記事を救済(GPT-4o) or 完全削除。オーナー介入ゼロ。
 """
 import os, sys, json, urllib.request, base64, re
 from datetime import datetime
+from lib.agent_learning_loop import inject_lessons_to_prompt
 
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 for line in open('/home/aiuser/kpop-ai-system/.env'):
@@ -54,13 +55,15 @@ def _rescue_gpt4o(title, original_body, source_text, source_url):
     if not key or len(source_text) < 100:
         return None
     clean_title = re.sub(r'【.*?】', '', re.sub(r'<[^>]+>', '', title)).strip()
+    system_prompt = (
+        'K-POP専門メディア編集者。品質不足で一度失敗した記事を、追加情報で救済。'
+        '日本語600-900字、事実のみ、推測禁止、HTML <p>タグで3-4段落。'
+    )
+    system_prompt = inject_lessons_to_prompt('unknown', system_prompt)
     body_req = json.dumps({
         'model': 'gpt-4o',
         'messages': [
-            {'role': 'system', 'content': (
-                'K-POP専門メディア編集者。品質不足で一度失敗した記事を、追加情報で救済。'
-                '日本語600-900字、事実のみ、推測禁止、HTML <p>タグで3-4段落。'
-            )},
+            {'role': 'system', 'content': system_prompt},
             {'role': 'user', 'content': (
                 f'タイトル: {clean_title}\n元本文(失敗): {re.sub(r"<[^>]+>", "", original_body)[:500]}\n'
                 f'ソースURL: {source_url}\nソース本文: {source_text[:2500]}\n\n'

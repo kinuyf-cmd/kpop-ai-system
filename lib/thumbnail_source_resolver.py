@@ -33,6 +33,31 @@ CACHE_DIR = BASE_DIR / "assets" / "artist_cache"
 CACHE_INDEX = CACHE_DIR / "index.json"
 OFFICIAL_ACCOUNTS = BASE_DIR / "config" / "official_accounts.json"
 SOURCES_LOG = BASE_DIR / "data" / "thumbnail_sources.jsonl"
+BLOCKED_VIDEO_IDS_FILE = BASE_DIR / "config" / "blocked_video_ids.json"
+MEMBER_TO_GROUP_FILE = BASE_DIR / "config" / "member_to_group.json"
+
+
+def _load_member_to_group() -> dict:
+    """メンバー名→グループ名マッピングをロード（ソロ記事のグループ画像フォールバック用）"""
+    if not MEMBER_TO_GROUP_FILE.exists():
+        return {}
+    try:
+        with open(MEMBER_TO_GROUP_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_blocked_video_ids() -> set:
+    """NG判定された動画IDをロード"""
+    if not BLOCKED_VIDEO_IDS_FILE.exists():
+        return set()
+    try:
+        with open(BLOCKED_VIDEO_IDS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return set(data.get("blocked", []))
+    except Exception:
+        return set()
 
 
 def _slug(name: str) -> str:
@@ -116,20 +141,136 @@ def _load_official_accounts() -> dict:
         return {}
 
 
-def resolve_youtube(artist_name: str) -> dict | None:
-    """Get YouTube MV thumbnail (maxresdefault) for official videos."""
+def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int = 3) -> list:
+    """YouTube Data API v3 で公式チャネルから動画リストを取得"""
+    yt_key = os.environ.get("YOUTUBE_API_KEY", "")
+    if not yt_key or not channel_id:
+        return []
+    try:
+        import urllib.parse
+        params = urllib.parse.urlencode({
+            "key": yt_key, "channelId": channel_id, "type": "video",
+            "order": order, "maxResults": max_results, "part": "snippet",
+        })
+        url = f"https://www.googleapis.com/youtube/v3/search?{params}"
+        req = urllib.request.Request(url, headers={"User-Agent": "KpopJournalBot/1.0"})
+        data = json.loads(urllib.request.urlopen(req, timeout=15).read())
+        return [
+            {"video_id": item["id"]["videoId"], "title": item["snippet"]["title"]}
+            for item in data.get("items", [])
+            if item.get("id", {}).get("videoId")
+        ]
+    except Exception as e:
+        sys.stderr.write(f"[resolver] YouTube API error: {e}\n")
+        return []
+
+
+def _resolve_channel_id(artist_name: str, accounts: dict) -> str:
+    """channel_id を解決 (設定値のみ — API検索フォールバック廃止)
+
+    再発防止: YouTube API検索は関係ないチャンネルを返すリスクがあるため、
+    official_accounts.json に登録済みのchannel_idのみを使用する。
+    未登録アーティストはYouTubeソースをスキップし、次の優先度(Wikimedia等)へ。
+    """
+    artist_key = _slug(artist_name)
+    account = accounts.get(artist_key, {})
+    ch_id = account.get("channel_id", "") or account.get("youtube_channel_id", "")
+    if ch_id:
+        return ch_id
+    # 未登録アーティスト: YouTube検索に頼らず空文字を返す（誤チャンネル防止）
+    sys.stderr.write(
+        f"[resolver] WARN: '{artist_name}' (key='{artist_key}') は "
+        f"official_accounts.json 未登録のためYouTubeソースをスキップ\n"
+    )
+    return ""
+
+
+def _resolve_channel_id_DEPRECATED(artist_name: str, accounts: dict) -> str:
+    """[廃止] API検索フォールバック — 誤チャンネル取得の根本原因"""
+    artist_key = _slug(artist_name)
+    account = accounts.get(artist_key, {})
+    ch_id = account.get("channel_id", "")
+    if ch_id:
+        return ch_id
+    yt_key = os.environ.get("YOUTUBE_API_KEY", "")
+    if not yt_key:
+        return ""
+    ch_name = account.get("channel_name", artist_name)
+    try:
+        import urllib.parse
+        params = urllib.parse.urlencode({
+            "key": yt_key, "q": f"{ch_name} official", "type": "channel", "maxResults": 1, "part": "snippet",
+        })
+        url = f"https://www.googleapis.com/youtube/v3/search?{params}"
+        req = urllib.request.Request(url, headers={"User-Agent": "KpopJournalBot/1.0"})
+        data = json.loads(urllib.request.urlopen(req, timeout=15).read())
+        items = data.get("items", [])
+        if items:
+            ch_id = items[0]["id"]["channelId"]
+            account["channel_id"] = ch_id
+            accounts[artist_key] = account
+            try:
+                json.dump(accounts, open(str(OFFICIAL_ACCOUNTS), "w"), ensure_ascii=False, indent=2)
+            except:
+                pass
+            return ch_id
+    except:
+        pass
+    return ""
+
+
+def resolve_youtube(artist_name: str, prefer: str = "latest") -> dict | None:
+    """Get YouTube MV thumbnail — 最新MV or 高再生MVから自動取得
+
+    prefer: "latest" = 最新動画優先, "popular" = 高再生数優先, "static" = 固定リストのみ
+    """
     if not artist_name:
         return None
 
     accounts = _load_official_accounts()
     artist_key = _slug(artist_name)
     account = accounts.get(artist_key, {})
+
+    # Step 1: YouTube Data API で動的取得 (latest or popular)
+    if prefer != "static":
+        channel_id = _resolve_channel_id(artist_name, accounts)
+        if channel_id:
+            order = "date" if prefer == "latest" else "viewCount"
+            blocked_ids = _load_blocked_video_ids()
+            videos = _fetch_youtube_videos(channel_id, order=order, max_results=3)
+            for v in videos:
+                vid = v["video_id"]
+                if vid in blocked_ids:
+                    sys.stderr.write(f"[resolver] BLOCKED video_id={vid} (blocked_video_ids.json)\n")
+                    continue
+                # maxresdefault → hqdefault fallback
+                for quality in ["maxresdefault", "hqdefault"]:
+                    url = f"https://img.youtube.com/vi/{vid}/{quality}.jpg"
+                    dest = str(CACHE_DIR / f"yt_{artist_key}_{vid[:8]}_{quality[:3]}.jpg")
+                    if os.path.exists(dest) and os.path.getsize(dest) > 5000:
+                        return {
+                            "image_path": dest,
+                            "source": "youtube_official",
+                            "source_url": f"https://www.youtube.com/watch?v={vid}",
+                            "license": "YouTube embed (fair use for editorial thumbnail)",
+                            "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
+                            "video_title": v.get("title", ""),
+                            "fetch_mode": prefer,
+                        }
+                    if _download(url, dest):
+                        return {
+                            "image_path": dest,
+                            "source": "youtube_official",
+                            "source_url": f"https://www.youtube.com/watch?v={vid}",
+                            "license": "YouTube embed (fair use for editorial thumbnail)",
+                            "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
+                            "video_title": v.get("title", ""),
+                            "fetch_mode": prefer,
+                        }
+
+    # Step 2: Fallback to static video_ids list
     video_ids = account.get("youtube_video_ids", [])
-
-    if not video_ids:
-        return None
-
-    for vid in video_ids[:3]:  # Try up to 3 videos
+    for vid in video_ids[:3]:
         url = f"https://img.youtube.com/vi/{vid}/maxresdefault.jpg"
         dest = str(CACHE_DIR / f"yt_{artist_key}_{vid[:8]}.jpg")
         if os.path.exists(dest):
@@ -139,6 +280,7 @@ def resolve_youtube(artist_name: str) -> dict | None:
                 "source_url": f"https://www.youtube.com/watch?v={vid}",
                 "license": "YouTube embed (fair use for editorial thumbnail)",
                 "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
+                "fetch_mode": "static",
             }
         if _download(url, dest):
             return {
@@ -147,6 +289,7 @@ def resolve_youtube(artist_name: str) -> dict | None:
                 "source_url": f"https://www.youtube.com/watch?v={vid}",
                 "license": "YouTube embed (fair use for editorial thumbnail)",
                 "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
+                "fetch_mode": "static",
             }
 
     return None
@@ -316,14 +459,45 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         # Priority 1: YouTube official MV thumbnail
         result = resolve_youtube(artist_name)
         if result:
-            _log_source(post_id, result)
-            return result
+            # 再発防止: attribution にリクエストしたアーティスト名が含まれるか検証
+            attr = (result.get("attribution", "") or "").lower()
+            artist_lower = artist_name.lower()
+            if artist_lower and artist_lower not in attr and _slug(artist_name) not in attr:
+                sys.stderr.write(
+                    f"[resolver] BLOCK: YouTube結果のattribution '{result.get('attribution')}' が "
+                    f"リクエストアーティスト '{artist_name}' と不一致 → スキップ\n"
+                )
+                result = None  # 不一致の場合は次のソースへフォールスルー
+            else:
+                _log_source(post_id, result)
+                return result
 
         # Priority 2: Wikimedia Commons
         result = resolve_wikimedia(artist_name)
         if result:
             _log_source(post_id, result)
             return result
+
+        # Priority 2.5: メンバー名→グループ画像フォールバック
+        # ソロメンバー記事（例: ジミン、V）でソロ画像がない場合、所属グループ（BTS等）の画像を使用
+        member_map = _load_member_to_group()
+        group_name = member_map.get(artist_name, "")
+        if group_name and group_name != artist_name:
+            sys.stderr.write(
+                f"[resolver] メンバー '{artist_name}' → グループ '{group_name}' にフォールバック\n"
+            )
+            result = resolve_youtube(group_name)
+            if result:
+                _log_source(post_id, result)
+                return result
+            result = resolve_wikimedia(group_name)
+            if result:
+                _log_source(post_id, result)
+                return result
+            result = resolve_fallback_photo(group_name)
+            if result:
+                _log_source(post_id, result)
+                return result
 
         # Priority 3: Unsplash/Pexels real photos
         query_terms = {"beauty": "korean beauty skincare", "live": "kpop concert live",

@@ -1,3 +1,7 @@
+
+try:
+    from lib.agent_learning_loop import get_recent_lessons
+except: get_recent_lessons = lambda *a, **k: []
 #!/usr/bin/env python3
 """DALL-E 3 を使ったサムネ画像生成
 
@@ -15,7 +19,7 @@ load_dotenv()
 
 DALLE_API = "https://api.openai.com/v1/images/generations"
 MODEL = "dall-e-3"
-DAILY_LIMIT = 20
+DAILY_LIMIT = 50
 COST_LOG = "/home/aiuser/kpop-ai-system/logs/dalle_cost.jsonl"
 
 

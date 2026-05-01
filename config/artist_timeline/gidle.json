@@ -1,0 +1,121 @@
+{
+  "slug": "gidle",
+  "name": "(G)I-DLE",
+  "name_kr": "(여자)아이들",
+  "name_en": "(G)I-DLE",
+  "debut_date": "2018-05-02",
+  "agency": "CUBE Entertainment",
+  "members": [
+    {
+      "name": "Soyeon",
+      "name_kr": "소연",
+      "birth": "1998-08-26"
+    },
+    {
+      "name": "Minnie",
+      "name_kr": "민니",
+      "birth": "1997-10-23"
+    },
+    {
+      "name": "Soojin",
+      "name_kr": "수진",
+      "birth": "1998-03-09"
+    },
+    {
+      "name": "Yuqi",
+      "name_kr": "우기",
+      "birth": "1999-09-23"
+    },
+    {
+      "name": "Shuhua",
+      "name_kr": "슈화",
+      "birth": "2000-01-06"
+    },
+    {
+      "name": "Miyeon",
+      "name_kr": "미연",
+      "birth": "1997-01-31"
+    }
+  ],
+  "official_links": {
+    "website": "https://gidle.cubeent.co.kr/",
+    "twitter": "https://twitter.com/g_i_dle",
+    "instagram": "https://www.instagram.com/g_i_dle/",
+    "youtube": "https://www.youtube.com/channel/UCyGfAWhcJdn6sDgTv4OaHFA",
+    "weverse": "https://www.weverse.io/gidle"
+  },
+  "events": [
+    {
+      "date": "2018-05-02",
+      "type": "debut",
+      "title": "LION",
+      "note": "デビューシングル"
+    },
+    {
+      "date": "2019-02-26",
+      "type": "comeback",
+      "title": "FALL IN LOVE",
+      "note": "カムバックシングル"
+    },
+    {
+      "date": "2020-04-06",
+      "type": "album",
+      "title": "I TRUST",
+      "note": "1stフルアルバム"
+    },
+    {
+      "date": "2020-08-14",
+      "type": "comeback",
+      "title": "DUMDi DUMDi",
+      "note": "夏のシングル"
+    },
+    {
+      "date": "2021-05-16",
+      "type": "comeback",
+      "title": "I NEVER DIE",
+      "note": "2ndフルアルバム"
+    },
+    {
+      "date": "2022-01-17",
+      "type": "album",
+      "title": "I LOVE",
+      "note": "ミニアルバム"
+    },
+    {
+      "date": "2022-10-05",
+      "type": "comeback",
+      "title": "NSEI",
+      "note": "新曲リリース"
+    },
+    {
+      "date": "2023-01-13",
+      "type": "award",
+      "title": "2023 Golden Disc Awards",
+      "note": "新人賞受賞"
+    },
+    {
+      "date": "2023-06-16",
+      "type": "comeback",
+      "title": "I FEEL",
+      "note": "新ミニアルバムリリース"
+    },
+    {
+      "date": "2024-05-15",
+      "type": "tour",
+      "title": "2024 WORLD TOUR",
+      "note": "ワールドツアー開始"
+    },
+    {
+      "date": "2025-10-10",
+      "type": "album",
+      "title": "NEW ALBUM",
+      "note": "新しいアルバムリリース予定"
+    },
+    {
+      "date": "2026-04-01",
+      "type": "event",
+      "title": "5周年記念ライブ",
+      "note": "デビュー5周年を祝うライブ"
+    }
+  ]
+}

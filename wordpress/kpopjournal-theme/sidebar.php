@@ -4,7 +4,7 @@
     <div class="kpj-widget kpj-widget--trending">
         <h3 class="kpj-widget__title">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF1B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-            Trending Now
+            今日読まれている記事
         </h3>
         <div class="kpj-trending-list">
             <?php
@@ -12,7 +12,7 @@
                 'posts_per_page' => 5,
                 'orderby'        => 'comment_count',
                 'order'          => 'DESC',
-                'date_query'     => [['after' => '7 days ago']],
+                'date_query'     => [['after' => '2 days ago']],
             ]);
             $rank = 1;
             while ($trending->have_posts()): $trending->the_post();

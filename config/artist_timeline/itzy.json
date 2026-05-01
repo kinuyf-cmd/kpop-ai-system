@@ -1,0 +1,122 @@
+{
+  "slug": "itzy",
+  "name": "ITZY",
+  "name_kr": "있지",
+  "name_en": "ITZY",
+  "debut_date": "2019-02-12",
+  "agency": "JYP Entertainment",
+  "members": [
+    {
+      "name": "Yeji",
+      "name_kr": "예지",
+      "birth": "2000-05-26"
+    },
+    {
+      "name": "Lia",
+      "name_kr": "리아",
+      "birth": "2000-07-21"
+    },
+    {
+      "name": "Ryujin",
+      "name_kr": "류진",
+      "birth": "2001-04-17"
+    },
+    {
+      "name": "Chaeryeong",
+      "name_kr": "채령",
+      "birth": "2001-09-05"
+    },
+    {
+      "name": "Yuna",
+      "name_kr": "유나",
+      "birth": "2003-12-09"
+    }
+  ],
+  "official_links": {
+    "website": "https://itzy.jype.com",
+    "twitter": "https://twitter.com/ITZYofficial",
+    "instagram": "https://www.instagram.com/itzy.all.in.us/",
+    "youtube": "https://www.youtube.com/channel/UCu8Z5rIG0nZP8kT8xkno6cg",
+    "weverse": ""
+  },
+  "events": [
+    {
+      "date": "2019-02-12",
+      "type": "debut",
+      "title": "IT'z Different",
+      "note": "Debut single album."
+    },
+    {
+      "date": "2019-03-06",
+      "type": "comeback",
+      "title": "IT'z ICY",
+      "note": "First mini album."
+    },
+    {
+      "date": "2019-07-29",
+      "type": "comeback",
+      "title": "IT'z NOT SHY",
+      "note": "Second mini album."
+    },
+    {
+      "date": "2020-05-22",
+      "type": "comeback",
+      "title": "IT'z ME",
+      "note": "Third mini album."
+    },
+    {
+      "date": "2020-07-29",
+      "type": "award",
+      "title": "2020 Mnet Asian Music Awards",
+      "note": "Best New Artist."
+    },
+    {
+      "date": "2021-04-30",
+      "type": "comeback",
+      "title": "Guess Who",
+      "note": "Fourth mini album."
+    },
+    {
+      "date": "2021-12-22",
+      "type": "comeback",
+      "title": "Crazy In Love",
+      "note": "First studio album."
+    },
+    {
+      "date": "2022-07-15",
+      "type": "comeback",
+      "title": "Checkmate",
+      "note": "Fifth mini album."
+    },
+    {
+      "date": "2022-06-18",
+      "type": "tour",
+      "title": "Checkmate World Tour",
+      "note": "First world tour."
+    },
+    {
+      "date": "2023-05-20",
+      "type": "comeback",
+      "title": "Next Level",
+      "note": "New digital single."
+    },
+    {
+      "date": "2024-01-12",
+      "type": "album",
+      "title": "IT'z Volume 2",
+      "note": "Second studio album."
+    },
+    {
+      "date": "2025-02-25",
+      "type": "comeback",
+      "title": "New Chapter",
+      "note": "Sixth mini album."
+    },
+    {
+      "date": "2026-04-10",
+      "type": "tour",
+      "title": "ITZY 2026 World Tour",
+      "note": "Second world tour."
+    }
+  ]
+}
