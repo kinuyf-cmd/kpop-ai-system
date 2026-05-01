@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-25T19:09:04.862615",
+  "updated_at": "2026-05-01T13:47:24.187929",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -70,9 +70,9 @@
       "agent": "unknown"
     },
     "x_post_failed": {
-      "count": 15,
-      "last_seen": "2026-04-25",
-      "example": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ: 記事ステータス=draft — pub",
+      "count": 16,
+      "last_seen": "2026-04-30",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
@@ -743,6 +743,392 @@
       "example": "OG画像が未設定",
       "fix": "調査が必要",
       "agent": "unknown"
+    },
+    "ogp_image_artist_mismatch": {
+      "count": 4,
+      "last_seen": "2026-04-26",
+      "example": "aespa記事にBTS YouTube画像、K-POP一般記事にBTS YouTube画像がOGPとして設定。thumbnail_source_resolverがYouTube API検索でリクエストアーティストと無関係なチャンネルを返却",
+      "fix": "4層対策: (1) _resolve_channel_idからAPI検索フォールバック廃止→official_accounts.json登録済みのみ使用。(2) resolve()でattribution/アーティスト名の不一致を検出しBLOCK。(3) full_audit_engineにcheck_ogp_image_relevance追加（alt内アーティスト名vsタイトル照合）。(4) error_patterns.jsonに登録。",
+      "agent": "thumbnail_source_resolver",
+      "resolved_at": "2026-04-26",
+      "root_cause": "_resolve_channel_id()のYouTube API検索が未登録アーティストに対し無関係なチャンネル(BTS/BLACKPINK)を返すことが根本原因。API検索結果の1位が必ずしも正しいアーティストとは限らない。"
+    },
+    "no_featured_image_on_publish": {
+      "count": 2,
+      "last_seen": "2026-04-27",
+      "example": "feature記事がsource_url/artistなしでunified_publishを呼び出し→サムネ解決スキップ→DALL-E日次上限到達→サムネなしで公開",
+      "fix": "(1) unified_publisher: source_url/artist無しでもDALL-Eフォールバック追加 (2) make_thumbnail_v6: ai_promptパスでDALL-E即時生成 (3) DALL-E日次上限20→50 (4) サムネなし時WARNログ出力",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-27"
+    },
+    "no_artist_category_on_publish": {
+      "count": 9,
+      "last_seen": "2026-04-29",
+      "example": "unified_publisherが基本カテゴリ(news/event)のみ設定し、アーティスト個別カテゴリを付与しない",
+      "root_cause": "_detect_category_slugは基本カテゴリのみ返却。artist_category_map.json照合が未実装だった",
+      "fix": "unified_publisherにartist_category_map.json照合を追加。タイトル+本文からアーティスト名を検出し、cat_idsにマージ",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "meta_desc_short_on_publish": {
+      "count": 8,
+      "last_seen": "2026-04-29",
+      "example": "速報記事でmeta_desc<80字。body_html[:500]が短すぎてGPTが短い出力を返す",
+      "root_cause": "generate_meta_descriptionにbody[:500]のみ渡していた。速報は本文が短いため、500字では文脈不足",
+      "fix": "[:1000]→[:2000]→固定テンプレートの3段フォールバック実装",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "title_over_42_on_publish": {
+      "count": 5,
+      "last_seen": "2026-04-29",
+      "example": "breaking prefix付加後に[:50]で切っていたが監査基準は42字",
+      "root_cause": "unified_publisher L113のslice[:50]が監査基準CRITERIA.post.title_max=42と不一致",
+      "fix": "[:42]に修正",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "popup_slug_encoded": {
+      "count": 5,
+      "last_seen": "2026-04-29",
+      "example": "popup記事のslugがWPデフォルトの日本語URLエンコード(%e3%83%9d%e3%83%83%e3%83%97...)",
+      "root_cause": "popup_publisher.pyがslugフィールドを未設定でWP POSTしていた。WPが自動的に日本語slugを生成しエンコード",
+      "fix": "popup_publisher.pyにgenerate_slug()呼び出し追加。body_dataにslugフィールドを設定",
+      "agent": "popup_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "unclosed_p_leak": {
+      "count": 6,
+      "last_seen": "2026-04-29",
+      "example": "GPT生成HTMLにunclosed <p>タグが1-2個残存。sanitize_gpt_htmlが閾値>2でスキップしていた",
+      "root_cause": "text_sanitizer.pyのunclosed_p修正が閾値>2で発動。1-2個のミスマッチは未修正のまま通過。加えてWPのwpautopが<p>を自動挿入するため、REST API取得時に1-2個の差分が常に発生",
+      "fix": "sanitizerは閾値なしで常に修正。監査では>2をmedium、1-2をlowに分離(wpautop仕様考慮)",
+      "agent": "text_sanitizer",
+      "resolved_at": "2026-04-29"
+    },
+    "internal_links_module_not_integrated": {
+      "count": 18,
+      "last_seen": "2026-04-29",
+      "example": "lib/internal_links.pyが存在するがunified_publisher/popup_publisherに統合されておらず、全記事で内部リンクが不足",
+      "root_cause": "内部リンク挿入モジュールを作成したが、各投稿パイプラインへの統合が未完了だった。「モジュール作成≠統合完了」",
+      "fix": "unified_publisher.pyのCTA挿入直後にinsert_internal_links()呼び出しを追加。popup_publisher.pyにも同様に追加",
+      "agent": "unified_publisher/popup_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "meta_desc_fallback_too_short": {
+      "count": 7,
+      "last_seen": "2026-04-29",
+      "example": "generate_meta_descriptionがGPTで短い出力を返し、固定テンプレートフォールバックも80字未満になるケース",
+      "root_cause": "フォールバックテンプレートがタイトル依存で短いタイトルの場合に80字を下回る。GPT再生成も入力body不足で短い出力",
+      "fix": "3段目フォールバックを「本文から最初の2段落を抽出」方式に変更。80字確保率100%",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "existing_articles_not_remediated": {
+      "count": 25,
+      "last_seen": "2026-04-29",
+      "example": "予防コード修正を入れたが、既存記事の実データは古いまま放置。slug_encoded/no_artist_category/meta_desc_short等が残存",
+      "root_cause": "予防コード(unified_publisher等)は今後の新規記事にのみ適用。既存記事は手動またはバッチスクリプトで別途修正が必要",
+      "fix": "WP REST API PATCHによる一括修正スクリプト実行。25件のslug/cat/meta_desc/content/titleを修正。内部リンクも17件に挿入",
+      "agent": "audit_remediation",
+      "resolved_at": "2026-04-29"
+    },
+    "artist_member_mismatch": {
+      "count": 1,
+      "last_seen": "2026-04-27",
+      "example": "NewJeans+JIMIN（BTSメンバー）の不正組合せで記事公開。feature_article_generatorのテンプレートでartist/memberが独立listだったため",
+      "fix": "artist_memberタプルリストに変更し、generate_topic_titleで紐づけを維持して展開するよう修正",
+      "agent": "feature_article_generator",
+      "resolved_at": "2026-04-27"
+    },
+    "llm_stale_date_in_article": {
+      "count": 9,
+      "last_seen": "2026-04-29",
+      "example": "LLM生成記事が2023年の背景情報のみ記載し、2026年の現在年月を本文に含めないためfact-checkでstale_dateブロック",
+      "fix": "breaking_news_detector.py/feature_article_generator.pyのLLMプロンプトに現在日付と「本文中に必ず現在年月を含めること」を強制注入(2026-04-29)",
+      "prevention": "LLMプロンプトテンプレートに日付コンテキスト注入を標準化",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "factcheck_block_infinite_retry": {
+      "count": 4,
+      "last_seen": "2026-04-29",
+      "example": "BTS CCTV記事が同一ソースURLで4回試行(3回ブロック)。mark_processedがsuccess時のみで、ブロック時はURLが再利用される",
+      "fix": "breaking_news_detector.pyでfact-checkブロック時もmark_processedを呼び出してリトライを防止(2026-04-29)",
+      "prevention": "unified_publishの失敗レスポンスでもソースURL記録を必須とする設計ルール",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "crontab_sync_drift": {
+      "count": 68,
+      "last_seen": "2026-04-29",
+      "example": "4/25のcrontab刷新でcrontab.txtの旧エントリ68本がライブcrontabから脱落。監査レポート/GA4/KPI/フィードバック/競合監視等が4日間停止",
+      "fix": "脱落ジョブ22本(監査5+GSC2+運用15)をライブcrontabに復旧。crontab.txtをライブcrontabから再生成(2026-04-29)",
+      "prevention": "crontab変更時は必ずcrontab -l > crontab.txtで同期。pipeline_health_monitorでcrontab.txt vs live差分を検出するチェックを追加",
+      "agent": "operations",
+      "resolved_at": "2026-04-25"
+    },
+    "adsense_oauth_testing_mode": {
+      "count": 3,
+      "last_seen": "2026-04-29",
+      "example": "Google Cloud OAuthが「Testing」モードのためrefresh_tokenが7日で失効。invalid_grantエラーが周期的に発生",
+      "fix": "kpi_store.py/fetch_adsense.pyにinvalid_grant時の明確なエラーメッセージと再認証手順を追加(2026-04-29)。根本修正はGCP Console「Testing→本番」変更",
+      "prevention": "OAuthトークン有効性をpipeline_health_monitorで日次チェック",
+      "agent": "revenue",
+      "resolved_at": null
+    },
+    "affiliate_config_desync": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "revenue_config.jsonのa8net_site_idが空文字のまま放置。.envには設定済みだがrevenue_config.jsonと不一致。affiliate_auto_linker.pyにdotenv未ロード",
+      "fix": "revenue_config.jsonにA8NET IDを記入。affiliate_auto_linker.pyにdotenv load追加(2026-04-29)",
+      "prevention": "設定値は.envを単一ソースとし、JSON設定ファイルに同一値を二重管理しない。読み込み側は必ずdotenvをロードする",
+      "agent": "revenue",
+      "resolved_at": "2026-04-29"
+    },
+    "llm_name_anonymization": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "G-Dragon/Giselle/ShotaroをAとBに匿名化し、交際疑惑を捏造。元記事はVerdyディナー同席ニュースだったのに全く異なる内容に",
+      "fix": "①LLMプロンプトに匿名化禁止・実名必須を明記 ②fact_checkerにanonymization_check(AとBパターン検出)追加 ③クラスタリングで事務所名(SM/YG等)のみマッチを低優先化",
+      "prevention": "4層防御: プロンプト禁止指示→fact-check BLOCK→クラスタリング精度向上→error_patterns登録",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "multi_source_contamination": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "Koreaboo(G-Dragon目撃)とnatalie.mu(INIMILE新曲)が「SM」キーワードで同一クラスタに入り、LLMが混合記事を生成",
+      "fix": "is_kpop_relatedでアーティスト名を事務所名より優先返却。事務所名のみマッチでは異なる記事が同一クラスタに入るリスクを低減",
+      "prevention": "LLMプロンプトに「複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化」指示を追加",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "llm_numeric_fabrication": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "JENNIE Dracula Remix '2億回達成'と記載→実際は約1.1億回。LLMがソースのfan報告を検証なしに採用",
+      "fix": "fact_checker.pyにcheck_numeric_claims()を追加。億/百万/million単位の数値主張を自動検出しWARN。ソース原文との照合を強制",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "llm_subject_mistranslation": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "ソース原文='Fans announcing pregnancy at concerts'を'アーティストが妊娠を発表'と誤訳。主語の取り違え",
+      "fix": "fact_checker.pyにcheck_source_content_mismatch()を追加。ソース見出しのfans/artist主語と記事本文の主語不一致をWARN",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "double_p_wrap": {
+      "count": 16,
+      "last_seen": "2026-04-29",
+      "example": "GPT出力が<p>...<h2>...</h2><p>...</p>を含むのにbreaking_news_detectorが更にf'<p>{text}</p>'で二重ラップ→unclosed_p",
+      "fix": "breaking_news_detector.pyに_wrap_body()ヘルパー追加。GPT出力が既にHTMLブロック要素を含む場合は<p>ラップしない。text_sanitizer.pyにPhase1(ブロック要素前の自動閉じ)+Phase3(孤児</p>除去)を追加",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    "popup_title_duplicate": {
+      "count": 2,
+      "last_seen": "2026-04-29",
+      "example": "トイ・ストーリー5ポップアップが同じタイトルで2件ずつ公開。URLベースdedupでは異なるURL同一イベントを防げない",
+      "fix": "popup_publisher.pyにタイトル先頭40字ベースの重複除外ロジックを追加（seen_titles set）",
+      "agent": "popup_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    "x_post_silent_failure": {
+      "count": 13,
+      "last_seen": "2026-04-29",
+      "example": "X投稿がcredential期限切れで失敗するが記事は公開済。x_retry_queueに入るがretry処理が未実装",
+      "fix": "x_retry_queue.jsonに13件登録。retry処理の実装は別タスクで対応予定",
+      "agent": "unified_publisher"
+    },
+    "llm_date_conflation": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "ミンジ誕生日記事で「今日は4/29、特別な日」と記載→実際の誕生日は5/7。LLMがプロンプトの現在日付を記事の「特別な日」と混同",
+      "fix": "feature記事のLLMプロンプトに「現在日付を記事内容の日付と混同するな」の明示的指示を追加。fact_checkerに生年月日/イベント日の検証ロジック追加を検討",
+      "agent": "feature_article_generator",
+      "resolved_at": "2026-04-29"
+    },
+    "audit_fixer_infinite_rewrite": {
+      "count": 77,
+      "last_seen": "2026-04-29",
+      "example": "ID 4299(IU記事)が12回リライトされても content_short が解消しない。344回のGPT呼び出しのうち258回が重複リライト",
+      "fix": "1. _load_already_fixed()で3回以上リライト済みをスキップ 2. content_shortをGPT_REWRITE_TYPESから除外 3. 新しい記事を優先するソート 4. max_fixes=15→30に引き上げ",
+      "agent": "audit_fixer_universal",
+      "resolved_at": "2026-04-29"
+    },
+    "publish_path_bypass": {
+      "count": 0,
+      "last_seen": "2026-04-29",
+      "example": "popup_publisher/draft_auto_publisher/feature_draft がunified_publisherの品質ゲートを完全にバイパスして公開。全issueの65%がFIXABLE対象外",
+      "fix": "lib/pre_publish_gate.pyを新規作成し全5公開経路の手前に統一ゲートを挿入。BLOCK6種/WARN多数。popup_publisher/draft_auto_publisher/feature_draftにgate呼び出し追加",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-29"
+    },
+    "unknown_1160": {
+      "count": 1,
+      "last_seen": "2026-04-30",
+      "example": "X投稿PRE_SCOREが低い: 79.0（閾値80未満）",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "gate_silent_crash_cat_ids": {
+      "count": 1,
+      "last_seen": "2026-04-30",
+      "example": "unified_publisher.pyでcat_idsがゲート呼び出し時点で未定義→NameError→except Exceptionで\"Gate skip\"として無音スキップ。全品質ゲートが無効化された状態で記事公開が続行",
+      "fix": "カテゴリ初期化(cat_ids構築)をゲート呼び出し前に移動。ゲートにはsanitize済みcontentを渡す。CTA/リンク挿入後に再sanitize追加。check_categoryをaudit_checksリストに追加。content_short/no_artist_categoryをBLOCK_TYPESに追加。_map_audit_issuesでBLOCK_TYPESマッチ時にblock昇格するよう修正",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-30"
+    },
+    "unclosed_p_post_injection": {
+      "count": 4,
+      "last_seen": "2026-04-30",
+      "example": "sanitize_gpt_html実行後にCTA挿入・内部リンク挿入が走り、新たなunclosed_pが発生。ゲートには生body_htmlが渡されsanitize済みcontentではなかった",
+      "fix": "CTA/リンク挿入後に sanitize_gpt_html を再実行。ゲートには sanitize済み content を渡すよう修正",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-30"
+    },
+    "fabricated_shop_articles": {
+      "count": 3,
+      "last_seen": "2026-04-30",
+      "example": "「明洞おすすめ韓国カフェ7選」で架空のカフェ名（カフェ・ド・ルーヴル、ヤギカフェ等）を列挙。住所・営業時間・地図なし。読者が訪問不可能な記事を公開していた",
+      "fix": "4層再発防止: (1)カフェ/レストラン/グルメ○選テンプレートをfeature_article_generatorから削除 (2)GPTプロンプトに架空店舗禁止+4点セット必須ルール追加 (3)pre_publish_gateにshop_no_practical_info BLOCKチェック追加 (4)agent_lessons/feature_article_writer.mdに警告#10追加",
+      "agent": "feature_article_generator",
+      "resolved_at": "2026-04-30"
+    },
+    "unknown_5175": {
+      "count": 1,
+      "last_seen": "2026-04-30",
+      "example": "X投稿PRE_SCOREが低い: 79.8（閾値80未満）",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "unknown_3438": {
+      "count": 1,
+      "last_seen": "2026-05-01",
+      "example": "OG画像が未設定",
+      "fix": "調査が必要",
+      "agent": "unknown"
+    },
+    "draft_infinite_block_loop": {
+      "count": 4,
+      "last_seen": "2026-05-01",
+      "example": "BLOCKされたドラフト(6052/5852/5849/5689)が毎時BLOCKログを出し続ける無限ループ",
+      "root_cause": "draft_auto_publisher.pyにBLOCK後のアーカイブ機構がなく同じドラフトが永遠にBLOCK判定を受ける",
+      "fix": "MAX_BLOCK_COUNT=3回でauto-archive、draft_block_history.jsonで履歴追跡を実装(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "popup_content_min_inconsistency": {
+      "count": 1,
+      "last_seen": "2026-05-01",
+      "example": "popup_audit.pyは200字基準、full_audit_engineは800字基準で矛盾",
+      "root_cause": "2つの監査エンジンで同じ指標の閾値が異なりpopup特性を考慮していなかった",
+      "fix": "popup content_minを500字に統一(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "feedback_loop_window_too_narrow": {
+      "count": 30,
+      "last_seen": "2026-05-01",
+      "example": "post_audit_feedback_loopが2週間以上対象投稿なしを返し続ける",
+      "root_cause": "検索ウィンドウが10~20分前のたった10分間でdraft_auto_publisherの公開タイミングとズレ",
+      "fix": "ウィンドウを5~40分に拡大+seen.json重複防止を実装(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "discord_webhooks_all_404": {
+      "count": 8,
+      "last_seen": "2026-05-01",
+      "example": "全8個のDiscord webhookが404。監査通知が届かない",
+      "root_cause": "Discord側でwebhookが一括無効化/チャンネル削除された",
+      "fix": "Discord側でwebhook再作成が必要（ユーザー対応待ち）",
+      "agent": "infra"
+    },
+    "youtube_api_quota_noise": {
+      "count": 258,
+      "last_seen": "2026-04-29",
+      "example": "YouTube API配額超過で403連発。3クエリ全てが失敗してログ258件のWARN蓄積",
+      "root_cause": "配額超過時に残りクエリも無駄に叩いてエラーを3倍に増幅",
+      "fix": "403検知時にbreakして残りクエリをスキップするよう修正(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "x_account_locked_by_duplicate_spam": {
+      "count": 4,
+      "last_seen": "2026-05-01",
+      "example": "duplicate content 403を連発→Xがアカウントをスパム疑いで一時ロック→全X投稿停止",
+      "root_cause": "x_poster.pyがタイトル+URLの定型テキストを連続投稿。X APIがduplicate判定→403→リトライ不可→さらに連投→ロック",
+      "fix": "x_poster.pyをフック+リプライ方式に変更(URLはリプライ、ハッシュタグ付与でユニーク化)。post_to_x.pyでduplicate 403はテキスト変更してリトライ。DIAG_LOCKED検出追加(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "x_post_error_no_auto_fix": {
+      "count": 8,
+      "last_seen": "2026-05-01",
+      "example": "comprehensive_auditがx_post_error/x_missingを検出するが自動修復パスがない",
+      "root_cause": "FIXABLE_TYPESにx_post系が含まれない。監査は検出するだけで修復する担当者が不在",
+      "fix": "comprehensive_auditにtry_fix_x_post()を追加。X投稿リトライを自動実行する修復パスを構築(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "post_publish_enricher_no_args_noop": {
+      "count": 1,
+      "last_seen": "2026-05-01",
+      "example": "cronで引数なし実行→parser.print_help()で何もせず終了。記事公開後のenrichmentが全く動いていなかった",
+      "root_cause": "--recent-hoursのdefault=0で、引数なし時はelseブランチでhelp出力のみ",
+      "fix": "default=2に変更し、引数なしでも直近2時間の記事を自動処理(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "diag_403_misdiagnosis": {
+      "count": 4,
+      "last_seen": "2026-05-01",
+      "example": "duplicate content 403を'credential問題'と誤診。DIAG_403ラベルでcredential alertを発報",
+      "root_cause": "post_to_x.shが全ての403をcredential問題と扱う。duplicate/lockedは別問題",
+      "fix": "DIAG_DUPLICATE/DIAG_LOCKEDを分離。duplicate→テキスト変更リトライ、locked→ユーザー通知(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "x_spam_label_rate_limiting": {
+      "count": 1,
+      "last_seen": "2026-05-01",
+      "example": "連続投稿+duplicate連発→Xがスパムラベル付与→表示範囲限定",
+      "root_cause": "レート制限なし+定型テキスト+URL直接挿入の3重問題",
+      "fix": "3層防御実装: (1)MAX_POSTS_PER_HOUR=3制限 (2)類似テキスト検知→キュー送り (3)フック+リプライ方式でURLとテキスト分離(2026-05-01)",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-01"
+    },
+    "event_non_kpop_mixed": {
+      "count": 1,
+      "last_seen": "2026-05-01",
+      "example": "GW韓国旅行がevents_manual.jsonの近日開催イベントに混入",
+      "fix": "event_auto_collector.pyの3箇所修正: (1) is_kpop_related()から韓国単独KW除外 (2) EVENT_KWからツアー単独除外+NOT_EVENT_KW追加 (3) GPT抽出後タイトルに非イベント除外パターン追加",
+      "agent": "event_auto_collector",
+      "resolved_at": "2026-05-01"
+    },
+    "publish_without_audit": {
+      "count": 4,
+      "pattern": "feature_article_generatorが記事を公開後にfull_audit/fact_checkを実行しなかった",
+      "fix": "post_publish_audit()を全パイプラインのpost_to_wp()直後に組み込み。publish_quality_gate.pyを毎時cronで横断チェック",
+      "added_at": "2026-05-01",
+      "severity": "critical"
+    },
+    "dalle_thumbnail_wrong_subject": {
+      "count": 4,
+      "pattern": "DALL-E生成サムネがアーティスト名を含まないプロンプトで生成され、記事と無関係な画像になる",
+      "fix": "unified_publisherのDALL-Eプロンプトにタイトルからアーティスト名を自動抽出して注入",
+      "added_at": "2026-05-01",
+      "severity": "high"
+    },
+    "upload_media_no_alt": {
+      "count": 4,
+      "pattern": "_upload_mediaがALTテキストを設定せずにアップロードする",
+      "fix": "_upload_mediaにalt_text引数追加。publish_quality_gateで空ALT検出時に自動設定",
+      "added_at": "2026-05-01",
+      "severity": "medium"
     }
   },
   "recurring_errors": [
@@ -766,9 +1152,9 @@
     },
     {
       "key": "x_post_failed",
-      "count": 15,
-      "last_seen": "2026-04-25",
-      "example": "canonical が正しくない: https://www.kpopjournal.tokyo サムネ再生成後alt空: media=4272 X投稿スキップ: 記事ステータス=draft — pub",
+      "count": 16,
+      "last_seen": "2026-04-30",
+      "example": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish昇格後に手動再試行が必要",
       "root_cause": "記事がdraftステータスのままX投稿が実行されスキップされる。publish昇格タイミングとX投稿cronのタイミングがずれる場合に発生（04/22: post_id=3911が対象）",
       "fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
       "agent": "persian",
@@ -937,74 +1323,183 @@
       "fix": "agents/gardevoir_hook_critic.mdに英語応答禁止・空出力防止ルール追加。パイプラインに空出力時SOFT_RETRY(60)フォールバック追加。agent_directives.jsonにretry_on_empty=2設定",
       "agent": "gardevoir_hook_critic",
       "resolved_at": "2026-04-24"
+    },
+    {
+      "key": "ogp_image_artist_mismatch",
+      "count": 4,
+      "last_seen": "2026-04-26",
+      "example": "aespa記事にBTS YouTube画像、K-POP一般記事にBTS YouTube画像がOGPとして設定。thumbnail_source_resolverがYouTube API検索でリクエストアーティストと無関係なチャンネルを返却",
+      "fix": "4層対策: (1) _resolve_channel_idからAPI検索フォールバック廃止→official_accounts.json登録済みのみ使用。(2) resolve()でattribution/アーティスト名の不一致を検出しBLOCK。(3) full_audit_engineにcheck_ogp_image_relevance追加（alt内アーティスト名vsタイトル照合）。(4) error_patterns.jsonに登録。",
+      "agent": "thumbnail_source_resolver",
+      "resolved_at": "2026-04-26",
+      "root_cause": "_resolve_channel_id()のYouTube API検索が未登録アーティストに対し無関係なチャンネル(BTS/BLACKPINK)を返すことが根本原因。API検索結果の1位が必ずしも正しいアーティストとは限らない。"
+    },
+    {
+      "key": "no_artist_category_on_publish",
+      "count": 9,
+      "last_seen": "2026-04-29",
+      "example": "unified_publisherが基本カテゴリ(news/event)のみ設定し、アーティスト個別カテゴリを付与しない",
+      "root_cause": "_detect_category_slugは基本カテゴリのみ返却。artist_category_map.json照合が未実装だった",
+      "fix": "unified_publisherにartist_category_map.json照合を追加。タイトル+本文からアーティスト名を検出し、cat_idsにマージ",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "meta_desc_short_on_publish",
+      "count": 8,
+      "last_seen": "2026-04-29",
+      "example": "速報記事でmeta_desc<80字。body_html[:500]が短すぎてGPTが短い出力を返す",
+      "root_cause": "generate_meta_descriptionにbody[:500]のみ渡していた。速報は本文が短いため、500字では文脈不足",
+      "fix": "[:1000]→[:2000]→固定テンプレートの3段フォールバック実装",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "title_over_42_on_publish",
+      "count": 5,
+      "last_seen": "2026-04-29",
+      "example": "breaking prefix付加後に[:50]で切っていたが監査基準は42字",
+      "root_cause": "unified_publisher L113のslice[:50]が監査基準CRITERIA.post.title_max=42と不一致",
+      "fix": "[:42]に修正",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "popup_slug_encoded",
+      "count": 5,
+      "last_seen": "2026-04-29",
+      "example": "popup記事のslugがWPデフォルトの日本語URLエンコード(%e3%83%9d%e3%83%83%e3%83%97...)",
+      "root_cause": "popup_publisher.pyがslugフィールドを未設定でWP POSTしていた。WPが自動的に日本語slugを生成しエンコード",
+      "fix": "popup_publisher.pyにgenerate_slug()呼び出し追加。body_dataにslugフィールドを設定",
+      "agent": "popup_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "unclosed_p_leak",
+      "count": 6,
+      "last_seen": "2026-04-29",
+      "example": "GPT生成HTMLにunclosed <p>タグが1-2個残存。sanitize_gpt_htmlが閾値>2でスキップしていた",
+      "root_cause": "text_sanitizer.pyのunclosed_p修正が閾値>2で発動。1-2個のミスマッチは未修正のまま通過。加えてWPのwpautopが<p>を自動挿入するため、REST API取得時に1-2個の差分が常に発生",
+      "fix": "sanitizerは閾値なしで常に修正。監査では>2をmedium、1-2をlowに分離(wpautop仕様考慮)",
+      "agent": "text_sanitizer",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "internal_links_module_not_integrated",
+      "count": 18,
+      "last_seen": "2026-04-29",
+      "example": "lib/internal_links.pyが存在するがunified_publisher/popup_publisherに統合されておらず、全記事で内部リンクが不足",
+      "root_cause": "内部リンク挿入モジュールを作成したが、各投稿パイプラインへの統合が未完了だった。「モジュール作成≠統合完了」",
+      "fix": "unified_publisher.pyのCTA挿入直後にinsert_internal_links()呼び出しを追加。popup_publisher.pyにも同様に追加",
+      "agent": "unified_publisher/popup_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "meta_desc_fallback_too_short",
+      "count": 7,
+      "last_seen": "2026-04-29",
+      "example": "generate_meta_descriptionがGPTで短い出力を返し、固定テンプレートフォールバックも80字未満になるケース",
+      "root_cause": "フォールバックテンプレートがタイトル依存で短いタイトルの場合に80字を下回る。GPT再生成も入力body不足で短い出力",
+      "fix": "3段目フォールバックを「本文から最初の2段落を抽出」方式に変更。80字確保率100%",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "existing_articles_not_remediated",
+      "count": 25,
+      "last_seen": "2026-04-29",
+      "example": "予防コード修正を入れたが、既存記事の実データは古いまま放置。slug_encoded/no_artist_category/meta_desc_short等が残存",
+      "root_cause": "予防コード(unified_publisher等)は今後の新規記事にのみ適用。既存記事は手動またはバッチスクリプトで別途修正が必要",
+      "fix": "WP REST API PATCHによる一括修正スクリプト実行。25件のslug/cat/meta_desc/content/titleを修正。内部リンクも17件に挿入",
+      "agent": "audit_remediation",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "llm_stale_date_in_article",
+      "count": 9,
+      "last_seen": "2026-04-29",
+      "example": "LLM生成記事が2023年の背景情報のみ記載し、2026年の現在年月を本文に含めないためfact-checkでstale_dateブロック",
+      "fix": "breaking_news_detector.py/feature_article_generator.pyのLLMプロンプトに現在日付と「本文中に必ず現在年月を含めること」を強制注入(2026-04-29)",
+      "prevention": "LLMプロンプトテンプレートに日付コンテキスト注入を標準化",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "factcheck_block_infinite_retry",
+      "count": 4,
+      "last_seen": "2026-04-29",
+      "example": "BTS CCTV記事が同一ソースURLで4回試行(3回ブロック)。mark_processedがsuccess時のみで、ブロック時はURLが再利用される",
+      "fix": "breaking_news_detector.pyでfact-checkブロック時もmark_processedを呼び出してリトライを防止(2026-04-29)",
+      "prevention": "unified_publishの失敗レスポンスでもソースURL記録を必須とする設計ルール",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "crontab_sync_drift",
+      "count": 68,
+      "last_seen": "2026-04-29",
+      "example": "4/25のcrontab刷新でcrontab.txtの旧エントリ68本がライブcrontabから脱落。監査レポート/GA4/KPI/フィードバック/競合監視等が4日間停止",
+      "fix": "脱落ジョブ22本(監査5+GSC2+運用15)をライブcrontabに復旧。crontab.txtをライブcrontabから再生成(2026-04-29)",
+      "prevention": "crontab変更時は必ずcrontab -l > crontab.txtで同期。pipeline_health_monitorでcrontab.txt vs live差分を検出するチェックを追加",
+      "agent": "operations",
+      "resolved_at": "2026-04-25"
+    },
+    {
+      "key": "adsense_oauth_testing_mode",
+      "count": 3,
+      "last_seen": "2026-04-29",
+      "example": "Google Cloud OAuthが「Testing」モードのためrefresh_tokenが7日で失効。invalid_grantエラーが周期的に発生",
+      "fix": "kpi_store.py/fetch_adsense.pyにinvalid_grant時の明確なエラーメッセージと再認証手順を追加(2026-04-29)。根本修正はGCP Console「Testing→本番」変更",
+      "prevention": "OAuthトークン有効性をpipeline_health_monitorで日次チェック",
+      "agent": "revenue",
+      "resolved_at": null
+    },
+    {
+      "key": "double_p_wrap",
+      "count": 16,
+      "last_seen": "2026-04-29",
+      "example": "GPT出力が<p>...<h2>...</h2><p>...</p>を含むのにbreaking_news_detectorが更にf'<p>{text}</p>'で二重ラップ→unclosed_p",
+      "fix": "breaking_news_detector.pyに_wrap_body()ヘルパー追加。GPT出力が既にHTMLブロック要素を含む場合は<p>ラップしない。text_sanitizer.pyにPhase1(ブロック要素前の自動閉じ)+Phase3(孤児</p>除去)を追加",
+      "agent": "breaking_news_detector",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "x_post_silent_failure",
+      "count": 13,
+      "last_seen": "2026-04-29",
+      "example": "X投稿がcredential期限切れで失敗するが記事は公開済。x_retry_queueに入るがretry処理が未実装",
+      "fix": "x_retry_queue.jsonに13件登録。retry処理の実装は別タスクで対応予定",
+      "agent": "unified_publisher"
+    },
+    {
+      "key": "audit_fixer_infinite_rewrite",
+      "count": 77,
+      "last_seen": "2026-04-29",
+      "example": "ID 4299(IU記事)が12回リライトされても content_short が解消しない。344回のGPT呼び出しのうち258回が重複リライト",
+      "fix": "1. _load_already_fixed()で3回以上リライト済みをスキップ 2. content_shortをGPT_REWRITE_TYPESから除外 3. 新しい記事を優先するソート 4. max_fixes=15→30に引き上げ",
+      "agent": "audit_fixer_universal",
+      "resolved_at": "2026-04-29"
+    },
+    {
+      "key": "unclosed_p_post_injection",
+      "count": 4,
+      "last_seen": "2026-04-30",
+      "example": "sanitize_gpt_html実行後にCTA挿入・内部リンク挿入が走り、新たなunclosed_pが発生。ゲートには生body_htmlが渡されsanitize済みcontentではなかった",
+      "fix": "CTA/リンク挿入後に sanitize_gpt_html を再実行。ゲートには sanitize済み content を渡すよう修正",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-30"
+    },
+    {
+      "key": "fabricated_shop_articles",
+      "count": 3,
+      "last_seen": "2026-04-30",
+      "example": "「明洞おすすめ韓国カフェ7選」で架空のカフェ名（カフェ・ド・ルーヴル、ヤギカフェ等）を列挙。住所・営業時間・地図なし。読者が訪問不可能な記事を公開していた",
+      "fix": "4層再発防止: (1)カフェ/レストラン/グルメ○選テンプレートをfeature_article_generatorから削除 (2)GPTプロンプトに架空店舗禁止+4点セット必須ルール追加 (3)pre_publish_gateにshop_no_practical_info BLOCKチェック追加 (4)agent_lessons/feature_article_writer.mdに警告#10追加",
+      "agent": "feature_article_generator",
+      "resolved_at": "2026-04-30"
     }
   ],
   "resolved_errors": [
-    {
-      "ts": "2026-04-18",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "3185"
-    },
-    {
-      "ts": "2026-04-18",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3280"
-    },
-    {
-      "ts": "2026-04-18",
-      "fix": "タグを自動生成して設定: [91] アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "3286"
-    },
-    {
-      "ts": "2026-04-19",
-      "fix": "本文補強: 2803 → 3249文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "3313"
-    },
-    {
-      "ts": "2026-04-19",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3323"
-    },
-    {
-      "ts": "2026-04-19",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3333"
-    },
-    {
-      "ts": "2026-04-19",
-      "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
-      "post_id": "3338"
-    },
-    {
-      "ts": "2026-04-19",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "3345"
-    },
-    {
-      "ts": "2026-04-20",
-      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "3605"
-    },
-    {
-      "ts": "2026-04-20",
-      "fix": "本文補強: 2989 → 3237文字 タグを自動生成して設定: [91] GSCインデックス登録送信",
-      "post_id": "3615"
-    },
-    {
-      "ts": "2026-04-20",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3683"
-    },
-    {
-      "ts": "2026-04-20",
-      "fix": "本文補強: 2936 → 3384文字 GSCインデックス登録送信",
-      "post_id": "3723"
-    },
-    {
-      "ts": "2026-04-21",
-      "fix": "GSCインデックス登録送信",
-      "post_id": "3831"
-    },
     {
       "ts": "2026-04-21",
       "fix": "アイキャッチaltテキストを自動設定 GSCインデックス登録送信",
@@ -1189,13 +1684,103 @@
       "ts": "2026-04-25",
       "fix": "タグを自動生成して設定: [91] サムネイル再生成・差し替え: 4308 → 4310 GSCインデックス登録送信",
       "post_id": "4304"
+    },
+    {
+      "ts": "2026-04-30",
+      "fix": "タグを自動生成して設定: [91]",
+      "post_id": "6058"
+    },
+    {
+      "ts": "2026-04-30",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "6065"
+    },
+    {
+      "key": "crontab_sync_drift",
+      "count": 68,
+      "last_seen": "2026-04-29",
+      "example": "4/25のcrontab刷新でcrontab.txtの旧エントリ68本がライブcrontabから脱落。監査レポート/GA4/KPI/フィードバック/競合監視等が4日間停止",
+      "fix": "脱落ジョブ22本(監査5+GSC2+運用15)をライブcrontabに復旧。crontab.txtをライブcrontabから再生成(2026-04-29)",
+      "prevention": "crontab変更時は必ずcrontab -l > crontab.txtで同期。pipeline_health_monitorでcrontab.txt vs live差分を検出するチェックを追加",
+      "agent": "operations",
+      "resolved_at": "2026-04-25",
+      "resolution": "crontab -l > crontab.txt 同期ルール確立。feedback_crontab_sync_mandatoryで再発防止"
+    },
+    {
+      "key": "audit_fixer_infinite_rewrite",
+      "count": 77,
+      "last_seen": "2026-04-29",
+      "example": "ID 4299(IU記事)が12回リライトされても content_short が解消しない。344回のGPT呼び出しのうち258回が重複リライト",
+      "fix": "1. _load_already_fixed()で3回以上リライト済みをスキップ 2. content_shortをGPT_REWRITE_TYPESから除外 3. 新しい記事を優先するソート 4. max_fixes=15→30に引き上げ",
+      "agent": "audit_fixer_universal",
+      "resolved_at": "2026-04-30",
+      "resolution": "MAX_REWRITE_ATTEMPTS=3の永続スキップリスト導入 + content_shortをGPTリライト対象から除外"
+    },
+    {
+      "key": "gradient_thumbnail_leak",
+      "count": 3,
+      "last_seen": "2026-04-23",
+      "example": "3/8記事でサムネがグラデーション画像(7KB未満)のまま公開。OPENAI_API_KEY未設定",
+      "fix": "post_publish_enricher.pyにサムネサイズ検証追加。根本対策: API key設定がPhase10で必要",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-30",
+      "resolution": "OPENAI_API_KEY設定済み確認。DALL-E利用可能"
+    },
+    {
+      "key": "x_post_silent_failure",
+      "count": 13,
+      "last_seen": "2026-04-29",
+      "example": "X投稿がcredential期限切れで失敗するが記事は公開済。x_retry_queueに入るがretry処理が未実装",
+      "fix": "x_retry_queue.jsonに13件登録。retry処理の実装は別タスクで対応予定",
+      "agent": "unified_publisher",
+      "resolved_at": "2026-04-30",
+      "resolution": "X credential復活確認(4/30 09:07成功)。x_retry_processor.pyをcron登録し11件のbacklog消化開始"
+    },
+    {
+      "ts": "2026-04-30",
+      "fix": "タグを自動生成して設定: [91] GSCインデックス登録送信",
+      "post_id": "6119"
+    },
+    {
+      "ts": "2026-04-30",
+      "fix": "サムネイル再生成・差し替え: 6129 → 6131 GSCインデックス登録送信",
+      "post_id": "6125"
+    },
+    {
+      "pattern": "no_gsc_indexing_false_positive",
+      "cause": "監査エンジンが間違ったログファイルを参照",
+      "fix": "data/gsc_indexing_log.jsonlに修正",
+      "added": "2026-05-01"
+    },
+    {
+      "pattern": "x_missing_no_post_id",
+      "cause": "x_posts.jsonlにpost_id未記録でURL照合不安定",
+      "fix": "x_poster.pyにpost_id引数+ログ記録追加",
+      "added": "2026-05-01"
+    },
+    {
+      "pattern": "unclosed_p_regex_incomplete",
+      "cause": "text_sanitizer.pyのp検出regexが不完全",
+      "fix": "regex修正: <p(?:\\s[^>]*)?>",
+      "added": "2026-05-01"
+    },
+    {
+      "pattern": "factcheck_429_no_retry",
+      "cause": "llm_proofreader.pyにリトライなし",
+      "fix": "指数バックオフ3回リトライ追加",
+      "added": "2026-05-01"
+    },
+    {
+      "ts": "2026-05-01",
+      "fix": "サムネイル再生成・差し替え: 6192 → 6193 GSCインデックス登録送信",
+      "post_id": "6185"
     }
   ],
   "agent_failure_counts": {
     "mewtwo": 1,
     "pipeline": 7,
     "make_thumbnail": 1,
-    "persian": 15
+    "persian": 16
   },
   "phase4_monitors": {
     "trend_predictor_no_signal": {
@@ -1221,6 +1806,180 @@
       "description": "月次API予算を超過（$MONTHLY_API_BUDGET環境変数）",
       "fix": "パイプライン実行頻度の削減。model_tier.jsonでHaiku活用。safety_config.jsonのtoken_budget_exceeded確認",
       "agent": "cost_optimizer"
+    },
+    "robots_txt_soft_404": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "robots.txtがNext.jsの[slug]キャッチオールに捕捉され、HTML 404+noindexを返していた。Googleがrobots.txtディレクティブを読めない状態",
+      "root_cause": "Next.jsフロントエンドのpublic/にrobots.txtが存在せず、catch-allルートがWP APIにslug問い合わせ→notFound()→HTML 404",
+      "fix": "public/robots.txtを作成。新しい静的ファイル（ads.txt等）追加時は必ずpublic/に配置し、[slug]に落ちないことを確認する",
+      "agent": "infrastructure",
+      "resolved_at": "2026-04-29"
+    },
+    "sitemap_sub_soft_404": {
+      "count": 2,
+      "last_seen": "2026-04-29",
+      "example": "post_tag-sitemap.xml, category-sitemap.xmlがNext.jsに横取りされHTML 404。AIOSEOのsitemap indexが壊れたサブマップを参照",
+      "root_cause": "nginxがAIOSEO生成の*-sitemap.xmlをWordPressにプロキシせず、Next.jsのcatch-allに流していた",
+      "fix": "nginx設定にAIOSEOサイトマップ用location正規表現を追加しWordPressへ直接プロキシ。加えてAIOSEOのsitemap taxonomies設定からpost_tagを除外（タグはNext.jsでホームにリダイレクト済み）",
+      "agent": "infrastructure",
+      "resolved_at": "2026-04-29"
+    },
+    "empty_category_indexed": {
+      "count": 7,
+      "last_seen": "2026-04-29",
+      "example": "count=0のカテゴリ（3つの真実, I DO, 長寿5条件等）がnoindexなしでHTTP 200を返し、薄いコンテンツとしてGoogleに露出",
+      "root_cause": "テスト用カテゴリが削除されず公開状態。カテゴリページのgenerateMetadataにcount=0時のnoindex条件がなかった",
+      "fix": "不要カテゴリ3件(138,139,134)をWP APIで削除。空タグ3件(81,144,149)も削除。Next.jsカテゴリページにcount===0時のnoindex設定を追加。新カテゴリ作成時は記事が入るまでnoindexが自動付与される",
+      "agent": "infrastructure",
+      "resolved_at": "2026-04-29"
+    },
+    "auto_generated_slug": {
+      "count": 4,
+      "last_seen": "2026-04-29",
+      "example": "post-4855, post-4858, post-4860, post-4857 がデフォルトスラッグのまま公開。Googleが'URL is unknown to Google'と判定",
+      "root_cause": "feature_article_generatorがunified_publishを経由せず直接WP APIに投稿した際、slugフィールドが空のためWPがpost-NNNNを自動生成",
+      "fix": "4件のスラッグを適切な英語slugに修正。旧URLからの301リダイレクト追加。full_audit_engineにslug_auto_generated検出を追加すべき",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-29"
+    },
+    "trash_accumulation": {
+      "count": 17,
+      "last_seen": "2026-04-29",
+      "example": "テスト投稿(id=1716,1717)、エラー出力をそのまま投稿(id=1747,2600)、ファクト誤り記事(id=2130)等がtrashに蓄積",
+      "root_cause": "自動パイプラインがエラー時に投稿を作成→trashに移動するが、完全削除しない。手動テスト投稿も放置",
+      "fix": "17件完全削除。site_health_check.pyにdraft/trash蓄積検出を追加（毎日6時cron）。パイプラインのエラー投稿はforce=trueで即削除する設計に",
+      "agent": "infrastructure",
+      "resolved_at": "2026-04-29"
+    },
+    "duplicate_article_published": {
+      "count": 2,
+      "last_seen": "2026-04-29",
+      "example": "ファンタジー韓国ドラマ7選(id=5388/5196)、aespaドーム記事(id=2539/2536)が同一タイトルで重複公開",
+      "root_cause": "feature_article_generatorが既存タイトルとの重複チェックなしで記事生成。WPはslugに-2を付加して別記事として登録",
+      "fix": "重複2件削除。site_health_check.pyに重複タイトル検出を追加。unified_publisherに既存タイトル照合を追加すべき",
+      "agent": "pipeline",
+      "resolved_at": "2026-04-29"
+    },
+    "admin_page_public": {
+      "count": 1,
+      "last_seen": "2026-04-29",
+      "example": "kpop-admin-dashboard(id=2596)が公開ステータスで一般アクセス可能",
+      "root_cause": "管理用固定ページがpublishステータスのまま放置",
+      "fix": "privateステータスに変更。内部ページは作成時にprivateを明示する運用",
+      "agent": "infrastructure",
+      "resolved_at": "2026-04-29"
     }
+  },
+  "no_gsc_indexing": {
+    "count": 40,
+    "first_seen": "2026-04-30T17:50:05.969655+09:00",
+    "last_seen": "2026-05-01T10:54:41.158283+09:00",
+    "example_post_ids": [
+      6065,
+      6058,
+      6115,
+      6113,
+      6184
+    ],
+    "prevention": "no_gsc_indexing: パターン分析して共通lib化で再発防止"
+  },
+  "x_missing": {
+    "count": 44,
+    "first_seen": "2026-04-30T17:50:05.972874+09:00",
+    "last_seen": "2026-05-01T10:55:55.529090+09:00",
+    "example_post_ids": [
+      6065,
+      6185,
+      6184,
+      6115,
+      6113
+    ],
+    "prevention": "x_missing: パターン分析して共通lib化で再発防止"
+  },
+  "text_meta_phrase": {
+    "count": 6,
+    "first_seen": "2026-04-30T17:50:07.660701+09:00",
+    "last_seen": "2026-05-01T10:55:03.333186+09:00",
+    "example_post_ids": [
+      6058,
+      6178
+    ],
+    "prevention": "text_meta_phrase: パターン分析して共通lib化で再発防止"
+  },
+  "few_internal_links": {
+    "count": 10,
+    "first_seen": "2026-04-30T17:50:08.710307+09:00",
+    "last_seen": "2026-05-01T10:55:55.520206+09:00",
+    "example_post_ids": [
+      6056,
+      6054,
+      6185,
+      6174,
+      6172
+    ],
+    "prevention": "post_publish_enricher で内部リンク2本以上を保証"
+  },
+  "unclosed_p": {
+    "count": 22,
+    "first_seen": "2026-04-30T17:50:10.379386+09:00",
+    "last_seen": "2026-05-01T10:03:11.580231+09:00",
+    "example_post_ids": [
+      6178,
+      6176,
+      6174,
+      6172,
+      6170
+    ],
+    "prevention": "unclosed_p: パターン分析して共通lib化で再発防止"
+  },
+  "slug_short": {
+    "count": 9,
+    "first_seen": "2026-05-01T01:50:08.320104+09:00",
+    "last_seen": "2026-05-01T10:55:55.523319+09:00",
+    "example_post_ids": [
+      6125
+    ],
+    "prevention": "slug_short: パターン分析して共通lib化で再発防止"
+  },
+  "title_long": {
+    "count": 3,
+    "first_seen": "2026-05-01T10:00:44.645093+09:00",
+    "last_seen": "2026-05-01T10:54:23.118854+09:00",
+    "example_post_ids": [
+      6185
+    ],
+    "prevention": "title_long: パターン分析して共通lib化で再発防止"
+  },
+  "content_short": {
+    "count": 4,
+    "first_seen": "2026-05-01T10:00:59.184987+09:00",
+    "last_seen": "2026-05-01T10:54:41.149202+09:00",
+    "example_post_ids": [
+      6184,
+      6113
+    ],
+    "prevention": "LLM生成時の最低文字数指定を2000字以上に"
+  },
+  "x_post_error": {
+    "count": 12,
+    "first_seen": "2026-05-01T10:01:23.274953+09:00",
+    "last_seen": "2026-05-01T10:55:55.516708+09:00",
+    "example_post_ids": [
+      6178,
+      6176,
+      6174,
+      6172
+    ],
+    "prevention": "x_post_error: パターン分析して共通lib化で再発防止"
+  },
+  "text_repeated_char": {
+    "count": 2,
+    "first_seen": "2026-05-01T10:54:26.357759+09:00",
+    "last_seen": "2026-05-01T10:54:41.152439+09:00",
+    "example_post_ids": [
+      6184
+    ],
+    "prevention": "text_repeated_char: パターン分析して共通lib化で再発防止"
   }
 }

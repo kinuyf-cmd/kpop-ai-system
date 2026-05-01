@@ -64,6 +64,8 @@
 30 7,13,19 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.youtube_show_monitor >> logs/youtube_show_monitor.log 2>&1
 0 7,11,15,19 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.music_show_monitor >> logs/music_show_monitor.log 2>&1
 0 6,12,18 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.tiktok_trend_collector >> logs/tiktok_trend_collector.log 2>&1
+# 公開品質ゲート: 全パイプライン横断で公開記事を自動検証 (2026-05-01追加)
+30 */1 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.publish_quality_gate --hours 2 >> logs/publish_quality_gate.log 2>&1
 0 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.reporter --type morning >> /opt/grant-ops/data/logs/cron_report.log 2>&1 # grant-ops-managed
 0 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_discord --type kpi --log-file /opt/grant-ops/data/logs/cron_discord_notify.log >> /opt/grant-ops/data/logs/cron_discord_notify.log 2>&1 # grant-ops-managed
 0 9 * * 1,4 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_marketing.py >> /opt/grant-ops/data/logs/meeting_marketing.log 2>&1 # grant-ops-managed
