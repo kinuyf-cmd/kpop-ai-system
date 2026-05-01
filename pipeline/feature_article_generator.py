@@ -440,9 +440,28 @@ def post_publish_audit(post_id):
         return True  # 監査自体の失敗では公開を止めない
 
 
-def post_to_wp(title, content, category_id):
+def _detect_artist(title, content=''):
+    """タイトル/本文からアーティスト名を検出"""
+    known = [
+        'BTS', 'BLACKPINK', 'TWICE', 'aespa', 'NewJeans', 'IVE',
+        'LE SSERAFIM', 'Stray Kids', 'SEVENTEEN', 'ENHYPEN', 'NMIXX',
+        'ITZY', 'TXT', 'EXO', '2PM', 'BABYMONSTER', 'RIIZE', 'ILLIT',
+        'NCT', 'Red Velvet', 'BIGBANG', 'SHINee', 'GOT7', 'ASTRO',
+        '(G)I-DLE', 'ATEEZ', 'TREASURE', 'MONSTA X', 'DAY6',
+    ]
+    search = (title + ' ' + content[:300]).lower()
+    for g in known:
+        if g.lower() in search:
+            return g
+    return None
+
+
+def post_to_wp(title, content, category_id, artist=None):
     """unified_publish 経由で投稿 + 公開後監査"""
     from lib.unified_publisher import unified_publish
+    # アーティスト名を自動検出（未指定時）
+    if not artist:
+        artist = _detect_artist(title, content)
     try:
         r = unified_publish(
             raw_title=title,
@@ -450,6 +469,7 @@ def post_to_wp(title, content, category_id):
             kind='feature',
             confidence='high',
             force_category_id=category_id,
+            artist=artist,
         )
         if r and r.get('success'):
             post_id = r.get('post_id')
