@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T13:47:24.187929",
+  "updated_at": "2026-05-01T16:35:30.252063",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1129,6 +1129,14 @@
       "fix": "_upload_mediaにalt_text引数追加。publish_quality_gateで空ALT検出時に自動設定",
       "added_at": "2026-05-01",
       "severity": "medium"
+    },
+    "artist_article_dalle_thumbnail": {
+      "count": 38,
+      "pattern": "アイドル記事のサムネがDALL-E生成画像になる。unified_publisherにartistが渡されず、thumbnail_source_resolverが呼ばれない",
+      "fix": "(1) unified_publisherでタイトルからアーティスト名を自動検出 (2) resolve_featured_image.pyにthumbnail_source_resolver追加 (3) 既存38件を本人画像に差替",
+      "added_at": "2026-05-01",
+      "severity": "high",
+      "root_cause": "unified_publisher L157のif source_url or artist:条件。両方Noneだとサムネ取得をスキップしDALL-Eフォールバックに直行"
     }
   },
   "recurring_errors": [
