@@ -379,8 +379,69 @@ def generate_trend_title(plan):
         return plan['title_hint']
 
 
+def post_publish_audit(post_id):
+    """公開後の必須監査 — BLOCK判定ならdraft化"""
+    import urllib.request as _req
+    try:
+        url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}"
+        req = _req.Request(url, headers={'Authorization': f'Basic {AUTH}'})
+        post = json.loads(_req.urlopen(req, timeout=30).read())
+
+        from lib.full_audit_engine import full_audit
+        issues = full_audit(post, post_type='post')
+        if isinstance(issues, dict):
+            issues = issues.get('issues', [])
+
+        criticals = [i for i in issues if isinstance(i, dict) and i.get('severity') in ('critical', 'high')]
+
+        # サムネイル関連性チェック
+        media_id = post.get('featured_media', 0)
+        if not media_id:
+            criticals.append({'severity': 'critical', 'type': 'no_thumbnail', 'detail': 'サムネイルなし'})
+        else:
+            try:
+                m_url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{media_id}?_fields=alt_text"
+                m_req = _req.Request(m_url, headers={'Authorization': f'Basic {AUTH}'})
+                m_data = json.loads(_req.urlopen(m_req, timeout=15).read())
+                if not m_data.get('alt_text'):
+                    issues.append({'severity': 'medium', 'type': 'empty_alt', 'detail': 'サムネALT空'})
+            except Exception:
+                pass
+
+        # ファクトチェック
+        try:
+            from lib.fact_checker import check_article
+            title_text = post['title']['rendered'] if isinstance(post['title'], dict) else post['title']
+            body_text = re.sub('<[^>]+>', '', post['content']['rendered'] if isinstance(post['content'], dict) else post['content'])[:2000]
+            fc = check_article(title_text, body_text)
+            if isinstance(fc, dict) and fc.get('verdict') == 'BLOCK':
+                criticals.append({'severity': 'critical', 'type': 'fact_check_block', 'detail': str(fc.get('issues', ''))[:100]})
+        except Exception as e:
+            print(f"    fact_check err: {e}")
+
+        if criticals:
+            # BLOCK: draft化
+            try:
+                draft_body = json.dumps({'status': 'draft'}).encode()
+                draft_req = _req.Request(url, data=draft_body, method='POST',
+                    headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
+                _req.urlopen(draft_req, timeout=30)
+                print(f"    ⛔ 監査BLOCK → draft化 (理由: {', '.join(c.get('type','?') for c in criticals)})")
+            except Exception:
+                print(f"    ⛔ 監査BLOCK検知 but draft化失敗")
+            return False
+
+        warn_count = len([i for i in issues if isinstance(i, dict) and i.get('severity') in ('medium', 'low')])
+        print(f"    ✅ 監査PASS (warn={warn_count})")
+        return True
+
+    except Exception as e:
+        print(f"    監査エラー: {e}")
+        return True  # 監査自体の失敗では公開を止めない
+
+
 def post_to_wp(title, content, category_id):
-    """unified_publish 経由で投稿"""
+    """unified_publish 経由で投稿 + 公開後監査"""
     from lib.unified_publisher import unified_publish
     try:
         r = unified_publish(
@@ -391,7 +452,13 @@ def post_to_wp(title, content, category_id):
             force_category_id=category_id,
         )
         if r and r.get('success'):
-            return r.get('post_id')
+            post_id = r.get('post_id')
+            # 公開後の必須監査
+            if post_id:
+                audit_ok = post_publish_audit(post_id)
+                if not audit_ok:
+                    return None  # 監査NGならpost_id返さない(生成失敗扱い)
+            return post_id
         else:
             print(f"  unified_publish fail: {r.get('error', 'unknown') if r else 'None'}")
             return None
