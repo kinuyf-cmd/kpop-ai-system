@@ -164,7 +164,7 @@ def check_content_quality(post, criteria):
     plain = re.sub(r'<[^>]+>', '', content)
 
     if len(plain) < criteria['content_min']:
-        issues.append({'type': 'content_short', 'severity': 'high', 'value': len(plain)})
+        issues.append({'type': 'content_short', 'severity': 'medium', 'value': len(plain)})
 
     jp_chars = len(re.findall(r'[\u3040-\u309F\u30A0-\u30FF\u4e00-\u9fff]', plain))
     if len(plain) > 0 and jp_chars / len(plain) < criteria['jp_ratio_min']:

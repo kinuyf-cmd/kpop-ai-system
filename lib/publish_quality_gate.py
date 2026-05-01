@@ -54,6 +54,10 @@ def check_post(post_id, auto_fix=True):
         _log_result(result)
         return result
 
+    # まとめページ(-matome)はcontent_shortを免除
+    post_slug = post.get('slug', '')
+    is_matome = post_slug.endswith('-matome')
+
     title = post['title']['rendered'] if isinstance(post['title'], dict) else str(post['title'])
     content_html = post['content']['rendered'] if isinstance(post['content'], dict) else str(post['content'])
     content_text = re.sub('<[^>]+>', '', content_html)
@@ -133,6 +137,12 @@ def check_post(post_id, auto_fix=True):
             pass
 
     # ── 判定 ──
+    # まとめページはcontent_short/title_shortを免除
+    if is_matome:
+        result['issues'] = [
+            i for i in result['issues']
+            if not isinstance(i, dict) or i.get('type') not in ('content_short', 'title_short')
+        ]
     criticals = [i for i in result['issues'] if isinstance(i, dict) and i.get('severity') in ('critical', 'high')]
     if criticals:
         result['pass'] = False
