@@ -1,0 +1,367 @@
+{
+  "batch": 3,
+  "processed_at": "2026-05-01",
+  "total_targets": 48,
+  "updated": 38,
+  "skipped": 10,
+  "failed": 0,
+  "rewrites": [
+    {
+      "post_id": 3952,
+      "slug": "newjeans-comeback-2026",
+      "old_title": "NewJeans カムバック 2026——ついに動いた。ミンジなしで戻れるのか",
+      "new_title": "NewJeans 2026年カムバック！ミンジ不在の影響は？",
+      "impressions": 131,
+      "ctr_before": 2.29
+    },
+    {
+      "post_id": 1352,
+      "slug": "incheon-to-seoul-arex-vs-allstop",
+      "old_title": "仁川空港からソウル市内｜AREX直通vs各駅どっちが得？徹底比較ガイド",
+      "new_title": "仁川空港からソウル市内｜AREX直通と各駅はどっちがお得？",
+      "impressions": 121,
+      "ctr_before": 3.31
+    },
+    {
+      "post_id": 1622,
+      "slug": "kpop-events-japan-2025-list",
+      "old_title": "2025年10月日本制覇｜K-POPイベント15公演まとめ 首位続出の衝撃月",
+      "new_title": "2025年10月、日本でのK-POPイベント15公演とは？",
+      "impressions": 111,
+      "ctr_before": 3.6
+    },
+    {
+      "post_id": 1301,
+      "slug": "medicube-age-r-boosterpro-howto",
+      "old_title": "メディキューブAGE-Rブースタープロ正しい使い方徹底ガイド【美顔器マニュアル】",
+      "new_title": "メディキューブAGE-RブースターProの効果的な使い方5選！",
+      "impressions": 107,
+      "ctr_before": 0.93
+    },
+    {
+      "post_id": 661,
+      "slug": "abema-premium-cancel-guide",
+      "old_title": "【完全ガイド】ABEMAプレミアムの解約方法まとめ",
+      "new_title": "ABEMAプレミアム解約のコツ5選！失敗しない方法は？",
+      "impressions": 102,
+      "ctr_before": 0
+    },
+    {
+      "post_id": 1433,
+      "slug": "confidence-man-kr-guide",
+      "old_title": "『コンフィデンスマンKR』完全ガイド｜配信日から吹き替えまで徹底解説",
+      "new_title": "『コンフィデンスマンKR』の配信日と吹き替え情報は？",
+      "impressions": 96,
+      "ctr_before": 1.04
+    },
+    {
+      "post_id": 4209,
+      "slug": "twice-60-2026",
+      "old_title": "ついにTWICEが国立競技場に——60年の聖域が開いた夜",
+      "new_title": "TWICE、国立競技場での歴史的ライブ！何が起こる？",
+      "impressions": 90,
+      "ctr_before": 3.33
+    },
+    {
+      "post_id": 175,
+      "slug": "royal-family-supa3-intro",
+      "old_title": "【スウパ3】ROYAL FAMILY完全紹介｜世界トップレベルの実力を誇るニュージーランド発レジェンドクルーのすべて",
+      "new_title": "【スウパ3】ニュージーランドのレジェンド、ROYAL FAMILYの魅力とは？",
+      "impressions": 89,
+      "ctr_before": 3.37
+    },
+    {
+      "post_id": 1681,
+      "slug": "kpop-events-japan-2025-november",
+      "old_title": "2025年11月｜日本のK-POP関連イベント総まとめ",
+      "new_title": "2025年11月開催！日本のK-POPイベント一覧まとめ",
+      "impressions": 89,
+      "ctr_before": 2.25
+    },
+    {
+      "post_id": 2591,
+      "slug": "babymonster-3rd-choom-15-june-tour-2026",
+      "old_title": "K-POP BABYMONSTERの3rdミニアルバム「CHOOM」完全ガイド｜全15形態・6月ワールドツアー日本公演まとめ",
+      "new_title": "BABYMONSTERの3rdミニアルバム「CHOOM」全15形態と日本ツアー日程は？",
+      "impressions": 87,
+      "ctr_before": 2.3
+    },
+    {
+      "post_id": 563,
+      "slug": "kpop-couple-rumors-2025",
+      "old_title": "【話題沸騰】このK-POPアイドル同士って付き合ってる？仲良しすぎる噂の組み合わせ8選",
+      "new_title": "K-POPアイドルの噂の恋愛関係8選とは？",
+      "impressions": 84,
+      "ctr_before": 1.19
+    },
+    {
+      "post_id": 4952,
+      "slug": "bts-arirang-tour-tampa-60000",
+      "old_title": "BTS ワールドツアー「ARIRANG」タンパ開幕 6万人熱狂",
+      "new_title": "BTSワールドツアー「ARIRANG」タンパで6万人が熱狂！何が起こった？",
+      "impressions": 70,
+      "ctr_before": 2.86
+    },
+    {
+      "post_id": 1083,
+      "slug": "nct-wish-color-album-2025",
+      "old_title": "NCT WISH新作『COLOR』徹底解説｜収録曲・イベント情報まとめ",
+      "new_title": "NCT WISH新作『COLOR』の全貌！収録曲＆イベントは？",
+      "impressions": 66,
+      "ctr_before": 1.52
+    },
+    {
+      "post_id": 318,
+      "slug": "momoland-reunion-future",
+      "old_title": "【2025年最新】MOMOLAND完全復活！再契約から未来まで徹底解説",
+      "new_title": "MOMOLAND再契約！2025年の新展開とは？",
+      "impressions": 63,
+      "ctr_before": 4.76
+    },
+    {
+      "post_id": 1594,
+      "slug": "seventeen-pilgrimage-guide",
+      "old_title": "SEVENTEENファン必見！聖地スポットと現地巡りプラン",
+      "new_title": "SEVENTEEN聖地巡り！見逃せないスポット5選",
+      "impressions": 63,
+      "ctr_before": 3.17
+    },
+    {
+      "post_id": 3180,
+      "slug": "kpop-20-bigbang-5-2026",
+      "old_title": "20年目で初コーチェラ──BIGBANGが「第5世代時代」に呼ばれた異常な理由",
+      "new_title": "BIGBANGが初コーチェラ！何が「第5世代」を呼んだのか？",
+      "impressions": 62,
+      "ctr_before": 4.84
+    },
+    {
+      "post_id": 3615,
+      "slug": "kpop-10-dle-kpop-3-2026",
+      "old_title": "アジア完売→北米だけ全10公演消滅――(G)I-DLE「説明なし」中止が暴くK-POP興行3つの死角",
+      "new_title": "北米公演消滅！(G)I-DLEが示すK-POPの危機とは？",
+      "impressions": 54,
+      "ctr_before": 1.85
+    },
+    {
+      "post_id": 888,
+      "slug": "cortis-members-profile-2025",
+      "old_title": "CORTISメンバー徹底解剖｜BTS・TXTの弟分グループを完全紹介",
+      "new_title": "CORTISメンバーは誰？BTS・TXTの弟分グループの魅力とは",
+      "impressions": 53,
+      "ctr_before": 1.89
+    },
+    {
+      "post_id": 1086,
+      "slug": "treasure-pulse-on-seoul-2025",
+      "old_title": "TREASUREソウル公演一般発売開始｜PULSE ONツアー徹底解説",
+      "new_title": "TREASUREソウル公演のチケットはいつゲット？PULSE ONツアー情報！",
+      "impressions": 50,
+      "ctr_before": 4.0
+    },
+    {
+      "post_id": 2850,
+      "slug": "bts-popular-songs-2026",
+      "old_title": "BTS人気曲ランキングTOP15完全版2026｜Dynamite・Butter・ARIRANGまでBillboard実績と共に解説",
+      "new_title": "BTS人気曲15選！DynamiteからARIRANGまでの実績とは？",
+      "impressions": 50,
+      "ctr_before": 2.0
+    },
+    {
+      "post_id": 3899,
+      "slug": "kpop-seventeen-10-13-3-2026",
+      "old_title": "なぜSEVENTEENだけ10年で脱退ゼロ？13人を繋ぎ止める3つの異常な仕組み",
+      "new_title": "SEVENTEEN脱退ゼロの秘密は？13人を繋ぐ3つの仕組みとは",
+      "impressions": 48,
+      "ctr_before": 2.08
+    },
+    {
+      "post_id": 462,
+      "slug": "blackpink-mlb-dodgers-collab",
+      "old_title": "BLACKPINK×MLB公式コラボ解禁！ドジャース15形態を完全解剖",
+      "new_title": "BLACKPINKとMLBコラボ！ドジャース15種類の魅力とは？",
+      "impressions": 42,
+      "ctr_before": 2.38
+    },
+    {
+      "post_id": 308,
+      "slug": "xg-performance-analysis-dance-rap",
+      "old_title": "【XG特集②】なぜXGのパフォーマンスは「異次元」なのか？",
+      "new_title": "XGのパフォーマンスが「異次元」と言われる理由とは？",
+      "impressions": 41,
+      "ctr_before": 4.88
+    },
+    {
+      "post_id": 3251,
+      "slug": "bts-jin-comeback-solo-reunion-2026",
+      "old_title": "BTS ジン完全復活2026｜除隊後の活動・ソロ曲・グループ復帰スケジュールまとめ",
+      "new_title": "BTSジン2026年復帰！ソロとグループ活動の全貌とは？",
+      "impressions": 41,
+      "ctr_before": 2.44
+    },
+    {
+      "post_id": 692,
+      "slug": "lovebob-popup-report-2025",
+      "old_title": "【現地レポ】ラブブPOPUPに行ってきた！2025年限定グッズ・雰囲気・待ち時間すべて公開",
+      "new_title": "2025年限定グッズは何？ラブブPOPUPレポート！",
+      "impressions": 40,
+      "ctr_before": 2.5
+    },
+    {
+      "post_id": 3237,
+      "slug": "bts-group-reunion-2026-outlook",
+      "old_title": "BTS完全復活へ ── 2026年グループ活動再開の全容と今後の展望まとめ",
+      "new_title": "BTSは2026年にどう変わる？活動再開の全貌と未来展望",
+      "impressions": 38,
+      "ctr_before": 2.63
+    },
+    {
+      "post_id": 3291,
+      "slug": "cross-generation-live-2026-guide",
+      "old_title": "【完全ガイド】CROSS GENERATION LIVE 2026｜CxM・岩橋玄樹・NOA出演、Kアリーナ横浜2daysの全情報",
+      "new_title": "CROSS GENERATION LIVE 2026｜2日間の全貌と出演者情報まとめ",
+      "impressions": 38,
+      "ctr_before": 2.63
+    },
+    {
+      "post_id": 5247,
+      "slug": "illit-wonhi-seikei-guyaku",
+      "old_title": "【速報】ILLITのウォンヒが整形疑惑に言及",
+      "new_title": "ILLITウォンヒ、整形疑惑の真相は？ファン必見の発言！",
+      "impressions": 35,
+      "ctr_before": 2.86
+    },
+    {
+      "post_id": 2856,
+      "slug": "blackpink-2026-future-outlook",
+      "old_title": "BLACKPINK 2026年完全予測｜カムバック・契約更新・4人ツアーの全展開を先読み",
+      "new_title": "BLACKPINK 2026年の全展望｜ツアー・契約更新の最新情報とは？",
+      "impressions": 33,
+      "ctr_before": 3.03
+    },
+    {
+      "post_id": 2847,
+      "slug": "bts-members-guide-2026",
+      "old_title": "BTS 7人メンバー完全ガイド2026｜RM・Jinから最年少Jung Kookまで経歴・担当パート・最新活動",
+      "new_title": "BTSメンバー7人の魅力｜経歴・担当・最新活動を一挙紹介！",
+      "impressions": 32,
+      "ctr_before": 3.12
+    },
+    {
+      "post_id": 750,
+      "slug": "twice-jihyo-carb-diet",
+      "old_title": "TWICEジヒョも実践？炭水化物を抜かないダイエット法",
+      "new_title": "TWICEジヒョが実践！炭水化物ダイエットの秘密とは？",
+      "impressions": 31,
+      "ctr_before": 3.23
+    },
+    {
+      "post_id": 745,
+      "slug": "kpop-haircare-bleach-safe",
+      "old_title": "カラー・ブリーチしてもOK！K‑POPアイドルの髪が傷まない秘訣",
+      "new_title": "K-POPアイドル髪ケア法！ブリーチしても傷まない理由は？",
+      "impressions": 29,
+      "ctr_before": 3.45
+    },
+    {
+      "post_id": 1109,
+      "slug": "daesung-umbrella-release-2025",
+      "old_title": "テソン(D-LITE)、新曲『Umbrella』徹底解説｜歌詞の意味とアジアツアーへの想い",
+      "new_title": "テソンの新曲『Umbrella』とは？歌詞とアジアツアーの想いを探る",
+      "impressions": 28,
+      "ctr_before": 3.57
+    },
+    {
+      "post_id": 742,
+      "slug": "labubu-trading-guide",
+      "old_title": "【沼の入口】ラブブってどこから集めるべき？初心者ガイド",
+      "new_title": "ラブブコレクション入門！どこから始める？",
+      "impressions": 28,
+      "ctr_before": 3.57
+    },
+    {
+      "post_id": 3345,
+      "slug": "kpop-4-fanomenon-19-5-2026",
+      "old_title": "なぜ“絶対組まない”4社が動いた？FANOMENON誕生の裏に「売上19.5%減」の衝撃",
+      "new_title": "4社の奇跡の連携！FANOMENON誕生と19.5%減の真相とは？",
+      "impressions": 27,
+      "ctr_before": 3.7
+    },
+    {
+      "post_id": 2295,
+      "slug": "hearts2hearts-1-op-9-sm-gg-2026",
+      "old_title": "K-POP Hearts2Heartsとは？デビュー1年でアニメOP・新人賞9冠・1億再生を達成したSM最新GG完全ガイド【2026年】",
+      "new_title": "K-POP Hearts2Heartsの実績とは？デビュー1年で9冠達成！",
+      "impressions": 24,
+      "ctr_before": 4.17
+    },
+    {
+      "post_id": 1298,
+      "slug": "medicube-age-r-boosterpro-review",
+      "old_title": "メディキューブAGE-Rブースタープロ効果・口コミ・使い方徹底解説【美顔器レビュー】",
+      "new_title": "メディキューブAGE-Rブースターの効果は？口コミ＆使い方まとめ",
+      "impressions": 24,
+      "ctr_before": 4.17
+    },
+    {
+      "post_id": 2111,
+      "slug": "2026-pop-20260409",
+      "old_title": "2026年春ソウル最新版！K-POPファン必見のカフェ・ポップアップ・聖地巡礼完全ガイド",
+      "new_title": "2026年春ソウル！K-POPファン必見のカフェと聖地は？",
+      "impressions": 10,
+      "ctr_before": 0
+    }
+  ],
+  "skipped_details": [
+    {
+      "index": 33,
+      "slug": "bts-aespa-worn-brands-kpop-fashion-trends-spring-2",
+      "reason": "not_found"
+    },
+    {
+      "index": 36,
+      "slug": "#rtoc-1",
+      "reason": "filter"
+    },
+    {
+      "index": 42,
+      "slug": "advertise",
+      "reason": "filter"
+    },
+    {
+      "index": 46,
+      "slug": "newjeans%E3%81%AEmv%E3%83%BB%E6%B4%BB%E5%8B%95%E3%",
+      "reason": "not_found"
+    },
+    {
+      "index": 54,
+      "slug": "twice-sana-7-skin-method-glass-skin-korean-idol-co",
+      "reason": "not_found"
+    },
+    {
+      "index": 59,
+      "slug": "k-pop%E9%9F%B3%E6%A5%BD%E7%95%AA%E7%B5%84%E3%82%92",
+      "reason": "not_found"
+    },
+    {
+      "index": 63,
+      "slug": "aespa%E3%81%AE%E3%82%B3%E3%83%B3%E3%82%B5%E3%83%BC",
+      "reason": "not_found"
+    },
+    {
+      "index": 65,
+      "slug": "about",
+      "reason": "filter"
+    },
+    {
+      "index": 66,
+      "slug": "music-bank%EF%BC%88%EB%AE%A4%EC%A7%81%EB%B1%85%ED%",
+      "reason": "not_found"
+    },
+    {
+      "index": 69,
+      "slug": "inkigayo%EF%BC%88%E4%BA%BA%E6%B0%97%E6%AD%8C%E8%AC",
+      "reason": "not_found"
+    }
+  ],
+  "failed_details": []
+}

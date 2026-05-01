@@ -314,11 +314,34 @@ else: print('default')
   TWEET_TEXT=$(python3 "$_SCRIPT_DIR/lib/x_post_templates.py" "$TITLE" "$POST_URL" --category-id "$_AUTO_CAT" 2>/dev/null || echo "")
 fi
 
-# フォールバック
+# フォールバック（ランダムテンプレートでduplicate content回避）
 if [ -z "$TWEET_TEXT" ] || [ ${#TWEET_TEXT} -lt 20 ]; then
-  TWEET_TEXT="${TITLE}
+  TWEET_TEXT=$(python3 -c "
+import random, sys, time
+title = sys.argv[1]
+url = sys.argv[2] if len(sys.argv) > 2 else ''
+
+hashtag_pool = ['#KPOP', '#韓国', '#推し活', '#K-POP速報', '#韓国芸能', '#K-POP好き']
+random.shuffle(hashtag_pool)
+tags = ' '.join(hashtag_pool[:2])
+
+# タイトルから短いフレーズを引用
+title_short = title[:15] + '…' if len(title) > 15 else title
+
+hooks = [
+    f'{title_short}\n{tags}',
+    f'注目…{title_short}\n{tags}',
+    f'話題…{title_short}\n{tags}',
+    f'必見…{title_short}\n{tags}',
+    f'速報…{title_short}\n{tags}',
+]
+chosen = random.choice(hooks)
+if url:
+    chosen += f'\n{url}'
+print(chosen)
+" "$TITLE" "$POST_URL" 2>/dev/null || echo "${TITLE}
 #KPOP #韓国
-${POST_URL}"
+${POST_URL}")
 fi
 
 # CTOハック: URLペナルティ回避 — フック本文にURLを含めない

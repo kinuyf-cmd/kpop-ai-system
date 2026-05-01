@@ -23,8 +23,10 @@ Output: 完成したツイートテキスト（そのまま投稿可能）
 """
 import argparse
 import hashlib
+import random
 import re
 import sys
+import time
 
 # --- アーティスト名抽出用パターン ---
 KNOWN_ARTISTS = [
@@ -72,6 +74,10 @@ HOOKS = {
         "速報、誰も予想しなかった",
         "ファン騒然…{artist}の真相",
         "{artist}来日、{number}都市で開催",
+        "衝撃…{artist}の決断とは",
+        "{artist}に重大発表あり",
+        "まさかの展開…{artist}速報",
+        "緊急…{artist}の新情報",
     ],
     # ── 分析/解説 ─────────────────────────────────────────────────────────
     # カバー範囲: 考察・比較ランキング・歴史・業界解説・なぜ系
@@ -83,6 +89,11 @@ HOOKS = {
         "K-POPの裏側、暴露された",
         "この数字の意味、分かる？",
         "{artist}の変化、気づいてた？",
+        "判明…{artist}の本当の実力",
+        "なぜ{artist}だけ違うのか",
+        "{artist}の秘密、解禁された",
+        "歴史的快挙…その裏側とは",
+        "驚愕の事実…知ってた？",
     ],
     # ── 美容/ノウハウ ──────────────────────────────────────────────────────
     # カバー範囲: スキンケア・コスメ・ダイエット・ヘアケア・ファッション
@@ -94,6 +105,11 @@ HOOKS = {
         "このコーデ、真似できる？",
         "K-POPアイドルが選んだ方法",
         "知らないと損するケア術",
+        "衝撃…{artist}の美容法とは",
+        "神コスメ、ついに解禁",
+        "韓国で即完売した理由とは",
+        "アイドル愛用コスメが判明",
+        "これ知らないと損する美容法",
     ],
     # ── 旅行/まとめ ────────────────────────────────────────────────────────
     # カバー範囲: ソウル聖地・カフェ・ホテル・推し活ガイド・まとめ記事
@@ -104,6 +120,11 @@ HOOKS = {
         "ソウル、完全変化を速報解禁",
         "現地に行った人しか知らない",
         "この場所、{artist}ファン聖地だった",
+        "穴場スポット、ついに解禁",
+        "推し活聖地、{number}選を解禁",
+        "ガイドブックに載ってない場所",
+        "ファン必見…新スポット判明",
+        "行った人だけ知ってる場所",
     ],
     # ── デフォルト（後方互換・旧ジャンル名） ──────────────────────────────
     "default": [
@@ -112,14 +133,26 @@ HOOKS = {
         "{artist}の真相、判明した",
         "速報…{artist}に何かが起きた",
         "{artist}ファン、これ知ってた？",
+        "衝撃…{artist}の最新動向",
+        "まさか…{artist}の新事実",
+        "判明…{artist}の本当の姿",
+        "ファン必見…{artist}速報",
+        "{artist}に驚きの展開が",
+        "K-POPファン騒然の真相",
     ],
     # 旧ジャンル名エイリアス（後方互換）
-    "breaking":    ["速報…{artist}が動いた", "{artist}から緊急発表", "K-POPに衝撃が走った"],
-    "comeback":    ["{artist}がついに動いた", "{artist}の新章が始まる"],
-    "controversy": ["ファン騒然…{artist}の真相", "{artist}に何が起きたのか"],
-    "live":        ["{artist}来日、{number}都市で開催", "チケット争奪戦が始まる"],
-    "chart":       ["{artist}が{number}冠の衝撃", "記録更新…何が起きた？"],
-    "fashion":     ["{artist}の私服が完全判明", "このコーデ、真似できる？"],
+    "breaking":    ["速報…{artist}が動いた", "{artist}から緊急発表", "K-POPに衝撃が走った",
+                    "衝撃…{artist}の決断とは", "まさかの速報が入った"],
+    "comeback":    ["{artist}がついに動いた", "{artist}の新章が始まる",
+                    "ついに解禁…{artist}復活", "{artist}カムバック速報"],
+    "controversy": ["ファン騒然…{artist}の真相", "{artist}に何が起きたのか",
+                    "衝撃…{artist}の真実とは", "まさかの展開…{artist}"],
+    "live":        ["{artist}来日、{number}都市で開催", "チケット争奪戦が始まる",
+                    "{artist}ライブ、衝撃の演出", "伝説のステージが判明"],
+    "chart":       ["{artist}が{number}冠の衝撃", "記録更新…何が起きた？",
+                    "チャート制覇…その裏側とは", "歴史的記録、ついに判明"],
+    "fashion":     ["{artist}の私服が完全判明", "このコーデ、真似できる？",
+                    "即完売…{artist}着用アイテム", "衝撃のファッション解禁"],
 }
 
 # ─── コメントトリガー (v13.0 — 4ジャンル対応) ──────────────────────────────
@@ -145,6 +178,9 @@ COMMENT_TRIGGERS = {
         "みんなはどう思う？私はアリだと思うけど…",
         "これ、どう思う？賛否あると思う",
         "あなたはどっち派？",
+        "正直どう思った？教えて",
+        "ファンの意見聞きたい…どう思う？",
+        "あなたの推しならどうする？",
     ],
     "感動系": [
         "泣いた人いない？リプ欄に『😭』置いてって",
@@ -152,11 +188,15 @@ COMMENT_TRIGGERS = {
         "これ見て涙止まらなかった…どう思う？",
         "あなたも同じ気持ちだった？",
         "これ、みんなはどう感じた？",
+        "共感した人いたらRT",
     ],
     "記録系": [
         "これ超えられるグループ、他にある？",
         "この記録、どこまで続くと思う？",
         "歴史的瞬間だと思う人、どう思う？👇",
+        "この数字、正直どう思う？",
+        "次はどこまでいくと思う？教えて",
+        "この記録を超えるのは誰だと思う？",
     ],
 }
 
@@ -171,6 +211,10 @@ EMOTION_LINES = {
         "真相はまだ明かされていない",
         "ファンの反応が二極化している",
         "その勢いはまだ止まっていない",
+        "SNSでは騒然となっている",
+        "この速報、まだ知らない人が多い",
+        "事態は予想以上に動いている",
+        "世界中のファンが注目している",
     ],
     # ── 分析/解説: 知的好奇心・「実は知らなかった」 ─────────────────────────
     "analysis": [
@@ -180,6 +224,10 @@ EMOTION_LINES = {
         "見落としていた人も多いはずだ",
         "ファンの間でひそかに話題になっている",
         "知っているようで知らない事実がある",
+        "データが語る真実は意外だった",
+        "比較してみると驚きの結果になった",
+        "この視点、意外と盲点だった",
+        "冷静に見ると異常な数字だ",
     ],
     # ── 美容/ノウハウ: 「自分もできる」「やってみたい」 ─────────────────────
     "beauty": [
@@ -189,6 +237,10 @@ EMOTION_LINES = {
         "入手困難なアイテムに秘密がある",
         "センスの差がここに出る",
         "知っているようで知らない美容法がある",
+        "韓国では常識だという美容法がある",
+        "これ、もっと早く知りたかった",
+        "プロが教える方法は違った",
+        "実はコスパ最強だったアイテムがある",
     ],
     # ── 旅行/まとめ: 「行きたい」「知らなかった」 ──────────────────────────
     "travel": [
@@ -197,6 +249,10 @@ EMOTION_LINES = {
         "K-POPファンが選ぶ理由がある",
         "この場所、ガイドブックには載っていない",
         "推し活ファンの間でひそかに話題だ",
+        "SNSで話題沸騰中のスポットがある",
+        "行った人の満足度が異常に高い",
+        "この場所、まだ穴場だった",
+        "ファンが集まる理由がわかった",
     ],
     # 後方互換
     "breaking":    [
@@ -233,6 +289,10 @@ EMOTION_LINES = {
         "その事実を知る人は少ない",
         "ファンの間でひそかに話題になっている",
         "見落としていた人も多いはずだ",
+        "この情報、まだ知らない人が多い",
+        "SNSで一気に拡散されている",
+        "真相を知ったファンが驚いている",
+        "予想外の展開に注目が集まっている",
     ],
 }
 
@@ -355,20 +415,29 @@ def extract_number(title: str) -> str:
     return "新"
 
 
+def _random_idx(items_len: int, title: str = "") -> int:
+    """タイムスタンプベースのランダムインデックスを返す。
+    同じタイトルでも呼び出し時刻が違えば異なるインデックスになる。
+    """
+    # time.time_ns() でナノ秒精度のエントロピーを混ぜる
+    seed = int(time.time_ns()) ^ hash(title) ^ random.randint(0, 2**32)
+    return seed % items_len
+
+
 def select_hook(genre: str, title: str, artist: str) -> str:
-    """ジャンルに基づいてフックを選択し、プレースホルダを埋める"""
+    """ジャンルに基づいてフックをランダム選択し、プレースホルダを埋める"""
     hooks = HOOKS.get(genre, HOOKS["default"])
     # アーティスト名が有効な場合は {artist} を含むフックを優先選択
     if artist and artist not in ("K-POP", "K-POPアイドル"):
         artist_hooks = [h for h in hooks if "{artist}" in h]
         if artist_hooks:
-            idx = int(hashlib.md5(title.encode()).hexdigest(), 16) % len(artist_hooks)
+            idx = _random_idx(len(artist_hooks), title)
             hook = artist_hooks[idx]
         else:
-            idx = int(hashlib.md5(title.encode()).hexdigest(), 16) % len(hooks)
+            idx = _random_idx(len(hooks), title)
             hook = hooks[idx]
     else:
-        idx = int(hashlib.md5(title.encode()).hexdigest(), 16) % len(hooks)
+        idx = _random_idx(len(hooks), title)
         hook = hooks[idx]
 
     event = extract_event(title)
@@ -390,24 +459,29 @@ def select_hook(genre: str, title: str, artist: str) -> str:
     return hook
 
 
-def build_emotion_line(genre: str, title: str, idx: int) -> str:
-    """v12.0 §3: 感情行（2行目）— 未完結・答えを書かない"""
+def build_emotion_line(genre: str, title: str, idx: int = 0) -> str:
+    """v12.0 §3: 感情行（2行目）— 未完結・答えを書かない
+    ランダム選択で毎回異なる感情行を生成する。
+    """
     lines = EMOTION_LINES.get(genre, EMOTION_LINES["default"])
-    return lines[idx % len(lines)]
+    return lines[_random_idx(len(lines), title)]
 
 
-def build_comment_trigger(genre: str, idx: int) -> str:
+def build_comment_trigger(genre: str, idx: int = 0) -> str:
     """v12.0 §5 + CTO: 動的コメントトリガー
-    論争系・感動系・記録系 の3タイプからジャンルに応じて選択
+    論争系・感動系・記録系 の3タイプからジャンルに応じてランダム選択
     """
     trigger_type = COMMENT_TRIGGER_TYPE.get(genre, "論争系")
     triggers = COMMENT_TRIGGERS[trigger_type]
-    return triggers[idx % len(triggers)]
+    return triggers[_random_idx(len(triggers))]
 
 
 def build_hashtags(artist: str, genre: str) -> str:
-    """ハッシュタグを生成する（2-3個）"""
-    tags = ["#KPOP"]
+    """ハッシュタグを生成する（2-3個、ランダム選択で毎回バリエーション）"""
+    # ベースタグプール（ここからランダムに1つ選ぶ）
+    base_pool = ["#KPOP", "#K-POP速報", "#韓国", "#推し活", "#KPOP好きと繋がりたい"]
+    base_tag = base_pool[_random_idx(len(base_pool))]
+    tags = [base_tag]
 
     # アーティスト名ハッシュタグ
     artist_tag = artist.replace(" ", "")
@@ -419,24 +493,32 @@ def build_hashtags(artist: str, genre: str) -> str:
             and not re.search(r'^\d{4}年', artist_tag)):
         tags.append(f"#{artist_tag}")
 
-    # ジャンル別追加タグ
-    genre_tags = {
-        "breaking": "#速報",
-        "comeback": "#カムバック",
-        "controversy": "#韓国芸能",
-        "beauty": "#韓国コスメ",
-        "live": "#コンサート",
-        "chart": "#チャート",
-        "default": "#韓国",
+    # ジャンル別追加タグプール（複数候補からランダム選択）
+    genre_tag_pools = {
+        "news":        ["#速報", "#韓国芸能", "#K-POPニュース", "#芸能ニュース"],
+        "breaking":    ["#速報", "#緊急速報", "#K-POP速報", "#芸能ニュース"],
+        "comeback":    ["#カムバック", "#新曲", "#MV", "#K-POP新曲"],
+        "controversy": ["#韓国芸能", "#芸能ニュース", "#K-POP", "#話題"],
+        "beauty":      ["#韓国コスメ", "#美容", "#スキンケア", "#コスメ好き"],
+        "travel":      ["#韓国旅行", "#ソウル", "#推し活旅行", "#聖地巡礼"],
+        "live":        ["#コンサート", "#ライブ", "#来日公演", "#チケット"],
+        "chart":       ["#チャート", "#1位", "#記録更新", "#K-POPチャート"],
+        "analysis":    ["#考察", "#K-POP解説", "#韓国芸能", "#分析"],
+        "fashion":     ["#韓国ファッション", "#コーデ", "#私服", "#ファッション"],
+        "default":     ["#韓国", "#推し活", "#K-POP好き", "#韓国エンタメ"],
     }
-    extra = genre_tags.get(genre, "#韓国")
-    if len(tags) < 3 and extra not in tags:
+    pool = genre_tag_pools.get(genre, genre_tag_pools["default"])
+    # poolからランダムに1つ選ぶ（baseと重複しないもの）
+    available = [t for t in pool if t not in tags]
+    if available:
+        extra = available[_random_idx(len(available))]
         tags.append(extra)
+
     # 重複除去しつつ順序を維持
     seen = set()
     tags = [t for t in tags if not (t in seen or seen.add(t))]
 
-    return " ".join(tags)
+    return " ".join(tags[:3])
 
 
 def fragment_title(title: str, artist: str) -> str:
@@ -468,6 +550,37 @@ def fragment_title(title: str, artist: str) -> str:
     return title
 
 
+def extract_title_fragment(title: str, artist: str) -> str:
+    """タイトルからキーワード断片を抽出して引用テキストを生成する。
+    毎回異なる引用フレーズを作ることで duplicate content を回避する。
+    """
+    # タイトルから括弧・アーティスト名を除去して本体を取る
+    clean = re.sub(r'【[^】]*】|（[^）]*）|\([^)]*\)', '', title).strip()
+    clean = clean.replace(artist, '').strip() if artist else clean
+
+    # タイトルからキーワードを抽出（助詞で分割）
+    parts = re.split(r'[のがはをにでと、。！？!?\s]+', clean)
+    keywords = [p for p in parts if len(p) >= 2 and not p.isdigit()]
+
+    if not keywords:
+        return ""
+
+    # ランダムに1個選んで引用風テキストにする
+    kw = random.choice(keywords)
+    if len(kw) > 12:
+        kw = kw[:12]
+    fragment_patterns = [
+        '「{kw}」の真相とは…',
+        '"{kw}"が話題に…',
+        '「{kw}」に注目が集まる…',
+        '"{kw}"その裏側…',
+        '「{kw}」がファンの間で…',
+        '"{kw}"の意味、知ってる？',
+    ]
+    pattern = fragment_patterns[_random_idx(len(fragment_patterns), title)]
+    return pattern.format(kw=kw)
+
+
 def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -> str:
     """完成したツイートテキストを生成する (v12.0 + CTO指示 準拠)
 
@@ -485,7 +598,6 @@ def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -
     include_url=True:  URL付き完全投稿（リプライ挿入用）
     """
     artist = extract_artist(title)
-    idx = int(hashlib.md5(title.encode()).hexdigest(), 16)
 
     # フック生成（20文字以内）
     hook = select_hook(genre, title, artist)
@@ -499,27 +611,49 @@ def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -
             h2 = h.replace("{number}", number).replace("{event}", event)
             if len(h2) <= 20:
                 alt_hooks.append(h2)
-        hook = alt_hooks[0] if alt_hooks else hook[:19] + "…"
+        hook = alt_hooks[_random_idx(len(alt_hooks), title)] if alt_hooks else hook[:19] + "…"
 
-    # 感情行: 断片化 or 感情ライン
-    emotion = build_emotion_line(genre, title, idx)
+    # 感情行: ランダム選択
+    emotion = build_emotion_line(genre, title)
 
-    # コメントトリガー（動的3タイプ）
-    comment_trigger = build_comment_trigger(genre, idx)
+    # タイトル断片引用（duplicate content回避の要）
+    title_fragment = extract_title_fragment(title, artist)
+
+    # コメントトリガー（動的3タイプ、ランダム選択）
+    comment_trigger = build_comment_trigger(genre)
 
     hashtags = build_hashtags(artist, genre)
 
+    # タイトル断片がある場合は感情行の後に挿入
+    if title_fragment:
+        body = f"{hook}\n{emotion}\n{title_fragment}\n\n{comment_trigger}"
+    else:
+        body = f"{hook}\n{emotion}\n\n{comment_trigger}"
+
     if include_url:
-        tweet = f"{hook}\n{emotion}\n\n{comment_trigger}\n\n{url}\n\n{hashtags}"
+        tweet = f"{body}\n\n{url}\n\n{hashtags}"
     else:
         # CTOハック: URLなし → IMP最大化フック投稿
-        tweet = f"{hook}\n{emotion}\n\n{comment_trigger}\n\n{hashtags}"
+        tweet = f"{body}\n\n{hashtags}"
     return tweet
 
 
 def generate_url_reply(url: str, hashtags: str = "") -> str:
-    """CTOハック §8: IMP条件達成後にリプライとして投稿するURL文"""
-    return f"📖 記事全文はこちら👇\n{url}"
+    """CTOハック §8: IMP条件達成後にリプライとして投稿するURL文
+    毎回異なるリプライ文でduplicate contentを回避する。
+    """
+    reply_templates = [
+        "📖 記事全文はこちら👇\n{url}",
+        "📰 詳しくはこちら👇\n{url}",
+        "🔗 全文はこちらから\n{url}",
+        "📖 続きはこちら👇\n{url}",
+        "📝 記事の詳細はこちら\n{url}",
+        "🔗 気になる人はチェック👇\n{url}",
+        "📖 詳細レポートはこちら\n{url}",
+        "📰 記事の全文はこちらから\n{url}",
+    ]
+    template = reply_templates[_random_idx(len(reply_templates))]
+    return template.format(url=url)
 
 
 def generate_single(title: str, url: str, genre: str,
@@ -608,13 +742,18 @@ def generate_best_scoring_tweet(title: str, url: str, genre: str) -> str:
     best_score = 0.0
 
     hooks_list = HOOKS.get(genre, HOOKS["default"])
+    emotion_lines = EMOTION_LINES.get(genre, EMOTION_LINES["default"])
+    trigger_type = COMMENT_TRIGGER_TYPE.get(genre, "論争系")
+    triggers_list = COMMENT_TRIGGERS[trigger_type]
     for i, raw_hook in enumerate(hooks_list):
         event = extract_event(title)
         number = extract_number(title)
         hook = raw_hook.replace("{artist}", artist).replace("{event}", event).replace("{number}", number)
-        emotion = build_emotion_line(genre, title, i)
-        trigger = build_comment_trigger(genre, i)
-        tweet = f"{hook}\n{emotion}\n\n{trigger}\n\n{url}\n\n{hashtags}"
+        emotion = emotion_lines[i % len(emotion_lines)]
+        trigger = triggers_list[i % len(triggers_list)]
+        title_frag = extract_title_fragment(title, artist)
+        frag_line = f"\n{title_frag}" if title_frag else ""
+        tweet = f"{hook}\n{emotion}{frag_line}\n\n{trigger}\n\n{url}\n\n{hashtags}"
 
         try:
             result = subprocess.run(
@@ -638,9 +777,11 @@ def generate_best_scoring_tweet(title: str, url: str, genre: str) -> str:
         event = extract_event(title)
         number = extract_number(title)
         hook = raw_hook.replace("{artist}", artist).replace("{event}", event).replace("{number}", number)
-        emotion = build_emotion_line(genre, title, 0)
-        trigger = build_comment_trigger(genre, 0)
-        best_text = f"{hook}\n{emotion}\n\n{trigger}\n\n{url}\n\n{hashtags}"
+        emotion = build_emotion_line(genre, title)
+        trigger = build_comment_trigger(genre)
+        title_frag = extract_title_fragment(title, artist)
+        frag_line = f"\n{title_frag}" if title_frag else ""
+        best_text = f"{hook}\n{emotion}{frag_line}\n\n{trigger}\n\n{url}\n\n{hashtags}"
 
     return best_text
 
