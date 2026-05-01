@@ -30,8 +30,8 @@
       "rate_limit_per_15min": 180,
       "collect_interval_minutes": 60,
       "min_engagement_threshold": {
-        "retweet_count": 50,
-        "like_count": 100
+        "retweet_count": 5,
+        "like_count": 10
       },
       "credential_path": "~/.x_credentials",
       "fallback_on_missing_creds": "skip_gracefully"
@@ -59,12 +59,22 @@
         },
         {
           "id": "allkpop",
-          "name": "AllKPop (FeedBurner)",
+          "name": "AllKPop",
           "url": "https://feeds.feedburner.com/allkpop",
           "language": "en",
           "priority": "high",
           "category_filter": null,
-          "note": "allkpop.com/feed が404のためFeedBurner経由に変更 (2026-04-24)"
+          "enabled": false,
+          "note": "RSS廃止確認 (2026-04-30) FeedBurner/直リンク共にHTML返却。kpophitで代替"
+        },
+        {
+          "id": "kpophit",
+          "name": "KpopHit",
+          "url": "https://www.kpophit.com/feed/",
+          "language": "en",
+          "priority": "high",
+          "category_filter": null,
+          "note": "allkpop代替として追加 (2026-04-30)"
         },
         {
           "id": "hellokpop",
@@ -82,7 +92,17 @@
           "language": "en",
           "priority": "medium",
           "category_filter": null,
-          "note": "追加 (2026-04-24)"
+          "enabled": false,
+          "note": "RSS廃止確認 (2026-04-30) HTML返却。billboardで代替"
+        },
+        {
+          "id": "billboard",
+          "name": "Billboard",
+          "url": "https://www.billboard.com/feed/",
+          "language": "en",
+          "priority": "medium",
+          "category_filter": null,
+          "note": "kpopmap代替として追加 (2026-04-30)"
         },
         {
           "id": "natalie_music",
@@ -128,6 +148,52 @@
       "delegate_to": "lib/trend_predictor.py",
       "collect_interval_minutes": 360,
       "note": "trend_predictor.pyが直接GSC APIを叩く。trend_collector.pyは結果JSONLを読み取るのみ。"
+    },
+    "tiktok": {
+      "enabled": true,
+      "type": "scrape",
+      "description": "TikTok K-POPダンスチャレンジ・バズ動画検知",
+      "method": "creative_center_trending",
+      "search_keywords": [
+        "K-POP dance challenge",
+        "KPOP challenge",
+        "아이돌 챌린지",
+        "K-POP コスメ",
+        "韓国アイドル"
+      ],
+      "hashtags": [
+        "#kpop", "#kpopdance", "#kpopchallenge",
+        "#blackpink", "#bts", "#twice", "#aespa",
+        "#newjeans", "#lesserafim", "#ive", "#straykids",
+        "#enhypen", "#seventeen", "#nmixx", "#babymonster",
+        "#韓国コスメ", "#推し活"
+      ],
+      "collect_interval_minutes": 360,
+      "min_engagement_threshold": {
+        "views": 100000,
+        "likes": 5000
+      },
+      "collector": "lib/tiktok_trend_collector.py",
+      "note": "TikTok Creative Center Trending Pageのスクレイピング。API無し。v1: 2026-05-01"
+    },
+    "youtube_shows": {
+      "enabled": true,
+      "type": "api",
+      "description": "K-POPアイドルYouTubeオリジナル番組の新エピソード検知",
+      "config_file": "config/youtube_shows.json",
+      "collector": "lib/youtube_show_monitor.py",
+      "collect_interval_minutes": 360,
+      "credential_env": "YOUTUBE_API_KEY",
+      "note": "GoSe/BABYMONSTER House/Workdol等の番組監視。v1: 2026-05-01"
+    },
+    "music_shows": {
+      "enabled": true,
+      "type": "scrape",
+      "description": "6大音楽番組(ミューバン/インガ/エムカ等)の1位結果検知",
+      "config_file": "config/music_shows.json",
+      "collector": "lib/music_show_monitor.py",
+      "collect_interval_minutes": 240,
+      "note": "Soompi RSS + Naver検索で1位結果を検知。v1: 2026-05-01"
     }
   },
   "output": {
@@ -137,7 +203,7 @@
     "rotation": "daily_append_with_weekly_cleanup",
     "schema": {
       "timestamp": "ISO8601",
-      "source": "string (x_twitter|rss|youtube|gsc_rising)",
+      "source": "string (x_twitter|rss|youtube|gsc_rising|youtube_show|music_show|tiktok)",
       "keyword": "string",
       "title": "string (nullable)",
       "url": "string (nullable)",

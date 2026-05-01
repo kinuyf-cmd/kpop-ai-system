@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-05-01",
+  "description": "K-POP 6大音楽番組のスケジュールと結果収集設定",
+  "shows": [
+    {
+      "id": "the_show",
+      "name": "THE SHOW",
+      "name_ko": "더쇼",
+      "network": "SBS MTV",
+      "weekday": 0,
+      "air_time": "18:00",
+      "search_keywords": ["THE SHOW 1位", "더쇼 1위", "THE SHOW winner"],
+      "naver_keyword": "더쇼 1위"
+    },
+    {
+      "id": "show_champion",
+      "name": "Show Champion",
+      "name_ko": "쇼챔피언",
+      "network": "MBC M",
+      "weekday": 1,
+      "air_time": "18:00",
+      "search_keywords": ["Show Champion 1位", "쇼챔피언 1위", "Show Champion winner"],
+      "naver_keyword": "쇼챔피언 1위"
+    },
+    {
+      "id": "m_countdown",
+      "name": "M COUNTDOWN",
+      "name_ko": "엠카운트다운",
+      "network": "Mnet",
+      "weekday": 2,
+      "air_time": "18:00",
+      "search_keywords": ["M COUNTDOWN 1位", "엠카 1위", "M COUNTDOWN winner", "엠카운트다운"],
+      "naver_keyword": "엠카운트다운 1위"
+    },
+    {
+      "id": "music_bank",
+      "name": "Music Bank",
+      "name_ko": "뮤직뱅크",
+      "network": "KBS",
+      "weekday": 3,
+      "air_time": "17:00",
+      "search_keywords": ["Music Bank 1位", "뮤직뱅크 1위", "ミュージックバンク", "ミューバン 1位"],
+      "naver_keyword": "뮤직뱅크 1위"
+    },
+    {
+      "id": "music_core",
+      "name": "Music Core",
+      "name_ko": "음악중심",
+      "network": "MBC",
+      "weekday": 4,
+      "air_time": "15:30",
+      "search_keywords": ["Music Core 1位", "음악중심 1위", "音楽中心"],
+      "naver_keyword": "음악중심 1위"
+    },
+    {
+      "id": "inkigayo",
+      "name": "Inkigayo",
+      "name_ko": "인기가요",
+      "network": "SBS",
+      "weekday": 6,
+      "air_time": "15:40",
+      "search_keywords": ["Inkigayo 1位", "인기가요 1위", "人気歌謡 1位", "インガ 1位"],
+      "naver_keyword": "인기가요 1위"
+    }
+  ],
+  "article_types": {
+    "winner_breaking": {
+      "description": "○○が△△で1位獲得！速報",
+      "timing": "放送直後",
+      "priority": "high"
+    },
+    "weekly_prediction": {
+      "description": "今週の1位候補予想+投票状況",
+      "timing": "月曜",
+      "priority": "medium"
+    },
+    "weekly_summary": {
+      "description": "今週の音楽番組まとめ — ○冠達成、新カムバック",
+      "timing": "日曜夜",
+      "priority": "high"
+    }
+  },
+  "check_interval_hours": 4,
+  "output": "data/trend_signals.jsonl"
+}
