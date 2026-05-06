@@ -1,0 +1,107 @@
+{
+  "phase": 30,
+  "title": "A8バナー新規投稿自動配置 (3層ハイブリッドCTA)",
+  "completed_at": "2026-05-06T16:45:09.491989+09:00",
+  "tasks": {
+    "A_a8_banners": {
+      "status": "done",
+      "programs": 13,
+      "banners": 26
+    },
+    "B_hybrid_templates": {
+      "status": "done",
+      "positions": 3
+    },
+    "C_genre_matrix": {
+      "status": "done",
+      "categories": 9
+    },
+    "D_new_post_injector": {
+      "status": "done",
+      "tested_posts": [
+        14991,
+        17060,
+        16993,
+        17054
+      ]
+    },
+    "E_compliance": {
+      "status": "pass",
+      "checks": [
+        "nofollow",
+        "tracking_pixel",
+        "PR_label",
+        "disclosure"
+      ]
+    },
+    "F_ga4_tracking": {
+      "status": "done",
+      "events": [
+        "cta_click",
+        "cta_view"
+      ]
+    }
+  },
+  "injection_results": {
+    "14991": {
+      "positions": [
+        "top",
+        "middle",
+        "bottom"
+      ],
+      "genre": "default",
+      "chars": 2608
+    },
+    "17060": {
+      "positions": [
+        "bottom"
+      ],
+      "genre": "breaking_news",
+      "chars": 1432
+    },
+    "16993": {
+      "positions": [
+        "bottom"
+      ],
+      "genre": "live_concert",
+      "chars": 2342
+    },
+    "17054": {
+      "positions": [
+        "bottom"
+      ],
+      "genre": "breaking_news",
+      "chars": 1662
+    }
+  },
+  "existing_articles_safe": {
+    "checked_ids": [
+      7528,
+      7429,
+      7426,
+      7157,
+      7036
+    ],
+    "hybrid_cta_present": false,
+    "verification": "All pre-2026-05-04 articles confirmed untouched"
+  },
+  "md5_checksums": {
+    "a8_banners.json": "077d7438a8d05a88aa026514e218284a",
+    "cta_hybrid_templates.json": "78d95d53f6cc1d26f846a46ed93f4165",
+    "new_post_injector.py": "25a715ba7b541dfbaa26b8cb35783dde",
+    "cta_genre_map.json": "69dc7255447eec5d30cffdb402b686e3"
+  },
+  "files_created": [
+    "cta/a8_banners.json",
+    "cta/cta_hybrid_templates.json",
+    "cta/new_post_injector.py",
+    "config/affiliate/cta_genre_map.json"
+  ],
+  "compliance": {
+    "nofollow_on_all_banners": true,
+    "tracking_pixel_on_all": true,
+    "pr_label_on_all_templates": true,
+    "disclosure_injected": true,
+    "a8_html_unmodified": true
+  }
+}

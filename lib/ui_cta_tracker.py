@@ -125,14 +125,54 @@ def build_cta_tracking_js(cta_label: str = "最新K-POPニュースをチェッ�
       link.addEventListener('click', function(e) {{
         var pos = getCtaPosition(link);
         var eventName = 'cta_click_' + pos;
+        // Phase 30: data属性からハイブリッドCTAパラメータ抽出
+        var wrapper = link.closest('.kpj-hybrid-cta');
+        var a8matId = wrapper ? (wrapper.getAttribute('data-a8mat') || '') : '';
+        var ctaId = wrapper ? (wrapper.getAttribute('data-cta-id') || '') : '';
+        var explicitPos = wrapper ? (wrapper.getAttribute('data-cta-position') || '') : '';
+        var bannerSize = '';
+        if (wrapper) {{
+          var img = wrapper.querySelector('.kpj-banner-wrap img[width]');
+          if (img) bannerSize = img.getAttribute('width') + 'x' + img.getAttribute('height');
+        }}
+        var params = {{
+          cta_position:     explicitPos || pos,
+          article_type:     articleType,
+          page_path:        pagePath,
+          cta_label:        link.textContent.trim().substring(0, 50),
+          banner_size:      bannerSize,
+          a8mat_id:         a8matId,
+          article_category: ctaId,
+        }};
+        _gtag('event', 'cta_click', params);
+        // Legacy event for backwards compatibility
         _gtag('event', eventName, {{
-          cta_position:  pos,
-          article_type:  articleType,
-          page_path:     pagePath,
-          cta_label:     link.textContent.trim().substring(0, 50),
+          cta_position: pos,
+          article_type: articleType,
+          page_path:    pagePath,
         }});
       }});
     }});
+
+    // Phase 30: ハイブリッドCTAビュー計測 (IntersectionObserver)
+    if ('IntersectionObserver' in window) {{
+      var hybridCtas = document.querySelectorAll('.kpj-hybrid-cta');
+      var viewObserver = new IntersectionObserver(function(entries) {{
+        entries.forEach(function(entry) {{
+          if (entry.isIntersecting) {{
+            var el = entry.target;
+            _gtag('event', 'cta_view', {{
+              cta_position:     el.getAttribute('data-cta-position') || '',
+              a8mat_id:         el.getAttribute('data-a8mat') || '',
+              article_category: el.getAttribute('data-cta-id') || '',
+              page_path:        pagePath,
+            }});
+            viewObserver.unobserve(el);
+          }}
+        }});
+      }}, {{ threshold: 0.5 }});
+      hybridCtas.forEach(function(cta) {{ viewObserver.observe(cta); }});
+    }}
   }}
 
   // ─ 固定CTAバー計測 ─

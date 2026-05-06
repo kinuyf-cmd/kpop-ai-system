@@ -1,0 +1,63 @@
+{
+  "phase": 30,
+  "title": "Phase 30 デプロイメント完了検証",
+  "completed_at": "2026-05-06T17:02:32.824641+09:00",
+  "verification": {
+    "a8_banners_programs": 13,
+    "hybrid_templates_positions": 3,
+    "genre_matrix_categories": 9,
+    "public_url_cta_confirmed": {
+      "14991": {
+        "positions": [
+          "top",
+          "middle",
+          "bottom"
+        ],
+        "nofollow": 10,
+        "a8net": 11,
+        "pr_labels": 5
+      },
+      "16993": {
+        "positions": [
+          "bottom"
+        ]
+      },
+      "17054": {
+        "positions": [
+          "bottom"
+        ]
+      }
+    },
+    "existing_articles_safe": {
+      "checked_post_ids": [
+        7528,
+        7429,
+        7426,
+        7157,
+        7036
+      ],
+      "wp_backend_hybrid_cta_count": 0
+    },
+    "site_status": 200,
+    "pm2_processes": "all online",
+    "next_js_revalidation": "success"
+  },
+  "deployment": {
+    "pm2_restart": "success",
+    "litespeed_reload": "requires_root_access (T1)",
+    "post_publish_hook_integrated": true,
+    "webhook_method": "lib/post_publish_hook.py (all pipelines)",
+    "lessons_learned": [
+      "#131 a8mat ID naming conflict",
+      "#132 banner size asymmetry"
+    ]
+  },
+  "compliance": {
+    "nofollow_all_banners": true,
+    "tracking_pixel_all": true,
+    "pr_label_all_positions": true,
+    "disclosure_injected": true,
+    "a8_html_unmodified": true,
+    "nofollow_sponsored_buttons": true
+  }
+}
