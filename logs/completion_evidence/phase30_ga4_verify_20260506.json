@@ -1,0 +1,59 @@
+{
+  "phase": 30,
+  "title": "GA4トラッキング受信確認",
+  "completed_at": "2026-05-06T17:19:55.341837+09:00",
+  "ui_cta_tracker_params": {
+    "cta_click": [
+      "cta_position",
+      "banner_size",
+      "a8mat_id",
+      "article_category"
+    ],
+    "cta_view": [
+      "cta_position",
+      "a8mat_id",
+      "article_category",
+      "page_path"
+    ]
+  },
+  "data_attributes_on_live_page": {
+    "url": "https://kpopjournal.tokyo/kpop-3-guide-may-2026/",
+    "data-cta-position": [
+      "top",
+      "middle",
+      "bottom"
+    ],
+    "data-a8mat": [
+      "457NRV+2WSC0Q+2JMM+6GJWX",
+      "457NRV+2WSC0Q+2JMM+6IHCX",
+      "457NRV+3I7XSQ+5PQ4+5ZU29"
+    ],
+    "data-cta-id": [
+      "global_wifi",
+      "matilda"
+    ],
+    "data-cta-tier": [
+      "S",
+      "B"
+    ],
+    "count_positions": 4,
+    "count_a8mat": 4
+  },
+  "listener_files": [
+    "/home/aiuser/kpopjournal-frontend/public/js/cta-tracking.js (v2.0 - Phase 30 click+view)",
+    "lib/ui_cta_tracker.py (backend JS generator with Phase 30 params)"
+  ],
+  "ga4_measurement_id": "G-5RFTNW****",
+  "ga4_property_id": "493983919",
+  "measurement_protocol_test": "skipped (no API_SECRET configured)",
+  "cta_tracking_js_served": true,
+  "phase30_references_in_js": 4,
+  "click_events_implemented": [
+    ".kpj-cta-btn click -> cta_click with position/banner_size/a8mat_id/article_category",
+    ".kpj-banner-wrap a click -> cta_click with banner dimensions"
+  ],
+  "view_events_implemented": [
+    ".kpj-hybrid-cta IntersectionObserver -> cta_view with position/a8mat/category",
+    "[data-cta-id] IntersectionObserver -> cta_view (existing)"
+  ]
+}
