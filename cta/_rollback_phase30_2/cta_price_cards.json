@@ -1,0 +1,101 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-07",
+    "description": "Phase 30.2 価格カードデータ (verified=trueのみ数値表示)",
+    "policy": "has_price=falseの案件は定性表現のみ使用"
+  },
+  "programs": {
+    "global_wifi": {
+      "has_price": true,
+      "original_price": null,
+      "current_price": "¥970〜/日",
+      "discount_percent": null,
+      "qualitative_text": "1日定額でお得に利用可能"
+    },
+    "voyageesim": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "お手頃価格のeSIMプラン"
+    },
+    "korea_data_wifi": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "韓国専用のお得なWiFiプラン"
+    },
+    "dholic": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "お手頃な韓国ファッションが豊富"
+    },
+    "olens_poplens": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "お得な価格でカラコンが見つかる"
+    },
+    "kkday": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "お得な割引クーポン随時配信中"
+    },
+    "ikyu": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "直前セールでお得に予約可能"
+    },
+    "newt": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "最低価格保証で安心して予約"
+    },
+    "matilda": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "初回購入割引でお得にお試し"
+    },
+    "codibook": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "プチプラ韓国服が豊富に揃う"
+    },
+    "italki": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "お手頃価格で韓国語レッスン"
+    },
+    "dekiru_korean": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "詳細は公式サイトでご確認"
+    },
+    "sazo_purchase_agent": {
+      "has_price": false,
+      "original_price": null,
+      "current_price": null,
+      "discount_percent": null,
+      "qualitative_text": "詳細は公式サイトでご確認"
+    }
+  }
+}

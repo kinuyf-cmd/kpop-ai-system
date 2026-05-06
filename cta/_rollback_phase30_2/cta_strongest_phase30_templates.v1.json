@@ -1,0 +1,53 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-06",
+    "description": "最強CTA Phase 30版テンプレート (8ブロック構造・新規投稿専用)",
+    "target": "5/4以降の新規投稿のみ",
+    "existing_articles": "変更禁止",
+    "blocks": ["hero_banner", "headline_subtext", "urgency_bar", "benefits_4", "social_proof_bar", "a8_banner_300x250", "main_button", "trust_badges"]
+  },
+  "shared_css": "<style>.kpj-strongest-phase30{margin:2em 0;padding:0;text-align:center;position:relative;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}.kpj-strongest-phase30 .kpj-pr-label{display:block;font-size:12px;color:#9CA3AF;margin-bottom:6px;text-align:left}.kpj-strongest-phase30 .kpj-hero-wrap{display:inline-block;margin:0 auto 12px;max-width:100%}.kpj-strongest-phase30 .kpj-hero-wrap img{max-width:100%;height:auto}.kpj-strongest-phase30 .kpj-headline{font-size:18px;font-weight:700;color:#1F2937;margin:8px 0 4px;line-height:1.4}.kpj-strongest-phase30 .kpj-subtext{font-size:14px;color:#6B7280;margin:0 0 12px;line-height:1.5}.kpj-strongest-phase30 .kpj-urgency-bar{background:#FEF3C7;color:#92400E;font-size:13px;font-weight:600;padding:8px 16px;border-radius:6px;margin:0 auto 12px;max-width:500px;line-height:1.4}.kpj-strongest-phase30 .kpj-benefits{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 12px;max-width:600px}.kpj-strongest-phase30 .kpj-benefit-item{flex:1 1 45%;min-width:200px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;font-size:13px;color:#374151;text-align:left;line-height:1.4}.kpj-strongest-phase30 .kpj-benefit-icon{margin-right:6px}.kpj-strongest-phase30 .kpj-social-proof-bar{background:#F0FDF4;color:#166534;font-size:13px;font-weight:600;padding:8px 16px;border-radius:6px;margin:0 auto 12px;max-width:500px;line-height:1.4}.kpj-strongest-phase30 .kpj-banner-300{display:inline-block;margin:12px auto;max-width:100%}.kpj-strongest-phase30 .kpj-banner-300 img{max-width:100%;height:auto}.kpj-strongest-phase30 .kpj-main-btn{display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B9D,#C44DFF);color:#fff;font-size:16px;font-weight:700;border-radius:30px;text-decoration:none;transition:transform .2s,box-shadow .2s;margin:12px 0}.kpj-strongest-phase30 .kpj-main-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,77,255,.4)}.kpj-strongest-phase30 .kpj-trust-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px auto 0;max-width:500px}.kpj-strongest-phase30 .kpj-trust-badge{background:#F3F4F6;border-radius:20px;padding:6px 14px;font-size:12px;color:#6B7280;white-space:nowrap}.kpj-strongest-phase30.pulse .kpj-main-btn{animation:kpj-sp30-pulse 2s infinite}@keyframes kpj-sp30-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}@media(max-width:768px){.kpj-strongest-phase30 .kpj-benefits{flex-direction:column}.kpj-strongest-phase30 .kpj-benefit-item{flex:1 1 100%;min-width:auto}.kpj-strongest-phase30 .kpj-headline{font-size:16px}.kpj-strongest-phase30 .kpj-main-btn{padding:12px 32px;font-size:15px}.kpj-strongest-phase30 .kpj-trust-badges{gap:6px}.kpj-strongest-phase30 .kpj-trust-badge{font-size:11px;padding:4px 10px}}</style>",
+  "responsive_css": ".kpj-pc-only{display:block}.kpj-sp-only{display:none}@media(max-width:768px){.kpj-pc-only{display:none}.kpj-sp-only{display:block}}",
+  "trust_badges_html": "<div class=\"kpj-trust-badges\"><span class=\"kpj-trust-badge\">🔒 SSL暗号化通信</span><span class=\"kpj-trust-badge\">⏰ 24時間サポート</span><span class=\"kpj-trust-badge\">👥 多数の利用実績</span><span class=\"kpj-trust-badge\">💳 各種カード対応</span></div>",
+  "positions": {
+    "position_top": {
+      "description": "第1 H2直前 / 728x90(PC)+320x50(SP) / ヒーロー大型 / ベネフィット横並び",
+      "condition": "content_length >= 2500",
+      "pulse_animation": false,
+      "blocks_included": ["hero_banner", "headline_subtext", "trust_badges"],
+      "template": "<div class=\"kpj-strongest-phase30\" data-cta-position=\"top\" data-a8mat=\"{{a8mat_pc}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-pr-label\">PR</span>\n<div class=\"kpj-hero-wrap kpj-pc-only\">{{banner_html_728x90}}{{tracking_pixel_728x90}}</div>\n<div class=\"kpj-hero-wrap kpj-sp-only\">{{banner_html_320x50}}{{tracking_pixel_320x50}}</div>\n<p class=\"kpj-headline\">{{headline}}</p>\n<p class=\"kpj-subtext\">{{subtext}}</p>\n<a href=\"{{click_url}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-main-btn\">{{button_text}}</a>\n{{trust_badges}}\n</div>",
+      "fallback_no_728": "<div class=\"kpj-strongest-phase30\" data-cta-position=\"top\" data-a8mat=\"{{a8mat_sp}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-pr-label\">PR</span>\n<div class=\"kpj-hero-wrap\">{{banner_html_320x50}}{{tracking_pixel_320x50}}</div>\n<p class=\"kpj-headline\">{{headline}}</p>\n<p class=\"kpj-subtext\">{{subtext}}</p>\n<a href=\"{{click_url}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-main-btn\">{{button_text}}</a>\n{{trust_badges}}\n</div>"
+    },
+    "position_middle": {
+      "description": "第3-4 H2直前 / 300x250 / ヒーロー中型 / ベネフィット縦+緊急性+社会的証明",
+      "condition": "content_length >= 2500",
+      "pulse_animation": true,
+      "blocks_included": ["hero_banner", "headline_subtext", "urgency_bar", "benefits_4", "social_proof_bar", "a8_banner_300x250", "main_button"],
+      "template": "<div class=\"kpj-strongest-phase30 pulse\" data-cta-position=\"middle\" data-a8mat=\"{{a8mat}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-pr-label\">広告</span>\n<p class=\"kpj-headline\">{{headline}}</p>\n<p class=\"kpj-subtext\">{{subtext}}</p>\n<div class=\"kpj-urgency-bar\">{{urgency_text}}</div>\n<div class=\"kpj-benefits\">{{benefits_html}}</div>\n<div class=\"kpj-social-proof-bar\">{{social_proof}}</div>\n<div class=\"kpj-banner-300\">{{banner_html_300x250}}{{tracking_pixel_300x250}}</div>\n<a href=\"{{click_url}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-main-btn\">{{button_text}}</a>\n</div>"
+    },
+    "position_bottom": {
+      "description": "記事末尾 / 300x250 / 全要素フルセット (8ブロック完全版)",
+      "condition": "always",
+      "pulse_animation": true,
+      "blocks_included": ["hero_banner", "headline_subtext", "urgency_bar", "benefits_4", "social_proof_bar", "a8_banner_300x250", "main_button", "trust_badges"],
+      "template": "<div class=\"kpj-strongest-phase30 pulse\" data-cta-position=\"bottom\" data-a8mat=\"{{a8mat}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-pr-label\">PR</span>\n<p class=\"kpj-headline\">{{headline}}</p>\n<p class=\"kpj-subtext\">{{subtext}}</p>\n<div class=\"kpj-urgency-bar\">{{urgency_text}}</div>\n<div class=\"kpj-benefits\">{{benefits_html}}</div>\n<div class=\"kpj-social-proof-bar\">{{social_proof}}</div>\n<div class=\"kpj-banner-300\">{{banner_html_300x250}}{{tracking_pixel_300x250}}</div>\n<a href=\"{{click_url}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-main-btn\">{{button_text}}</a>\n{{trust_badges}}\n</div>"
+    }
+  },
+  "ga4_tracking": {
+    "event_name": "cta_click",
+    "parameters": {
+      "position": "top|middle|bottom",
+      "banner_size": "728x90|320x50|300x250",
+      "a8mat_id": "from data-a8mat",
+      "article_category": "from WP category",
+      "program_key": "from data-cta-id",
+      "cta_version": "strongest_phase30"
+    },
+    "view_tracking": {
+      "event_name": "cta_view",
+      "method": "IntersectionObserver",
+      "threshold": 0.5
+    }
+  }
+}

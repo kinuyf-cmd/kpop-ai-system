@@ -1,0 +1,62 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-07",
+    "description": "Phase 30.2 副ボタン定義 (関連サービスクロスリンク)",
+    "policy": "副ボタンはA8リンク、nofollow sponsored属性必須"
+  },
+  "programs": {
+    "global_wifi": {
+      "sub_program_key": "voyageesim",
+      "sub_button_text": "VOYAGEESIMもチェック"
+    },
+    "voyageesim": {
+      "sub_program_key": "global_wifi",
+      "sub_button_text": "グローバルWiFiもチェック"
+    },
+    "korea_data_wifi": {
+      "sub_program_key": "voyageesim",
+      "sub_button_text": "VOYAGEESIMもチェック"
+    },
+    "dholic": {
+      "sub_program_key": "olens_poplens",
+      "sub_button_text": "OLENS/POPLENSもチェック"
+    },
+    "olens_poplens": {
+      "sub_program_key": "dholic",
+      "sub_button_text": "DHOLICもチェック"
+    },
+    "kkday": {
+      "sub_program_key": "global_wifi",
+      "sub_button_text": "グローバルWiFiもチェック"
+    },
+    "ikyu": {
+      "sub_program_key": "kkday",
+      "sub_button_text": "KKdayもチェック"
+    },
+    "newt": {
+      "sub_program_key": "voyageesim",
+      "sub_button_text": "VOYAGEESIMもチェック"
+    },
+    "matilda": {
+      "sub_program_key": "olens_poplens",
+      "sub_button_text": "OLENS/POPLENSもチェック"
+    },
+    "codibook": {
+      "sub_program_key": "dholic",
+      "sub_button_text": "DHOLICもチェック"
+    },
+    "italki": {
+      "sub_program_key": "dekiru_korean",
+      "sub_button_text": "できる韓国語もチェック"
+    },
+    "dekiru_korean": {
+      "sub_program_key": "italki",
+      "sub_button_text": "italkiもチェック"
+    },
+    "sazo_purchase_agent": {
+      "sub_program_key": "olens_poplens",
+      "sub_button_text": "OLENS/POPLENSもチェック"
+    }
+  }
+}

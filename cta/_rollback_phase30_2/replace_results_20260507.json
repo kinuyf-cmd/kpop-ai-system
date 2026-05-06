@@ -1,54 +1,52 @@
 {
-  "timestamp": "2026-05-07T00:15:25.129827+09:00",
+  "timestamp": "2026-05-07T00:06:48.482146+09:00",
   "dry_run": false,
   "results": [
     {
       "post_id": 14991,
       "status": "success",
-      "md5_before": "500bdefb022aea1f39fd8c755381b002",
-      "md5_after": "3988e0bd10b60010c313f8b51060479d",
+      "md5_before": "9347f4805f15c7494e1f3dc135a1224c",
+      "md5_after": "500bdefb022aea1f39fd8c755381b002",
       "positions_injected": [
         "top",
         "middle",
         "bottom"
       ],
       "genre": "default",
-      "content_length": 3564
+      "content_length": 3075
     },
     {
       "post_id": 17060,
       "status": "success",
-      "md5_before": "82eee5e11a3d68e34e8f93687e54e5e9",
-      "md5_after": "946068b9d16f9565587cb82ad2ab1859",
+      "md5_before": "b674cf8a7659f734a94038d0f0d908ca",
+      "md5_after": "82eee5e11a3d68e34e8f93687e54e5e9",
       "positions_injected": [
         "bottom"
       ],
       "genre": "breaking_news",
-      "content_length": 1764
+      "content_length": 1575
     },
     {
       "post_id": 16993,
       "status": "success",
-      "md5_before": "2b5ee10f5be61ebaa00190a9047bd737",
-      "md5_after": "b23c55fc53483229ac065a34d85b6c76",
+      "md5_before": "0f4a13fce60bcae0f8c1bc65e94f9002",
+      "md5_after": "2b5ee10f5be61ebaa00190a9047bd737",
       "positions_injected": [
-        "top",
-        "middle",
         "bottom"
       ],
       "genre": "live_concert",
-      "content_length": 2633
+      "content_length": 2457
     },
     {
       "post_id": 17054,
       "status": "success",
-      "md5_before": "4a4e59d94e3f083df130c3ba4cd61ced",
-      "md5_after": "cbf0e4803b8156bed747650791c5ed90",
+      "md5_before": "caee77d973da3dab56231840a2aa1b82",
+      "md5_after": "4a4e59d94e3f083df130c3ba4cd61ced",
       "positions_injected": [
         "bottom"
       ],
       "genre": "breaking_news",
-      "content_length": 1542
+      "content_length": 1353
     }
   ]
 }

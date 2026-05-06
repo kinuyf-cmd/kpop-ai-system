@@ -1,0 +1,49 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-07",
+    "description": "Phase 30.2 評価バー定性文言 (景表法配慮)",
+    "policy": "具体数値・★アイコン・順位主張禁止"
+  },
+  "programs": {
+    "global_wifi": {
+      "rating_text": "海外WiFiレンタル業界で多数の支持"
+    },
+    "voyageesim": {
+      "rating_text": "渡韓者の間で人気のeSIMサービス"
+    },
+    "korea_data_wifi": {
+      "rating_text": "韓国専用回線で高評価"
+    },
+    "dholic": {
+      "rating_text": "韓国ファッション通販で支持されるブランド"
+    },
+    "olens_poplens": {
+      "rating_text": "K-POPファンに選ばれる韓国カラコン"
+    },
+    "kkday": {
+      "rating_text": "アジアで多数の予約実績"
+    },
+    "ikyu": {
+      "rating_text": "高級ホテル予約で支持されるサービス"
+    },
+    "newt": {
+      "rating_text": "海外旅行アプリで評価獲得"
+    },
+    "matilda": {
+      "rating_text": "韓国コスメ専門店として支持"
+    },
+    "codibook": {
+      "rating_text": "韓国ファッション通販で人気"
+    },
+    "italki": {
+      "rating_text": "オンライン語学レッスンで利用者多数"
+    },
+    "dekiru_korean": {
+      "rating_text": "韓国語学習教材で実績"
+    },
+    "sazo_purchase_agent": {
+      "rating_text": "韓国コスメ通販で支持"
+    }
+  }
+}
