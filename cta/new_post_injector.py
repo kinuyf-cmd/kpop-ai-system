@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""new_post_injector.py — Phase 30: 新規投稿向け3層ハイブリッドCTA自動配置
+"""new_post_injector.py — Phase 30.1: 最強CTA Phase 30版 自動配置
 
 対象: 2026-05-04以降の新規投稿のみ (既存631記事は不変)
 フロー:
@@ -7,8 +7,18 @@
   2. 文字数カウント
   3. hybrid_banner_matrixでメイン/サブ案件決定
   4. 2500字以上ならH2位置検出 (第1, 第3-4)
-  5. 3層ハイブリッドHTML生成 (A8素材改変禁止)
+  5. 最強CTA Phase 30版 8ブロックHTML生成 (A8素材改変禁止)
   6. WP REST APIでpost.content更新
+
+8ブロック構造:
+  1. ヒーロー枠 (A8バナー)
+  2. 見出し+サブテキスト
+  3. 緊急性バー
+  4. ベネフィット4項目
+  5. 社会的証明バー
+  6. A8公式バナー枠 (300x250)
+  7. メインボタン
+  8. 保証バッジ4つ
 
 使い方:
   python3 cta/new_post_injector.py <post_id>
@@ -49,8 +59,9 @@ AUTH_HEADER = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
 # Phase 30 cutoff date
 CUTOFF_DATE = "2026-05-04T00:00:00"
 
-# Marker to avoid double-injection
+# Markers to avoid double-injection (detect both old and new CTA)
 HYBRID_MARKER = 'data-cta-position="'
+STRONGEST_MARKER = 'kpj-strongest-phase30'
 
 
 def load_banners() -> dict:
@@ -59,7 +70,14 @@ def load_banners() -> dict:
 
 
 def load_templates() -> dict:
-    with open(CTA_DIR / "cta_hybrid_templates.json") as f:
+    """Load the strongest Phase 30 templates (8-block version)."""
+    with open(CTA_DIR / "cta_strongest_phase30_templates.json") as f:
+        return json.load(f)
+
+
+def load_strongest_data() -> dict:
+    """Load the strongest Phase 30 program data (verified claims only)."""
+    with open(CTA_DIR / "cta_strongest_phase30_data.json") as f:
         return json.load(f)
 
 
@@ -172,9 +190,19 @@ def find_h2_positions(content: str) -> list[int]:
     return positions
 
 
+def _build_benefits_html(benefits: list) -> str:
+    """Build 4 benefit items HTML."""
+    icons = ["✨", "🎯", "💡", "🎁"]
+    items = []
+    for i, b in enumerate(benefits[:4]):
+        icon = icons[i % len(icons)]
+        items.append(f'<div class="kpj-benefit-item"><span class="kpj-benefit-icon">{icon}</span>{b}</div>')
+    return "\n".join(items)
+
+
 def build_hybrid_html(program_key: str, position: str, banners: dict,
                       templates: dict, sub_key: str = None) -> str:
-    """Build the 3-layer hybrid CTA HTML for a given position."""
+    """Build the 最強CTA Phase 30版 8-block HTML for a given position."""
     program = banners.get(program_key)
     if not program:
         return ""
@@ -183,8 +211,15 @@ def build_hybrid_html(program_key: str, position: str, banners: dict,
     if not pos_template:
         return ""
 
+    # Load strongest data for this program
+    strongest = load_strongest_data()
+    prog_data = strongest.get("programs", {}).get(program_key, {})
+    if not prog_data:
+        return ""
+
+    trust_badges = templates.get("trust_badges_html", "")
+
     if position == "position_top":
-        # Needs 728x90 (PC) + 320x50 (SP) or fallback
         sizes = program["sizes"]
         has_728 = "728x90" in sizes
         has_320 = "320x50" in sizes
@@ -196,70 +231,63 @@ def build_hybrid_html(program_key: str, position: str, banners: dict,
             html = html.replace("{{tracking_pixel_728x90}}", sizes["728x90"]["tracking_pixel"])
             html = html.replace("{{banner_html_320x50}}", sizes["320x50"]["html"])
             html = html.replace("{{tracking_pixel_320x50}}", sizes["320x50"]["tracking_pixel"])
+            click_a8mat = sizes["728x90"]["a8mat"]
         elif has_320:
             html = pos_template.get("fallback_no_728", pos_template["template"])
             html = html.replace("{{a8mat_sp}}", sizes["320x50"]["a8mat"])
             html = html.replace("{{banner_html_320x50}}", sizes["320x50"]["html"])
             html = html.replace("{{tracking_pixel_320x50}}", sizes["320x50"]["tracking_pixel"])
+            click_a8mat = sizes["320x50"]["a8mat"]
         else:
-            return ""  # Cannot place at top without 320x50
+            return ""
 
-        html = html.replace("{{micro_copy}}", program["micro_copy"])
         html = html.replace("{{program_key}}", program_key)
-        # Text link from existing a8_materials
-        text_link = f'<a href="https://px.a8.net/svt/ejp?a8mat={sizes.get("320x50", sizes.get("728x90", {})).get("a8mat", "")}" rel="nofollow sponsored" target="_blank">{program["name"]}の詳細はこちら</a>'
-        html = html.replace("{{text_link_html}}", text_link)
+        html = html.replace("{{headline}}", prog_data.get("headline", ""))
+        html = html.replace("{{subtext}}", prog_data.get("subtext", ""))
+        html = html.replace("{{button_text}}", prog_data.get("button_text", program["button_text"]))
+        html = html.replace("{{click_url}}", f"https://px.a8.net/svt/ejp?a8mat={click_a8mat}")
+        html = html.replace("{{trust_badges}}", trust_badges)
         return html
 
     elif position == "position_middle":
         sizes = program["sizes"]
         if "300x250" not in sizes:
             return ""
-        html = pos_template["template"]
         size_data = sizes["300x250"]
+
+        html = pos_template["template"]
         html = html.replace("{{a8mat}}", size_data["a8mat"])
+        html = html.replace("{{program_key}}", program_key)
+        html = html.replace("{{headline}}", prog_data.get("headline", ""))
+        html = html.replace("{{subtext}}", prog_data.get("subtext", ""))
+        html = html.replace("{{urgency_text}}", prog_data.get("urgency_text", ""))
+        html = html.replace("{{benefits_html}}", _build_benefits_html(prog_data.get("benefits", [])))
+        html = html.replace("{{social_proof}}", prog_data.get("social_proof", ""))
         html = html.replace("{{banner_html_300x250}}", size_data["html"])
         html = html.replace("{{tracking_pixel_300x250}}", size_data["tracking_pixel"])
-        html = html.replace("{{micro_copy}}", program["micro_copy"])
-        html = html.replace("{{program_key}}", program_key)
         html = html.replace("{{click_url}}", f"https://px.a8.net/svt/ejp?a8mat={size_data['a8mat']}")
-        html = html.replace("{{button_text}}", program["button_text"])
-        html = html.replace("{{tier}}", program["tier"])
-        text_link = f'<a href="https://px.a8.net/svt/ejp?a8mat={size_data["a8mat"]}" rel="nofollow sponsored" target="_blank">{program["name"]}を見る</a>'
-        html = html.replace("{{text_link_html}}", text_link)
+        html = html.replace("{{button_text}}", prog_data.get("button_text", program["button_text"]))
         return html
 
     elif position == "position_bottom":
-        sub_program = banners.get(sub_key) if sub_key else None
         sizes_main = program["sizes"]
         if "300x250" not in sizes_main:
             return ""
+        main_300 = sizes_main["300x250"]
 
         html = pos_template["template"]
-        main_300 = sizes_main["300x250"]
-        html = html.replace("{{a8mat_main}}", main_300["a8mat"])
-        html = html.replace("{{program_key_main}}", program_key)
-        html = html.replace("{{micro_copy_main}}", program["micro_copy"])
-        html = html.replace("{{banner_html_main_300x250}}", main_300["html"])
-        html = html.replace("{{tracking_pixel_main}}", main_300["tracking_pixel"])
-        html = html.replace("{{click_url_main}}", f"https://px.a8.net/svt/ejp?a8mat={main_300['a8mat']}")
-        html = html.replace("{{button_text_main}}", program["button_text"])
-        html = html.replace("{{tier_main}}", program["tier"])
-
-        # Sub banner
-        if sub_program and "300x250" in sub_program["sizes"]:
-            sub_300 = sub_program["sizes"]["300x250"]
-            html = html.replace("{{banner_html_sub_300x250}}", sub_300["html"])
-            html = html.replace("{{tracking_pixel_sub}}", sub_300["tracking_pixel"])
-            text_link_sub = f'<a href="https://px.a8.net/svt/ejp?a8mat={sub_300["a8mat"]}" rel="nofollow sponsored" target="_blank">{sub_program["name"]}</a>'
-        else:
-            html = html.replace("{{banner_html_sub_300x250}}", "")
-            html = html.replace("{{tracking_pixel_sub}}", "")
-            text_link_sub = ""
-
-        text_link_main = f'<a href="https://px.a8.net/svt/ejp?a8mat={main_300["a8mat"]}" rel="nofollow sponsored" target="_blank">{program["name"]}</a>'
-        html = html.replace("{{text_link_main}}", text_link_main)
-        html = html.replace("{{text_link_sub}}", text_link_sub)
+        html = html.replace("{{a8mat}}", main_300["a8mat"])
+        html = html.replace("{{program_key}}", program_key)
+        html = html.replace("{{headline}}", prog_data.get("headline", ""))
+        html = html.replace("{{subtext}}", prog_data.get("subtext", ""))
+        html = html.replace("{{urgency_text}}", prog_data.get("urgency_text", ""))
+        html = html.replace("{{benefits_html}}", _build_benefits_html(prog_data.get("benefits", [])))
+        html = html.replace("{{social_proof}}", prog_data.get("social_proof", ""))
+        html = html.replace("{{banner_html_300x250}}", main_300["html"])
+        html = html.replace("{{tracking_pixel_300x250}}", main_300["tracking_pixel"])
+        html = html.replace("{{click_url}}", f"https://px.a8.net/svt/ejp?a8mat={main_300['a8mat']}")
+        html = html.replace("{{button_text}}", prog_data.get("button_text", program["button_text"]))
+        html = html.replace("{{trust_badges}}", trust_badges)
         return html
 
     return ""
@@ -287,9 +315,9 @@ def inject_hybrid_cta(post_id: int, dry_run: bool = False) -> dict:
         result["reason"] = "before_cutoff"
         return result
 
-    # 3. Check if already injected
+    # 3. Check if already injected (old or new CTA)
     content = post["content"]
-    if HYBRID_MARKER in content:
+    if HYBRID_MARKER in content or STRONGEST_MARKER in content:
         result["reason"] = "already_injected"
         return result
 

@@ -1,0 +1,504 @@
+{
+  "_metadata": {
+    "created_at": "2026-05-06T19:46:02.336545+09:00",
+    "purpose": "Phase 30.1 benefit number verification",
+    "total_benefits": 52,
+    "changed_count": 10
+  },
+  "programs": {
+    "korea_data_wifi": {
+      "program_key": "korea_data_wifi",
+      "benefits_original": [
+        "韓国専用WiFi、高速4G/LTE接続",
+        "仁川空港・金浦空港で受取&返却OK",
+        "1台で最大10台同時接続、グループ旅行に最適",
+        "無制限プラン有、データ残量を気にせず使える"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国専用WiFi、高速4G/LTE接続",
+          "verified": "韓国専用WiFi、高速4G/LTE接続",
+          "changed": false
+        },
+        {
+          "original": "仁川空港・金浦空港で受取&返却OK",
+          "verified": "仁川空港・金浦空港で受取&返却OK",
+          "changed": false
+        },
+        {
+          "original": "1台で最大10台同時接続、グループ旅行に最適",
+          "verified": "1台で複数台同時接続、グループ旅行に最適",
+          "changed": true
+        },
+        {
+          "original": "無制限プラン有、データ残量を気にせず使える",
+          "verified": "無制限プラン有、データ残量を気にせず使える",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "10台": {
+          "value": "10",
+          "found_on_site": false
+        }
+      }
+    },
+    "kkday": {
+      "program_key": "kkday",
+      "benefits_original": [
+        "ソウル現地ツアー予約、日本語完全対応",
+        "即日予約OK、当日参加できるアクティビティ多数",
+        "最大20%割引クーポン随時配信",
+        "550以上の都市で体験が予約できる"
+      ],
+      "benefits_verified": [
+        {
+          "original": "ソウル現地ツアー予約、日本語完全対応",
+          "verified": "ソウル現地ツアー予約、日本語完全対応",
+          "changed": false
+        },
+        {
+          "original": "即日予約OK、当日参加できるアクティビティ多数",
+          "verified": "即日予約OK、当日参加できるアクティビティ多数",
+          "changed": false
+        },
+        {
+          "original": "最大20%割引クーポン随時配信",
+          "verified": "お得な割引クーポン随時配信",
+          "changed": true
+        },
+        {
+          "original": "550以上の都市で体験が予約できる",
+          "verified": "世界中の都市で体験が予約できる",
+          "changed": true
+        }
+      ],
+      "numbers_checked": {
+        "20%": {
+          "value": "20",
+          "found_on_site": false
+        },
+        "550": {
+          "value": "550",
+          "found_on_site": false
+        }
+      }
+    },
+    "olens_poplens": {
+      "program_key": "olens_poplens",
+      "benefits_original": [
+        "韓国No.1カラコンブランド、アイドル多数着用",
+        "1箱¥1,650〜、ワンデーから長期タイプまで",
+        "処方箋不要、度あり・度なし対応",
+        "K-POPアイドル愛用デザイン多数"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国No.1カラコンブランド、アイドル多数着用",
+          "verified": "韓国No.1カラコンブランド、アイドル多数着用",
+          "changed": false
+        },
+        {
+          "original": "1箱¥1,650〜、ワンデーから長期タイプまで",
+          "verified": "お手頃価格、ワンデーから長期タイプまで",
+          "changed": true
+        },
+        {
+          "original": "処方箋不要、度あり・度なし対応",
+          "verified": "処方箋不要、度あり・度なし対応",
+          "changed": false
+        },
+        {
+          "original": "K-POPアイドル愛用デザイン多数",
+          "verified": "K-POPアイドル愛用デザイン多数",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥1,650": {
+          "value": "1,650",
+          "found_on_site": false
+        }
+      }
+    },
+    "newt": {
+      "program_key": "newt",
+      "benefits_original": [
+        "航空券+ホテルをアプリで一括比較・予約",
+        "海外旅行アプリ ダウンロード数No.1",
+        "最低価格保証で安心して予約できる",
+        "24時間チャットサポート対応"
+      ],
+      "benefits_verified": [
+        {
+          "original": "航空券+ホテルをアプリで一括比較・予約",
+          "verified": "航空券+ホテルをアプリで一括比較・予約",
+          "changed": false
+        },
+        {
+          "original": "海外旅行アプリ ダウンロード数No.1",
+          "verified": "海外旅行アプリ ダウンロード数No.1",
+          "changed": false
+        },
+        {
+          "original": "最低価格保証で安心して予約できる",
+          "verified": "最低価格保証で安心して予約できる",
+          "changed": false
+        },
+        {
+          "original": "24時間チャットサポート対応",
+          "verified": "24時間チャットサポート対応",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {}
+    },
+    "voyageesim": {
+      "program_key": "voyageesim",
+      "benefits_original": [
+        "韓国eSIM 1日¥690〜、到着前に設定完了",
+        "物理SIM不要、QRコード読取で即開通",
+        "200ヵ国以上対応、乗り継ぎ先でもそのまま使える",
+        "データ使い放題プラン有、速度制限の心配なし"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国eSIM 1日¥690〜、到着前に設定完了",
+          "verified": "韓国eSIM お手頃価格、到着前に設定完了",
+          "changed": true
+        },
+        {
+          "original": "物理SIM不要、QRコード読取で即開通",
+          "verified": "物理SIM不要、QRコード読取で即開通",
+          "changed": false
+        },
+        {
+          "original": "200ヵ国以上対応、乗り継ぎ先でもそのまま使える",
+          "verified": "多数の国と地域に対応、乗り継ぎ先でもそのまま使える",
+          "changed": true
+        },
+        {
+          "original": "データ使い放題プラン有、速度制限の心配なし",
+          "verified": "データ使い放題プラン有、速度制限の心配なし",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥690": {
+          "value": "690",
+          "found_on_site": false
+        },
+        "200ヵ国": {
+          "value": "200",
+          "found_on_site": false
+        }
+      }
+    },
+    "matilda": {
+      "program_key": "matilda",
+      "benefits_original": [
+        "韓国コスメ専門、日本未入荷ブランド多数",
+        "韓国から直送、正規品のみ取扱い",
+        "初回購入10%OFF、お得に試せる",
+        "SNSで話題の最新コスメをいち早くGET"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国コスメ専門、日本未入荷ブランド多数",
+          "verified": "韓国コスメ専門、日本未入荷ブランド多数",
+          "changed": false
+        },
+        {
+          "original": "韓国から直送、正規品のみ取扱い",
+          "verified": "韓国から直送、正規品のみ取扱い",
+          "changed": false
+        },
+        {
+          "original": "初回購入10%OFF、お得に試せる",
+          "verified": "初回購入割引あり、お得に試せる",
+          "changed": true
+        },
+        {
+          "original": "SNSで話題の最新コスメをいち早くGET",
+          "verified": "SNSで話題の最新コスメをいち早くGET",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "10%": {
+          "value": "10",
+          "found_on_site": false
+        }
+      }
+    },
+    "codibook": {
+      "program_key": "codibook",
+      "benefits_original": [
+        "韓国ファッション専門、毎日新商品追加",
+        "¥3,000以下のプチプラ韓国服も豊富",
+        "コーデ提案機能で推し活コーデを発見",
+        "全品韓国直送、本場のトレンドそのまま"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国ファッション専門、毎日新商品追加",
+          "verified": "韓国ファッション専門、毎日新商品追加",
+          "changed": false
+        },
+        {
+          "original": "¥3,000以下のプチプラ韓国服も豊富",
+          "verified": "プチプラ韓国服も豊富",
+          "changed": true
+        },
+        {
+          "original": "コーデ提案機能で推し活コーデを発見",
+          "verified": "コーデ提案機能で推し活コーデを発見",
+          "changed": false
+        },
+        {
+          "original": "全品韓国直送、本場のトレンドそのまま",
+          "verified": "全品韓国直送、本場のトレンドそのまま",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥3,000": {
+          "value": "3,000",
+          "found_on_site": false
+        }
+      }
+    },
+    "dekiru_korean": {
+      "program_key": "dekiru_korean",
+      "benefits_original": [
+        "「できる韓国語」シリーズの公式オンライン講座",
+        "動画+オンラインレッスンの組み合わせ学習",
+        "入門〜上級、レベルに合わせたカリキュラム",
+        "推しのSNSを原文で読めるようになる"
+      ],
+      "benefits_verified": [
+        {
+          "original": "「できる韓国語」シリーズの公式オンライン講座",
+          "verified": "「できる韓国語」シリーズの公式オンライン講座",
+          "changed": false
+        },
+        {
+          "original": "動画+オンラインレッスンの組み合わせ学習",
+          "verified": "動画+オンラインレッスンの組み合わせ学習",
+          "changed": false
+        },
+        {
+          "original": "入門〜上級、レベルに合わせたカリキュラム",
+          "verified": "入門〜上級、レベルに合わせたカリキュラム",
+          "changed": false
+        },
+        {
+          "original": "推しのSNSを原文で読めるようになる",
+          "verified": "推しのSNSを原文で読めるようになる",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {}
+    },
+    "sazo_purchase_agent": {
+      "program_key": "sazo_purchase_agent",
+      "benefits_original": [
+        "韓国の通販サイトから商品を代行購入",
+        "URLを入力するだけで簡単注文",
+        "日本語サポートで安心して利用できる",
+        "韓国限定グッズも自宅にお届け"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国の通販サイトから商品を代行購入",
+          "verified": "韓国の通販サイトから商品を代行購入",
+          "changed": false
+        },
+        {
+          "original": "URLを入力するだけで簡単注文",
+          "verified": "URLを入力するだけで簡単注文",
+          "changed": false
+        },
+        {
+          "original": "日本語サポートで安心して利用できる",
+          "verified": "日本語サポートで安心して利用できる",
+          "changed": false
+        },
+        {
+          "original": "韓国限定グッズも自宅にお届け",
+          "verified": "韓国限定グッズも自宅にお届け",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {}
+    },
+    "global_wifi": {
+      "program_key": "global_wifi",
+      "benefits_original": [
+        "1日定額¥970〜、韓国4G/5G接続",
+        "空港受取&返却、24時間サポート対応",
+        "同時接続5台、友達・家族でシェアOK",
+        "200以上の国と地域で使える安心感"
+      ],
+      "benefits_verified": [
+        {
+          "original": "1日定額¥970〜、韓国4G/5G接続",
+          "verified": "1日定額¥970〜、韓国4G/5G接続",
+          "changed": false
+        },
+        {
+          "original": "空港受取&返却、24時間サポート対応",
+          "verified": "空港受取&返却、24時間サポート対応",
+          "changed": false
+        },
+        {
+          "original": "同時接続5台、友達・家族でシェアOK",
+          "verified": "同時接続5台、友達・家族でシェアOK",
+          "changed": false
+        },
+        {
+          "original": "200以上の国と地域で使える安心感",
+          "verified": "200以上の国と地域で使える安心感",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥970": {
+          "value": "970",
+          "found_on_site": true
+        },
+        "5台": {
+          "value": "5",
+          "found_on_site": true
+        },
+        "200": {
+          "value": "200",
+          "found_on_site": true
+        }
+      }
+    },
+    "italki": {
+      "program_key": "italki",
+      "benefits_original": [
+        "韓国語ネイティブ講師と1対1オンラインレッスン",
+        "1レッスン¥800〜、お手頃価格で始められる",
+        "24時間好きな時間に予約できる柔軟さ",
+        "推しの言葉を理解したいファンに最適"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国語ネイティブ講師と1対1オンラインレッスン",
+          "verified": "韓国語ネイティブ講師と1対1オンラインレッスン",
+          "changed": false
+        },
+        {
+          "original": "1レッスン¥800〜、お手頃価格で始められる",
+          "verified": "1レッスンお手頃価格で始められる",
+          "changed": true
+        },
+        {
+          "original": "24時間好きな時間に予約できる柔軟さ",
+          "verified": "24時間好きな時間に予約できる柔軟さ",
+          "changed": false
+        },
+        {
+          "original": "推しの言葉を理解したいファンに最適",
+          "verified": "推しの言葉を理解したいファンに最適",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥800": {
+          "value": "800",
+          "found_on_site": false
+        }
+      }
+    },
+    "ikyu": {
+      "program_key": "ikyu",
+      "benefits_original": [
+        "厳選高級ホテル、最大60%割引の直前セール",
+        "ライブ会場近くの高評価ホテルが見つかる",
+        "ポイント最大5%還元、次回予約にも使える",
+        "口コミ評価4.0以上のホテルを多数掲載"
+      ],
+      "benefits_verified": [
+        {
+          "original": "厳選高級ホテル、最大60%割引の直前セール",
+          "verified": "厳選高級ホテル、最大60%割引の直前セール",
+          "changed": false
+        },
+        {
+          "original": "ライブ会場近くの高評価ホテルが見つかる",
+          "verified": "ライブ会場近くの高評価ホテルが見つかる",
+          "changed": false
+        },
+        {
+          "original": "ポイント最大5%還元、次回予約にも使える",
+          "verified": "ポイント最大5%還元、次回予約にも使える",
+          "changed": false
+        },
+        {
+          "original": "口コミ評価4.0以上のホテルを多数掲載",
+          "verified": "口コミ評価4.0以上のホテルを多数掲載",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "60%": {
+          "value": "60",
+          "found_on_site": true
+        },
+        "5%": {
+          "value": "5",
+          "found_on_site": true
+        },
+        "4.0": {
+          "value": "4.0",
+          "found_on_site": true
+        }
+      }
+    },
+    "dholic": {
+      "program_key": "dholic",
+      "benefits_original": [
+        "韓国トレンド直輸入、毎日新作入荷",
+        "全品送料¥550、¥5,500以上で送料無料",
+        "サイズ交換対応、初めての韓国ファッションも安心",
+        "推しと同じ系統のコーデが見つかる"
+      ],
+      "benefits_verified": [
+        {
+          "original": "韓国トレンド直輸入、毎日新作入荷",
+          "verified": "韓国トレンド直輸入、毎日新作入荷",
+          "changed": false
+        },
+        {
+          "original": "全品送料¥550、¥5,500以上で送料無料",
+          "verified": "リーズナブルな送料、一定額以上で送料無料",
+          "changed": true
+        },
+        {
+          "original": "サイズ交換対応、初めての韓国ファッションも安心",
+          "verified": "サイズ交換対応、初めての韓国ファッションも安心",
+          "changed": false
+        },
+        {
+          "original": "推しと同じ系統のコーデが見つかる",
+          "verified": "推しと同じ系統のコーデが見つかる",
+          "changed": false
+        }
+      ],
+      "numbers_checked": {
+        "¥550": {
+          "value": "550",
+          "found_on_site": false
+        },
+        "¥5,500": {
+          "value": "5,500",
+          "found_on_site": false
+        }
+      }
+    }
+  }
+}

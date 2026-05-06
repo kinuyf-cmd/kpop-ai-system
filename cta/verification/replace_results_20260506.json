@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-05-06T19:50:08.980714+09:00",
+  "dry_run": false,
+  "results": [
+    {
+      "post_id": 14991,
+      "status": "success",
+      "md5_before": "0e9fc6f68009f88a0bef3d27c1e48da1",
+      "md5_after": "0d5665deb1bab8e33698e84444370138",
+      "positions_injected": [
+        "top",
+        "middle",
+        "bottom"
+      ],
+      "genre": "default",
+      "content_length": 3858
+    },
+    {
+      "post_id": 17060,
+      "status": "success",
+      "md5_before": "f35da44a9603ea597391115d6a313a11",
+      "md5_after": "886b31a426570fcb31c655f7b99dcfce",
+      "positions_injected": [
+        "bottom"
+      ],
+      "genre": "breaking_news",
+      "content_length": 2578
+    },
+    {
+      "post_id": 16993,
+      "status": "success",
+      "md5_before": "7f126f17356fd8cd5c9e5770fa598583",
+      "md5_after": "2bbf3a8514215add8d6c02603b71dee3",
+      "positions_injected": [
+        "bottom"
+      ],
+      "genre": "live_concert",
+      "content_length": 2308
+    },
+    {
+      "post_id": 17054,
+      "status": "success",
+      "md5_before": "057c9c16511c2327f94f2dc281387b5a",
+      "md5_after": "caee77d973da3dab56231840a2aa1b82",
+      "positions_injected": [
+        "bottom"
+      ],
+      "genre": "breaking_news",
+      "content_length": 1185
+    }
+  ]
+}

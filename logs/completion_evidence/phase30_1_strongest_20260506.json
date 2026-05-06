@@ -1,0 +1,76 @@
+{
+  "phase": "30.1",
+  "task": "Strongest CTA Phase 30 version with verified social proof",
+  "completed_at": "2026-05-06T19:52:52.249402+09:00",
+  "files_changed": {
+    "cta/cta_strongest_phase30_templates.json": {
+      "md5": "17fca9753875ffa863f932c0b198d5de",
+      "size": 7675
+    },
+    "cta/cta_strongest_phase30_data.json": {
+      "md5": "957b5444285172ee625838523f01a5af",
+      "size": 10984
+    },
+    "cta/new_post_injector.py": {
+      "md5": "cfa602a34559b543cd59e9beec6c1b85",
+      "size": 18829
+    },
+    "cta/verification/social_proof_evidence_20260506.json": {
+      "md5": "819f35b8e5846716e065a3d4eec44f60",
+      "size": 8827
+    },
+    "cta/verification/benefit_evidence_20260506.json": {
+      "md5": "a153a40340a3200d5338d1a3f6435420",
+      "size": 17704
+    }
+  },
+  "verification": {
+    "social_proof": {
+      "total_programs": 13,
+      "verified_count": 2,
+      "unverified_fallback": "qualitative expressions (景表法配慮)"
+    },
+    "benefits": {
+      "total": 52,
+      "changed_to_qualitative": 10,
+      "reason": "numbers not found on official sites"
+    }
+  },
+  "replaced_articles": {
+    "target_ids": [
+      14991,
+      17060,
+      16993,
+      17054
+    ],
+    "success_count": 4,
+    "article_14991": "3-layer (top/middle/bottom) - published",
+    "article_16993": "1-layer (bottom) - published",
+    "article_17060": "1-layer (bottom) - trashed",
+    "article_17054": "1-layer (bottom) - draft"
+  },
+  "existing_unchanged": {
+    "sample_ids": [
+      7528,
+      7429,
+      7426,
+      7157,
+      7036
+    ],
+    "strongest_phase30_count": 0,
+    "hybrid_cta_count": 0,
+    "result": "ALL PASS - no contamination"
+  },
+  "post_publish_hook": {
+    "function": "inject_hybrid_cta",
+    "source": "cta.new_post_injector",
+    "status": "compatible - no modification needed",
+    "uses_new_templates": true
+  },
+  "compliance": {
+    "pr_disclosure": "全ポジションにPR/広告表記あり",
+    "nofollow_sponsored": "全リンクにrel=nofollow sponsored",
+    "a8_banner_unmodified": true,
+    "verified_numbers_only": true
+  }
+}
