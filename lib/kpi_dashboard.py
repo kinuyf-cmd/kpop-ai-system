@@ -200,16 +200,16 @@ def collect_yesterday_actuals(yesterday_str: str) -> dict:
 
 def collect_monthly_actuals(year: int, month: int) -> dict:
     """当月累計の実績値を集計して返す。
-    数字は実累計のみ。GA4/AdSense は1日値しか metrics_yesterday.json に無いため
-    現状は当月実累計が取れない指標 (sessions/pageviews/revenue) は推計表記とせず
-    Noneのまま返す (=表示は '未取得')。実累計が必要なら別途日次積み上げログが要る。
+    GA4/AdSense/GSC は logs/daily_metrics_history.jsonl の当月分を合算。
+    履歴ファイルが無い (初日) 場合は metrics_yesterday.json の単日値のみ表示し、
+    実態として未蓄積であることを示す。
     """
     now = datetime.now(JST)
     month_str = f"{year:04d}-{month:02d}"
     days_elapsed = now.day
 
     actuals = {
-        "sessions": None,         # 当月実累計の集計ソース未整備のためNone
+        "sessions": None,
         "pageviews": None,
         "revenue_jpy": None,
         "articles_total": None,
@@ -218,21 +218,59 @@ def collect_monthly_actuals(year: int, month: int) -> dict:
         "pipeline_uptime": None,
         "avg_position": None,
         "_days_elapsed": days_elapsed,
+        "_history_days": 0,
     }
 
-    # 平均掲載順位は最新値を表示 (新フォーマット sitewide.position)
-    if METRICS_FILE.exists():
-        try:
-            m = json.loads(METRICS_FILE.read_text())
-            gsc = m.get("gsc", {})
-            sw = gsc.get("sitewide") or {}
-            pos_raw = sw.get("position", gsc.get("position"))
-            if pos_raw is not None:
-                actuals["avg_position"] = round(float(pos_raw), 1)
-        except Exception:
-            pass
+    # daily_metrics_history.jsonl の当月分を合算
+    history_path = LOGS / "daily_metrics_history.jsonl"
+    sess_sum = pv_sum = rev_sum = clicks_sum = 0
+    pos_values = []
+    history_days = 0
+    if history_path.exists():
+        for line in history_path.read_text(errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if not str(r.get("date", "")).startswith(month_str):
+                continue
+            history_days += 1
+            if r.get("ga4_sessions") is not None:
+                sess_sum += int(r["ga4_sessions"])
+            if r.get("ga4_pageviews") is not None:
+                pv_sum += int(r["ga4_pageviews"])
+            if r.get("adsense_earnings") is not None:
+                rev_sum += int(r["adsense_earnings"])
+            if r.get("gsc_clicks") is not None:
+                clicks_sum += int(r["gsc_clicks"])
+            if r.get("gsc_position") is not None:
+                pos_values.append(float(r["gsc_position"]))
 
-    # 記事総数: 当月の unified_publish.jsonl success:true 件数 (旧: kpi_posts.jsonl 全期間累計はバグ)
+    actuals["_history_days"] = history_days
+    if history_days > 0:
+        actuals["sessions"] = sess_sum
+        actuals["pageviews"] = pv_sum
+        actuals["revenue_jpy"] = rev_sum
+        actuals["gsc_clicks"] = clicks_sum
+        if pos_values:
+            actuals["avg_position"] = round(sum(pos_values) / len(pos_values), 1)
+    else:
+        # 履歴未蓄積時は metrics_yesterday.json の sitewide.position だけは表示
+        if METRICS_FILE.exists():
+            try:
+                m = json.loads(METRICS_FILE.read_text())
+                gsc = m.get("gsc", {})
+                sw = gsc.get("sitewide") or {}
+                pos_raw = sw.get("position", gsc.get("position"))
+                if pos_raw is not None:
+                    actuals["avg_position"] = round(float(pos_raw), 1)
+            except Exception:
+                pass
+
+    # 記事総数: 当月の unified_publish.jsonl success:true 件数
     actuals["articles_total"] = _count_unified_publish_success(month_str)
 
     # X投稿月間: x_posts.jsonl の status='ok' 当月分

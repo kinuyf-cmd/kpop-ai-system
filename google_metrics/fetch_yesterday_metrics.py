@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
@@ -355,6 +355,53 @@ def main():
     out_path = os.path.join(BASE_DIR, "metrics_yesterday.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
+
+    # 月次累計用に履歴も追記 (2026-05-07追加)
+    # 同 date の既存行があれば上書き、無ければ追加。スキーマは
+    # lib/kpi_dashboard.py の collect_monthly_actuals が読む形に揃える。
+    try:
+        history_path = "/home/aiuser/kpop-ai-system/logs/daily_metrics_history.jsonl"
+        ga4_sum = ga4_data.get("summary", {}) if isinstance(ga4_data, dict) else {}
+        ads = adsense_data if isinstance(adsense_data, dict) else {}
+        gsc_full = result.get("gsc", {}) or {}
+        sw = gsc_full.get("sitewide") or {}
+
+        new_row = {
+            "date": start_date,
+            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "ga4_sessions": int(ga4_sum.get("sessions", 0) or 0) if ga4_sum.get("sessions") else None,
+            "ga4_pageviews": int(ga4_sum.get("pageviews", 0) or 0) if ga4_sum.get("pageviews") else None,
+            "adsense_earnings": int(float(ads.get("ESTIMATED_EARNINGS", 0) or 0)) if ads.get("ESTIMATED_EARNINGS") else None,
+            "adsense_pageviews": int(float(ads.get("PAGE_VIEWS", 0) or 0)) if ads.get("PAGE_VIEWS") else None,
+            "adsense_rpm": int(float(ads.get("PAGE_VIEWS_RPM", 0) or 0)) if ads.get("PAGE_VIEWS_RPM") else None,
+            "gsc_clicks": int(float(sw.get("clicks", 0) or 0)) if sw.get("clicks") is not None else None,
+            "gsc_impressions": int(float(sw.get("impressions", 0) or 0)) if sw.get("impressions") is not None else None,
+            "gsc_ctr": round(float(sw.get("ctr", 0) or 0), 5) if sw.get("ctr") is not None else None,
+            "gsc_position": round(float(sw.get("position", 0) or 0), 2) if sw.get("position") is not None else None,
+        }
+
+        existing = []
+        if os.path.exists(history_path):
+            with open(history_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        r = json.loads(line)
+                    except Exception:
+                        continue
+                    if r.get("date") != start_date:
+                        existing.append(r)
+
+        existing.append(new_row)
+        existing.sort(key=lambda r: r.get("date", ""))
+
+        with open(history_path, "w", encoding="utf-8") as f:
+            for r in existing:
+                f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"[WARN] daily_metrics_history append failed: {e}")
 
     # ui_cta_events.jsonlにも追記
     try:
