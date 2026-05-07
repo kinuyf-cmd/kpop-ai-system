@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T17:45:29.320591",
+  "updated_at": "2026-05-07T17:51:40.646125",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1306,6 +1306,15 @@
       "fix": "lib/title_optimizer.py の generate_slug が日本語タイトルでASCIIスラッグ生成失敗時、より良いフォールバックを使う(現状は英単語抽出+timestamp)。既存25記事はslug変更時に301設定必須",
       "detection": "GSC pages で URL に \"%\" を含むものをカウント (ASCII slug ルールから外れている)",
       "agent": "lib.title_optimizer",
+      "resolved_at": "2026-05-07"
+    },
+    "gsc_stale_noindex_from_draft_crawl": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "本日 publish の post 18063/18057 が GSC で「Excluded by noindex tag」と表示。実HTML/HTTPヘッダ調査では noindex は見つからず。原因はWP draft → publish の極短時間にGoogleがクロールしdraftのnoindexを記録した。Next.jsのキャッシュ s-maxage=60+SWR=1年 が古いHTMLをstale配信していた可能性も",
+      "fix": "(1) sitemap全resubmit (2) 当該URLを Indexing API キュー (data/gsc_reindex_queue.jsonl) に登録し翌日(quota回復後)再request (3) Next.jsのキャッシュ purge を post_publish_hook で確実に実行",
+      "detection": "GSC URL Inspection で verdict=NEUTRAL かつ coverage=Excluded by noindex なのに、実HTMLには noindex meta なし",
+      "agent": "gsc_indexing",
       "resolved_at": "2026-05-07"
     }
   },
