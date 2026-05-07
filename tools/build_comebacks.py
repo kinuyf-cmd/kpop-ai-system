@@ -101,8 +101,9 @@ for c in comebacks:
 
 future.sort(key=lambda x: x['date'])
 
+final_items = future[:8]
 json.dump(
-    {'updated_at': datetime.now().isoformat(), 'items': future[:8]},
+    {'updated_at': datetime.now().isoformat(), 'items': final_items},
     open(OUT, 'w', encoding='utf-8'),
     ensure_ascii=False,
     indent=2,
@@ -111,3 +112,9 @@ json.dump(
 print(f"comebacks.json: {len(future)}件 (厳格版)")
 for c in future[:5]:
     print(f"  {c['date']} {c['artist']}: {c.get('title', '')[:50]} [{c.get('source', '?')}]")
+
+# 0件継続検知 + Discord通知 (silent rot 再発防止 / 2026-04-24障害の教訓)
+import sys as _sys
+_sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+from lib.event_data_health import record_and_alert
+print(record_and_alert('comebacks', OUT, len(final_items)))

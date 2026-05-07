@@ -1,1 +1,160 @@
-{"_comment":"手動キュレーション用","items":[]}
+{
+  "_comment": "手動キュレーション用 (build_events.py 最優先ソース)",
+  "_source_note": "公式サイト/ファンサイト/Kstyleなど信頼ソースで日付/会場が確認済みのK-POPライブ・ファンミーティングのみ掲載",
+  "_last_curation": "2026-05-07",
+  "items": [
+    {
+      "title": "KCON JAPAN 2026 Day1",
+      "date": "2026-05-08",
+      "venue": "幕張メッセ",
+      "artist": "KCON",
+      "url": "https://www.kpopjournal.tokyo/kcon-japan-2026-complete-guide-lineup-ticket/",
+      "source": "manual",
+      "slug": "kcon-japan-2026-complete-guide-lineup-ticket"
+    },
+    {
+      "title": "KCON JAPAN 2026 Day2",
+      "date": "2026-05-09",
+      "venue": "幕張メッセ",
+      "artist": "KCON",
+      "url": "https://www.kpopjournal.tokyo/kcon-japan-2026-day2-artists-profiles/",
+      "source": "manual",
+      "slug": "kcon-japan-2026-day2-artists-profiles"
+    },
+    {
+      "title": "KCON JAPAN 2026 Day3",
+      "date": "2026-05-10",
+      "venue": "幕張メッセ",
+      "artist": "KCON",
+      "url": "https://www.kpopjournal.tokyo/kcon-japan-2026-complete-guide-lineup-ticket/",
+      "source": "manual",
+      "slug": "kcon-japan-2026-complete-guide-lineup-ticket"
+    },
+    {
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in JAPAN",
+      "date": "2026-05-09",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "ITZY",
+      "url": "https://www.kpopjournal.tokyo/itzy-3rd-world-tour-2026-japan-guide/",
+      "source": "manual",
+      "slug": "itzy-3rd-world-tour-2026-japan-guide"
+    },
+    {
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in JAPAN",
+      "date": "2026-05-10",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "ITZY",
+      "url": "https://www.kpopjournal.tokyo/itzy-3rd-world-tour-2026-japan-guide/",
+      "source": "manual",
+      "slug": "itzy-3rd-world-tour-2026-japan-guide"
+    },
+    {
+      "title": "SHINee - The Trilogy I - 2026 SHINee WORLD VIII : [THE INVERT]",
+      "date": "2026-06-05",
+      "venue": "ベルーナドーム",
+      "artist": "SHINee",
+      "url": "https://www.kpopjournal.tokyo/2026-may-kpop-events-live-complete-summary/",
+      "source": "manual",
+      "slug": "2026-may-kpop-events-live-complete-summary"
+    },
+    {
+      "title": "SHINee - The Trilogy I - 2026 SHINee WORLD VIII : [THE INVERT]",
+      "date": "2026-06-07",
+      "venue": "ベルーナドーム",
+      "artist": "SHINee",
+      "url": "https://www.kpopjournal.tokyo/2026-may-kpop-events-live-complete-summary/",
+      "source": "manual",
+      "slug": "2026-may-kpop-events-live-complete-summary"
+    },
+    {
+      "title": "RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME -",
+      "date": "2026-07-10",
+      "venue": "マリンメッセ福岡 B館",
+      "artist": "RIIZE",
+      "url": "https://www.kpopjournal.tokyo/riize-japan-arena-tour-2025/",
+      "source": "manual",
+      "slug": "riize-japan-arena-tour-2025"
+    },
+    {
+      "title": "RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME -",
+      "date": "2026-07-15",
+      "venue": "国立代々木競技場第一体育館",
+      "artist": "RIIZE",
+      "url": "https://www.kpopjournal.tokyo/riize-japan-arena-tour-2025/",
+      "source": "manual",
+      "slug": "riize-japan-arena-tour-2025"
+    },
+    {
+      "title": "RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME -",
+      "date": "2026-07-16",
+      "venue": "国立代々木競技場第一体育館",
+      "artist": "RIIZE",
+      "url": "https://www.kpopjournal.tokyo/riize-japan-arena-tour-2025/",
+      "source": "manual",
+      "slug": "riize-japan-arena-tour-2025"
+    },
+    {
+      "title": "aespa MY-J presents JAPAN FANMEETING 2026 \"MY CLASSMaeTE\"",
+      "date": "2026-07-18",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "aespa",
+      "url": "https://www.kpopjournal.tokyo/aespa-2026-future-outlook/",
+      "source": "manual",
+      "slug": "aespa-2026-future-outlook"
+    },
+    {
+      "title": "aespa MY-J presents JAPAN FANMEETING 2026 \"MY CLASSMaeTE\"",
+      "date": "2026-07-19",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "aespa",
+      "url": "https://www.kpopjournal.tokyo/aespa-2026-future-outlook/",
+      "source": "manual",
+      "slug": "aespa-2026-future-outlook"
+    },
+    {
+      "title": "aespa MY-J presents JAPAN FANMEETING 2026 \"MY CLASSMaeTE\"",
+      "date": "2026-07-20",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "aespa",
+      "url": "https://www.kpopjournal.tokyo/aespa-2026-future-outlook/",
+      "source": "manual",
+      "slug": "aespa-2026-future-outlook"
+    },
+    {
+      "title": "RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME -",
+      "date": "2026-07-23",
+      "venue": "神戸ワールド記念ホール",
+      "artist": "RIIZE",
+      "url": "https://www.kpopjournal.tokyo/riize-japan-arena-tour-2025/",
+      "source": "manual",
+      "slug": "riize-japan-arena-tour-2025"
+    },
+    {
+      "title": "RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME -",
+      "date": "2026-07-24",
+      "venue": "神戸ワールド記念ホール",
+      "artist": "RIIZE",
+      "url": "https://www.kpopjournal.tokyo/riize-japan-arena-tour-2025/",
+      "source": "manual",
+      "slug": "riize-japan-arena-tour-2025"
+    },
+    {
+      "title": "NMIXX 1ST WORLD TOUR <EPISODE 1: ZERO FRONTIER> IN JAPAN",
+      "date": "2026-08-08",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "NMIXX",
+      "url": "https://www.kpopjournal.tokyo/2026-may-kpop-events-live-complete-summary/",
+      "source": "manual",
+      "slug": "2026-may-kpop-events-live-complete-summary"
+    },
+    {
+      "title": "NMIXX 1ST WORLD TOUR <EPISODE 1: ZERO FRONTIER> IN JAPAN",
+      "date": "2026-08-09",
+      "venue": "KEIO ARENA TOKYO",
+      "artist": "NMIXX",
+      "url": "https://www.kpopjournal.tokyo/2026-may-kpop-events-live-complete-summary/",
+      "source": "manual",
+      "slug": "2026-may-kpop-events-live-complete-summary"
+    }
+  ]
+}

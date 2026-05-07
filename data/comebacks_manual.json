@@ -1,1 +1,43 @@
-{"_comment":"手動管理カムバック情報","items":[]}
+{
+  "_comment": "手動管理カムバック情報 (build_comebacks.py 唯一の有効ソース)",
+  "_source_note": "公式アナウンス済みのリリース日のみ。signals自動抽出は2026-04-27に無効化済",
+  "_last_curation": "2026-05-07",
+  "items": [
+    {
+      "artist": "NMIXX",
+      "title": "Heavy Serenade",
+      "date": "2026-05-11",
+      "type": "シングル"
+    },
+    {
+      "artist": "ITZY",
+      "title": "Motto",
+      "date": "2026-05-18",
+      "type": "ミニアルバム"
+    },
+    {
+      "artist": "ZEROBASEONE",
+      "title": "TOP 5",
+      "date": "2026-05-18",
+      "type": "ミニアルバム"
+    },
+    {
+      "artist": "xikers",
+      "title": "OKay",
+      "date": "2026-05-19",
+      "type": "ミニアルバム"
+    },
+    {
+      "artist": "LE SSERAFIM",
+      "title": "BOOMPALA",
+      "date": "2026-05-22",
+      "type": "ミニアルバム"
+    },
+    {
+      "artist": "aespa",
+      "title": "LEMONADE",
+      "date": "2026-05-29",
+      "type": "ミニアルバム"
+    }
+  ]
+}

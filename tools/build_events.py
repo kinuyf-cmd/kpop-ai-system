@@ -176,8 +176,9 @@ for it in unique:
         slug = _find_related_article(it.get('title', ''), it.get('artist', ''))
         if slug:
             it['slug'] = slug
+final_items = unique[:12]
 json.dump(
-    {'updated_at': datetime.now().isoformat(), 'items': unique[:12]},
+    {'updated_at': datetime.now().isoformat(), 'items': final_items},
     open(OUT, 'w', encoding='utf-8'),
     ensure_ascii=False,
     indent=2,
@@ -186,3 +187,9 @@ json.dump(
 print(f"events.json: {len(unique)}件")
 for it in unique[:5]:
     print(f"  {it['date']} {it.get('artist', '')}: {it['title'][:50]} @ {it['venue']} [{it['source']}]")
+
+# 0件継続検知 + Discord通知 (silent rot 再発防止 / 2026-04-24障害の教訓)
+import sys as _sys
+_sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+from lib.event_data_health import record_and_alert
+print(record_and_alert('events', OUT, len(final_items)))
