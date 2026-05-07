@@ -222,9 +222,19 @@ def collect_eplus():
     except Exception as e:
         print(f'eplus_enricher import error: {e}')
         return []
+    # eplus の record_list は 1record = 1公演 (同kogyo_codeで複数日が並ぶ)。
+    # 同一公演 (kogyo_code) の複数公演をまとめて1 signalにし performances リストにする
     signals = []
-    seen_codes = set()
-    for keyword in ('K-POP', '韓流'):
+    grouped: dict[str, dict] = {}
+    # eplus /sf/search は1キーワード20件 (ページネーションが効かない) なので
+    # 多重キーワードで K-POP の長尾アーティストまでカバー
+    EPLUS_KEYWORDS = (
+        'K-POP', '韓流', 'BTS', 'BLACKPINK', 'aespa', 'NewJeans', 'SEVENTEEN',
+        'TWICE', 'IVE', 'LE SSERAFIM', 'ITZY', 'NCT', 'NMIXX', 'RIIZE',
+        'TREASURE', 'BABYMONSTER', 'SHINee', 'ENHYPEN', 'Stray Kids', 'TXT',
+        '&TEAM', 'BOYNEXTDOOR', 'CRAVITY', 'P1Harmony', 'TWS', 'KCON',
+    )
+    for keyword in EPLUS_KEYWORDS:
         try:
             recs = fetch_eplus_kpop(keyword=keyword)
         except Exception as e:
@@ -235,33 +245,44 @@ def collect_eplus():
             if not n:
                 continue
             code = n['kogyo_code']
-            if code in seen_codes:
+            perf = {
+                'date': n['date'],
+                'venue': n['venue'],
+                'prefecture': n['prefecture'],
+                'open_time': n['open_time'],
+                'start_time': n['start_time'],
+            }
+            if code not in grouped:
+                grouped[code] = {
+                    'title': n['title'],
+                    'artist': n['artist'],
+                    'url': n['url'],
+                    'performances': [],
+                    'seen_perf_keys': set(),
+                }
+            g = grouped[code]
+            pkey = (perf['date'], perf['venue'])
+            if pkey in g['seen_perf_keys']:
                 continue
-            seen_codes.add(code)
-            # collector level dedup: 同 kogyo_code は複数公演 (record_listに各公演日が並ぶ)
-            # 1 record = 1公演なので performances は単一
-            signals.append({
-                'timestamp': datetime.now().isoformat(),
-                'source': 'ticket_guide',
-                'source_id': 'eplus',
-                'keyword': n['artist'] or 'K-POP',
-                'title': n['title'][:200],
-                'url': n['url'],
-                'engagement_score': 2.0,
-                'language': 'ja',
-                'raw_data': {
-                    'all_keywords': [n['artist']] if n['artist'] else [],
-                    'category': 'event',
-                    'kogyo_code': code,
-                    'performances': [{
-                        'date': n['date'],
-                        'venue': n['venue'],
-                        'prefecture': n['prefecture'],
-                        'open_time': n['open_time'],
-                        'start_time': n['start_time'],
-                    }],
-                },
-            })
+            g['seen_perf_keys'].add(pkey)
+            g['performances'].append(perf)
+    for code, g in grouped.items():
+        signals.append({
+            'timestamp': datetime.now().isoformat(),
+            'source': 'ticket_guide',
+            'source_id': 'eplus',
+            'keyword': g['artist'] or 'K-POP',
+            'title': g['title'][:200],
+            'url': g['url'],
+            'engagement_score': 2.0,
+            'language': 'ja',
+            'raw_data': {
+                'all_keywords': [g['artist']] if g['artist'] else [],
+                'category': 'event',
+                'kogyo_code': code,
+                'performances': g['performances'],
+            },
+        })
     return signals
 
 

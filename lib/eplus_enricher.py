@@ -88,8 +88,10 @@ def fetch_eplus_kpop(keyword: str = 'K-POP', max_pages: int = 5, *, sleep_sec: f
     if not force and cache_key in cache and _is_fresh(cache[cache_key]):
         return cache[cache_key].get('records', [])
 
+    # 各 record = 1公演 (同 kogyo_code が複数日で並ぶ)。
+    # dedup key は (kogyo_code, koenbi_term, venue_code) で公演単位にユニーク化
     all_records = []
-    seen_codes = set()
+    seen_keys = set()
     for page in range(1, max_pages + 1):
         params = {'keyword': keyword}
         if page > 1:
@@ -105,11 +107,15 @@ def fetch_eplus_kpop(keyword: str = 'K-POP', max_pages: int = 5, *, sleep_sec: f
         records = _extract_records(html)
         new_count = 0
         for rec in records:
-            code = rec.get('kogyo_code')
-            if code and code not in seen_codes:
-                seen_codes.add(code)
-                all_records.append(rec)
-                new_count += 1
+            code = rec.get('kogyo_code') or ''
+            term = rec.get('koenbi_term') or ''
+            venue_code = (rec.get('kanren_venue') or {}).get('venue_code') or ''
+            key = f'{code}|{term}|{venue_code}'
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            all_records.append(rec)
+            new_count += 1
         if new_count == 0:
             break
         time.sleep(sleep_sec)
