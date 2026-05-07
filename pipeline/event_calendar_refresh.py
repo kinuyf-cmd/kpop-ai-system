@@ -40,6 +40,7 @@ def sync_frontend_json(events):
                     'title': e.get('title', ''),
                     'date': ds,
                     'date_end': de,
+                    'date_tba': e.get('date_tba', False),
                     'venue': e.get('venue', '') or e.get('location', ''),
                     'slug': e.get('article_slug', ''),
                     'url': e.get('official_url', '') or e.get('url', ''),
@@ -47,7 +48,8 @@ def sync_frontend_json(events):
                 })
         except Exception:
             pass
-    items.sort(key=lambda x: x['date'])
+    # 日付未定は末尾に並べる（プレースホルダ日付に引きずられない）
+    items.sort(key=lambda x: (x.get('date_tba', False), x['date']))
     out = {'updated_at': datetime.now().isoformat(), 'items': items}
     out_path = '/home/aiuser/kpopjournal-frontend/public/data/events.json'
     os.makedirs(os.path.dirname(out_path), exist_ok=True)

@@ -164,13 +164,20 @@ def is_kpop_related(sig):
 
 
 def group_signals(signals):
-    """アーティスト×イベント種別でグルーピング (K-POP関連のみ)"""
+    """アーティスト×イベント種別でグルーピング (K-POP関連のみ)
+
+    artist が検出できないシグナルは破棄。汎用 'K-POP_event' fallback は
+    無関係な異なるイベントを1グループに混ぜてGPTが捏造抽出する原因になるため使わない。
+    """
     groups = defaultdict(list)
     for sig in signals:
         if not is_kpop_related(sig):
             continue
         title = sig.get('title', '')
-        artist = detect_artist(title) or 'K-POP'
+        artist = detect_artist(title)
+        if not artist:
+            # アーティスト名が特定できないシグナルは events_manual.json に入れない
+            continue
         etype = detect_event_type(title)
         key = f"{artist}_{etype}"
         groups[key].append(sig)
@@ -238,6 +245,51 @@ def extract_event_details_gpt(sigs):
     except Exception as e:
         print(f"  GPT抽出エラー: {e}")
     return None
+
+
+def enrich_date_via_tavily(artist: str, title: str) -> str | None:
+    """GPT で date が抽出できなかった場合、Tavily で公演日を web 検索。
+
+    返り値: 'YYYY-MM-DD' または None。
+    """
+    key = os.getenv('TAVILY_API_KEY')
+    if not key:
+        return None
+    try:
+        from tavily import TavilyClient
+        client = TavilyClient(api_key=key)
+        # 検索クエリ: アーティスト + イベントタイトル + 公演日キーワード
+        # tickeboの英字タイトルから余計な記号を落とす
+        clean_title = re.sub(r'[<>\[\]\(\)\|]', ' ', title)[:60]
+        query = f'{artist} {clean_title} 公演日 日程 2026'
+        resp = client.search(query, max_results=5, search_depth='basic')
+        # results[].content から日付を抽出
+        for r in resp.get('results', []):
+            text = (r.get('title', '') + ' ' + r.get('content', ''))[:1000]
+            # 2026年MM月DD日形式
+            m = re.search(r'(20\d{2})年(\d{1,2})月(\d{1,2})日', text)
+            if m:
+                y, mo, d = m.groups()
+                return f'{int(y):04d}-{int(mo):02d}-{int(d):02d}'
+            # ISO形式
+            m = re.search(r'\b(20\d{2})-(\d{1,2})-(\d{1,2})\b', text)
+            if m:
+                y, mo, d = m.groups()
+                return f'{int(y):04d}-{int(mo):02d}-{int(d):02d}'
+    except Exception as e:
+        print(f'  Tavily date enrich err: {e}')
+    return None
+
+
+def extract_year_from_text(text: str) -> int | None:
+    """タイトル等から年を抽出。今年以降のみ採用。年が取れない場合は今年を返す。"""
+    today_year = datetime.now().year
+    for m in re.finditer(r'\b(20\d{2})\b', text):
+        y = int(m.group(1))
+        if today_year <= y <= today_year + 3:
+            return y
+    # 年が取れない場合のデフォルトは今年（チケット発売中の公演は当年中の開催が大半）
+    return today_year
 
 
 def load_existing_events():
@@ -329,12 +381,37 @@ def main():
             skipped_low += 1
             continue
 
+        # 日付enrichment: GPT で取れなかった場合 Tavily 検索 → それでもダメなら年抽出+TBA
+        ds = details.get('date_start')
+        de = details.get('date_end') or ds
+        date_tba = False
+        if not ds:
+            enriched = enrich_date_via_tavily(artist, extracted_title)
+            if enriched:
+                ds = enriched
+                de = enriched
+                print(f'  ✚ Tavily date enrich: {artist} → {ds}')
+            else:
+                # 年だけ抽出して年末をプレースホルダ + TBA フラグ
+                all_text = extracted_title + ' ' + ' '.join(s.get('title', '') for s in sigs)
+                y = extract_year_from_text(all_text)
+                if y:
+                    ds = f'{y}-12-31'
+                    de = ds
+                    date_tba = True
+
+        # 日程未定の場合タイトルにマーク（frontend が日付を出さない判断材料）
+        display_title = details.get('title', sigs[0].get('title', '')[:60])
+        if date_tba:
+            display_title = f'[日程未定] {display_title}'[:80]
+
         event = {
             'id': f"auto_{artist.lower().replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}",
             'type': detect_event_type(sigs[0].get('title', '')),
-            'title': details.get('title', sigs[0].get('title', '')[:60]),
-            'date_start': details.get('date_start') or '',
-            'date_end': details.get('date_end') or details.get('date_start') or '',
+            'title': display_title,
+            'date_start': ds or '',
+            'date_end': de or '',
+            'date_tba': date_tba,
             'venue': details.get('venue') or '',
             'city': details.get('city') or '',
             'priority': 'A' if confidence == 'high' else 'B',
