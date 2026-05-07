@@ -238,3 +238,4 @@
 # === KCON JAPAN 2026 期間限定 (5/8-10) 高頻度監視 ===
 */5 * 8,9,10 5 * cd /home/aiuser/kpop-ai-system && python3 -m lib.kcon_monitor >> logs/kcon_monitor.log 2>&1
 0 9 * * * cd /home/aiuser/kpop-ai-system && python3 google_metrics/fetch_yesterday_metrics.py >> logs/fetch_yesterday_metrics.log 2>&1
+5 9 * * * cd /home/aiuser/kpop-ai-system && python3 lib/check_metrics_fetch_health.py >> logs/metrics_health.log 2>&1
