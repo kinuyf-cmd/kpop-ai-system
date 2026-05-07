@@ -247,6 +247,12 @@ for it in items:
         continue
     nv = _normalize_venue(it['venue'])
     artist = it.get('artist', '')
+    # artistが空ならtitleの主語(英大文字+数字+ハイフン)をheuristic推定 → dedup効率化
+    if not artist and it.get('title'):
+        m = re.match(r'^([A-Z][A-Za-z0-9&\-\.]{1,20})', it['title'])
+        if m:
+            artist = m.group(1)
+            it['artist'] = artist
     key = f"{artist}-{it['date']}-{nv}"
     no_artist_key = f"{it['date']}-{nv}"
     # 既に同 date+venue で artist 付きが入っていれば、artist空の重複を捨てる

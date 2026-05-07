@@ -286,6 +286,71 @@ def collect_eplus():
     return signals
 
 
+def collect_ltike():
+    """ローチケ K-POP/韓流/アジア hub から ld+json 経由で公演取得
+
+    Akamai bot mitigation のため curl-impersonate (Chrome 116 TLS模倣) 経由。
+    ~/.local/bin/curl-impersonate/curl_chrome116 が必要。
+    """
+    try:
+        from lib.ltike_enricher import discover_kpop_events, fetch_ltike_event, _curl_impersonate_available
+    except Exception as e:
+        print(f'ltike_enricher import error: {e}')
+        return []
+    if not _curl_impersonate_available():
+        print('  ltike skip: curl-impersonate not installed')
+        return []
+    try:
+        events = discover_kpop_events()
+    except Exception as e:
+        print(f'  ltike discover: {e}')
+        return []
+    print(f'  ltike: discovered {len(events)} mids')
+    import unicodedata
+    NOISE_KEYWORDS = ['ブルーマン', 'ドラゴンクエスト', 'Janet', 'ヤナーチェク', 'ブロードウェイ']
+    signals = []
+    for prefix, mid in events:
+        try:
+            r = fetch_ltike_event(prefix, mid)
+        except Exception as e:
+            print(f'  ltike enrich {mid}: {e}')
+            continue
+        if not r:
+            continue
+        title = unicodedata.normalize('NFKC', r.get('title', '')).strip()
+        venue = unicodedata.normalize('NFKC', r.get('venue', '')).strip()
+        # ノイズ除外: K-POP hub にぶら下がる非K-POP公演
+        if any(noise.lower() in title.lower() for noise in NOISE_KEYWORDS):
+            continue
+        if not r.get('startDate') or not venue:
+            continue
+        perf = {
+            'date': r['startDate'],
+            'venue': venue,
+            'prefecture': r.get('prefecture', ''),
+        }
+        if r.get('endDate') and r['endDate'] != r['startDate']:
+            perf['date_end'] = r['endDate']
+        signals.append({
+            'timestamp': datetime.now().isoformat(),
+            'source': 'ticket_guide',
+            'source_id': 'ltike',
+            'keyword': title.split(' ')[0][:30] or 'K-POP',
+            'title': title[:200],
+            'url': r.get('url', ''),
+            'engagement_score': 2.0,
+            'language': 'ja',
+            'raw_data': {
+                'all_keywords': [],  # ltikeはartistを単独抽出しない (titleが代用)
+                'category': 'event',
+                'mid': mid,
+                'image': r.get('image', ''),
+                'performances': [perf],
+            },
+        })
+    return signals
+
+
 def collect():
     all_signals = []
     print(f'[ticket_collector] pia {PIA_URL}')
@@ -301,6 +366,11 @@ def collect():
     eplus_sigs = collect_eplus()
     print(f'  eplus: {len(eplus_sigs)} signals')
     all_signals.extend(eplus_sigs)
+
+    print('[ticket_collector] ltike (curl-impersonate)')
+    ltike_sigs = collect_ltike()
+    print(f'  ltike: {len(ltike_sigs)} signals')
+    all_signals.extend(ltike_sigs)
 
     with open(OUT, 'a', encoding='utf-8') as f:
         for s in all_signals:
