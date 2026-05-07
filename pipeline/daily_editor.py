@@ -38,11 +38,31 @@ def count_posts_today():
         print(f"count error: {e}")
         return {'total': 0, 'breaking': 0, 'other': 0}
 
-    breaking = sum(
+    # 速報の判定: breaking_articles.jsonl の本日エントリpost_idと突合
+    # （旧: タイトルの【速報】prefix → 2026-05-07にprefix廃止のため変更）
+    breaking_ids = set()
+    today_iso = datetime.now(jst).date().isoformat()
+    log_path = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
+    try:
+        with open(log_path, encoding='utf-8') as f:
+            for line in f:
+                try:
+                    e = json.loads(line)
+                    if e.get('date') == today_iso and e.get('post_id'):
+                        breaking_ids.add(int(e['post_id']))
+                except Exception:
+                    continue
+    except FileNotFoundError:
+        pass
+
+    # フォールバック: 既存titleスキャン（過去公開分の互換性のため残す）
+    legacy_breaking = sum(
         1 for p in posts
         if any(tag in (p.get('title', {}).get('rendered', '') if isinstance(p.get('title'), dict) else '')
                for tag in ['【速報】', '【韓国メディア速報】'])
     )
+    new_breaking = sum(1 for p in posts if p.get('id') in breaking_ids)
+    breaking = max(legacy_breaking, new_breaking)
     return {'total': len(posts), 'breaking': breaking, 'other': len(posts) - breaking}
 
 
