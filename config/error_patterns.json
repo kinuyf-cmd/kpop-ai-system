@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T17:36:08.247474",
+  "updated_at": "2026-05-07T17:45:29.320591",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1288,6 +1288,24 @@
       "fix": "GSC高IMP×低CTR記事はクエリ次元で原因分析。タイトルに検索者の疑問語 (いつ/誰/なぜ) を直接含める。stale年度 (2025) はリライト時に最新年に更新",
       "detection": "GSC データで impressions>=200 かつ ctr<2% かつ position<=10 のページを抽出。クエリ別データで疑問語が頻出するか確認",
       "agent": "gsc_optimizer",
+      "resolved_at": "2026-05-07"
+    },
+    "keyword_cannibalization_duplicate_articles": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "NewJeans系で5記事が同一クエリ群を奪い合い、勝者(323IMP/0click)も低CTR。デーモンハンターズで-draft suffix付publish記事(2806)が本記事(1090)から46IMPを横取り",
+      "fix": "(1) GSC dimensions=[query,page] で同一クエリ→2記事以上を抽出 (2) winner特定→ topic差別化 or 重複記事をdraft化 (3) 重複検出を定期化",
+      "detection": "GSCで「合計IMP>=10 かつ 同一クエリで 2記事以上」のクエリ抽出",
+      "agent": "gsc_optimizer",
+      "resolved_at": "2026-05-07"
+    },
+    "japanese_slug_url_encoding": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "kcon-japan-2026のライブ配信... など25記事が日本語slug→GSC上では%エンコードURL。1,547 IMP/137 clicks。SNS共有でもURLが読めない",
+      "fix": "lib/title_optimizer.py の generate_slug が日本語タイトルでASCIIスラッグ生成失敗時、より良いフォールバックを使う(現状は英単語抽出+timestamp)。既存25記事はslug変更時に301設定必須",
+      "detection": "GSC pages で URL に \"%\" を含むものをカウント (ASCII slug ルールから外れている)",
+      "agent": "lib.title_optimizer",
       "resolved_at": "2026-05-07"
     }
   },
