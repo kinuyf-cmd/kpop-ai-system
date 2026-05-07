@@ -153,6 +153,9 @@ def unified_publish(
     conf_note = CONFIDENCE_NOTES.get(confidence, '')
 
     # 5. サムネ解決 — artistが未指定でもタイトルから自動検出
+    # 2026-05-07: タイトルの「主語」のみ採用 (本文/タイトル末尾に共起する別アーティストの誤採用を防止)
+    #   例: "カン・ドンウォン、BTSのダンスチャレンジ希望" → 主語=カン・ドンウォン、BTSはサムネに不採用
+    #   例: "ソ・イニョン、15kg減量..." (本文にTWICE言及) → 主語=ソ・イニョン非K-POP、TWICEは不採用
     thumb = None
     media_id = None
     attribution_html = ''
@@ -163,36 +166,26 @@ def unified_publish(
             'ITZY', 'TXT', 'EXO', '2PM', 'BABYMONSTER', 'RIIZE', 'ILLIT',
             'NCT', 'Red Velvet', 'BIGBANG', 'SHINee', 'GOT7', 'ASTRO',
             '(G)I-DLE', 'ATEEZ', 'TREASURE', 'MONSTA X', 'DAY6',
+            'THE BOYZ', 'KISS OF LIFE', 'BOYNEXTDOOR', 'TWS', 'TXT',
+            'fromis_9', 'KEP1ER', 'STAYC', 'XG', 'P1Harmony',
         ]
-        _search = (title_final + ' ' + (body_html or '')[:300]).lower()
+        # 主語抽出: タイトル先頭部分 (最初の読点・句読点まで) のみ走査
+        import re as _re_subj
+        _title_subject = _re_subj.split(r'[、。「」!?！？\s]', title_final, maxsplit=1)[0]
         for _g in _known_groups:
-            if _g.lower() in _search:
+            if _g.lower() in _title_subject.lower():
                 artist = _g
-                log.append(f"artist auto-detected: {artist}")
+                log.append(f"artist auto-detected (subject): {artist}")
                 break
+        # 主語に固有名詞がない場合は artist=空のまま (非K-POP記事の可能性)
+        # 別アーティスト誤検出より、テーマ画像/abstract fallbackの方が安全
 
-    # サムネ優先順位 (2026-05-06修正: ソース記事og:imageを最優先)
-    # 速報/ニュース: ソースog:image → アーティスト写真 → DALL-E
-    # 理由: Soompi/Allkpop等の信頼メディアのog:imageは記事内容と一致する
-    #        元記事の画像がそのニュースを最も正確に表す
-    if not media_id and source_url:
-        try:
-            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
-        except Exception as e:
-            log.append(f"source_thumb error: {e}")
-            thumb = None
-        if thumb and thumb.get('path'):
-            _src_alt = f"{title_final}のサムネイル画像"
-            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
-            if media_id:
-                log.append(f"media_id: {media_id} (source_og)")
-                if thumb.get('source_url'):
-                    attribution_html = (
-                        f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
-                        f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
-                    )
-
-    # ソースog:imageが取れなかった場合のフォールバック: アーティスト写真
+    # サムネ優先順位 (2026-05-07修正: アーティスト本人写真を最優先に逆転)
+    # 速報/ニュース: アーティスト写真 → ソースog:image → DALL-E
+    # 理由: source og:imageが無関係画像 (例: ソ・イニョン記事にTWICEアルバムカバー、
+    #       IVE記事に映画キャストの写真) を返す事故を多発したため。
+    #       本人写真は確実に主役を映す。og:imageは検証手段なくfallbackに後退。
+    #       ユーザールール「アイドル記事サムネは必ず本人写真」を厳守するため
     if not media_id and artist:
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
@@ -214,6 +207,24 @@ def unified_publish(
                             )
         except Exception as e:
             log.append(f"artist_resolver error: {e}")
+
+    # アーティスト写真が取得できなかった場合のフォールバック: ソース記事og:image
+    if not media_id and source_url:
+        try:
+            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
+        except Exception as e:
+            log.append(f"source_thumb error: {e}")
+            thumb = None
+        if thumb and thumb.get('path'):
+            _src_alt = f"{title_final}のサムネイル画像"
+            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
+            if media_id:
+                log.append(f"media_id: {media_id} (source_og_fallback)")
+                if thumb.get('source_url'):
+                    attribution_html = (
+                        f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
+                        f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
+                    )
 
     # source_url経由のサムネ取得（アーティスト写真で取得できなかった場合のフォールバック）
     if not media_id and source_url:
