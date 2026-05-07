@@ -161,10 +161,18 @@ def run_post_publish(post_id, post_type='post'):
             )
             if _gate_r['verdict'] == 'BLOCK':
                 block_reasons = _gate_r.get('block_reasons', [])
-                _draft_post(post_id, f"post-publish gate BLOCK: {block_reasons[:2]}")
-                result['status'] = 'draft'
-                result['issues'].extend([f'gate_block: {r[:50]}' for r in block_reasons])
-                print(f"  [hook] post-publish gate BLOCK: {block_reasons[:2]}")
+                # self-match 除外: 自身のpost_idを「類似テーマ」として検出するbug回避 (2026-05-07)
+                # pre_publish_gate の duplicate_title は WP search でID自身も拾うため、
+                # 公開後のhook再ゲートだと毎回 self-match で BLOCK→draft化される事故になる
+                _self_id_marker = f'(ID={post_id})'
+                block_reasons = [r for r in block_reasons if _self_id_marker not in r]
+                if block_reasons:
+                    _draft_post(post_id, f"post-publish gate BLOCK: {block_reasons[:2]}")
+                    result['status'] = 'draft'
+                    result['issues'].extend([f'gate_block: {r[:50]}' for r in block_reasons])
+                    print(f"  [hook] post-publish gate BLOCK: {block_reasons[:2]}")
+                else:
+                    print(f"  [hook] post-publish gate self-match のみ → 無視")
             elif _gate_r.get('warn_reasons'):
                 result['issues'].extend([f'gate_warn: {r[:50]}' for r in _gate_r['warn_reasons'][:3]])
                 print(f"  [hook] post-publish gate WARN: {len(_gate_r['warn_reasons'])}件")

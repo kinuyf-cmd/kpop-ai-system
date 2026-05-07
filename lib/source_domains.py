@@ -38,13 +38,18 @@ def source_url_regex() -> str:
     使い方:
         import re
         urls = re.findall(source_url_regex(), html)
+
+    任意のサブドメインを許容する: m.entertain.naver.com / n.news.naver.com /
+    www.koreaboo.com / koreaboo.com / sports.media.daum.net など全て対応。
+    各ドメインキーワードの直前は `.` または `//` (URLの先頭) を要求し、
+    `notnaver.com` のような誤マッチを防ぐ。
     """
     domains = load_domains()
     if not domains:
-        # フォールバック: ドメインリスト読み込み失敗時は何もマッチしないregex
         return r"href=\"https?://NEVER_MATCH/[^\"]+\""
     pat = "|".join(re.escape(d) for d in domains)
-    return r'href="(https?://(?:www\.)?(?:' + pat + r')[^"]+)"'
+    # `(?:[a-z0-9-]+\.)*` で任意のサブドメイン階層 (任意回) を許容
+    return r'href="(https?://(?:[a-z0-9-]+\.)*(?:' + pat + r')[^"]+)"'
 
 
 def is_trusted_source(url: str) -> bool:
