@@ -42,3 +42,30 @@ logs/gsc_metrics_latest.json
 logs/rewrite_candidates.jsonl
 logs/gsc_index_status.jsonl
 logs/gsc_index_summary.json
+
+# 機密情報 (絶対commitしない、2026-05-07追加)
+config/discord_webhooks.json
+google_metrics/oauth_token.json
+google_metrics/oauth_client.json
+
+# cron実行で頻繁更新される運用データ (git管理外、2026-05-07追加)
+data/audit_state.jsonl
+data/auto_article_processed.jsonl
+data/buzzlab_processed_urls.txt
+data/gsc_indexing_log.jsonl
+data/popup_processed.jsonl
+data/popup_signals.jsonl
+data/thumbnail_sources.jsonl
+data/trend_signals.jsonl
+data/audit_fixer_skip.json
+data/editor_state.json
+data/music_show_state.json
+data/youtube_show_state.json
+data/tiktok_trend_state.json
+data/translation_threshold.json
+data/chart_weekly_manual.json
+data/signals/
+config/x_retry_queue.json
+config/chart_compare_latest.json
+google_metrics/metrics_yesterday.json
+static/news-sitemap.xml
