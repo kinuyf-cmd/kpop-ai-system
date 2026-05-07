@@ -52,36 +52,52 @@ def _match_keywords(text):
 
 
 def collect_pia():
+    """PIAのK-POPタグページから event_bundle_cd を発見し、各詳細ページを enrich
+
+    旧版は t2.pia.jp/music の category linkを集めるだけで日付/会場が取れなかった。
+    2026-05-07 改修で lib.pia_enricher 経由で詳細ページから date/venue/prefecture を取得。
+    """
     try:
-        html = _fetch(PIA_URL)
+        from lib.pia_enricher import discover_kpop_events, fetch_pia_performances
     except Exception as e:
-        print(f'pia error: {e}')
+        print(f'pia_enricher import error: {e}')
         return []
+    try:
+        bundles = discover_kpop_events()
+    except Exception as e:
+        print(f'pia discover error: {e}')
+        return []
+    print(f'  pia: discovered {len(bundles)} bundles')
     signals = []
-    # t2.pia.jp/music はイベント一覧。<a href=".../event/...">タイトル</a> 形式
-    for m in re.finditer(r'<a\s+href="([^"]+)"[^>]*>([^<]{5,120})</a>', html):
-        link = m.group(1)
-        title = re.sub(r'\s+', ' ', m.group(2)).strip()
-        matched = _match_keywords(title)
-        if not matched:
+    for bundle_cd in bundles:
+        try:
+            r = fetch_pia_performances(bundle_cd)
+        except Exception as e:
+            print(f'  pia enrich {bundle_cd}: {e}')
             continue
-        # カテゴリ・ナビ系の generic タイトルを除外
-        # "K-POP" / "K-POP・韓流エンタメ" 等の category link は固有イベント情報を持たない
-        if matched == ['K-POP'] and len(title) <= 30:
+        if r is None:
             continue
-        # event/ パスを含まない link はカテゴリ/トップページの可能性が高い
-        if '/event/' not in link and '/feature/' not in link and 'event' not in link.lower():
-            continue
+        title = r.get('title') or bundle_cd
+        # discover_kpop_events は K-POPタグ (0000078) で絞り込み済 → 追加 keyword filter はかけない
+        matched = _match_keywords(f"{title} {r.get('description', '')}")
+        # ロングテール (PARK YUCHUN/CNBLUE/Kangin等) はキーワード未登録のまま通す。
+        # artist は keyword ヒット時のみ採用 (誤推定より空欄のほうが安全)
         signals.append({
             'timestamp': datetime.now().isoformat(),
             'source': 'ticket_guide',
             'source_id': 'pia',
-            'keyword': matched[0],
+            'keyword': matched[0] if matched else 'K-POP',
             'title': title[:200],
-            'url': link if link.startswith('http') else f'http://t2.pia.jp{link}',
+            'url': f'http://t.pia.jp/pia/event/event.do?eventBundleCd={bundle_cd}',
             'engagement_score': 2.0,
             'language': 'ja',
-            'raw_data': {'all_keywords': matched, 'category': 'event'},
+            'raw_data': {
+                'all_keywords': matched,  # 空配列 = artist不明
+                'category': 'event',
+                'event_bundle_cd': bundle_cd,
+                'image': r.get('image', ''),
+                'performances': r.get('performances', []),  # [{date, venue, prefecture, date_end?}]
+            },
         })
     return signals
 
@@ -165,6 +181,14 @@ def collect_tickebo(scan_window=200, sleep_sec=0.4):
         if not matched:
             time.sleep(sleep_sec)
             continue
+        # 公演詳細を内部APIから取得 (date/venue/openTime/startTime)
+        try:
+            from lib.ticket_enricher import fetch_tickebo_performances
+            enriched = fetch_tickebo_performances(event_id, sleep_sec=0)
+        except Exception as e:
+            print(f'  tickebo enrich {event_id}: {e}')
+            enriched = None
+        performances = enriched.get('performances', []) if enriched else []
         signals.append({
             'timestamp': datetime.now().isoformat(),
             'source': 'ticket_guide',
@@ -179,6 +203,7 @@ def collect_tickebo(scan_window=200, sleep_sec=0.4):
                 'category': 'event',
                 'event_id': event_id,
                 'image': ev.get('image', ''),
+                'performances': performances,  # [{date, venue, open_time, start_time, event_cd}]
             },
         })
         time.sleep(sleep_sec)

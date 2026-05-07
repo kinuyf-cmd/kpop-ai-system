@@ -106,60 +106,74 @@ if os.path.exists(MANUAL):
         print(f"manual load error: {e}")
 
 # 2) trend_signals.jsonl から ticket_guide + PRTIMES (K-POP allow-list)
-# PRTIMES再有効化 2026-05-07: 厳格K-POPフィルタ (ARTIST + KPOP_EVENT_TERMS 両方マッチ) で誤検出防止
-# tickebo enrichment 2026-05-07: og:titleに日付がないため /web/api/evt/sales-list を直接叩いて公演詳細取得
+# 2026-05-07 改修: collector側で performances enrichment 済 (raw_data.performances)
+# PRTIMES再有効化: 厳格K-POPフィルタ (ARTIST + KPOP_EVENT_TERMS 両方マッチ) で誤検出防止
+# 旧signal (raw_data に performances なし) は ticket_enricher を fallback で叩く
 import sys as _sys
 _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.ticket_enricher import fetch_tickebo_performances
 
-tickebo_seen_ids = set()
-tickebo_enriched = 0
-tickebo_404 = 0
+ticket_seen_keys = set()
+ticket_perf_count = 0
+ticket_404 = 0
 prtimes_added = 0
 if os.path.exists(SIGNALS):
+    # 最新のenrichmentが古いものに勝つよう逆順で処理 (collectorはappendなので末尾が最新)
     with open(SIGNALS, encoding='utf-8') as f:
-        for line in f:
+        all_lines = f.readlines()
+    for line in reversed(all_lines):
             try:
                 sig = json.loads(line)
             except Exception:
                 continue
             src = sig.get('source')
             title = sig.get('title', '')
+            raw = sig.get('raw_data') or {}
             if src == 'ticket_guide':
-                # tickebo: raw_data.event_id を使ってAPI enrichment
-                eid = (sig.get('raw_data') or {}).get('event_id')
-                if eid and sig.get('source_id') == 'tickebo':
-                    if eid in tickebo_seen_ids:
-                        continue
-                    tickebo_seen_ids.add(eid)
-                    enriched = fetch_tickebo_performances(int(eid))
+                # 新形式: collector が raw_data.performances を埋めている
+                perfs = raw.get('performances')
+                source_id = sig.get('source_id', '')
+                # 旧形式 fallback (tickebo の event_id だけある古いsignal)
+                if not perfs and source_id == 'tickebo' and raw.get('event_id'):
+                    enriched = fetch_tickebo_performances(int(raw['event_id']))
                     if enriched is None:
-                        tickebo_404 += 1
+                        ticket_404 += 1
                         continue
-                    artist = enriched.get('performers', [''])[0] if enriched.get('performers') else ''
-                    base_title = enriched.get('title') or title
-                    enrich_url = sig.get('url', f'https://ticket.tickebo.jp/show/event.html?info={eid}')
-                    for perf in enriched.get('performances', []):
-                        if not perf.get('date') or not perf.get('venue'):
-                            continue
-                        items.append({
-                            'title': base_title,
-                            'date': perf['date'],
-                            'venue': perf['venue'],
-                            'artist': artist,
-                            'url': enrich_url,
-                            'source': 'ticket_guide',
-                            'open_time': perf.get('open_time', ''),
-                            'start_time': perf.get('start_time', ''),
-                        })
-                        tickebo_enriched += 1
-                else:
-                    # PIA等の非tickebo ticket_guide: 従来のtitle regex
-                    ev = extract_event(title, sig.get('url', ''), src)
-                    if ev:
-                        items.append(ev)
+                    perfs = enriched.get('performances', [])
+                    if not title and enriched.get('title'):
+                        title = enriched['title']
+                    if not raw.get('all_keywords') and enriched.get('performers'):
+                        raw['all_keywords'] = enriched['performers']
+                if not perfs:
+                    # 日付/会場 抽出不可。手動キュレーション要件として可視化
+                    continue
+                # dedup key: source_id + 識別子 (event_id or event_bundle_cd)
+                signal_key = f"{source_id}:{raw.get('event_id') or raw.get('event_bundle_cd') or sig.get('url')}"
+                if signal_key in ticket_seen_keys:
+                    continue
+                ticket_seen_keys.add(signal_key)
+
+                artist = (raw.get('all_keywords') or [''])[0]
+                for perf in perfs:
+                    if not perf.get('date') or not perf.get('venue'):
+                        continue
+                    item = {
+                        'title': title,
+                        'date': perf['date'],
+                        'venue': perf['venue'],
+                        'artist': artist,
+                        'url': sig.get('url', ''),
+                        'source': 'ticket_guide',
+                    }
+                    if perf.get('date_end'):
+                        item['date_end'] = perf['date_end']
+                    if perf.get('open_time'):
+                        item['open_time'] = perf['open_time']
+                    if perf.get('start_time'):
+                        item['start_time'] = perf['start_time']
+                    items.append(item)
+                    ticket_perf_count += 1
             elif src == 'prtimes':
-                # K-POP判定: 既知アーティスト名 + イベント関連語 両方必須
                 if not (ARTIST.search(title) and KPOP_EVENT_TERMS.search(title)):
                     continue
                 ev = extract_event(title, sig.get('url', ''), src)
@@ -168,8 +182,8 @@ if os.path.exists(SIGNALS):
                     prtimes_added += 1
             else:
                 continue
-if tickebo_enriched or tickebo_404:
-    print(f"tickebo enrichment: {tickebo_enriched}公演 取得 / {tickebo_404}件 404")
+if ticket_perf_count or ticket_404:
+    print(f"ticket_guide enrichment: {ticket_perf_count}公演 取得 / {ticket_404}件 404")
 if prtimes_added:
     print(f"prtimes: {prtimes_added}件 K-POP allow-list通過")
 
@@ -215,10 +229,18 @@ def _normalize_venue(v: str) -> str:
     }
     return aliases.get(v, v)
 
+_TODAY = datetime.now() - timedelta(days=1)
 seen = set()
 unique = []
 for it in items:
     if not it.get('date') or not it.get('venue'):
+        continue
+    # 過去イベント除外 (date_endがあればそれを基準に)
+    try:
+        ref_date = datetime.strptime(it.get('date_end') or it['date'], '%Y-%m-%d')
+        if ref_date < _TODAY:
+            continue
+    except Exception:
         continue
     key = f"{it.get('artist', '')}-{it['date']}-{_normalize_venue(it['venue'])}"
     if key in seen:
