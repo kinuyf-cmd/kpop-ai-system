@@ -161,7 +161,29 @@ def post_tweet(text: str, url: str = None, post_id: int = None,
     if not text or len(text.strip()) < 5:
         return {'success': False, 'error': 'テキストが空または短すぎる', 'queued': False}
 
-    # --- OGP事前検証（WARNのみ、投稿はブロックしない）---
+    # --- WP記事status再検証 (2026-05-07: trash記事へのX投稿事故防止) ---
+    if post_id:
+        try:
+            import urllib.request as _ur, base64 as _b64, json as _json
+            _AUTH = _b64.b64encode(b'kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh').decode()
+            _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status,featured_media&status=any'
+            _req = _ur.Request(_u, headers={'Authorization': f'Basic {_AUTH}'})
+            with _ur.urlopen(_req, timeout=10) as _r:
+                _wp = _json.loads(_r.read())
+            if _wp.get('status') != 'publish':
+                return {'success': False,
+                        'error': f'WP記事 {post_id} status={_wp.get("status")} (publish以外) — X投稿スキップ',
+                        'queued': False}
+            if _wp.get('featured_media', 0) == 0:
+                return {'success': False,
+                        'error': f'WP記事 {post_id} featured_media未設定 — サムネ不一致防止のためX投稿スキップ',
+                        'queued': False}
+        except Exception as _e:
+            print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+
+    # --- OGP事前検証 (2026-05-07更新: og-default も block) ---
+    # ユーザー指示「サムネイルは投稿記事と必ず同じものを使用」厳守のため、
+    # og-default 検出時は X 投稿しない (記事サムネ無し → Twitter Card不一致直結)
     if url:
         try:
             from lib.x_post_url_validator import validate_url
@@ -179,13 +201,12 @@ def post_tweet(text: str, url: str = None, post_id: int = None,
                 if post_id:
                     warn_entry['post_id'] = post_id
                 _log(warn_entry)
-                # soft-404のみブロック。OGP問題(og-default等)はWARNのみで投稿続行
-                if 'soft-404' in reason:
+                # soft-404 / og-default / OGP問題はすべて block (サムネ一致原則)
+                if any(kw in reason for kw in ('soft-404', 'og-default', 'OGP問題')):
                     return {'success': False, 'error': f'URL検証NG: {reason}', 'queued': False}
-                # OGP問題はログ記録のみ（記事は既にWPで公開済みなので投稿は実行）
-                print(f"  [x_poster] OGP warn: {reason} — 投稿続行")
+                print(f"  [x_poster] OGP warn (続行): {reason}")
         except Exception:
-            pass  # バリデーション自体の失敗は無視して投稿続行
+            pass
 
     # --- バースト防止: 直前投稿からMIN_INTERVAL_SEC秒空ける ---
     recent = _recent_posts(hours=1)
