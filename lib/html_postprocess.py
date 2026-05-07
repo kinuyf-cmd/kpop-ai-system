@@ -21,7 +21,11 @@ import re
 import sys
 from pathlib import Path
 
-from seo_structured_data import inject_structured_data, guess_category_from_title
+try:
+    from lib.seo_structured_data import inject_structured_data, guess_category_from_title
+except ImportError:
+    # lib/ が sys.path にある時のフォールバック
+    from seo_structured_data import inject_structured_data, guess_category_from_title
 
 # ─────────────────────────────────────────────
 # 設定
