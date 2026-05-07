@@ -117,7 +117,20 @@ def _wp_update(pid, data):
         headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'},
         method='POST')
     try:
-        return json.loads(urllib.request.urlopen(req, timeout=60).read())
+        result = json.loads(urllib.request.urlopen(req, timeout=60).read())
+        # 2026-05-07: trash化時に紐づくXツイートも削除 (broken link防止)
+        if data.get('status') == 'trash':
+            try:
+                import sys as _sys
+                _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+                from lib.x_tweet_manager import delete_tweets_for_post
+                results = delete_tweets_for_post(pid)
+                deleted = sum(1 for r in results if r.get('deleted'))
+                if results:
+                    print(f"  [quarantine] post {pid} X tweets deleted: {deleted}/{len(results)}")
+            except Exception:
+                pass
+        return result
     except Exception:
         return None
 

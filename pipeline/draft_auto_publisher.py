@@ -28,7 +28,7 @@ def _save_block_history(history: dict):
 
 
 def _archive_draft(pid: int, reasons: list):
-    """MAX_BLOCK_COUNT超過のドラフトをゴミ箱に移動 + キャッシュパージ"""
+    """MAX_BLOCK_COUNT超過のドラフトをゴミ箱に移動 + キャッシュパージ + X tweet削除"""
     try:
         r = requests.delete(
             f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}',
@@ -44,6 +44,15 @@ def _archive_draft(pid: int, reasons: list):
                     print(f"  draft {pid} cache purge: /{slug}/")
                 except Exception:
                     pass
+            # 2026-05-07: 紐づくXツイートも自動削除 (broken link防止)
+            try:
+                from lib.x_tweet_manager import delete_tweets_for_post
+                results = delete_tweets_for_post(pid)
+                deleted = sum(1 for r in results if r.get('deleted'))
+                if results:
+                    print(f"  draft {pid} X tweets deleted: {deleted}/{len(results)}")
+            except Exception as e:
+                print(f"  draft {pid} X delete err: {e}")
         else:
             print(f"  draft {pid} archive失敗: HTTP {r.status_code}")
     except Exception as e:

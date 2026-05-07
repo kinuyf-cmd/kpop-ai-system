@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T18:11:21.513967",
+  "updated_at": "2026-05-07T18:22:27.101444",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1350,6 +1350,15 @@
       "fix": "lib/x_poster.py post_hook_and_reply に2層guard追加: (1) WP REST で post_id status を直前再取得、publish以外なら abort (2) URL validator の og-default/OGP問題もスキップ条件に追加",
       "detection": "logs/x_posts.jsonl の post_id を WP API で照合し、status!=publish が一定割合超える",
       "agent": "lib.x_poster",
+      "resolved_at": "2026-05-07"
+    },
+    "x_tweet_orphan_after_trash": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "記事trash化時に紐づくX tweetが残置 → broken link 6記事×2tweet=12件発生。X API delete v2 (api.twitter.com/2/tweets/:id) は credentials保有済みだったが trash hook に未連携",
+      "fix": "(1) draft_auto_publisher._archive_draft で AUTO-ARCHIVE 後に lib.x_tweet_manager.delete_tweets_for_post を呼出 (2) quarantine_cleaner._wp_update で status=trash 時に同じく削除フック",
+      "detection": "logs/x_posts.jsonl の post_id を WP REST で照合、status=trash の record に対し未削除tweet が存在",
+      "agent": "pipeline.draft_auto_publisher / pipeline.quarantine_cleaner",
       "resolved_at": "2026-05-07"
     }
   },
