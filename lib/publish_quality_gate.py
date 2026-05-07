@@ -143,13 +143,35 @@ def check_post(post_id, auto_fix=True):
             i for i in result['issues']
             if not isinstance(i, dict) or i.get('type') not in ('content_short', 'title_short')
         ]
-    criticals = [i for i in result['issues'] if isinstance(i, dict) and i.get('severity') in ('critical', 'high')]
-    if criticals:
+    # 2026-05-07修正: llm_high 単独では draft化しない (LLM誤検知過多のため)
+    # 判定軸は type:
+    #   - type='llm_critical': LLM校閲で致命的問題と判定 → 2件以上で draft化
+    #   - type='llm_high': 重要問題 → 警告のみ
+    #   - 他 (ALT欠如、サムネ異常等の構造系): severity='critical' → 即 draft化
+    structural_critical = [i for i in result['issues'] if isinstance(i, dict)
+                           and i.get('severity') == 'critical'
+                           and i.get('type') not in ('llm_critical', 'llm_high')]
+    llm_criticals = [i for i in result['issues'] if isinstance(i, dict) and i.get('type') == 'llm_critical']
+    llm_highs = [i for i in result['issues'] if isinstance(i, dict) and i.get('type') == 'llm_high']
+
+    if llm_highs:
+        result['actions'].append(f'⚠️ llm_high警告 (draft化せず): {len(llm_highs)}件')
+    if len(llm_criticals) == 1:
+        result['actions'].append(f'⚠️ llm_critical 1件 (誤検知耐性で draft化せず): {llm_criticals[0].get("detail","")[:60]}')
+
+    # draft化条件:
+    # (a) 構造的 critical (ALT/サムネ/HTML等) → 即 draft化
+    # (b) llm_critical 2件以上 → draft化
+    should_draft = bool(structural_critical) or len(llm_criticals) >= 2
+    if should_draft:
         result['pass'] = False
         if auto_fix and post.get('status') == 'publish':
+            reasons = [c.get("type","?") for c in structural_critical[:2]] + \
+                      [f"llm_critical x{len(llm_criticals)}"] if len(llm_criticals) >= 2 else \
+                      [c.get("type","?") for c in structural_critical[:3]]
             try:
                 _wp_update(post_id, {'status': 'draft'})
-                result['actions'].append(f'⛔ draft化 (理由: {", ".join(c.get("type","?") for c in criticals[:3])})')
+                result['actions'].append(f'⛔ draft化 (理由: {", ".join(reasons)})')
             except Exception:
                 result['actions'].append('draft化失敗')
 
