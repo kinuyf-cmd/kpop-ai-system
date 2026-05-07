@@ -159,10 +159,16 @@ def group_signals(signals):
 
 
 def assess_confidence(sigs):
-    """信頼度判定: 2ソース以上=high, 公式KW含む=medium, その他=low"""
+    """信頼度判定: 一次情報源(チケット販売)があれば最優先でhigh、
+    2ソース以上=high, 公式KW含む=medium, その他=low"""
     sources = set(s.get('source_id', s.get('source', '')) for s in sigs)
+    raw_sources = set(s.get('source', '') for s in sigs)
     titles = ' '.join(s.get('title', '') for s in sigs)
     has_official = any(kw in titles for kw in OFFICIAL_KW)
+
+    # 一次情報源（チケット販売／KCON公式／公式番組）は単独ソースでも信頼可
+    if 'ticket_guide' in raw_sources or 'kcon_monitor' in raw_sources:
+        return 'high'
 
     if len(sources) >= 2:
         return 'high'
