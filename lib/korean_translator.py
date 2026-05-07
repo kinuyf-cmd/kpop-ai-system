@@ -1,12 +1,53 @@
 #!/usr/bin/env python3
-"""Korean → Japanese 翻訳 (GPT-4o-mini)"""
-import os, json, urllib.request, datetime
+"""Korean → Japanese 翻訳 (GPT-4o-mini)
+
+固有名詞は外部辞書 (config/korean_proper_nouns.json) で前置換し、
+GPTには日本語/英語表記済みのテキストを渡す。これにより翻訳漏れを根治する。
+辞書漏れは lib.translation_residue_check が公開直前に BLOCK する二段防御。
+"""
+import os, json, re, urllib.request, datetime, functools
 from dotenv import load_dotenv
 load_dotenv()
 
 API = "https://api.openai.com/v1/chat/completions"
 LOG = '/home/aiuser/kpop-ai-system/logs/translation.jsonl'
 DAILY_LIMIT = 500
+PROPER_NOUNS_PATH = '/home/aiuser/kpop-ai-system/config/korean_proper_nouns.json'
+
+
+@functools.lru_cache(maxsize=1)
+def _load_proper_nouns():
+    """固有名詞辞書をロード。長い表記から先にマッチさせるため key 長で降順 sort。"""
+    try:
+        d = json.load(open(PROPER_NOUNS_PATH, encoding='utf-8'))
+    except Exception:
+        return []
+    pairs = []
+    for section in ('groups', 'members', 'labels', 'common_terms', 'shows_and_media', 'personalities'):
+        for k, v in (d.get(section) or {}).items():
+            if k and v and not k.startswith('_'):
+                pairs.append((k, v))
+    # 長い key を先にマッチさせる (e.g. "스트레이키즈" を "스트레이"より先に)
+    pairs.sort(key=lambda p: -len(p[0]))
+    return pairs
+
+
+def apply_proper_noun_dict(text: str) -> tuple[str, int]:
+    """前置換: 固有名詞辞書で単純な substring 置換。
+
+    Returns: (置換済テキスト, 置換回数)
+    """
+    if not text:
+        return text, 0
+    pairs = _load_proper_nouns()
+    count = 0
+    for ko, ja in pairs:
+        if ko in text:
+            count += text.count(ko)
+            text = text.replace(ko, ja)
+    # 重複併記の除去: 韓国語側を置換した結果 "BTS (BTS)" のような冗長表記が出るため整理
+    text = re.sub(r'(\S+?)\s*[（(]\s*\1\s*[)）]', r'\1', text)
+    return text, count
 
 
 def _count_today():
@@ -53,6 +94,9 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
     _update_threshold(used)
     if used >= DAILY_LIMIT:
         return {'success': False, 'translated': text, 'reason': f'1日上限{DAILY_LIMIT}到達'}
+
+    # 固有名詞を決定論的に前置換 (アーティスト名/メンバー名/事務所名/番組名/共通用語)
+    text, _replaced_count = apply_proper_noun_dict(text)
 
     # Lv2: agent_lessonsから最新教訓を自動注入
     try:
