@@ -84,7 +84,7 @@ def main(dry_run=False, max_articles=None):
 
         combined = "\n".join([s['title'] for s in sigs[:3]])
         body_r = translate_ko_to_ja(
-            f"以下のK-POPカムバック報道から200-300字の日本語記事本文を事実ベースで作成。推測禁止:\n\n{combined}",
+            f"以下のK-POPカムバック報道から1500-2000字の日本語HTML記事本文を事実ベースで作成。h2セクション2つ以上。推測禁止:\n\n{combined}",
             'K-POPカムバック記事',
         )
         if not body_r['success']:
@@ -102,6 +102,12 @@ def main(dry_run=False, max_articles=None):
         )
         if r and r.get('success'):
             print(f"  WP公開 ID={r['post_id']}")
+            # Post-publish hook
+            try:
+                from lib.post_publish_hook import run_post_publish
+                run_post_publish(r['post_id'], post_type='post')
+            except Exception as hook_e:
+                print(f"  [post-publish] hook error: {hook_e}")
             created += 1
             for s in sigs:
                 mark_processed({'ts': datetime.now().isoformat(), 'source_url': s['url'],

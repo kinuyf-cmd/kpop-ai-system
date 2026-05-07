@@ -11,10 +11,16 @@ FEEDS = [
     'https://prtimes.jp/index.rdf',
 ]
 KEYWORDS = [
-    'K-POP', 'KPOP', 'K-Pop', 'BTS', 'BLACKPINK', 'NewJeans', 'aespa',
-    'SEVENTEEN', 'TWICE', 'IVE', 'LE SSERAFIM', '韓国', 'カムバック',
-    '来日', 'ファンミーティング', '新曲', 'リリース', 'アルバム', 'ライブ',
+    'K-POP', 'KPOP', 'K-Pop',
+    'BTS', 'BLACKPINK', 'NewJeans', 'aespa', 'SEVENTEEN', 'TWICE',
+    'LE SSERAFIM', 'Stray Kids', 'ENHYPEN', 'ITZY', 'NMIXX',
+    'BABYMONSTER', 'NCT', 'EXO', 'TREASURE', 'RIIZE', 'ZEROBASEONE',
+    'TXT', 'ATEEZ', 'BOYNEXTDOOR', 'Hearts2Hearts',
+    'カムバック', 'ファンミーティング',
 ]
+# 誤検知が多い汎用キーワードを除外 (2026-05-01修正)
+# 除外: 'IVE'(everlIVEに誤マッチ), '韓国'(広すぎ), 'リリース'(汎用),
+#        'ライブ'(汎用), '新曲'(汎用), 'アルバム'(汎用), '来日'(汎用)
 
 
 def collect():

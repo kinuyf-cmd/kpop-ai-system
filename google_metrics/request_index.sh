@@ -18,6 +18,22 @@ if [ -z "$URL" ]; then
   exit 1
 fi
 
+# 重複送信防止: 24時間以内に同じURLを送信済みならスキップ
+LOG_FILE="$HOME/kpop-ai-system/data/gsc_indexing_log.jsonl"
+if [ -f "$LOG_FILE" ]; then
+  CUTOFF=$(date -d '24 hours ago' +%Y-%m-%dT%H:%M 2>/dev/null || date -v-24H +%Y-%m-%dT%H:%M 2>/dev/null)
+  if [ -n "$CUTOFF" ]; then
+    RECENT_HIT=$(grep "$URL" "$LOG_FILE" | tail -5 | grep -c "\"status\": \"ok\"" || true)
+    if [ "$RECENT_HIT" -gt 0 ]; then
+      LAST_TS=$(grep "$URL" "$LOG_FILE" | grep '"status": "ok"' | tail -1 | grep -oP '"timestamp": "\K[^"]+' || echo "")
+      if [ -n "$LAST_TS" ] && [[ "$LAST_TS" > "$CUTOFF" ]]; then
+        echo "⏭ スキップ: $URL (24h以内に送信済み: $LAST_TS)"
+        exit 0
+      fi
+    fi
+  fi
+fi
+
 echo "=== Google Indexing API リクエスト ==="
 echo "  URL: $URL"
 
@@ -58,6 +74,15 @@ for attempt in range(MAX_RETRIES):
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
         if r.ok:
+            # gsc_indexing_log.jsonl にも記録(重複検知用)
+            import datetime as _dt
+            _log_entry = {"status": "ok", "url": url,
+                         "timestamp": _dt.datetime.now(_dt.timezone(_dt.timedelta(hours=9))).isoformat(),
+                         "method": "indexing_api"}
+            try:
+                with open("/home/aiuser/kpop-ai-system/data/gsc_indexing_log.jsonl", "a") as _f:
+                    _f.write(json.dumps(_log_entry, ensure_ascii=False) + "\n")
+            except: pass
             print(f"\n✅ インデックス登録リクエスト成功: {url}")
             sys.exit(0)
         else:

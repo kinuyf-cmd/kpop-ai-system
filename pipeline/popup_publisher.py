@@ -143,6 +143,10 @@ def fetch_og_image(url):
         m = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html)
         if not m:
             m = re.search(r'<meta\s+content=["\']([^"\']+)["\']\s+property=["\']og:image["\']', html)
+        if not m:
+            m = re.search(r'<meta\s+property=["\']og:image["\'][^>]*\s+content=["\']([^"\']+)["\']', html, re.IGNORECASE)
+        if not m:
+            m = re.search(r'<meta[^>]*\s+content=["\']([^"\']+)["\'][^>]*\s+property=["\']og:image["\']', html, re.IGNORECASE)
         if m:
             return m.group(1)
     except:
@@ -380,7 +384,24 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
             data=body, method='POST',
             headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
         r = json.loads(urllib.request.urlopen(req, timeout=30).read())
-        return r.get('id')
+        post_id = r.get('id')
+        if not post_id:
+            return None
+        # slug が WP に反映されなかった場合は PATCH で上書き
+        actual_slug = r.get('slug', '')
+        if '%' in actual_slug or actual_slug != slug:
+            try:
+                patch_body = json.dumps({'slug': slug}).encode()
+                patch_req = urllib.request.Request(
+                    f'https://www.kpopjournal.tokyo/wp-json/wp/v2/popup/{post_id}',
+                    data=patch_body, method='POST',
+                    headers={'Authorization': f'Basic {AUTH}',
+                             'Content-Type': 'application/json'})
+                urllib.request.urlopen(patch_req, timeout=15)
+                print(f"  slug patched: {slug}")
+            except Exception as e:
+                print(f"  slug patch err: {e}")
+        return post_id
     except Exception as e:
         print(f"  WP err: {e}")
         return None
@@ -438,6 +459,16 @@ def main(max_articles=10):
 
         print(f"\n処理中: {sig['title'][:50]}")
 
+        # シグナル品質ゲート (記事化前にURL存在確認)
+        from lib.signal_validator import validate_signal
+        vr = validate_signal(sig, check_url=True)
+        if vr['reject']:
+            print(f"  REJECT: {vr['reasons']}")
+            mark_processed(sig['url'], None, f"signal_rejected: {'; '.join(vr['reasons'])}")
+            continue
+        if vr['warnings']:
+            print(f"  WARN: {vr['warnings']}")
+
         full_text = fetch_full_content(sig['url'])
 
         start, end = extract_dates(f"{sig['title']} {full_text or ''}")
@@ -475,10 +506,70 @@ def main(max_articles=10):
 
         featured_id = get_thumbnail(sig)
 
+        # Pre-publish factcheck
+        try:
+            from lib.pre_publish_gate import pre_publish_gate
+            gate_result = pre_publish_gate(
+                sig.get('title', ''), content, post_type='popup', kind='popup',
+                source_url=sig.get('url'), status=status,
+            )
+            if gate_result.get('verdict') == 'BLOCK':
+                print(f"  [pre-publish] BLOCKED: {gate_result.get('block_reasons', [])}")
+                status = 'draft'
+            elif gate_result.get('verdict') == 'WARN':
+                print(f"  [pre-publish] WARN: {gate_result.get('warnings', [])}")
+        except Exception as e:
+            print(f"  [pre-publish] gate error (continuing): {e}")
+
         post_id = post_to_wp_popup(sig, content, status,
                                    extra_meta=extra_meta, featured_media=featured_id)
         if post_id:
             print(f"  post_id={post_id} status={status} thumb={featured_id}")
+
+            # OGP/Twitterカード設定（X投稿前に必ず実行）
+            if featured_id:
+                try:
+                    from lib.ogp_twitter_card_optimizer import fix_post_meta
+                    ogp_r = fix_post_meta(post_id)
+                    if ogp_r.get('fixes'):
+                        print(f"  OGP fix: {ogp_r['fixes']}")
+                except Exception as e:
+                    print(f"  OGP err: {e}")
+
+            # 統一ポストパブリッシュフック
+            try:
+                from lib.post_publish_hook import run_post_publish
+                run_post_publish(post_id, post_type='popup')
+            except Exception as e:
+                print(f"  post_publish_hook err: {e}")
+
+            # GSC indexing + X投稿（正しいNext.jsルートURL）
+            city = extra_meta.get('_popup_city', 'tokyo') if extra_meta else 'tokyo'
+            popup_url = f'https://www.kpopjournal.tokyo/popup/{city}/{post_id}/'
+            try:
+                from lib.gsc_indexing import notify_url_updated
+                if notify_url_updated(popup_url):
+                    print(f"  GSC OK: {popup_url}")
+                else:
+                    print(f"  GSC FAIL: {popup_url}")
+            except Exception as e:
+                print(f"  GSC err: {e}")
+            try:
+                from lib.x_poster import post_tweet
+                import time as _time
+                title_text = sig.get('title', '')[:80]
+                x_r = post_tweet(title_text, popup_url, post_id=post_id,
+                                 genre='travel', artist='')
+                if x_r.get('success'):
+                    print(f"  X OK tid={x_r.get('tweet_id', '?')}")
+                    _time.sleep(15)  # バースト防止: 15秒間隔で投稿
+                elif x_r.get('queued'):
+                    print(f"  X queued")
+                else:
+                    print(f"  X skip: {x_r.get('error', '')[:60]}")
+            except Exception as e:
+                print(f"  X err: {e}")
+
             mark_processed(sig['url'], post_id, 'published')
             created += 1
         else:

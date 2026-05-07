@@ -6,14 +6,14 @@ arceus_feedback_loop.py — arceus却下→deoxysリビジョン自動差し戻�
   1. arceus出力から却下理由を構造化抽出
   2. 却下理由をカテゴリ分類（ソース不足/CTR弱/SEO不備/品質不足/フォーマット違反）
   3. deoxys向けリビジョンリクエスト（構造化プロンプト）を生成
-  4. 却下履歴をarceus_rejections.jsonl���蓄積（学習用）
-  5. リビジョン回数制限��最大2回）と最終エスカレーション
+  4. 却下履歴をarceus_rejections.jsonlに蓄積（学習用）
+  5. リビジョン回数制限（最大2回）と最終エスカレーション
 
 【パイプライン統合】
   kpop_pipeline.sh から以下のように呼ばれる:
     # arceus却下時
     REVISION_PROMPT=$(python3 lib/arceus_feedback_loop.py parse-rejection reports/3_arceus.md)
-    # リビジョンリク���スト生成
+    # リビジョンリクエスト生成
     python3 lib/arceus_feedback_loop.py generate-revision \
       --arceus-report reports/3_arceus.md \
       --original-article reports/0_breaking.md \
@@ -63,12 +63,12 @@ REJECTION_CATEGORIES = {
             r"CTR.*(?:弱|低|不十分|改善)",
             r"タイトル.*(?:弱|汎用|一般的|改善|薄い)",
             r"フック.*(?:弱|なし|不足)",
-            r"��情語.*(?:なし|不足)",
+            r"感情語.*(?:なし|不足)",
             r"数字.*(?:なし|不足)",
             r"(?:刺さ|引き).*(?:弱|ない)",
             r"クリック.*(?:弱|されない)",
         ],
-        "revision_instruction": "タイトルに感情語+具体数字+アーティスト名を含め、CTRを意識した訴���力のあるフックに修正すること。",
+        "revision_instruction": "タイトルに感情語+具体数字+アーティスト名を含め、CTRを意識した訴求力のあるフックに修正すること。",
     },
     "seo_deficiency": {
         "label": "SEO不備",
@@ -116,7 +116,7 @@ REJECTION_CATEGORIES = {
             r"(?:存在しない|実在しない)",
             r"未検証.*(?:情報|事実|データ)",
         ],
-        "revision_instruction": "全事実をWebSearchで再検証し、確認が取れない情報は削除すること。架空のアーティ���ト・イベントは絶対に記載しないこと。",
+        "revision_instruction": "全事実をWebSearchで再検証し、確認が取れない情報は削除すること。架空のアーティスト・イベントは絶対に記載しないこと。",
     },
 }
 
@@ -176,7 +176,7 @@ def parse_rejection(arceus_report_path: str) -> dict:
         if "条件付き承認" in text:
             result["rejected"] = True
             result["rejection_line"] = "条件付き承認（禁止表現 → 却下扱い）"
-            result["reason_text"] = "��止表現使用"
+            result["reason_text"] = "禁止表現使用"
         # 承認行が見つからない場合
         elif not re.search(r'✅\s*投稿承認', text):
             result["rejected"] = True
@@ -212,7 +212,7 @@ def parse_rejection(arceus_report_path: str) -> dict:
             "max": int(m.group(2)),
         }
 
-    # 改���指摘の抽出（「改善」「修正」「必要」を含む行）
+    # 改善指摘の抽出（「改善」「修正」「必要」を含む行）
     for line in text.splitlines():
         line = line.strip()
         if re.search(r'(改善|修正|不足|要改善|推奨|すべき)', line) and len(line) > 10:
@@ -286,7 +286,7 @@ def generate_revision_prompt(
 
 【{urgency}】
 
-【出力形式】1行目：タイトルのみ 2行目：空行 3��目以降：<h2>から始まるHTML
+【出力形式】1行目：タイトルのみ 2行目：空行 3行目以降：<h2>から始まるHTML
 【重要】必ずWebSearchで最新情報を確認してから記事を修正せよ。
 ---
 

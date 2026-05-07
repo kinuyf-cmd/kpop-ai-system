@@ -71,7 +71,7 @@ def notify_discord(errors):
             return
 
         import urllib.request
-        msg = f"🔴 **X投稿リンクチェッ��: {len(errors)}件のエラー検出**\n"
+        msg = f"🔴 **X投稿リンクチェック: {len(errors)}件のエラー検出**\n"
         for e in errors[:5]:
             msg += f"  • {e['reason']}: {e['url'][:60]}\n"
         if len(errors) > 5:

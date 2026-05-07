@@ -208,12 +208,36 @@ def post_birthday_article(member: dict, content_file: Path, target_date: date, s
         "meta": {"_aioseo_description": meta_desc},
     }
 
+    # Pre-publish factcheck
+    try:
+        from lib.pre_publish_gate import pre_publish_gate
+        gate_result = pre_publish_gate(
+            title, body, post_type='post', kind='birthday',
+            slug=slug, status=status,
+            categories=data.get('categories'),
+            excerpt=meta_desc,
+        )
+        if gate_result.get('verdict') == 'BLOCK':
+            print(f"  [pre-publish] BLOCKED: {gate_result.get('block_reasons', [])}")
+            data['status'] = 'draft'
+        elif gate_result.get('verdict') == 'WARN':
+            print(f"  [pre-publish] WARN: {gate_result.get('warnings', [])}")
+    except Exception as e:
+        print(f"  [pre-publish] gate error (continuing): {e}")
+
     for attempt in range(3):
         try:
             res = requests.post(f"{WP_API}/posts", headers=headers, json=data, timeout=30)
             if res.status_code == 201:
                 result = res.json()
-                return {"success": True, "post_id": result.get("id"), "url": result.get("link", "")}
+                post_id = result.get("id")
+                # Post-publish hook
+                try:
+                    from lib.post_publish_hook import run_post_publish
+                    run_post_publish(post_id, post_type='post')
+                except Exception as hook_e:
+                    print(f"  [post-publish] hook error: {hook_e}")
+                return {"success": True, "post_id": post_id, "url": result.get("link", "")}
             elif res.status_code == 429:
                 time.sleep(30 * (attempt + 1))
             elif 500 <= res.status_code < 600:

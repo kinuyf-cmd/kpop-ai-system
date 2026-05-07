@@ -82,8 +82,15 @@ def fetch_tiktok_mentions_from_signals():
                 sig = json.loads(line)
                 title = sig.get('title', '').lower()
                 ts = sig.get('timestamp', '')
-                if ts and datetime.fromisoformat(ts.replace('Z', '+00:00')) < cutoff:
-                    continue
+                if ts:
+                    try:
+                        parsed = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                        if parsed.tzinfo is None:
+                            parsed = parsed.replace(tzinfo=timezone.utc)
+                        if parsed < cutoff:
+                            continue
+                    except ValueError:
+                        pass
                 # TikTok/ダンスチャレンジへの言及を検出
                 if any(kw in title for kw in ['tiktok', 'dance challenge', 'チャレンジ', 'viral']):
                     results.append({

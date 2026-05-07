@@ -8,20 +8,20 @@ from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, s
 def collect():
     signals = []
     try:
-        html = fetch_html('https://sports.chosun.com/entertainment')
+        html = fetch_html('https://www.sportschosun.com/entertainment')
     except Exception as e:
         log(f"Sports Chosun fetch error: {e}")
         return 0
 
     patterns = [
-        r'<a[^>]+href="(https://www\.sportschosun\.com/entertainment/[^"]+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
-        r'<a[^>]+href="(https://sports\.chosun\.com/entertainment/[^"]+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
+        r'<a[^>]+href="(https://www\.sportschosun\.com/entertainment/[^"]+)"[^>]*>((?:<[^>]*>|[^<]){5,200})</a>',
+        r'<a[^>]+href="(/entertainment/[^"]+)"[^>]*>((?:<[^>]*>|[^<]){5,200})</a>',
     ]
     seen = set()
     for pat in patterns:
         for m in re.finditer(pat, html, re.DOTALL):
             path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
-            url = path if path.startswith('http') else 'https://sports.chosun.com' + path
+            url = path if path.startswith('http') else 'https://www.sportschosun.com' + path
             if url in seen or len(title) < 5:
                 continue
             seen.add(url)

@@ -178,6 +178,10 @@ def _resize_to_thumbnail(src: str, dst: str, W: int = 1200, H: int = 630) -> boo
         if iw < 300 or ih < 200:
             _log(f"image too small {iw}x{ih}")
             return False
+        # 縦長画像は引き伸ばしになるため拒否 (2026-05-01追加)
+        if ih > iw * 1.3:
+            _log(f"REJECT portrait image {iw}x{ih} (ratio={ih/iw:.1f})")
+            return False
         scale = max(W / iw, H / ih)
         new_w, new_h = int(iw * scale), int(ih * scale)
         im = im.resize((new_w, new_h), Image.LANCZOS)
@@ -253,14 +257,26 @@ def resolve(body: str, title: str, out_path: str = "",
         else:
             _log("wikimedia: no safe image")
 
-    # --- 2.5. thumbnail_source_resolver — YouTube公式MV等から本人画像取得 ---
+    # --- 2.5. thumbnail_source_resolver — テーマ連動画像取得 ---
     if artist:
         try:
             from lib.thumbnail_source_resolver import resolve as _tsr_resolve
-            _tsr = _tsr_resolve(artist_name=artist, article_type='concrete')
+            # テーマ分類でソース優先順序を切替
+            _theme, _theme_config = "", None
+            try:
+                from lib.article_topic_classifier import classify_theme as _ct
+                _tr = _ct(title, body)
+                _theme = _tr.get("theme", "")
+                _theme_config = _tr.get("theme_config")
+            except Exception:
+                pass
+            _tsr = _tsr_resolve(
+                artist_name=artist, article_type='concrete',
+                theme=_theme, theme_config=_theme_config,
+            )
             if _tsr and _tsr.get('image_path') and os.path.exists(_tsr['image_path']):
                 if _resize_to_thumbnail(_tsr['image_path'], out_path):
-                    _log(f"artist_resolver ({_tsr.get('source')}) → {out_path}")
+                    _log(f"artist_resolver ({_tsr.get('source')}, theme={_theme}) → {out_path}")
                     return out_path, f"artist_{_tsr.get('source', 'unknown')}"
         except Exception as e:
             _log(f"artist_resolver error: {e}")

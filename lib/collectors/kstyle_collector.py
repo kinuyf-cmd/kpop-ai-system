@@ -17,7 +17,7 @@ URGENT_JP = ['速報', '緊急', '公式', '発表', '逮捕', '解散', '脱退
 def collect():
     signals = []
     try:
-        html = fetch_html('https://kstyle.com/main.ksn')
+        html = fetch_html('https://www.kstyle.com/')
     except Exception as e:
         log(f"Kstyle fetch error: {e}")
         return 0
@@ -29,7 +29,7 @@ def collect():
     seen = set()
     for m in pattern.finditer(html):
         path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
-        url = path if path.startswith('http') else 'https://kstyle.com/' + path.lstrip('/')
+        url = path if path.startswith('http') else 'https://www.kstyle.com/' + path.lstrip('/')
         if url in seen or len(title) < 5:
             continue
         seen.add(url)

@@ -7,6 +7,36 @@
 """
 import re
 
+
+def _remove_duplicate_paragraphs(html: str) -> str:
+    """段落・文レベルの重複を検出して2回目以降を除去する。
+
+    LLM生成で同一の文やパラグラフが2回出力されるパターンを防止。
+    30文字以上の同一テキストが複数回出現した場合、2回目以降のブロックを除去。
+    """
+    # <p>タグで分割して重複チェック
+    parts = re.split(r'(</?p[^>]*>|</?li[^>]*>|</?h[2-6][^>]*>)', html)
+    seen_texts = set()
+    result = []
+    i = 0
+    while i < len(parts):
+        part = parts[i]
+        # テキスト部分を正規化して比較
+        plain = re.sub(r'<[^>]+>', '', part).strip()
+        if len(plain) >= 30:
+            if plain in seen_texts:
+                # この部分を除去（前後のタグも含めてスキップ）
+                i += 1
+                continue
+            seen_texts.add(plain)
+        result.append(part)
+        i += 1
+    out = ''.join(result)
+    # 重複除去で空になったタグを除去
+    out = re.sub(r'<p[^>]*>\s*</p>', '', out)
+    out = re.sub(r'<li[^>]*>\s*</li>', '', out)
+    return out
+
 # GPT生成時に混入しうるセクション識別子ラベル
 # 行頭 or <p>直後の「リード文:」「導入文:」「本文:」「セクションN:」等を除去
 _LABEL_PATTERNS = [
@@ -75,6 +105,9 @@ def sanitize_gpt_html(html: str) -> str:
 
     # 文字重複修正 (5文字以上の連続→2文字に)
     html = re.sub(r'(.)\1{4,}', r'\1\1', html)
+
+    # 段落レベルの重複除去（同一文が2回以上出現→2回目以降を削除）
+    html = _remove_duplicate_paragraphs(html)
 
     # unclosed <p> fix (常に修正、閾値なし)
     # Phase 1: <p>内にブロック要素があれば</p>を挿入して閉じる

@@ -54,6 +54,25 @@ def safe_update_featured_media(post_id, new_media_id, post_type='posts', force=F
         _log(msg)
         return {'success': False, 'reason': 'mv_protected', 'blocked': True}
 
+    # 縦長/回転画像チェック (2026-05-06追加: 回転サムネ事故の再発防止)
+    try:
+        media_url = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{new_media_id}?_fields=media_details,alt_text'
+        mreq = urllib.request.Request(media_url, headers={'Authorization': f'Basic {AUTH}'})
+        mdata = json.loads(urllib.request.urlopen(mreq, timeout=10).read())
+        img_w = mdata.get('media_details', {}).get('width', 0)
+        img_h = mdata.get('media_details', {}).get('height', 0)
+        if img_w > 0 and img_h > img_w:
+            msg = f'REJECTED: media {new_media_id} は縦長 ({img_w}x{img_h})。OGP壊滅のため拒否'
+            print(f'  🛡️ {msg}')
+            _log(msg)
+            return {'success': False, 'reason': 'portrait_thumbnail', 'blocked': True}
+        # alt空チェック
+        alt = mdata.get('alt_text', '').strip()
+        if not alt:
+            _log(f'WARN: media {new_media_id} のalt_textが空')
+    except Exception:
+        pass  # メディア検証失敗は更新をブロックしない
+
     endpoint = post_type if post_type != 'post' else 'posts'
     try:
         url = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/{endpoint}/{post_id}'

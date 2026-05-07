@@ -37,36 +37,275 @@ def fetch_recent_posts(hours=4, per_page=30):
     return posts
 
 
-def _already_proofread(post_id):
-    """直近24h以内に同一IDを校閲済みならスキップ"""
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+def _already_proofread(post_id, force=False):
+    """直近6h以内に同一IDを校閲済みならスキップ（24h→6hに短縮: 修正後の再チェック漏れ防止）"""
+    if force:
+        return False
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=6)
     if not os.path.exists(LOGS_DIR):
         return False
-    for fname in os.listdir(LOGS_DIR):
+    for fname in sorted(os.listdir(LOGS_DIR), reverse=True):
         if not fname.endswith('.json'):
             continue
         try:
-            data = json.load(open(os.path.join(LOGS_DIR, fname)))
+            parts = fname.replace('.json', '').split('_')
+            file_date = datetime.strptime(parts[0], '%Y%m%d').replace(tzinfo=timezone.utc)
+            if len(parts) >= 2 and parts[1].isdigit() and len(parts[1]) <= 2:
+                file_date = file_date.replace(hour=int(parts[1]))
+            if file_date < cutoff:
+                continue
+        except (ValueError, IndexError):
+            continue
+
+        try:
+            fpath = os.path.join(LOGS_DIR, fname)
+            data = json.load(open(fpath))
             for r in data.get('results', []):
                 if r.get('id') == post_id:
                     return True
-        except:
+            if len(parts) >= 3 and parts[2].isdigit():
+                if int(parts[2]) == post_id:
+                    return True
+        except Exception:
             pass
     return False
 
 
+def _load_artist_profiles():
+    """artist_profiles.jsonを読み込み"""
+    path = '/home/aiuser/kpop-ai-system/config/artist_profiles.json'
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f).get('profiles', {})
+    except Exception:
+        return {}
+
+
+def _check_artist_profile(title, plain):
+    """記事内のアーティスト基本情報をartist_profiles.jsonと照合
+
+    検出: メンバー人数の矛盾、デビュー年の矛盾
+    Returns: list of issue strings (critical level)
+    """
+    profiles = _load_artist_profiles()
+    if not profiles:
+        return []
+
+    issues = []
+    # タイトル+本文冒頭からアーティスト名を検索
+    text_to_check = (title + ' ' + plain[:1500]).lower()
+
+    for key, prof in profiles.items():
+        names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
+        names = [n.lower() for n in names if n]
+        if not any(n in text_to_check for n in names):
+            continue
+
+        # このアーティストが記事に登場
+        display = prof.get('display_name', key)
+        members = prof.get('members', [])
+        debut_year = prof.get('debut_year')
+        member_count = len(members)
+
+        if member_count > 0:
+            # 「N人組」パターンを検索
+            for m in re.finditer(r'(\d+)\s*人組', plain):
+                num = int(m.group(1))
+                # その付近にアーティスト名があるか確認
+                ctx_start = max(0, m.start() - 60)
+                ctx_end = min(len(plain), m.end() + 60)
+                ctx = plain[ctx_start:ctx_end].lower()
+                if any(n in ctx for n in names):
+                    if num != member_count:
+                        issues.append(
+                            f'{display}のメンバー人数が誤り: 記事では{num}人組と記載、正しくは{member_count}人組（{", ".join(members)}）'
+                        )
+
+        if debut_year:
+            # 「NNNN年デビュー」「NNNN年にデビュー」パターン
+            for m in re.finditer(r'(\d{4})年(?:に)?デビュー', plain):
+                yr = int(m.group(1))
+                ctx_start = max(0, m.start() - 60)
+                ctx_end = min(len(plain), m.end() + 60)
+                ctx = plain[ctx_start:ctx_end].lower()
+                if any(n in ctx for n in names):
+                    if yr != debut_year:
+                        issues.append(
+                            f'{display}のデビュー年が誤り: 記事では{yr}年と記載、正しくは{debut_year}年'
+                        )
+
+    return issues
+
+
+def _web_factcheck_context(title, plain):
+    """記事の主要主張を抽出して、LLMプロンプトに外部検証指示を追加するコンテキストを生成"""
+    # 数値・固有名詞・イベント名などの事実主張を抽出
+    claims = []
+
+    # 「N人組」
+    for m in re.finditer(r'(\S+?)(?:は|の)\s*(\d+)人組', plain):
+        claims.append(f'{m.group(1)}は{m.group(2)}人組')
+
+    # 「NNNN年デビュー」
+    for m in re.finditer(r'(\S+?)(?:は|が)\s*(\d{4})年(?:に)?デビュー', plain):
+        claims.append(f'{m.group(1)}は{m.group(2)}年デビュー')
+
+    # イベント名+年
+    for m in re.finditer(r'((?:Billboard|Grammy|Oscar|Coachella|MAMA|KCON|アカデミー|グラミー)[^。、]{5,30})', plain):
+        claims.append(m.group(1).strip())
+
+    # 受賞・記録
+    for m in re.finditer(r'((?:受賞|獲得|ノミネート|1位|記録)[^。]{5,40})', plain):
+        claims.append(m.group(1).strip())
+
+    if not claims:
+        return ''
+
+    claims_text = '\n'.join(f'  - {c}' for c in claims[:8])
+    return f"""
+
+## 外部ファクトチェック指示（重要）
+以下は記事から抽出した事実主張です。あなたの知識と照合し、誤りがあればcriticalまたはhighで報告してください:
+{claims_text}
+
+特に以下を厳格にチェック:
+- グループのメンバー人数とデビュー年
+- イベント名（Billboard/Coachella/Grammy等）が実際の開催と一致するか
+- 受賞歴や記録が事実か"""
+
+
 def proofread_post(post):
-    """GPT-4o-miniで1件校閲"""
+    """GPT-4o-miniで1件校閲 + artist_profiles照合 + 外部ファクトチェック"""
     title = post['title']['rendered'] if isinstance(post.get('title'), dict) else post.get('title', '')
     content = post['content']['rendered'] if isinstance(post.get('content'), dict) else post.get('content', '')
     plain = re.sub(r'<[^>]+>', ' ', content)
     plain = re.sub(r'\s+', ' ', plain).strip()[:2500]
 
-    prompt = f'''以下の記事を厳格に校閲。問題なしならcritical=[],high=[],medium=[]で返す。
+    # --- Layer 1: artist_profiles.json照合（deterministic） ---
+    profile_issues = _check_artist_profile(title, plain)
+
+    # --- Layer 1b: 記事に登場するアーティストのprofile情報を取得（GPT誤検知防止） ---
+    profile_context = ''
+    try:
+        profiles = _load_artist_profiles()
+        text_lower = (title + ' ' + plain[:1500]).lower()
+        matched_profiles = []
+        for key, prof in profiles.items():
+            names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
+            names = [n.lower() for n in names if n]
+            if any(n in text_lower for n in names):
+                members = prof.get('members', [])
+                matched_profiles.append(
+                    f"  - {prof.get('display_name', key)}: {len(members)}人組, "
+                    f"{prof.get('debut_year', '?')}年デビュー, "
+                    f"メンバー={', '.join(members)}"
+                )
+        if matched_profiles:
+            profile_context = "\n\n## 参考: アーティスト正式情報（以下は確定事実です。記事の内容がこれと矛盾していればcriticalで報告してください）\n" + '\n'.join(matched_profiles)
+    except Exception:
+        pass
+
+    # --- Layer 0: ソース記事の本文を取得（記事内容との照合用） ---
+    # ドメインリストは config/source_domains.json から (2026-05-07統一)
+    source_section = ''
+    try:
+        from lib.source_domains import source_url_regex as _src_re
+        _source_urls = re.findall(_src_re(), content)
+        if _source_urls:
+            from lib.source_reader import read_source
+            _src_text = read_source(_source_urls[0], max_chars=1500)
+            if _src_text and len(_src_text) > 200:
+                source_section = f"""
+
+## ソース記事の本文（以下がこの記事の元ネタです。記事がソースから逸脱していないか照合してください）
+{_src_text[:1200]}
+"""
+    except Exception:
+        pass
+
+    today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
+    prompt = f'''あなたはK-POP専門メディアの校閲担当です。以下の記事を校閲してください。
+今日の日付は{today}です。この記事は既に公開済みの記事です。
+
 【タイトル】{title}
 【本文抜粋】{plain}
-JSON出力のみ: {{"score":0-100,"critical":["致命的問題"],"high":["重要問題"],"medium":["軽微な問題"]}}
-判定基準: critical=事実誤認/重大誤字, high=不自然な日本語/タイトル不整合, medium=表現の改善余地'''
+{source_section}
+## 判定基準
+- critical: 人名/グループ名の間違い、数値の矛盾、存在しない人物、**ソース記事にない事実の追加（捏造）**、**バラエティ番組を新曲と誤記**、**タイトルがソースと全く異なる内容**
+- high: 不自然な日本語、タイトルと本文の不整合、ソースに名前があるのに記事で省略
+- medium: 表現の改善余地、軽微な表記揺れ
+
+## 絶対に問題として報告してはいけないもの
+- 2026年やそれ以降の日付は正常です。現在は2026年です。未来の日付として報告しないこと
+- 曜日と日付の整合性チェックは行わないこと（あなたの暦計算は不正確なため）
+- K-POPアーティスト名の英語/韓国語/日本語の表記揺れ
+- K-POPファンが日常的に使う用語（カムバック、ファンミ等）
+
+## スコア基準
+- 95-100: 問題なし
+- 80-94: medium問題のみ
+- 60-79: high問題あり
+- 60未満: critical問題あり
+
+JSON出力のみ:
+{{"score":60-100,"critical":[],"high":[],"medium":[]}}'''
+
+    # --- Layer 1b結果をプロンプトに注入（GPT誤検知防止） ---
+    if profile_context:
+        prompt += profile_context
+
+    # --- Layer 2: Tavily Web検索で事実を裏取り → 結果をプロンプトに注入 ---
+    # 速報記事で信頼できるソースURLが本文に含まれる場合はTavilyスキップ
+    TRUSTED_BREAKING_DOMAINS = [
+        'soompi.com', 'allkpop.com', 'koreaboo.com', 'kpopstarz.com',
+        'hellokpop.com', 'kpoppost.com', 'kstyle.com',
+        'naver.com', 'daum.net', 'dispatch.co.kr', 'sportsseoul.com',
+        'starnews.co.kr', 'newsen.com', 'osen.mt.co.kr', 'xsportsnews.com',
+        'spotvnews.co.kr', 'entertain.naver.com', 'n.news.naver.com',
+        'billboard.com', 'oricon.co.jp', 'weverse.io',
+        'hybe.co.kr', 'smtown.com', 'ygent.com', 'jype.com',
+        'reuters.com', 'apnews.com', 'bbc.com',
+        'yna.co.kr', 'yonhapnews.co.kr', 'prtimes.jp',
+        'kpophit.com', 'kbizoom.com', 'tenasia.com',
+    ]
+    has_trusted_source = False
+    source_urls_in_content = re.findall(r'href="(https?://[^"]+)"', content)
+    for src_url in source_urls_in_content:
+        if any(domain in src_url for domain in TRUSTED_BREAKING_DOMAINS):
+            has_trusted_source = True
+            break
+
+    tavily_context = ''
+    tavily_issues = []
+    if has_trusted_source:
+        print(f"  [factcheck] Tavily skip: 信頼ソースURL検出済み")
+    else:
+        try:
+            from lib.web_factcheck import _verify_with_tavily
+            tavily_result = _verify_with_tavily(title, plain)
+            tavily_found = tavily_result.get('found')
+            if tavily_found is True:
+                # 裏付けソースが見つかった → その内容をプロンプトに注入して照合させる
+                src_texts = []
+                for s in tavily_result.get('sources', [])[:3]:
+                    src_texts.append(f"  - [{s.get('title', '')}]({s.get('url', '')})")
+                if src_texts:
+                    tavily_context = f"""
+
+## Web検索で見つかった裏付け情報（Tavily）
+以下は記事タイトルに関連するWeb検索結果です。記事の内容がこれらの情報と矛盾していないか確認し、矛盾があればcritical/highで報告してください:
+{chr(10).join(src_texts)}"""
+            elif tavily_found is False:
+                tavily_issues.append(f'Web検索で裏付けソースが見つかりません: {tavily_result.get("reason", "")[:80]}')
+        except Exception as e:
+            print(f"  [factcheck] Tavily err: {e}")
+
+    # Layer 2b: 事実主張の抽出+外部検証指示
+    factcheck_ctx = _web_factcheck_context(title, plain)
+    if tavily_context:
+        prompt += tavily_context
+    if factcheck_ctx:
+        prompt += factcheck_ctx
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
@@ -87,7 +326,16 @@ JSON出力のみ: {{"score":0-100,"critical":["致命的問題"],"high":["重要
     for attempt in range(3):
         try:
             r = json.loads(urllib.request.urlopen(req, timeout=60).read())
-            return json.loads(r['choices'][0]['message']['content'])
+            result = json.loads(r['choices'][0]['message']['content'])
+            # --- Layer 1の結果をマージ: profile照合で見つかった事実誤認をcriticalに追加 ---
+            if profile_issues:
+                result.setdefault('critical', []).extend(profile_issues)
+                result['score'] = min(result.get('score', 100), 50)
+            # --- Tavily裏付けなしをhighに追加 ---
+            if tavily_issues:
+                result.setdefault('high', []).extend(tavily_issues)
+                result['score'] = min(result.get('score', 100), 70)
+            return result
         except urllib.error.HTTPError as e:
             last_err = e
             if e.code == 429:
@@ -103,6 +351,22 @@ JSON出力のみ: {{"score":0-100,"critical":["致命的問題"],"high":["重要
             else:
                 raise
     raise last_err
+
+
+def proofread_article(title: str, body_html: str) -> dict:
+    """公開前ファクトチェック（WP postオブジェクト不要版）
+
+    pre_publish_gateから呼ばれる。proofread_postと同じ3層検証を実行。
+    """
+    fake_post = {
+        'title': {'rendered': title},
+        'content': {'rendered': body_html},
+    }
+    try:
+        return proofread_post(fake_post)
+    except Exception as e:
+        return {'score': 100, 'critical': [], 'high': [], 'medium': [],
+                'error': str(e)[:100]}
 
 
 def queue_to_audit_state(post_id, post_type, llm_issues):

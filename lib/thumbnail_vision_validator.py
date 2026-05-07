@@ -28,18 +28,25 @@ from pathlib import Path
 
 
 def _score_dimensions(width: int, height: int) -> int:
-    """Score based on closeness to ideal 1200x630 dimensions. Max 20."""
-    ideal_w, ideal_h = 1200, 630
-    # Ratio match (1200/630 = 1.905)
+    """Score based on closeness to ideal dimensions. Max 20.
+
+    Accepts both 1200x630 (OG standard) and 1200x675 (16:9 v6) as ideal.
+    """
+    # 縦長画像は即NG (height > width)
     if height == 0:
         return 0
+    if height > width:
+        return 0  # portrait image → score 0 → HARD_FAIL
     actual_ratio = width / height
-    ideal_ratio = ideal_w / ideal_h
+    # 2つの理想比率のうち近い方を使う
+    ratio_og = 1200 / 630    # 1.905 (OG image standard)
+    ratio_16_9 = 1200 / 675  # 1.778 (16:9 v6)
+    ideal_ratio = ratio_og if abs(actual_ratio - ratio_og) < abs(actual_ratio - ratio_16_9) else ratio_16_9
     ratio_diff = abs(actual_ratio - ideal_ratio) / ideal_ratio
 
-    # Size match
+    # Size match (minimum: 1200x630 or equivalent)
     size_score = 0
-    if width >= ideal_w and height >= ideal_h:
+    if width >= 1200 and height >= 630:
         size_score = 10  # Full marks for meeting minimum
     elif width >= 800 and height >= 420:
         size_score = 6
@@ -138,7 +145,103 @@ def _score_source_type(image_path: str) -> int:
     return 20
 
 
-def validate_thumbnail(image_path: str, title: str, body: str = "", source_path: str = "") -> dict:
+def _score_filename_match_from_info(source_info: dict, title: str) -> int:
+    """source_info から直接スコアリング。Max 25.
+
+    ファイル名パターン推測ではなく、resolverが返した実際のソース情報を使う。
+    テーマ雰囲気画像(DALL-E/Unsplash)はアーティスト名不要でも高スコア。
+    """
+    source = source_info.get("source", "")
+    attribution = (source_info.get("attribution", "") or "").lower()
+    theme = source_info.get("theme", "")
+
+    score = 0
+
+    # テーマ雰囲気画像(DALL-E/Unsplash) → アーティスト名マッチ不要、テーマ指定自体が品質保証
+    if source in ("dalle3", "unsplash") and theme:
+        score += 18  # テーマ別プロンプト/クエリで生成 → 内容は適切
+    else:
+        # アーティスト写真系ソース → アーティスト名がattributionに含まれているかチェック
+        title_words = re.findall(r'[A-Za-z]{2,}', title)
+        for word in title_words:
+            if word.lower() in attribution:
+                score += 15
+                break
+
+    # ソースの信頼性ボーナス
+    if source in ("youtube_official", "wikimedia", "unsplash"):
+        score += 7
+    elif source in ("dalle3",):
+        score += 7
+    elif source == "ai_prompt":
+        score += 3  # 未生成
+    elif source == "fallback_cache":
+        score += 5
+
+    return min(25, score)
+
+
+def _score_source_type_from_info(source_info: dict) -> int:
+    """source_info から直接ソースタイプスコア。Max 25."""
+    source = source_info.get("source", "")
+
+    source_scores = {
+        "youtube_official": 25,  # 公式チャンネルの画像
+        "wikimedia": 25,         # CC-BY ライセンス写真
+        "unsplash": 25,          # ストック写真
+        "dalle3": 22,            # テーマ別AI生成
+        "ai_prompt": 15,         # 未生成プロンプト
+        "fallback_cache": 20,    # キャッシュ画像
+    }
+    return source_scores.get(source, 15)
+
+
+def _score_theme_relevance(image_path: str, source_info: dict) -> int:
+    """Score based on theme-source alignment. Max 10.
+
+    テーマに合ったソースから取得された画像は高スコア。
+    例: concert記事でYouTubeライブ映像 → +10
+        chart記事でアーティスト通常写真 → +3
+    """
+    theme = source_info.get("theme", "")
+    source = source_info.get("source", "")
+    fetch_mode = source_info.get("fetch_mode", "")
+
+    if not theme or theme == "general":
+        return 5  # テーマ不明は中立スコア
+
+    # YouTube公式ソース: テーマに応じたfetch_modeかチェック
+    if source in ("youtube_official",):
+        # chart記事でviewCount順取得 = 最適
+        if theme == "chart" and fetch_mode == "viewCount":
+            return 10
+        # comeback記事で最新動画 = 最適
+        if theme == "comeback" and fetch_mode in ("date", "latest"):
+            return 10
+        # それ以外のYouTube = やや適合
+        return 7
+
+    # Wikimedia: アーティスト本人写真 = テーマ問わず中程度の適合
+    if source == "wikimedia":
+        return 6
+
+    # Unsplash: テーマ別クエリで取得された場合は高スコア
+    if source == "unsplash":
+        return 8  # テーマクエリで取得済みの前提
+
+    # DALL-E: テーマプロンプトで生成 = 高適合
+    if source in ("dalle3", "ai_prompt"):
+        return 8
+
+    # fallback_cache: テーマ適合は低い（同じアーティストだが内容無関係）
+    if source == "fallback_cache":
+        return 3
+
+    return 5
+
+
+def validate_thumbnail(image_path: str, title: str, body: str = "", source_path: str = "",
+                       source_info: dict | None = None) -> dict:
     """
     Validate a thumbnail image using heuristic scoring.
 
@@ -216,13 +319,49 @@ def validate_thumbnail(image_path: str, title: str, body: str = "", source_path:
     # Use source_path for filename/source scoring if provided (compose_v6 creates temp files)
     scoring_path = source_path if source_path else image_path
 
-    # Compute individual scores
+    # --- 明るさチェック ---
+    brightness_score = 0
+    mean_brightness = -1
+    dark_ratio = -1
+    try:
+        from PIL import Image as _PILImage
+        import numpy as np
+        with _PILImage.open(image_path) as _img:
+            gray = _img.convert("L")
+            arr = np.array(gray)
+            mean_brightness = float(arr.mean())
+            dark_ratio = float((arr < 50).sum() / arr.size)
+
+        if dark_ratio > 0.60:
+            checks_failed.append(f"brightness_critical (dark_ratio={dark_ratio:.0%})")
+            brightness_score = -20  # 重いペナルティ
+        elif mean_brightness < 60:
+            checks_failed.append(f"brightness_low (mean={mean_brightness:.0f})")
+            brightness_score = -15
+        elif mean_brightness < 90:
+            brightness_score = 0  # やや暗いが許容
+        else:
+            checks_passed.append("brightness_ok")
+            brightness_score = 5  # 明るい画像にボーナス
+    except Exception:
+        pass  # PILやnumpyが無い場合はスキップ
+
+    # Compute individual scores (max 20 + 20 + 25 + 25 + 10 + 5 = 105, capped at 100)
     dim_score = _score_dimensions(width, height)
     fs_score = _score_file_size(file_size)
-    fn_score = _score_filename_match(scoring_path, title)
-    src_score = _score_source_type(scoring_path)
 
-    total_score = dim_score + fs_score + fn_score + src_score
+    si = source_info or {}
+    if si.get("source"):
+        fn_score = _score_filename_match_from_info(si, title)
+        src_score = _score_source_type_from_info(si)
+    else:
+        fn_score = min(25, _score_filename_match(scoring_path, title))
+        src_score = min(25, _score_source_type(scoring_path))
+
+    theme_score = _score_theme_relevance(scoring_path, si)
+
+    total_score = min(100, dim_score + fs_score + fn_score + src_score + theme_score + brightness_score)
+    total_score = max(0, total_score)
 
     # Determine verdict
     if total_score >= 90:
@@ -240,6 +379,10 @@ def validate_thumbnail(image_path: str, title: str, body: str = "", source_path:
             "filesize_score": fs_score,
             "filename_match_score": fn_score,
             "source_type_score": src_score,
+            "theme_relevance_score": theme_score,
+            "brightness_score": brightness_score,
+            "mean_brightness": round(mean_brightness, 1) if mean_brightness >= 0 else None,
+            "dark_ratio": round(dark_ratio, 3) if dark_ratio >= 0 else None,
             "width": width,
             "height": height,
             "file_size_kb": round(file_size / 1024, 1),

@@ -35,6 +35,52 @@ OFFICIAL_ACCOUNTS = BASE_DIR / "config" / "official_accounts.json"
 SOURCES_LOG = BASE_DIR / "data" / "thumbnail_sources.jsonl"
 BLOCKED_VIDEO_IDS_FILE = BASE_DIR / "config" / "blocked_video_ids.json"
 MEMBER_TO_GROUP_FILE = BASE_DIR / "config" / "member_to_group.json"
+USED_IMAGES_FILE = BASE_DIR / "data" / "thumbnail_used_images.json"
+
+# ── 使用済み画像追跡（同日中の重複防止）──
+
+def _load_used_images() -> dict:
+    """使用済み画像パスを日付キーで管理 {"2026-05-02": ["/path/to/img1.jpg", ...]}"""
+    if not USED_IMAGES_FILE.exists():
+        return {}
+    try:
+        with open(USED_IMAGES_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _save_used_images(data: dict):
+    """使用済み画像を保存（3日分のみ保持）"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    # 3日より古いエントリを削除
+    keys_to_remove = [k for k in data if k < today[:8]]  # rough cleanup
+    from datetime import timedelta
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).strftime("%Y-%m-%d")
+    keys_to_remove = [k for k in data if k < cutoff]
+    for k in keys_to_remove:
+        del data[k]
+    USED_IMAGES_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(USED_IMAGES_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+
+
+def _is_image_used_today(image_path: str) -> bool:
+    """画像が今日既に使われたかチェック"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    used = _load_used_images()
+    return image_path in used.get(today, [])
+
+
+def _mark_image_used(image_path: str):
+    """画像を使用済みとして記録"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    used = _load_used_images()
+    if today not in used:
+        used[today] = []
+    if image_path not in used[today]:
+        used[today].append(image_path)
+    _save_used_images(used)
 
 
 def _load_member_to_group() -> dict:
@@ -141,11 +187,21 @@ def _load_official_accounts() -> dict:
         return {}
 
 
+_YT_QUOTA_EXHAUSTED_UNTIL = None  # quota超過時に日付を記録しAPIスキップ
+
+
 def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int = 3) -> list:
     """YouTube Data API v3 で公式チャネルから動画リストを取得"""
+    global _YT_QUOTA_EXHAUSTED_UNTIL
     yt_key = os.environ.get("YOUTUBE_API_KEY", "")
     if not yt_key or not channel_id:
         return []
+
+    # quota超過済みなら当日中はAPIスキップ (キャッシュ/staticで対応)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if _YT_QUOTA_EXHAUSTED_UNTIL == today:
+        return []
+
     try:
         import urllib.parse
         params = urllib.parse.urlencode({
@@ -160,6 +216,13 @@ def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int
             for item in data.get("items", [])
             if item.get("id", {}).get("videoId")
         ]
+    except urllib.error.HTTPError as e:
+        if e.code == 403:
+            _YT_QUOTA_EXHAUSTED_UNTIL = today
+            sys.stderr.write(f"[resolver] YouTube API quota超過 → 本日中はAPIスキップ、キャッシュ使用\n")
+        else:
+            sys.stderr.write(f"[resolver] YouTube API error: {e.code} {e.reason}\n")
+        return []
     except Exception as e:
         sys.stderr.write(f"[resolver] YouTube API error: {e}\n")
         return []
@@ -248,6 +311,9 @@ def resolve_youtube(artist_name: str, prefer: str = "latest") -> dict | None:
                     url = f"https://img.youtube.com/vi/{vid}/{quality}.jpg"
                     dest = str(CACHE_DIR / f"yt_{artist_key}_{vid[:8]}_{quality[:3]}.jpg")
                     if os.path.exists(dest) and os.path.getsize(dest) > 5000:
+                        if _is_image_used_today(dest):
+                            sys.stderr.write(f"[resolver] SKIP used today: {dest}\n")
+                            continue
                         return {
                             "image_path": dest,
                             "source": "youtube_official",
@@ -258,6 +324,9 @@ def resolve_youtube(artist_name: str, prefer: str = "latest") -> dict | None:
                             "fetch_mode": prefer,
                         }
                     if _download(url, dest):
+                        if _is_image_used_today(dest):
+                            sys.stderr.write(f"[resolver] SKIP used today: {dest}\n")
+                            continue
                         return {
                             "image_path": dest,
                             "source": "youtube_official",
@@ -380,19 +449,25 @@ def resolve_fallback_photo(artist_name: str) -> dict | None:
     if not candidates:
         return None
 
-    # Shuffle to get a different image each time
+    # 使用済みでない画像を優先選択（重複回避）
     random.shuffle(candidates)
+    unused = [c for c in candidates if not _is_image_used_today(c)]
+    if unused:
+        selected = unused[0]
+    elif len(set(candidates)) <= 1:
+        # Only 1 unique image and already used today → force fallback to next source
+        sys.stderr.write(f"[resolver] cache exhausted for '{artist_name}' (1 image, already used) → skip to next source\n")
+        return None
+    else:
+        selected = candidates[0]
 
-    for img_path in candidates:
-        return {
-            "image_path": img_path,
-            "source": "fallback_cache",
-            "source_url": "",
-            "license": "Cached (original license applies)",
-            "attribution": f"Cached image for {artist_name}",
-        }
-
-    return None
+    return {
+        "image_path": selected,
+        "source": "fallback_cache",
+        "source_url": "",
+        "license": "Cached (original license applies)",
+        "attribution": f"Cached image for {artist_name}",
+    }
 
 
 # ── Source 5: AI image generation (prompt only) ──
@@ -438,7 +513,8 @@ def resolve_ai_prompt(topic_context: str = "", genre: str = "") -> dict:
 # ── Main resolver ──
 
 def resolve(artist_name: str, genre: str = "", post_id: str = "",
-            article_type: str = "concrete") -> dict:
+            article_type: str = "concrete",
+            theme: str = "", theme_config: dict | None = None) -> dict:
     """
     Resolve the best available image source for a thumbnail.
 
@@ -447,98 +523,161 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         genre: Genre key for query tuning
         post_id: Post ID for source logging
         article_type: "concrete" or "abstract" (from article_topic_classifier)
+        theme: Article theme key (comeback/concert/chart/variety/award/fashion/personal/debut/general)
+        theme_config: Theme-specific config dict with youtube_order, unsplash_query, dalle_prompt
 
     Returns dict with keys: image_path, source, source_url, license, attribution
     If no source available, returns a fallback dict with source='gradient_fallback'.
     """
+    tc = theme_config or {}
+    yt_order = tc.get("youtube_order", "date")
+    unsplash_q = tc.get("unsplash_query", "")
+    dalle_prompt = tc.get("dalle_prompt", "")
+    dalle_negative = tc.get("dalle_negative", "")
     result = None
 
-    if article_type == "concrete":
-        # v2 concrete priority: YouTube → Wikimedia → Unsplash → Fallback cache → AI prompt
+    def _tag(r):
+        """結果dictにテーマ情報を付与"""
+        if r:
+            r["theme"] = theme
+        return r
 
-        # Priority 1: YouTube official MV thumbnail
-        result = resolve_youtube(artist_name)
-        if result:
-            # 再発防止: attribution にリクエストしたアーティスト名が含まれるか検証
-            attr = (result.get("attribution", "") or "").lower()
-            artist_lower = artist_name.lower()
-            if artist_lower and artist_lower not in attr and _slug(artist_name) not in attr:
+    def _resolve_artist_sources(artist: str) -> dict | None:
+        """アーティスト本人画像を解決 (YouTube → Wikimedia → グループフォールバック → cache)"""
+        r = resolve_youtube(artist, prefer=yt_order)
+        if r:
+            attr = (r.get("attribution", "") or "").lower()
+            artist_lower = artist.lower()
+            if artist_lower and artist_lower not in attr and _slug(artist) not in attr:
                 sys.stderr.write(
-                    f"[resolver] BLOCK: YouTube結果のattribution '{result.get('attribution')}' が "
-                    f"リクエストアーティスト '{artist_name}' と不一致 → スキップ\n"
+                    f"[resolver] BLOCK: YouTube attribution不一致 → スキップ\n"
                 )
-                result = None  # 不一致の場合は次のソースへフォールスルー
             else:
-                _log_source(post_id, result)
-                return result
+                return r
 
-        # Priority 2: Wikimedia Commons
-        result = resolve_wikimedia(artist_name)
-        if result:
-            _log_source(post_id, result)
-            return result
+        r = resolve_wikimedia(artist)
+        if r:
+            return r
 
-        # Priority 2.5: メンバー名→グループ画像フォールバック
-        # ソロメンバー記事（例: ジミン、V）でソロ画像がない場合、所属グループ（BTS等）の画像を使用
+        # メンバー→グループフォールバック
         member_map = _load_member_to_group()
-        group_name = member_map.get(artist_name, "")
-        if group_name and group_name != artist_name:
+        group_name = member_map.get(artist, "")
+        if group_name and group_name != artist:
             sys.stderr.write(
-                f"[resolver] メンバー '{artist_name}' → グループ '{group_name}' にフォールバック\n"
+                f"[resolver] メンバー '{artist}' → グループ '{group_name}' にフォールバック\n"
             )
-            result = resolve_youtube(group_name)
+            r = resolve_youtube(group_name, prefer=yt_order)
+            if r:
+                return r
+            r = resolve_wikimedia(group_name)
+            if r:
+                return r
+            r = resolve_fallback_photo(group_name)
+            if r:
+                return r
+
+        # アーティスト本人のキャッシュ画像
+        r = resolve_fallback_photo(artist)
+        if r:
+            return r
+
+        return None
+
+    if article_type == "concrete":
+        # ── concrete記事: アーティスト本人の写真を最優先 ──
+        # 鉄則: アイドル記事にはアイドルの写真。テーマはDALL-Eフォールバックのプロンプトにのみ影響。
+        # 優先順: YouTube → Wikimedia → グループFB → cache → Unsplash(テーマ) → DALL-E(テーマ)
+        if artist_name:
+            sys.stderr.write(
+                f"[resolver] テーマ={theme}: アーティスト写真最優先 (artist={artist_name})\n"
+            )
+
+            result = _resolve_artist_sources(artist_name)
             if result:
-                _log_source(post_id, result)
-                return result
-            result = resolve_wikimedia(group_name)
-            if result:
-                _log_source(post_id, result)
-                return result
-            result = resolve_fallback_photo(group_name)
-            if result:
-                _log_source(post_id, result)
+                _log_source(post_id, _tag(result))
                 return result
 
-        # Priority 3: Unsplash/Pexels real photos
-        query_terms = {"beauty": "korean beauty skincare", "live": "kpop concert live",
-                       "travel": "seoul korea", "fashion": "korean fashion"}
-        q = query_terms.get(genre, f"kpop {artist_name}" if artist_name else "kpop music")
+            sys.stderr.write(
+                f"[resolver] アーティスト '{artist_name}' の写真なし → テーマ別フォールバック\n"
+            )
+
+        # アーティスト写真が取得できなかった場合のみテーマ別画像
+        # Unsplash (テーマ別クエリ)
+        q = unsplash_q
+        if not q:
+            query_terms = {"beauty": "korean beauty skincare", "live": "kpop concert live",
+                           "travel": "seoul korea", "fashion": "korean fashion"}
+            q = query_terms.get(genre, f"kpop {artist_name}" if artist_name else "kpop music")
         result = resolve_unsplash(q)
         if result:
-            _log_source(post_id, result)
+            _log_source(post_id, _tag(result))
             return result
 
-        # Priority 4: Fallback real photo (JUDGE_Q1=B)
-        result = resolve_fallback_photo(artist_name)
-        if result:
-            _log_source(post_id, result)
-            return result
-
-        # Priority 5: AI prompt as last resort for concrete
-        result = resolve_ai_prompt(topic_context=artist_name, genre=genre)
-        _log_source(post_id, result)
+        # 最終フォールバック: DALL-E (テーマ別プロンプト)
+        # Include artist + theme for more diverse generation when cache was exhausted
+        if not dalle_prompt:
+            parts = [p for p in [artist_name, theme] if p]
+            topic_ctx = " ".join(parts) if parts else ""
+        else:
+            topic_ctx = ""
+        result = resolve_ai_prompt(topic_context=topic_ctx, genre=genre)
+        if dalle_prompt:
+            result["ai_positive_prompt"] = dalle_prompt
+        if dalle_negative:
+            result["ai_negative_prompt"] = dalle_negative
+        _log_source(post_id, _tag(result))
         return result
 
     else:
-        # v2 abstract priority: Unsplash real photos → AI prompt
-
-        # Priority 1: Unsplash/Pexels real photos
-        query_terms = {"beauty": "korean beauty skincare", "live": "kpop concert live",
-                       "travel": "seoul korea", "fashion": "korean fashion"}
-        q = query_terms.get(genre, "kpop music korean culture")
+        # ── abstract記事: テーマ別画像優先 ──
+        # Unsplash (テーマ別クエリ) → DALL-E (テーマ別プロンプト)
+        q = unsplash_q
+        if not q:
+            query_terms = {"beauty": "korean beauty skincare", "live": "kpop concert live",
+                           "travel": "seoul korea", "fashion": "korean fashion"}
+            q = query_terms.get(genre, "kpop music korean culture")
         result = resolve_unsplash(q)
         if result:
-            _log_source(post_id, result)
+            _log_source(post_id, _tag(result))
             return result
 
-        # Priority 2: AI image prompt (Korean documentary style)
         result = resolve_ai_prompt(topic_context=genre or "K-POP culture", genre=genre)
-        _log_source(post_id, result)
+        if dalle_prompt:
+            result["ai_positive_prompt"] = dalle_prompt
+        if dalle_negative:
+            result["ai_negative_prompt"] = dalle_negative
+        _log_source(post_id, _tag(result))
         return result
 
 
+def _check_portrait(image_path: str) -> bool:
+    """画像が縦長(portrait)かチェック。縦長ならTrue (2026-05-01追加)"""
+    if not image_path or not os.path.exists(image_path):
+        return False
+    try:
+        from PIL import Image
+        im = Image.open(image_path)
+        if im.height > im.width * 1.3:
+            sys.stderr.write(f"[resolver] REJECT portrait: {im.width}x{im.height} {image_path}\n")
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _validate_and_log(post_id: str, result: dict) -> dict | None:
+    """結果の画像品質を検証してからログ記録。縦長ならNone返却 (2026-05-01追加)"""
+    if not result:
+        return None
+    img_path = result.get('image_path', result.get('path', ''))
+    if img_path and _check_portrait(img_path):
+        return None  # 縦長→次のソースへフォールスルー
+    _log_source(post_id, result)
+    return result
+
+
 def _log_source(post_id: str, source_info: dict):
-    """Append source metadata to thumbnail_sources.jsonl."""
+    """Append source metadata to thumbnail_sources.jsonl and mark image as used."""
     record = {
         "post_id": post_id,
         "source": source_info.get("source", ""),
@@ -553,6 +692,14 @@ def _log_source(post_id: str, source_info: dict):
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception as e:
         sys.stderr.write(f"[resolver] log failed: {e}\n")
+
+    # 使用済みとしてマーク（同日中の重複防止）
+    img_path = source_info.get("image_path", "")
+    if img_path:
+        try:
+            _mark_image_used(img_path)
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

@@ -92,8 +92,39 @@ def check_ai_phrases(text: str) -> dict:
     else:
         status = "PASS"
 
+    # テンプレート残存・プレースホルダ検出
+    template_patterns = [
+        (r'XX[月日年時分]', 'XX月/XX日テンプレ残存'),
+        (r'〇〇[月日年]', '〇〇テンプレ残存'),
+        (r'△△', '△△テンプレ残存'),
+        (r'(?<!\w)TBD(?!\w)', 'TBD残存'),
+        (r'(?<!\w)TODO(?!\w)', 'TODO残存'),
+        (r'(?<!\w)FIXME(?!\w)', 'FIXME残存'),
+        (r'\[要確認\]|\[未定\]|\[確認中\]', '要確認マーカー残存'),
+        (r'【[^】]*未定[^】]*】|【[^】]*要確認[^】]*】', '未定/要確認マーカー残存'),
+        (r'```(?:html|python|json|css|javascript)', 'コードブロックマーカー混入'),
+        (r'INSERT_.*?_HERE|PLACEHOLDER', '英語プレースホルダ残存'),
+    ]
+    template_hits = []
+    for pat, label in template_patterns:
+        matches = re.findall(pat, plain)
+        if matches:
+            template_hits.append({"pattern": label, "count": len(matches), "examples": matches[:3]})
+            total += len(matches) * 2  # テンプレ残存は重めにカウント
+
+    # テンプレ残存があればステータスを再判定
+    if template_hits:
+        if any(h['count'] >= 2 for h in template_hits):
+            status = "HARD_FAIL"
+        elif status == "PASS":
+            status = "SOFT_RETRY"
+
     # 警告生成
     warnings = []
+    for hit in template_hits:
+        warnings.append(
+            f"テンプレ残存検出: {hit['pattern']} x{hit['count']} ({', '.join(str(e) for e in hit['examples'][:2])})"
+        )
     if exclamation_count >= EXCLAMATION_WARNING_THRESHOLD:
         warnings.append(
             f"感嘆符が多すぎます: {exclamation_count}個（推奨: {EXCLAMATION_WARNING_THRESHOLD - 1}個以下）"

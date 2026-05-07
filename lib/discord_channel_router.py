@@ -1,36 +1,20 @@
 #!/usr/bin/env python3
 """
-discord_channel_router.py — Discord通知4チャネルルーター v1.0
-
-既存の8 webhookチャネルを4つの論理チャネルにルーティングする。
-各論理チャネルはDiscordサーバー上の1つのチャネルに対応する。
+discord_channel_router.py — Discord通知ルーター v2.0
 
 【4チャネル設計】
-
-  #daily-report  : 毎日の経営サマリー（CEO朝礼・KPIスナップ・SEO概況）
-    ← daily_ceo_report, seo_insights
-
-  #article       : 記事公開通知（新規・リライト・X投稿成功）
-    ← publishing_log
-
-  #alert         : 異常通知（CRITICAL即時・WARNING集約）
-    ← urgent_errors, alert_summary, sales_monetization
-
-  #weekly        : 週次・月次レポート（ボード報告）
-    ← weekly_board_report, monthly_board_report
+  morning  : モーニングブリーフィング（CEO朝礼・KPIスナップ）
+  seo      : SEOレポート（GSC・CTR・検索パフォーマンス）
+  publish  : 投稿通知（記事公開・リライト・X投稿）
+  error    : エラー通知（CRITICAL/WARNING 全て統合）
 
 【使い方】
   from lib.discord_channel_router import send_to_channel, ChannelType
 
-  # 論理チャネルで送信
-  send_to_channel(ChannelType.DAILY_REPORT, title, body)
-  send_to_channel(ChannelType.ARTICLE, title, body)
-  send_to_channel(ChannelType.ALERT, title, body, severity="CRITICAL")
-  send_to_channel(ChannelType.WEEKLY, title, body)
-
-  # 記事公開通知のヘルパー
-  notify_article_published(post_id, title, url, category)
-  notify_x_post_success(tweet_url, article_title)
+  send_to_channel(ChannelType.MORNING, title, body)
+  send_to_channel(ChannelType.SEO, title, body)
+  send_to_channel(ChannelType.PUBLISH, title, body)
+  send_to_channel(ChannelType.ERROR, title, body)
 """
 import json
 import sys
@@ -48,33 +32,24 @@ JST = timezone(timedelta(hours=9))
 
 
 class ChannelType(Enum):
-    DAILY_REPORT = "daily-report"
-    ARTICLE = "article"
-    ALERT = "alert"
-    WEEKLY = "weekly"
+    MORNING = "morning"
+    SEO = "seo"
+    PUBLISH = "publish"
+    ERROR = "error"
 
+    # 後方互換エイリアス（既存コードの段階移行用）
+    DAILY_REPORT = "morning"
+    ARTICLE = "publish"
+    ALERT = "error"
+    WEEKLY = "morning"
 
-# 論理チャネル → 物理webhook(s) のマッピング
-CHANNEL_MAP = {
-    ChannelType.DAILY_REPORT: ["daily_ceo_report"],
-    ChannelType.ARTICLE:      ["publishing_log"],
-    ChannelType.ALERT:        ["urgent_errors", "alert_summary"],
-    ChannelType.WEEKLY:       ["weekly_board_report"],
-}
 
 # チャネル別色
 CHANNEL_COLORS = {
-    ChannelType.DAILY_REPORT: 0x3498DB,   # 青
-    ChannelType.ARTICLE:      0x2ECC71,   # 緑
-    ChannelType.ALERT:        0xE74C3C,   # 赤
-    ChannelType.WEEKLY:       0x9B59B6,   # 紫
-}
-
-# ALERT severity で送信先を分岐
-ALERT_SEVERITY_MAP = {
-    "CRITICAL": "urgent_errors",
-    "WARNING":  "alert_summary",
-    "REVENUE":  "sales_monetization",
+    ChannelType.MORNING: 0x3498DB,   # 青
+    ChannelType.SEO:     0x27AE60,   # 緑
+    ChannelType.PUBLISH: 0x2ECC71,   # 明緑
+    ChannelType.ERROR:   0xE74C3C,   # 赤
 }
 
 
@@ -93,7 +68,7 @@ def _do_send(webhook_url: str, payload: dict) -> tuple[str, str]:
     try:
         req = urllib.request.Request(
             webhook_url, data=data,
-            headers={"Content-Type": "application/json", "User-Agent": "KpopJournal-Bot/1.0"},
+            headers={"Content-Type": "application/json", "User-Agent": "KpopJournal-Bot/2.0"},
             method="POST",
         )
         with urllib.request.urlopen(req, timeout=10) as resp:
@@ -111,12 +86,11 @@ def _do_send(webhook_url: str, payload: dict) -> tuple[str, str]:
         return "network_error", str(e)[:120]
 
 
-def _log(channel_type: str, physical: str, title: str, result: str, detail: str = ""):
+def _log(channel: str, title: str, result: str, detail: str = ""):
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     entry = {
         "timestamp": datetime.now(JST).isoformat(),
-        "logical_channel": channel_type,
-        "physical_channel": physical,
+        "channel": channel,
         "title": title[:80],
         "result": result,
         "detail": detail,
@@ -128,10 +102,10 @@ def _log(channel_type: str, physical: str, title: str, result: str, detail: str 
 def send_to_channel(channel: ChannelType, title: str, body: str,
                     severity: str = "", color: int = None) -> list[dict]:
     """
-    論理チャネルにメッセージを送信する。
-    ALERT チャネルの場合、severity で物理チャネルを分岐する。
+    チャネルにメッセージを送信する。
+    severity は後方互換用（無視して全て channel の webhook に送信）。
 
-    Returns: list of {physical_channel, result, detail}
+    Returns: list of {channel, result, detail}
     """
     webhooks = _load_webhooks()
     now_jst = datetime.now(JST).strftime("%Y-%m-%d %H:%M JST")
@@ -153,31 +127,23 @@ def send_to_channel(channel: ChannelType, title: str, body: str,
         }],
     }
 
-    # 送信先の物理チャネルを決定
-    if channel == ChannelType.ALERT and severity:
-        physical_keys = [ALERT_SEVERITY_MAP.get(severity, "alert_summary")]
-    else:
-        physical_keys = CHANNEL_MAP.get(channel, [])
+    # 物理webhook名 = channel.value
+    webhook_key = channel.value
+    url = webhooks.get(webhook_key, "")
+    if not url:
+        _log(webhook_key, title, "webhook_not_set")
+        return [{"channel": webhook_key, "result": "webhook_not_set", "detail": ""}]
 
-    results = []
-    for key in physical_keys:
-        url = webhooks.get(key, "")
-        if not url:
-            _log(channel.value, key, title, "webhook_not_set")
-            results.append({"physical_channel": key, "result": "webhook_not_set", "detail": ""})
-            continue
-        result, detail = _do_send(url, payload)
-        _log(channel.value, key, title, result, detail)
-        results.append({"physical_channel": key, "result": result, "detail": detail})
-
-    return results
+    result, detail = _do_send(url, payload)
+    _log(webhook_key, title, result, detail)
+    return [{"channel": webhook_key, "result": result, "detail": detail}]
 
 
 # ── 便利ヘルパー ──────────────────────────────────────────────
 
 def notify_article_published(post_id: int, title: str, url: str,
                              category: str = "", is_rewrite: bool = False):
-    """記事公開通知を #article チャネルに送信"""
+    """記事公開通知を #publish チャネルに送信"""
     action = "リライト公開" if is_rewrite else "新規公開"
     cat_label = f" [{category}]" if category else ""
     body = (
@@ -186,16 +152,11 @@ def notify_article_published(post_id: int, title: str, url: str,
         f"post_id: {post_id}\n"
         f"{url}"
     )
-    return send_to_channel(
-        ChannelType.ARTICLE,
-        f"📰 {action}: {title[:50]}",
-        body,
-        color=0x2ECC71,
-    )
+    return send_to_channel(ChannelType.PUBLISH, f"📰 {action}: {title[:50]}", body)
 
 
 def notify_x_post_success(tweet_url: str, article_title: str, article_url: str = ""):
-    """X投稿成功通知を #article チャネルに送信"""
+    """X投稿成功通知を #publish チャネルに送信"""
     body = (
         f"**X/Twitter 投稿成功**\n\n"
         f"記事: {article_title[:60]}\n"
@@ -203,95 +164,54 @@ def notify_x_post_success(tweet_url: str, article_title: str, article_url: str =
     )
     if article_url:
         body += f"\n記事URL: {article_url}"
-    return send_to_channel(
-        ChannelType.ARTICLE,
-        f"🐦 X投稿成功: {article_title[:40]}",
-        body,
-        color=0x1DA1F2,
-    )
+    return send_to_channel(ChannelType.PUBLISH, f"🐦 X投稿成功: {article_title[:40]}", body)
 
 
-def notify_daily_report(report_body: str, date_str: str = ""):
-    """日次レポートを #daily-report チャネルに送信"""
+def notify_morning_brief(report_body: str, date_str: str = ""):
+    """モーニングブリーフィングを送信"""
     if not date_str:
         date_str = datetime.now(JST).strftime("%Y-%m-%d")
-    return send_to_channel(
-        ChannelType.DAILY_REPORT,
-        f"📊 日次レポート {date_str}",
-        report_body,
-    )
+    return send_to_channel(ChannelType.MORNING, f"☀️ モーニングブリーフ {date_str}", report_body)
 
+
+def notify_seo_report(report_body: str, label: str = ""):
+    """SEOレポートを送信"""
+    if not label:
+        label = datetime.now(JST).strftime("%Y-%m-%d")
+    return send_to_channel(ChannelType.SEO, f"📊 SEOレポート {label}", report_body)
+
+
+def notify_error(title: str, body: str, severity: str = "CRITICAL"):
+    """エラー通知を送信"""
+    color = 0xE74C3C if severity == "CRITICAL" else 0xF39C12
+    return send_to_channel(ChannelType.ERROR, title, body, color=color)
+
+
+# 後方互換ヘルパー
+def notify_daily_report(report_body: str, date_str: str = ""):
+    return notify_morning_brief(report_body, date_str)
 
 def notify_weekly_report(report_body: str, week_label: str = ""):
-    """週次レポートを #weekly チャネルに送信"""
-    if not week_label:
-        week_label = datetime.now(JST).strftime("W%W")
-    return send_to_channel(
-        ChannelType.WEEKLY,
-        f"📈 週次ボードレポート {week_label}",
-        report_body,
-    )
-
+    return notify_morning_brief(report_body, week_label)
 
 def notify_alert(title: str, body: str, severity: str = "WARNING"):
-    """アラートを #alert チャネルに送信"""
-    color = {
-        "CRITICAL": 0xE74C3C,
-        "WARNING": 0xF39C12,
-        "REVENUE": 0xE67E22,
-    }.get(severity, 0xF39C12)
-    return send_to_channel(
-        ChannelType.ALERT,
-        title,
-        body,
-        severity=severity,
-        color=color,
-    )
-
-
-def print_channel_design():
-    """4チャネル設計を表示"""
-    print("""
-╔══════════════════════════════════════════════════════════════════════╗
-║   Discord 4チャネル設計 v1.0                                         ║
-╠══════════════════╦═══════════════════════════════╦════════════════════╣
-║ 論理チャネル     ║ 用途                          ║ 物理webhook        ║
-╠══════════════════╬═══════════════════════════════╬════════════════════╣
-║ #daily-report    ║ CEO朝礼・KPI・SEO概況         ║ daily_ceo_report   ║
-║ #article         ║ 記事公開・X投稿成功            ║ publishing_log     ║
-║ #alert           ║ CRITICAL即時・WARNING集約      ║ urgent_errors      ║
-║                  ║                               ║ alert_summary      ║
-║                  ║                               ║ sales_monetization ║
-║ #weekly          ║ 週次・月次ボードレポート        ║ weekly_board_report║
-╚══════════════════╩═══════════════════════════════╩════════════════════╝
-
-【通知フロー】
-  記事公開 → #article (publishing_log)
-  X投稿成功 → #article (publishing_log)
-  パイプライン停止 → #alert (urgent_errors) [CRITICAL]
-  成功率低下 → #alert (alert_summary) [WARNING]
-  売上異常 → #alert (sales_monetization) [REVENUE]
-  毎朝KPI → #daily-report (daily_ceo_report)
-  週次まとめ → #weekly (weekly_board_report)
-""")
+    return notify_error(title, body, severity)
 
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Discord 4チャネルルーター")
+    parser = argparse.ArgumentParser(description="Discord 4チャネルルーター v2.0")
     parser.add_argument("--design", action="store_true", help="チャネル設計を表示")
-    parser.add_argument("--test", choices=["daily-report", "article", "alert", "weekly"],
+    parser.add_argument("--test", choices=["morning", "seo", "publish", "error"],
                         help="テスト送信")
     args = parser.parse_args()
 
-    if args.design:
-        print_channel_design()
-    elif args.test:
+    if args.test:
         ch_map = {
-            "daily-report": ChannelType.DAILY_REPORT,
-            "article": ChannelType.ARTICLE,
-            "alert": ChannelType.ALERT,
-            "weekly": ChannelType.WEEKLY,
+            "morning": ChannelType.MORNING,
+            "seo": ChannelType.SEO,
+            "publish": ChannelType.PUBLISH,
+            "error": ChannelType.ERROR,
         }
         ch = ch_map[args.test]
         results = send_to_channel(
@@ -300,7 +220,16 @@ if __name__ == "__main__":
             f"これは #{args.test} チャネルのテスト送信です。\n正常に表示されていれば設定完了です。",
         )
         for r in results:
-            icon = "+" if r["result"] == "sent" else "!"
-            print(f"  [{icon}] {r['physical_channel']}: {r['result']}")
+            icon = "✅" if r["result"] == "sent" else "❌"
+            print(f"  {icon} {r['channel']}: {r['result']}")
     else:
-        print_channel_design()
+        print("""
+Discord 4チャネル設計 v2.0
+══════════════════════════════════════════
+  #morning  : モーニングブリーフィング
+  #seo      : SEOレポート
+  #publish  : 投稿通知（記事公開・X投稿）
+  #error    : エラー通知（CRITICAL/WARNING統合）
+══════════════════════════════════════════
+テスト: python3 lib/discord_channel_router.py --test morning
+""")

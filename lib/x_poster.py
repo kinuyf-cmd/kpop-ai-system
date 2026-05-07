@@ -6,18 +6,21 @@
   2. 類似テキスト検知: 直近投稿と類似度が高い場合はキュー送り
   3. フック+リプライ方式: URLはリプライで挿入、ハッシュタグでユニーク化
 """
-import sys, os, json
+import sys, os, json, re
 from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, '/home/aiuser/kpop-ai-system/google_metrics')
+sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 BASE = Path('/home/aiuser/kpop-ai-system')
 LOG = str(BASE / 'logs' / 'x_posts.jsonl')
 RETRY_QUEUE = BASE / 'config' / 'x_retry_queue.json'
 
-MAX_POSTS_PER_HOUR = 3
-SIMILARITY_THRESHOLD = 0.7  # 70%以上類似ならキュー送り
+MAX_POSTS_PER_HOUR = 10
+MAX_POSTS_PER_DAY = 40  # 日次上限: KCON等イベント時の大量公開に対応 (15→40)
+SIMILARITY_THRESHOLD = 0.6  # 60%以上類似ならキュー送り（ワード分割Jaccard）
+MIN_INTERVAL_SEC = 15  # 連続投稿間隔: 最低15秒空ける（バースト防止）
 
 # 既存モジュールをimport
 _validate = None
@@ -53,14 +56,50 @@ def _recent_posts(hours: int = 1) -> list[dict]:
 
 
 def _text_similarity(a: str, b: str) -> float:
-    """簡易テキスト類似度（文字集合のJaccard係数）"""
+    """テキスト類似度（ワード分割Jaccard係数）
+    文字集合だとK-POP記事は共通文字が多く誤検知するため、
+    ハッシュタグ・URL除去+ワード分割で比較する。
+    """
+    import re
     if not a or not b:
         return 0.0
-    set_a = set(a[:100])
-    set_b = set(b[:100])
+    # ハッシュタグ・URL・絵文字を除去して本文のみ比較
+    def _clean(t):
+        t = re.sub(r'#\S+', '', t)
+        t = re.sub(r'https?://\S+', '', t)
+        t = re.sub(r'[\U00010000-\U0010ffff]', '', t)  # 絵文字除去
+        return t.strip()
+    ca, cb = _clean(a), _clean(b)
+    # 2-gram + ワード分割のハイブリッド
+    def _tokens(t):
+        words = set(re.split(r'[\s、。！？!?\n]+', t))
+        words.discard('')
+        # 2文字gramも追加（短文対応）
+        for i in range(len(t) - 1):
+            words.add(t[i:i+2])
+        return words
+    set_a = _tokens(ca[:150])
+    set_b = _tokens(cb[:150])
+    if not set_a or not set_b:
+        return 0.0
     intersection = len(set_a & set_b)
     union = len(set_a | set_b)
     return intersection / union if union > 0 else 0.0
+
+
+def _extract_artist_from_title(title: str) -> str:
+    """タイトルからアーティスト名を推定"""
+    # 【速報】以降の最初の固有名詞を抽出
+    title = re.sub(r'^【[^】]*】\s*', '', title)
+    # 英字アーティスト名 (BTS, BLACKPINK, LE SSERAFIM etc.)
+    m = re.match(r'([A-Z][A-Za-z0-9\s\.\-]{1,25}?)(?:が|の|は|、|「)', title)
+    if m:
+        return m.group(1).strip()
+    # カタカナ名
+    m = re.match(r'([ァ-ヶー]{2,15})(?:が|の|は|、)', title)
+    if m:
+        return m.group(1)
+    return ''
 
 
 def _add_to_retry_queue(text: str, url: str, post_id: int = None):
@@ -82,30 +121,100 @@ def _add_to_retry_queue(text: str, url: str, post_id: int = None):
     RETRY_QUEUE.write_text(json.dumps(queue_data, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
-def post_tweet(text: str, url: str = None, post_id: int = None) -> dict:
+def post_tweet(text: str, url: str = None, post_id: int = None,
+               genre: str = "", artist: str = "",
+               schedule: bool = True) -> dict:
     """X投稿 (unified_publisher等から呼ばれる)
 
-    URL込み単一投稿方式: OGPカード表示のためURLをメイン投稿に含める。
-    レート制限(1h/3件)+類似テキスト検知+ハッシュタグでスパム判定を防止。
+    デフォルト動作: スケジューラーキューに追加し、ピーク時間帯に分散投稿。
+    schedule=False で即時投稿（リトライプロセッサー用）。
 
     Args:
         text: タイトル/本文
         url: 記事URL (メイン投稿に含める)
         post_id: WordPress記事ID（監査のログ照合用）
+        genre: ジャンル (breaking/news/comeback等) — ハッシュタグ・CTA選択に使用
+        artist: アーティスト名 — ハッシュタグ生成に使用
+        schedule: True=キュー経由で分散投稿 / False=即時投稿
 
     Returns:
         {'success': bool, 'tweet_id': str|None, 'error': str|None, 'queued': bool}
     """
+    # --- スケジューラーキュー投入モード ---
+    if schedule and url:
+        try:
+            from pipeline.x_scheduled_poster import enqueue
+            priority = 'high' if genre in ('breaking', 'news', 'comeback') else 'normal'
+            enqueued = enqueue(text, url, post_id=post_id, genre=genre,
+                              artist=artist, priority=priority)
+            if enqueued:
+                return {'success': False, 'queued': True,
+                        'error': 'スケジューラーキューに追加（ピーク時間帯に投稿）'}
+            # 既にキューにある場合は即時投稿にフォールバック
+        except Exception as _e:
+            print(f"[x_poster] scheduler queue fallback: {_e}", file=sys.stderr)
+
     if _validate is None or _post is None:
         return {'success': False, 'error': 'post_to_x module import失敗'}
 
-    # --- レート制限チェック ---
+    # --- 空テキストガード ---
+    if not text or len(text.strip()) < 5:
+        return {'success': False, 'error': 'テキストが空または短すぎる', 'queued': False}
+
+    # --- OGP事前検証（WARNのみ、投稿はブロックしない）---
+    if url:
+        try:
+            from lib.x_post_url_validator import validate_url
+            url_check = validate_url(url)
+            if not url_check.get('ok'):
+                reason = url_check.get('reason', '')
+                ogp_issue = url_check.get('ogp_issue', {})
+                warn_entry = {
+                    'ts': datetime.now().isoformat(),
+                    'url': url,
+                    'status': 'ogp_warn',
+                    'reason': reason,
+                    'og_image': ogp_issue.get('og_image', ''),
+                }
+                if post_id:
+                    warn_entry['post_id'] = post_id
+                _log(warn_entry)
+                # soft-404のみブロック。OGP問題(og-default等)はWARNのみで投稿続行
+                if 'soft-404' in reason:
+                    return {'success': False, 'error': f'URL検証NG: {reason}', 'queued': False}
+                # OGP問題はログ記録のみ（記事は既にWPで公開済みなので投稿は実行）
+                print(f"  [x_poster] OGP warn: {reason} — 投稿続行")
+        except Exception:
+            pass  # バリデーション自体の失敗は無視して投稿続行
+
+    # --- バースト防止: 直前投稿からMIN_INTERVAL_SEC秒空ける ---
     recent = _recent_posts(hours=1)
+    if recent:
+        from datetime import datetime as _dt
+        last_ts = max(r.get('ts', '') for r in recent)
+        try:
+            elapsed = (datetime.now() - datetime.fromisoformat(last_ts)).total_seconds()
+            if elapsed < MIN_INTERVAL_SEC:
+                import time as _time
+                wait = MIN_INTERVAL_SEC - elapsed
+                _time.sleep(wait)
+        except (ValueError, TypeError):
+            pass
+
+    # --- レート制限チェック ---
     if len(recent) >= MAX_POSTS_PER_HOUR:
         _add_to_retry_queue(text, url, post_id)
         return {
             'success': False, 'queued': True,
             'error': f'レート制限: 直近1時間に{len(recent)}件投稿済み (上限{MAX_POSTS_PER_HOUR}件)。キューに追加'
+        }
+
+    # --- 日次レート制限チェック ---
+    daily = _recent_posts(hours=24)
+    if len(daily) >= MAX_POSTS_PER_DAY:
+        return {
+            'success': False, 'queued': False,
+            'error': f'日次上限: 直近24時間に{len(daily)}件投稿済み (上限{MAX_POSTS_PER_DAY}件)。翌日まで停止'
         }
 
     # --- 類似テキスト検知 ---
@@ -122,14 +231,48 @@ def post_tweet(text: str, url: str = None, post_id: int = None) -> dict:
     if errors or creds is None:
         return {'success': False, 'error': '; '.join(errors[:2]) if errors else 'credential invalid'}
 
-    # --- テキスト構築: URL込み+ハッシュタグでユニーク化 ---
-    # URL=23字(t.co短縮) + ハッシュタグ約20字 + 改行3字 = 約46字を予約
-    max_title = 280 - 46 - (24 if url else 0)
-    hook_text = text[:max_title].rstrip()
-    parts = [hook_text, '\n\n#KPOPJOURNAL #KPOP']
-    if url:
-        parts.append(f'\n{url}')
-    full_text = ''.join(parts)[:280]
+    # --- テキスト構築: generate_tweet() でフック+感情行+CTA+ハッシュタグ生成 ---
+    full_text = ''
+    try:
+        from lib.x_post_templates import generate_tweet, CATEGORY_TO_GENRE
+        _genre = genre or 'default'
+        # カテゴリID→ジャンル変換（unified_publisherからkind=category名が来る場合）
+        if _genre not in ('news', 'analysis', 'beauty', 'travel',
+                          'breaking', 'comeback', 'controversy', 'live',
+                          'chart', 'fashion', 'default'):
+            _genre = CATEGORY_TO_GENRE.get(_genre, 'default')
+        full_text = generate_tweet(text, url or '', _genre, include_url=bool(url))
+    except Exception as _e:
+        print(f"[x_poster] generate_tweet fallback: {_e}", file=sys.stderr)
+
+    # フォールバック: テンプレート生成失敗時は従来方式
+    if not full_text:
+        hashtags = '#KPOPJOURNAL #KPOP'
+        try:
+            from lib.x_post_templates import build_hashtags
+            _artist = artist or _extract_artist_from_title(text)
+            hashtags = build_hashtags(_artist, genre or 'default')
+        except Exception:
+            pass
+        url_reserve = 24 if url else 0
+        hashtag_reserve = len(hashtags) + 2
+        max_title = 280 - url_reserve - hashtag_reserve - 4
+        hook_text = text[:max_title].rstrip()
+        parts = [hook_text, f'\n\n{hashtags}']
+        if url:
+            parts.append(f'\n{url}')
+        full_text = ''.join(parts)[:280]
+
+    # --- 投稿前セルフ検証 (2026-05-06追加: ハッシュタグ0件事故の再発防止) ---
+    _hashtag_count = full_text.count('#')
+    if _hashtag_count < 2:
+        import sys as _sys
+        print(f"[x_poster] WARN: hashtag {_hashtag_count}個 (<2)。テンプレート関数の問題を調査",
+              file=_sys.stderr)
+        # フォールバック: 最低限のハッシュタグを強制追加
+        if '#KPOPJOURNAL' not in full_text:
+            _fallback_tags = '\n#KPOPJOURNAL #KPOP'
+            full_text = full_text[:280 - len(_fallback_tags)] + _fallback_tags
 
     try:
         tweet_id, attempts = _post(full_text, '', creds)
@@ -140,6 +283,7 @@ def post_tweet(text: str, url: str = None, post_id: int = None) -> dict:
             'url': url,
             'attempts': attempts,
             'status': 'ok',
+            'hashtag_count': _hashtag_count,
         }
         if post_id:
             entry['post_id'] = post_id
@@ -158,13 +302,125 @@ def post_tweet(text: str, url: str = None, post_id: int = None) -> dict:
         if post_id:
             entry['post_id'] = post_id
         _log(entry)
-        return {'success': False, 'error': err}
+        # API失敗時もリトライキューに追加（永久エラー以外）
+        if url and '401' not in err:
+            _add_to_retry_queue(text, url, post_id)
+        return {'success': False, 'error': err, 'queued': bool(url and '401' not in err)}
 
 
 def _log(d):
     os.makedirs(os.path.dirname(LOG), exist_ok=True)
     with open(LOG, 'a', encoding='utf-8') as f:
         f.write(json.dumps(d, ensure_ascii=False) + '\n')
+
+
+def post_hook_and_reply(text: str, url: str, post_id: int = None,
+                        genre: str = "", artist: str = "") -> dict:
+    """2段投稿: フック(URLなし)→URLリプライ (IMP最大化ハック)
+
+    1) generate_tweet(include_url=False) でフック投稿（URLペナルティ回避）
+    2) tweet_idに対してURLリプライを投稿（OGPカード表示）
+
+    Returns:
+        {'success': bool, 'tweet_id': str, 'reply_id': str|None, 'error': str|None}
+    """
+    import time as _time
+
+    if _validate is None or _post is None:
+        return {'success': False, 'error': 'post_to_x module import失敗'}
+
+    if not text or len(text.strip()) < 5:
+        return {'success': False, 'error': 'テキストが空または短すぎる'}
+
+    # --- URL事前検証 ---
+    if url:
+        try:
+            from lib.x_post_url_validator import validate_url
+            url_check = validate_url(url)
+            if not url_check.get('ok') and 'soft-404' in url_check.get('reason', ''):
+                return {'success': False, 'error': f'URL検証NG: {url_check.get("reason")}'}
+        except Exception:
+            pass
+
+    # --- レート制限チェック ---
+    recent = _recent_posts(hours=1)
+    if len(recent) >= MAX_POSTS_PER_HOUR:
+        _add_to_retry_queue(text, url, post_id)
+        return {'success': False, 'queued': True, 'error': 'レート制限'}
+
+    # --- バースト防止 ---
+    if recent:
+        last_ts = max(r.get('ts', '') for r in recent)
+        try:
+            elapsed = (datetime.now() - datetime.fromisoformat(last_ts)).total_seconds()
+            if elapsed < MIN_INTERVAL_SEC:
+                _time.sleep(MIN_INTERVAL_SEC - elapsed)
+        except (ValueError, TypeError):
+            pass
+
+    # --- credential検証 ---
+    creds, errors = _validate()
+    if errors or creds is None:
+        return {'success': False, 'error': '; '.join(errors[:2]) if errors else 'credential invalid'}
+
+    # --- Step 1: フック投稿（URLなし） ---
+    try:
+        from lib.x_post_templates import generate_tweet, CATEGORY_TO_GENRE
+        _genre = genre or 'default'
+        if _genre not in ('news', 'analysis', 'beauty', 'travel',
+                          'breaking', 'comeback', 'controversy', 'live',
+                          'chart', 'fashion', 'default'):
+            _genre = CATEGORY_TO_GENRE.get(_genre, 'default')
+        hook_text = generate_tweet(text, '', _genre, include_url=False)
+    except Exception as _e:
+        # フォールバック
+        hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+
+    if not hook_text:
+        hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+
+    try:
+        tweet_id, attempts = _post(hook_text, '', creds)
+    except Exception as e:
+        err = str(e)[:200]
+        _log({'ts': datetime.now().isoformat(), 'text': hook_text[:120],
+              'url': url, 'status': 'error', 'error': err, 'post_id': post_id})
+        return {'success': False, 'error': err}
+
+    _log({
+        'ts': datetime.now().isoformat(), 'tweet_id': tweet_id,
+        'text': hook_text[:120], 'url': url, 'attempts': attempts,
+        'status': 'ok', 'mode': 'hook', 'post_id': post_id,
+    })
+
+    # --- Step 2: URLリプライ（3秒後） ---
+    reply_id = None
+    if url and tweet_id:
+        _time.sleep(3)
+        try:
+            from lib.x_post_templates import generate_url_reply
+            reply_text = generate_url_reply(url)
+        except Exception:
+            reply_text = f"📖 記事はこちら👇\n{url}"
+
+        try:
+            from google_metrics.post_to_x import post_tweet as _raw_post
+            reply_id, _ = _raw_post(reply_text, tweet_id, creds)
+            _log({
+                'ts': datetime.now().isoformat(), 'tweet_id': reply_id,
+                'text': reply_text[:120], 'url': url,
+                'status': 'ok', 'mode': 'url_reply',
+                'reply_to': tweet_id, 'post_id': post_id,
+            })
+        except Exception as e:
+            # リプライ失敗はフック投稿自体は成功なので致命的ではない
+            _log({
+                'ts': datetime.now().isoformat(), 'url': url,
+                'status': 'reply_error', 'error': str(e)[:100],
+                'reply_to': tweet_id, 'post_id': post_id,
+            })
+
+    return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id}
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""アーティスト別ポップアップま��めページ生成 (毎週水曜10:00 cron)"""
+"""アーティスト別ポップアップまとめページ生成 (毎週水曜10:00 cron)"""
 import sys
 import os
 import json

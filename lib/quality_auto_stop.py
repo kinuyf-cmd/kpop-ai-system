@@ -11,7 +11,7 @@ quality_auto_stop.py — 品質スコア監視→エージェント自動停止 
 
 【品質スコア算出】
   - 成功率 × 40点
-  - (1 - 空出��率) × 20点
+  - (1 - 空出力率) × 20点
   - (1 - HARD_FAIL率) × 20点
   - (1 - 汚染率) × 20点
   合計100点満点
@@ -89,7 +89,7 @@ def _load_jsonl(p: Path) -> list[dict]:
 
 # ═══════════════════════════════════════════════════════════════
 # 品質スコア算出
-# ═══════��═══════��════════════════════════════════════���══════════
+# ═══════════════════════════════════════════════════════════════
 
 def calculate_quality_score(agent_data: dict) -> float:
     """
@@ -150,9 +150,9 @@ def score_all_agents() -> dict[str, dict]:
     return scores
 
 
-# ═════════════════════════════════���═════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # 品質スコア履歴管理
-# ═══════��══════════════���════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 def record_scores(scores: dict[str, dict]):
     """品質スコアを履歴に記録する。"""
@@ -166,7 +166,7 @@ def record_scores(scores: dict[str, dict]):
 
 
 def get_consecutive_low_scores(agent_id: str) -> int:
-    """指定エージェントの連続低スコア回数を��得する。"""
+    """指定エージェントの連続低スコア回数を取得する。"""
     records = _load_jsonl(SCORE_HISTORY_PATH)
     consecutive = 0
 
@@ -183,9 +183,9 @@ def get_consecutive_low_scores(agent_id: str) -> int:
     return consecutive
 
 
-# ═════��═════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # エージェント自動停止
-# ══════���════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 def load_stopped_agents() -> dict:
     """停止中エージェント一覧を読み込む。"""
@@ -209,7 +209,7 @@ def stop_agent(agent_id: str, score_data: dict, consecutive: int,
 
     if dry_run:
         print(f"[DRY-RUN] 自動停止: {agent_id} "
-              f"(スコ��={score_data['score']}, 連続{consecutive}回)")
+              f"(スコア={score_data['score']}, 連続{consecutive}回)")
         return {"stopped": False, "reason": "dry_run"}
 
     stopped = load_stopped_agents()
@@ -223,7 +223,7 @@ def stop_agent(agent_id: str, score_data: dict, consecutive: int,
         "stopped_at": NOW.isoformat(),
         "quality_score": score_data["score"],
         "consecutive_low_count": consecutive,
-        "reason": f"品��スコア{score_data['score']}点が{consecutive}回連続でしきい値{QUALITY_SCORE_THRESHOLD}点未満",
+        "reason": f"品質スコア{score_data['score']}点が{consecutive}回連続でしきい値{QUALITY_SCORE_THRESHOLD}点未満",
         "auto_stopped": True,
     }
 
@@ -261,9 +261,9 @@ def restore_agent(agent_id: str) -> dict:
     return {"restored": True, "entry": restore_entry}
 
 
-# ═══════════════���═══════════════════��═══════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # Discord通知
-# ═════════════════��═════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 def send_stop_alert(agent_id: str, score_data: dict, consecutive: int,
                     dry_run: bool = False) -> str:
@@ -299,9 +299,9 @@ def send_stop_alert(agent_id: str, score_data: dict, consecutive: int,
         return f"error: {e}"
 
 
-# ══���══════════════════════════��═════════════════════════════════
-# 停止チェック関数（パイプラインから呼���れる）
-# ════════════════════════���══════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
+# 停止チェック関数（パイプラインから呼ばれる）
+# ═══════════════════════════════════════════════════════════════
 
 def is_agent_stopped(agent_id: str) -> bool:
     """エージェントが自動停止中かどうかを返す。パイプラインのステップ実行前に呼ぶ。"""
@@ -309,9 +309,9 @@ def is_agent_stopped(agent_id: str) -> bool:
     return agent_id in stopped
 
 
-# ═══════════════════════════════��═══════════════════════════════
-# メ��ン実行
-# ═══════════��═════════════════════════════��═════════════════════
+# ═══════════════════════════════════════════════════════════════
+# メイン実行
+# ═══════════════════════════════════════════════════════════════
 
 def run(dry_run: bool = False) -> dict:
     """全エージェントの品質スコアを確認し、必要なら停止する。"""
@@ -319,7 +319,7 @@ def run(dry_run: bool = False) -> dict:
 
     # 1. 全エージェントのスコアを算出
     scores = score_all_agents()
-    print(f"  スコア算出: {len(scores)}エージ���ント", file=sys.stderr)
+    print(f"  スコア算出: {len(scores)}エージェント", file=sys.stderr)
 
     # 2. スコアを記録
     record_scores(scores)
@@ -340,7 +340,7 @@ def run(dry_run: bool = False) -> dict:
         consecutive = get_consecutive_low_scores(agent_id)
 
         print(f"  ⚠️ {score_data['name_ja']}({agent_id}): "
-              f"スコア={score_data['score']}���, 連続{consecutive}回", file=sys.stderr)
+              f"スコア={score_data['score']}点, 連続{consecutive}回", file=sys.stderr)
 
         if consecutive >= CONSECUTIVE_LOW_THRESHOLD:
             # 自動停止実行
@@ -372,7 +372,7 @@ def print_status():
     for agent_id, entry in stopped.items():
         print(f"  🛑 {entry.get('name_ja', agent_id)} ({agent_id})")
         print(f"     停止日時: {entry.get('stopped_at', '-')}")
-        print(f"     ス���ア: {entry.get('quality_score', '-')}点")
+        print(f"     スコア: {entry.get('quality_score', '-')}点")
         print(f"     理由: {entry.get('reason', '-')}")
         print()
 

@@ -28,13 +28,22 @@ def _save_block_history(history: dict):
 
 
 def _archive_draft(pid: int, reasons: list):
-    """MAX_BLOCK_COUNT超過のドラフトをゴミ箱に移動"""
+    """MAX_BLOCK_COUNT超過のドラフトをゴミ箱に移動 + キャッシュパージ"""
     try:
         r = requests.delete(
             f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{pid}',
             auth=AUTH, timeout=15)
         if r.status_code == 200:
             print(f"  draft {pid} AUTO-ARCHIVE: {MAX_BLOCK_COUNT}回BLOCK超過 reasons={reasons[:2]}")
+            # Next.js ISRキャッシュをパージ (soft-404防止)
+            slug = r.json().get('slug', '')
+            if slug:
+                try:
+                    from lib.frontend_cache import purge_post
+                    purge_post(slug)
+                    print(f"  draft {pid} cache purge: /{slug}/")
+                except Exception:
+                    pass
         else:
             print(f"  draft {pid} archive失敗: HTTP {r.status_code}")
     except Exception as e:
@@ -90,9 +99,22 @@ def main():
 
     block_history = _load_block_history()
     pub = rew = archived = err = 0
+    # 捏造/架空でdraft化された記事のpublish復帰を防止
+    try:
+        import json as _json
+        _blocked = set(_json.load(open('/home/aiuser/kpop-ai-system/data/factcheck_blocked.json')).get('blocked_ids', []))
+    except Exception:
+        _blocked = set()
+
     for d in all_drafts:
         pid = d['id']
         pid_str = str(pid)
+
+        # ファクトチェックブロックリストに含まれる記事は絶対にpublishしない
+        if pid in _blocked:
+            print(f"  [{pid}] SKIP: 捏造/架空でブロック済み")
+            continue
+
         try:
             title = d.get('title', {}).get('rendered', '')
             content = d.get('content', {}).get('rendered', '')
@@ -105,19 +127,36 @@ def main():
             NEWS_CATS = {2, 7, 58}  # 速報記事, 出演情報, 今日話題のニュース
             _kind = 'news' if set(cats) & NEWS_CATS else 'feature'
 
-            # 本文に既に埋め込まれた信頼ソースリンクを抽出 (2026-05-07追加)
-            # config/source_domains.json 参照で全collectorsドメインに対応
-            # これがないと pre_publish_gate が source_url=None で BLOCK判定 → 3回繰り返しで trash化
+            # ソース取得を試行（feature記事のBLOCK回避）
             _source_url = None
             _source_signals = None
+
+            # まず本文に既に埋め込まれた信頼ソースリンクを抽出 (2026-05-07追加)
+            # config/source_domains.json 参照で全collectorsドメインに対応
             try:
+                import re as _re_dap
                 from lib.source_domains import source_url_regex as _src_re_dap
-                _embedded_urls = re.findall(_src_re_dap(), content)
+                _embedded_urls = _re_dap.findall(_src_re_dap(), content)
                 if _embedded_urls:
                     _source_url = _embedded_urls[0]
                     _source_signals = [{'url': u, 'title': ''} for u in _embedded_urls[:3]]
-            except Exception:
-                pass
+                    print(f"  [factcheck] 本文埋込ソース: {len(_embedded_urls)}件")
+            except Exception as _se:
+                print(f"  [factcheck] embed source extract skip: {_se}")
+
+            # 本文に無ければ feature記事はTavily検索でフォールバック
+            if not _source_url and _kind == 'feature':
+                try:
+                    from pipeline.feature_article_generator import _fetch_web_context
+                    _, _web_sources = _fetch_web_context(title)
+                    if _web_sources:
+                        _source_url = _web_sources[0].get('url')
+                        _source_signals = _web_sources
+                        print(f"  [factcheck] Tavily OK: {len(_web_sources)}件取得")
+                    else:
+                        print(f"  [factcheck] Tavily skip: ソース取得失敗")
+                except Exception as _fe:
+                    print(f"  [factcheck] Tavily skip: {_fe}")
 
             gate = pre_publish_gate(
                 title=title, body_html=content,
@@ -136,6 +175,12 @@ def main():
                     json={'status': 'publish'}, auth=AUTH, timeout=15)
                 if u.status_code == 200:
                     pub += 1
+                    # Post-publish hook
+                    try:
+                        from lib.post_publish_hook import run_post_publish
+                        run_post_publish(pid, post_type='post')
+                    except Exception as hook_e:
+                        print(f"  [post-publish] hook error (pid={pid}): {hook_e}")
                     # publishできたらblock履歴から削除
                     block_history.pop(pid_str, None)
             else:

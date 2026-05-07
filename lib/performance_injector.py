@@ -3,14 +3,14 @@
 performance_injector.py — 記事パフォーマンス→エージェント事前注入 v1.0
 
 【責務】
-  パイプ���イン実行**前**にwinning_patterns/title_performance/arceus_rejections
-  のデータを集約し、各エージェントが参照できる��造化ディレクティブを生成する。
+  パイプライン実行**前**にwinning_patterns/title_performance/arceus_rejections
+  のデータを集約し、各エージェントが参照できる構造化ディレクティブを生成する。
 
-  既存の auto_directives.json (事後学習) とは��なり、
+  既存の auto_directives.json (事後学習) とは異なり、
   パイプライン開始時に最新パフォーマンスデータを直接注入する。
 
 【注入先エージェント】
-  deoxys_kpop   : 勝ちパターン（カテゴリ/タイト���構造/公開時間帯）
+  deoxys_kpop   : 勝ちパターン（カテゴリ/タイトル構造/公開時間帯）
   metamon_kpop  : CTRスコア上位タイトル・タイトル要素分析
   persian       : X投稿の勝ちパターン（フック/ハッシュタグ/時間帯）
   mewtwo        : 全体パフォーマンスサマリ（戦略判断用）
@@ -195,7 +195,7 @@ def generate_deoxys_directive(perf: dict) -> str:
         elements = sorted(we.items(), key=lambda x: -x[1])
         lines.append(f"勝ちタイトル要素: {', '.join(f'{k}({v})' for k,v in elements[:4])}")
 
-    # 最適タ���トル長
+    # 最適タイトル長
     if perf.get("avg_win_title_length"):
         lines.append(f"勝ちタイトル平均長: {perf['avg_win_title_length']}文字 (負け: {perf.get('avg_lose_title_length', '-')}文字)")
 
@@ -291,7 +291,7 @@ def generate_mewtwo_directive(perf: dict) -> str:
 
     rp = perf.get("rejection_patterns", {})
     if rp and rp.get("total_rejections", 0) > 0:
-        lines.append(f"arceus却下: {rp['total_rejections']}件 (リビジ���ン成功: {rp.get('revision_success_count', 0)})")
+        lines.append(f"arceus却下: {rp['total_rejections']}件 (リビジョン成功: {rp.get('revision_success_count', 0)})")
 
     return "\n".join(lines)
 
@@ -352,7 +352,7 @@ def cmd_generate_all(args):
     PERF_DIRECTIVES.parent.mkdir(parents=True, exist_ok=True)
     PERF_DIRECTIVES.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n  保存: {PERF_DIRECTIVES}")
-    print(f"  パイプライ��から読み込み:")
+    print(f"  パイプラインから読み込み:")
     print(f"    DEOXYS_PERF=$(python3 lib/performance_injector.py directive --agent deoxys)")
 
 
@@ -398,7 +398,7 @@ def cmd_summary(args):
 
     rp = perf.get("rejection_patterns", {})
     if rp and rp.get("total_rejections", 0) > 0:
-        print(f"\n  arceus却��統計:")
+        print(f"\n  arceus却下統計:")
         print(f"    総却下: {rp['total_rejections']}件")
         print(f"    リビジョン成功: {rp.get('revision_success_count', 0)} / 失敗: {rp.get('revision_fail_count', 0)}")
         cats = rp.get("category_counts", {})
@@ -412,7 +412,7 @@ def main():
     parser = argparse.ArgumentParser(description="記事パフォーマンス→エージェント事前注入 v1.0")
     sub = parser.add_subparsers(dest="command")
 
-    p_dir = sub.add_parser("directive", help="エージェント別ディレクティブ��力")
+    p_dir = sub.add_parser("directive", help="エージェント別ディレクティブ出力")
     p_dir.add_argument("--agent", required=True, choices=list(AGENT_GENERATORS.keys()))
 
     sub.add_parser("generate-all", help="全エージェント分を生成＆保存")

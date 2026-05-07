@@ -18,8 +18,11 @@ from pipeline.auto_event_article import is_processed, mark_processed
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
-DAILY_BREAKING_LIMIT = 9999  # 上限撤廃(KPI駆動)
+DAILY_BREAKING_LIMIT = 100  # 上限実質なし (品質はpre_publish_gate+post_publish_hookで担保)
 
+
+# 速報ソースとして不適切なソースタイプ（トレンド検知には使うが記事化しない）
+_EXCLUDE_SOURCES = {'youtube', 'tiktok', 'gtrends'}
 
 def load_recent(minutes=5):
     if not os.path.exists(SIGNALS_PATH):
@@ -30,6 +33,9 @@ def load_recent(minutes=5):
         for line in f:
             try:
                 sig = json.loads(line)
+                # YouTube等のソースは速報候補から除外
+                if sig.get('source', '') in _EXCLUDE_SOURCES:
+                    continue
                 ts = datetime.fromisoformat(sig.get('timestamp', '')[:19])
                 if ts >= cutoff:
                     result.append(sig)
@@ -46,24 +52,41 @@ def today_breaking_count():
                if l.strip() and json.loads(l).get('date') == today)
 
 
+def _is_stale_source(sig) -> bool:
+    """ソースURLに含まれる日付が7日以上前ならTrue（古いニュースの速報化を防止）"""
+    url = sig.get('url', '')
+    import re as _re
+    # URLに日付パターンが含まれるか (例: /20260414/, /2026/04/14/, /2026-04-14)
+    m = _re.search(r'(\d{4})[-/]?(\d{2})[-/]?(\d{2})', url)
+    if m:
+        try:
+            from datetime import datetime, timedelta
+            article_date = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+            if article_date < datetime.now() - timedelta(days=7):
+                return True
+        except (ValueError, TypeError):
+            pass
+    return False
+
+
 def detect_breaking(signals):
     from lib.collectors.korean_base import is_kpop_related
     candidates = []
     seen = set()
 
-    # 1. urgency=high
+    # 1. urgency=high (音楽番組1位等)
     for s in signals:
         if s.get('urgency') != 'high':
             continue
         arts = is_kpop_related(s.get('title', ''))
         if not arts or arts[0] in seen:
             continue
-        if is_processed(s['url']):
+        if is_processed(s['url']) or _is_stale_source(s):
             continue
         seen.add(arts[0])
         candidates.append((arts[0], [s], 'urgent'))
 
-    # 2. 同一アーティスト+複数ソース (15分以内)
+    # 2. 同一アーティスト+複数ソース
     by_artist = {}
     for s in signals:
         arts = is_kpop_related(s.get('title', ''))
@@ -75,15 +98,69 @@ def detect_breaking(signals):
         if artist in seen:
             continue
         sources = set(s.get('source_id', '') for s in sigs)
-        if len(sources) >= 2 and not any(is_processed(s['url']) for s in sigs):
+        # 古いソースを除外
+        fresh_sigs = [s for s in sigs if not _is_stale_source(s)]
+        if not fresh_sigs:
+            continue
+        sources = set(s.get('source_id', '') for s in fresh_sigs)
+        if len(sources) >= 2 and not any(is_processed(s['url']) for s in fresh_sigs):
             seen.add(artist)
-            candidates.append((artist, sigs, 'multi'))
-        # 4/27緩和: 単一ソースでも記事が2件以上あれば候補化 (confidence=medium)
-        elif len(sigs) >= 2 and not any(is_processed(s['url']) for s in sigs):
+            candidates.append((artist, fresh_sigs, 'multi'))
+        elif len(fresh_sigs) >= 2 and not any(is_processed(s['url']) for s in fresh_sigs):
             seen.add(artist)
             candidates.append((artist, sigs, 'single_multi'))
 
+    # 3. 高engagement単独シグナル (2026-05-01追加)
+    # engagement_score >= 2.0 かつ未処理のK-POP関連シグナルを速報候補に
+    high_eng = sorted(
+        [s for s in signals if s.get('engagement_score', 0) >= 2.0],
+        key=lambda x: -x.get('engagement_score', 0)
+    )
+    for s in high_eng:
+        arts = is_kpop_related(s.get('title', ''))
+        if not arts or arts[0] in seen:
+            continue
+        if is_processed(s.get('url', '')):
+            continue
+        # 同じアーティストの記事が今日既に出ていないかチェック
+        seen.add(arts[0])
+        candidates.append((arts[0], [s], 'high_engagement'))
+
     return candidates
+
+
+def _inject_followup_theme(artist, ja_title, en_title):
+    """速報記事のフォローアップテーマをauto_directivesに注入
+    24-72h後にfeature_article_generatorが深掘り記事を自動生成する"""
+    directives_path = os.path.join('/home/aiuser/kpop-ai-system', 'config/auto_directives.json')
+    try:
+        with open(directives_path, encoding='utf-8') as f:
+            directives = json.load(f)
+
+        now = datetime.now()
+        followup = {
+            'topic': f"{artist}速報の深掘り: {ja_title[:30]}",
+            'hint': (
+                f"速報「{ja_title}」の背景分析・ファン反応・今後の影響を深掘りする記事。"
+                f"元ニュース: {en_title[:80]}。"
+                f"関連: {artist}。バズ予測スコア: 12.0。シグナル: breaking_followup"
+            ),
+            'category_suggest': '深掘り',
+            'added_at': now.strftime('%Y-%m-%d'),
+            'source': 'breaking_followup',
+            'buzz_score': 12.0,
+            'expires_at': (now + timedelta(days=3)).strftime('%Y-%m-%d'),
+        }
+        focus = directives.get('focus_themes', [])
+        # 同じアーティストの古いfollowupを除去
+        focus = [t for t in focus if not (t.get('source') == 'breaking_followup' and artist in t.get('topic', ''))]
+        focus.append(followup)
+        directives['focus_themes'] = focus
+        with open(directives_path, 'w', encoding='utf-8') as f:
+            json.dump(directives, f, ensure_ascii=False, indent=2)
+        print(f"  フォローアップテーマ注入: {followup['topic'][:40]}")
+    except Exception as e:
+        print(f"  followup inject err: {e}")
 
 
 def _mark_breaking_stage(post_id, stage):
@@ -112,43 +189,211 @@ def _wrap_body(translated: str, fallback_title: str, success: bool) -> str:
     return f"<p>{text}</p>"
 
 
+def _enrich_with_web_search(title, sigs):
+    """速報記事生成前にWeb検索で事実を収集（捏造防止の根本対策）
+
+    Tavily → DuckDuckGo のフォールバック。
+    タイトルキーワードとの関連度フィルタ付き。
+    """
+    import re as _re
+    # タイトルからキーワード抽出（関連度フィルタ用）
+    _title_kw = set(_re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', title.lower()))
+    _title_kw -= {'the', 'and', 'for', 'with', 'new', 'ガイド', '完全', '最新', '速報'}
+
+    def _is_relevant(result_title, result_content):
+        """検索結果がタイトルのキーワードと関連するか"""
+        combined = (result_title + ' ' + result_content).lower()
+        hits = sum(1 for kw in _title_kw if kw in combined)
+        return hits >= 1  # キーワード1つ以上一致
+
+    parts = []
+
+    # 1. Tavily (優先)
+    try:
+        tavily_key = os.environ.get('TAVILY_API_KEY', '')
+        if tavily_key:
+            from tavily import TavilyClient
+            client = TavilyClient(api_key=tavily_key)
+            query = f'{title} K-POP 2026'
+            response = client.search(query, max_results=5, search_depth='basic',
+                                     exclude_domains=['kpopjournal.tokyo'])
+            for r in response.get('results', [])[:4]:
+                content = r.get('content', '')[:400]
+                r_title = r.get('title', '')
+                if content and _is_relevant(r_title, content):
+                    parts.append(f'【{r_title}】{content}')
+            if parts:
+                return '\n'.join(parts)
+    except Exception as _te:
+        print(f"  [web_search] Tavily失敗: {_te}")
+
+    # 2. DuckDuckGo フォールバック
+    if not parts:
+        try:
+            from ddgs import DDGS
+            with DDGS() as ddgs:
+                # 英語タイトルは日本語キーワードを追加して検索精度向上
+                _query_base = _re.sub(r'[！!？?\s]+', ' ', title)[:40]
+                _has_ja = bool(_re.search(r'[\u3040-\u9fff]', _query_base))
+                query = _query_base if _has_ja else f'{_query_base} K-POP 最新'
+                results = list(ddgs.text(query, max_results=5))
+                # 結果0件なら日本語翻訳キーワードで再試行
+                if not results and not _has_ja:
+                    # アーティスト名+主要キーワードで日本語検索
+                    _en_words = _re.findall(r'[A-Z][a-zA-Z]+', title)
+                    if _en_words:
+                        query = ' '.join(_en_words[:3]) + ' 最新 速報'
+                        results = list(ddgs.text(query, max_results=5))
+            for r in results[:4]:
+                body = r.get('body', '')[:400]
+                r_title = r.get('title', '')
+                if body and _is_relevant(r_title, body):
+                    parts.append(f'【{r_title}】{body}')
+            if parts:
+                print(f"  [web_search] DuckDuckGo OK: {len(parts)}件")
+        except Exception as _de:
+            print(f"  [web_search] DuckDuckGo失敗: {_de}")
+
+    return '\n'.join(parts)
+
+
+def _get_artist_profile_context(artist, sigs=None):
+    """アーティスト基本情報をプロンプトに注入（メンバー人数/デビュー年の捏造防止）
+
+    sigisに含まれる全アーティスト名も検索して複数プロファイルを返す。
+    """
+    try:
+        import json as _json
+        with open('/home/aiuser/kpop-ai-system/config/artist_profiles.json', 'r', encoding='utf-8') as f:
+            profiles = _json.load(f).get('profiles', {})
+
+        # 検索対象: メインartist + sigs内の全タイトルから抽出
+        search_names = {(artist or '').lower()}
+        if sigs:
+            for sig in sigs[:5]:
+                title = sig.get('title', '')
+                for key, prof in profiles.items():
+                    names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
+                    if any(n and n.lower() in title.lower() for n in names):
+                        search_names.add(key.lower())
+
+        matched = []
+        for key, prof in profiles.items():
+            names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
+            if any(n and n.lower() in search_names for n in names):
+                members = prof.get('members', [])
+                matched.append(
+                    f"- {prof['display_name']}: {len(members)}人組, "
+                    f"{prof.get('debut_year', '?')}年デビュー, "
+                    f"所属: {prof.get('agency', '?')}, "
+                    f"メンバー: {', '.join(members)}")
+
+        if matched:
+            return ("\n【アーティスト正式情報（これと矛盾する内容を絶対に書かないこと）】\n"
+                    + "\n".join(matched))
+    except Exception:
+        pass
+    return ''
+
+
+# 速報記事プロンプト: 「書く」のではなく「ソースを翻訳・要約する」
+_BREAKING_PROMPT_TEMPLATE = """あなたはK-POP専門メディアの翻訳・編集者です。
+以下のソース記事を日本語に翻訳・要約して、1500-2500字のHTML記事を作成してください。
+今日は{today}です。本文中に現在の年月({year_month})を含めること。
+
+【ソース記事ヘッドライン】
+{combined}
+
+{web_context_section}
+{profile_context}
+
+【あなたの仕事: 翻訳・要約（創作ではない）】
+- ソース記事に書かれている事実をそのまま日本語に翻訳すること
+- ソースに書かれている人名・日付・数字・引用は一字一句正確に訳すこと
+- ソースに書かれていないことは絶対に追加しない
+- 「背景情報」「過去の経緯」もソースに言及がある場合のみ書く
+- 字数が足りなくても、ソースにない情報で埋めることは禁止
+
+【記事構造（HTML）】
+- 冒頭1文: 何が起きたかを結論として書く
+- h2セクション2-3個（ソースの段落構成に従う）
+- ソースに引用コメントがあれば日本語訳して含める
+- 末尾に「今後の注目ポイント」3つを箇条書き
+- 末尾に「※ 本記事は[ソース名]の報道を翻訳・編集したものです」と明記
+
+【禁止事項 — 違反=即削除】
+- ソースにない事実の追加（メンバー人数・デビュー年・楽曲名を自分の知識で補わない）
+- 人名の匿名化（「A」「B」等にしない。ソースの実名をそのまま使う）
+- SNSの反応の捏造（ソースに引用がなければ「SNSでも話題になっている」程度に留める）
+- 同じ文やフレーズの繰り返し
+- 「Run BTS」のようなバラエティ番組を「新曲」と誤記
+
+5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。ソースに書いていないことは書かない。"""
+
+
 def publish_breaking(artist, sigs, typ):
-    """unified_publish経由で速報投稿"""
+    """unified_publish経由で速報投稿（ソース本文取得→Web検索→生成→公開）"""
     best = max(sigs, key=lambda s: len(s.get('title', '')))
 
-    # 翻訳
+    # Step 0: ソースURLから本文を直接取得（最も重要な事実の根拠）
+    from lib.source_reader import read_sources
+    source_text = read_sources(sigs)
+
+    # Step 1: Web検索で補完事実を収集
+    web_facts = _enrich_with_web_search(best['title'], sigs)
+
+    web_context_section = ''
+    if source_text:
+        web_context_section = f"""【ソース記事の本文（この記事の事実の根拠。ここに書かれている固有名詞・人名・経緯を必ず記事に含めること）】
+{source_text[:1500]}"""
+        if web_facts:
+            web_context_section += f"""
+
+【Web検索で取得した補足情報】
+{web_facts}"""
+    elif web_facts:
+        web_context_section = f"""【Web検索で取得した事実情報（この情報を優先的に使うこと）】
+{web_facts}"""
+    else:
+        web_context_section = '【注意】Web検索で追加情報が見つかりませんでした。ヘッドラインの内容のみで簡潔に書くこと。背景情報の推測は禁止。'
+
+    # アーティスト基本情報
+    profile_context = _get_artist_profile_context(artist, sigs=sigs)
+
+    today = datetime.now().strftime('%Y年%m月%d日')
+    year_month = datetime.now().strftime('%Y年%m月')
+    combined = "\n".join([s['title'] for s in sigs[:3]])
+
+    prompt_text = _BREAKING_PROMPT_TEMPLATE.format(
+        today=today, year_month=year_month, combined=combined,
+        web_context_section=web_context_section, profile_context=profile_context,
+    )
+
+    # タイトル翻訳: ソースのヘッドラインを忠実に翻訳するだけ。煽り・意訳・要約禁止。
+    _title_context = (
+        'ニュース見出しの忠実翻訳。意味を変えない。煽らない。要約しない。'
+        '元の見出しが言っていることだけを日本語にする。'
+        '「出席禁止」「衝撃」等ソースにない語句を追加しない。'
+    )
     if best.get('language') == 'ko':
-        title_r = translate_ko_to_ja(best['title'], 'K-POP速報見出し')
+        title_r = translate_ko_to_ja(best['title'], _title_context)
         if not title_r.get('success'):
             return None
-        raw_title = title_r['translated'].strip().strip('「」""')
-        combined = "\n".join([s['title'] for s in sigs[:3]])
-        body_r = translate_ko_to_ja(
-            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下のK-POP速報から800-1200字の日本語記事を事実ベースで。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
-            'K-POP速報記事',
-        )
+        raw_title = '【速報】' + title_r['translated'].strip().strip('「」""【】')
+        body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
     elif best.get('language') == 'ja':
-        raw_title = best['title']
-        combined = "\n".join([s['title'] for s in sigs[:3]])
-        # 日本語ソース: translate_ko_to_jaの汎用LLM機能で速報本文を生成
-        body_r = translate_ko_to_ja(
-            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下のK-POP速報見出しから800-1200字の日本語速報記事を事実ベースで書いてください。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
-            'K-POP速報記事（日本語ソース）',
-        )
+        raw_title = '【速報】' + best['title'].strip().strip('【】')
+        body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
     else:
-        # 英語ソース: 翻訳+本文生成
-        combined = "\n".join([s['title'] for s in sigs[:3]])
-        title_r = translate_ko_to_ja(best['title'], 'K-POP速報見出し（英語→日本語）')
+        # 英語ソース
+        title_r = translate_ko_to_ja(best['title'], _title_context)
         if title_r.get('success'):
-            raw_title = title_r['translated'].strip().strip('「」""')
+            raw_title = '【速報】' + title_r['translated'].strip().strip('「」""【】')
         else:
-            raw_title = best['title']
-        body_r = translate_ko_to_ja(
-            f"今日は{datetime.now().strftime('%Y年%m月%d日')}です。以下の英語K-POP速報から800-1200字の日本語記事を事実ベースで。本文中に必ず現在の年月(例:{datetime.now().strftime('%Y年%m月')})を含めること。5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。背景情報・関連する過去の出来事も含めて厚みのある記事にすること。【絶対厳禁】人名を「A」「B」等に匿名化しないこと。ソースに記載された実名(アーティスト名・グループ名)を必ずそのまま使用すること。複数の無関係なニュースが含まれる場合は最も重要な1件のみ記事化し、他は無視すること。推測禁止:\n\n{combined}",
-            'K-POP速報記事',
-        )
+            raw_title = '【速報】' + best['title']
+        body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
 
     confidence = 'high' if typ == 'multi' else ('medium' if typ in ('urgent', 'single_multi') else 'low')
@@ -182,6 +427,16 @@ def publish_breaking(artist, sigs, typ):
                 'artist': artist,
                 'type': typ,
             }) + '\n')
+
+        # 速報→深掘り連鎖: auto_directivesにフォローアップテーマを注入
+        _inject_followup_theme(artist, r.get('title', ''), best.get('title', ''))
+
+        # 統一ポストパブリッシュフック (enricher+audit+factcheck+カテゴリ修正)
+        try:
+            from lib.post_publish_hook import run_post_publish
+            run_post_publish(r['post_id'])
+        except Exception as e:
+            print(f"  post_publish_hook err: {e}")
         return {'id': r.get('post_id'), 'link': r.get('post_url')}
 
     # fact-checkブロック等でも同じURLの無限リトライを防止
@@ -203,7 +458,7 @@ def main(dry_run=False):
         print("本日の速報上限到達")
         return 0
 
-    signals_raw = load_recent(minutes=5)
+    signals_raw = load_recent(minutes=180)  # 3時間ウィンドウ (RSSバッチ取得に合わせる)
     signals, _dup_n, _ = deduplicate(signals_raw)
     print(f"過去5分のsignals: {len(signals_raw)}件 (dedup: -{_dup_n})")
 
@@ -211,6 +466,7 @@ def main(dry_run=False):
     print(f"速報候補: {len(candidates)}件")
 
     published = 0
+    import time as _time
     for artist, sigs, typ in candidates[:DAILY_BREAKING_LIMIT - count_today]:
         best = max(sigs, key=lambda s: len(s.get('title', '')))
         print(f"\n=== {artist} ({typ}): {best['title'][:60]} ===")
@@ -220,6 +476,8 @@ def main(dry_run=False):
         if r:
             print(f"  速報公開 ID={r.get('id')}")
             published += 1
+            # バースト防止: 記事間に30秒待機（X投稿がスケジューラーキューに入るため短縮可能）
+            _time.sleep(30)
 
     print(f"\n速報記事化: {published}件")
     return published

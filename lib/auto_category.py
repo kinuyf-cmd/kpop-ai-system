@@ -56,7 +56,7 @@ def _load_artist_categories():
 
 
 def detect_artist_categories(title, content=''):
-    """��イトル+本文からアーティスト名を検出し、対応するカテゴリIDリストを返す"""
+    """タイトル+本文からアーティスト名を検出し、対応するカテゴリIDリストを返す"""
     mapping = _load_artist_categories()
     if not mapping:
         return []
@@ -68,8 +68,16 @@ def detect_artist_categories(title, content=''):
         # 3文字以上のアーティスト名のみマッチ (短すぎると誤検出)
         if len(name) < 3:
             continue
-        if name in text:
-            found.add(cat_id)
+        # 単語境界マッチ: "NCT"が"NCT WISH"の部分一致で誤検出するのを防止
+        # 英字名は前後が英字でない場合のみマッチ (2026-05-01修正)
+        if re.search(r'[A-Za-z]', name):
+            pattern = r'(?<![A-Za-z])' + re.escape(name) + r'(?![A-Za-z\s][\w])'
+            if re.search(pattern, text):
+                found.add(cat_id)
+        else:
+            # 韓国語・日本語名はそのまま部分一致
+            if name in text:
+                found.add(cat_id)
 
     return list(found)
 
@@ -97,7 +105,7 @@ def ensure_artist_categories(post_id, title, content='', existing_categories=Non
             headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
         urllib.request.urlopen(req, timeout=15)
         added = set(merged) - set(existing_categories)
-        print(f'[auto_category] post {post_id}: +{len(added)}カ���ゴリ追加 {added}')
+        print(f'[auto_category] post {post_id}: +{len(added)}カテゴリ追加 {added}')
     except Exception as e:
         print(f'[auto_category] post {post_id} 更新失敗: {e}')
 

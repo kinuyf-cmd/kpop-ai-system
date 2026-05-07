@@ -18,7 +18,8 @@ class _TextExtractor(HTMLParser):
         super().__init__()
         self._texts: list[str] = []
         self._skip = False
-        self._skip_tags = {"h1", "h2", "h3", "h4", "h5", "h6", "script", "style"}
+        self._skip_tags = {"h1", "h2", "h3", "h4", "h5", "h6", "script", "style",
+                           "table", "thead", "tbody", "tr", "td", "th", "nav", "aside"}
 
     def handle_starttag(self, tag, attrs):
         if tag.lower() in self._skip_tags:
@@ -37,7 +38,12 @@ class _TextExtractor(HTMLParser):
 
 
 def _extract_text(html: str) -> str:
-    """HTMLからプレーンテキストを抽出する（ヘッダーを除く）。"""
+    """HTMLからプレーンテキストを抽出する（ヘッダー・画像帰属・CTA除く）。"""
+    # 画像帰属行を事前に除去
+    html = re.sub(r'<p[^>]*>画像[：:].*?</p>', '', html)
+    html = re.sub(r'<p[^>]*>※当サイト.*?</p>', '', html)
+    # kpj-cta/kpj-hybrid-cta/kpj-disclosure ブロックを除去
+    html = re.sub(r'<div[^>]*class="kpj-(?:cta|hybrid|disclosure)[^"]*"[^>]*>.*?</div>', '', html, flags=re.DOTALL)
     parser = _TextExtractor()
     parser.feed(html)
     return parser.get_text()
@@ -67,9 +73,11 @@ def generate_summary(article_html: str) -> str:
     sentences = _split_sentences(text)
 
     # Pick first 3 substantive sentences (>20 chars)
+    # 画像帰属・CTA・注釈を除外
+    _skip_patterns = ['画像:', '画像：', '元記事より', '※当サイト', '※Amazon', 'PR ', 'こんな方におすすめ']
     key_sentences: list[str] = []
     for s in sentences:
-        if len(s) > 20:
+        if len(s) > 20 and not any(p in s for p in _skip_patterns):
             key_sentences.append(s)
             if len(key_sentences) == 3:
                 break
@@ -96,31 +104,64 @@ def generate_summary(article_html: str) -> str:
     return summary_html
 
 
+def _remove_duplicate_lead(full_html: str, summary_sentences: list[str]) -> str:
+    """3行まとめと重複するリード文（最初の<p>）を削除する。
+
+    GPT生成記事は5W1Hリード文を冒頭に置くが、3行まとめがその文を
+    そのまま抽出するため重複する。まとめ挿入後に冒頭段落を削除する。
+    """
+    if not summary_sentences:
+        return full_html
+
+    # 最初の<h2>より前の<p>...</p>を取得
+    h2_pos = re.search(r'<h2[^>]*>', full_html, re.IGNORECASE)
+    search_region = full_html[:h2_pos.start()] if h2_pos else full_html[:2000]
+
+    # 最初の<p>...</p>ブロックを取得
+    first_p = re.search(r'<p[^>]*>(.*?)</p>', search_region, re.DOTALL | re.IGNORECASE)
+    if not first_p:
+        return full_html
+
+    first_p_text = re.sub(r'<[^>]+>', '', first_p.group(1)).strip()
+    if len(first_p_text) < 30:
+        return full_html
+
+    # 3行まとめの文と最初の段落の類似度チェック
+    overlap = sum(1 for s in summary_sentences if s[:30] in first_p_text)
+    if overlap >= 2:
+        # 2文以上重複 → 最初の段落を削除
+        return full_html[:first_p.start()] + full_html[first_p.end():]
+
+    return full_html
+
+
 def insert_summary_into_html(full_html: str, summary_html: str) -> str:
     """
     まとめHTMLを記事内に挿入する。
-    挿入位置: 最初の</p>の後、最初の<h2>の前。
+    挿入位置: 最初の<h2>の直前。
+    挿入後に、3行まとめと重複するリード文を削除する。
     """
-    # Find first </p>
-    p_end = re.search(r'</p>', full_html, re.IGNORECASE)
+    # 3行まとめのテキストを抽出（重複チェック用）
+    summary_texts = re.findall(r'<li>([^<]+)</li>', summary_html)
+
     # Find first <h2>
     h2_start = re.search(r'<h2[^>]*>', full_html, re.IGNORECASE)
 
-    if p_end and h2_start and p_end.end() <= h2_start.start():
-        # Insert between </p> and <h2>
-        insert_pos = p_end.end()
-        return full_html[:insert_pos] + "\n" + summary_html + "\n" + full_html[insert_pos:]
-    elif h2_start:
-        # No </p> before <h2>, insert before <h2>
+    if h2_start:
         insert_pos = h2_start.start()
-        return full_html[:insert_pos] + summary_html + "\n" + full_html[insert_pos:]
-    elif p_end:
-        # No <h2>, insert after first </p>
-        insert_pos = p_end.end()
-        return full_html[:insert_pos] + "\n" + summary_html + "\n" + full_html[insert_pos:]
+        result = full_html[:insert_pos] + summary_html + "\n" + full_html[insert_pos:]
     else:
-        # Fallback: prepend
-        return summary_html + "\n" + full_html
+        # No <h2>, insert after first </p>
+        p_end = re.search(r'</p>', full_html, re.IGNORECASE)
+        if p_end:
+            insert_pos = p_end.end()
+            result = full_html[:insert_pos] + "\n" + summary_html + "\n" + full_html[insert_pos:]
+        else:
+            result = summary_html + "\n" + full_html
+
+    # 重複リード文を削除
+    result = _remove_duplicate_lead(result, summary_texts)
+    return result
 
 
 def main():

@@ -17,6 +17,7 @@ import base64
 import html
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -36,11 +37,16 @@ WP_API = f"{WP_URL}/wp-json/wp/v2"
 WP_AUTH_FILE = Path.home() / ".wp_auth"
 JST = timezone(timedelta(hours=9))
 
-# 対象アーティスト (要件で指定された16組)
+# 対象アーティスト (40組: 2026-05-06拡張)
 TARGET_ARTISTS = [
     "bts", "blackpink", "aespa", "twice", "ive", "newjeans",
     "le_sserafim", "stray_kids", "seventeen", "enhypen",
     "itzy", "nmixx", "babymonster", "exo", "nct", "bigbang",
+    "katseye", "illit", "xikers", "boynextdoor",
+    "txt", "red_velvet", "shinee", "got7", "ateez", "g_idle",
+    "treasure", "day6", "riize", "zerobaseone",
+    "kiss_of_life", "xg", "2pm", "monsta_x", "stayc", "boa",
+    "fromis_9", "izna", "meovv", "plave",
 ]
 
 LATEST_ARTICLES_COUNT = 5
@@ -232,20 +238,53 @@ def build_summary_page(artist_id: str, profile: dict, articles: list[dict]) -> d
 
 
 # ---------- WP投稿 ----------
-def publish_to_wp(page_data: dict, post_type: str = "pages", status: str = "draft") -> dict:
-    """生成したまとめページを WP に投稿する (固定ページ)。"""
+def _generate_thumbnail_for_post(post_id: int, title: str, slug: str) -> int:
+    """サムネイルを生成してWPにアップロード。media_id を返す (失敗時は0)。"""
+    try:
+        from lib.auto_thumbnail import generate_and_set_thumbnail
+        success = generate_and_set_thumbnail(post_id, title, slug)
+        if success:
+            print(f"  サムネイル設定完了: post_id={post_id}")
+            return 1  # 成功フラグ (media_idはauto_thumbnailが直接設定)
+    except Exception as e:
+        print(f"  サムネイル生成失敗: {e}")
+    return 0
+
+
+def publish_to_wp(page_data: dict, post_type: str = "posts", status: str = "draft") -> dict:
+    """生成したまとめページを WP に投稿する。
+    post_type を 'posts' に変更 (pages→posts: 監査・カテゴリ・配信と整合性確保)"""
+    # Structural page check: empty content / template placeholders
+    content = page_data.get("content", "")
+    _placeholder_re = re.compile(r'(XX月|TBD|TODO|PLACEHOLDER|{{.*?}}|\[\[.*?\]\])', re.IGNORECASE)
+    if not content or len(content.strip()) < 100:
+        print(f"  [pre-publish] artist page BLOCKED: content empty or too short ({len(content.strip())} chars)")
+        status = 'draft'
+    elif _placeholder_re.search(content):
+        found = _placeholder_re.findall(content)
+        print(f"  [pre-publish] artist page BLOCKED: template placeholders found: {found[:5]}")
+        status = 'draft'
+
     payload = {
         "title": page_data["title"],
         "content": page_data["content"],
         "slug": page_data["slug"],
         "status": status,
     }
+    # カテゴリ設定 (publish_to_wp で漏れていた根本原因 2026-05-01修正)
+    if page_data.get("category_id"):
+        payload["categories"] = [page_data["category_id"]]
     try:
         result = wp_api_post(post_type, payload)
         if isinstance(result, dict) and result.get("id"):
+            post_id = result["id"]
+            # サムネイル自動生成 (2026-05-01追加: no_thumbnail再発防止)
+            _generate_thumbnail_for_post(
+                post_id, page_data["title"], page_data["slug"]
+            )
             return {
                 "success": True,
-                "post_id": result["id"],
+                "post_id": post_id,
                 "url": result.get("link", ""),
             }
         error_msg = result.get("message", str(result)) if isinstance(result, dict) else str(result)
@@ -314,9 +353,17 @@ def process_artist(
 
     # WP投稿
     if publish and not dry_run:
-        wp_result = publish_to_wp(page_data, post_type="pages", status="draft")
+        wp_result = publish_to_wp(page_data, post_type="posts", status="draft")
         if wp_result.get("success"):
-            print(f"  WP投稿完了: ID={wp_result['post_id']} URL={wp_result['url']}")
+            post_id = wp_result['post_id']
+            print(f"  WP投稿完了: ID={post_id} URL={wp_result['url']}")
+            # 統一ポストパブリッシュフック
+            try:
+                from lib.post_publish_hook import run_post_publish
+                hook_r = run_post_publish(post_id)
+                wp_result['hook_status'] = hook_r.get('status')
+            except Exception as e:
+                print(f"  post_publish_hook スキップ: {e}")
             log_result(artist_id, "published", wp_result)
         else:
             print(f"  WP投稿失敗: {wp_result.get('error', '')}")

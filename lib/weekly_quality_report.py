@@ -307,7 +307,7 @@ def main():
         except Exception:
             pass
 
-    # ─��� 学習適用確認（improvement_engineが学習結果を実際に適用しているか） ──
+    # ── 学習適用確認（improvement_engineが学習結果を実際に適用しているか） ──
     learning_log = LOGS / "learning_feedback.jsonl"
     if learning_log.exists():
         learn_records = []

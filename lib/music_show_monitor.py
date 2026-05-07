@@ -127,6 +127,7 @@ def inject_winner_signal(show, artist, song=None, source_url=None):
         'url': source_url or '',
         'engagement_score': 15.0,
         'language': 'ja',
+        'urgency': 'high',  # breaking_news_detectorに拾わせる
         'raw_data': {
             'show_name': show['name'],
             'show_network': show['network'],
@@ -172,22 +173,30 @@ def inject_winner_signal(show, artist, song=None, source_url=None):
 
 
 def check_today_shows(config, state):
-    """今日放送の音楽番組の結果を確認"""
+    """今日放送+昨日放送の音楽番組の結果を確認
+    (Soompi等の記事は放送翌日にpublishされることが多いため)"""
     weekday = datetime.now(JST).weekday()
+    yesterday_weekday = (weekday - 1) % 7
     today = datetime.now(JST).strftime('%Y-%m-%d')
+    yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
     new_winners = 0
 
     for show in config['shows']:
-        if show['weekday'] != weekday:
+        # 今日または昨日の番組を対象
+        if show['weekday'] == weekday:
+            check_date = today
+        elif show['weekday'] == yesterday_weekday:
+            check_date = yesterday
+        else:
             continue
 
-        # 既に今日の結果を記録済みならスキップ
+        # 既にこの放送日の結果を記録済みならスキップ
         already_recorded = any(
-            w.get('show_id') == show['id'] and w.get('date') == today
+            w.get('show_id') == show['id'] and w.get('date') == check_date
             for w in state.get('winners', [])
         )
         if already_recorded:
-            print(f"  {show['name']}: 今日の結果は記録済み")
+            print(f"  {show['name']}: {check_date}の結果は記録済み")
             continue
 
         print(f"  {show['name']} ({show['network']}): 結果を検索中...")
@@ -198,16 +207,21 @@ def check_today_shows(config, state):
             result = soompi_results[0]
             # タイトルからアーティスト名を抽出（パターン: "Artist Takes 1st Win..."）
             title = result['title']
-            artist_match = re.match(r"(.+?)(?:'s|Takes|Wins|Earns)", title)
-            artist = artist_match.group(1).strip() if artist_match else title.split(' ')[0]
+            # "Watch: NCT WISH Takes 1st Win..." パターン対応
+            clean_title = re.sub(r'^(?:Watch:\s*|Exclusive:\s*)', '', title).strip()
+            artist_match = re.match(r"(.+?)(?:\s*'s|\s+Takes|\s+Wins|\s+Earns)", clean_title)
+            artist = artist_match.group(1).strip() if artist_match else clean_title.split(' Takes')[0].split(' Wins')[0]
+            # 楽曲名抽出 ("Song Title")
+            song_match = re.search(r'["""](.+?)["""]', title)
+            song = song_match.group(1) if song_match else None
 
-            print(f"    結果検知: {artist} が1位 (Soompi)")
-            inject_winner_signal(show, artist, source_url=result.get('url'))
+            print(f"    結果検知: {artist} が1位 (Soompi)" + (f" 楽曲「{song}」" if song else ""))
+            inject_winner_signal(show, artist, song=song, source_url=result.get('url'))
             state.setdefault('winners', []).append({
                 'show_id': show['id'],
                 'show_name': show['name'],
                 'artist': artist,
-                'date': today,
+                'date': check_date,
                 'source': 'soompi',
             })
             new_winners += 1
@@ -217,7 +231,7 @@ def check_today_shows(config, state):
         existing_signals = search_rss_for_winner(show)
         recent_signals = [
             s for s in existing_signals
-            if s.get('timestamp', '')[:10] == today
+            if s.get('timestamp', '')[:10] in (today, check_date)
         ]
         if recent_signals:
             sig = recent_signals[0]
@@ -227,7 +241,7 @@ def check_today_shows(config, state):
                 'show_id': show['id'],
                 'show_name': show['name'],
                 'artist': artist,
-                'date': today,
+                'date': check_date,
                 'source': 'trend_signals',
             })
             new_winners += 1
@@ -296,6 +310,75 @@ def generate_weekly_summary_signal(state):
     print(f"  週次まとめシグナル生成: {top_artist}が{top_count}冠")
 
 
+def generate_prediction_signals(config, state):
+    """翌日放送の音楽番組の1位予測シグナルを生成（放送前日に実行）
+
+    ファンの最大関心事＝「投票戦争」「1位候補」の予測記事を自動生成するための
+    シグナルを注入する。放送前日の夕方に生成し、feature_article_generatorで記事化。
+    """
+    now = datetime.now(JST)
+    tomorrow = (now + timedelta(days=1)).strftime('%A')  # Monday, Tuesday, etc.
+    tomorrow_date = (now + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # 曜日名→英語の対応
+    day_map = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
+               'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+    tomorrow_weekday = day_map.get(tomorrow, -1)
+
+    shows = config.get('shows', [])
+    generated = 0
+
+    for show in shows:
+        if show.get('weekday') != tomorrow_weekday:
+            continue
+
+        show_name = show.get('name', '')
+        show_id = show.get('id', '')
+
+        # 既に同日の予測シグナルを生成済みならスキップ
+        pred_key = f'prediction_{show_id}_{tomorrow_date}'
+        if pred_key in state.get('generated_signals', []):
+            continue
+
+        # 最近の1位アーティストから候補を推定
+        recent_winners = [w for w in state.get('winners', [])
+                         if w.get('show_id') == show_id][-4:]
+        candidates = list(set(w.get('artist', '') for w in recent_winners if w.get('artist')))
+
+        if not candidates:
+            candidates = ['注目アーティスト']
+
+        signal = {
+            'timestamp': now.isoformat(),
+            'source': 'music_show_prediction',
+            'source_id': f'{show_id}_prediction',
+            'keyword': candidates[0] if candidates else show_name,
+            'title': f'{show_name}1位予測｜今週の有力候補と投票方法まとめ',
+            'url': '',
+            'engagement_score': 12.0,
+            'language': 'ja',
+            'urgency': 'normal',
+            'raw_data': {
+                'show_name': show_name,
+                'show_id': show_id,
+                'air_date': tomorrow_date,
+                'candidates': candidates[:5],
+                'article_type': 'prediction',
+            }
+        }
+
+        with open(SIGNALS_PATH, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(signal, ensure_ascii=False) + '\n')
+
+        state.setdefault('generated_signals', []).append(pred_key)
+        # 30件までに制限
+        state['generated_signals'] = state['generated_signals'][-30:]
+        generated += 1
+        print(f"  予測シグナル: {show_name} ({tomorrow_date})")
+
+    return generated
+
+
 def main():
     config = load_config()
     state = load_state()
@@ -303,6 +386,9 @@ def main():
     print(f"=== music_show_monitor: {datetime.now(JST).strftime('%Y-%m-%d %H:%M (%a)')} ===")
 
     new_winners = check_today_shows(config, state)
+
+    # 翌日放送番組の1位予測シグナル生成
+    predictions = generate_prediction_signals(config, state)
 
     # 日曜日なら週次まとめも生成
     generate_weekly_summary_signal(state)
@@ -312,7 +398,7 @@ def main():
     state['winners'] = [w for w in state.get('winners', []) if w.get('date', '') >= cutoff]
 
     save_state(state)
-    print(f"\n  新規1位結果: {new_winners}件")
+    print(f"\n  新規1位結果: {new_winners}件 / 予測シグナル: {predictions}件")
 
 
 if __name__ == '__main__':

@@ -245,7 +245,7 @@ def check_agent_errors(agent_id, dry_run=False):
                 f"最終検出: {error_info.get('last_seen', 'N/A')}\n"
                 f"対応: 修正提案を確認してください"
             )
-            _send_discord(msg, "daily_ceo_report")
+            _send_discord(msg, "error")
             _append_jsonl(EXECUTIONS_LOG_PATH, {
                 "timestamp": now_iso,
                 "agent": agent_id,
@@ -275,7 +275,7 @@ def check_agent_errors(agent_id, dry_run=False):
                 f"内容: {error_info.get('example', '')[:200]}\n"
                 f"⚠️ Yuta承認待ち"
             )
-            _send_discord(msg, "urgent_errors")
+            _send_discord(msg, "error")
             result["status"] = "queued_for_approval"
 
         results.append(result)

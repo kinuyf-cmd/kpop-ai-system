@@ -371,22 +371,20 @@ def determine_target(title: str, genre: str) -> str:
 
 
 def extract_artist(title: str) -> str:
-    """タイトルからアーティスト名を抽出する"""
+    """タイトルからアーティスト名を抽出する（KNOWN_ARTISTSのみ信頼）"""
     for artist in KNOWN_ARTISTS:
         if artist.lower() in title.lower():
             return artist
-    # 「○○の」「○○が」等のパターンで先頭名詞を抽出
-    m = re.match(r'^([^のがはをにで、。!！?？\s]{2,10})[のがはをにで]', title)
+    # KNOWN_ARTISTSに一致しない場合はカタカナ名のみフォールバック
+    # （英字ブランド名やショップ名の誤抽出を防止）
+    m = re.match(r'^([ァ-ヶー]{3,10})[のがはをにで]', title)
     if m:
-        return m.group(1)
-    # フォールバック: タイトル先頭から意味のある語句を抽出
-    m2 = re.match(r'^[【（\[]?([A-Za-z0-9\u30a0-\u30ff\u4e00-\u9fff]{2,8})[】）\]]?', title)
-    if m2:
-        candidate = m2.group(1)
-        stopwords = {"K-POP", "KPO", "2026", "2025", "K-P", "韓国K", "完全"}
-        if candidate not in stopwords and len(candidate) >= 2:
+        candidate = m.group(1)
+        # 一般名詞を除外
+        generic = {"ポップアップ", "スキンケア", "ファッション", "コスメ", "ダイエット", "ソウル"}
+        if candidate not in generic:
             return candidate
-    return "K-POP"
+    return ""
 
 
 def extract_event(title: str) -> str:
@@ -428,7 +426,7 @@ def select_hook(genre: str, title: str, artist: str) -> str:
     """ジャンルに基づいてフックをランダム選択し、プレースホルダを埋める"""
     hooks = HOOKS.get(genre, HOOKS["default"])
     # アーティスト名が有効な場合は {artist} を含むフックを優先選択
-    if artist and artist not in ("K-POP", "K-POPアイドル"):
+    if artist and artist not in ("K-POP", "K-POPアイドル", ""):
         artist_hooks = [h for h in hooks if "{artist}" in h]
         if artist_hooks:
             idx = _random_idx(len(artist_hooks), title)
@@ -437,24 +435,21 @@ def select_hook(genre: str, title: str, artist: str) -> str:
             idx = _random_idx(len(hooks), title)
             hook = hooks[idx]
     else:
-        idx = _random_idx(len(hooks), title)
-        hook = hooks[idx]
+        # アーティスト不明: {artist}を含まないフックのみ使う
+        no_artist_hooks = [h for h in hooks if "{artist}" not in h]
+        if no_artist_hooks:
+            idx = _random_idx(len(no_artist_hooks), title)
+            hook = no_artist_hooks[idx]
+        else:
+            idx = _random_idx(len(hooks), title)
+            hook = hooks[idx]
 
     event = extract_event(title)
     number = extract_number(title)
 
-    hook = hook.replace("{artist}", artist)
+    hook = hook.replace("{artist}", artist or "K-POP")
     hook = hook.replace("{event}", event)
     hook = hook.replace("{number}", number)
-
-    # アーティスト名が空の場合 → タイトルからK-POPキーワードで代替
-    if not artist and "{artist}" not in hooks[idx]:
-        pass  # プレースホルダなしフックはそのまま使用
-    elif not artist:
-        # アーティスト名が取れない場合はフックごとタイトル先頭から抽出
-        import re as _re
-        title_short = _re.sub(r'【[^】]*】|（[^）]*）|\([^)]*\)', '', title).strip()[:12]
-        hook = hook.replace("{artist}", title_short) if title_short else hook.replace("{artist}に", "K-POPに").replace("{artist}", "K-POP")
 
     return hook
 
@@ -477,11 +472,13 @@ def build_comment_trigger(genre: str, idx: int = 0) -> str:
 
 
 def build_hashtags(artist: str, genre: str) -> str:
-    """ハッシュタグを生成する（2-3個、ランダム選択で毎回バリエーション）"""
+    """ハッシュタグを生成する（3-4個: KPOPJOURNAL固定 + ランダム2-3個）"""
+    # ブランドタグ固定（サイト認知用）
+    tags = ["#KPOPJOURNAL"]
     # ベースタグプール（ここからランダムに1つ選ぶ）
     base_pool = ["#KPOP", "#K-POP速報", "#韓国", "#推し活", "#KPOP好きと繋がりたい"]
     base_tag = base_pool[_random_idx(len(base_pool))]
-    tags = [base_tag]
+    tags.append(base_tag)
 
     # アーティスト名ハッシュタグ
     artist_tag = artist.replace(" ", "")
@@ -518,6 +515,7 @@ def build_hashtags(artist: str, genre: str) -> str:
     seen = set()
     tags = [t for t in tags if not (t in seen or seen.add(t))]
 
+    # 最大3個（post_to_x.sh互換: 4個以上はBLOCKされる）
     return " ".join(tags[:3])
 
 
@@ -560,7 +558,10 @@ def extract_title_fragment(title: str, artist: str) -> str:
 
     # タイトルからキーワードを抽出（助詞で分割）
     parts = re.split(r'[のがはをにでと、。！？!?\s]+', clean)
-    keywords = [p for p in parts if len(p) >= 2 and not p.isdigit()]
+    # 日本語キーワードのみ抽出（英字ブランド名の誤抽出を防止）
+    _stopkw = {"ポップアップ", "コレクション", "オープン", "スペシャル", "トレンド", "サマー"}
+    keywords = [p for p in parts if len(p) >= 2 and not p.isdigit()
+                and p not in _stopkw and not p.isascii()]
 
     if not keywords:
         return ""

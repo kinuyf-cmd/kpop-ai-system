@@ -32,7 +32,7 @@ REGIONS = {
                      'ルクア', 'グランフロント', '天王寺'],
     },
     'nagoya': {
-        'name': '名���屋',
+        'name': '名古屋',
         'keywords': ['名古屋', '栄', '金山', '大須'],
     },
     'fukuoka': {
@@ -40,7 +40,7 @@ REGIONS = {
         'keywords': ['福岡', '博多', '天神', 'キャナルシティ'],
     },
     'yokohama': {
-        'name': '横��',
+        'name': '横浜',
         'keywords': ['横浜', 'みなとみらい', 'Kアリーナ', 'ランドマーク'],
     },
     'kyoto': {
@@ -115,9 +115,69 @@ def generate_region_html(region_name, popups):
     return html
 
 
+def _upload_local_image(image_path, alt_text=''):
+    """ローカル画像をWP Mediaにアップロード→media_idを返す"""
+    try:
+        with open(image_path, 'rb') as f:
+            data = f.read()
+    except Exception:
+        return None
+    ext = os.path.splitext(image_path)[1][1:].lower() or 'jpg'
+    ct = 'image/png' if ext == 'png' else ('image/webp' if ext == 'webp' else 'image/jpeg')
+    filename = f"popup_region_{int(datetime.now(timezone.utc).timestamp())}.{ext}"
+    req = urllib.request.Request(
+        'https://www.kpopjournal.tokyo/wp-json/wp/v2/media',
+        data=data,
+        headers={
+            'Authorization': f'Basic {AUTH}',
+            'Content-Type': ct,
+            'Content-Disposition': f'attachment; filename="{filename}"',
+        },
+        method='POST',
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            media_id = json.loads(r.read()).get('id')
+        if media_id and alt_text:
+            alt_body = json.dumps({'alt_text': alt_text}).encode()
+            alt_req = urllib.request.Request(
+                f'https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{media_id}',
+                data=alt_body, method='POST',
+                headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
+            urllib.request.urlopen(alt_req, timeout=30)
+        return media_id
+    except Exception as e:
+        print(f"    media upload error: {e}")
+        return None
+
+
+def _generate_and_set_thumbnail(post_id, title):
+    """サムネイル生成→WPにアップロード→featured_media設定"""
+    try:
+        from lib.make_thumbnail_v6 import make_thumbnail_v6
+        result = make_thumbnail_v6(title=title, post_id=str(post_id))
+        path = result.get('output_path')
+        if not path:
+            print(f"    thumbnail generation returned no path")
+            return False
+        media_id = _upload_local_image(path, alt_text=title)
+        if not media_id:
+            print(f"    thumbnail upload failed")
+            return False
+        _wp_request(
+            f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}',
+            data={'featured_media': media_id},
+        )
+        print(f"    thumbnail set: media_id={media_id}")
+        return True
+    except Exception as e:
+        print(f"    thumbnail error: {e}")
+    return False
+
+
 def upsert_region_page(slug, region_name, popups):
     html = generate_region_html(region_name, popups)
-    title = f'{region_name} K-POP\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u5b8c\u5168\u30ac\u30a4\u30c9'
+    title = f'{region_name} K-POPポップアップ完全ガイド'
     page_slug = f'popup-region-{slug}'
 
     try:
@@ -142,10 +202,18 @@ def upsert_region_page(slug, region_name, popups):
             )
             return 'updated', len(popups)
         else:
-            _wp_request(
+            resp = _wp_request(
                 'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts',
                 data=payload,
             )
+            new_id = resp.get('id')
+            if new_id:
+                _generate_and_set_thumbnail(new_id, title)
+                try:
+                    from lib.post_publish_hook import run_post_publish
+                    run_post_publish(new_id)
+                except Exception as e:
+                    print(f"    post_publish_hook error: {e}")
             return 'created', len(popups)
     except Exception as e:
         return 'error', str(e)

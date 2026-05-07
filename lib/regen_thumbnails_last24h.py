@@ -1,4 +1,3 @@
-from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 #!/usr/bin/env python3
 """過去24時間の記事サムネを v4 レイアウトで再生成し featured_media を差し替える
 
@@ -15,6 +14,7 @@ from lib.thumbnail_guard import safe_update_featured_media as _guard_update
   python3 lib/regen_thumbnails_last24h.py            # アップロード＋差し替え
 """
 from __future__ import annotations
+from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 import argparse
 import json
 import os
@@ -134,8 +134,11 @@ def generate_thumbnail(post_id: int, artist: str, copy: str, genre: str,
     return dst_jpg
 
 
-def upload_media(jpg_path: Path, slug_hint: str) -> int | None:
-    """WP Media API に JPG をアップロード → media_id を返す"""
+def upload_media(jpg_path: Path, slug_hint: str, alt_text: str = '') -> int | None:
+    """WP Media API に JPG をアップロード → media_id を返す
+
+    alt_text が指定されない場合、slug_hint からalt を自動生成する。
+    """
     url = f"{WP_DOMAIN}/wp-json/wp/v2/media"
     fname = f"kpop-v4-{slug_hint}.jpg"
     cmd = [
@@ -150,7 +153,17 @@ def upload_media(jpg_path: Path, slug_hint: str) -> int | None:
         data = json.loads(r.stdout)
         mid = data.get("id")
         if mid:
-            return int(mid)
+            mid = int(mid)
+            # alt_text 自動設定 (2026-05-06追加: alt空再発防止)
+            _alt = alt_text or f"{slug_hint.replace('-', ' ').replace('thumb ', '').strip()}のサムネイル画像"
+            _alt_cmd = [
+                "curl", "-s", "-K", WP_AUTH,
+                "-X", "POST", f"{WP_DOMAIN}/wp-json/wp/v2/media/{mid}",
+                "-H", "Content-Type: application/json",
+                "-d", json.dumps({"alt_text": _alt}),
+            ]
+            run(_alt_cmd, timeout=15)
+            return mid
         print(f"  [upload] FAIL: {r.stdout[:300]}", file=sys.stderr)
     except Exception as e:
         print(f"  [upload] parse fail: {e} / {r.stdout[:200]}", file=sys.stderr)

@@ -395,14 +395,61 @@ def compose(
     return meta
 
 
+def _analyze_brightness(img: Image.Image) -> tuple:
+    """画像の平均輝度と暗ピクセル比率を計算"""
+    import numpy as np
+    gray = img.convert("L")
+    arr = np.array(gray)
+    mean_brightness = float(arr.mean())
+    dark_ratio = float((arr < 50).sum() / arr.size)
+    return mean_brightness, dark_ratio
+
+
 def compose_v6(image_path: str, output_path: str) -> str:
     """v6 compositor: text-zero, photo-only processing.
 
     No text overlay, no gradient band, no logo badge.
-    Just clean photo processing: resize/crop to 1200x675 (16:9) with subtle enhancement.
+    Clean photo processing: resize/crop to 1200x675 (16:9) with adaptive brightness.
+
+    暗画像対策:
+      - dark_ratio > 60% → REJECT（暗すぎ、次ソースへ）
+      - 平均輝度 < 60 → 強ブースト (1.4x brightness + 1.15x contrast)
+      - 平均輝度 60-90 → 中ブースト (1.2x brightness + 1.10x contrast)
+      - 平均輝度 90+ → 従来通り軽微 (1.02x brightness + 1.05x contrast)
     """
     V6_W, V6_H = 1200, 675
     img = Image.open(image_path).convert("RGB")
+    # 縦長画像NG: height > width の場合はNoneを返す
+    if img.height > img.width:
+        sys.stderr.write(f"[compositor] REJECT portrait image: {img.width}x{img.height} ({image_path})\n")
+        return None
+
+    # 縦動画サムネ検出: 16:9フレーム内に縦長コンテンツ+左右ブラーパディング
+    # 中央1/3と左右1/3の色の標準偏差を比較 — 左右がぼけていれば差が大きい
+    if img.width >= 600:
+        import numpy as np
+        _arr = np.array(img.resize((600, int(600 * img.height / img.width))))
+        _w = _arr.shape[1]
+        _left = _arr[:, :_w//4]
+        _center = _arr[:, _w//4:_w*3//4]
+        _right = _arr[:, _w*3//4:]
+        _center_std = float(_center.std())
+        _side_std = float((_left.std() + _right.std()) / 2)
+        if _center_std > 0 and _side_std < _center_std * 0.5:
+            sys.stderr.write(
+                f"[compositor] REJECT blur-padded vertical content: "
+                f"center_std={_center_std:.1f} side_std={_side_std:.1f} ({image_path})\n"
+            )
+            return None
+
+    # 暗さ事前チェック（リサイズ前のサンプル）
+    mean_b, dark_r = _analyze_brightness(img)
+    if dark_r > 0.60:
+        sys.stderr.write(
+            f"[compositor] REJECT too dark: brightness={mean_b:.0f} dark_ratio={dark_r:.0%} ({image_path})\n"
+        )
+        return None
+
     # Resize/crop to 1200x675 (16:9)
     target_ratio = V6_W / V6_H
     img_ratio = img.width / img.height
@@ -415,10 +462,24 @@ def compose_v6(image_path: str, output_path: str) -> str:
     img = img.resize((new_w, new_h), Image.LANCZOS)
     # Smart crop (顔焦点: 上部にエッジが多ければ上寄せ)
     img = _smart_crop_top(img, V6_W, V6_H)
-    # Subtle enhancement
+
+    # Adaptive brightness enhancement
     from PIL import ImageEnhance
-    img = ImageEnhance.Contrast(img).enhance(1.05)
-    img = ImageEnhance.Brightness(img).enhance(1.02)
+    if mean_b < 60:
+        # 暗い画像: 強ブースト
+        sys.stderr.write(f"[compositor] DARK image boost: brightness={mean_b:.0f} → strong (1.4x)\n")
+        img = ImageEnhance.Brightness(img).enhance(1.4)
+        img = ImageEnhance.Contrast(img).enhance(1.15)
+    elif mean_b < 90:
+        # やや暗い画像: 中ブースト
+        sys.stderr.write(f"[compositor] DIM image boost: brightness={mean_b:.0f} → medium (1.2x)\n")
+        img = ImageEnhance.Brightness(img).enhance(1.2)
+        img = ImageEnhance.Contrast(img).enhance(1.10)
+    else:
+        # 通常画像: 軽微な補正
+        img = ImageEnhance.Contrast(img).enhance(1.05)
+        img = ImageEnhance.Brightness(img).enhance(1.02)
+
     # Save
     if output_path.endswith('.webp'):
         img.save(output_path, 'WEBP', quality=92)

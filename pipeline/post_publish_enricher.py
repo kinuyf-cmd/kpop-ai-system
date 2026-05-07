@@ -41,6 +41,16 @@ except Exception:
 LOGS = BASE / "logs"
 JST = timezone(timedelta(hours=9))
 
+# YouTube Data API key (optional — used for placeholder resolution)
+YOUTUBE_API_KEY = None
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE / ".env")
+    import os as _os_env
+    YOUTUBE_API_KEY = _os_env.getenv("YOUTUBE_API_KEY", "")
+except Exception:
+    pass
+
 # WP API helpers
 WP_DOMAIN = "https://www.kpopjournal.tokyo"
 WP_AUTH_FILE = Path.home() / ".wp_auth"
@@ -72,7 +82,7 @@ def _fetch_post(post_id: int) -> dict | None:
     try:
         resp = requests.get(
             f"{WP_DOMAIN}/wp-json/wp/v2/posts/{post_id}",
-            params={"_fields": "id,slug,title,content,featured_media"},
+            params={"_fields": "id,slug,title,content,featured_media,categories"},
             timeout=15,
         )
         if resp.status_code == 200:
@@ -80,6 +90,169 @@ def _fetch_post(post_id: int) -> dict | None:
     except Exception as e:
         _log(f"WARN: fetch post {post_id} failed: {e}")
     return None
+
+
+def _fetch_related_by_category(post_id: int, categories: list[int], count: int = 3,
+                               title: str = '') -> list[dict]:
+    """同アーティスト優先 → 同カテゴリの関連記事をcount件取得（サムネ付き）"""
+    import requests
+    results = []
+
+    # 1. タイトルからアーティストを検出し、同アーティスト記事を優先取得
+    if title:
+        try:
+            from lib.article_topic_classifier import classify
+            c = classify(title)
+            subjects = c.get('subjects', [])
+            if subjects:
+                # アーティスト名で検索
+                resp = requests.get(
+                    f"{WP_DOMAIN}/wp-json/wp/v2/posts",
+                    params={
+                        "search": subjects[0],
+                        "exclude": post_id,
+                        "per_page": count,
+                        "orderby": "date",
+                        "order": "desc",
+                        "status": "publish",
+                        "_fields": "id,title,link,featured_media,_links",
+                        "_embed": "wp:featuredmedia",
+                    },
+                    timeout=15,
+                )
+                if resp.status_code == 200:
+                    posts = resp.json()
+                    for p in posts:
+                        if not isinstance(p, dict):
+                            continue
+                        thumb_url = ''
+                        try:
+                            embedded = p.get('_embedded', {}).get('wp:featuredmedia', [])
+                            if embedded:
+                                sizes = embedded[0].get('media_details', {}).get('sizes', {})
+                                thumb_url = (sizes.get('thumbnail', {}).get('source_url', '')
+                                           or sizes.get('medium', {}).get('source_url', '')
+                                           or embedded[0].get('source_url', ''))
+                        except Exception:
+                            pass
+                        results.append({
+                            "title": p["title"]["rendered"],
+                            "url": p["link"],
+                            "thumbnail": thumb_url,
+                        })
+        except Exception:
+            pass
+
+    # 1b. アーティスト検索0件の場合: タイトルキーワードで検索フォールバック
+    if len(results) == 0 and title:
+        try:
+            import re as _re
+            # タイトルから主要キーワードを抽出（アーティスト名以外も）
+            keywords = _re.findall(r'[\w]{2,}', title)
+            # 最も特徴的なキーワードで検索（短い一般語を除外）
+            search_kws = [k for k in keywords if len(k) >= 3 and k not in ('速報', '完全', 'ガイド', '2026', '最新')][:2]
+            if search_kws:
+                search_q = ' '.join(search_kws)
+                resp = requests.get(
+                    f"{WP_DOMAIN}/wp-json/wp/v2/posts",
+                    params={
+                        "search": search_q,
+                        "exclude": post_id,
+                        "per_page": count,
+                        "orderby": "relevance",
+                        "status": "publish",
+                        "_fields": "id,title,link,featured_media,_links",
+                        "_embed": "wp:featuredmedia",
+                    },
+                    timeout=15,
+                )
+                if resp.status_code == 200:
+                    existing_urls = {r['url'] for r in results}
+                    for p in resp.json():
+                        if len(results) >= count:
+                            break
+                        if not isinstance(p, dict) or p.get('link', '') in existing_urls:
+                            continue
+                        thumb_url = ''
+                        try:
+                            embedded = p.get('_embedded', {}).get('wp:featuredmedia', [])
+                            if embedded:
+                                sizes = embedded[0].get('media_details', {}).get('sizes', {})
+                                thumb_url = (sizes.get('thumbnail', {}).get('source_url', '')
+                                           or embedded[0].get('source_url', ''))
+                        except Exception:
+                            pass
+                        results.append({
+                            "title": p["title"]["rendered"],
+                            "url": p["link"],
+                            "thumbnail": thumb_url,
+                        })
+        except Exception:
+            pass
+
+    # 2. 不足分をカテゴリベースで補完（cat 1,2は汎用すぎるのでスキップ）
+    if len(results) < count and categories:
+        meaningful = [c for c in categories if c not in (1, 2)]
+        if not meaningful:
+            return results  # cat 1,2のみの場合はキーワード検索結果で十分
+        cat_id = meaningful[0]
+        existing_urls = {r['url'] for r in results}
+        try:
+            resp = requests.get(
+                f"{WP_DOMAIN}/wp-json/wp/v2/posts",
+                params={
+                    "categories": cat_id,
+                    "exclude": post_id,
+                    "per_page": count * 2,
+                    "orderby": "date",
+                    "order": "desc",
+                    "status": "publish",
+                    "_fields": "id,title,link,featured_media,_links",
+                    "_embed": "wp:featuredmedia",
+                },
+                timeout=15,
+            )
+            if resp.status_code == 200:
+                for p in resp.json():
+                    if len(results) >= count:
+                        break
+                    if not isinstance(p, dict) or p.get('link', '') in existing_urls:
+                        continue
+                    thumb_url = ''
+                    try:
+                        embedded = p.get('_embedded', {}).get('wp:featuredmedia', [])
+                        if embedded:
+                            sizes = embedded[0].get('media_details', {}).get('sizes', {})
+                            thumb_url = (sizes.get('thumbnail', {}).get('source_url', '')
+                                       or sizes.get('medium', {}).get('source_url', '')
+                                       or embedded[0].get('source_url', ''))
+                    except Exception:
+                        pass
+                    results.append({
+                        "title": p["title"]["rendered"],
+                        "url": p["link"],
+                        "thumbnail": thumb_url,
+                    })
+        except Exception as e:
+            _log(f"WARN: related fetch failed (cat={cat_id}): {e}")
+
+    return results[:count]
+
+
+def _build_related_widget(related: list[dict]) -> str:
+    """関連記事ウィジェットHTML（related-articlesと同一形式）"""
+    if not related:
+        return ""
+    items = "".join(
+        f'<li><a href="{a["url"]}">{a["title"]}</a></li>'
+        for a in related[:4]
+    )
+    return (
+        '\n<section class="related-articles" aria-label="関連記事">'
+        '<h2>あわせて読みたい</h2>'
+        f'<ul>{items}</ul>'
+        '</section>\n'
+    )
 
 
 def _update_post_content(post_id: int, content: str) -> bool:
@@ -98,6 +271,24 @@ def _update_post_content(post_id: int, content: str) -> bool:
         return resp.status_code == 200
     except Exception as e:
         _log(f"ERROR: update post {post_id} failed: {e}")
+        return False
+
+
+def _update_post_title(post_id: int, title: str) -> bool:
+    import requests
+    headers = _wp_headers()
+    if not headers:
+        return False
+    try:
+        resp = requests.post(
+            f"{WP_DOMAIN}/wp-json/wp/v2/posts/{post_id}",
+            headers=headers,
+            json={"title": title},
+            timeout=30,
+        )
+        return resp.status_code == 200
+    except Exception as e:
+        _log(f"ERROR: update title post {post_id} failed: {e}")
         return False
 
 
@@ -159,6 +350,91 @@ def _check_thumbnail_quality(image_url: str) -> tuple[bool, str]:
     return False, "ok"
 
 
+def _resolve_visual_placeholders(html: str) -> tuple[str, list[str]]:
+    """Resolve <!-- MAP: ... --> and <!-- YOUTUBE: ... --> placeholders in HTML.
+
+    Returns (modified_html, list_of_changes).
+    <!-- IMAGE: ... --> placeholders are left as-is for future DALL-E integration.
+    """
+    changes: list[str] = []
+
+    # --- Google Maps embed ---
+    def _replace_map(m):
+        venue_info = m.group(1).strip()
+        # URL-encode the query for Google Maps embed
+        import urllib.parse
+        query = urllib.parse.quote_plus(venue_info)
+        iframe = (
+            f'<div class="kpj-map-embed" style="margin:20px 0;">'
+            f'<iframe src="https://www.google.com/maps?q={query}&output=embed" '
+            f'width="100%" height="350" style="border:0;border-radius:8px;" '
+            f'allowfullscreen="" loading="lazy" '
+            f'referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            f'<p style="font-size:12px;color:#888;margin-top:4px;">'
+            f'{venue_info}</p></div>'
+        )
+        changes.append(f"map_embed({venue_info[:30]})")
+        return iframe
+
+    html = re.sub(r'<!--\s*MAP:\s*(.+?)\s*-->', _replace_map, html)
+
+    # --- YouTube embed ---
+    def _replace_youtube(m):
+        query = m.group(1).strip()
+        video_id = _search_youtube(query)
+        if video_id:
+            iframe = (
+                f'<div class="kpj-youtube-embed" style="margin:20px 0;">'
+                f'<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;">'
+                f'<iframe src="https://www.youtube.com/embed/{video_id}" '
+                f'style="position:absolute;top:0;left:0;width:100%;height:100%;" '
+                f'frameborder="0" allow="accelerometer; autoplay; clipboard-write; '
+                f'encrypted-media; gyroscope; picture-in-picture" allowfullscreen '
+                f'loading="lazy"></iframe></div></div>'
+            )
+            changes.append(f"youtube_embed({query[:30]})")
+            return iframe
+        # If search fails, leave a visible link instead
+        search_url = f"https://www.youtube.com/results?search_query={__import__('urllib.parse', fromlist=['quote_plus']).quote_plus(query)}"
+        fallback = (
+            f'<div class="kpj-youtube-fallback" style="margin:20px 0;padding:16px;'
+            f'background:#f8f4ff;border-radius:8px;text-align:center;">'
+            f'<a href="{search_url}" target="_blank" rel="noopener" '
+            f'style="color:#FF1493;font-weight:600;">YouTubeで「{query}」を検索</a></div>'
+        )
+        changes.append(f"youtube_fallback({query[:30]})")
+        return fallback
+
+    html = re.sub(r'<!--\s*YOUTUBE:\s*(.+?)\s*-->', _replace_youtube, html)
+
+    return html, changes
+
+
+def _search_youtube(query: str) -> str | None:
+    """Search YouTube Data API v3 for a video ID. Returns None on failure."""
+    if not YOUTUBE_API_KEY:
+        return None
+    import urllib.parse
+    import urllib.request
+    try:
+        params = urllib.parse.urlencode({
+            "part": "snippet",
+            "q": query,
+            "type": "video",
+            "maxResults": 1,
+            "key": YOUTUBE_API_KEY,
+        })
+        url = f"https://www.googleapis.com/youtube/v3/search?{params}"
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        resp = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        items = resp.get("items", [])
+        if items:
+            return items[0]["id"]["videoId"]
+    except Exception as e:
+        _log(f"YouTube search error for '{query}': {e}")
+    return None
+
+
 def enrich_post(post_id: int) -> dict:
     """Enrich a single post with summary + profile if missing."""
     result = {"post_id": post_id, "changes": [], "status": "ok"}
@@ -218,8 +494,52 @@ def enrich_post(post_id: int) -> dict:
         except Exception as e:
             _log(f"thumb_quality_check error: {e}")
 
+    # 2b. Related articles widget — 無効化
+    # Next.js側の RelatedArticles コンポーネントが4カラムグリッドで
+    # 関連記事を表示するため、WPコンテンツへの書き込みは不要。
+    # (旧コード: _build_related_widget → kpj-related-widget / related-articles セクション挿入)
+
+    # 4b. Resolve visual placeholders (MAP / YOUTUBE embeds)
+    if "<!-- MAP:" in modified or "<!-- YOUTUBE:" in modified:
+        resolved_html, visual_changes = _resolve_visual_placeholders(modified)
+        if visual_changes:
+            modified = resolved_html
+            changes.extend(visual_changes)
+
+    # サムネ品質ゲート: regen失敗時はdraft化 (2026-05-01追加)
+    thumb_failed = any(c.startswith("thumb_regen_failed") for c in changes)
+    if thumb_failed:
+        _log(f"THUMB_BLOCK: post {post_id} サムネ再生成失敗→draft化")
+        try:
+            import requests as _req_draft
+            _req_draft.post(
+                f"{WP_DOMAIN}/wp-json/wp/v2/posts/{post_id}",
+                headers=_wp_headers(),
+                json={"status": "draft"},
+                timeout=15,
+            )
+            result["status"] = "thumb_draft"
+            changes.append("draft_for_thumb_failure")
+        except Exception as e:
+            _log(f"draft化失敗: {e}")
+
+    # 4c. 【速報】ラベル除去（公開から6h以上経過した速報タイトル）
+    if "【速報】" in title:
+        pub_date_str = post.get("date", "")
+        try:
+            pub_date = datetime.fromisoformat(pub_date_str.replace("Z", "+00:00"))
+            now = datetime.now(timezone.utc)
+            if (now - pub_date).total_seconds() > 6 * 3600:
+                new_title = title.replace("【速報】", "").strip()
+                _update_post_title(post_id, new_title)
+                changes.append("sokuho_label_removed")
+                _log(f"TITLE_FIX: post {post_id} 【速報】除去 (6h経過)")
+        except Exception:
+            pass
+
     # Apply changes
-    if any(c.startswith(("summary_", "profile_")) for c in changes):
+    has_content_changes = any(c.startswith(("summary_", "profile_", "related_", "map_embed", "youtube_embed", "youtube_fallback")) for c in changes)
+    if has_content_changes:
         ok = _update_post_content(post_id, modified)
         if ok:
             _log(f"OK: post {post_id} enriched: {', '.join(changes)}")

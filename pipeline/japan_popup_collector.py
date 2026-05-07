@@ -29,6 +29,7 @@ def load_existing_urls():
 
 def main():
     from lib.japan_popup_sources import collect_japan
+    from lib.signal_validator import validate_signals_batch
 
     print(f"=== 日本ポップアップ収集: {datetime.now(JST).isoformat()} ===")
 
@@ -36,6 +37,15 @@ def main():
     items = collect_japan()
 
     new_items = [it for it in items if it.get('url') and it['url'] not in existing_urls]
+
+    # シグナル品質ゲート (鮮度チェック、URL確認は収集時はスキップ=高速)
+    if new_items:
+        vr = validate_signals_batch(new_items, check_url=False)
+        if vr['rejected']:
+            print(f"  品質ゲートREJECT: {vr['stats']['rejected']}件")
+            for r in vr['rejected'][:3]:
+                print(f"    ✗ {r.get('title','')[:40]} → {r.get('_reject_reasons','')}")
+        new_items = vr['valid']
 
     if new_items:
         os.makedirs(os.path.dirname(SIGNALS), exist_ok=True)

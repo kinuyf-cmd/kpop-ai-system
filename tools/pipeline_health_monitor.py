@@ -200,8 +200,8 @@ def main():
         issue = w.get('issue', f"{w.get('silent_min', '?')}分沈黙")
         print(f'  WARNING: {w["pipeline"]} — {issue}')
 
-    # 4. Discord通知 (criticalのみ)
-    notify_discord(critical, warning)
+    # 4. Discord通知 → discord_notifier.py に一本化済み（二重通知防止）
+    # notify_discord(critical, warning)
 
     # 5. crontab同期チェック
     crontab_drift = check_crontab_sync()

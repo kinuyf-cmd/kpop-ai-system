@@ -105,24 +105,32 @@ def compute_state():
 def force_generate(state):
     urgency = state['urgency']
     if urgency == 'high':
-        print(f"  HIGH urgency -> forcing generation")
+        print(f"  HIGH urgency -> forcing generation (event+comeback+feature)")
         subprocess.run(
-            ['python3', 'pipeline/auto_event_article.py', '--max', '3'],
+            ['python3', 'pipeline/auto_event_article.py', '--max', '4'],
             cwd='/home/aiuser/kpop-ai-system', timeout=600,
         )
         subprocess.run(
             ['python3', 'pipeline/auto_comeback_article.py', '--max', '3'],
             cwd='/home/aiuser/kpop-ai-system', timeout=600,
         )
+        subprocess.run(
+            ['python3', 'pipeline/feature_article_generator.py', '--max', '4'],
+            cwd='/home/aiuser/kpop-ai-system', timeout=900,
+        )
     elif urgency == 'medium':
         print(f"  MEDIUM urgency -> supplemental generation")
         subprocess.run(
-            ['python3', 'pipeline/auto_event_article.py', '--max', '2'],
+            ['python3', 'pipeline/auto_event_article.py', '--max', '3'],
             cwd='/home/aiuser/kpop-ai-system', timeout=400,
         )
         subprocess.run(
             ['python3', 'pipeline/auto_comeback_article.py', '--max', '2'],
             cwd='/home/aiuser/kpop-ai-system', timeout=400,
+        )
+        subprocess.run(
+            ['python3', 'pipeline/feature_article_generator.py', '--max', '3'],
+            cwd='/home/aiuser/kpop-ai-system', timeout=600,
         )
 
 

@@ -1,16 +1,28 @@
 #!/bin/bash
 # ============================================================
-# discord_channels.sh - Discord チャネル別Webhook取得
+# discord_channels.sh - Discord チャネル別Webhook取得 v2.0
+#
+# 4チャネル: morning / seo / publish / error
 #
 # Usage:
 #   source lib/discord_channels.sh
-#   discord_send "publishing_log" "記事投稿完了" '{"embeds":[...]}'
+#   discord_send "publish" "記事投稿完了" '{"embeds":[...]}'
+#   discord_send "error" "パイプライン停止"
 # ============================================================
 
 DISCORD_CONFIG="${DISCORD_CONFIG:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config/discord_webhooks.json}"
 
 get_discord_webhook() {
   local channel="$1"
+
+  # 旧チャネル名→新チャネル名へマッピング
+  case "$channel" in
+    urgent_errors|alert_summary|sales_monetization) channel="error" ;;
+    daily_ceo_report|weekly_board_report|monthly_board_report) channel="morning" ;;
+    seo_insights) channel="seo" ;;
+    publishing_log) channel="publish" ;;
+  esac
+
   if [ -f "$DISCORD_CONFIG" ]; then
     python3 -c "
 import json, sys

@@ -50,6 +50,8 @@ def scrape_buzzlab_article(url):
     # --- OG画像 ---
     images = []
     og_img = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)', html)
+    if not og_img:
+        og_img = re.search(r'<meta\s+property=["\']og:image["\'][^>]*\s+content=["\']([^"\']+)', html, re.IGNORECASE)
     if og_img:
         images.append(og_img.group(1))
 

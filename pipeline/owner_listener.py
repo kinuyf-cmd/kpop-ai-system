@@ -121,7 +121,7 @@ async def on_message(msg):
 
 応答ルール (300字以内):
 1. 内容を理解、実行可否を判定
-2. 実行可能なら担当社員/部門を明示���「○○に指示しました」と宣言
+2. 実行可能なら担当社員/部門を明示し「○○に指示しました」と宣言
 3. 実行不可なら理由
 4. 詳細不足なら追加質問
 
@@ -164,7 +164,7 @@ async def on_message(msg):
                 ack = m_r.choices[0].message.content
             except Exception:
                 ack = (f'承知しました、{responder_name}{responder_role[:3]}。'
-                       f'タ��ク {task_id} 受領、業務開始します。\n— {s_code}')
+                       f'タスク {task_id} 受領、業務開始します。\n— {s_code}')
             post_as_staff(sid, ack)
     elif directive_type != 'general':
         assign_task(responder_id, f'owner_directive_{directive_type}',

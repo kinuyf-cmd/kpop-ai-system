@@ -55,11 +55,11 @@ HISTORY_PATH = BASE / "logs" / "discord_alert_history.jsonl"
 JST = timezone(timedelta(hours=9))
 
 # ─────────────────────────────────────────────────────────────
-# チャネル・色定義
+# チャネル・色定義（v2.0: 全エラー系は "error" に統合）
 # ─────────────────────────────────────────────────────────────
-CHANNEL_CRITICAL = "urgent_errors"
-CHANNEL_WARNING  = "alert_summary"
-CHANNEL_REVENUE  = "sales_monetization"
+CHANNEL_CRITICAL = "error"
+CHANNEL_WARNING  = "error"
+CHANNEL_REVENUE  = "error"
 
 COLOR_CRITICAL = 0xE74C3C   # 赤
 COLOR_WARNING  = 0xF39C12   # オレンジ

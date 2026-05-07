@@ -65,7 +65,7 @@ def check_post(post_id, auto_fix=True):
     # ── 1. full_audit ──
     try:
         from lib.full_audit_engine import full_audit
-        audit_issues = full_audit(post, post_type='post')
+        audit_issues = full_audit(post, post_type=post.get('type', 'post'))
         if isinstance(audit_issues, dict):
             audit_issues = audit_issues.get('issues', [])
         for iss in audit_issues:

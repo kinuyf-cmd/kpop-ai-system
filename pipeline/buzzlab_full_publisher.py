@@ -139,10 +139,38 @@ def publish_to_wp(article):
     if address:
         meta['_popup_address'] = address
 
+    # ASCIIスラッグ生成 (日本語エンコード防止)
+    try:
+        from lib.title_optimizer import generate_slug, validate_slug
+        slug = validate_slug(generate_slug(title))
+        if not slug:
+            slug = validate_slug(generate_slug(article.get('body_html', '')[:200])) \
+                   or f"popup-event-{int(datetime.now(JST).timestamp())}"
+    except Exception as e:
+        slug = f"popup-event-{int(datetime.now(JST).timestamp())}"
+        print(f"  slug gen err: {e}")
+
+    # Pre-publish factcheck
+    pub_status = 'publish'
+    try:
+        from lib.pre_publish_gate import pre_publish_gate
+        gate_result = pre_publish_gate(
+            title, full_content, post_type='popup', kind='popup',
+            source_url=url, slug=slug, status='publish',
+        )
+        if gate_result.get('verdict') == 'BLOCK':
+            print(f"  [pre-publish] BLOCKED: {gate_result.get('block_reasons', [])}")
+            pub_status = 'draft'
+        elif gate_result.get('verdict') == 'WARN':
+            print(f"  [pre-publish] WARN: {gate_result.get('warnings', [])}")
+    except Exception as e:
+        print(f"  [pre-publish] gate error (continuing): {e}")
+
     payload = {
         'title': title,
         'content': full_content,
-        'status': 'publish',
+        'slug': slug,
+        'status': pub_status,
         'meta': meta,
     }
     if featured_id:
@@ -157,6 +185,25 @@ def publish_to_wp(article):
                      'Content-Type': 'application/json'})
         r = json.loads(urllib.request.urlopen(req, timeout=30).read())
         post_id = r.get('id')
+        if not post_id:
+            print(f"  WP post err: no id in response")
+            return None, 0, 0
+
+        # slug が WP に反映されなかった場合は PATCH で上書き
+        actual_slug = r.get('slug', '')
+        if '%' in actual_slug or actual_slug != slug:
+            try:
+                patch_body = json.dumps({'slug': slug}).encode()
+                patch_req = urllib.request.Request(
+                    f"{WP}/wp-json/wp/v2/popup/{post_id}",
+                    data=patch_body, method='POST',
+                    headers={'Authorization': f'Basic {AUTH}',
+                             'Content-Type': 'application/json'})
+                urllib.request.urlopen(patch_req, timeout=15)
+                print(f"  slug patched: {slug}")
+            except Exception as e:
+                print(f"  slug patch err: {e}")
+
         return post_id, featured_id, images_saved
     except Exception as e:
         print(f"  WP post err: {e}")
@@ -198,6 +245,37 @@ def main(max_articles=10):
             total_images += img_count
             if feat_id:
                 total_featured += 1
+
+            # ポストパブリッシュフック（LLMファクトチェック含む）
+            try:
+                from lib.post_publish_hook import run_post_publish
+                run_post_publish(post_id, post_type='popup')
+            except Exception as e:
+                print(f"  post_publish_hook err: {e}")
+
+            # ポストパブリッシュ: GSCインデックス + X投稿
+            city = detect_city(article['title'], article.get('body_html', ''))
+            popup_url = f'{WP}/popup/{city}/{post_id}/' if city else f'{WP}/popup/tokyo/{post_id}/'
+            try:
+                from lib.gsc_indexing import notify_url_updated
+                if notify_url_updated(popup_url):
+                    print(f"  GSC OK: {popup_url}")
+                else:
+                    print(f"  GSC FAIL: {popup_url}")
+            except Exception as e:
+                print(f"  GSC err: {e}")
+            try:
+                from lib.x_poster import post_tweet
+                title_text = article['title'][:80]
+                x_r = post_tweet(title_text, popup_url, post_id=post_id)
+                if x_r.get('success'):
+                    print(f"  X OK tid={x_r.get('tweet_id', '?')}")
+                elif x_r.get('queued'):
+                    print(f"  X queued")
+                else:
+                    print(f"  X skip: {x_r.get('error', '')[:60]}")
+            except Exception as e:
+                print(f"  X err: {e}")
         else:
             print("  WP公開失敗")
         mark_processed(url)

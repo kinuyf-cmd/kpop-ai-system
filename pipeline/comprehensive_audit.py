@@ -58,22 +58,30 @@ def run_llm_factcheck(posts):
             print("  [factcheck] OPENAI_API_KEY未設定、スキップ")
             return results
 
+        skipped = 0
+        checked = 0
         for p in posts:
             pid = p['id']
             if _already_proofread(pid):
+                skipped += 1
                 continue
             try:
                 r = proofread_post(p)
+                checked += 1
                 nc = len(r.get('critical', []))
                 nh = len(r.get('high', []))
+                nm = len(r.get('medium', []))
+                score = r.get('score', 0)
                 if nc > 0 or nh > 0:
                     results[pid] = {
-                        'score': r.get('score', 0),
+                        'score': score,
                         'critical': r.get('critical', []),
                         'high': r.get('high', []),
                         'medium': r.get('medium', []),
                     }
-                    print(f"  [factcheck] id={pid} score={r.get('score',0)} C={nc} H={nh}")
+                    print(f"  [factcheck] id={pid} score={score} C={nc} H={nh}")
+                else:
+                    print(f"  [factcheck] id={pid} score={score} OK (M={nm})")
 
                 # Save to llm_audit directory
                 LLM_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
@@ -83,6 +91,7 @@ def run_llm_factcheck(posts):
 
             except Exception as e:
                 print(f"  [factcheck] id={pid} ERR: {e}")
+        print(f"  [factcheck] 合計: checked={checked} skipped={skipped} issues={len(results)}")
     except ImportError as e:
         print(f"  [factcheck] import error: {e}")
     return results
@@ -100,6 +109,28 @@ def attempt_auto_fix(post_id, post_type, issues):
     fixable = [i for i in issues if i.get('type') in FIXABLE_TYPES]
     high_issues = [i for i in issues if i.get('severity') == 'high']
 
+    # LLMファクトチェックで「裏付けソースなし」が検出された場合は即Draft化
+    # これは記事全体が捏造である可能性を示す最も深刻な警告
+    llm_critical = [i for i in issues if i.get('type') in ('llm_critical', 'fabricated_name')]
+    llm_no_source = [i for i in issues if i.get('type') == 'llm_high'
+                     and '裏付けソース' in str(i.get('detail', ''))]
+    if llm_critical:
+        post = fetch_post(post_id, post_type)
+        if post:
+            try:
+                update_post(post_id, post_type, {'status': 'draft'})
+                return 'drafted', f"LLM CRITICAL検出({len(llm_critical)}件)でDraft化"
+            except Exception as e:
+                return 'draft_failed', str(e)
+    if len(llm_no_source) >= 1:
+        post = fetch_post(post_id, post_type)
+        if post:
+            try:
+                update_post(post_id, post_type, {'status': 'draft'})
+                return 'drafted', f"裏付けソースなし{len(llm_no_source)}件でDraft化"
+            except Exception as e:
+                return 'draft_failed', str(e)
+
     if not fixable and len(high_issues) < 3:
         return None, "修正対象なし"
 
@@ -107,8 +138,8 @@ def attempt_auto_fix(post_id, post_type, issues):
     if not post:
         return None, "記事取得失敗"
 
-    # high 5件以上 → Draft化
-    if len(high_issues) >= 5:
+    # high 3件以上 → Draft化 (5→3に引き下げ: 品質基準強化)
+    if len(high_issues) >= 3:
         try:
             update_post(post_id, post_type, {'status': 'draft'})
             return 'drafted', f"high={len(high_issues)}件でDraft化"
@@ -216,6 +247,7 @@ def _get_prevention_rule(issue_type):
         'stale_date': 'LLMプロンプトに現在日付を必ず含める',
         'text_casual_greeting': 'text_sanitizer のカジュアル表現除去パターン拡充',
         'no_x_post': 'X投稿連動を必須化。失敗時はx_retry_queueに追加',
+        'fabricated_name': 'LLM生成コンテンツの架空名称検出。即Draft化+ソース付きで再生成必須',
     }
     return rules.get(issue_type, f'{issue_type}: パターン分析して共通lib化で再発防止')
 
@@ -319,7 +351,12 @@ def main():
     now = datetime.now(JST)
     print(f"=== 総合監査 {now.strftime('%Y-%m-%d %H:%M')} ===")
 
-    hours = get_audit_window_hours()
+    # CLI引数 --hours N で遡及時間を上書き可能
+    import argparse
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--hours', type=int, default=None)
+    args, _ = parser.parse_known_args()
+    hours = args.hours if args.hours else get_audit_window_hours()
     print(f"  遡及時間: {hours}時間")
 
     # 1. 記事取得
@@ -331,7 +368,7 @@ def main():
         all_posts.extend(posts)
     print(f"  取得: {len(all_posts)}件")
 
-    # 2. full_audit (16項目 + サムネイルチェック)
+    # 2. full_audit (16項目) + 3行まとめ検証 + サムネ品質検証
     audit_results = {}
     by_severity = {'high': 0, 'medium': 0, 'low': 0}
     by_type = {}
@@ -340,7 +377,110 @@ def main():
         pid = p['id']
         pt = p.get('_post_type', 'post')
         title = p['title']['rendered'] if isinstance(p['title'], dict) else p['title']
+        content = p.get('content', {}).get('rendered', '') if isinstance(p.get('content'), dict) else ''
         issues = full_audit(p, pt)
+
+        # 追加チェック A: 3行まとめ検証 (2026-05-01追加、2026-05-06強化)
+        if pt == 'post' and 'kpj-summary' in content:
+            import re as _re_sum
+            _sum_m = _re_sum.search(r'<div class="kpj-summary">(.*?)</div>', content, _re_sum.DOTALL)
+            if _sum_m:
+                _sum_text = _re_sum.sub(r'<[^>]+>', '', _sum_m.group(1))
+                _li_count = _sum_m.group(1).count('<li>')
+                if _li_count != 3:
+                    issues.append({'type': 'summary_not_3lines', 'severity': 'medium',
+                                   'value': f'{_li_count}行'})
+                # テーブルタグ混入チェック
+                if '<td>' in _sum_m.group(1) or '<th>' in _sum_m.group(1):
+                    issues.append({'type': 'summary_table_leak', 'severity': 'high',
+                                   'value': 'テーブルHTMLが3行まとめに混入'})
+                # 画像帰属混入チェック
+                if '画像' in _sum_text and '元記事' in _sum_text:
+                    issues.append({'type': 'summary_image_attribution', 'severity': 'high',
+                                   'detail': '3行まとめに画像帰属が混入'})
+                # 3行まとめとタイトルの関連性（タイトルのキーワードが1つも含まれない）
+                _title_kw = set(_re_sum.findall(r'[A-Za-z]{3,}|[ァ-ヶー]{3,}', title))
+                _title_kw -= {'速報', 'KPOP'}
+                if _title_kw and not any(kw.lower() in _sum_text.lower() for kw in _title_kw):
+                    issues.append({'type': 'summary_title_mismatch', 'severity': 'high',
+                                   'detail': 'タイトルのキーワードが3行まとめに1つもない'})
+
+        # 追加チェック B2: アーティスト基本情報照合 (メンバー人数/デビュー年) (2026-05-04追加)
+        try:
+            from pipeline.llm_proofreader import _check_artist_profile
+            _plain = re.sub(r'<[^>]+>', ' ', content)
+            _profile_issues = _check_artist_profile(title, _plain)
+            for _pi in _profile_issues:
+                issues.append({'type': 'artist_profile_mismatch', 'severity': 'high',
+                               'detail': _pi})
+        except Exception:
+            pass
+
+        # 追加チェック C: サムネ品質検証 (暗すぎ/小さすぎ) (2026-05-01追加)
+        _fm = p.get('featured_media', 0)
+        if _fm and pt == 'post':
+            try:
+                from pipeline.post_publish_enricher import _check_thumbnail_size, _check_thumbnail_quality
+                _tv, _ts = _check_thumbnail_size(_fm)
+                if _tv == 'GRADIENT_FAIL':
+                    issues.append({'type': 'thumbnail_gradient', 'severity': 'high',
+                                   'value': f'{_ts}B'})
+            except Exception:
+                pass
+
+        # 追加チェック D: pre_publish_gate 再チェック (2026-05-06追加)
+        # CSS混入/タイトル年号/内部用語/重複/OGP等をfull_auditでは見れない項目
+        try:
+            from lib.pre_publish_gate import pre_publish_gate as _gate_check
+            _excerpt = p.get('excerpt', {}).get('rendered', '') if isinstance(p.get('excerpt'), dict) else ''
+            _slug = p.get('slug', '')
+            _cats = p.get('categories', [])
+            _gate_r = _gate_check(
+                title=title, body_html=content,
+                post_type=pt, kind='news',
+                slug=_slug, featured_media=_fm,
+                categories=_cats, excerpt=_excerpt,
+                status='publish',
+            )
+            # gate BLOCKのうち、定期監査で検出すべき致命的項目のみ
+            # content_short, meta_desc_empty等は速報記事では正常なのでスキップ
+            _gate_critical = {'css_leak', 'internal_ops_leak', 'stale_year_in_title',
+                              'ai_mention', 'review_contamination', 'template_placeholder'}
+            for _gi in _gate_r.get('issues', []):
+                if _gi['severity'] == 'block' and _gi['type'] in _gate_critical:
+                    issues.append({
+                        'type': f'gate_{_gi["type"]}',
+                        'severity': 'high',
+                        'detail': _gi.get('detail', '')[:80],
+                    })
+        except Exception as _ge:
+            pass  # ゲートチェック失敗は監査を止めない
+
+        # 追加チェック E: ソース記事との内容一致度 (2026-05-06追加)
+        # 記事内のソースURLを取得し、ソース本文のキーワードが記事に含まれるか
+        # ドメインリストは config/source_domains.json (2026-05-07統一)
+        try:
+            from lib.source_domains import source_url_regex as _src_re
+            _source_urls = re.findall(_src_re(), content)
+            if _source_urls:
+                from lib.source_reader import read_source
+                _src_text = read_source(_source_urls[0], max_chars=1000)
+                if _src_text and len(_src_text) > 200:
+                    # ソースの固有名詞が記事に含まれるか
+                    _src_names = set(re.findall(r'[A-Z][a-z]{2,}', _src_text))
+                    _src_names -= {'The', 'And', 'For', 'With', 'News', 'Her', 'His',
+                                   'New', 'After', 'When', 'What', 'How', 'Who', 'All'}
+                    _plain_lower = re.sub(r'<[^>]+>', ' ', content).lower()
+                    _found = sum(1 for n in _src_names if n.lower() in _plain_lower)
+                    if _src_names and _found / max(len(_src_names), 1) < 0.1:
+                        issues.append({
+                            'type': 'source_content_mismatch',
+                            'severity': 'high',
+                            'detail': f'ソース固有名詞の{_found}/{len(_src_names)}件しか記事に含まれない',
+                        })
+        except Exception:
+            pass
+
         save_audit_state(pid, pt, issues)
 
         audit_results[pid] = {
@@ -434,14 +574,14 @@ def main():
             severity=severity or "WARNING"
         )
         for r in results:
-            print(f"  Discord [{r['physical_channel']}]: {r['result']}")
+            print(f"  Discord [{r.get('channel', r.get('physical_channel', '?'))}]: {r['result']}")
     else:
         title = f"総合監査 {now.strftime('%H:%M')} | 問題なし"
         results = send_to_channel(
             ChannelType.DAILY_REPORT, title, report_body
         )
         for r in results:
-            print(f"  Discord [{r['physical_channel']}]: {r['result']}")
+            print(f"  Discord [{r.get('channel', r.get('physical_channel', '?'))}]: {r['result']}")
 
     # 7. ログ保存
     DAILY_AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)

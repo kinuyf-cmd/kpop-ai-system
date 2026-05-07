@@ -18,7 +18,7 @@ ADSENSE_ACCOUNT_NAME = os.environ.get("ADSENSE_ACCOUNT_NAME", "accounts/pub-5968
 
 SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "service_account.json")
 ADSENSE_CLIENT_SECRET_FILE = os.path.join(BASE_DIR, "adsense_client_secret.json")
-ADSENSE_TOKEN_FILE = os.path.join(BASE_DIR, "adsense_token.json")
+ADSENSE_TOKEN_FILE = os.path.join(BASE_DIR, "oauth_token.json")  # 2026-05-01: adsense_token.json→oauth_token.jsonに統合（同一スコープ）
 
 yesterday = date.today() - timedelta(days=1)
 start_date = yesterday.isoformat()
@@ -93,6 +93,18 @@ def get_ga4_data():
         traffic_sources = {}
         x_sessions = 0
 
+    # --- bot/phantom トラフィック除外した実質メトリクス ---
+    raw_sessions = int(summary_row.metric_values[0].value)
+    raw_engaged = int(summary_row.metric_values[3].value)
+    # bot推定: (not set)ソース + 空ランディングページ(PV=0)のセッション
+    bot_sessions = traffic_sources.get("(not set)", 0)
+    # 空ランディングページのセッション数を推定(top_pagesの""エントリ)
+    empty_lp = sum(int(p.get("sessions", 0)) for p in top_pages
+                   if not p.get("page", "").strip("/"))
+    estimated_bot = max(bot_sessions, empty_lp)
+    real_sessions = max(1, raw_sessions - estimated_bot)
+    real_bounce_rate = round((1 - raw_engaged / real_sessions) * 100, 1) if real_sessions > 0 else 0
+
     return {
         "summary": {
             "sessions": summary_row.metric_values[0].value,
@@ -100,6 +112,13 @@ def get_ga4_data():
             "pageviews": summary_row.metric_values[2].value,
             "engaged_sessions": summary_row.metric_values[3].value,
             "avg_session_duration": summary_row.metric_values[4].value,
+        },
+        "quality_metrics": {
+            "raw_sessions": raw_sessions,
+            "estimated_bot_sessions": estimated_bot,
+            "real_sessions": real_sessions,
+            "real_bounce_rate": real_bounce_rate,
+            "raw_bounce_rate": round((1 - raw_engaged / max(1, raw_sessions)) * 100, 1),
         },
         "top_landing_pages": top_pages,
         "traffic_sources": traffic_sources,
@@ -139,6 +158,12 @@ def get_gsc_data():
     ]
 
     for r in ranges:
+        # サイト全体集計（dimensionsなし → 正確な総クリック/IMP/CTR）
+        body_sitewide = {
+            "startDate": r["start"],
+            "endDate": r["end"],
+        }
+
         body_queries = {
             "startDate": r["start"],
             "endDate": r["end"],
@@ -153,11 +178,13 @@ def get_gsc_data():
             "rowLimit": 10
         }
 
+        sw_res = run_gsc_query(service, body_sitewide)
         q_res = run_gsc_query(service, body_queries)
         p_res = run_gsc_query(service, body_pages)
 
         q_rows = q_res.get("rows", []) if isinstance(q_res, dict) else []
         p_rows = p_res.get("rows", []) if isinstance(p_res, dict) else []
+        sw_rows = sw_res.get("rows", []) if isinstance(sw_res, dict) else []
 
         if q_rows or p_rows:
             top_queries = []
@@ -180,10 +207,22 @@ def get_gsc_data():
                     "position": row.get("position", 0),
                 })
 
+            # サイト全体集計
+            sitewide = {}
+            if sw_rows:
+                row = sw_rows[0]
+                sitewide = {
+                    "clicks": row.get("clicks", 0),
+                    "impressions": row.get("impressions", 0),
+                    "ctr": row.get("ctr", 0),
+                    "position": row.get("position", 0),
+                }
+
             return {
                 "period_label": r["label"],
                 "start_date": r["start"],
                 "end_date": r["end"],
+                "sitewide": sitewide,
                 "top_queries": top_queries,
                 "top_pages": top_pages
             }
@@ -357,8 +396,8 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=2)
 
     # 月次累計用に履歴も追記 (2026-05-07追加)
-    # 同 date の既存行があれば上書き、無ければ追加。スキーマは
-    # lib/kpi_dashboard.py の collect_monthly_actuals が読む形に揃える。
+    # 同 date の既存行があれば上書き、無ければ追加。新行スキーマは
+    # lib/kpi_dashboard.py の collect_monthly_actuals が期待する形と一致。
     try:
         history_path = "/home/aiuser/kpop-ai-system/logs/daily_metrics_history.jsonl"
         ga4_sum = ga4_data.get("summary", {}) if isinstance(ga4_data, dict) else {}
@@ -380,6 +419,7 @@ def main():
             "gsc_position": round(float(sw.get("position", 0) or 0), 2) if sw.get("position") is not None else None,
         }
 
+        # 既存履歴を読み、同 date を除外して再書き込み (順序維持)
         existing = []
         if os.path.exists(history_path):
             with open(history_path, "r", encoding="utf-8") as f:

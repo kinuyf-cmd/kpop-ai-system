@@ -169,8 +169,29 @@ def unified_publish(
                 log.append(f"artist auto-detected: {artist}")
                 break
 
-    # アーティスト検出済みならthumbnail_source_resolverで本人画像を取得
-    if artist:
+    # サムネ優先順位 (2026-05-06修正: ソース記事og:imageを最優先)
+    # 速報/ニュース: ソースog:image → アーティスト写真 → DALL-E
+    # 理由: Soompi/Allkpop等の信頼メディアのog:imageは記事内容と一致する
+    #        元記事の画像がそのニュースを最も正確に表す
+    if not media_id and source_url:
+        try:
+            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
+        except Exception as e:
+            log.append(f"source_thumb error: {e}")
+            thumb = None
+        if thumb and thumb.get('path'):
+            _src_alt = f"{title_final}のサムネイル画像"
+            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
+            if media_id:
+                log.append(f"media_id: {media_id} (source_og)")
+                if thumb.get('source_url'):
+                    attribution_html = (
+                        f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
+                        f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
+                    )
+
+    # ソースog:imageが取れなかった場合のフォールバック: アーティスト写真
+    if not media_id and artist:
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
             _artist_thumb = _resolve_artist_thumb(artist_name=artist, article_type='concrete')
@@ -192,7 +213,7 @@ def unified_publish(
         except Exception as e:
             log.append(f"artist_resolver error: {e}")
 
-    # source_url経由のサムネ取得（artistで取得できなかった場合のフォールバック）
+    # source_url経由のサムネ取得（アーティスト写真で取得できなかった場合のフォールバック）
     if not media_id and source_url:
         try:
             thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
@@ -303,17 +324,38 @@ def unified_publish(
             with open(_acm_path, encoding='utf-8') as _acf:
                 _acm = json.load(_acf)
             _search_text = title_final + ' ' + (body_html[:500] if body_html else '')
+            import re as _re_cat
             for _artist_name, _cat_id in _acm.items():
-                if _artist_name in _search_text and _cat_id not in cat_ids:
+                if len(_artist_name) < 3:
+                    continue
+                # 単語境界マッチ: auto_category.pyと同じロジック (2026-05-01修正)
+                if _re_cat.search(r'[A-Za-z]', _artist_name):
+                    _pat = r'(?<![A-Za-z])' + _re_cat.escape(_artist_name) + r'(?![A-Za-z\s][\w])'
+                    _matched = bool(_re_cat.search(_pat, _search_text))
+                else:
+                    _matched = _artist_name in _search_text
+                if _matched and _cat_id not in cat_ids:
                     cat_ids.append(_cat_id)
                     log.append(f"artist_cat: {_artist_name}→{_cat_id}")
                     break  # 1アーティストで十分
     except Exception as _ace:
         log.append(f"artist_cat err: {_ace}")
 
+    # カテゴリ2(速報/デフォルト)は他カテゴリと共存時に除去 (2026-05-01追加)
+    if len(cat_ids) > 1 and 2 in cat_ids:
+        cat_ids = [c for c in cat_ids if c != 2]
+
     # 6.4. 統一公開前ゲート (fact_check + 品質 + HTML + メタデータを一括判定)
     try:
         from lib.pre_publish_gate import pre_publish_gate as _gate
+        # ソースタイトルを取得（タイトル乖離チェック用）
+        _src_title = None
+        if source_signals and isinstance(source_signals, list):
+            for _sig in source_signals[:3]:
+                _st = _sig.get('title', '') if isinstance(_sig, dict) else ''
+                if _st and len(_st) > 10:
+                    _src_title = _st
+                    break
         _gate_r = _gate(
             title=title_final, body_html=content,
             post_type='post', kind=kind,
@@ -321,6 +363,7 @@ def unified_publish(
             slug=slug, featured_media=media_id,
             categories=cat_ids, excerpt=meta_desc,
             status='publish',
+            source_title=_src_title,
         )
         if _gate_r['verdict'] == 'BLOCK':
             log.append(f"\U0001f534 Gate BLOCK: {_gate_r['block_reasons']}")
@@ -362,6 +405,9 @@ def unified_publish(
         'content': content,
         'excerpt': meta_desc,
         'status': 'publish',
+        'meta': {
+            '_aioseo_description': meta_desc,
+        },
     }
     if slug:
         data['slug'] = slug
@@ -369,10 +415,50 @@ def unified_publish(
         data['categories'] = cat_ids
     elif cat_id:
         data['categories'] = [cat_id]
+
+    # タグ自動設定: アーティスト名 + kind
+    _auto_tags = []
+    if artist:
+        _auto_tags.append(artist)
+    # kind タグ (breaking/comeback等)
+    if kind and kind not in ('feature', 'default', 'news'):
+        _kind_tag_map = {'breaking': '速報', 'comeback': 'カムバック', 'chart': 'チャート'}
+        if kind in _kind_tag_map:
+            _auto_tags.append(_kind_tag_map[kind])
+    if _auto_tags:
+        try:
+            _tag_ids = []
+            for _tname in _auto_tags:
+                # 既存タグ検索
+                _t_url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/tags?search={urllib.request.quote(_tname)}&_fields=id,name"
+                _t_req = urllib.request.Request(_t_url, headers={'Authorization': f'Basic {AUTH}', 'User-Agent': 'up/1.0'})
+                with urllib.request.urlopen(_t_req, timeout=10) as _tr:
+                    _existing = json.loads(_tr.read())
+                _found = next((t['id'] for t in _existing if t['name'].lower() == _tname.lower()), None)
+                if _found:
+                    _tag_ids.append(_found)
+                else:
+                    # タグ新規作成
+                    _c_data = json.dumps({'name': _tname}).encode()
+                    _c_req = urllib.request.Request(
+                        "https://www.kpopjournal.tokyo/wp-json/wp/v2/tags",
+                        data=_c_data,
+                        headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'})
+                    with urllib.request.urlopen(_c_req, timeout=10) as _cr:
+                        _tag_ids.append(json.loads(_cr.read())['id'])
+            if _tag_ids:
+                data['tags'] = _tag_ids
+                log.append(f"tags: {_auto_tags}")
+        except Exception as _te:
+            log.append(f"tag auto err: {_te}")
+
     if media_id:
         data['featured_media'] = media_id
     else:
         log.append("⚠️ WARN: サムネなしで公開 (resolve/DALL-E全失敗)")
+        # Note: X投稿はスキップしない。enricherがサムネを後付けするため、
+        # X投稿時点でOGPカードが不完全でも記事リンクの価値がある。
+        # _skip_x = True は廃止 (2026-05-05: サムネなし→X未投稿の事故を受けて)
 
     body_req = json.dumps(data).encode()
     req = urllib.request.Request(
@@ -399,20 +485,100 @@ def unified_publish(
     post_url = result.get('link', '')
     log.append(f"post_id={post_id}")
 
-    # 9. GSC Indexing
-    if post_url and _gsc_notify(post_url):
-        log.append("GSC OK")
-
-    # 9b. X投稿
-    if post_url and _x_post_tweet is not None:
+    # 9. GSC Indexing（失敗時リトライ）
+    _gsc_ok = False
+    if post_url:
         try:
-            x_r = _x_post_tweet(title_final, post_url, post_id=post_id)
+            _gsc_ok = _gsc_notify(post_url)
+        except Exception:
+            pass
+        if _gsc_ok:
+            log.append("GSC OK")
+        else:
+            # 即時リトライ（1回）
+            import time as _time
+            _time.sleep(3)
+            try:
+                _gsc_ok = _gsc_notify(post_url)
+                if _gsc_ok:
+                    log.append("GSC OK (retry)")
+                else:
+                    log.append("⚠️ GSC indexing失敗 (要手動確認)")
+            except Exception as _ge:
+                log.append(f"⚠️ GSC retry失敗: {_ge}")
+
+    # 9a-2. OGP/Twitterカード設定（X投稿前に必ず実行）
+    if post_id:
+        try:
+            from lib.ogp_twitter_card_optimizer import fix_post_meta
+            ogp_r = fix_post_meta(post_id)
+            if ogp_r.get('fixes'):
+                log.append(f"OGP fix: {ogp_r['fixes']}")
+        except Exception as _ogp_e:
+            log.append(f"OGP err: {_ogp_e}")
+
+    # 9b. X投稿（サムネなしならスキップ — og-default.png表示防止）
+    _skip_x = locals().get('_skip_x', False)
+    if _skip_x:
+        log.append("X skip: サムネなし→og-default表示防止のためX投稿スキップ")
+    elif post_url and _x_post_tweet is not None:
+        try:
+            x_r = _x_post_tweet(title_final, post_url, post_id=post_id,
+                                genre=kind or '', artist=artist or '')
             if x_r.get('success'):
-                log.append(f"X OK tid={x_r.get('tweet_id', '?')}")
+                tid = x_r.get('tweet_id', '')
+                # tweet_id取得できたがURLが含まれているか確認
+                if tid and post_url:
+                    log.append(f"X OK tid={tid}")
+                elif tid:
+                    log.append(f"X OK tid={tid} (URL未確認)")
+                else:
+                    log.append("X OK (tid不明)")
+            elif x_r.get('queued'):
+                log.append(f"X queued: {x_r.get('error', '')[:60]}")
             else:
-                log.append(f"X skip: {x_r.get('error', '')[:60]}")
+                # 投稿失敗かつキュー追加もされていない場合、強制キュー追加
+                log.append(f"X fail: {x_r.get('error', '')[:60]}")
+                try:
+                    from lib.x_poster import _add_to_retry_queue
+                    _add_to_retry_queue(title_final, post_url, post_id)
+                    log.append("X → retry queue追加")
+                except Exception:
+                    log.append("X retry queue追加失敗")
         except Exception as e:
             log.append(f"X error: {e}")
+            # 例外時もリトライキューに追加
+            try:
+                from lib.x_poster import _add_to_retry_queue
+                _add_to_retry_queue(title_final, post_url, post_id)
+                log.append("X → retry queue追加")
+            except Exception:
+                pass
+
+    # 9c. 公開後セルフ検証: meta_description が実際に設定されたか確認 (2026-05-06追加)
+    if post_id and meta_desc:
+        try:
+            _verify_url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=meta"
+            _verify_req = urllib.request.Request(
+                _verify_url, headers={'Authorization': f'Basic {AUTH}'})
+            with urllib.request.urlopen(_verify_req, timeout=10) as _vr:
+                _post_meta = json.loads(_vr.read()).get('meta', {})
+            _aioseo = _post_meta.get('_aioseo_description', '')
+            if not _aioseo or len(_aioseo) < 40:
+                # meta未設定 → 再送信
+                _fix_data = json.dumps({'meta': {'_aioseo_description': meta_desc}}).encode()
+                _fix_req = urllib.request.Request(
+                    f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}",
+                    data=_fix_data,
+                    headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'},
+                    method='POST',
+                )
+                urllib.request.urlopen(_fix_req, timeout=15)
+                log.append(f"meta_desc self-heal: 再送信OK ({len(meta_desc)}字)")
+            else:
+                log.append(f"meta_desc verified: {len(_aioseo)}字")
+        except Exception as _me:
+            log.append(f"meta_desc verify skip: {_me}")
 
     # 10. ログ
     _log_publish({
@@ -421,6 +587,7 @@ def unified_publish(
         'title': title_final, 'slug': slug,
         'kind': kind, 'confidence': confidence,
         'media_id': media_id, 'thumb_source': thumb.get('source') if thumb else None,
+        'log': log,
     })
 
     return {

@@ -34,10 +34,62 @@ def save_state(state):
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 
-def youtube_search(query, published_after=None, max_results=5):
-    """YouTube Data API v3 で動画を検索"""
+def youtube_rss_feed(channel_id, max_results=5):
+    """YouTube RSS フィード経由で最新動画を取得（API quota不要）"""
+    if not channel_id:
+        return []
+    feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
+    try:
+        import xml.etree.ElementTree as ET
+        req = urllib.request.Request(feed_url, headers={
+            'User-Agent': 'KPOPJournal-Monitor/1.0'
+        })
+        data = urllib.request.urlopen(req, timeout=15).read()
+        root = ET.fromstring(data)
+        ns = {'atom': 'http://www.w3.org/2005/Atom',
+              'yt': 'http://www.youtube.com/xml/schemas/2015',
+              'media': 'http://search.yahoo.com/mrss/'}
+        items = []
+        for entry in root.findall('atom:entry', ns)[:max_results]:
+            video_id = entry.find('yt:videoId', ns)
+            title = entry.find('atom:title', ns)
+            published = entry.find('atom:published', ns)
+            channel = entry.find('atom:author/atom:name', ns)
+            if video_id is not None:
+                items.append({
+                    'id': {'videoId': video_id.text},
+                    'snippet': {
+                        'title': title.text if title is not None else '',
+                        'publishedAt': published.text if published is not None else '',
+                        'channelTitle': channel.text if channel is not None else '',
+                    }
+                })
+        return items
+    except Exception as e:
+        print(f"  RSS feed err ({channel_id[:12]}): {e}")
+        return []
+
+
+def youtube_search(query, published_after=None, max_results=5, channel_id=None):
+    """YouTube動画を検索。RSS→API の優先順位で取得（API quota節約）"""
+    # 1. channel_idがあればRSSフィードを優先（quota不要）
+    if channel_id:
+        rss_results = youtube_rss_feed(channel_id, max_results)
+        if rss_results:
+            # published_afterフィルタを適用
+            if published_after:
+                from datetime import datetime as _dt
+                cutoff = _dt.fromisoformat(published_after.replace('Z', '+00:00'))
+                rss_results = [
+                    r for r in rss_results
+                    if r['snippet'].get('publishedAt', '') > cutoff.isoformat()
+                ]
+            if rss_results:
+                return rss_results
+
+    # 2. RSSで取得できなければAPI（quota消費）
     if not YOUTUBE_API_KEY:
-        print("  YOUTUBE_API_KEY未設定")
+        print("  YOUTUBE_API_KEY未設定+RSSも取得失敗")
         return []
 
     params = {
@@ -181,8 +233,10 @@ def main():
         # 直近7日分を検索
         published_after = (datetime.now(timezone.utc) - timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
 
+        channel_id = show.get('channel_id')
         for keyword in show['search_keywords']:
-            results = youtube_search(keyword, published_after=published_after, max_results=3)
+            results = youtube_search(keyword, published_after=published_after,
+                                     max_results=3, channel_id=channel_id)
             if not results:
                 continue
 

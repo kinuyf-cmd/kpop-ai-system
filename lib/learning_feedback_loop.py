@@ -217,7 +217,7 @@ def learn_typos() -> None:
 
     TYPO_KEYWORDS = ["誤字", "脱字", "typo", "文字化け", "誤記", "スペルミス", "表記ゆれ",
                      "変換ミス", "全角半角", "カタカナ", "ローマ字"]
-    # 正常報告やセクションヘ���ダーは誤字パターンではないのでスキップ
+    # 正常報告やセクションヘッダーは誤字パターンではないのでスキップ
     FALSE_POSITIVE_RE = re.compile(r"(なし|OK|正常|✅|問題なし|検出なし|---.*チェック|AUDIT.*---)")
 
     for record in recent_feedback:

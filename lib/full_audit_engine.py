@@ -19,7 +19,7 @@ AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode() if WP_USER els
 
 CRITERIA = {
     'post': {
-        'title_max': 42, 'title_min': 10,
+        'title_max': 50, 'title_min': 10,
         'slug_min': 20, 'slug_max': 60,
         'content_min': 1500, 'jp_ratio_min': 0.30,
         'meta_desc_min': 80, 'meta_desc_max': 160,
@@ -27,6 +27,16 @@ CRITERIA = {
         'require_gsc_indexing': True,
         'require_og_image': True,
         'min_internal_links': 2,
+    },
+    'matome': {
+        'title_max': 50, 'title_min': 10,
+        'slug_min': 5, 'slug_max': 40,
+        'content_min': 500, 'jp_ratio_min': 0.30,
+        'meta_desc_min': 50, 'meta_desc_max': 160,
+        'require_x_post': False,
+        'require_gsc_indexing': True,
+        'require_og_image': True,
+        'min_internal_links': 1,
     },
     'popup': {
         'title_max': 60, 'title_min': 10,
@@ -38,7 +48,39 @@ CRITERIA = {
         'require_og_image': True,
         'min_internal_links': 1,
     },
+    'chart': {
+        'title_max': 50, 'title_min': 10,
+        'slug_min': 10, 'slug_max': 60,
+        'content_min': 800, 'jp_ratio_min': 0.15,  # 韓国語曲名・アーティスト名が多いため緩和
+        'meta_desc_min': 50, 'meta_desc_max': 160,
+        'require_x_post': True,
+        'require_gsc_indexing': True,
+        'require_og_image': True,
+        'min_internal_links': 1,
+    },
 }
+
+# まとめページ自動判定: slug末尾が -matome のpost
+def _detect_post_type(post, post_type):
+    """slugパターンからpost_typeを細分化（matome/chart等）"""
+    if post_type == 'post':
+        slug = post.get('slug', '')
+        if slug.endswith('-matome'):
+            return 'matome'
+        # チャート記事: slugに "chart" を含む or カテゴリ71(K-POPチャート)
+        if 'chart' in slug or 71 in post.get('categories', []):
+            return 'chart'
+    return post_type
+
+# LLM捏造検出: 架空の店名・施設名パターン（"Cafe A", "Shop B", "Venue C"等）
+FABRICATION_PATTERNS = [
+    # アルファベット1文字の仮名（Cafe A, Shop B, Hotel C, Venue D etc.）
+    r'(?:Cafe|Shop|Hotel|Store|Restaurant|Venue|Gallery|Studio|Bar|Lounge)\s+[A-Z](?=[^a-zA-Z]|$)',
+    # 日本語版: 「カフェA」「ショップB」等
+    r'(?:カフェ|ショップ|ホテル|レストラン|会場|ギャラリー|スタジオ|バー|ラウンジ)\s*[A-Z](?=[^a-zA-Z]|$)',
+    # 「某○○」「とある○○」（LLMの曖昧表現）
+    r'(?:某|とある)(?:カフェ|ショップ|レストラン|店舗|施設)',
+]
 
 TYPO_PATTERNS = [
     (r'こんにちは[、。!]', 'casual_greeting', 'medium'),
@@ -49,7 +91,7 @@ TYPO_PATTERNS = [
     (r'(?:です|ます)。\s*(?:です|ます)。', 'broken_sentence', 'high'),
     (r'<h2></h2>|<p></p>|<div></div>', 'empty_tag', 'high'),
     (r'```|^##\s', 'markdown_leak', 'high'),
-    (r'(?:AI|ChatGPT|GPT-[34]|Claude)\b', 'ai_mention', 'high'),
+    (r'(?<![A-Za-z])(?:AI|ChatGPT|GPT-[34]|Claude)(?![A-Za-z])', 'ai_mention', 'high'),
     (r'(?<![0-9倍割])以上です(?!。[^。]*[0-9])|以下のように|参考になれば|まとめると|この記事では|ご参考ください', 'meta_phrase', 'high'),
     (r'(?:皆さん|みなさん)、', 'casual_address', 'medium'),
     (r'~?(?:した|されました)。\s*~?(?:した|されました)。\s*~?(?:した|されました)。', 'monotonous_ending', 'medium'),
@@ -142,12 +184,26 @@ def check_category(post, post_type):
 def check_meta_description(post, criteria):
     issues = []
     excerpt_plain = re.sub(r'<[^>]+>', '', _get_excerpt(post)).strip()
-    if not excerpt_plain:
+    # _aioseo_description も確認 (2026-05-06追加: excerptだけでは不十分)
+    aioseo_desc = ''
+    meta = post.get('meta', {})
+    if isinstance(meta, dict):
+        aioseo_desc = meta.get('_aioseo_description', '')
+    elif isinstance(meta, list):
+        # WP APIがmeta=[]で返す場合がある
+        pass
+    # excerpt と _aioseo_description の両方をチェック
+    effective_desc = aioseo_desc or excerpt_plain
+    if not effective_desc:
         issues.append({'type': 'no_meta_description', 'severity': 'high'})
-    elif len(excerpt_plain) < criteria['meta_desc_min']:
-        issues.append({'type': 'meta_desc_short', 'severity': 'medium', 'value': len(excerpt_plain)})
-    elif len(excerpt_plain) > criteria['meta_desc_max']:
-        issues.append({'type': 'meta_desc_long', 'severity': 'low', 'value': len(excerpt_plain)})
+    elif len(effective_desc) < criteria['meta_desc_min']:
+        issues.append({'type': 'meta_desc_short', 'severity': 'medium', 'value': len(effective_desc)})
+    elif len(effective_desc) > criteria['meta_desc_max']:
+        issues.append({'type': 'meta_desc_long', 'severity': 'low', 'value': len(effective_desc)})
+    # _aioseo_description が空なのにexcerptだけある場合 → SEO的に無効
+    if excerpt_plain and not aioseo_desc and post.get('status') == 'publish':
+        issues.append({'type': 'aioseo_desc_missing', 'severity': 'medium',
+                       'detail': 'excerpt有だが_aioseo_descriptionが空。SEOメタ未設定'})
     return issues
 
 
@@ -175,6 +231,13 @@ def check_content_quality(post, criteria):
         if m:
             issues.append({'type': f'text_{issue_type}', 'severity': severity, 'sample': m.group(0)[:30]})
 
+    # LLM捏造検出: 架空名称パターン
+    for fp in FABRICATION_PATTERNS:
+        fm = re.search(fp, plain)
+        if fm:
+            issues.append({'type': 'fabricated_name', 'severity': 'high',
+                           'value': fm.group(0)[:40]})
+
     open_h2 = len(re.findall(r'<h2[^>]*>', content))
     close_h2 = len(re.findall(r'</h2>', content))
     if open_h2 != close_h2:
@@ -182,10 +245,10 @@ def check_content_quality(post, criteria):
 
     open_p = len(re.findall(r'<p[^>]*>', content))
     close_p = len(re.findall(r'</p>', content))
-    # WPのwpautopが<p>を自動挿入するため、1-2個の差分は正常
-    if abs(open_p - close_p) > 2:
+    # WPのwpautopが<p>を自動挿入するため、2個以下の差分は正常
+    if abs(open_p - close_p) > 4:
         issues.append({'type': 'unclosed_p', 'severity': 'medium', 'value': abs(open_p - close_p)})
-    elif abs(open_p - close_p) > 0:
+    elif abs(open_p - close_p) > 2:
         issues.append({'type': 'unclosed_p', 'severity': 'low', 'value': abs(open_p - close_p)})
 
 
@@ -214,39 +277,84 @@ def check_internal_links(post, criteria):
 
 
 def check_ogp_image_relevance(post):
-    """OGP画像（アイキャッチ）のalt属性が記事内容と整合しているか検証
+    """サムネ画像が記事のアーティストと一致しているか検証
 
-    再発防止: サムネイル生成で誤アーティストのYouTube画像が使われた場合を検出する。
-    altに含まれるアーティスト名がタイトルに含まれないアーティストならflag。
+    検証方法:
+    1. classifierでタイトルからアーティスト(subjects)を抽出
+    2. サムネのファイル名からアーティスト名を抽出
+    3. subjectsのアーティストがファイル名に含まれているか照合
+    4. アイドル記事なのにDALL-E画像 or 別アーティスト画像なら検出
+
+    2026-05-02教訓: ファイル名にアーティスト名が含まれないv6_artist_*.jpgパターンでは
+    検出できないため、WP API経由でmediaのsource_urlからファイル名を取得する。
     """
     issues = []
-    # featured_media のalt_textが取得済みの場合のみ検証
-    alt = post.get('_featured_media_alt', '') or ''
-    if not alt:
+    fm = post.get('featured_media', 0)
+    if not fm:
         return issues
 
-    title = _get_title(post).lower()
-    alt_lower = alt.lower()
+    title = _get_title(post)
 
-    # alt中のアーティスト名がタイトルに含まれないかチェック
-    known_artists = [
-        'bts', 'blackpink', 'aespa', 'seventeen', 'stray kids', 'twice',
-        'newjeans', 'ive', 'le sserafim', 'nct', 'txt', 'enhypen', 'itzy',
-        'illit', 'riize', 'exo', 'nmixx', 'babymonster', 'zerobaseone',
-        'bigbang', '(g)i-dle', 'hearts2hearts', 'ateez', 'fromis_9',
-    ]
-    for artist in known_artists:
-        # altにアーティスト名が含まれるがタイトルには含まれない = 不一致
-        if artist in alt_lower and artist not in title:
-            # ただし「K-POP」一般記事でBTSが言及されている場合はOK（本文チェック）
-            content = _get_content(post).lower()
-            if artist not in content[:500]:
+    # classifierでタイトルのアーティストを取得
+    try:
+        import sys
+        if '/home/aiuser/kpop-ai-system' not in sys.path:
+            sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+        from lib.article_topic_classifier import classify
+        c = classify(title)
+        subjects = c.get('subjects', [])
+        primary_artist = subjects[0] if subjects else ''
+    except Exception:
+        return issues  # classifierが使えなければスキップ
+
+    if not primary_artist:
+        return issues  # 汎用記事はチェック不要
+
+    # WP APIでサムネのsource_urlを取得
+    try:
+        url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{fm}?_fields=source_url"
+        req = urllib.request.Request(url, headers={"Authorization": f"Basic {AUTH}"})
+        media = json.loads(urllib.request.urlopen(req, timeout=10).read())
+        source_url = media.get('source_url', '')
+        fname = os.path.basename(source_url).lower()
+    except Exception:
+        return issues
+
+    # ファイル名からアーティスト名を抽出
+    artist_slug = re.sub(r'[^a-z0-9]+', '_', primary_artist.lower()).strip('_')
+
+    # DALL-Eファイル名チェック (dalle, v6_dalle)
+    is_dalle = 'dalle' in fname and artist_slug not in fname
+
+    # アーティスト写真ファイル名チェック (yt_bts_, wiki_aespa_, etc.)
+    has_artist_in_fname = artist_slug in fname
+
+    # アイドル記事 + DALL-E画像 = 不一致
+    if is_dalle:
+        issues.append({
+            'type': 'idol_article_dalle_thumbnail',
+            'severity': 'high',
+            'detail': f'アイドル記事(artist={primary_artist})にDALL-E画像: {fname[:50]}',
+        })
+
+    # アーティスト写真だがファイル名に別アーティスト名
+    if not is_dalle and not has_artist_in_fname:
+        # yt_bts_ でaespa記事 → 不一致の可能性
+        known_slugs = [
+            'bts', 'blackpink', 'aespa', 'ive', 'newjeans', 'le_sserafim',
+            'seventeen', 'nct', 'txt', 'exo', 'twice', 'enhypen', 'itzy',
+            'illit', 'riize', 'babymonster', 'g_i_dle', 'nmixx', 'ateez',
+            'stray_kids', 'red_velvet', 'mamamoo', 'bigbang', 'got7',
+        ]
+        for slug in known_slugs:
+            if slug in fname and slug != artist_slug and artist_slug not in slug:
                 issues.append({
-                    'type': 'ogp_image_artist_mismatch',
+                    'type': 'thumbnail_artist_mismatch',
                     'severity': 'high',
-                    'detail': f'alt="{alt[:40]}" にタイトル外アーティスト "{artist}" 検出',
+                    'detail': f'記事={primary_artist} だがサムネに "{slug}" の画像: {fname[:50]}',
                 })
                 break
+
     return issues
 
 
@@ -266,8 +374,8 @@ def check_distribution(post, post_type, criteria):
     except:
         return issues
 
-    if age_h < 1:
-        return issues  # 投稿後1時間は猶予
+    if age_h < 6:
+        return issues  # 投稿後6時間は猶予（GSC indexing + X投稿の遅延考慮）
 
     # GSC（URLベースで照合 — GSCログにはpost_idがない）
     if criteria.get('require_gsc_indexing'):
@@ -325,6 +433,9 @@ def _find_in_log(post_id, log_path, post_slug=None, post_url=None):
                     found = d
                 elif post_slug and entry_url and f'/{post_slug}/' in entry_url:
                     found = d
+                # popup記事: GSCログURL(/popup/{city}/{id}/)にpost_idが含まれるケース
+                elif post_id and entry_url and f'/{post_id}/' in entry_url:
+                    found = d
             except:
                 pass
     return found
@@ -338,7 +449,11 @@ def _is_in_log(post_id, log_path, key='post_id'):
 
 def full_audit(post, post_type='post'):
     """投稿1件の16+項目フル監査"""
-    criteria = CRITERIA.get(post_type, CRITERIA['post'])
+    # post objectのtype fieldから自動検出 (popup等のCPTに対応)
+    if post_type == 'post' and post.get('type') and post.get('type') != 'post':
+        post_type = post['type']
+    effective_type = _detect_post_type(post, post_type)
+    criteria = CRITERIA.get(effective_type, CRITERIA['post'])
     issues = []
 
     # 0. ステータス異常検出
@@ -350,7 +465,7 @@ def full_audit(post, post_type='post'):
     issues.extend(check_title(post, criteria))
     issues.extend(check_slug(post, criteria))
     issues.extend(check_featured_media(post))
-    issues.extend(check_category(post, post_type))
+    issues.extend(check_category(post, effective_type if effective_type != 'matome' else 'post'))
 
     # B. SEO要件
     issues.extend(check_meta_description(post, criteria))
@@ -361,7 +476,7 @@ def full_audit(post, post_type='post'):
     issues.extend(check_content_quality(post, criteria))
 
     # D. 配信完全性
-    issues.extend(check_distribution(post, post_type, criteria))
+    issues.extend(check_distribution(post, effective_type, criteria))
     issues.extend(check_internal_links(post, criteria))
 
     # F. LLM校閲結果の統合 (直近24h)

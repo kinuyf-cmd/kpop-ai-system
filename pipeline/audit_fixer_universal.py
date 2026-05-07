@@ -22,6 +22,7 @@ FIXABLE_TYPES = {
     'content_short', 'few_internal_links',
     'slug_encoded',
     'meta_desc_short', 'no_meta_description',
+    'no_artist_category',  # 2026-05-01追加: カテゴリ自動検出・設定
 }
 
 
@@ -36,7 +37,22 @@ def fetch_post(post_id, post_type):
         return None
 
 
+def _is_factcheck_blocked(post_id):
+    """捏造/架空でdraft化された記事のpublish復帰を防止"""
+    blocked_path = '/home/aiuser/kpop-ai-system/data/factcheck_blocked.json'
+    try:
+        with open(blocked_path) as f:
+            data = json.load(f)
+        return post_id in data.get('blocked_ids', [])
+    except Exception:
+        return False
+
+
 def update_post(post_id, post_type, payload):
+    # 捏造ブロックリストの記事にstatusをpublishに変更する操作をブロック
+    if _is_factcheck_blocked(post_id) and payload.get('status') == 'publish':
+        print(f"  [{post_id}] BLOCKED: 捏造/架空でdraft化済み。publish復帰禁止")
+        return False
     endpoint = 'posts' if post_type == 'post' else post_type
     url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/{endpoint}/{post_id}"
     body = json.dumps(payload).encode()
@@ -66,6 +82,29 @@ def rewrite_with_gpt(post, issues, post_type):
     else:
         structure = "リード→詳細→まとめ三段構成、h2見出し2つ以上"
 
+    # 記事種別判定（ビジュアル要素挿入用）
+    is_popup = post_type == 'popup'
+    is_artist = bool(re.search(
+        r'BTS|BLACKPINK|TWICE|aespa|NewJeans|IVE|LE SSERAFIM|Stray Kids|SEVENTEEN|ENHYPEN|'
+        r'NMIXX|ITZY|TXT|EXO|BABYMONSTER|RIIZE|ILLIT|NCT|Red Velvet|BIGBANG|SHINee|'
+        r'GOT7|\(G\)I-DLE|ATEEZ|TREASURE|MONSTA X|DAY6|2PM',
+        title, re.IGNORECASE
+    ))
+
+    visual_instructions = """
+【ビジュアル要素の挿入ルール】
+- 重要な事実やデータは <div class="kpj-info-box">...</div> で囲む（開催日時、メンバー情報、数字データ等）
+- 特に注目すべい引用・統計は <div class="kpj-highlight">...</div> で囲む
+- 比較やリスト形式のデータは <table> を使用（<th>ヘッダー必須）
+- 画像が欲しい箇所にプレースホルダーを挿入: <!-- IMAGE: 画像の説明 -->"""
+
+    if is_popup:
+        visual_instructions += """
+- 会場情報がある場合: <!-- MAP: 会場名, 住所 --> を挿入（1記事に1つまで）"""
+    if is_artist:
+        visual_instructions += """
+- アーティストのMV/パフォーマンス映像の参考として: <!-- YOUTUBE: アーティスト名 MV --> を挿入（1記事に1つまで）"""
+
     prompt = f"""以下のK-POP記事を問題を解消した自然な記事に書き直してください。
 
 【タイトル】{title}
@@ -80,6 +119,7 @@ def rewrite_with_gpt(post, issues, post_type):
 - 内部リンク2本: <a href="https://www.kpopjournal.tokyo/category/news/">最新ニュース</a> 等
 - {structure}
 - 800-1200字
+{visual_instructions}
 
 【出力】HTML本文のみ。セクション識別子ラベル（リード文:, 導入文:, 本文: 等）は含めないこと"""
 
@@ -175,7 +215,7 @@ def _record_attempt(skip_list, post_id, issue_types):
 
 # content_short はGPTリライトでは解決できない（ソース情報不足）
 # GPTリライト対象から除外し、別のアプローチ（手動補強）に回す
-GPT_REWRITE_TYPES = FIXABLE_TYPES - {'content_short'}
+GPT_REWRITE_TYPES = FIXABLE_TYPES - {'content_short', 'no_artist_category'}
 
 
 def main(max_fixes=30):
@@ -220,7 +260,7 @@ def main(max_fixes=30):
                 # BUG FIX: content_short のみの記事はGPTでは解決不能なので対象外
                 # GPT_REWRITE_TYPES を使ってフィルタリング
                 fixable = [i for i in rec['issues'] if i['type'] in GPT_REWRITE_TYPES
-                           or i['type'] in ('slug_encoded', 'meta_desc_short', 'no_meta_description')]
+                           or i['type'] in ('slug_encoded', 'meta_desc_short', 'no_meta_description', 'no_artist_category')]
                 if fixable:
                     key = (pid, rec.get('post_type', 'post'))
                     targets[key] = fixable
@@ -256,9 +296,34 @@ def main(max_fixes=30):
 
         update_payload = {}
 
-        # slug修正
-        if any(i['type'] == 'slug_encoded' for i in issues):
-            update_payload['slug'] = f"{ptype}-{pid}"
+        # slug修正 (GPTでASCIIスラッグ生成)
+        if any(i['type'] in ('slug_encoded', 'slug_auto_generated') for i in issues):
+            try:
+                from lib.title_optimizer import generate_slug, validate_slug
+                new_slug = validate_slug(generate_slug(title))
+                if new_slug:
+                    update_payload['slug'] = new_slug
+                else:
+                    # フォールバック: タイムスタンプ付き
+                    from datetime import datetime as _dt
+                    update_payload['slug'] = f"kpop-popup-{int(_dt.now().timestamp())}"
+            except Exception as _e:
+                print(f"  slug gen err: {_e}")
+                from datetime import datetime as _dt
+                update_payload['slug'] = f"kpop-popup-{int(_dt.now().timestamp())}"
+
+        # カテゴリ修正 (no_artist_category)
+        if any(i['type'] == 'no_artist_category' for i in issues):
+            try:
+                from lib.auto_category import detect_artist_categories
+                detected = detect_artist_categories(title)
+                if detected:
+                    current_cats = post.get('categories', [])
+                    new_cats = list(set(current_cats + detected))
+                    update_payload['categories'] = new_cats
+                    print(f"  カテゴリ修正: {current_cats} -> {new_cats}")
+            except Exception as e:
+                print(f"  カテゴリ検出エラー: {e}")
 
         # 本文修正 (content_shortはGPT_REWRITE_TYPESから除外済み)
         text_issues = [i for i in issues if i['type'].startswith('text_')

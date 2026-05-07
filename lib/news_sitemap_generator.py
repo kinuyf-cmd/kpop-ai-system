@@ -130,11 +130,46 @@ def fetch_recent_posts(hours: int = NEWS_WINDOW_HOURS) -> list[dict]:
             print(f"  [warn] WP API fetch error: {e}", file=sys.stderr)
             break
 
+    # popup記事も取得
+    page = 1
+    while len(posts) < MAX_URLS:
+        params = urllib.parse.urlencode({
+            "after": after_iso,
+            "per_page": per_page,
+            "page": page,
+            "status": "publish",
+            "orderby": "date",
+            "order": "desc",
+            "_fields": "id,title,link,date_gmt,modified_gmt,slug,categories",
+        })
+        url = f"{WP_API}/popup?{params}"
+
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "news-sitemap-gen/1.0",
+                **_wp_auth_header(),
+            })
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                if not data:
+                    break
+                posts.extend(data)
+                total_pages = int(resp.headers.get("X-WP-TotalPages", 1))
+                if page >= total_pages:
+                    break
+                page += 1
+        except urllib.error.HTTPError as e:
+            if e.code == 400:
+                break
+            break
+        except Exception:
+            break
+
     return posts[:MAX_URLS]
 
 
 def extract_keywords_from_slug(slug: str) -> list[str]:
-    """スラッグからキーワードを抽出す��。"""
+    """スラッグからキーワードを抽出する。"""
     keywords = []
     slug_lower = slug.lower()
     for kw, label in KEYWORD_SECTIONS.items():
@@ -341,16 +376,9 @@ def main():
     OUTPUT_FILE.write_text(xml, encoding="utf-8")
     print(f"\n[3] ローカル保存: {OUTPUT_FILE}")
 
-    # 3.5. nginx配信先に同期（/var/www/html/ が配信先の場合）
-    import shutil
-    NGINX_DEST = Path("/var/www/html/news-sitemap.xml")
-    try:
-        shutil.copy2(str(OUTPUT_FILE), str(NGINX_DEST))
-        print(f"  → nginx配信先に同期完了: {NGINX_DEST}")
-    except PermissionError:
-        print(f"  ⚠️ {NGINX_DEST} への書き込み権限なし（sudo設定 or nginx alias変更が必要）")
-    except Exception as e:
-        print(f"  ⚠️ 同期失敗: {e}")
+    # nginx は alias で static/news-sitemap.xml を直接配信するため
+    # /var/www/html/ へのコピーは不要
+    print(f"  → nginx alias配信: /news-sitemap.xml → {OUTPUT_FILE}")
 
     # 4. アップロード（--upload指定時）
     if args.upload and not args.local:

@@ -313,6 +313,14 @@ def process_entry(entry):
             f'{source_url[:60]}</a></p>'
         )
 
+    # 捏造ブロックリスト確認
+    try:
+        import json as _j3
+        _bl2 = set(_j3.load(open('/home/aiuser/kpop-ai-system/data/factcheck_blocked.json')).get('blocked_ids', []))
+        if pid in _bl2:
+            print(f"  [{pid}] SKIP: 捏造ブロック済み")
+            return None
+    except: pass
     r = wp_update(pid, {'content': final_body, 'status': 'publish'})
     if r and r.get('status') == 'publish':
         print(f"  [{pid}] ✅ リライト成功+再公開 ({quality_msg})")

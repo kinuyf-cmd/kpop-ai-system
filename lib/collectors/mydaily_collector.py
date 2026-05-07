@@ -5,8 +5,7 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log
 
 SECTIONS = [
-    ('mydaily_music', 'https://www.mydaily.co.kr/entertainment/music'),
-    ('mydaily_ent', 'https://www.mydaily.co.kr/entertainment'),
+    ('mydaily_ent', 'https://www.mydaily.co.kr/news/newslist.html?cate=E'),
 ]
 
 
@@ -20,8 +19,8 @@ def collect():
             continue
 
         patterns = [
-            r'<a[^>]+href="(/article/\d+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
-            r'<a[^>]+href="(https?://www\.mydaily\.co\.kr/article/\d+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
+            r'<a[^>]+href="(/page/view/\d+)"[^>]*>((?:<[^>]*>|[^<]){5,200})</a>',
+            r'<a[^>]+href="(https?://www\.mydaily\.co\.kr/page/view/\d+)"[^>]*>((?:<[^>]*>|[^<]){5,200})</a>',
         ]
         seen = set()
         count = 0

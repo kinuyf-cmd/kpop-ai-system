@@ -613,7 +613,43 @@ if [ "$DRY_RUN" = "true" ]; then
   exit 0
 fi
 
-xlog "POST: X API呼び出し開始（v2.0リトライ付き、フックのみ、URLなし）"
+# ─── スケジューラーキュー転送モード ─────────────────────────────────────────
+# 品質ゲート通過後、即時投稿ではなくキューに入れて時間分散する
+# POST_URL含む完全テキストをキューに入れ、x_scheduled_poster が投稿時にリプライ方式で処理
+_QUEUE_RESULT=$(python3 -c "
+import sys
+sys.path.insert(0, '$_SCRIPT_DIR')
+from pipeline.x_scheduled_poster import enqueue
+title = sys.argv[1]
+url = sys.argv[2] if len(sys.argv) > 2 else ''
+# ジャンル推定
+import re
+t = title.lower()
+if re.search(r'速報|緊急|炎上|騒動', t): genre = 'breaking'
+elif re.search(r'カムバック|新曲|アルバム', t): genre = 'comeback'
+elif re.search(r'チャート|1位|billboard', t): genre = 'chart'
+elif re.search(r'旅行|ソウル|ポップアップ', t): genre = 'travel'
+elif re.search(r'コスメ|スキンケア|美容', t): genre = 'beauty'
+else: genre = 'news'
+priority = 'high' if genre in ('breaking', 'news', 'comeback') else 'normal'
+ok = enqueue(title, url, genre=genre, priority=priority)
+print('QUEUED' if ok else 'DUPLICATE')
+" "$TITLE" "$POST_URL" 2>/dev/null || echo "FALLBACK")
+
+if [ "$_QUEUE_RESULT" = "QUEUED" ]; then
+  xlog "RESULT: スケジューラーキューに追加（ピーク時間帯に投稿）"
+  echo "QUEUED: X投稿はスケジューラーキューに追加されました"
+  # x_posts.jsonl にキュー記録（pipeline側のtweet_id取得互換用）
+  # 実際のtweet_idはスケジューラー投稿時に記録される
+  exit 0
+elif [ "$_QUEUE_RESULT" = "DUPLICATE" ]; then
+  xlog "RESULT: 重複のためスキップ（既にキューまたは投稿済み）"
+  echo "SKIP: 重複投稿防止（既にキューにあります）"
+  exit 0
+fi
+
+# フォールバック: スケジューラーキュー追加失敗時は従来の即時投稿
+xlog "POST: スケジューラー失敗→即時投稿にフォールバック"
 POST_OUTPUT=$(python3 "$_SCRIPT_DIR/google_metrics/post_to_x.py" "$TWEET_TEXT" 2>&1) || {
   xlog "RESULT: X投稿失敗（リトライ${MAX_RETRIES:-3}回後）- $POST_OUTPUT"
   echo "$POST_OUTPUT"

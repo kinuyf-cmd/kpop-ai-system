@@ -1,4 +1,3 @@
-from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 #!/usr/bin/env python3
 """対象post_idのサムネをDALL-E 3で再生成し、WPのfeatured_mediaを差し替え"""
 import sys
@@ -7,7 +6,9 @@ import json
 import base64
 import urllib.request
 
+sys.path.insert(0, "/home/aiuser/kpop-ai-system")
 sys.path.insert(0, "/home/aiuser/kpop-ai-system/lib")
+from lib.thumbnail_guard import safe_update_featured_media as _guard_update
 
 from dalle_thumbnail_gen import generate_thumbnail
 from make_thumbnail_v6 import _dalle_fallback
@@ -101,14 +102,20 @@ def process_post(post_id: int) -> bool:
 
     print(f"\n[{post_id}] {title[:60]}")
 
-    result = _dalle_fallback(title, body, post_id, output_dir="/tmp/v6_regen")
-    if result["verdict"] != "PASS":
+    # v6パイプライン経由 (アーティスト写真最優先 → DALL-Eフォールバック)
+    from make_thumbnail_v6 import make_thumbnail_v6
+    result = make_thumbnail_v6(
+        title=title, body=body, post_id=str(post_id),
+        output_dir="/tmp/v6_regen", max_retries=2,
+    )
+    if result.get("verdict") not in ("PASS", "QUEUE_REVIEW") or not result.get("output_path"):
         print(f"  generation failed: {result.get('meta', {}).get('reason', '?')}")
         return False
 
     image_path = result["output_path"]
-    cost = result.get("meta", {}).get("cost_usd", 0)
-    print(f"  DALL-E generated: {image_path} (${cost:.3f})")
+    source = result.get("source", "?")
+    score = result.get("vision_score", 0)
+    print(f"  v6 OK: source={source} score={score} {image_path}")
 
     try:
         media_id = upload_media(image_path, post_id)

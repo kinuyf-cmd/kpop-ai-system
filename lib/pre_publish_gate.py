@@ -23,15 +23,27 @@ _LOG_PATH = '/home/aiuser/kpop-ai-system/logs/pre_publish_gate.jsonl'
 # BLOCKすべきissue type（壊滅レベルのみ）
 BLOCK_TYPES = frozenset({
     'content_empty',          # 本文 < 400字
-    'content_short',          # 本文 < 1500字 (基準未満は公開不可)
+    # content_short は kind別に判定 → _should_block_content_short() で制御
     'no_source_no_signal',    # ソースなし (feature/popup除く)
     'anonymized_names',       # fact_checker critical: 実名匿名化
     'latest_but_old',         # fact_checker critical: 速報なのに古い
     'stale_date',             # fact_checker critical: 2年以上古い
     'ai_mention',             # ChatGPT/Claude等が本文に混入
     'review_contamination',   # レビューレポート/エラーメッセージ混入
-    'no_artist_category',     # アーティストカテゴリ未設定
+    # no_artist_category は公開後に自動修正可能 → BLOCK_TYPESから除外 (WARN扱い)
     'shop_no_practical_info', # 店舗紹介なのに住所/営業時間なし（架空店舗の疑い）
+    'slug_short',             # slug短すぎはSEO壊滅 → BLOCK (2026-05-02追加)
+    'no_thumbnail',           # サムネなしは公開禁止 (2026-05-02追加)
+    'thumbnail_portrait',     # 縦長サムネはOGP壊滅 (2026-05-02追加)
+    'artist_profile_mismatch', # メンバー人数/デビュー年の事実誤認 (2026-05-04追加)
+    'template_placeholder',    # XX月/TBD等のテンプレ残存 (2026-05-04追加)
+    'internal_ops_leak',       # GSC横展開/CTR/IMP等の内部施策用語混入 (2026-05-04追加)
+    'meta_desc_empty',         # meta_description空で公開禁止 (2026-05-06追加)
+    'duplicate_title',         # 同一/酷似タイトルの記事が既に公開済み (2026-05-06追加)
+    'stale_year_in_title',     # タイトルに古い年号 (2026-05-06追加)
+    'feature_no_source',       # ソースなしfeature記事 (2026-05-02追加)
+    'css_leak',                # CSS生テキスト混入 (2026-05-06追加)
+    'title_source_mismatch',   # タイトルがソースと乖離 (2026-05-06追加)
 })
 
 # fact_checker の critical → BLOCK にマッピングする type
@@ -148,7 +160,8 @@ def pre_publish_gate(
     title, body_html, post_type='post', kind='news',
     source_url=None, source_signals=None, slug=None,
     featured_media=None, categories=None, excerpt=None,
-    status='publish',
+    status='publish', source_text_length=None,
+    source_title=None,
 ):
     """統一公開前ゲート
 
@@ -172,29 +185,81 @@ def pre_publish_gate(
     # 1a2. 店舗紹介記事の実用情報チェック (住所/営業時間なしはBLOCK)
     issues.extend(_check_shop_article_without_details(title, body_html))
 
-    # 1b. ソースなし (feature/popup は除外)
-    if kind not in ('feature', 'popup'):
-        has_source = (source_url and source_url.startswith('http')) or \
-                     (source_signals and len(source_signals) > 0)
-        if not has_source:
+    # 1b. ソースURL/シグナルの有無判定（全kind共通）
+    has_source = (source_url and source_url.startswith('http')) or \
+                 (source_signals and len(source_signals) > 0)
+
+    # 1b0. ソース本文の取得確認（ソースURLがあるのに本文を読んでいない場合はWARN）
+    if has_source and source_text_length is not None and source_text_length < 100:
+        issues.append({
+            'type': 'source_not_read',
+            'severity': 'warn',
+            'detail': f'ソースURLは存在するがソース本文の取得に失敗({source_text_length}字)。'
+                      'GPTが推測で記事を書いた可能性。固有名詞の正確性を人手で確認してください',
+        })
+
+    # 1b1. news/breaking でソースなし → BLOCK
+    if kind not in ('feature', 'popup') and not has_source:
+        issues.append({
+            'type': 'no_source_no_signal',
+            'severity': 'block',
+            'detail': 'ソースURL/シグナルなし。GPT単独生成の疑い',
+        })
+
+    # 1b2. feature でソースなし → BLOCK（2026-05-02 捏造18%判明を受けて全面停止）
+    if kind == 'feature' and not has_source:
+        issues.append({
+            'type': 'feature_no_source',
+            'severity': 'block',
+            'detail': 'ソースなしのfeature記事は公開禁止。LLM単独生成は捏造率18%',
+        })
+
+    # 1b3. Web検索ファクトチェック（ソースなし記事の裏取り）
+    if not has_source and kind not in ('popup',):
+        try:
+            from lib.web_factcheck import verify_article as _web_verify
+            _wf = _web_verify(title, body_html, kind=kind, source_url=source_url)
+            if _wf['verdict'] == 'BLOCK':
+                issues.append({
+                    'type': 'web_factcheck_failed',
+                    'severity': 'block',
+                    'detail': f'Web検索ファクトチェック不合格: {_wf["issues"][0]["detail"][:80] if _wf["issues"] else "裏付けソースなし"}',
+                })
+            elif _wf['verdict'] == 'WARN':
+                issues.append({
+                    'type': 'web_factcheck_warn',
+                    'severity': 'warn',
+                    'detail': f'Web検索ファクトチェック警告: 確信度{_wf["confidence"]:.0%}',
+                })
+        except Exception as _wfe:
             issues.append({
-                'type': 'no_source_no_signal',
-                'severity': 'block',
-                'detail': 'ソースURL/シグナルなし。GPT単独生成の疑い',
+                'type': 'web_factcheck_error',
+                'severity': 'warn',
+                'detail': f'Web検索ファクトチェックスキップ: {_wfe}',
             })
 
     # 1c. contamination
     issues.extend(_check_contamination(body_html))
 
+    # 1c0. CSS生テキスト混入チェック（WPが<style>除去→CSS文字列が可視化）
+    _plain_css_check = re.sub(r'<[^>]+>', '', body_html or '')
+    if re.search(r'\.kpj-[a-z-]+\{|@keyframes|@media\(', _plain_css_check):
+        issues.append({
+            'type': 'css_leak',
+            'severity': 'block',
+            'detail': 'CSSスタイル文字列が本文に混入。<style>タグがWPに除去された可能性',
+        })
+
     # 1c1. ハングル混入検査 (translate_ko_to_ja の訳し漏れ検出)
-    # タイトル/altに1字でもBLOCK / 本文20字超でBLOCK / 5字超でWARN
+    # タイトル/altに1字でも → BLOCK / 本文20字超 → BLOCK / 5字超 → WARN
     try:
         from lib.translation_residue_check import assess_residue
-        _plain_for_hangul = re.sub(r'<[^>]+>', '', body_html or '')
-        _alt_collected = ''
+        _plain_body = re.sub(r'<[^>]+>', '', body_html or '')
+        _alt_for_check = ''
+        # alt は呼び出し元から渡されないことが多いので body 中の <img alt=> も拾う
         for _m in re.finditer(r'<img[^>]*\salt=["\']([^"\']*)["\']', body_html or ''):
-            _alt_collected += ' ' + _m.group(1)
-        _residue = assess_residue(title or '', _plain_for_hangul, _alt_collected)
+            _alt_for_check += ' ' + _m.group(1)
+        _residue = assess_residue(title, _plain_body, _alt_for_check)
         if _residue['verdict'] == 'BLOCK':
             issues.append({
                 'type': 'translation_residue_block',
@@ -207,8 +272,47 @@ def pre_publish_gate(
                 'severity': 'warn',
                 'detail': f"翻訳残存ハングル: {_residue['reason']}",
             })
-    except Exception:
+    except Exception as _trre:
         pass
+
+    # 1c3. 内部施策用語がタイトル/本文に混入していないか検出
+    _internal_ops_terms = [
+        (r'GSC横展開', 'GSC横展開(内部施策用語)が混入'),
+        (r'(?<!\w)CTR[\s]*[\d]+\.?\d*%', 'CTR数値(内部指標)が混入'),
+        (r'(?<!\w)IMP\s*=\s*\d+', 'IMP値(内部指標)が混入'),
+        (r'潜在\+\d+clicks', '潜在clicks(内部指標)が混入'),
+        (r'(?<!\w)GSC(?:の|を|で|と)', 'GSC(内部ツール名)が混入'),
+        (r'横展開', '横展開(内部用語)が混入'),
+        (r'(?<!\w)RPM[\s]*[\d]', 'RPM(内部指標)が混入'),
+        (r'A8\.net|アフィリエイト戦略', 'アフィリエイト関連の内部用語が混入'),
+    ]
+    _check_text = f"{title or ''} {re.sub(r'<[^>]+>', ' ', body_html or '')}"
+    for _ops_pat, _ops_label in _internal_ops_terms:
+        if re.search(_ops_pat, _check_text):
+            issues.append({
+                'type': 'internal_ops_leak',
+                'severity': 'block',
+                'detail': _ops_label,
+            })
+
+    # 1c2. テンプレ残存・プレースホルダ検出 (XX月/TBD/要確認 等)
+    _plain_sanitize = re.sub(r'<[^>]+>', ' ', body_html or '')
+    _template_blockers = [
+        (r'XX[月日年時分]', 'XX月/XX日テンプレ残存'),
+        (r'〇〇[月日年]', '〇〇テンプレ残存'),
+        (r'(?<!\w)TBD(?!\w)', 'TBD残存'),
+        (r'\[要確認\]|\[未定\]|\[確認中\]', '要確認マーカー残存'),
+        (r'```(?:html|python|json|css|javascript)', 'コードブロックマーカー混入'),
+        (r'INSERT_.*?_HERE|PLACEHOLDER', '英語プレースホルダ残存'),
+    ]
+    for _tp, _tl in _template_blockers:
+        _tm = re.findall(_tp, _plain_sanitize)
+        if _tm:
+            issues.append({
+                'type': 'template_placeholder',
+                'severity': 'block',
+                'detail': f'{_tl}: {", ".join(_tm[:3])}',
+            })
 
     # 1d. AI mention 直接検出 (TYPO_PATTERNSの\bが日本語境界で不発のため補完)
     _plain = re.sub(r'<[^>]+>', ' ', body_html or '')
@@ -218,6 +322,180 @@ def pre_publish_gate(
             'severity': 'block',
             'detail': '本文にAI/LLMツール名が混入',
         })
+
+    # 1e. アーティスト基本情報照合（メンバー人数/デビュー年の矛盾 → BLOCK）
+    try:
+        from pipeline.llm_proofreader import _check_artist_profile
+        _plain_text = re.sub(r'<[^>]+>', ' ', body_html or '')
+        _profile_issues = _check_artist_profile(title or '', _plain_text)
+        for _pi in _profile_issues:
+            issues.append({
+                'type': 'artist_profile_mismatch',
+                'severity': 'block',
+                'detail': _pi,
+            })
+    except Exception:
+        pass  # profile照合失敗は投稿をブロックしない
+
+    # 1f. meta_description空チェック (2026-05-06追加: unified_publisherバグの再発防止)
+    _excerpt = (excerpt or '').strip()
+    if status == 'publish' and post_type == 'post' and len(_excerpt) < 40:
+        issues.append({
+            'type': 'meta_desc_empty',
+            'severity': 'block',
+            'detail': f'meta_description(excerpt)が{len(_excerpt)}字。80字以上必須。SEO壊滅を防止',
+        })
+
+    # 1g. 重複記事チェック (2026-05-06追加: 同テーマ記事の重複公開防止)
+    if status == 'publish' and title:
+        try:
+            import urllib.request, urllib.parse
+            _norm_title = re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', title).strip()
+            # 主要キーワード(英字+カタカナ+漢字2文字以上)を抽出して検索
+            _keywords = re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _norm_title)
+            _keywords = [k for k in _keywords if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
+            _search_q = ' '.join(_keywords[:3]) if _keywords else _norm_title[:20]
+            _wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
+            _search_url = f'{_wp_api}/posts?search={urllib.parse.quote(_search_q)}&status=publish&per_page=5&_fields=id,title'
+            _req = urllib.request.Request(_search_url, headers={'User-Agent': 'KPJ-Gate/1.0'})
+            with urllib.request.urlopen(_req, timeout=10) as _resp:
+                _existing = json.loads(_resp.read())
+            for _ep in _existing:
+                _et = _ep.get('title', {})
+                _et_text = _et.get('rendered', '') if isinstance(_et, dict) else str(_et)
+                # キーワードベースの類似度チェック（固有名詞重視）
+                _ex_kw = set(re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _et_text.lower()))
+                _new_kw = set(k.lower() for k in _keywords)
+                _overlap = _new_kw & _ex_kw
+                # 固有名詞(英字2語以上 or カタカナ)が一致 = 同テーマ濃厚
+                _proper_overlap = {w for w in _overlap if re.match(r'[a-z]', w) or re.match(r'[ァ-ヶー]', w)}
+                if len(_proper_overlap) >= 2 or (len(_overlap) >= 2 and len(_overlap) / max(len(_new_kw), 1) > 0.4):
+                    issues.append({
+                        'type': 'duplicate_title',
+                        'severity': 'block',
+                        'detail': f'類似テーマの記事が公開済み (ID={_ep["id"]}): {_et_text[:40]}',
+                    })
+                    break
+        except Exception:
+            pass  # APIエラーは投稿をブロックしない
+
+    # 1g2. 本文内フレーズ重複チェック（GPTハルシネーション検出）
+    if body_html:
+        _plain_dup = re.sub(r'<[^>]+>', '', body_html)
+        _sentences = re.findall(r'[^。！!？?\n]{10,}[。！!？?]', _plain_dup)
+        # 「」で囲まれた引用フレーズの重複を検出
+        _quotes = re.findall(r'「([^」]{5,30})」', _plain_dup)
+        _quote_counts = {}
+        for _q in _quotes:
+            _quote_counts[_q] = _quote_counts.get(_q, 0) + 1
+        for _q, _c in _quote_counts.items():
+            if _c >= 2:
+                issues.append({
+                    'type': 'duplicate_phrase',
+                    'severity': 'warn',
+                    'detail': f'同一引用フレーズが{_c}回出現: 「{_q}」',
+                })
+                break
+        # 文全体の重複（先頭20字一致）
+        _seen_heads = {}
+        for _s in _sentences:
+            _head = _s.strip()[:20]
+            if _head in _seen_heads:
+                issues.append({
+                    'type': 'duplicate_phrase',
+                    'severity': 'warn',
+                    'detail': f'類似文が複数回出現: 「{_head}…」',
+                })
+                break
+            _seen_heads[_head] = True
+
+    # 1h00. タイトルとソースヘッドラインの乖離チェック
+    # 記事タイトルにソースにない固有名詞が追加されていたらBLOCK
+    if source_title and title:
+        _src_text = source_title.lower()
+        # 記事タイトルの英字固有名詞を抽出
+        _title_proper = set(re.findall(r'[A-Z][A-Za-z]{2,}', title))
+        _title_proper -= {'速報', 'KPOP'}
+        # ソースにない固有名詞を検出
+        _added = {p for p in _title_proper if p.lower() not in _src_text}
+        # 一般的な翻訳追加語を除外
+        _added -= {'COUNTDOWN', 'JOURNAL'}
+        if _added:
+            # 追加された固有名詞がニュースのキーワード（Met Gala等の捏造を検出）
+            _suspicious = {w for w in _added if len(w) >= 3
+                          and w not in {'BTS', 'YG', 'SM', 'JYP', 'HYBE', 'MBC', 'SBS', 'KBS', 'Mnet'}}
+            if _suspicious:
+                issues.append({
+                    'type': 'title_source_mismatch',
+                    'severity': 'block',
+                    'detail': f'タイトルにソースにない語句が追加: {_suspicious}。'
+                              f'ソース: {source_title[:40]}',
+                })
+
+    # 1h0. タイトル年号チェック（現在年と矛盾する年号をBLOCK）
+    if title:
+        _current_year = datetime.now(_JST).year
+        _year_matches = re.findall(r'(20[0-9]{2})年?', title)
+        for _ym in _year_matches:
+            _y = int(_ym)
+            if _y < _current_year:
+                issues.append({
+                    'type': 'stale_year_in_title',
+                    'severity': 'block',
+                    'detail': f'タイトルに過去の年号({_y}年)。現在{_current_year}年',
+                })
+                break
+
+    # 1h. サムネイル品質ゲート（有無だけでなく縦長・alt空もBLOCK）
+    if featured_media and featured_media > 0:
+        try:
+            import urllib.request
+            wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
+            media_url = f'{wp_api}/media/{featured_media}'
+            req = urllib.request.Request(media_url, headers={'User-Agent': 'KPJ-Gate/1.0'})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                media_data = json.loads(resp.read())
+            # 縦長チェック
+            img_w = media_data.get('media_details', {}).get('width', 0)
+            img_h = media_data.get('media_details', {}).get('height', 0)
+            if img_w > 0 and img_h > img_w:
+                issues.append({
+                    'type': 'thumbnail_portrait',
+                    'severity': 'block',
+                    'detail': f'サムネイルが縦長 ({img_w}x{img_h})。OGP表示が壊れます',
+                })
+            # alt空チェック
+            alt = media_data.get('alt_text', '').strip()
+            if not alt:
+                issues.append({
+                    'type': 'thumbnail_alt_empty',
+                    'severity': 'warn',
+                    'detail': 'サムネイルのalt_textが空',
+                })
+
+            # サムネ-記事整合性チェック: タイトルのアーティスト名がサムネに含まれるか
+            _thumb_text = (alt + ' ' + media_data.get('source_url', '') +
+                           ' ' + media_data.get('title', {}).get('rendered', '')).lower()
+            _ARTIST_NAMES_CHECK = [
+                'BTS', 'BLACKPINK', 'TWICE', 'aespa', 'NewJeans', 'IVE',
+                'LE SSERAFIM', 'Stray Kids', 'SEVENTEEN', 'ENHYPEN', 'ITZY',
+                'BABYMONSTER', 'RIIZE', 'EXO', 'NCT', 'TXT', 'NMIXX',
+                'Red Velvet', 'BIGBANG', '(G)I-DLE', 'ATEEZ', 'TREASURE',
+            ]
+            _title_artist = None
+            for _an in _ARTIST_NAMES_CHECK:
+                if _an.lower() in (title or '').lower():
+                    _title_artist = _an
+                    break
+            if _title_artist and _title_artist.lower() not in _thumb_text:
+                # サムネにアーティスト名がない → 別人の写真の可能性
+                issues.append({
+                    'type': 'thumbnail_artist_mismatch',
+                    'severity': 'warn',
+                    'detail': f'サムネにタイトルのアーティスト名({_title_artist})が含まれない。別人の写真の可能性',
+                })
+        except Exception:
+            pass  # メディアAPI取得失敗は投稿をブロックしない
 
     # --- 2. fact_checker (既存を再利用) ---
     try:
@@ -245,6 +523,33 @@ def pre_publish_gate(
             'detail': f'fact_check skip: {e}',
         })
 
+    # --- 2b. LLMファクトチェック (公開前の捏造検出 — 2026-05-04追加) ---
+    # fact_checker.pyは構造チェックのみ。proofread_articleで事実の裏付けを検証
+    if status == 'publish' and kind not in ('popup',):
+        try:
+            from pipeline.llm_proofreader import proofread_article
+            pr = proofread_article(title or '', body_html or '')
+            for c in pr.get('critical', []):
+                issues.append({
+                    'type': 'llm_factcheck_critical',
+                    'severity': 'block',
+                    'detail': str(c)[:100],
+                })
+            for h in pr.get('high', []):
+                issues.append({
+                    'type': 'llm_factcheck_high',
+                    'severity': 'warn',  # highはWARN（BLOCKは壊滅レベルのcriticalのみ）
+                    'detail': str(h)[:100],
+                })
+        except ImportError:
+            pass  # proofread_article未実装ならスキップ
+        except Exception as e:
+            issues.append({
+                'type': 'llm_factcheck_error',
+                'severity': 'warn',
+                'detail': f'LLM factcheck error: {str(e)[:60]}',
+            })
+
     # --- 3. audit_engine チェック (既存を再利用) ---
     # 各 check_* は list[dict] を返す
     audit_checks = [
@@ -260,6 +565,17 @@ def pre_publish_gate(
         issues.extend(_map_audit_issues(check_result))
 
     # --- 4. verdict 決定 ---
+
+    # content_short の severity を kind 別に制御
+    # breaking/popup: 短い本文は許容（翻訳ベース/イベント情報のため）→ WARN
+    # feature/news: 短い本文は品質不足 → BLOCK
+    for i in issues:
+        if i.get('type') == 'content_short':
+            if kind in ('breaking', 'popup'):
+                i['severity'] = 'warn'
+            else:
+                i['severity'] = 'block'
+
     if status == 'draft':
         # draft は BLOCK しない — 全てWARNに格下げ
         for i in issues:

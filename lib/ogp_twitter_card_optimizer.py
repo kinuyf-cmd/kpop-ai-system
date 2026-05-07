@@ -132,11 +132,18 @@ def check_live_ogp(url: str) -> dict:
 
 
 def fix_post_meta(post_id: int, dry_run: bool = False) -> dict:
-    """WP API経由で記事のOGP/Twitter cardメタを修復"""
+    """WP API経由で記事のOGP/Twitter cardメタを修復（通常記事+popupカスタムポストタイプ対応）"""
+    post = None
+    post_type = 'posts'
     try:
         post = _wp_get(f"/posts/{post_id}?context=edit")
-    except Exception as e:
-        return {"post_id": post_id, "status": "error", "error": str(e)}
+    except Exception:
+        # 通常postsで見つからない場合、popupカスタムポストタイプを試行
+        try:
+            post = _wp_get(f"/popup/{post_id}?context=edit")
+            post_type = 'popup'
+        except Exception as e2:
+            return {"post_id": post_id, "status": "error", "error": str(e2)}
 
     meta = post.get("meta", {})
     title = post.get("title", {}).get("raw", "")
@@ -212,7 +219,7 @@ def fix_post_meta(post_id: int, dry_run: bool = False) -> dict:
 
     if patch and not dry_run:
         try:
-            _wp_patch(f"/posts/{post_id}", {"meta": patch})
+            _wp_patch(f"/{post_type}/{post_id}", {"meta": patch})
             result["status"] = "fixed"
         except Exception as e:
             result["status"] = "error"

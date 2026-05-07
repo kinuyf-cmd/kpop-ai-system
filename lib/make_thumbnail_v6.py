@@ -32,7 +32,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR / "lib"))
 
-from article_topic_classifier import classify
+from article_topic_classifier import classify, classify_theme
 from thumbnail_source_resolver import resolve, resolve_fallback_photo, resolve_ai_prompt
 from thumbnail_vision_validator import validate_thumbnail
 
@@ -53,6 +53,10 @@ def _try_dalle_from_prompt(prompt_data: dict, output_dir: str, post_id: str) -> 
             "pink coral and lavender gradient, minimal elegant composition, "
             "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
         )
+    # negative_promptをpositiveに追記（DALL-E 3はnegative非対応のためAvoidで指示）
+    negative = prompt_data.get("ai_negative_prompt", "")
+    if negative:
+        positive = f"{positive}. Avoid: {negative}"
     output = os.path.join(output_dir, f"dalle_v6_post{post_id}_v6.jpg")
     raw_output = os.path.join(output_dir, f"dalle_v6_post{post_id}.png")
     result = _dalle_generate(positive[:4000], raw_output, size="1792x1024", quality="standard")
@@ -79,39 +83,49 @@ def _save_ai_prompt(prompt_data: dict, output_dir: str, post_id: str) -> str:
     return prompt_file
 
 
-def _dalle_fallback(title: str, body: str, post_id, output_dir: str = "/tmp") -> dict:
-    """v6の実写真検索が空振りしたときのDALL-E生成フォールバック"""
+def _dalle_fallback(title: str, body: str, post_id, output_dir: str = "/tmp",
+                    theme_dalle_prompt: str = "") -> dict:
+    """v6の実写真検索が空振りしたときのDALL-E生成フォールバック
+
+    theme_dalle_prompt: テーマ分類から得たDALL-Eプロンプト。指定時はこれを優先使用。
+    """
     if _dalle_generate is None:
         return {"verdict": "QUEUE_REVIEW", "output_path": "", "reason": "dalle module unavailable"}
 
-    # ジャンル判定でプロンプト切替
-    text = title + " " + (body or "")[:500]
-    if any(k in text for k in ["スキンケア", "美容", "コスメ", "肌", "グロウ", "PDRN", "メイク"]):
-        prompt = (
-            "Editorial magazine photo, young East Asian woman with luminous glowing skin, "
-            "natural K-beauty makeup, soft pastel pink and lavender background, "
-            "elegant cosmetic products arranged aesthetically, "
-            "professional studio lighting, shallow depth of field, high-end beauty magazine style, "
-            "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
-        )
-    elif any(k in text for k in ["チャート", "ランキング", "Billboard", "Circle"]):
-        prompt = (
-            "Dynamic music chart visualization, vinyl records floating on gradient pink-purple background, "
-            "musical notes, concert lights, professional photography style, "
-            "16:9 aspect ratio, NO TEXT, NO WORDS"
-        )
-    elif any(k in text for k in ["ライブ", "コンサート", "ツアー"]):
-        prompt = (
-            "K-pop concert stage with spotlights, excited crowd silhouettes, stage confetti, "
-            "vibrant pink and purple lighting, photorealistic concert photography, "
-            "16:9 aspect ratio, NO TEXT, NO WORDS"
-        )
+    # テーマ別プロンプトがあればそれを優先使用
+    if theme_dalle_prompt:
+        prompt = theme_dalle_prompt
     else:
-        prompt = (
-            "Modern K-pop magazine editorial, abstract musical and cultural elements, "
-            "pink coral and lavender gradient, minimal elegant composition, "
-            "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
-        )
+        # レガシーフォールバック: キーワードマッチ
+        text = title + " " + (body or "")[:500]
+        if any(k in text for k in ["スキンケア", "美容", "コスメ", "肌", "グロウ", "PDRN", "メイク"]):
+            prompt = (
+                "Editorial magazine photo, young East Asian woman with luminous glowing skin, "
+                "natural K-beauty makeup, soft pastel pink and lavender background, "
+                "elegant cosmetic products arranged aesthetically, "
+                "professional studio lighting, shallow depth of field, high-end beauty magazine style, "
+                "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+            )
+        elif any(k in text for k in ["チャート", "ランキング", "Billboard", "Circle",
+                                      "投票", "音楽番組", "ミューバン", "エムカ", "インガ",
+                                      "Music Bank", "M COUNTDOWN", "人気歌謡", "1位"]):
+            prompt = (
+                "Dynamic music chart visualization, vinyl records floating on gradient pink-purple background, "
+                "golden trophy, musical notes, concert lights, professional photography style, "
+                "16:9 aspect ratio, NO TEXT, NO WORDS"
+            )
+        elif any(k in text for k in ["ライブ", "コンサート", "ツアー"]):
+            prompt = (
+                "K-pop concert stage with spotlights, excited crowd silhouettes, stage confetti, "
+                "vibrant pink and purple lighting, photorealistic concert photography, "
+                "16:9 aspect ratio, NO TEXT, NO WORDS"
+            )
+        else:
+            prompt = (
+                "Modern K-pop magazine editorial, abstract musical and cultural elements, "
+                "pink coral and lavender gradient, minimal elegant composition, "
+                "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+            )
 
     output = os.path.join(output_dir, f"dalle_v6_post{post_id}.png")
     result = _dalle_generate(prompt, output, size="1792x1024", quality="standard")
@@ -195,15 +209,20 @@ def make_thumbnail_v6(
             "meta": meta,
         }
 
-    # Step 1: Classify article
+    # Step 1: Classify article (type + theme)
     classification = classify(title, body)
     article_type = classification["type"]
     subjects = classification["subjects"]
     artist_name = subjects[0] if subjects else ""
 
+    theme_result = classify_theme(title, body)
+    theme = theme_result["theme"]
+    theme_config = theme_result["theme_config"]
+
     sys.stderr.write(
-        f"[v6] classified: type={article_type}, subjects={subjects}, "
-        f"confidence={classification['confidence']:.2f}\n"
+        f"[v6] classified: type={article_type}, theme={theme}, subjects={subjects}, "
+        f"confidence={classification['confidence']:.2f}, "
+        f"theme_confidence={theme_result['confidence']:.2f}\n"
     )
 
     os.makedirs(output_dir, exist_ok=True)
@@ -223,6 +242,8 @@ def make_thumbnail_v6(
                 genre="",
                 post_id=post_id,
                 article_type=article_type,
+                theme=theme,
+                theme_config=theme_config,
             )
         else:
             # Retry with fallback strategies
@@ -235,9 +256,9 @@ def make_thumbnail_v6(
                         topic_context=artist_name, genre=""
                     )
             else:
-                # Abstract: try AI prompt
+                # Abstract: try AI prompt (テーマのみ、タイトル全文は渡さない)
                 source_result = resolve_ai_prompt(
-                    topic_context=title, genre=""
+                    topic_context=theme or "K-POP culture", genre=""
                 )
 
         source_type = source_result.get("source", "unknown")
@@ -250,6 +271,13 @@ def make_thumbnail_v6(
 
         # Handle AI prompt source — try DALL-E generation immediately
         if source_type == "ai_prompt":
+            # テーマ別DALL-Eプロンプトがあれば、汎用テンプレを上書き
+            if theme_config.get("dalle_prompt"):
+                source_result["ai_positive_prompt"] = theme_config["dalle_prompt"]
+                if theme_config.get("dalle_negative"):
+                    source_result["ai_negative_prompt"] = theme_config["dalle_negative"]
+                sys.stderr.write(f"[v6] overriding ai_prompt with theme dalle_prompt (theme={theme})\n")
+
             prompt_file = _save_ai_prompt(source_result, output_dir, post_id)
             sys.stderr.write(f"[v6] AI prompt saved to {prompt_file}\n")
 
@@ -258,6 +286,8 @@ def make_thumbnail_v6(
             if dalle_path and os.path.exists(dalle_path):
                 image_path = dalle_path
                 source_type = "dalle3"
+                source_result["source"] = "dalle3"  # バリデーターにDALL-E成功を伝える
+                source_result["image_path"] = dalle_path
                 sys.stderr.write(f"[v6] DALL-E fallback succeeded: {dalle_path}\n")
                 # Fall through to compose_v6 below
             else:
@@ -291,13 +321,19 @@ def make_thumbnail_v6(
                 output_dir,
                 f"{post_id or 'thumb_v6'}_attempt{attempt}{output_ext}",
             )
-            compose_v6(image_path, attempt_output)
+            composed = compose_v6(image_path, attempt_output)
+            if composed is None:
+                sys.stderr.write(f"[v6] compose_v6 rejected (portrait/too-dark), skipping to next source\n")
+                continue
         except Exception as e:
             sys.stderr.write(f"[v6] compose_v6 failed: {e}\n")
             continue
 
-        # Step 4: Validate (pass source_path for accurate scoring)
-        validation = validate_thumbnail(attempt_output, title, body, source_path=image_path)
+        # Step 4: Validate (pass source_path + source_info for accurate scoring)
+        validation = validate_thumbnail(
+            attempt_output, title, body,
+            source_path=image_path, source_info=source_result,
+        )
         score = validation["score"]
         verdict = validation["verdict"]
 
@@ -323,6 +359,8 @@ def make_thumbnail_v6(
                 "verdict": verdict,
                 "meta": {
                     "classification": classification,
+                    "theme": theme,
+                    "theme_config": theme_config,
                     "source_detail": source_result,
                     "validation": validation,
                     "attempts": attempts,
@@ -386,8 +424,11 @@ def make_thumbnail_v6(
 
     # Try DALL-E 3 fallback before giving up
     if _dalle_generate is not None:
-        sys.stderr.write("[v6] no real photo found, trying DALL-E 3 fallback...\n")
-        fallback_result = _dalle_fallback(title, body, post_id or "0", output_dir)
+        sys.stderr.write(f"[v6] no real photo found, trying DALL-E 3 fallback (theme={theme})...\n")
+        fallback_result = _dalle_fallback(
+            title, body, post_id or "0", output_dir,
+            theme_dalle_prompt=theme_config.get("dalle_prompt", ""),
+        )
         if fallback_result["verdict"] == "PASS":
             sys.stderr.write(
                 f"[v6] DALL-E fallback succeeded: {fallback_result['output_path']} "

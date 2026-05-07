@@ -150,10 +150,17 @@ def fetch_prtimes_search():
     """PR TIMES — K-POPポップアップのプレスリリース検索"""
     items = []
     search_queries = [
+        # ポップアップ
         'K-POP ポップアップ', '韓国 ポップアップストア', 'K-POP コラボカフェ',
         'BTS ポップアップ', 'BLACKPINK ポップアップ', 'NewJeans ポップアップ',
         'aespa ポップアップ', 'TWICE ポップアップ', 'SEVENTEEN ポップアップ',
         'OLIVE YOUNG ポップアップ', '韓国コスメ ポップアップ',
+        # ライブ・イベント (2026-05-01追加)
+        'K-POP ライブ 日本', 'K-POP コンサート 来日', 'K-POP ファンミーティング',
+        'BTS ライブ', 'BLACKPINK ツアー', 'SEVENTEEN ライブ',
+        'Stray Kids ツアー', 'aespa コンサート', 'ENHYPEN ライブ',
+        'IVE コンサート', 'LE SSERAFIM ライブ', 'TWICE ライブ',
+        'K-POP フェス 2026', 'K-POP イベント',
     ]
     for q in search_queries:
         url = f'https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word={urllib.request.quote(q)}'

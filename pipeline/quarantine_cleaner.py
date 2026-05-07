@@ -190,6 +190,15 @@ def process(entry, dry_run=False):
     if source_url:
         body += f'\n<h2>情報ソース</h2>\n<p><a href="{source_url}" target="_blank" rel="noopener">{source_url[:60]}</a></p>'
 
+    # 捏造ブロックリスト確認
+    try:
+        import json as _j2
+        _bl = set(_j2.load(open('/home/aiuser/kpop-ai-system/data/factcheck_blocked.json')).get('blocked_ids', []))
+        if pid in _bl:
+            print(f"  [{pid}] SKIP: 捏造ブロック済み")
+            return 'blocked', '捏造ブロックリストに該当'
+    except Exception:
+        pass
     r = _wp_update(pid, {'content': body, 'status': 'publish'})
     if r and r.get('status') == 'publish':
         try:

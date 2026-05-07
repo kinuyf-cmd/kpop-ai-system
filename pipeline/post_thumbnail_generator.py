@@ -146,17 +146,28 @@ def _upload_to_wp(img_path: str, post_id: int, title: str, endpoint: str) -> boo
 
 def _dalle_fallback(post_id: int, title: str, body: str) -> str:
     """教訓#59: v6 score<90時のDALL-Eフォールバック
-    記事タイトル+本文からテーマに合った画像を生成"""
+    テーマ分類からプロンプトを取得し、テーマに合った画像を生成"""
     try:
         from lib.dalle_thumbnail_gen import generate_thumbnail
         from PIL import Image
 
-        # タイトルから英語プロンプト生成
-        prompt = (
-            f"A professional editorial thumbnail image for a K-pop/Korean culture article titled '{title}'. "
-            f"Modern, vibrant, magazine-quality photo composition, 1200x675 aspect ratio. "
-            f"No text overlay, no faces of real people. Korean pop culture aesthetic."
-        )
+        # テーマ分類からDALL-Eプロンプトを取得 (テーマ別プロンプトを優先)
+        prompt = ""
+        try:
+            from lib.article_topic_classifier import classify_theme
+            theme_result = classify_theme(title, body)
+            prompt = theme_result.get("theme_config", {}).get("dalle_prompt", "")
+            theme_name = theme_result.get("theme", "general")
+            print(f"     DALL-E theme={theme_name}")
+        except Exception:
+            pass
+
+        if not prompt:
+            prompt = (
+                "Modern K-pop magazine editorial, abstract musical and cultural elements, "
+                "pink coral and lavender gradient, minimal elegant composition, "
+                "16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
+            )
 
         out_dir = f"/tmp/dalle_fallback_{post_id}"
         os.makedirs(out_dir, exist_ok=True)
@@ -247,6 +258,17 @@ def generate_and_attach(post):
 
 def regenerate_for_post(post_id: int, force: bool = False) -> dict:
     """既存記事のサムネをv6で再生成 (外部呼び出し用)"""
+    # まず記事データを取得
+    try:
+        url = (
+            f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}"
+            f"?_fields=id,title,content,featured_media"
+        )
+        req = urllib.request.Request(url, headers={"Authorization": f"Basic {AUTH}"})
+        post = json.loads(urllib.request.urlopen(req, timeout=15).read())
+    except Exception as e:
+        return {"success": False, "error": f"WP fetch: {e}"}
+
     # 保護: 既にYouTube MV画像が設定済みなら再生成しない (DALL-E上書き防止)
     if not force:
         existing_fm = post.get("featured_media", 0)
@@ -260,16 +282,6 @@ def regenerate_for_post(post_id: int, force: bool = False) -> dict:
                     print(f"  skip_if_youtube: 既存v6 MV画像を保持 ({_m_file})")
                     return {"success": True, "verdict": "SKIP", "reason": "existing_v6_mv_preserved"}
             except: pass
-
-    try:
-        url = (
-            f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}"
-            f"?_fields=id,title,content,featured_media"
-        )
-        req = urllib.request.Request(url, headers={"Authorization": f"Basic {AUTH}"})
-        post = json.loads(urllib.request.urlopen(req, timeout=15).read())
-    except Exception as e:
-        return {"success": False, "error": f"WP fetch: {e}"}
 
     title_obj = post.get("title", {})
     title = title_obj.get("rendered", "") if isinstance(title_obj, dict) else str(title_obj)
