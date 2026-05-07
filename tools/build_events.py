@@ -107,7 +107,15 @@ if os.path.exists(MANUAL):
 
 # 2) trend_signals.jsonl から ticket_guide + PRTIMES (K-POP allow-list)
 # PRTIMES再有効化 2026-05-07: 厳格K-POPフィルタ (ARTIST + KPOP_EVENT_TERMS 両方マッチ) で誤検出防止
-ticket_skipped_no_date = 0
+# tickebo enrichment 2026-05-07: og:titleに日付がないため /web/api/evt/sales-list を直接叩いて公演詳細取得
+import sys as _sys
+_sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+from lib.ticket_enricher import fetch_tickebo_performances
+
+tickebo_seen_ids = set()
+tickebo_enriched = 0
+tickebo_404 = 0
+prtimes_added = 0
 if os.path.exists(SIGNALS):
     with open(SIGNALS, encoding='utf-8') as f:
         for line in f:
@@ -118,12 +126,38 @@ if os.path.exists(SIGNALS):
             src = sig.get('source')
             title = sig.get('title', '')
             if src == 'ticket_guide':
-                ev = extract_event(title, sig.get('url', ''), src)
-                if ev:
-                    items.append(ev)
-                elif ARTIST.search(title):
-                    # tickebo og:title に日付がないケース。次回以降の手動キュレーション候補
-                    ticket_skipped_no_date += 1
+                # tickebo: raw_data.event_id を使ってAPI enrichment
+                eid = (sig.get('raw_data') or {}).get('event_id')
+                if eid and sig.get('source_id') == 'tickebo':
+                    if eid in tickebo_seen_ids:
+                        continue
+                    tickebo_seen_ids.add(eid)
+                    enriched = fetch_tickebo_performances(int(eid))
+                    if enriched is None:
+                        tickebo_404 += 1
+                        continue
+                    artist = enriched.get('performers', [''])[0] if enriched.get('performers') else ''
+                    base_title = enriched.get('title') or title
+                    enrich_url = sig.get('url', f'https://ticket.tickebo.jp/show/event.html?info={eid}')
+                    for perf in enriched.get('performances', []):
+                        if not perf.get('date') or not perf.get('venue'):
+                            continue
+                        items.append({
+                            'title': base_title,
+                            'date': perf['date'],
+                            'venue': perf['venue'],
+                            'artist': artist,
+                            'url': enrich_url,
+                            'source': 'ticket_guide',
+                            'open_time': perf.get('open_time', ''),
+                            'start_time': perf.get('start_time', ''),
+                        })
+                        tickebo_enriched += 1
+                else:
+                    # PIA等の非tickebo ticket_guide: 従来のtitle regex
+                    ev = extract_event(title, sig.get('url', ''), src)
+                    if ev:
+                        items.append(ev)
             elif src == 'prtimes':
                 # K-POP判定: 既知アーティスト名 + イベント関連語 両方必須
                 if not (ARTIST.search(title) and KPOP_EVENT_TERMS.search(title)):
@@ -131,10 +165,13 @@ if os.path.exists(SIGNALS):
                 ev = extract_event(title, sig.get('url', ''), src)
                 if ev:
                     items.append(ev)
+                    prtimes_added += 1
             else:
                 continue
-if ticket_skipped_no_date:
-    print(f"ticket_guide: {ticket_skipped_no_date}件 K-POP関連だが日付不明→手動キュレーション要")
+if tickebo_enriched or tickebo_404:
+    print(f"tickebo enrichment: {tickebo_enriched}公演 取得 / {tickebo_404}件 404")
+if prtimes_added:
+    print(f"prtimes: {prtimes_added}件 K-POP allow-list通過")
 
 # 3) event カテゴリ記事
 auth = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
@@ -162,13 +199,28 @@ try:
 except Exception as e:
     print(f"article fetch error: {e}")
 
-# 重複除去
+# 重複除去 (会場名の表記ゆれを正規化してdedup: 全角/半角・空白・session prefix・ローマ字↔漢字)
+def _normalize_venue(v: str) -> str:
+    v = re.sub(r'^【[^】]*】\s*', '', v)  # 「【1部】京王アリーナTOKYO」 → 「京王アリーナTOKYO」
+    v = re.sub(r'\s+', '', v)
+    v = v.lower()
+    aliases = {
+        # ローマ字 ↔ 漢字
+        'keioarenatokyo': '京王アリーナtokyo',
+        # 略称統一
+        '国立代々木競技場第一体育館': '代々木第一体育館',
+        '代々木第一体育館': '代々木第一体育館',
+        # 会場の館号バリエーション
+        'マリンメッセ福岡b館': 'マリンメッセ福岡',
+    }
+    return aliases.get(v, v)
+
 seen = set()
 unique = []
 for it in items:
     if not it.get('date') or not it.get('venue'):
         continue
-    key = f"{it.get('artist', '')}-{it['date']}-{it['venue']}"
+    key = f"{it.get('artist', '')}-{it['date']}-{_normalize_venue(it['venue'])}"
     if key in seen:
         continue
     seen.add(key)
