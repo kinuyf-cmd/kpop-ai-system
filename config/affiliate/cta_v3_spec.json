@@ -1,0 +1,24 @@
+{
+  "version": "1.1",
+  "date": "2026-05-04",
+  "title": "GA4計測拡張仕様 (Tracking Extension)",
+  "scope": "5/3達成済「真100点版CTA」(全631記事展開済)に対する計測機能の追加仕様。CTAデザイン本体には変更なし。",
+  "supersedes": "5/4セッションで誤って作成した「100点CTAテンプレv1.0」。同設計は5/3達成済仕様より劣るため廃棄。",
+  "base_cta_reference": {
+    "deployed_date": "2026-05-03",
+    "deployment_count": "全631記事",
+    "templates": ["eSIM", "エアトリ", "Prime Video", "Qoo10", "Amazon"]
+  },
+  "tracking_extensions": {
+    "data_attributes": ["data-cta-id", "data-cta-tier", "data-cta-position", "data-cta-variant", "data-a8mat"],
+    "click_event": "gtag('event','cta_click',{cta_id,cta_tier,cta_position,cta_variant,page_path})",
+    "view_event": "gtag('event','cta_view',...) via IntersectionObserver in /public/js/cta-tracking.js",
+    "ctr_formula": "cta_click / cta_view (position別/variant別)"
+  },
+  "deployment_status": {
+    "ga4_tracking_added": "591件",
+    "cta_position_added": "591件",
+    "view_observer": "全公開記事 (cta-tracking.js in layout.tsx)"
+  },
+  "abandoned_v1_notes": "LL-KP-141参照。5/3達成済仕様を失念し再発明。計測拡張のみに役割限定。"
+}

@@ -73,14 +73,25 @@
     {
       "id": "itzy_world_tour_japan_may",
       "type": "concert",
-      "title": "ITZY 3RD WORLD TOUR TUNNEL VISION",
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION> in JAPAN",
       "date_start": "2026-05-09",
       "date_end": "2026-05-10",
-      "venue": "TBA",
-      "city": "TBA",
-      "priority": "A",
+      "venue": "京王アリーナ TOKYO",
+      "city": "東京",
+      "official_url": "https://www.itzyjapan.com/feature/3rd_worldtour_TUNNELVISION",
+      "priority": "S",
+      "ticket_price": "¥15,000（指定席）/ ¥14,500（立見）",
+      "times": {
+        "2026-05-09": "開場16:30 / 開演17:30",
+        "2026-05-10": "開場15:00 / 開演16:00"
+      },
+      "note": "YEJI腰椎椎間板ヘルニアのためパフォーマンス制限あり（2026-05-05公式発表）。未就学児入場不可。チケット転売禁止。問合せ: キョードー横浜 045-671-9911",
       "tags": [
-        "ITZY"
+        "ITZY",
+        "YEJI",
+        "ワールドツアー",
+        "TUNNEL VISION",
+        "Kアリーナ横浜"
       ]
     },
     {
@@ -200,8 +211,1344 @@
       "confidence": "high",
       "source_count": 1,
       "collected_at": "2026-05-01T06:30:04.759569"
+    },
+    {
+      "title": "ITZY 3RD WORLD TOUR <TUNNEL VISION>",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-10",
+      "venue": "京王アリーナTOKYO",
+      "city": "東京",
+      "type": "concert",
+      "tags": [
+        "ITZY"
+      ],
+      "id": "concert_itzy_20260509",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346533"
+    },
+    {
+      "title": "SEVENTEEN 2026 JAPAN FANMEETING 'YAKUSOKU'",
+      "date_start": "2026-05-13",
+      "date_end": "2026-05-24",
+      "venue": "東京ドーム / 京セラドーム大阪",
+      "city": "東京・大阪",
+      "type": "concert",
+      "tags": [
+        "SEVENTEEN"
+      ],
+      "id": "concert_seventeen_20260513",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346562"
+    },
+    {
+      "title": "TXT 2026 MOA CON",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-28",
+      "venue": "IG Arena / LaLa arena TOKYO-BAY",
+      "city": "愛知・千葉",
+      "type": "concert",
+      "tags": [
+        "TXT"
+      ],
+      "id": "concert_txt_20260523",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346569"
+    },
+    {
+      "title": "2PM Japan 15th Anniversary Concert 'THE RETURN'",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-10",
+      "venue": "東京ドーム",
+      "city": "東京",
+      "type": "concert",
+      "tags": [
+        "2PM"
+      ],
+      "id": "concert_2pm_20260509",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346574"
+    },
+    {
+      "title": "MONSTA X WORLD TOUR [THE X：NEXUS]",
+      "date_start": "2026-04-28",
+      "date_end": "2026-05-04",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "MONSTA X"
+      ],
+      "id": "concert_monsta_x_20260428",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346583"
+    },
+    {
+      "title": "DAY6 10th Anniversary Tour <The DECADE>",
+      "date_start": "2026-04-25",
+      "date_end": "2026-06-21",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "DAY6"
+      ],
+      "id": "concert_day6_20260425",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346588"
+    },
+    {
+      "title": "イェソン（SUPER JUNIOR）LIVE TOUR『咲き誇る時を待つのは』",
+      "date_start": "2026-05-05",
+      "date_end": "2026-05-30",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "SUPER JUNIOR",
+        "イェソン"
+      ],
+      "id": "concert_super_junior_20260505",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346593"
+    },
+    {
+      "title": "2NE1 / TEN K*Pop Masterz SPECIAL LIVE in JAPAN 2026",
+      "date_start": "2026-05-20",
+      "date_end": "2026-05-21",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "2NE1",
+        "TEN"
+      ],
+      "id": "concert_2ne1_20260520",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346597"
+    },
+    {
+      "title": "ジェジュン ZEPP & HALL LIVE TOUR",
+      "date_start": "2026-05-23",
+      "date_end": "2026-07-26",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "ジェジュン"
+      ],
+      "id": "concert_ジェジュン_20260523",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346605"
+    },
+    {
+      "title": "ASIA STAR ENTERTAINER AWARDS 2026 (ASEA)",
+      "date_start": "2026-05-15",
+      "date_end": "2026-05-16",
+      "venue": "",
+      "city": "",
+      "type": "festival",
+      "tags": [
+        "ASEA"
+      ],
+      "id": "concert_asea_20260515",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346611"
+    },
+    {
+      "title": "オンユ（SHINee）2026 FANMEETING [TOUGH LOVE]",
+      "date_start": "2026-04-24",
+      "date_end": "2026-05-14",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "SHINee",
+        "オンユ"
+      ],
+      "id": "concert_shinee_20260424",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346619"
+    },
+    {
+      "title": "チェ・ジョンヒョプ Fanmeeting in JAPAN 'THE WAY for US'",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-24",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "チェ・ジョンヒョプ"
+      ],
+      "id": "concert_チェ・ジョンヒョプ_20260523",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346624"
+    },
+    {
+      "title": "iKON FOUREVER TOUR 日本公演",
+      "date_start": "2026-06-13",
+      "date_end": "2026-08-02",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "iKON"
+      ],
+      "id": "concert_ikon_20260613",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346629"
+    },
+    {
+      "title": "(G)I-DLE WORLD TOUR [Syncopation] IN YOKOHAMA",
+      "date_start": "2026-06-20",
+      "date_end": "2026-06-21",
+      "venue": "Kアリーナ横浜",
+      "city": "横浜",
+      "type": "concert",
+      "tags": [
+        "(G)I-DLE"
+      ],
+      "id": "concert_gi-dle_20260620",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346633"
+    },
+    {
+      "title": "KISS OF LIFE ASIA FANMEETING TOUR <DEJA VU> IN TOKYO",
+      "date_start": "2026-06-27",
+      "date_end": "2026-06-27",
+      "venue": "",
+      "city": "東京",
+      "type": "concert",
+      "tags": [
+        "KISS OF LIFE"
+      ],
+      "id": "concert_kiss_of_life_20260627",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346637"
+    },
+    {
+      "title": "NCT ジェノ・ジェミン FANMEETING TOUR [DUALITY]",
+      "date_start": "2026-06-27",
+      "date_end": "2026-06-28",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "NCT"
+      ],
+      "id": "concert_nct_20260627",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346641"
+    },
+    {
+      "title": "KARA JAPAN FANMEETING：Hello, KAMILIA!",
+      "date_start": "2026-07-04",
+      "date_end": "2026-07-05",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "KARA"
+      ],
+      "id": "concert_kara_20260704",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346645"
+    },
+    {
+      "title": "BABYMONSTER WORLD TOUR [CHOOM] IN JAPAN",
+      "date_start": "2026-07-08",
+      "date_end": "2026-09-23",
+      "venue": "神戸・福岡・横浜・千葉・名古屋・大阪",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "BABYMONSTER"
+      ],
+      "id": "concert_babymonster_20260708",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346649"
+    },
+    {
+      "title": "LE SSERAFIM TOUR 'PUREFLOW' IN JAPAN",
+      "date_start": "2026-07-25",
+      "date_end": "2026-09-03",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "LE SSERAFIM"
+      ],
+      "id": "concert_le_sserafim_20260725",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346652"
+    },
+    {
+      "title": "ATEEZ FANMEETING ATINY'S VOYAGE IN JAPAN",
+      "date_start": "2026-08-04",
+      "date_end": "2026-08-06",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "ATEEZ"
+      ],
+      "id": "concert_ateez_20260804",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346658"
+    },
+    {
+      "title": "イトゥク・ヒチョル 83z FAN-CON TOUR [1983] IN JAPAN",
+      "date_start": "2026-08-01",
+      "date_end": "2026-08-02",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "SUPER JUNIOR"
+      ],
+      "id": "concert_super_junior_20260801",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346662"
+    },
+    {
+      "title": "2026 MAMA AWARDS",
+      "date_start": "2026-11-20",
+      "date_end": "2026-11-21",
+      "venue": "",
+      "city": "",
+      "type": "festival",
+      "tags": [
+        "MAMA"
+      ],
+      "id": "concert_mama_20261120",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346666"
+    },
+    {
+      "title": "ENHYPEN WORLD TOUR 'BLOOD SAGA'",
+      "date_start": "2026-12-01",
+      "date_end": "2027-02-20",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "ENHYPEN"
+      ],
+      "id": "concert_enhypen_20261201",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346670"
+    },
+    {
+      "title": "ZELO FANCONCERT [COMIGO:NEXT CHAPTER] in Japan",
+      "date_start": "2026-05-16",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "ZELO"
+      ],
+      "id": "concert_zelo_20260516",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346675"
+    },
+    {
+      "title": "DKB FanConcert in Japan 2026 -Signal-",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-29",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "DKB"
+      ],
+      "id": "concert_dkb_20260523",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346679"
+    },
+    {
+      "title": "ヒョビン LIVE in JAPAN 2026 -BINZ: 528Hz",
+      "date_start": "2026-05-02",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "type": "concert",
+      "tags": [
+        "ヒョビン"
+      ],
+      "id": "concert_ヒョビン_20260502",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346683"
+    },
+    {
+      "title": "ILLIT ライブ『PRESS START❤』",
+      "date_start": "2026-07-18",
+      "date_end": "2026-07-26",
+      "venue": "神戸・東京",
+      "city": "神戸・東京",
+      "type": "concert",
+      "tags": [
+        "ILLIT"
+      ],
+      "id": "concert_illit_20260718",
+      "priority": "A",
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea/reaction-idols",
+      "collected_at": "2026-05-01T22:09:19.346688"
+    },
+    {
+      "id": "wow_afterimage_20260328",
+      "type": "event",
+      "title": "Afterimage［残像］",
+      "date_start": "2026-03-28",
+      "date_end": "2026-05-12",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20599.html",
+      "collected_at": "2026-05-01T22:14:18.005622"
+    },
+    {
+      "id": "wow_plavegratte_20260414",
+      "type": "comeback",
+      "title": "PLAVEアルバム発売記念×Gratte",
+      "date_start": "2026-04-14",
+      "date_end": "2026-05-31",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "PLAVE"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20628.html",
+      "collected_at": "2026-05-01T22:14:18.005677"
+    },
+    {
+      "id": "wow_lesserafimvrconce_20260415",
+      "type": "concert",
+      "title": "LE SSERAFIM VR CONCERT：INVITATION",
+      "date_start": "2026-04-15",
+      "date_end": "2026-05-14",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20606.html",
+      "collected_at": "2026-05-01T22:14:18.005723"
+    },
+    {
+      "id": "wow_waker3rdminialbum_20260415",
+      "type": "event",
+      "title": "WAKER 3rd MINI ALBUM JAPAN RELEASE EVENT &quot;IN ELIXIR: SPELL BOUND&quot;",
+      "date_start": "2026-04-15",
+      "date_end": "2026-05-01",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "WAKER"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20593.html",
+      "collected_at": "2026-05-01T22:14:18.005756"
+    },
+    {
+      "id": "wow_inaminutespecial_20260418",
+      "type": "concert",
+      "title": "In A Minute SPECIAL JAPAN LIVE 2026 Who Do You Love? : I Need You",
+      "date_start": "2026-04-18",
+      "date_end": "2026-05-10",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "In A Minute"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20592.html",
+      "collected_at": "2026-05-01T22:14:18.005788"
+    },
+    {
+      "id": "wow_2026onewfanmeeting_20260424",
+      "type": "concert",
+      "title": "2026 ONEW FANMEETING [TOUGH LOVE] IN JAPAN",
+      "date_start": "2026-04-24",
+      "date_end": "2026-05-14",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "オンユ（SHINee）"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20547.html",
+      "collected_at": "2026-05-01T22:14:18.005821"
+    },
+    {
+      "id": "wow_aimersliveintokyo_20260425",
+      "type": "concert",
+      "title": "AIMERS Live in Tokyo &lt;Forever Ever&gt; : [ZERØ BACK]",
+      "date_start": "2026-04-25",
+      "date_end": "2026-05-10",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "AIMERS"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20607.html",
+      "collected_at": "2026-05-01T22:14:18.005855"
+    },
+    {
+      "id": "wow_cmdmliveinjapan2_20260426",
+      "type": "concert",
+      "title": "CMDM Live In Japan 2026 - Chain & Link -",
+      "date_start": "2026-04-26",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "CMDM"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20615.html",
+      "collected_at": "2026-05-01T22:14:18.005896"
+    },
+    {
+      "id": "wow_genusspecialjapan_20260429",
+      "type": "concert",
+      "title": "GENUS SPECIAL JAPAN LIVE 2026 SUGAR WAVE",
+      "date_start": "2026-04-29",
+      "date_end": "2026-06-07",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "GENUS"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20624.html",
+      "collected_at": "2026-05-01T22:14:18.005937"
+    },
+    {
+      "id": "wow_hyobinliveinjapan_20260502",
+      "type": "concert",
+      "title": "HYOBIN LIVE in JAPAN 2026 -BINZ: 528Hz-",
+      "date_start": "2026-05-02",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ヒョビン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20627.html",
+      "collected_at": "2026-05-01T22:14:18.005969"
+    },
+    {
+      "id": "wow_superjunioryesung_20260505",
+      "type": "concert",
+      "title": "SUPER JUNIOR-YESUNG LIVE TOUR 『咲き誇る時を待つのは』",
+      "date_start": "2026-05-05",
+      "date_end": "2026-05-30",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "イェソン（SUPER JUNIOR）"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20618.html",
+      "collected_at": "2026-05-01T22:14:18.006008"
+    },
+    {
+      "id": "wow_onepact1stfanmeet_20260505",
+      "type": "concert",
+      "title": "ONE PACT 1st FANMEETING in TOKYO THE GOLDEN DAY",
+      "date_start": "2026-05-05",
+      "date_end": "2026-05-05",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ONE PACT"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20590.html",
+      "collected_at": "2026-05-01T22:14:18.006042"
+    },
+    {
+      "id": "wow_quotspringwithy_20260506",
+      "type": "concert",
+      "title": "&quot;Spring, With You&quot; LEE SIN YOUNG JAPAN FANMEETING 2026",
+      "date_start": "2026-05-06",
+      "date_end": "2026-05-06",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "イ・シニョン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20594.html",
+      "collected_at": "2026-05-01T22:14:18.006089"
+    },
+    {
+      "id": "wow_2026wooseung1stfa_20260508",
+      "type": "concert",
+      "title": "2026 WOOSEUNG 1st Fanmeeting in Osaka: [MAY BE]",
+      "date_start": "2026-05-08",
+      "date_end": "2026-05-10",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "WOOSEUNG"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20617.html",
+      "collected_at": "2026-05-01T22:14:18.006126"
+    },
+    {
+      "id": "wow_boyfriendthe6thmi_20260508",
+      "type": "event",
+      "title": "BOYFRIEND The 6th Mini Album [Boyager 6] PRE-ORDER JAPAN RELEASE EVENT",
+      "date_start": "2026-05-08",
+      "date_end": "2026-05-10",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "BOYFRIEND"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20639.html",
+      "collected_at": "2026-05-01T22:14:18.006162"
+    },
+    {
+      "id": "wow_2026kimjonghyeonf_20260509",
+      "type": "concert",
+      "title": "2026 KIM JONGHYEON FANMEETING [COMING HOME] in Tokyo",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-09",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "キム・ジョンヒョン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20631.html",
+      "collected_at": "2026-05-01T22:14:18.006202"
+    },
+    {
+      "id": "wow_adapdebutmissionp_20260509",
+      "type": "concert",
+      "title": "ADAP DEBUT MISSION PROMOTION JAPAN LIVE 2026 PART.1",
+      "date_start": "2026-05-09",
+      "date_end": "2026-05-31",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ADAP"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20632.html",
+      "collected_at": "2026-05-01T22:14:18.006269"
+    },
+    {
+      "id": "wow_2026kimseonhofanm_20260510",
+      "type": "concert",
+      "title": "2026 KIM SEONHO FANMEETING &lt;LOVE FACTORY&gt; in Japan",
+      "date_start": "2026-05-10",
+      "date_end": "2026-05-10",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "キム・ソンホ"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20577.html",
+      "collected_at": "2026-05-01T22:14:18.006305"
+    },
+    {
+      "id": "wow_adapdebutmission_20260513",
+      "type": "concert",
+      "title": "ADAP DEBUT MISSION 突破記念 JAPAN FANMEETING 2026 DREAM ARE POSSIBLE",
+      "date_start": "2026-05-13",
+      "date_end": "2026-05-15",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ADAP"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20601.html",
+      "collected_at": "2026-05-01T22:14:18.006348"
+    },
+    {
+      "id": "wow_ukbirthdaylive202_20260514",
+      "type": "concert",
+      "title": "UK BIRTHDAY LIVE 2026",
+      "date_start": "2026-05-14",
+      "date_end": "2026-05-14",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "UK"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20620.html",
+      "collected_at": "2026-05-01T22:14:18.006386"
+    },
+    {
+      "id": "wow_2ujapanfanmeeting_20260514",
+      "type": "concert",
+      "title": "2U JAPAN FANMEETING 2026 2U know me?",
+      "date_start": "2026-05-14",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "キソプ",
+        "フン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20621.html",
+      "collected_at": "2026-05-01T22:14:18.006425"
+    },
+    {
+      "id": "wow_2026chajunhwanto_20260515",
+      "type": "concert",
+      "title": "2026 CHA JUN HWAN TOKYO FANMEETING &lt;Not a Dream&gt;",
+      "date_start": "2026-05-15",
+      "date_end": "2026-05-15",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "チャ・ジュンファン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20633.html",
+      "collected_at": "2026-05-01T22:14:18.006479"
+    },
+    {
+      "id": "wow_2026_20260516",
+      "type": "event",
+      "title": "2026 アン・ジェヒョン イベント",
+      "date_start": "2026-05-16",
+      "date_end": "2026-05-16",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "アン・ジェヒョン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20544.html",
+      "collected_at": "2026-05-01T22:14:18.006514"
+    },
+    {
+      "id": "wow_thecolorkentaco_20260517",
+      "type": "concert",
+      "title": "THE COLOR - KENTA Collaboration Live Vol.2",
+      "date_start": "2026-05-17",
+      "date_end": "2026-05-17",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "KENTA",
+        "よんふん"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20625.html",
+      "collected_at": "2026-05-01T22:14:18.006574"
+    },
+    {
+      "id": "wow_kpopmasterzpresen_20260520",
+      "type": "concert",
+      "title": "K*Pop Masterz Presents 2NE1 &TEN SPECIAL LIVE in JAPAN 2026",
+      "date_start": "2026-05-20",
+      "date_end": "2026-05-21",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "「2NE1」",
+        "TEN（NCT・WayV）"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20610.html",
+      "collected_at": "2026-05-01T22:14:18.006615"
+    },
+    {
+      "id": "wow_2026thechimiroin_20260521",
+      "type": "event",
+      "title": "2026 THE CHIMIRO IN JAPAN",
+      "date_start": "2026-05-21",
+      "date_end": "2026-07-25",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "CHIMIRO"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20635.html",
+      "collected_at": "2026-05-01T22:14:18.006663"
+    },
+    {
+      "id": "wow_ntxspecialliveedi_20260522",
+      "type": "concert",
+      "title": "NTX SPECIAL LIVE EDITION JAPAN LIVE 2026",
+      "date_start": "2026-05-22",
+      "date_end": "2026-05-24",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "NTX"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20638.html",
+      "collected_at": "2026-05-01T22:14:18.006703"
+    },
+    {
+      "id": "wow_2026jaejoongzepp_20260523",
+      "type": "concert",
+      "title": "2026 JAEJOONG ZEPP & HALL LIVE TOUR - 10%",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-23",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ジェジュン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20586.html",
+      "collected_at": "2026-05-01T22:14:18.006763"
+    },
+    {
+      "id": "wow_2026kanginfanmeeti_20260523",
+      "type": "concert",
+      "title": "2026 KANGIN FANMEETING TOUR: STUNNING TOGETHER in TOKYO",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-23",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "カンイン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20608.html",
+      "collected_at": "2026-05-01T22:14:18.006805"
+    },
+    {
+      "id": "wow_2026chaejonghyeop_20260523",
+      "type": "concert",
+      "title": "2026 CHAE JONG HYEOP Fanmeeting in JAPAN THE WAY for US",
+      "date_start": "2026-05-23",
+      "date_end": "2026-05-24",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "チェ・ジョンヒョプ"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20561.html",
+      "collected_at": "2026-05-01T22:14:18.006847"
+    },
+    {
+      "id": "wow_ikonfourevertour_20260613",
+      "type": "concert",
+      "title": "『iKON FOUREVER TOUR』日本公演",
+      "date_start": "2026-06-13",
+      "date_end": "2026-08-02",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "iKON"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20626.html",
+      "collected_at": "2026-05-01T22:14:18.006927"
+    },
+    {
+      "id": "wow_2026leejoobeen1st_20260613",
+      "type": "concert",
+      "title": "2026 LEE JOOBEEN 1st FANMEETING [JOOTOPIA] : ASIA TOUR in Tokyo",
+      "date_start": "2026-06-13",
+      "date_end": "2026-06-13",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "イ・ジュビン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20634.html",
+      "collected_at": "2026-05-01T22:14:18.006970"
+    },
+    {
+      "id": "wow_btsworldtourarir_20260613",
+      "type": "concert",
+      "title": "『BTS WORLD TOUR ARIRANG IN BUSAN』ライブビューイング",
+      "date_start": "2026-06-13",
+      "date_end": "2026-06-13",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "BTS"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20637.html",
+      "collected_at": "2026-05-01T22:14:18.007018"
+    },
+    {
+      "id": "wow_2026idleworldtou_20260620",
+      "type": "concert",
+      "title": "2026 i-dle WORLD TOUR [Syncopation] IN YOKOHAMA",
+      "date_start": "2026-06-20",
+      "date_end": "2026-06-21",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "i-dle"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20583.html",
+      "collected_at": "2026-05-01T22:14:18.007062"
+    },
+    {
+      "id": "wow_2026nctjnjmfanmee_20260627",
+      "type": "concert",
+      "title": "2026 NCT JNJM FANMEETING TOUR [DUALITY] # JAPAN",
+      "date_start": "2026-06-27",
+      "date_end": "2026-06-28",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "「NCT」ジェノ",
+        "ジェミン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20623.html",
+      "collected_at": "2026-05-01T22:14:18.007127"
+    },
+    {
+      "id": "wow_2026kimjunghyunf_20260718",
+      "type": "concert",
+      "title": "2026 KIM JUNG HYUN FANMEETING-The List of Ours-",
+      "date_start": "2026-07-18",
+      "date_end": "2026-07-18",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "キム・ジョンヒョン"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20622.html",
+      "collected_at": "2026-05-01T22:14:18.007207"
+    },
+    {
+      "id": "wow_2026lesserafimtou_20260725",
+      "type": "concert",
+      "title": "2026 LE SSERAFIM TOUR PUREFLOW IN JAPAN",
+      "date_start": "2026-07-25",
+      "date_end": "2026-09-03",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "LE SSERAFIM"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20641.html",
+      "collected_at": "2026-05-01T22:14:18.007814"
+    },
+    {
+      "id": "wow_2026superjunior83_20260801",
+      "type": "concert",
+      "title": "2026 SUPER JUNIOR 83z FAN-CON TOUR [1983] IN JAPAN",
+      "date_start": "2026-08-01",
+      "date_end": "2026-08-02",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "イトゥク",
+        "ヒチョル"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20629.html",
+      "collected_at": "2026-05-01T22:14:18.007878"
+    },
+    {
+      "id": "wow_2026choidanieleve_20260808",
+      "type": "event",
+      "title": "2026 CHOI DANIEL EVENT-One Day With You-",
+      "date_start": "2026-08-08",
+      "date_end": "2026-08-08",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "チェ・ダニエル"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20630.html",
+      "collected_at": "2026-05-01T22:14:18.007989"
+    },
+    {
+      "id": "wow_enhypenworldtourb_20261201",
+      "type": "concert",
+      "title": "ENHYPEN WORLD TOUR BLOOD SAGA",
+      "date_start": "2026-12-01",
+      "date_end": "2027-02-20",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "ENHYPEN"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source": "wowkorea",
+      "source_url": "https://www.wowkorea.jp/guide/event/read/1/20619.html",
+      "collected_at": "2026-05-01T22:14:18.008055"
+    },
+    {
+      "id": "auto_bts_20260502",
+      "type": "concert",
+      "title": "BTSツアーの米タンパ公演",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "タンパ",
+      "priority": "A",
+      "tags": [
+        "bts"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-05-02T06:30:05.279610"
+    },
+    {
+      "id": "auto_twice_20260502",
+      "type": "event",
+      "title": "TWICE初の国立競技場公演",
+      "date_start": "",
+      "date_end": "",
+      "venue": "国立競技場",
+      "city": "東京",
+      "priority": "A",
+      "tags": [
+        "TWICE"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 1,
+      "collected_at": "2026-05-02T06:30:09.568614"
+    },
+    {
+      "id": "auto_bts_20260504",
+      "type": "event",
+      "title": "BTS 釜山 コンサート",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "釜山",
+      "priority": "B",
+      "tags": [
+        "BTS"
+      ],
+      "auto_collected": true,
+      "confidence": "medium",
+      "source_count": 1,
+      "collected_at": "2026-05-04T06:30:04.038310"
+    },
+    {
+      "id": "auto_nct_20260505",
+      "type": "concert",
+      "title": "ファンコンサートツアー「Mono」",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "NCT"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-05-05T06:30:07.498877"
+    },
+    {
+      "id": "auto_day6_20260506",
+      "type": "event",
+      "title": "Unpiltered ソロコンサート",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "DAY6"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-05-06T06:30:03.704745"
+    },
+    {
+      "id": "auto_nct_20260506",
+      "type": "concert",
+      "title": "ファンコンサート「Mono」",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "NCT"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-05-06T06:30:05.514274"
+    },
+    {
+      "id": "auto_illit_20260507",
+      "type": "festival",
+      "title": "子供の日フェスティバル",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "ソウル",
+      "priority": "A",
+      "tags": [
+        "ILLIT"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 2,
+      "collected_at": "2026-05-07T06:30:05.411070"
+    },
+    {
+      "id": "auto_ive_20260507",
+      "type": "concert",
+      "title": "ARIRANGツアーコンサート",
+      "date_start": "",
+      "date_end": "",
+      "venue": "",
+      "city": "",
+      "priority": "A",
+      "tags": [
+        "IVE"
+      ],
+      "auto_collected": true,
+      "confidence": "high",
+      "source_count": 1,
+      "collected_at": "2026-05-07T06:30:09.338401"
+    },
+    {
+      "id": "auto_kpop_20260507",
+      "type": "event",
+      "title": "M COUNTDOWN X MEGACONCERT 3차 프리퀀시 이벤트",
+      "date_start": "2023-10-14",
+      "date_end": "2023-11-06",
+      "venue": "",
+      "city": "",
+      "priority": "B",
+      "tags": [
+        "kpop"
+      ],
+      "auto_collected": true,
+      "confidence": "medium",
+      "source_count": 1,
+      "collected_at": "2026-05-07T06:30:12.294889"
     }
   ],
-  "updated_at": "2026-05-01T06:30:14.259168",
+  "updated_at": "2026-05-07T06:30:12.295003",
   "note": "AI生成(confidence=medium)と手動(confidence=high)の混在。auto_event_articleはhighのみ優先参照"
 }

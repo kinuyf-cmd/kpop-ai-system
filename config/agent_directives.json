@@ -15,8 +15,8 @@
     },
     "x_post": {
       "action": "X投稿のプロンプト修正で改善余地あり。config/agent_directives.jsonまたはagents/x_post.mdを修正する",
-      "set_at": "2026-04-24",
-      "source": "auto_executor_green",
+      "set_at": "2026-05-05",
+      "source": "ceo_config_executor",
       "target_agent": "X投稿"
     },
     "deoxys_kpop": {

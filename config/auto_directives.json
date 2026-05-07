@@ -1,50 +1,383 @@
 {
-  "updated_at": "2026-05-01T09:16:44.731097",
+  "updated_at": "2026-05-07T09:23:21.131212",
   "focus_themes": [
     {
-      "topic": "BTS東京ドーム7年ぶり来日公演",
-      "hint": "ARIRANG WORLD TOUR東京ドーム公演(4/17-18)が7年ぶりの来日で大反響。カメラワーク問題でジミン関連がトレンド入り。関連: BTS。バズ予測スコア: 30.0。シグナル: x",
-      "category_suggest": "速報",
-      "added_at": "2026-04-25",
-      "source": "trend_prediction",
-      "buzz_score": 30.0,
-      "expires_at": "2026-04-28"
-    },
-    {
-      "topic": "TWICE国立競技場単独公演",
-      "hint": "4/25-26に海外アーティスト初の国立競技場公演。16万人動員で歴史的記録。関連: TWICE。バズ予測スコア: 27.0。シグナル: x",
-      "category_suggest": "速報",
-      "added_at": "2026-04-25",
-      "source": "trend_prediction",
-      "buzz_score": 27.0,
-      "expires_at": "2026-04-28"
-    },
-    {
-      "topic": "K-POPスーパーウィークエンド",
-      "hint": "4/25-26に主要グループが日本の大型会場を同時ジャック。推定42万人超動員。関連: TWICE/aespa/TVXQ/DAY6。バズ予測スコア: 27.0。シグナル: x",
-      "category_suggest": "速報",
-      "added_at": "2026-04-25",
-      "source": "trend_prediction",
-      "buzz_score": 27.0,
-      "expires_at": "2026-04-28"
-    },
-    {
-      "topic": "TWICE 国立競技場",
-      "hint": "4/25-28 MUFG STADIUM(国立競技場)3DAYS開催。海外アーティスト初の国立競技場公演、1日8万人動員。バズ予測スコア: 25.0。シグナル: google_trends",
-      "category_suggest": "来日公演",
-      "added_at": "2026-04-25",
-      "source": "trend_prediction",
+      "topic": "KCON JAPAN 2026直前｜初参加でも安心の完全持ち物チェックリスト",
+      "hint": "KCON JAPAN 2026(5/8-10幕張メッセ)の事前準備ガイド。持ち物・服装・交通・会場マップ。開催前の検索需要を狙う。",
+      "category_suggest": "kpop-news",
+      "added_at": "2026-05-02",
+      "source": "gsc_top_expansion",
       "buzz_score": 25.0,
-      "expires_at": "2026-04-28"
+      "expires_at": "2026-05-08"
     },
     {
-      "topic": "TOMORROW X TOGETHER カムバック",
-      "hint": "契約更新後初の8thミニアルバム「7TH YEAR:」リリース(4/13)。タイトル曲「Stick With You」で音楽番組出演中。関連: TXT。バズ予測スコア: 24.0。シグナル: x",
-      "category_suggest": "速報",
-      "added_at": "2026-04-25",
-      "source": "trend_prediction",
+      "topic": "Kstyle PARTY 2026完全ガイド｜出演者・タイムテーブル・座席情報",
+      "hint": "Kstyle PARTY 2026(5/9-10 Kアリーナ横浜)の事前ガイド。出演者とタイムテーブル、座席からの見え方、周辺情報。",
+      "category_suggest": "kpop-news",
+      "added_at": "2026-05-02",
+      "source": "gsc_top_expansion",
+      "buzz_score": 22.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "NCT WISHがInkigayoで1位",
+      "hint": "NCT WISHが2026-05-04のInkigayo(SBS)で1位を獲得。関連: NCT WISH。バズ予測スコア: 15.0。シグナル: music_show",
+      "category_suggest": "音楽番組",
+      "added_at": "2026-05-04",
+      "source": "music_show_monitor",
+      "buzz_score": 15.0,
+      "expires_at": "2026-05-07"
+    },
+    {
+      "topic": "Swf3 Osaka Ojo Gang Members 関連ガイド・まとめ",
+      "hint": "GSC横展開: 元記事/swf3-osaka-ojo-gang-members/ IMP=1796 CTR=0.6%。潜在+170clicks。関連キーワードで横展開記事を作成。シグナル: search_driven",
+      "category_suggest": "まとめ",
+      "added_at": "2026-05-04",
+      "source": "search_driven_expansion",
+      "buzz_score": 34.0,
+      "expires_at": "2026-05-18"
+    },
+    {
+      "topic": "Www.Kpopjournal.Tokyo 関連ガイド・まとめ",
+      "hint": "GSC横展開: 元記事/www.kpopjournal.tokyo/ IMP=1552 CTR=2.3%。潜在+120clicks。関連キーワードで横展開記事を作成。シグナル: search_driven",
+      "category_suggest": "まとめ",
+      "added_at": "2026-05-04",
+      "source": "search_driven_expansion",
       "buzz_score": 24.0,
-      "expires_at": "2026-04-28"
+      "expires_at": "2026-05-18"
+    },
+    {
+      "topic": "Bigbang Coachella 2026 Kpop Festival 関連ガイド・まとめ",
+      "hint": "GSC横展開: 元記事/bigbang-coachella-2026-kpop-festival/ IMP=1522 CTR=2.3%。潜在+117clicks。関連キーワードで横展開記事を作成。シグナル: search_driven",
+      "category_suggest": "まとめ",
+      "added_at": "2026-05-05",
+      "source": "search_driven_expansion",
+      "buzz_score": 23.4,
+      "expires_at": "2026-05-19"
+    },
+    {
+      "topic": "ITZY速報の深掘り: 【速報】ITZYのイェジ、ヘルニアでコンサート参加制限",
+      "hint": "速報「【速報】ITZYのイェジ、ヘルニアでコンサート参加制限」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ITZY’s Yeji To Limit Participation In Upcoming Concerts Due To Herniated Disc。関連: ITZY。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "YG速報の深掘り: 【速報】BABYMONSTERの失望 YGはテディ不在で苦戦",
+      "hint": "速報「【速報】BABYMONSTERの失望 YGはテディ不在で苦戦」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: BABYMONSTER Disappointment Sparks Accusations That YG Struggles Without Teddy。関連: YG。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "ENHYPEN速報の深掘り: 【速報】ENHYPENのソンフン、体重増加でボディシェイミン",
+      "hint": "速報「【速報】ENHYPENのソンフン、体重増加でボディシェイミング遭遇」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ENHYPEN’s Sunghoon Faces Online Body-Shaming After Bulking Up for Concert。関連: ENHYPEN。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "LE SSERAFIM速報の深掘り: 【速報】LE SSERAFIMが新曲「PUREFLOW」カム",
+      "hint": "速報「【速報】LE SSERAFIMが新曲「PUREFLOW」カムバック発表」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: LE SSERAFIM announces comeback with promotions schedule chart for 'PUREFLOW'。関連: LE SSERAFIM。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "케이팝速報の深掘り: 【速報】Mnet新ダンスプログラムでパフォーマンスディレクタ",
+      "hint": "速報「【速報】Mnet新ダンスプログラムでパフォーマンスディレクター競争」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 최근 케이팝 씬에서는 안무 구성을 넘어 동선, 연출, 무대 활용까지 총괄하는 퍼포먼스 디렉터의 역할이 중요해지고 있다. 시청자들은 ‘스트릿’..。関連: 케이팝。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "FIFTY FIFTY速報の深掘り: 【速報】FIFTY FIFTY、夏のカムバック発表とハナ不参",
+      "hint": "速報「【速報】FIFTY FIFTY、夏のカムバック発表とハナ不参加」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: FIFTY FIFTY Announces Summer Comeback + Hana Unable To Participate Due To Health。関連: FIFTY FIFTY。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "지드래곤速報の深掘り: 【速報】ジドゥレゴン、黒人差別Tシャツ論争謝罪",
+      "hint": "速報「【速報】ジドゥレゴン、黒人差別Tシャツ論争謝罪」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 지드래곤, 흑인 비하 티셔츠 논란..\"실망시켜 죄송, 면밀히 살필 것\" [공식]。関連: 지드래곤。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "NCT速報の深掘り: 【速報】NCT テヨン、聖水洞で美貌を披露",
+      "hint": "速報「【速報】NCT テヨン、聖水洞で美貌を披露」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: &quot;금발이 반짝&quot; NCT 태용, 성수동 아침 밝히는 미모。関連: NCT。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "블랙핑크速報の深掘り: 【速報】カン・ミンギョン「1人旅行」動画操作論争釈明",
+      "hint": "速報「【速報】カン・ミンギョン「1人旅行」動画操作論争釈明」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 강민경, 럭셔리 '1인 여행' 영상 조작논란…결국 \"혼자 맞아\" 직접 해명 [엑's 이슈]\n\n\n\n\n\n\n\n\n\n\n\n블랙핑크 지수, 의상 미반환 의혹。関連: 블랙핑크。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "엠넷速報の深掘り: 【速報】Mnet、「第68回グラミー賞」を独占生中継",
+      "hint": "速報「【速報】Mnet、「第68回グラミー賞」を独占生中継」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ‘제68회 그래미 어워드’ 엠넷-엠넷플러스로 만난다..2월 2일 독점 생중...헤럴드뮤즈2026.01.30.네이버뉴스엠넷, '제68회 그래미 어。関連: 엠넷。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "ILLIT速報の深掘り: 【速報】ILLITユナ、運転免許取得を発表",
+      "hint": "速報「【速報】ILLITユナ、運転免許取得を発表」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ILLIT ユナ、運転免許を取得したことを明かす！「もう夜でも雨の道でも運転できる」（動画あり）2026/05/06 13:49Billlie、デビュー後初のフ。関連: ILLIT。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "TWICE速報の深掘り: 【速報】ILLIT、日本の音楽フェス中止で韓国帰国",
+      "hint": "速報「【速報】ILLIT、日本の音楽フェス中止で韓国帰国」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 【PHOTO】ILLIT、日本の音楽フェスが中止に…韓国に到着【PHOTO】ALPHA DRIVE ONE、海外スケジュールを終えて韓国に到着【PHOTO】NC。関連: TWICE。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "에릭남速報の深掘り: 【速報】エリック・ナムが健康問題と活動状況を語る",
+      "hint": "速報「【速報】エリック・ナムが健康問題と活動状況を語る」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 에릭남 '돌연' 사라진 이유 밝혔다..\"\"공황장애. 팔.다리. 얼굴 마비\" ('제이키아웃')。関連: 에릭남。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "K-POP速報の深掘り: 【速報】IU、こどもの日に子役たちへサプライズプレゼント",
+      "hint": "速報「【速報】IU、こどもの日に子役たちへサプライズプレゼント」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: IU、こどもの日を迎え「おつかれさま」で共演した子役俳優たちにサプライズ！手紙とプレゼントを用意2026/05/06 13:46K-POPの新星「UNCHILD。関連: K-POP。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "HYBE速報の深掘り: 【速報】HybeとGeffen、多国籍ガールグループ最終選定",
+      "hint": "速報「【速報】HybeとGeffen、多国籍ガールグループ最終選定へ」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: Hybe and Geffen’s multinational girl group nears final lineup selection。関連: HYBE。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-06",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-09"
+    },
+    {
+      "topic": "Lesserafim Comeback October 2025 関連ガイド・まとめ",
+      "hint": "GSC横展開: 元記事/lesserafim-comeback-october-2025/ IMP=1342 CTR=0.3%。潜在+130clicks。関連キーワードで横展開記事を作成。シグナル: search_driven",
+      "category_suggest": "まとめ",
+      "added_at": "2026-05-07",
+      "source": "search_driven_expansion",
+      "buzz_score": 26.0,
+      "expires_at": "2026-05-21"
+    },
+    {
+      "topic": "소녀시대速報の深掘り: 【速報】少女時代スヨン 父の闘病とメンバー支え",
+      "hint": "速報「【速報】少女時代スヨン 父の闘病とメンバー支え」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 수영 &ldquo;부친 15년 투병 끝 실명&hellip;소녀시대 멤버들이 짐 나눠 들어줬다&rdquo; 뭉클。関連: 소녀시대。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "TWS速報の深掘り: 【速報】NEXZが「Show Champion」で初勝利を獲",
+      "hint": "速報「【速報】NEXZが「Show Champion」で初勝利を獲得」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: Watch: NEXZ Takes Tearful 1st-Ever Win On &#8220;Show Champion&#8221; With &#822。関連: TWS。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "아이돌速報の深掘り: 【速報】キム・ミンギョン「6年無職」から「パジュアイドル」へ",
+      "hint": "速報「【速報】キム・ミンギョン「6年無職」から「パジュアイドル」へ」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: '민음사' 김민경 \"부모 돈 축낸 취준생\"…6년 장기 백수서 '파주 아이돌' 되기까지。関連: 아이돌。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "BLACKPINK速報の深掘り: 【速報】JISOOがV Magazineに登場、魅力発揮",
+      "hint": "速報「【速報】JISOOがV Magazineに登場、魅力発揮」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: Socorro!!! JISOO para V Magazine 🔥\n\n#JISOO #BLACKPINK https://t.co/OcfUn4lhvo。関連: BLACKPINK。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "데뷔速報の深掘り: 【速報】イ・ソジン、デビュー27年目初舞台『バーニャおじさん",
+      "hint": "速報「【速報】イ・ソジン、デビュー27年目初舞台『バーニャおじさん』出演」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 이서진, 오늘(7일) 데뷔 27년 만 첫 연극 무대&hellip;&quot;긴장의 연속&quot; [바냐 삼촌]。関連: 데뷔。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "SM速報の深掘り: 【速報】SMエンターテインメント「SMiniz」新イベント実",
+      "hint": "速報「【速報】SMエンターテインメント「SMiniz」新イベント実施」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: SM엔터 IP 기반 모바일게임 'SMiniz', 로비 개편과 신규 이벤트 실시。関連: SM。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "앨범速報の深掘り: 【速報】パク・ジンジュ、ミュージカル「アナと雪の女王」出演決",
+      "hint": "速報「【速報】パク・ジンジュ、ミュージカル「アナと雪の女王」出演決定」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 박진주, 뮤지컬 ‘겨울왕국’ 안나 캐스팅…맑은 목소리로 무대 선다\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t조수지 기자\n\t\t\t\t\t05.07 09:39\n\t\t\t\t。関連: 앨범。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "오마이걸速報の深掘り: 【速報】オマイガールヒョジョン「子供3人欲しい」育児挑戦",
+      "hint": "速報「【速報】オマイガールヒョジョン「子供3人欲しい」育児挑戦」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 오마이걸 효정, “아이 셋 낳고 싶다”…‘육아인턴’서 현실 육아 도전\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t장지우 기자\n\t\t\t\t\t05.07 09:38\n\t\t。関連: 오마이걸。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "아이유速報の深掘り: 【速報】ビリー、正規1集ショーケース5月6日開催",
+      "hint": "速報「【速報】ビリー、正規1集ショーケース5月6日開催」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 빌리, “빌리브의 일상에 빌리가 행복이길”…정규 1집 쇼케이스 열기\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t장영권 기자\n\t\t\t\t\t05.07 09:37\n\t\t\t。関連: 아이유。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "신곡速報の深掘り: 【速報】あ홉、6月新曲発表とソウル公演計画",
+      "hint": "速報「【速報】あ홉、6月新曲発表とソウル公演計画」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 아홉, 6월 신곡 발표⋯아시아 투어 서울서 무대 선공개。関連: 신곡。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "Wanna One速報の深掘り: 【速報】UNCHILDデビュー、メンバー魅力を分析",
+      "hint": "速報「【速報】UNCHILDデビュー、メンバー魅力を分析」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: K-POPの新星「UNCHILD」がついにデビュー！メンバーの魅力に迫る！ヒキ＆ティナを徹底分析 Vol․32026/05/07 11:00Wanna One出。関連: Wanna One。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "NewJeans速報の深掘り: 【速報】ADORの投稿がMinji復帰の憶測を呼ぶ",
+      "hint": "速報「【速報】ADORの投稿がMinji復帰の憶測を呼ぶ」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ADOR’s Recent Post About Minji Spark Speculation On Her Return To NewJeans。関連: NewJeans。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "콘서트速報の深掘り: 【速報】無名伝説 全国ツアーコンサート予約開始",
+      "hint": "速報「【速報】無名伝説 全国ツアーコンサート予約開始」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: &apos;무명전설 전국투어 콘서트&apos;, 울산·춘천 공연 오늘(7일) 예매 오픈…일정·티켓 가격?\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t이수현 기자。関連: 콘서트。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "IVE速報の深掘り: 【速報】イ・ジェウク、5月18日に現役軍人入隊",
+      "hint": "速報「【速報】イ・ジェウク、5月18日に現役軍人入隊」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: Lee Jae Wook to Enlist in Military on May 18 as Active-Duty Army Soldier。関連: IVE。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "I.O.I速報の深掘り: 【速報】I.O.Iが10周年、練習室で再集結カムバック予告",
+      "hint": "速報「【速報】I.O.Iが10周年、練習室で再集結カムバック予告」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: I.O.I reunites in practice room for 10th anniversary, teases comeback activities。関連: I.O.I。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "발매速報の深掘り: 【速報】ジョスミ、40周年アルバム「コンティニューム」リリー",
+      "hint": "速報「【速報】ジョスミ、40周年アルバム「コンティニューム」リリース」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: 조수미, 40주년 기념 앨범 '컨티뉴엄' 발매…엑소 수호 참여。関連: 발매。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "aespa速報の深掘り: 【速報】aespa 2026年日本ファンミーティング「MY ",
+      "hint": "速報「【速報】aespa 2026年日本ファンミーティング「MY CLASSMaeTE」開」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: aespa MY-J presents aespa JAPAN FANMEETING 2026 “MY CLASSMaeTE” | ticket board。関連: aespa。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "RIIZE速報の深掘り: 【速報】RIIZE 日本ファンミーティング2026 RPG開",
+      "hint": "速報「【速報】RIIZE 日本ファンミーティング2026 RPG開催決定」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: RIIZE RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME - | ticket board。関連: RIIZE。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "NMIXX速報の深掘り: 【速報】NMIXX 初のワールドツアー「EPISODE 1」",
+      "hint": "速報「【速報】NMIXX 初のワールドツアー「EPISODE 1」日本開催」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: NMIXX NMIXX 1ST WORLD TOUR <EPISODE 1: ZERO FRONTIER> IN JAPAN | ticket board。関連: NMIXX。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
+    },
+    {
+      "topic": "BTS速報の深掘り: 【速報】カナダの大家族、BTS旅行地で挑戦中",
+      "hint": "速報「【速報】カナダの大家族、BTS旅行地で挑戦中」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: ‘어서와 한국은 처음이지?’, 캐나다 다둥이 가족 강원도 폭우 속 BTS 여행지 도전\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t박다연 기자\n\t\t\t\t\t05.07。関連: BTS。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-07",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-10"
     }
   ],
   "agent_directives": {
@@ -79,8 +412,8 @@
     "persian": {
       "problem": "canonical が正しくない: https://www.kpopjournal.tokyo X投稿スキップ: 記事ステータス=draft — publish",
       "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
-      "error_count": 16,
-      "set_at": "2026-04-30",
+      "error_count": 19,
+      "set_at": "2026-05-05",
       "source": "audit_feedback"
     },
     "inject_meta_desc_copied": {
@@ -235,9 +568,11 @@
       "title_learning_date": "2026-04-24"
     },
     "arceus": {
-      "learned_s_features": "S/A記事共通特徴: 数字入り、固有名詞、対比構造",
-      "quality_learning_date": "2026-04-24",
-      "recurring_quality_issues": "文字数不足、SEO不備"
+      "problem": "速報記事が信頼ソース(allkpop/koreaboo等)付きにも関わらずTavily検索で裏付けなし→llm_high→draft化",
+      "action": "llm_proofreader.pyで記事本文に信頼ドメインのhrefがあればTavily検索をスキップ。TRUSTED_BREAKING_DOMAINS定義。pre_publish_gateは元々has_sourceチェック済みで問題なし",
+      "error_count": 10,
+      "set_at": "2026-05-05",
+      "source": "audit_feedback"
     },
     "learn_title_typo_entity_mojibake": {
       "action": "(1) kpop_pipeline.sh ステップ2.6にtitle_quality_checker.pyによるリアルタイム検査+自動修正を追加 (2) 文字化け時はClaude再生成(最大2回) (3) cron毎朝8時にlib/title_quality_checker.pyバッチ実行で漏れを捕捉 (4) TYPO_MAP辞書でパターン学習を蓄積",
@@ -295,7 +630,7 @@
       "source": "audit_feedback"
     },
     "pipeline/all": {
-      "problem": "3記事(ID:3251,3250,3237)でU+FFFD合計43箇所。除隊し�ジン→除隊したジン、第5世��のアイコン→第5世代のアイコン等",
+      "problem": "3記事(ID:3251,3250,3237)でU+FFFD合計43箇所。除隊したジン→除隊したジン、第5世代のアイコン→第5世代のアイコン等",
       "action": "(1) 全lib/*.pyをerrors=\"replace\"に統一(15ファイル) (2) sanitize_output.shでU+FFFDを確実に除去(L70-77) (3) 全パイプライン冒頭にexport PYTHONIOENCODING=utf-8追加 (4) validate_encoding()関数をWP投稿直前に実行 (5) kpop_pipeline.shにエンコーディング検証ステップあり",
       "error_count": 3,
       "set_at": "2026-04-18",
@@ -495,10 +830,10 @@
       "promoted_at": "2026-04-24T21:30:01.706279"
     },
     "thumbnail_source_resolver": {
-      "problem": "aespa記事にBTS YouTube画像、K-POP一般記事にBTS YouTube画像がOGPとして設定。thumbnail_source_resolver",
-      "action": "4層対策: (1) _resolve_channel_idからAPI検索フォールバック廃止→official_accounts.json登録済みのみ使用。(2) resolve()でattribution/アーティスト名の不一致を検出しBLOCK。(3) full_audit_engineにcheck_ogp_image_relevance追加（alt内アーティスト名vsタイトル照合）。(4) error_patterns.jsonに登録。",
-      "error_count": 4,
-      "set_at": "2026-04-30",
+      "problem": "KCON JAPAN記事13件が全て同じサムネイル(kcon_de2eaad9.jpg)",
+      "action": "artist_cacheに複数画像を追加するか、イベント記事はDALL-Eで個別生成。used_today重複チェック改善",
+      "error_count": 13,
+      "set_at": "2026-05-05",
       "source": "audit_feedback"
     },
     "unified_publisher": {
@@ -565,10 +900,73 @@
       "source": "audit_feedback"
     },
     "feature_article_generator": {
-      "problem": "「明洞おすすめ韓国カフェ7選」で架空のカフェ名（カフェ・ド・ルーヴル、ヤギカフェ等）を列挙。住所・営業時間・地図なし。読者が訪問不可能な記事を公開していた",
-      "action": "4層再発防止: (1)カフェ/レストラン/グルメ○選テンプレートをfeature_article_generatorから削除 (2)GPTプロンプトに架空店舗禁止+4点セット必須ルール追加 (3)pre_publish_gateにshop_no_practical_info BLOCKチェック追加 (4)agent_lessons/feature_article_writer.mdに警告#10追加",
+      "problem": "ガラス肌/スキンケア記事が24日間で19件量産。get_recent_titlesがタイトル先頭30字一致のみで、テーマ類似度チェックなし",
+      "action": "is_topic_duplicate()追加。キーワードセット抽出→同テーマ3件以上で生成ブロック。feature_article_generatorのPhase1/Phase2両方に適用",
+      "error_count": 21,
+      "set_at": "2026-05-02",
+      "source": "audit_feedback"
+    },
+    "infra": {
+      "problem": "全8個のDiscord webhookが404。監査通知が届かない",
+      "action": "Discord側でwebhook再作成が必要（ユーザー対応待ち）",
+      "error_count": 8,
+      "set_at": "2026-05-01",
+      "source": "audit_feedback"
+    },
+    "audit_engine": {
+      "problem": "まとめページ(slug末尾-matome)が通常記事基準で監査されslug_short/content_shortが大量検出",
+      "action": "CRITERIAに matome タイプ追加(slug_min=5,content_min=500,require_x_post=False)。_detect_post_type()でslugから自動判定",
+      "error_count": 10,
+      "set_at": "2026-05-01",
+      "source": "audit_feedback"
+    },
+    "artist_page_generator": {
+      "problem": "artist_page_generator.pyがpublish_to_wpでcategoriesを送信せず、デフォルトカテゴリ(id=2)で投稿",
+      "action": "publish_to_wpのpayloadにcategories追加+audit_fixer_universalにno_artist_category自動修正追加",
+      "error_count": 16,
+      "set_at": "2026-05-01",
+      "source": "audit_feedback"
+    },
+    "thumbnail_resolver": {
+      "problem": "縦長(portrait)のOG画像がthumbnail_resolverとresolve_featured_imageを通過し、横長枠に引き伸ばされて公開",
+      "action": "thumbnail_resolver.pyのfetch_source_imageに縦長チェック追加+resolve_featured_image.pyの_resize_to_thumbnailにih>iw*1.3拒否追加",
+      "error_count": 2,
+      "set_at": "2026-05-02",
+      "source": "audit_feedback"
+    },
+    "x_retry_processor": {
+      "problem": "リトライキュー57件滞留。毎時1件処理+レート制限で自身がキューに再追加される悪循環",
+      "action": "x_retry_processor v2.0: バッチ処理(5件/回)+キュー衛生管理(重複/古/投稿済除去)+API直接投稿(x_posterのレート制限バイパス)+失敗カウント上限",
+      "error_count": 57,
+      "set_at": "2026-05-02",
+      "source": "audit_feedback"
+    },
+    "x_poster": {
+      "problem": "文字集合Jaccardで全く異なるK-POP記事が類似判定→リトライキューに誤追加",
+      "action": "ワード分割+2gram Jaccard に変更。ハッシュタグ/URL除去後の本文比較。閾値0.7→0.6に調整",
+      "error_count": 15,
+      "set_at": "2026-05-02",
+      "source": "audit_feedback"
+    },
+    "thumbnail_compositor": {
+      "problem": "post7442: fashionテーマのDALL-Eプロンプトにnegative_promptなし→真っ黒画像生成。dark_ratio閾値75%が甘く素通り",
+      "action": "全テーマにdalle_negative追加。dark_ratio閾値を75%→60%に引下げ(compositor+validator両方)。negative_promptをDALL-Eプロンプト末尾にAvoid:として追記。abstract記事のretryでタイトル全文をtopic_contextに渡さない",
+      "error_count": 11,
+      "set_at": "2026-05-03",
+      "source": "audit_feedback"
+    },
+    "pre_publish_gate + llm_proofreader + comprehensive_audit": {
+      "problem": "KATSEYE 4人組→6人組, ILLIT 2021年デビュー→2024年, ILLITメンバー名全員架空",
+      "action": "4層防御実装: (1) pre_publish_gateにartist_profiles照合→BLOCK (2) comprehensive_auditに照合→HIGH (3) llm_proofreaderにdeterministic照合→CRITICAL (4) GPTプロンプトにprofile情報注入→false positive防止",
       "error_count": 3,
-      "set_at": "2026-04-30",
+      "set_at": "2026-05-04",
+      "source": "audit_feedback"
+    },
+    "breaking_news_detector + feature_article_generator": {
+      "problem": "全パイプラインで「LLMに書かせてから検証」の順序。速報はヘッドライン3本だけで800字記事を生成→GPTが90%捏造。feature記事もWeb検索空のまま生",
+      "action": "根本対策: (1) breaking_news_detectorにTavily Web検索を生成前に追加。事実収集→事実ベースで生成 (2) feature_article_generatorでWeb検索+トレンド両方空なら生成中止 (3) 全プロンプトから「背景情報・厚み」指示を削除→「ソースにない情報は書くな」に変更 (4) artist_profilesを全生成プロンプトに注入 (5) 字数要件を2500→1500に引下げ（字数稼ぎの捏造を防止）",
+      "error_count": 50,
+      "set_at": "2026-05-04",
       "source": "audit_feedback"
     }
   },
@@ -619,5 +1017,65 @@
     "pv_trend": "flat",
     "ctr_trend": "flat",
     "priority_action": "品質維持"
+  },
+  "tomorrow_feature_plans": {
+    "date": "2026-05-03",
+    "strategy": "当たり記事の横展開 + ソースあり速報",
+    "plans": [
+      {
+        "title": "KPop Demon Hunters シーズン2の伏線と考察まとめ【最新情報】",
+        "parent_slug": "kpop-demon-hunters-cast-characters",
+        "reason": "GSCクリック11件/CTR13.1%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "KPop Demon Huntersの楽曲一覧｜劇中歌・OST完全ガイド",
+        "parent_slug": "kpop-demon-hunters-cast-characters",
+        "reason": "GSCクリック11件/CTR13.1%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "TWICE国立競技場レポート｜感動の瞬間ベスト10",
+        "parent_slug": "twice-this-is-for-setlist-kokuritsu-2026",
+        "reason": "GSCクリック5件/CTR7.5%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "TWICEライブ初参戦ガイド｜持ち物・服装・マナー完全版",
+        "parent_slug": "twice-this-is-for-setlist-kokuritsu-2026",
+        "reason": "GSCクリック5件/CTR7.5%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "KCON JAPAN 2026 出演者別タイムテーブル予想｜推しの出番はいつ？",
+        "parent_slug": "kcon-japan-2026-complete-guide",
+        "reason": "GSCクリック4件/CTR14.8%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "KCON JAPAN 2026 幕張メッセ攻略｜座席・グッズ列・周辺グルメ",
+        "parent_slug": "kcon-japan-2026-complete-guide",
+        "reason": "GSCクリック4件/CTR14.8%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "KCON JAPAN連動ポップアップ情報まとめ｜幕張周辺の限定イベント",
+        "parent_slug": "may-2026-kpop-popup-map",
+        "reason": "GSCクリック4件/CTR25.0%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "ILLIT「It's Me」MV徹底解説｜メンバー別パート・衣装・ダンス分析",
+        "parent_slug": "illit-wonhi-seikei-guyaku",
+        "reason": "GSCクリック10件/CTR47.6%の横展開",
+        "priority": "high"
+      },
+      {
+        "title": "ILLITメンバー完全プロフィール｜5人の経歴・性格・魅力を徹底紹介",
+        "parent_slug": "illit-wonhi-seikei-guyaku",
+        "reason": "GSCクリック10件/CTR47.6%の横展開",
+        "priority": "high"
+      }
+    ]
   }
 }

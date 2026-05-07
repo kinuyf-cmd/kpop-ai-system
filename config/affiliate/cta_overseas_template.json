@@ -1,0 +1,18 @@
+{
+  "name": "overseas_tour_cta",
+  "description": "海外ツアー/海外公演記事用CTA。国内ホテルCTAの代わりに使用",
+  "applicable_when": "記事に海外都市名(台北,ソウル,バンコク等)が含まれ、日本国内イベントでない場合",
+  "programs": [
+    {
+      "name": "海外航空券+ホテル",
+      "a8_id": "457NRV+ASS3KQ+4EKC+62MDD",
+      "priority": 1
+    },
+    {
+      "name": "VOYAGEESIM海外eSIM",
+      "a8_id": "457NRV+30CXNE+5FXM+5YJRM",
+      "priority": 2
+    }
+  ],
+  "css_class": "kpj-cta-overseas"
+}

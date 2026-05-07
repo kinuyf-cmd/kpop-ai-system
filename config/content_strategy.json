@@ -1,0 +1,129 @@
+{
+  "_comment": "PV最大化コンテンツ戦略 v2 — 検索意図×IMP最大化×当たり記事横展開",
+  "version": "2.0",
+  "created_at": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "next_review": "2026-05-08",
+  "review_cycle": "weekly",
+
+  "core_insight": {
+    "problem": "774ページ中76%がクリック0。IMP/日=1,331で目標20,000の7%。量産は解決にならない",
+    "solution": "検索ボリュームがあるキーワードを狙い撃ち + 当たり記事の横展開 + 既存記事の強化",
+    "north_star": "IMP/日を1,331→5,000に伸ばす (CTR5%なら250clicks/日=PV500+)"
+  },
+
+  "baseline_metrics": {
+    "period": "2026-04-02 to 2026-04-29",
+    "imp_per_day": 1331,
+    "clicks_per_day": 46,
+    "site_avg_ctr": 3.47,
+    "daily_pv": 552,
+    "pages_with_clicks": 182,
+    "pages_zero_clicks": 592,
+    "top10_share": 58
+  },
+
+  "search_intent_performance": {
+    "_comment": "検索意図別の実績。IMP効率=IMP/記事数。効率が高い=検索ボリュームがあるテーマ",
+    "tier_s_high_imp": {
+      "キャスト/相関図":  {"articles": 34, "imp": 5560, "clicks": 359, "ctr": 6.5, "imp_per_article": 164},
+      "ドラマ/エンタメ":  {"articles": 37, "imp": 4676, "clicks": 291, "ctr": 6.2, "imp_per_article": 126},
+      "イベント日程/チケット": {"articles": 56, "imp": 5822, "clicks": 381, "ctr": 6.5, "imp_per_article": 104}
+    },
+    "tier_a_good_ctr": {
+      "コスメ/ビューティー": {"articles": 20, "imp": 1091, "clicks": 92, "ctr": 8.4, "imp_per_article": 55},
+      "視聴方法/ガイド":  {"articles": 54, "imp": 4319, "clicks": 236, "ctr": 5.5, "imp_per_article": 80}
+    },
+    "tier_c_low_roi": {
+      "速報/ニュース":   {"articles": 33, "imp": 2747, "clicks": 21, "ctr": 0.8, "imp_per_article": 83, "problem": "IMPはあるがCTR0.8%。タイトルが検索意図と不一致"}
+    }
+  },
+
+  "three_pillars": {
+    "_comment": "PV最大化の3本柱。新規記事量産ではなく、この3つに集中する",
+
+    "pillar_1_winning_pattern_expansion": {
+      "name": "当たり記事の横展開",
+      "description": "demon-hunters=195clicks/7記事。この勝ちパターンを他テーマに適用",
+      "actions": [
+        {"type": "ドラマキャスト表", "template": "{drama_title} キャスト・相関図・登場人物まとめ", "reason": "IMP効率164。検索意図が明確で高CTR"},
+        {"type": "イベント完全ガイド", "template": "{event_name} 2026 日程・チケット・参加方法まとめ", "reason": "IMP効率104。実用情報は検索される"},
+        {"type": "視聴方法ガイド", "template": "{show_name}を日本から見る方法【2026年最新】", "reason": "CTR7.1%の実績。全音楽番組・授賞式に横展開"},
+        {"type": "聖地巡礼マップ", "template": "{city}×{artist} 聖地巡礼ガイド【アクセス・営業時間付き】", "reason": "hongdae記事CTR11.7%"}
+      ],
+      "target": "週5本。新規ドラマ・イベントのたびに即座にガイド記事を作る"
+    },
+
+    "pillar_2_existing_article_optimization": {
+      "name": "既存記事の強化",
+      "description": "IMP上位だがCTR低い記事のタイトル/メタ改善。新記事より即効性が高い",
+      "high_potential_articles": [
+        {"slug": "bigbang-coachella-2026", "imp": 1531, "clicks": 4, "ctr": 0.3, "potential_clicks": 149, "action": "タイトル改善+FAQ schema追加"},
+        {"slug": "lesserafim-comeback-october-2025", "imp": 1357, "clicks": 3, "ctr": 0.2, "potential_clicks": 132, "action": "2026年情報に更新+タイトル刷新"},
+        {"slug": "bts-jimin-relationship-controversy-2025", "imp": 592, "clicks": 3, "ctr": 0.5, "potential_clicks": 56, "action": "最新情報追加+タイトル改善"},
+        {"slug": "kpop-demon-hunters-cast-characters", "imp": 2742, "clicks": 195, "ctr": 7.1, "potential_clicks": 79, "action": "FAQ schema+構造化データ追加"},
+        {"slug": "kpop-events-japan-april-2026-complete", "imp": 2135, "clicks": 143, "ctr": 6.7, "potential_clicks": 70, "action": "5月版に更新+内部リンク強化"}
+      ],
+      "target": "週10記事をリライト/更新。CTRを平均5%→10%に"
+    },
+
+    "pillar_3_search_volume_driven_new_articles": {
+      "name": "検索ボリューム駆動の新規記事",
+      "description": "GPTに適当に書かせるのではなく、実際に検索されるキーワードを先に調べて記事を書く",
+      "process": [
+        "1. GSC上昇クエリ / Google Trends / Soompi見出しから検索需要を検出",
+        "2. 検索ボリュームがあるか確認（IMP予測）",
+        "3. 検索意図に合致するコンテンツタイプを選択（キャスト表/ガイド/視聴方法等）",
+        "4. 記事生成+最適化タイトル",
+        "5. 公開後72hのIMP/CTR追跡"
+      ],
+      "deprioritize": [
+        "GPT単独生成の汎用記事（ガラス肌/推し活テンプレ等）",
+        "ソースなしの速報",
+        "同テーマの焼き直し"
+      ],
+      "target": "週10本。全て検索意図に基づく"
+    }
+  },
+
+  "daily_article_mix_v2": {
+    "_comment": "1日10-15本。量より質。全記事に検索意図の根拠が必要",
+    "total_target": "10-15本（質を担保できる範囲）",
+    "mix": {
+      "当たり横展開(ドラマ/イベント/視聴ガイド)": {"target": 4, "priority": "最高", "reason": "IMP効率104-164。検索される記事"},
+      "トレンド速報(ソースあり)": {"target": 3, "priority": "高", "reason": "カムバ/音楽番組/事件。速報+深掘り連鎖"},
+      "既存記事更新/リライト": {"target": 3, "priority": "高", "reason": "新記事より即効性。CTR改善で即PV増"},
+      "ビューティー/旅行": {"target": 2, "priority": "中", "reason": "CTR高い。ただし同テーマ月3件制限"},
+      "SEO蓄積(ガイド/学習)": {"target": 1, "priority": "低", "reason": "長期投資型"}
+    }
+  },
+
+  "content_rules": {
+    "topic_duplicate_limit": 3,
+    "topic_duplicate_window_days": 30,
+    "listicle_weekly_limit": 2,
+    "beauty_skincare_monthly_limit": 3,
+    "must_have_search_intent": true,
+    "must_have_source_url": true,
+    "no_gpt_only_news": true,
+    "existing_article_refresh_weekly": 10
+  },
+
+  "weekly_review_checklist": [
+    "IMP/日は先週比で増加したか？",
+    "Top10記事に変動はあるか？新しい当たり記事は生まれたか？",
+    "クリック0ページの割合は減少したか？",
+    "リライトした記事のCTR改善は確認できたか？",
+    "テーマ配分は戦略通りか？テンプレ偏重に戻っていないか？",
+    "速報→深掘り連鎖は機能したか？"
+  ],
+
+  "monthly_review_checklist": [
+    "月間PV目標の達成率",
+    "収益目標の達成率",
+    "カテゴリ別IMP/CTR/クリックの推移",
+    "3本柱(横展開/既存強化/検索駆動)の実施件数と効果",
+    "戦略ティアの再計算",
+    "来月のイベントカレンダーに基づく記事企画"
+  ]
+}

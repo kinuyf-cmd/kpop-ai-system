@@ -1,15 +1,18 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-05-01",
+  "updated_at": "2026-05-04",
   "description": "K-POPアイドルYouTubeオリジナル番組の監視対象リスト。新エピソード検知→trend_signalsに注入→記事化",
   "shows": [
     {
       "id": "gose",
       "name": "Going Seventeen",
       "group": "SEVENTEEN",
-      "channel_id": "UCyf2yLLF4RO2nIvhEiBibgQ",
+      "channel_id": "UCfkXDY7vwkcJ8ddFGz8KusA",
       "playlist_id": null,
-      "search_keywords": ["Going Seventeen", "고잉 세븐틴"],
+      "search_keywords": [
+        "Going Seventeen",
+        "고잉 세븐틴"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "high"
@@ -18,9 +21,11 @@
       "id": "babymonster_house",
       "name": "BABYMONSTER HOUSE",
       "group": "BABYMONSTER",
-      "channel_id": "UCqaGPjEPNMD-KCj5RnXfLOQ",
+      "channel_id": "UCqwUnggBBct-AY2lAdI88jQ",
       "playlist_id": null,
-      "search_keywords": ["BABYMONSTER HOUSE"],
+      "search_keywords": [
+        "BABYMONSTER HOUSE"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "high"
@@ -31,7 +36,10 @@
       "group": "Various",
       "channel_id": null,
       "playlist_id": null,
-      "search_keywords": ["워크돌", "Workdol"],
+      "search_keywords": [
+        "워크돌",
+        "Workdol"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "high"
@@ -40,9 +48,12 @@
       "id": "skz_code",
       "name": "SKZ CODE",
       "group": "Stray Kids",
-      "channel_id": "UC0ogjkBGMNBfPSdcngYtRBw",
+      "channel_id": "UC9rMiEjNaCSsebs31MRDCRA",
       "playlist_id": null,
-      "search_keywords": ["SKZ CODE", "스키즈 코드"],
+      "search_keywords": [
+        "SKZ CODE",
+        "스키즈 코드"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "high"
@@ -51,9 +62,12 @@
       "id": "enhypen_hi",
       "name": "ENHYPEN&Hi",
       "group": "ENHYPEN",
-      "channel_id": "UCXk-1aJEU7OQKGV5-F6e2tA",
+      "channel_id": "UCArLZtok93cO5R9RI4_Y5Jw",
       "playlist_id": null,
-      "search_keywords": ["ENHYPEN&Hi", "엔하이픈앤하이"],
+      "search_keywords": [
+        "ENHYPEN&Hi",
+        "엔하이픈앤하이"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "medium"
@@ -62,9 +76,12 @@
       "id": "itzy_itzy",
       "name": "ITZY? ITZY!",
       "group": "ITZY",
-      "channel_id": "UCLRp2naUb0bwyWFpCGCg4OA",
+      "channel_id": "UCDhM2k2Cua-JdobAh5moMFg",
       "playlist_id": null,
-      "search_keywords": ["ITZY? ITZY!", "있지? 있지!"],
+      "search_keywords": [
+        "ITZY? ITZY!",
+        "있지? 있지!"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "medium"
@@ -73,9 +90,12 @@
       "id": "nmixx_lunchbox",
       "name": "NMIXX Lunchbox",
       "group": "NMIXX",
-      "channel_id": "UCKiDbi8vjp76CO87_TBVkpQ",
+      "channel_id": "UCnUAyD4t2LkvW68YrDh7fDg",
       "playlist_id": null,
-      "search_keywords": ["NMIXX Lunchbox", "엔믹스 런치박스"],
+      "search_keywords": [
+        "NMIXX Lunchbox",
+        "엔믹스 런치박스"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "medium"
@@ -84,9 +104,12 @@
       "id": "lesserafim_leniverse",
       "name": "LE SSERAFIM LENIVERSE",
       "group": "LE SSERAFIM",
-      "channel_id": "UCeqkLCAuep2W-oP_GNICIyQ",
+      "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g",
       "playlist_id": null,
-      "search_keywords": ["LENIVERSE", "르세라핌 레니버스"],
+      "search_keywords": [
+        "LENIVERSE",
+        "르세라핌 레니버스"
+      ],
       "frequency": "weekly",
       "article_type": "show_review",
       "priority": "medium"
@@ -95,9 +118,12 @@
       "id": "aespa_synk",
       "name": "aespa SYNK",
       "group": "aespa",
-      "channel_id": "UCHq3UzjTRnvGr_NUiY5sIOQ",
+      "channel_id": "UCEdZAdnnKqbaHOlv8nM6OtA",
       "playlist_id": null,
-      "search_keywords": ["aespa SYNK", "에스파 싱크"],
+      "search_keywords": [
+        "aespa SYNK",
+        "에스파 싱크"
+      ],
       "frequency": "irregular",
       "article_type": "show_review",
       "priority": "medium"
@@ -106,9 +132,12 @@
       "id": "ive_switch",
       "name": "I AM IVE / IVE SWITCH",
       "group": "IVE",
-      "channel_id": "UCMcljVHm-2d3GY-ZRR0dm4g",
+      "channel_id": "UC-Fnix71vRP64WXeo0ikd0Q",
       "playlist_id": null,
-      "search_keywords": ["I AM IVE", "IVE SWITCH"],
+      "search_keywords": [
+        "I AM IVE",
+        "IVE SWITCH"
+      ],
       "frequency": "irregular",
       "article_type": "show_review",
       "priority": "medium"
@@ -119,7 +148,10 @@
       "group": "NewJeans",
       "channel_id": null,
       "playlist_id": null,
-      "search_keywords": ["NewJeans Phoning", "뉴진스 우왕좌왕"],
+      "search_keywords": [
+        "NewJeans Phoning",
+        "뉴진스 우왕좌왕"
+      ],
       "frequency": "irregular",
       "article_type": "show_review",
       "priority": "high"
@@ -128,9 +160,12 @@
       "id": "two_kids_room",
       "name": "2 Kids Room",
       "group": "Stray Kids",
-      "channel_id": "UC0ogjkBGMNBfPSdcngYtRBw",
+      "channel_id": "UC9rMiEjNaCSsebs31MRDCRA",
       "playlist_id": null,
-      "search_keywords": ["2 Kids Room", "투키즈룸"],
+      "search_keywords": [
+        "2 Kids Room",
+        "투키즈룸"
+      ],
       "frequency": "irregular",
       "article_type": "show_review",
       "priority": "medium"

@@ -5,7 +5,7 @@
     "stopped_at": "2026-04-17T19:00:01.483438+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   },
   "thumb_ctr_block": {
@@ -14,7 +14,7 @@
     "stopped_at": "2026-04-17T19:00:01.483438+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   },
   "ジラーチ": {
@@ -23,7 +23,7 @@
     "stopped_at": "2026-04-17T19:00:01.483438+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   },
   "mewtwo_strategy": {
@@ -32,7 +32,7 @@
     "stopped_at": "2026-04-19T17:00:01.529786+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   },
   "thumb_ctr_retry": {
@@ -41,7 +41,7 @@
     "stopped_at": "2026-04-21T11:00:01.852071+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   },
   "sns_draft_guard": {
@@ -50,7 +50,7 @@
     "stopped_at": "2026-04-23T11:00:01.273765+09:00",
     "quality_score": 40.0,
     "consecutive_low_count": 3,
-    "reason": "品��スコア40.0点が3回連続でしきい値60点未満",
+    "reason": "品質スコア40.0点が3回連続でしきい値60点未満",
     "auto_stopped": true
   }
 }
