@@ -131,11 +131,31 @@ fi
 # P1で呼び出し順序は修正済みだが、並列実行/手動実行時の再発を防ぐ
 # POST_IDは引数にないため、POST_URLのHTTPステータスで判定
 if [[ -n "$POST_URL" ]] && [[ "$POST_URL" != "（"* ]]; then
-  _GATE_CHECK=$(python3 "$_SCRIPT_DIR/lib/x_post_url_validator.py" "$POST_URL" --json 2>/dev/null || echo '{"ok":false,"reason":"validator error"}')
+  # validator stderr もキャプチャ（unknown原因追跡のため）
+  _GATE_RAW=$(python3 "$_SCRIPT_DIR/lib/x_post_url_validator.py" "$POST_URL" --json 2>&1)
+  _GATE_RC=$?
+  if [[ $_GATE_RC -ne 0 ]] || [[ -z "$_GATE_RAW" ]]; then
+    _GATE_CHECK='{"ok":false,"reason":"validator failed (rc='$_GATE_RC')"}'
+    xlog "POST_AUDIT_GATE_DEBUG: validator rc=$_GATE_RC raw=${_GATE_RAW:0:200}"
+  else
+    _GATE_CHECK="$_GATE_RAW"
+  fi
+  # ok / reason / ogp_issue.reason の順でフォールバック抽出
   _GATE_OK=$(echo "$_GATE_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('ok',False))" 2>/dev/null || echo "False")
   if [[ "$_GATE_OK" != "True" ]]; then
-    _GATE_REASON=$(echo "$_GATE_CHECK" | python3 -c "import json,sys; print(json.load(sys.stdin).get('reason','unknown'))" 2>/dev/null || echo "unknown")
+    _GATE_REASON=$(echo "$_GATE_CHECK" | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    r = d.get('reason') or (d.get('ogp_issue') or {}).get('reason') or 'unknown'
+    print(r)
+except Exception as e:
+    print(f'parse_fail: {e}')
+" 2>/dev/null || echo "extract_error")
     xlog "POST_AUDIT_GATE: X投稿全体スキップ — URL=$POST_URL reason=$_GATE_REASON"
+    if [[ "$_GATE_REASON" == "unknown" ]] || [[ "$_GATE_REASON" == parse_fail* ]]; then
+      xlog "POST_AUDIT_GATE_DEBUG: raw=${_GATE_CHECK:0:300}"
+    fi
     echo "  ⏸  POST_AUDIT_GATE: X投稿スキップ (URL: $_GATE_REASON)"
     exit 0
   fi

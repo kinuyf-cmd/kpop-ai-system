@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T16:02:11.525738",
+  "updated_at": "2026-05-07T16:44:31.516250",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1181,6 +1181,60 @@
       "detection": "trend_signals.jsonlでsource_id=newsen等の件数が0または極小で、当該媒体の記事タイトルに有名グループ名が含まれているのにmatchしない",
       "agent": "lib.collectors.korean_base",
       "resolved_at": "2026-05-07"
+    },
+    "artist_field_contamination_in_breaking": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "breaking_news_detector の arts[0] が \"데뷔/발매/SM\" 等の動詞・事務所名を artist として採用し、queueに29件汚染が蓄積",
+      "fix": "lib/collectors/korean_base.py に GENERIC_EVENT_KW を分離。is_kpop_related の返却順を 固有名詞→generic→agency に強制。breaking_news_detector に _pick_artist() ガード追加",
+      "detection": "config/x_post_queue.json の artist フィールドに名詞・動詞 (컴백/발매/데뷔/SM/YG/JYP/HYBE) が出現する",
+      "agent": "pipeline.breaking_news_detector",
+      "resolved_at": "2026-05-07"
+    },
+    "x_audit_gate_unknown_reason": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "post_to_x.sh の POST_AUDIT_GATE が validator の reason 抽出失敗時 unknown とログ。実際は OGP 問題が原因だった",
+      "fix": "google_metrics/post_to_x.sh で validator stderr/rc キャプチャ・reason→ogp_issue.reason のフォールバック・unknown時は raw も DEBUG ログに出力",
+      "detection": "logs/x_post.log に \"POST_AUDIT_GATE: ... reason=unknown\" が出る",
+      "agent": "google_metrics.post_to_x",
+      "resolved_at": "2026-05-07"
+    },
+    "tweet_title_fragment_mid_word_cut": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "\"Mnet新ダンスプログラ\"のように12字目で語中切断され読めないツイートが本日複数発生",
+      "fix": "lib/x_post_templates.py extract_title_fragment: 12字以内のkeywordを優先選択、やむを得ず切る場合は文字種(カタカナ/漢字/ひらがな)境界で切断",
+      "detection": "本番ツイート本文の引用フレーズが「ラ」「メッ」等中途半端な文字で終わる",
+      "agent": "lib.x_post_templates",
+      "resolved_at": "2026-05-07"
+    },
+    "x_slot_double_counted_hook_reply": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "x_scheduled_poster の SLOT制御で hook+url_reply が2件としてカウントされ、SLOT=1の時間帯に「2/1で消化済」と判定されていた",
+      "fix": "pipeline/x_scheduled_poster.py _posts_this_hour() を mode==hook のみカウントするよう変更",
+      "detection": "logs/x_scheduled.log に \"X時台のスロット消化済み (2/1)\" のように分子>分母が出る",
+      "agent": "pipeline.x_scheduled_poster",
+      "resolved_at": "2026-05-07"
+    },
+    "breaking_title_sokuho_prefix_legacy": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "commit 2b2d313 で title【速報】prefix 廃止後も x_post_queue.json には75/94件の旧prefix付きタイトルが残置",
+      "fix": "一括sanitize: queueの全エントリの title 先頭 【速報】/[速報]/【韓国メディア速報】 を除去。同時に汚染artist の再抽出",
+      "detection": "config/x_post_queue.json のtitleが【速報】で始まるエントリが存在する",
+      "agent": "pipeline.x_scheduled_poster",
+      "resolved_at": "2026-05-07"
+    },
+    "breaking_article_auto_archive_visibility": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "本日の breaking 51件中 17件 (33%) が draft_auto_publisher の AUTO-ARCHIVE で trash 化。内容はLLM事実誤認 (TWICEメンバー数誤り) や slug_short が連鎖",
+      "fix": "別件 (今回はOGPチェックの過程で発見)。trashed記事はWPがog-default.pngに切替えるため OGP-default 比率が高く見える。POST_AUDIT_GATE が正しくブロックしているため X 側の被害はゼロ。今後は LLM事実検証を上流で強化する必要あり",
+      "detection": "logs/draft_auto_publisher.log に \"AUTO-ARCHIVE: 3回BLOCK超過\" が頻発",
+      "agent": "pipeline.draft_auto_publisher",
+      "resolved_at": "2026-05-07"
     }
   },
   "recurring_errors": [
@@ -1937,15 +1991,15 @@
     "prevention": "no_gsc_indexing: パターン分析して共通lib化で再発防止"
   },
   "x_missing": {
-    "count": 49,
+    "count": 54,
     "first_seen": "2026-04-30T17:50:05.972874+09:00",
-    "last_seen": "2026-05-01T16:15:52.747789+09:00",
+    "last_seen": "2026-05-07T16:05:40.039013+09:00",
     "example_post_ids": [
-      6242,
-      6240,
-      6234,
-      6232,
-      6217
+      17611,
+      17583,
+      17578,
+      17564,
+      17560
     ],
     "prevention": "x_missing: パターン分析して共通lib化で再発防止"
   },
@@ -1973,15 +2027,15 @@
     "prevention": "post_publish_enricher で内部リンク2本以上を保証"
   },
   "unclosed_p": {
-    "count": 39,
+    "count": 42,
     "first_seen": "2026-04-30T17:50:10.379386+09:00",
-    "last_seen": "2026-05-01T16:15:52.741873+09:00",
+    "last_seen": "2026-05-07T16:04:08.245097+09:00",
     "example_post_ids": [
-      6240,
-      6234,
-      6232,
       6230,
-      6217
+      6217,
+      18012,
+      18006,
+      17839
     ],
     "prevention": "unclosed_p: パターン分析して共通lib化で再発防止"
   },
@@ -2008,15 +2062,15 @@
     "prevention": "title_long: パターン分析して共通lib化で再発防止"
   },
   "content_short": {
-    "count": 20,
+    "count": 25,
     "first_seen": "2026-05-01T10:00:59.184987+09:00",
-    "last_seen": "2026-05-01T16:12:41.525161+09:00",
+    "last_seen": "2026-05-07T16:05:37.351048+09:00",
     "example_post_ids": [
-      6281,
-      6280,
-      6279,
-      6278,
-      6277
+      18012,
+      17762,
+      17747,
+      17743,
+      17564
     ],
     "prevention": "LLM生成時の最低文字数指定を2000字以上に"
   },
@@ -2116,11 +2170,15 @@
     "prevention": "text_sanitizer のAIメンション除去パターン強化"
   },
   "llm_high": {
-    "count": 1,
+    "count": 9,
     "first_seen": "2026-05-01T16:10:43.285501+09:00",
-    "last_seen": "2026-05-01T16:10:43.285513+09:00",
+    "last_seen": "2026-05-07T16:05:15.524917+09:00",
     "example_post_ids": [
-      6282
+      17839,
+      17715,
+      17677,
+      17672,
+      17650
     ],
     "prevention": "LLM校閲のhigh検出時にaudit_fixer_universalキューに追加"
   },
@@ -2143,5 +2201,65 @@
       6172
     ],
     "prevention": "x_missing_url: パターン分析して共通lib化で再発防止"
+  },
+  "llm_critical": {
+    "count": 6,
+    "first_seen": "2026-05-07T16:02:58.850122+09:00",
+    "last_seen": "2026-05-07T16:05:40.041981+09:00",
+    "example_post_ids": [
+      17786,
+      17743,
+      17677,
+      17655,
+      17560
+    ],
+    "prevention": "LLMプロンプトにfact-check指示を追加。事実誤認検出時はDraft化"
+  },
+  "summary_not_3lines": {
+    "count": 10,
+    "first_seen": "2026-05-07T16:03:18.713660+09:00",
+    "last_seen": "2026-05-07T16:05:40.044979+09:00",
+    "example_post_ids": [
+      17664,
+      17655,
+      17650,
+      17583,
+      17560
+    ],
+    "prevention": "summary_not_3lines: パターン分析して共通lib化で再発防止"
+  },
+  "source_content_mismatch": {
+    "count": 6,
+    "first_seen": "2026-05-07T16:04:08.248538+09:00",
+    "last_seen": "2026-05-07T16:05:15.531045+09:00",
+    "example_post_ids": [
+      17786,
+      17743,
+      17672,
+      17664,
+      17650
+    ],
+    "prevention": "source_content_mismatch: パターン分析して共通lib化で再発防止"
+  },
+  "summary_title_mismatch": {
+    "count": 3,
+    "first_seen": "2026-05-07T16:04:08.471811+09:00",
+    "last_seen": "2026-05-07T16:05:15.288701+09:00",
+    "example_post_ids": [
+      17786,
+      17743,
+      17672
+    ],
+    "prevention": "summary_title_mismatch: パターン分析して共通lib化で再発防止"
+  },
+  "meta_desc_short": {
+    "count": 2,
+    "first_seen": "2026-05-07T16:05:14.808542+09:00",
+    "last_seen": "2026-05-07T16:05:40.035703+09:00",
+    "example_post_ids": [
+      17743,
+      17560
+    ],
+    "prevention": "excerpt生成プロンプトの最低文字数を80字に"
   }
 }

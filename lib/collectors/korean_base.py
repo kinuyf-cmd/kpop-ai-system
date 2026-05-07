@@ -56,43 +56,53 @@ def fetch_html(url, timeout=20):
 AGENCY_ONLY_KW = {'SM', 'YG', 'JYP', 'HYBE'}
 
 
+# 「アーティスト名ではない」一般K-POPキーワード（デビュー/発売/컴백等）。
+# 速報判定の go/no-go には使うが arts[0] には選ばれてはいけない（artist field汚染防止）
+# 2026-05-07: queueに데뷔/발매/SM等が"artist"として混入していた問題への対処
+GENERIC_EVENT_KW = {
+    'K-POP', 'KPOP', '케이팝', '아이돌',
+    '컴백', '신곡', '발매', '데뷔', '콘서트', '팬미팅',
+    '걸그룹', '보이그룹', '음방', '엠카', '인기가요', '뮤뱅', '엠넷',
+    '가수', '솔로곡', '타이틀곡', '앨범', '음원', '차트', '1위', '시구',
+}
+
+
 def is_kpop_related(text):
+    """K-POP関連シグナルかつアーティスト名を抽出。
+    返却順序保証: 固有アーティスト名 → ジェネリック語 → 事務所名
+    breaking_news_detector の arts[0] が必ず固有名詞優先で選ばれる
+    """
     import re as _re
     tl = text.lower()
-    # 韓国語の部分一致を防ぐ: 「아이유」が「(여자)아이들」にマッチしないように
-    # 長いキーワードから先にマッチさせ、マッチ済み部分は除外
-    # まず完全一致度の高い順（長い順）にソート
     sorted_kw = sorted(
         [kw for kw in KPOP_KW if kw not in AGENCY_ONLY_KW],
         key=lambda k: len(k), reverse=True
     )
 
-    artist_matches = []
+    proper_artist_matches = []
+    generic_matches = []
     _matched_text = tl
     for kw in sorted_kw:
         kw_lower = kw.lower()
         if kw_lower not in _matched_text:
             continue
-        # 韓国語キーワード: 前後の文字で部分一致を除外
-        # 例: 「아이유」が「아이들」にマッチしないように
-        if _re.search(r'[\uac00-\ud7af]', kw):  # 韓国語を含むキーワード
-            # 前後にハングルが続く場合は部分一致の可能性→スキップ
+        if _re.search(r'[\uac00-\ud7af]', kw):
             pattern = _re.escape(kw_lower)
             m = _re.search(pattern, _matched_text)
             if m:
                 start, end = m.start(), m.end()
                 before = _matched_text[start-1] if start > 0 else ' '
                 after = _matched_text[end] if end < len(_matched_text) else ' '
-                # 前後がハングルなら部分一致の可能性（例: 아이유 in 아이들）
                 if _re.match(r'[\uac00-\ud7af]', before) or _re.match(r'[\uac00-\ud7af]', after):
                     continue
-        artist_matches.append(kw)
-        # マッチした部分を除去して重複マッチ防止
+        if kw in GENERIC_EVENT_KW:
+            generic_matches.append(kw)
+        else:
+            proper_artist_matches.append(kw)
         _matched_text = _matched_text.replace(kw_lower, ' ', 1)
 
-    if artist_matches:
-        return artist_matches
-    # アーティスト名がなく事務所名のみマッチした場合も返す
+    if proper_artist_matches or generic_matches:
+        return proper_artist_matches + generic_matches
     agency_matches = [kw for kw in KPOP_KW if kw in AGENCY_ONLY_KW and kw.lower() in tl]
     return agency_matches
 

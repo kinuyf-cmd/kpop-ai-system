@@ -566,10 +566,27 @@ def extract_title_fragment(title: str, artist: str) -> str:
     if not keywords:
         return ""
 
-    # ランダムに1個選んで引用風テキストにする
-    kw = random.choice(keywords)
+    # 文字境界尊重: 12字以内のkeywordを優先選択
+    # 2026-05-07: 「Mnet新ダンスプログラ」のような語中切断を防ぐ
+    short_keywords = [k for k in keywords if len(k) <= 12]
+    pool = short_keywords or keywords
+    kw = random.choice(pool)
     if len(kw) > 12:
-        kw = kw[:12]
+        # やむを得ず長すぎる語のみ→助詞境界か文字種境界で切る
+        # カタカナ/漢字/ひらがなの境目を探して、そこまでに収める
+        cut = 12
+        for i in range(min(12, len(kw)-1), 4, -1):
+            ch_a, ch_b = kw[i-1], kw[i]
+            # 文字種が変わる位置を境界とみなす
+            def _kind(c):
+                if '゠' <= c <= 'ヿ': return 'kata'
+                if '぀' <= c <= 'ゟ': return 'hira'
+                if '一' <= c <= '鿿': return 'kanji'
+                return 'other'
+            if _kind(ch_a) != _kind(ch_b):
+                cut = i
+                break
+        kw = kw[:cut]
     fragment_patterns = [
         '「{kw}」の真相とは…',
         '"{kw}"が話題に…',

@@ -123,7 +123,10 @@ def enqueue(title: str, url: str, post_id: int = None, genre: str = '',
 
 
 def _posts_this_hour() -> int:
-    """現在の時間帯に投稿済みの件数"""
+    """現在の時間帯に投稿済みの件数。
+    1記事 = hook + url_reply の2エントリだが、SLOT制限は記事数基準のため
+    mode='hook'のみカウントする (2026-05-07: スロット2倍消化バグ修正)
+    """
     if not POSTS_LOG.exists():
         return 0
     now = datetime.now()
@@ -133,6 +136,9 @@ def _posts_this_hour() -> int:
         try:
             e = json.loads(line.strip())
             if e.get('status') != 'ok':
+                continue
+            # hookのみカウント (url_replyは同一記事のフォローアップ)
+            if e.get('mode') and e.get('mode') != 'hook':
                 continue
             ts = datetime.fromisoformat(e.get('ts', '2000-01-01'))
             if ts >= hour_start:

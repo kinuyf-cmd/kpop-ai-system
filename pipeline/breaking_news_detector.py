@@ -69,6 +69,18 @@ def _is_stale_source(sig) -> bool:
     return False
 
 
+def _pick_artist(arts):
+    """arts[0]が GENERIC_EVENT_KW (컴백/발매/데뷔等) や AGENCY_ONLY (SM/YG等) の場合は
+    artist として採用しない。固有アーティスト名のみを返す。
+    2026-05-07: queueに데뷔/발매/SM が"artist"として混入していた問題への対処。
+    """
+    from lib.collectors.korean_base import GENERIC_EVENT_KW, AGENCY_ONLY_KW
+    for a in arts or []:
+        if a not in GENERIC_EVENT_KW and a not in AGENCY_ONLY_KW:
+            return a
+    return None
+
+
 def detect_breaking(signals):
     from lib.collectors.korean_base import is_kpop_related
     candidates = []
@@ -79,20 +91,22 @@ def detect_breaking(signals):
         if s.get('urgency') != 'high':
             continue
         arts = is_kpop_related(s.get('title', ''))
-        if not arts or arts[0] in seen:
+        artist = _pick_artist(arts)
+        if not artist or artist in seen:
             continue
         if is_processed(s['url']) or _is_stale_source(s):
             continue
-        seen.add(arts[0])
-        candidates.append((arts[0], [s], 'urgent'))
+        seen.add(artist)
+        candidates.append((artist, [s], 'urgent'))
 
     # 2. 同一アーティスト+複数ソース
     by_artist = {}
     for s in signals:
         arts = is_kpop_related(s.get('title', ''))
-        if not arts:
+        artist = _pick_artist(arts)
+        if not artist:
             continue
-        by_artist.setdefault(arts[0], []).append(s)
+        by_artist.setdefault(artist, []).append(s)
 
     for artist, sigs in by_artist.items():
         if artist in seen:
@@ -118,13 +132,13 @@ def detect_breaking(signals):
     )
     for s in high_eng:
         arts = is_kpop_related(s.get('title', ''))
-        if not arts or arts[0] in seen:
+        artist = _pick_artist(arts)
+        if not artist or artist in seen:
             continue
         if is_processed(s.get('url', '')):
             continue
-        # 同じアーティストの記事が今日既に出ていないかチェック
-        seen.add(arts[0])
-        candidates.append((arts[0], [s], 'high_engagement'))
+        seen.add(artist)
+        candidates.append((artist, [s], 'high_engagement'))
 
     return candidates
 
