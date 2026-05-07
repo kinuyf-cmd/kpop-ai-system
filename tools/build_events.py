@@ -36,7 +36,18 @@ ARTIST = re.compile(
     r'(BTS|BLACKPINK|aespa|NewJeans|SEVENTEEN|TWICE|IVE|LE SSERAFIM|ILLIT|'
     r'ITZY|Red Velvet|TXT|Stray Kids|ENHYPEN|NCT|ATEEZ|TWS|'
     r'KISS OF LIFE|&TEAM|BOYNEXTDOOR|RIIZE|ZEROBASEONE|MEOVV|'
-    r'IU|LISA|JENNIE|Rosé|JISOO|V|Jungkook|Jimin|JIN|RM|J-HOPE|SUGA)'
+    r'IU|LISA|JENNIE|Rosé|JISOO|V|Jungkook|Jimin|JIN|RM|J-HOPE|SUGA|'
+    r'BABYMONSTER|TREASURE|NMIXX|SHINee|EXO|MONSTA X|GOT7|ASTRO|DAY6|'
+    r'\(G\)I-DLE|BIGBANG|fromis_9|KCON|Hearts2Hearts|JO1|INI|ME:I|NiziU|'
+    r'P1Harmony|KickFlip|izna|IS:SUE|EVNNE|MODYSSEY|CORTIS|ALPHA DRIVE ONE|'
+    r'KIM JAE HWAN|xikers|YOUNITE|TIFFANY|TAEYANG|YUTA|MAMAMOO|VERNON|THE 8)'
+)
+
+# PRTIMES向け: K-POPイベント関連語が含まれない投稿(AI/SaaS/化粧品プレスリリース)を除外
+KPOP_EVENT_TERMS = re.compile(
+    r'K-POP|KPOP|韓流|FANMEETING|ファンミ|ファンミーティング|'
+    r'コンサート|ライブ|ツアー|TOUR|LIVE IN JAPAN|JAPAN TOUR|'
+    r'POP-UP STORE|ポップアップ|カムバック|COMEBACK'
 )
 
 
@@ -94,7 +105,9 @@ if os.path.exists(MANUAL):
     except Exception as e:
         print(f"manual load error: {e}")
 
-# 2) trend_signals.jsonl から ticket_guide と PRTIMES
+# 2) trend_signals.jsonl から ticket_guide + PRTIMES (K-POP allow-list)
+# PRTIMES再有効化 2026-05-07: 厳格K-POPフィルタ (ARTIST + KPOP_EVENT_TERMS 両方マッチ) で誤検出防止
+ticket_skipped_no_date = 0
 if os.path.exists(SIGNALS):
     with open(SIGNALS, encoding='utf-8') as f:
         for line in f:
@@ -102,11 +115,26 @@ if os.path.exists(SIGNALS):
                 sig = json.loads(line)
             except Exception:
                 continue
-            if sig.get('source') not in ('ticket_guide',):  # prtimes除外 (誤検出対策)
+            src = sig.get('source')
+            title = sig.get('title', '')
+            if src == 'ticket_guide':
+                ev = extract_event(title, sig.get('url', ''), src)
+                if ev:
+                    items.append(ev)
+                elif ARTIST.search(title):
+                    # tickebo og:title に日付がないケース。次回以降の手動キュレーション候補
+                    ticket_skipped_no_date += 1
+            elif src == 'prtimes':
+                # K-POP判定: 既知アーティスト名 + イベント関連語 両方必須
+                if not (ARTIST.search(title) and KPOP_EVENT_TERMS.search(title)):
+                    continue
+                ev = extract_event(title, sig.get('url', ''), src)
+                if ev:
+                    items.append(ev)
+            else:
                 continue
-            ev = extract_event(sig.get('title', ''), sig.get('url', ''), sig['source'])
-            if ev:
-                items.append(ev)
+if ticket_skipped_no_date:
+    print(f"ticket_guide: {ticket_skipped_no_date}件 K-POP関連だが日付不明→手動キュレーション要")
 
 # 3) event カテゴリ記事
 auth = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
