@@ -7,6 +7,13 @@ CEO Morning Brief / 日次会議で使用する KPI 集計・進捗レポート�
   - generate_monthly_kpi_block(): 月間の目標 vs 実績 テーブル
   - generate_ultimate_progress(): 最終目標の進捗率
   - generate_full_dashboard()   : 全セクションまとめ（CEO Morning Brief 用）
+
+データソース (2026-05-07 監査・根治):
+  - 記事投稿: logs/unified_publish.jsonl の success:true 件数 (旧: pipeline log POST_ID + min(count,10) cap)
+  - X投稿  : logs/x_posts.jsonl の status='ok' 件数 (旧: x_post.log RESULT行)
+  - PL稼働 : 下記 PIPELINES_REGISTRY のみが母数。lifestyle/fashion/ai_meeting/chart/weekly_review は廃止のため除外
+  - GSC     : metrics_yesterday.json gsc.sitewide.clicks 優先、無ければ gsc.clicks フォールバック
+  - 古データ: metrics_yesterday.json の date が yesterday と一致しない場合は警告 (generate_full_dashboard)
 """
 
 import json
@@ -20,6 +27,79 @@ BASE = Path("/home/aiuser/kpop-ai-system")
 LOGS = BASE / "logs"
 TARGETS_FILE = BASE / "config/kpi_targets.json"
 METRICS_FILE = Path("/home/aiuser/google_metrics/metrics_yesterday.json")
+
+# 現役パイプライン母数 (crontab確認済 / 過去7日以内mtime更新あり)。
+# 廃止: lifestyle_pipeline.log, fashion_pipeline.log, ai_meeting.log,
+#       chart_pipeline.log, weekly_review.log は2026-05時点でcron無し。
+PIPELINES_REGISTRY = [
+    (Path("/home/aiuser/ai_kpop.log"),                "07:00 速報パイプライン"),
+    (LOGS / "beauty_pipeline.log",                    "11:00 美容・コスメ"),
+    (LOGS / "strategy_pipeline.log",                  "12:00 戦略・資産記事"),
+    (LOGS / "morning_brief.log",                      "09:00 CEOブリーフ"),
+    (LOGS / "post_publish_enricher.log",              "記事公開エンリッチャー"),
+    (LOGS / "post_audit_feedback_loop.log",           "記事監査フィードバックループ"),
+    (LOGS / "breaking_news.log",                      "速報ニュース検知"),
+    (LOGS / "x_scheduled.log",                        "X投稿スケジューラー"),
+]
+
+
+def _count_unified_publish_success(date_prefix: str) -> int:
+    """unified_publish.jsonl の success:true 件数を ts プレフィックス一致で返す"""
+    p = LOGS / "unified_publish.jsonl"
+    if not p.exists():
+        return 0
+    n = 0
+    for line in p.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        if r.get("success") is True and str(r.get("ts", "")).startswith(date_prefix):
+            n += 1
+    return n
+
+
+def _count_x_posts_ok(date_prefix: str) -> int:
+    """x_posts.jsonl の status='ok' 件数を ts プレフィックス一致で返す"""
+    p = LOGS / "x_posts.jsonl"
+    if not p.exists():
+        return 0
+    n = 0
+    for line in p.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        if r.get("status") == "ok" and str(r.get("ts", "")).startswith(date_prefix):
+            n += 1
+    return n
+
+
+def metrics_data_freshness(yesterday_str: str) -> dict:
+    """metrics_yesterday.json と AdSense の鮮度を返す。古ければ警告に使う"""
+    info = {"metrics_date": None, "is_stale": True, "adsense_status": "unknown"}
+    if not METRICS_FILE.exists():
+        return info
+    try:
+        m = json.loads(METRICS_FILE.read_text())
+        info["metrics_date"] = m.get("date")
+        info["is_stale"] = (m.get("date") != yesterday_str)
+        ads = m.get("adsense", {})
+        if isinstance(ads, dict):
+            if ads.get("error"):
+                info["adsense_status"] = "error"
+                info["adsense_error"] = str(ads.get("error", ""))[:120]
+            elif ads.get("ESTIMATED_EARNINGS") is not None:
+                info["adsense_status"] = "ok"
+    except Exception as e:
+        info["error"] = str(e)
+    return info
 
 
 # ──────────────────────────────────────────────
@@ -58,89 +138,59 @@ def collect_yesterday_actuals(yesterday_str: str) -> dict:
             actuals["pageviews"] = int(ga4.get("pageviews", 0) or 0)
 
             gsc = m.get("gsc", {})
-            # top_pagesから合計クリック・CTR・掲載順位を計算
-            top_pages = gsc.get("top_pages", [])
-            top_queries = gsc.get("top_queries", [])
-            all_pages = top_pages + top_queries
-            if all_pages:
-                total_clicks = sum(int(p.get("clicks", 0) or 0) for p in all_pages)
-                total_imps = sum(int(p.get("impressions", 0) or 0) for p in all_pages)
-                # top_pagesのみでクリック集計（queryとの重複を避ける）
-                page_clicks = sum(int(p.get("clicks", 0) or 0) for p in top_pages)
-                page_imps = sum(int(p.get("impressions", 0) or 0) for p in top_pages)
-                actuals["gsc_clicks"] = page_clicks
-                if page_imps > 0:
-                    actuals["avg_ctr"] = round(page_clicks / page_imps * 100, 2)
-                positions = [float(p.get("position", 0)) for p in top_pages if p.get("position")]
-                if positions:
-                    actuals["avg_position"] = round(sum(positions) / len(positions), 1)
-            # フォールバック: 旧フォーマット
-            if actuals["gsc_clicks"] is None:
+            # 新フォーマット (sitewide) 優先、旧フォーマットへフォールバック
+            sw = gsc.get("sitewide") or {}
+            if sw.get("clicks") is not None:
+                actuals["gsc_clicks"] = int(float(sw.get("clicks") or 0))
+                if sw.get("ctr") is not None:
+                    actuals["avg_ctr"] = round(float(sw.get("ctr")) * 100, 2)
+                if sw.get("position") is not None:
+                    actuals["avg_position"] = round(float(sw.get("position")), 1)
+            else:
+                # 旧フォーマット: top_pages集計 (sitewide欠落時のみ)
+                top_pages = gsc.get("top_pages", [])
+                if top_pages:
+                    page_clicks = sum(int(p.get("clicks", 0) or 0) for p in top_pages)
+                    page_imps = sum(int(p.get("impressions", 0) or 0) for p in top_pages)
+                    actuals["gsc_clicks"] = page_clicks
+                    if page_imps > 0:
+                        actuals["avg_ctr"] = round(page_clicks / page_imps * 100, 2)
+                    positions = [float(p.get("position", 0)) for p in top_pages if p.get("position")]
+                    if positions:
+                        actuals["avg_position"] = round(sum(positions) / len(positions), 1)
                 clicks_raw = gsc.get("clicks") or gsc.get("total_clicks")
-                if clicks_raw is not None:
+                if actuals["gsc_clicks"] is None and clicks_raw is not None:
                     actuals["gsc_clicks"] = int(float(clicks_raw))
 
             ads = m.get("adsense", {})
-            earn = ads.get("ESTIMATED_EARNINGS")
+            # AdSense は token 失効等で error フィールドが入る場合がある
+            earn = ads.get("ESTIMATED_EARNINGS") if isinstance(ads, dict) else None
             if earn is not None:
                 actuals["revenue_jpy"] = int(float(earn))
-            rpm = ads.get("PAGE_VIEWS_RPM")
+            rpm = ads.get("PAGE_VIEWS_RPM") if isinstance(ads, dict) else None
             if rpm is not None:
                 actuals["rpm"] = int(float(rpm))
         except Exception:
             pass
 
-    # ── 記事投稿数（kpi_posts.jsonl） ──
-    # published_atがない場合はpost_idのWP作成日をAPIで確認する代わりに
-    # ログファイルの更新日時から当日記録分をカウント
-    kpi_path = LOGS / "kpi_posts.jsonl"
-    if kpi_path.exists():
-        count = 0
-        # pipeline logの当日更新チェック
-        for pl_log in [Path("/home/aiuser/ai_kpop.log"),
-                       LOGS / "beauty_pipeline.log",
-                       LOGS / "strategy_pipeline.log",
-                       LOGS / "lifestyle_pipeline.log",
-                       LOGS / "fashion_pipeline.log"]:
-            if pl_log.exists():
-                mtime = datetime.fromtimestamp(os.path.getmtime(pl_log), tz=JST)
-                if mtime.strftime("%Y-%m-%d") == yesterday_str:
-                    # ログに "投稿完了" or "POST_ID=" があればカウント
-                    try:
-                        txt = pl_log.read_text(errors="replace")
-                        # 当日の投稿完了行を数える
-                        import re as _re
-                        count += len(_re.findall(r'POST_ID=\d+', txt))
-                    except Exception:
-                        pass
-        actuals["articles_posted"] = min(count, 10)  # 上限10
+    # ── 記事投稿数: unified_publish.jsonl の success:true (cap撤廃、真値) ──
+    actuals["articles_posted"] = _count_unified_publish_success(yesterday_str)
 
-    # ── X投稿数（x_post.log） ──
-    x_log = LOGS / "x_post.log"
-    if x_log.exists():
-        ok_pattern = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?:投稿成功|フック投稿成功)')
-        x_count = 0
-        for line in x_log.read_text(errors="replace").splitlines():
-            m2 = ok_pattern.search(line)
-            if m2 and m2.group(1) == yesterday_str:
-                x_count += 1
-        actuals["x_posts"] = x_count
+    # ── X投稿数: x_posts.jsonl の status='ok' (旧 x_post.log 廃止) ──
+    actuals["x_posts"] = _count_x_posts_ok(yesterday_str)
 
-    # ── パイプライン稼働率（watchdog_repairs + pipeline logs） ──
-    pipeline_logs = [
-        (Path("/home/aiuser/ai_kpop.log"), "速報"),
-        (LOGS / "beauty_pipeline.log", "美容"),
-        (LOGS / "strategy_pipeline.log", "戦略"),
-        (LOGS / "lifestyle_pipeline.log", "ライフスタイル"),
-        (LOGS / "fashion_pipeline.log", "ファッション"),
-    ]
+    # ── パイプライン稼働率: 現役 PIPELINES_REGISTRY のみ母数 ──
+    # 判定: yesterday 0:00 ~ now の26時間以内にmtime更新があれば稼働扱い。
+    # これは「常時稼働ログ (post_publish_enricher等) は今日にmtimeが付くため
+    # yesterday完全一致だと落ちる」問題への対応。日次バッチログも前日中の更新が拾える。
+    now = datetime.now(JST)
+    yesterday_start = datetime.strptime(yesterday_str, "%Y-%m-%d").replace(tzinfo=JST)
     ok_pipes = 0
-    total_pipes = len(pipeline_logs)
-    yesterday_dt = datetime.strptime(yesterday_str, "%Y-%m-%d").replace(tzinfo=JST)
-    for log_path, _ in pipeline_logs:
+    total_pipes = len(PIPELINES_REGISTRY)
+    for log_path, _ in PIPELINES_REGISTRY:
         if log_path.exists():
             mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=JST)
-            if (mtime - yesterday_dt).days == 0:
+            if mtime >= yesterday_start and mtime <= now:
                 ok_pipes += 1
     if total_pipes > 0:
         actuals["pipeline_uptime"] = round(ok_pipes / total_pipes * 100)
@@ -149,13 +199,17 @@ def collect_yesterday_actuals(yesterday_str: str) -> dict:
 
 
 def collect_monthly_actuals(year: int, month: int) -> dict:
-    """当月累計の実績値を集計して返す"""
+    """当月累計の実績値を集計して返す。
+    数字は実累計のみ。GA4/AdSense は1日値しか metrics_yesterday.json に無いため
+    現状は当月実累計が取れない指標 (sessions/pageviews/revenue) は推計表記とせず
+    Noneのまま返す (=表示は '未取得')。実累計が必要なら別途日次積み上げログが要る。
+    """
     now = datetime.now(JST)
     month_str = f"{year:04d}-{month:02d}"
     days_elapsed = now.day
 
     actuals = {
-        "sessions": None,
+        "sessions": None,         # 当月実累計の集計ソース未整備のためNone
         "pageviews": None,
         "revenue_jpy": None,
         "articles_total": None,
@@ -166,60 +220,23 @@ def collect_monthly_actuals(year: int, month: int) -> dict:
         "_days_elapsed": days_elapsed,
     }
 
-    # GA4/AdSense月間推計（前日実績×経過日数）
+    # 平均掲載順位は最新値を表示 (新フォーマット sitewide.position)
     if METRICS_FILE.exists():
         try:
             m = json.loads(METRICS_FILE.read_text())
-            ga4 = m.get("ga4", {}).get("summary", {})
-            sess_day = int(ga4.get("sessions", 0) or 0)
-            pv_day = int(ga4.get("pageviews", 0) or 0)
-            actuals["sessions"] = sess_day * days_elapsed
-            actuals["pageviews"] = pv_day * days_elapsed
-
-            ads = m.get("adsense", {})
-            earn = ads.get("ESTIMATED_EARNINGS")
-            if earn is not None:
-                actuals["revenue_jpy"] = int(float(earn)) * days_elapsed
-
             gsc = m.get("gsc", {})
-            clicks_day = int(float(gsc.get("clicks", 0) or 0))
-            actuals["gsc_clicks"] = clicks_day * days_elapsed
-
-            pos_raw = gsc.get("position")
+            sw = gsc.get("sitewide") or {}
+            pos_raw = sw.get("position", gsc.get("position"))
             if pos_raw is not None:
                 actuals["avg_position"] = round(float(pos_raw), 1)
         except Exception:
             pass
 
-    # 記事総数（kpi_posts.jsonl 全件 — published_at有無に関係なく有効行を計上）
-    kpi_path = LOGS / "kpi_posts.jsonl"
-    if kpi_path.exists():
-        total = 0
-        seen_ids = set()
-        for line in kpi_path.read_text(errors="replace").splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                r = json.loads(line)
-                pid = str(r.get("post_id", ""))
-                if pid and pid not in seen_ids:
-                    seen_ids.add(pid)
-                    total += 1
-            except Exception:
-                pass
-        actuals["articles_total"] = total
+    # 記事総数: 当月の unified_publish.jsonl success:true 件数 (旧: kpi_posts.jsonl 全期間累計はバグ)
+    actuals["articles_total"] = _count_unified_publish_success(month_str)
 
-    # X投稿月間（x_post.log）
-    x_log = LOGS / "x_post.log"
-    if x_log.exists():
-        ok_pattern = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?:投稿成功|フック投稿成功)')
-        x_count = 0
-        for line in x_log.read_text(errors="replace").splitlines():
-            m2 = ok_pattern.search(line)
-            if m2 and m2.group(1).startswith(month_str):
-                x_count += 1
-        actuals["x_posts"] = x_count
+    # X投稿月間: x_posts.jsonl の status='ok' 当月分
+    actuals["x_posts"] = _count_x_posts_ok(month_str)
 
     return actuals
 
@@ -282,15 +299,19 @@ def _progress_row(label: str, actual, target: float, unit: str, width: int = 55)
 # ──────────────────────────────────────────────
 # セクション生成
 # ──────────────────────────────────────────────
-def generate_daily_kpi_block(actuals: dict, targets: dict, date_label: str) -> str:
+def generate_daily_kpi_block(actuals: dict, targets: dict, date_label: str, stale: bool = False) -> str:
     dt = targets.get("daily", {})
+    header_inner = f"📊 デイリーKPI — {date_label}" + (" ⚠️ 古データ" if stale else "")
     lines = [
         f"┌─────────────────────────────────────────────────────────────────┐",
-        f"│  📊 デイリーKPI — {date_label}                                       │",
+        f"│  {header_inner:<63}│",
         f"├──────────────┬──────────┬──────────┬──────────────┬─────────────┤",
         f"│  指標         │  実績     │  目標     │  達成率       │  進捗       │",
         f"├──────────────┼──────────┼──────────┼──────────────┼─────────────┤",
     ]
+
+    # GA4/AdSense/GSC指標は metrics_yesterday.json 由来のため stale 影響を受ける
+    stale_flagged = {"セッション", "PV", "収益", "GSCクリック", "平均CTR", "RPM"}
 
     metrics = [
         ("セッション",      actuals.get("sessions"),        dt.get("sessions",{}).get("target",500),    "セッション"),
@@ -317,9 +338,13 @@ def generate_daily_kpi_block(actuals: dict, targets: dict, date_label: str) -> s
             icon = _status_icon(pct)
             actual_str = _fmt_val(actual, unit)
         target_str = _fmt_val(target, unit)
+        label_disp = f"{label}*" if (stale and label in stale_flagged and actual is not None) else label
         lines.append(
-            f"│  {icon} {label:<11}│ {actual_str:>8} │ {target_str:>8} │ {pct_str:>10}   │ {bar}  │"
+            f"│  {icon} {label_disp:<11}│ {actual_str:>8} │ {target_str:>8} │ {pct_str:>10}   │ {bar}  │"
         )
+
+    if stale:
+        lines.append(f"│  * 印は古データソース由来 (metrics_yesterday.json date不一致)")
 
     lines.append(f"└──────────────┴──────────┴──────────┴──────────────┴─────────────┘")
     return "\n".join(lines)
@@ -384,15 +409,21 @@ def generate_ultimate_progress(monthly_actuals: dict, targets: dict) -> str:
         f"├──────────────┼──────────┼──────────┼──────────────┼─────────────┤",
     ]
 
-    # 最終目標 vs 月次推計（月次ペースから換算）
+    # セッション/日: 月次累計を集計していないため、最新日次値 (collect_yesterday_actuals) を参照したいが
+    # ここでは monthly_actuals から取り出す経路がないため None で表示
+    sess_per_day = None
+    if monthly_actuals.get("sessions") is not None:
+        days = max(monthly_actuals.get("_days_elapsed", 1), 1)
+        sess_per_day = monthly_actuals["sessions"] / days
+
     metrics = [
-        ("セッション/日",  monthly_actuals.get("sessions", 0) / max(monthly_actuals.get("_days_elapsed",1),1),
+        ("セッション/日",  sess_per_day,
                            ut.get("sessions",{}).get("target",3000), "セッション"),
         ("月間収益",       monthly_actuals.get("revenue_jpy"),
                            ut.get("revenue_jpy",{}).get("target",30000), "円"),
         ("累計記事数",     monthly_actuals.get("articles_total"),
                            ut.get("articles_total",{}).get("target",500), "本"),
-        ("RPM",            None, ut.get("rpm",{}).get("target",500), "円"),  # 別途取得
+        ("RPM",            None, ut.get("rpm",{}).get("target",500), "円"),
         ("平均掲載順位",   monthly_actuals.get("avg_position"),
                            ut.get("avg_position",{}).get("target",10), "位"),
     ]
@@ -462,6 +493,7 @@ def generate_full_dashboard() -> str:
     targets = load_targets()
     daily_actuals = collect_yesterday_actuals(yesterday_str)
     monthly_actuals = collect_monthly_actuals(now.year, now.month)
+    freshness = metrics_data_freshness(yesterday_str)
 
     sections = []
 
@@ -473,8 +505,23 @@ def generate_full_dashboard() -> str:
         f"╚═══════════════════════════════════════════════════════════════════╝"
     )
 
+    # データ鮮度警告
+    warn_lines = []
+    if freshness.get("is_stale"):
+        md = freshness.get("metrics_date") or "未取得"
+        warn_lines.append(
+            f"⚠️ GA4/GSC/AdSense データが古いか欠落: metrics_yesterday.json date={md} "
+            f"(期待: {yesterday_str})。下記KPIのうち sessions/PV/収益/RPM/GSC は (古データ) 表示"
+        )
+    if freshness.get("adsense_status") == "error":
+        warn_lines.append(
+            f"⚠️ AdSense API エラー (token失効の可能性): {freshness.get('adsense_error','')}"
+        )
+    if warn_lines:
+        sections.append("\n".join(warn_lines))
+
     # デイリーKPI
-    sections.append(generate_daily_kpi_block(daily_actuals, targets, yesterday_label))
+    sections.append(generate_daily_kpi_block(daily_actuals, targets, yesterday_label, stale=freshness.get("is_stale")))
 
     # 月次KPI
     sections.append(generate_monthly_kpi_block(monthly_actuals, targets, now.year, now.month))

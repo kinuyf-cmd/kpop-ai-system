@@ -37,16 +37,17 @@ yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
 base = Path("/home/aiuser/kpop-ai-system/logs")
 
 PIPELINES = [
-    (Path("/home/aiuser/ai_kpop.log"),       "07:00 速報パイプライン"),
-    (base / "beauty_pipeline.log",            "11:00 美容・コスメ"),
-    (base / "strategy_pipeline.log",          "12:00 戦略・資産記事"),
-    (base / "lifestyle_pipeline.log",         "15:00 旅行・ライフスタイル"),
-    (base / "fashion_pipeline.log",           "18:00 ファッション"),
-    (base / "morning_brief.log",              "09:00 CEOブリーフ"),
-    (base / "ai_meeting.log",                 "21:00 AI日次会議"),
-    (base / "chart_pipeline.log",             "07:30 チャート（月曜）"),
-    (base / "weekly_review.log",              "06:30 週次改善（月曜）"),
+    (Path("/home/aiuser/ai_kpop.log"),                "07:00 速報パイプライン"),
+    (base / "beauty_pipeline.log",                    "11:00 美容・コスメ"),
+    (base / "strategy_pipeline.log",                  "12:00 戦略・資産記事"),
+    (base / "morning_brief.log",                      "09:00 CEOブリーフ"),
+    (base / "post_publish_enricher.log",              "記事公開エンリッチャー"),
+    (base / "post_audit_feedback_loop.log",           "記事監査フィードバックループ"),
+    (base / "breaking_news.log",                      "速報ニュース検知"),
+    (base / "x_scheduled.log",                        "X投稿スケジューラー"),
 ]
+# 廃止 (2026-05時点でcron無し): lifestyle_pipeline / fashion_pipeline /
+# ai_meeting / chart_pipeline (月曜) / weekly_review (月曜) — 母数から除外
 
 lines = []
 ok = ng = 0
@@ -77,50 +78,47 @@ PYPIPE
 # [SECTION 3] X投稿実績（前日）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 X_POST_SUMMARY=$(python3 - << 'PYXPOST'
-import re
+# 真ソース: x_posts.jsonl (status='ok'/'error'/'ogp_warn')。x_post.log は旧/部分ログのため使わない。
+import json
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 JST = timezone(timedelta(hours=9))
 yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
 
-x_log = Path("/home/aiuser/kpop-ai-system/logs/x_post.log")
-if not x_log.exists():
-    print("  ⬜ X投稿ログなし")
+xj = Path("/home/aiuser/kpop-ai-system/logs/x_posts.jsonl")
+if not xj.exists():
+    print("  ⬜ x_posts.jsonl なし")
     exit()
 
-ok_pat  = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?:投稿成功|フック投稿成功)')
-ng_pat  = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: (?!DRY-RUN).*(?:失敗|不合格)')
-dry_pat = re.compile(r'\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\] RESULT: DRY-RUN')
-url_pat = re.compile(r'RESULT: (?:投稿成功|フック投稿成功) - (https://x\.com/\S+)')
-
-ok = ng = dry = 0
+ok = ng = warn = 0
 tweet_urls = []
-for line in x_log.read_text(errors="replace").splitlines():
-    if yesterday not in line:
+for line in xj.read_text(errors="replace").splitlines():
+    line = line.strip()
+    if not line:
         continue
-    if ok_pat.search(line):
+    try:
+        r = json.loads(line)
+    except Exception:
+        continue
+    if not str(r.get("ts","")).startswith(yesterday):
+        continue
+    st = r.get("status")
+    if st == "ok":
         ok += 1
-        u = url_pat.search(line)
-        if u:
-            tweet_urls.append(u.group(1))
-    elif ng_pat.search(line):
+        if r.get("url"):
+            tweet_urls.append(r["url"])
+    elif st == "error":
         ng += 1
-    elif dry_pat.search(line):
-        dry += 1
+    elif st == "ogp_warn":
+        warn += 1
 
-if ok > 0:
-    icon = "✅"
-elif dry > 0:
-    icon = "🟡"
-else:
-    icon = "🔴"
-
-print(f"  {icon} 投稿成功: {ok}件  失敗: {ng}件  DRY-RUN: {dry}件")
+icon = "✅" if ok > 0 else ("🟡" if warn > 0 else "🔴")
+print(f"  {icon} 投稿成功: {ok}件  失敗: {ng}件  ogp_warn: {warn}件")
 for u in tweet_urls[:3]:
     print(f"      ↳ {u}")
-if ok == 0 and dry == 0 and ng == 0:
-    print("  ⬜ 前日のX投稿記録なし（パイプライン未実行の可能性）")
+if ok == 0 and warn == 0 and ng == 0:
+    print("  ⬜ 前日のX投稿記録なし")
 PYXPOST
 )
 
@@ -224,15 +222,19 @@ now = datetime.now(JST)
 yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
 base = Path("/home/aiuser/kpop-ai-system/logs")
 
-# 前日のx_post状況
+# 前日のx_post状況 (真ソース: x_posts.jsonl)
 x_ok = 0
-x_log = base / "x_post.log"
-if x_log.exists():
-    import re
-    ok_pat = re.compile(r'\[(\d{4}-\d{2}-\d{2})[^\]]*\] RESULT: (?:投稿成功|フック投稿成功)')
-    for line in x_log.read_text(errors="replace").splitlines():
-        m = ok_pat.search(line)
-        if m and m.group(1) == yesterday:
+xj = base / "x_posts.jsonl"
+if xj.exists():
+    for line in xj.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        if r.get("status") == "ok" and str(r.get("ts","")).startswith(yesterday):
             x_ok += 1
 
 # failsafe状態
@@ -365,7 +367,7 @@ echo "$BRIEF"
 # Discord送信（#daily-ceo-report）
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
-WEBHOOK=$(get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
+WEBHOOK=$(get_discord_webhook "morning" 2>/dev/null || echo "")
 [ -z "$WEBHOOK" ] && WEBHOOK="${DISCORD_WEBHOOK:-}"
 
 if [[ -z "$WEBHOOK" ]]; then
