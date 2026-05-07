@@ -80,27 +80,64 @@ def fetch_post_by_slug(slug):
         return None
 
 
+def fetch_top_queries(slug, days=14):
+    """対象記事のGSCトップクエリを取得 (検索意図を直接タイトルに反映)"""
+    try:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        SA = '/home/aiuser/kpop-ai-system/google_metrics/service_account.json'
+        SITE = 'https://www.kpopjournal.tokyo/'
+        creds = service_account.Credentials.from_service_account_file(
+            SA, scopes=["https://www.googleapis.com/auth/webmasters.readonly"])
+        service = build("searchconsole", "v1", credentials=creds, cache_discovery=False)
+        from datetime import date as _date, timedelta as _td
+        end = _date.today() - _td(days=2)
+        start = end - _td(days=days)
+        body = {
+            "startDate": start.isoformat(), "endDate": end.isoformat(),
+            "dimensions": ["query"],
+            "dimensionFilterGroups": [{"filters": [{"dimension": "page", "operator": "equals",
+                                                    "expression": f"{SITE}{slug}/"}]}],
+            "rowLimit": 5,
+        }
+        res = service.searchanalytics().query(siteUrl=SITE, body=body).execute()
+        return [(r['keys'][0], r['impressions'], r['clicks']) for r in res.get('rows', [])]
+    except Exception:
+        return []
+
+
 def generate_improved_title(current_title, slug, impressions, ctr):
-    """GPT-4o-miniで改善タイトルを生成"""
+    """GPT-4o-miniで改善タイトルを生成 (実クエリ意図を反映)"""
     key = os.getenv('OPENAI_API_KEY')
     if not key:
         return None
+
+    # 実際のGSCクエリを取得して検索意図を可視化
+    queries = fetch_top_queries(slug)
+    query_block = '\n'.join(f'  - "{q}" ({imp} IMP / {clk} clk)' for q, imp, clk in queries[:5]) if queries else '  (取得不可)'
+
+    current_year = datetime.now().year
 
     prompt = f"""以下のK-POP記事のタイトルを改善してください。
 
 【現在のタイトル】{current_title}
 【スラッグ】{slug}
-【検索表示回数】{impressions}回 (多い=検索ニーズあり)
+【検索表示回数】{impressions}回
 【クリック率】{ctr}% (低い=タイトルが検索意図に合っていない)
 
-【改善要件】
-- 検索者の意図に直接応えるタイトルにする
-- 具体的な情報を含める（年号、人数、比較対象など）
-- 30-42文字以内
-- 「なぜ」「完全版」「最新」等の誘引ワードを適切に使用
-- ただし煽りすぎない
+【実際の流入検索クエリ TOP5】
+{query_block}
 
-【出力】改善後のタイトル1行のみ"""
+【改善要件】
+1. 上記の実クエリの意図 (特に「いつ」「誰」「なぜ」等の疑問語) に直接応える
+2. 具体的な情報を含める（年号、人数、比較対象、結論等）
+3. 30-42文字以内（厳守）
+4. **stale年度の禁止**: 過去の年号 ({current_year-1}年以前) は本文が当該年限定の場合のみ。
+   現在 {current_year} 年なので、未来予定や継続事象なら {current_year} 年に更新
+5. 煽り過ぎない、しかし疑問形・結論先出しで CTR を狙う
+6. ローマ字検索が多い場合 (例: ojogang, illit) はタイトル冒頭に英字表記併記
+
+【出力】改善後のタイトル1行のみ。前置き・解説不要。"""
 
     body = json.dumps({
         'model': 'gpt-4o-mini',
