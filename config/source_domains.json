@@ -1,0 +1,31 @@
+{
+  "_comment": "信頼ソース判定用ドメインリスト。post_publish_hook / llm_proofreader / comprehensive_audit が共通参照する。collectors追加時はここに追加すること。lib/source_domains.py 経由で読み込む。",
+  "_last_updated": "2026-05-07",
+  "_history": "2026-05-07: collectors追加に伴い9ドメイン追加 (mydaily/newsen/starnews/sportschosun/topstarnews/xportsnews/kstyle/koreaherald/prtimes)。原因はcommit b42163e巻き込みでpost_publish_hookのregexが古いまま新collectors記事を全BLOCKしていた事故。",
+  "trusted_korean_media": [
+    "koreaboo",
+    "allkpop",
+    "soompi",
+    "tenasia",
+    "stoo",
+    "bntnews",
+    "naver",
+    "kpophit",
+    "newsis",
+    "joynews24",
+    "osen",
+    "mhns",
+    "tvreport",
+    "mydaily",
+    "newsen",
+    "starnews",
+    "sportschosun",
+    "topstarnews",
+    "xportsnews",
+    "kstyle",
+    "koreaherald"
+  ],
+  "trusted_japan_media": [
+    "prtimes"
+  ]
+}

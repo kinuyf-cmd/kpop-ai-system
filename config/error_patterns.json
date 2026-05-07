@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T16:35:30.252063",
+  "updated_at": "2026-05-07T13:18:11.227513",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1137,6 +1137,16 @@
       "added_at": "2026-05-01",
       "severity": "high",
       "root_cause": "unified_publisher L157のif source_url or artist:条件。両方Noneだとサムネ取得をスキップしDALL-Eフォールバックに直行"
+    },
+    "source_domain_regex_lag": {
+      "count": 30,
+      "last_seen": "2026-05-07",
+      "example": "post_publish_hook.py / llm_proofreader.py / comprehensive_audit.py のソースドメインregexが新collectors (mydaily/newsen/starnews/sportschosun/topstarnews/xportsnews/kstyle/koreaherald/prtimes) に追従しておらず、本文に正規ソースリンクがある記事を「ソースなし」と誤判定し公開後draft化。5/7に30件発生 (内訳: 5/7 publish由来22件 + 5/6以前8件)",
+      "root_cause": "ハードコードされたドメインリストが3ファイルに散在、collector追加時の同期義務が暗黙だった",
+      "fix": "config/source_domains.json と lib/source_domains.py に外出し、post_publish_hook.py が共通参照する形に切替 (2026-05-07 commit)。llm_proofreader.py / comprehensive_audit.py への波及はオーナー進行中作業の都合で別途",
+      "agent": "post_publish_hook",
+      "resolved_at": "2026-05-07",
+      "trigger_origin": "commit b42163e で post_publish_hook.py の Step3 = full_audit→pre_publish_gate 再実行への変更を巻き込んだことが副次的に表面化させた"
     }
   },
   "recurring_errors": [

@@ -143,8 +143,10 @@ def run_post_publish(post_id, post_type='post'):
             _pf_cats = post_fresh.get('categories', [])
 
             # 記事本文からソースURLを抽出（no_source誤BLOCKを防止）
+            # ドメインリストは config/source_domains.json から読み込み (2026-05-07修正)
             import re as _re_hook
-            _src_urls = _re_hook.findall(r'href="(https?://(?:www\.)?(?:koreaboo|allkpop|soompi|tenasia|stoo|bntnews|naver|kpophit|newsis|joynews24|osen|mhns|tvreport)[^"]+)"', _pf_content)
+            from lib.source_domains import source_url_regex as _src_re
+            _src_urls = _re_hook.findall(_src_re(), _pf_content)
             _src_url = _src_urls[0] if _src_urls else None
             _src_signals = [{'url': u, 'title': ''} for u in _src_urls[:3]] if _src_urls else None
 
