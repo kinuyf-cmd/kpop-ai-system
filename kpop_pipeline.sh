@@ -39,7 +39,7 @@ if [ "${ENABLE_TOKEN_TRACKING:-0}" = "1" ]; then
   source "$(cd "$(dirname "$0")" && pwd)/lib/claude_wrapper.sh"
 fi
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━���
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Phase 2: エージェント自動停止チェック
 # quality_auto_stop.py で停止されたエージェントをスキップする
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -583,11 +583,11 @@ PYEOF
 【過去${days}日間の投稿済みタイトル】
 ${RECENT_TITLES}
 【判定基準（厳格に適用）】
-- 同じアーティスト＋同じイベント＋同じ時期 → 重複（YES��
+- 同じアーティスト＋同じイベント＋同じ時期 → 重複（YES）
 - 同じテーマのまとめ・ラウンドアップ記事（例：カムバックスケジュールまとめが既にあるのに再度カムバック一覧を書く）→ 重複（YES）
 - 同じカテゴリの総まとめ・一覧系記事が既にある場合（例：4月のカムバック予定 vs 2025年春のカムバックまとめ）→ 重複（YES）
 - 美容・スキンケア・ガラス肌・韓国コスメ・Kビューティ系記事が過去${days}日に既に1本以上ある → 重複（YES）
-- 同じアー��ィストでも別イベント・別テーマ → 重複なし（NO）
+- 同じアーティストでも別イベント・別テーマ → 重複なし（NO）
 - チャートランキングは毎週異なるため常に重複なし（NO）
 【出力ルール】YESまたはNOの1単語のみ。他は出力禁止。
 ")
@@ -951,8 +951,8 @@ else
 
 【★ネタ被り絶対禁止★】以下は直近3日間に既に投稿済みの記事です。
 同じテーマ・同じ切り口・同じまとめ形式で書くことは絶対に禁止。
-特に「カムバックスケジュールまとめ」等のラウンドアップ記事が既にある場合、類似まとめ記事��絶対に書くな。
-編集長が指��したテーマで��っても、既出テーマと被る場合は切り口を大きく��えること。
+特に「カムバックスケジュールまとめ」等のラウンドアップ記事が既にある場合、類似まとめ記事は絶対に書くな。
+編集長が指示したテーマであっても、既出テーマと被る場合は切り口を大きく変えること。
 ${RECENT_POSTED}
 
 【速報の判断基準 - v1.3厳格ルール】
@@ -2094,7 +2094,7 @@ echo "  ✓ reports/final_post.md 生成完了"
 echo "=== 投稿 ==="
 
 # 投稿対象: final_post.md のみ（2_checked.mdや3_arceus.mdからは絶対に投稿しない）
-TITLE=$(head -n 1 reports/final_post.md)
+TITLE=$(head -n 1 reports/final_post.md | python3 -c "import sys,re; t=sys.stdin.read().strip(); print(re.sub(r'<[^>]+>','',t).strip())")
 check_duplicate "$TITLE" 7
 # 速報判定: デオキシスが【速報】を付けた場合のみ速報扱い（無条件付加しない）
 # 既に【速報】が含まれていればそのまま、なければ付けない
@@ -3433,6 +3433,8 @@ if [ -n "$X_TWEET_ID" ] && [ -n "$POST_ID" ]; then
 fi
 if [ -n "$X_TWEET_URL" ]; then
   X_STATUS="成功 ($X_TWEET_URL)"
+elif echo "$X_POST_RESULT" | grep -q "QUEUED"; then
+  X_STATUS="キュー追加（ピーク時間帯に投稿予定）"
 elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
   X_STATUS="DRY-RUN（テストモード）"
 elif echo "$X_POST_RESULT" | grep -q "SKIP:.*停止中\|SKIP:.*suspended"; then

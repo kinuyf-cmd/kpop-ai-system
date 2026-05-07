@@ -887,7 +887,7 @@ if m: print(m.group(1)); sys.exit(0)
 # P6: NN/100 形式（テキスト中のどこでも）
 m = re.search(r'(?<!\d)([5-9]\d|100)/100\b', text)
 if m: print(m.group(1)); sys.exit(0)
-# P7: 個別スコア平均（3項目以上ある場��）
+# P7: 個別スコア平均（3項目以上ある場合）
 scores = re.findall(r'[A-Z_]+(?:_SCORE)?:\s*(\d+)', text)
 if len(scores) >= 3:
     nums = [int(s) for s in scores if 0 <= int(s) <= 100]
@@ -1306,7 +1306,7 @@ fi
 # shellcheck source=lib/generate_thumb_copy.sh
 source "$(cd "$(dirname "$0")" && pwd)/lib/generate_thumb_copy.sh"
 _SP_THUMB_GENRE="analysis"
-_SP_THUMB_TITLE=$(head -n 1 reports/final_post.md 2>/dev/null)
+_SP_THUMB_TITLE=$(head -n 1 reports/final_post.md 2>/dev/null | python3 -c "import sys,re; t=sys.stdin.read().strip(); print(re.sub(r'<[^>]+>','',t).strip())")
 [[ -z "$_SP_THUMB_TITLE" ]] && _SP_THUMB_TITLE="${_CTR_THUMB_SHORT:-K-POP分析}"
 THUMB_TITLE=$(generate_thumb_copy "$_SP_THUMB_TITLE" "$_SP_THUMB_GENRE" "reports/final_post.md")
 echo "  [14.9] サムネテキスト確定: $THUMB_TITLE"
@@ -1318,7 +1318,7 @@ echo ""
 echo "━━━ PHASE 5: 品質チェック・投稿・拡散 ━━━"
 
 # 投稿対象: final_post.md のみ（13_final.mdや14_arceus.mdからは絶対に投稿しない）
-TITLE=$(head -n 1 reports/final_post.md)
+TITLE=$(head -n 1 reports/final_post.md | python3 -c "import sys,re; t=sys.stdin.read().strip(); print(re.sub(r'<[^>]+>','',t).strip())")
 check_duplicate "$TITLE" 7
 CONTENT=$(tail -n +2 reports/final_post.md)
 
@@ -2048,9 +2048,11 @@ X_POST_RESULT=$(bash "$SCRIPT_DIR/google_metrics/post_to_x.sh" "$TITLE" "$POST_U
 X_TWEET_URL=$(echo "$X_POST_RESULT" | grep -oP 'https://x\.com/\S+' | head -1 || true)
 if [ -n "$X_TWEET_URL" ]; then
   X_STATUS="成功 ($X_TWEET_URL)"
+elif echo "$X_POST_RESULT" | grep -q "QUEUED"; then
+  X_STATUS="キュー追加（ピーク時間帯に投稿予定）"
 elif echo "$X_POST_RESULT" | grep -q "DRY-RUN"; then
   X_STATUS="DRY-RUN（テストモード）"
-elif echo "$X_POST_RESULT" | grep -q "スキップ"; then
+elif echo "$X_POST_RESULT" | grep -q "スキップ\|SKIP"; then
   X_STATUS="スキップ"
 else
   X_STATUS="失敗"

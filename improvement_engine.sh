@@ -12,7 +12,7 @@
 #       STEP6: 週次レポート（月曜のみ）
 #       STEP7.5: エージェント責務逸脱チェック（audit_agent_roles.py → logs/role_audit.log）
 #       STEP9: タイトル品質学習（CTRパターン→eevee/metamon注入）
-#       STEP10: 誤字学習（パターン→error_patterns.json自���追加）
+#       STEP10: 誤字学習（パターン→error_patterns.json自動追加）
 #       STEP11: 品質スコア学習（S/C特徴→品質ゲートフィードバック）
 #       STEP8: Discordサマリー通知
 #

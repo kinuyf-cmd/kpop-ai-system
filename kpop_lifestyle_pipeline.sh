@@ -1,6 +1,6 @@
 #!/bin/bash
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ライ���スタイル記事パイプライン
+# ライフスタイル記事パイプライン
 # snorlax（レビュー・比較記事担当）を接続
 # K-POPグッズ・コスメレビュー・ソウル旅行スポット記事を自動生成
 # 毎日 14:00 自動実行
@@ -58,10 +58,10 @@ check_output() {
   fi
   local _sz; _sz=$(wc -c < "$file" 2>/dev/null || echo 0)
   if [[ "$_sz" -lt 500 ]]; then
-    echo "❌ [$step] 出力が極小 (${_sz}bytes) → パイプライ���停止"; log_step "$step" "error" "$file" "出力極小"; archive_and_exit 1
+    echo "❌ [$step] 出力が極小 (${_sz}bytes) → パイプライン停止"; log_step "$step" "error" "$file" "出力極小"; archive_and_exit 1
   fi
   if grep -qE '申し訳ありません[がで。、 ]|申し訳ありません$|お手伝いできますか|許可してください|入力記事が見当たりません|記事を提供してください|元の記事が提供されていません' "$file"; then
-    echo "❌ [$step] エラー応答検��� → パイプライン停止"; log_step "$step" "error" "$file" "エラー応答"; archive_and_exit 1
+    echo "❌ [$step] エラー応答検出 → パイプライン停止"; log_step "$step" "error" "$file" "エラー応答"; archive_and_exit 1
   fi
   echo "  ✓ [$step] OK ($(wc -c < "$file" | tr -d ' ') bytes)"; log_step "$step" "ok" "$file"
 }
@@ -86,7 +86,7 @@ archive_and_exit() {
 SUMMARY
   fi
   cleanup_reports_dir
-  bash "$SCRIPT_DIR/kpop_notify.sh" error "ラ��フスタイル" "パイプライン停止 (RUN: $RUN_ID)" 2>/dev/null
+  bash "$SCRIPT_DIR/kpop_notify.sh" error "ライフスタイル" "パイプライン停止 (RUN: $RUN_ID)" 2>/dev/null
   exit "$code"
 }
 
@@ -129,7 +129,7 @@ ${RECENT_TITLES}
 【出力】YESまたはNOのみ。
 ")
   if [[ "$SIMILARITY" == "YES" ]]; then
-    echo "  ⚠️  重複あり → スキッ���"; archive_and_exit 0
+    echo "  ⚠️  重複あり → スキップ"; archive_and_exit 0
   fi
   echo "  ✓ 重複なし"
 }
@@ -160,11 +160,11 @@ case "$ARTICLE_TYPE" in
     CATEGORY_ID=12
     ;;
   goods_compare)
-    THEME_PROMPT="K-POP公式グッズのおすすめ比較記���を生成せよ。タイプB（グッズ比較記���）のテンプレに従い、人気アーティストの公式グッズをWebSearchで調査し、3商品以上を比較するランキング記事を書け。"
+    THEME_PROMPT="K-POP公式グッズのおすすめ比較記事を生成せよ。タイプB（グッズ比較記事）のテンプレに従い、人気アーティストの公式グッズをWebSearchで調査し、3商品以上を比較するランキング記事を書け。"
     CATEGORY_ID=13
     ;;
   travel_review)
-    THEME_PROMPT="ソウルのK-POPファン向けスポットレビュー記事を生成せよ。タイ���C（旅行スポットレビュー）のテンプレに従い、聖地巡礼スポット・カフェ・ポップアップストア等をWebSearchで調査し、実用的なガイド記事を書け。"
+    THEME_PROMPT="ソウルのK-POPファン向けスポットレビュー記事を生成せよ。タイプC（旅行スポットレビュー）のテンプレに従い、聖地巡礼スポット・カフェ・ポップアップストア等をWebSearchで調査し、実用的なガイド記事を書け。"
     CATEGORY_ID=11
     ;;
 esac
@@ -215,7 +215,7 @@ claude --no-session-persistence --agent alakazam_kpop -p "
 【記事】
 $(cat reports/1_lifestyle_article.md)
 
-【出力形式】1行目:タイトルのみ 2行目:空行 3行���以降:修正済みHTML本文
+【出力形式】1行目:タイトルのみ 2行目:空行 3行目以降:修正済みHTML本文
 " > reports/2_lifestyle_checked.md
 sanitize_output reports/2_lifestyle_checked.md
 check_output reports/2_lifestyle_checked.md "アラカザム"
@@ -228,7 +228,7 @@ claude --no-session-persistence --agent gengar -p "
 【記事】
 $(cat reports/2_lifestyle_checked.md)
 
-1行目:タ���トルのみ 2行目:空行 3行目以降:HTML本文のみ
+1行目:タイトルのみ 2行目:空行 3行目以降:HTML本文のみ
 " > reports/3_lifestyle_audited.md
 sanitize_output reports/3_lifestyle_audited.md
 check_output reports/3_lifestyle_audited.md "ゲンガー"
@@ -247,7 +247,7 @@ fi
 
 # ━━━ PHASE 3: CVR最適化 ━━━
 echo ""
-echo "━━━ PHASE 3: CVR��適化 ━━━"
+echo "━━━ PHASE 3: CVR最適化 ━━━"
 
 echo "[4/5] カイリュー: CVR・回遊最適化..."
 ARTICLE_LINE=$(grep -n '^<h2>' reports/3_lifestyle_audited.md | head -1 | cut -d: -f1)
@@ -312,7 +312,7 @@ else:
 dst.write_text(cleaned, encoding="utf-8")
 PY
 
-TITLE=$(head -n 1 reports/final_post.md)
+TITLE=$(head -n 1 reports/final_post.md | python3 -c "import sys,re; t=sys.stdin.read().strip(); print(re.sub(r'<[^>]+>','',t).strip())")
 CONTENT=$(tail -n +2 reports/final_post.md)
 
 check_duplicate "$TITLE" 5
@@ -395,7 +395,7 @@ PY
 )
 
 echo "=== 投稿前バリデーション ==="
-if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/validate_post.py"; then echo "❌ バリデ��ション失敗"; archive_and_exit 1; fi
+if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/validate_post.py"; then echo "❌ バリデーション失敗"; archive_and_exit 1; fi
 echo "=== ダークライ権利監査 ==="
 if ! echo "$JSON" | python3 "$SCRIPT_DIR/lib/darkrai_audit.py"; then echo "❌ 権利監査失敗"; archive_and_exit 1; fi
 

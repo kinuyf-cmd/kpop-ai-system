@@ -2,7 +2,9 @@
 set -e
 
 BASE_DIR="$HOME/google_metrics"
-WEBHOOK_URL=$(cat ~/.kpop_discord_webhook | tr -d '[:space:]')
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
+WEBHOOK_URL=$(get_discord_webhook "seo" 2>/dev/null || cat ~/.kpop_discord_webhook 2>/dev/null | tr -d '[:space:]' || echo "")
 
 JSON_PATH="$BASE_DIR/metrics_yesterday.json"
 

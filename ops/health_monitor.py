@@ -40,7 +40,7 @@ CLEANABLE_DIRS = [
 def get_webhook_url():
     try:
         with open(WEBHOOKS_FILE) as f:
-            return json.load(f).get("urgent_errors", "")
+            return json.load(f).get("error", "")
     except Exception:
         return ""
 

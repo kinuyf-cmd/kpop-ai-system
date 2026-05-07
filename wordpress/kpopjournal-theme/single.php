@@ -1,5 +1,18 @@
 <?php get_header(); ?>
 
+<style>
+/* TOC removed — reclaim its space for article body */
+.kpj-single__content .kpj-toc { display: none; }
+.kpj-single .kpj-single__content {
+    max-width: 100%;
+    width: 100%;
+    flex: 1 1 0%;
+}
+.kpj-single .kpj-single__body {
+    max-width: 100%;
+}
+</style>
+
 <article class="kpj-single" id="kpj-article">
 
     <!-- Hero -->
@@ -63,16 +76,6 @@
     <!-- Content Area -->
     <div class="kpj-container kpj-layout">
         <div class="kpj-content kpj-single__content">
-
-            <!-- Table of Contents -->
-            <nav class="kpj-toc" id="kpj-toc">
-                <button class="kpj-toc__toggle" id="kpj-toc-toggle">
-                    <span>Table of Contents</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <ol class="kpj-toc__list" id="kpj-toc-list"></ol>
-            </nav>
-
             <!-- Article Body -->
             <div class="kpj-single__body" id="kpj-article-body">
                 <?php the_content(); ?>

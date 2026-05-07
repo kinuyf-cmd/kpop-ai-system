@@ -335,7 +335,7 @@ cleaned = cleaned.replace('\ufffd', '')
 dst.write_text(cleaned, encoding="utf-8")
 PY
 
-TITLE=$(head -n 1 reports/final_post.md)
+TITLE=$(head -n 1 reports/final_post.md | python3 -c "import sys,re; t=sys.stdin.read().strip(); print(re.sub(r'<[^>]+>','',t).strip())")
 CONTENT=$(tail -n +2 reports/final_post.md)
 
 check_duplicate "$TITLE" 7
