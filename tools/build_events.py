@@ -224,13 +224,16 @@ def _normalize_venue(v: str) -> str:
         # 略称統一
         '国立代々木競技場第一体育館': '代々木第一体育館',
         '代々木第一体育館': '代々木第一体育館',
-        # 会場の館号バリエーション
+        # 会場の館号/プレフィックスバリエーション
         'マリンメッセ福岡b館': 'マリンメッセ福岡',
+        '神戸ワールド記念ホール': 'ワールド記念ホール',
+        'ワールド記念ホール': 'ワールド記念ホール',
     }
     return aliases.get(v, v)
 
 _TODAY = datetime.now() - timedelta(days=1)
 seen = set()
+seen_no_artist = set()  # (date, venue) — artist空が後から来ても捨てる
 unique = []
 for it in items:
     if not it.get('date') or not it.get('venue'):
@@ -242,10 +245,18 @@ for it in items:
             continue
     except Exception:
         continue
-    key = f"{it.get('artist', '')}-{it['date']}-{_normalize_venue(it['venue'])}"
+    nv = _normalize_venue(it['venue'])
+    artist = it.get('artist', '')
+    key = f"{artist}-{it['date']}-{nv}"
+    no_artist_key = f"{it['date']}-{nv}"
+    # 既に同 date+venue で artist 付きが入っていれば、artist空の重複を捨てる
+    if not artist and no_artist_key in seen_no_artist:
+        continue
     if key in seen:
         continue
     seen.add(key)
+    if artist:
+        seen_no_artist.add(no_artist_key)
     unique.append(it)
 
 def _find_related_article(event_title, event_artist):

@@ -215,6 +215,56 @@ def collect_tickebo(scan_window=200, sleep_sec=0.4):
     return signals
 
 
+def collect_eplus():
+    """eplus 検索結果から K-POP 公演を取得 (inline JSONから直接抽出)"""
+    try:
+        from lib.eplus_enricher import fetch_eplus_kpop, normalize_record
+    except Exception as e:
+        print(f'eplus_enricher import error: {e}')
+        return []
+    signals = []
+    seen_codes = set()
+    for keyword in ('K-POP', '韓流'):
+        try:
+            recs = fetch_eplus_kpop(keyword=keyword)
+        except Exception as e:
+            print(f'  eplus {keyword}: {e}')
+            continue
+        for rec in recs:
+            n = normalize_record(rec)
+            if not n:
+                continue
+            code = n['kogyo_code']
+            if code in seen_codes:
+                continue
+            seen_codes.add(code)
+            # collector level dedup: 同 kogyo_code は複数公演 (record_listに各公演日が並ぶ)
+            # 1 record = 1公演なので performances は単一
+            signals.append({
+                'timestamp': datetime.now().isoformat(),
+                'source': 'ticket_guide',
+                'source_id': 'eplus',
+                'keyword': n['artist'] or 'K-POP',
+                'title': n['title'][:200],
+                'url': n['url'],
+                'engagement_score': 2.0,
+                'language': 'ja',
+                'raw_data': {
+                    'all_keywords': [n['artist']] if n['artist'] else [],
+                    'category': 'event',
+                    'kogyo_code': code,
+                    'performances': [{
+                        'date': n['date'],
+                        'venue': n['venue'],
+                        'prefecture': n['prefecture'],
+                        'open_time': n['open_time'],
+                        'start_time': n['start_time'],
+                    }],
+                },
+            })
+    return signals
+
+
 def collect():
     all_signals = []
     print(f'[ticket_collector] pia {PIA_URL}')
@@ -225,6 +275,11 @@ def collect():
     print('[ticket_collector] tickebo (ID scan)')
     tickebo_sigs = collect_tickebo()
     all_signals.extend(tickebo_sigs)
+
+    print('[ticket_collector] eplus (search)')
+    eplus_sigs = collect_eplus()
+    print(f'  eplus: {len(eplus_sigs)} signals')
+    all_signals.extend(eplus_sigs)
 
     with open(OUT, 'a', encoding='utf-8') as f:
         for s in all_signals:
