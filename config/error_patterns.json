@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T17:21:47.910172",
+  "updated_at": "2026-05-07T17:36:08.247474",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1270,6 +1270,24 @@
       "fix": "lib/unified_publisher.py: artist 写真を最優先、source og:image はフォールバックに後退。「アイドル記事サムネは必ず本人写真」ルールを厳守",
       "detection": "IVE/BTS等の記事に映画キャスト・他グループ画像など本人不在のサムネが設定される",
       "agent": "lib.unified_publisher",
+      "resolved_at": "2026-05-07"
+    },
+    "gsc_indexing_quota_loop": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "本日 Indexing API を325回呼び出し、182件が429 Quota exceeded。 _today_count() が status=ok のみカウントしていたため 429 失敗を含めず、quota枯渇後も呼び続けていた。同URL最多7回重複サブミット",
+      "fix": "lib/gsc_indexing.py: (1) _today_count を全試行数カウント (skipped以外) に変更、 (2) _today_429_seen 観測時は以降全停止、 (3) _url_already_submitted_today で本日成功送信URLを重複防止",
+      "detection": "data/gsc_indexing_log.jsonl で status=error が連続、response に \"429\" や \"RESOURCE_EXHAUSTED\" が頻出。同一URLで複数entryが同日内にある",
+      "agent": "lib.gsc_indexing",
+      "resolved_at": "2026-05-07"
+    },
+    "low_ctr_query_intent_mismatch": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "lesserafim-comeback-october-2025 が pos 6.6 / 309 IMP / 0 click。クエリ「ルセラ カムバ いつ」(\\\"いつ\\\"=when) に対しタイトル「2026年最新カムバック＆ツアー日程ガイド」では問題提起の「いつ？」感が弱い",
+      "fix": "GSC高IMP×低CTR記事はクエリ次元で原因分析。タイトルに検索者の疑問語 (いつ/誰/なぜ) を直接含める。stale年度 (2025) はリライト時に最新年に更新",
+      "detection": "GSC データで impressions>=200 かつ ctr<2% かつ position<=10 のページを抽出。クエリ別データで疑問語が頻出するか確認",
+      "agent": "gsc_optimizer",
       "resolved_at": "2026-05-07"
     }
   },

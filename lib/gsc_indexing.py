@@ -124,7 +124,10 @@ DAILY_LIMIT = 180  # 200 quota with safety margin
 
 
 def _today_count() -> int:
-    """Count today's successful indexing notifications."""
+    """Count ALL today's indexing API calls (including 429/error).
+    2026-05-07 fix: 旧コードは status='ok' のみカウントしていたため 429 後も呼び続け、
+    本日325回呼び出し中182件が429となる事故が発生。試行回数で打ち切るように変更。
+    """
     if not INDEX_LOG.exists():
         return 0
     today = datetime.now(tz=JST).strftime("%Y-%m-%d")
@@ -133,11 +136,47 @@ def _today_count() -> int:
         try:
             d = json.loads(line)
             ts = d.get("timestamp", "")[:10]
-            if ts == today and d.get("status") == "ok":
+            # method='skipped' (我々のquotaチェックでスキップ) は除外、それ以外は全部カウント
+            if ts == today and d.get("method") != "skipped":
                 cnt += 1
         except Exception:
             pass
     return cnt
+
+
+def _today_429_seen() -> bool:
+    """本日すでに429を観測したか。観測済みなら以降全停止 (Google側quota耗尽)"""
+    if not INDEX_LOG.exists():
+        return False
+    today = datetime.now(tz=JST).strftime("%Y-%m-%d")
+    for line in INDEX_LOG.read_text(errors="replace").splitlines():
+        try:
+            d = json.loads(line)
+            if d.get("timestamp", "")[:10] != today:
+                continue
+            err = str(d.get("response", "")) + str(d.get("error", ""))
+            if "429" in err or "RESOURCE_EXHAUSTED" in err or "Quota exceeded" in err:
+                return True
+        except Exception:
+            pass
+    return False
+
+
+def _url_already_submitted_today(url: str) -> bool:
+    """本日すでに同URLを送信済か (重複防止)"""
+    if not INDEX_LOG.exists():
+        return False
+    today = datetime.now(tz=JST).strftime("%Y-%m-%d")
+    for line in INDEX_LOG.read_text(errors="replace").splitlines():
+        try:
+            d = json.loads(line)
+            if d.get("timestamp", "")[:10] != today:
+                continue
+            if d.get("url") == url and d.get("status") == "ok":
+                return True
+        except Exception:
+            pass
+    return False
 
 
 def get_quota_remaining() -> int:
@@ -165,7 +204,31 @@ def notify_url_updated(url: str, token: str | None = None) -> dict:
     """
     ts = datetime.now(tz=JST).isoformat()
 
-    # Quota check
+    # Dedup check: 本日すでに同URLを成功送信済ならスキップ (2026-05-07追加)
+    if _url_already_submitted_today(url):
+        result = {
+            "status": "skipped_dup",
+            "url": url,
+            "timestamp": ts,
+            "response": {"info": "本日既に送信済"},
+            "method": "skipped",
+        }
+        _log_entry(result)
+        return result
+
+    # 429既観測なら全停止 (Google側quota耗尽 — 翌日まで待機)
+    if _today_429_seen():
+        result = {
+            "status": "skipped_429",
+            "url": url,
+            "timestamp": ts,
+            "response": {"info": "本日429観測済 — quota回復まで全停止"},
+            "method": "skipped",
+        }
+        _log_entry(result)
+        return result
+
+    # Quota check (試行回数ベース)
     if _today_count() >= DAILY_LIMIT:
         result = {
             "status": "quota_exceeded",
