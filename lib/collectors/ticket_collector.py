@@ -65,6 +65,13 @@ def collect_pia():
         matched = _match_keywords(title)
         if not matched:
             continue
+        # カテゴリ・ナビ系の generic タイトルを除外
+        # "K-POP" / "K-POP・韓流エンタメ" 等の category link は固有イベント情報を持たない
+        if matched == ['K-POP'] and len(title) <= 30:
+            continue
+        # event/ パスを含まない link はカテゴリ/トップページの可能性が高い
+        if '/event/' not in link and '/feature/' not in link and 'event' not in link.lower():
+            continue
         signals.append({
             'timestamp': datetime.now().isoformat(),
             'source': 'ticket_guide',

@@ -27,13 +27,22 @@ LOG_PATH = '/home/aiuser/kpop-ai-system/logs/event_auto_collector.log'
 EVENT_KW = [
     # 韓国語
     '콘서트', '팬미팅', '투어', '공연', '라이브', '쇼케이스', '페스티벌',
+    '월드투어',
     # 日本語
     'コンサート', 'ファンミ', 'ライブ', '公演', 'フェス',
     'ポップアップ', 'POP-UP', 'KCON', 'ワールドツアー', 'ドームツアー',
     'アリーナツアー', 'ジャパンツアー', 'ファンイベント', '来日', '日本公演',
     # 英語
     'concert', 'tour', 'fanmeeting', 'showcase', 'festival', 'fan meeting',
+    'world tour',
 ]
+
+# 一次情報源（チケット販売／公式番組モニター）— EVENT_KW不一致でも実イベントとして通す
+_EVENT_AUTHORITATIVE_SOURCES = {
+    'ticket_guide', 'kcon_monitor',
+    'music_show', 'music_show_monitor', 'music_show_weekly',
+    'youtube_show', 'youtube_show_monitor',
+}
 
 # 旅行・非エンタメシグナルを除外するキーワード（EVENT_KWにマッチしてもこれがあれば除外）
 NOT_EVENT_KW = [
@@ -70,7 +79,11 @@ def _load_artist_names():
 
 
 def load_event_signals(hours_back=48):
-    """trend_signals.jsonlからイベント系シグナルを抽出"""
+    """trend_signals.jsonlからイベント系シグナルを抽出
+
+    一次情報源（チケット販売／公式番組）は EVENT_KW 不一致でも実イベントとして通す。
+    SHINee "WORLD VIII" 等の固有シリーズ名で EVENT_KW に該当しないケースを救う。
+    """
     if not os.path.exists(SIGNALS_PATH):
         return []
     cutoff = (datetime.now() - timedelta(hours=hours_back)).isoformat()[:19]
@@ -83,10 +96,16 @@ def load_event_signals(hours_back=48):
                     continue
                 title = sig.get('title', '')
                 title_lower = title.lower()
+                src = sig.get('source', '')
+                # 旅行・非エンタメシグナルは常に除外
+                if any(nkw.lower() in title_lower for nkw in NOT_EVENT_KW):
+                    continue
+                # 一次情報源は EVENT_KW スキップ（実イベント前提）
+                if src in _EVENT_AUTHORITATIVE_SOURCES:
+                    result.append(sig)
+                    continue
+                # 通常ソースは EVENT_KW で篩う
                 if any(kw.lower() in title_lower for kw in EVENT_KW):
-                    # 旅行・非エンタメシグナルを除外
-                    if any(nkw.lower() in title_lower for nkw in NOT_EVENT_KW):
-                        continue
                     result.append(sig)
             except Exception:
                 pass
