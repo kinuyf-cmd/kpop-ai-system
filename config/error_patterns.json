@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T17:51:40.646125",
+  "updated_at": "2026-05-07T17:59:51.650973",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1315,6 +1315,32 @@
       "fix": "(1) sitemap全resubmit (2) 当該URLを Indexing API キュー (data/gsc_reindex_queue.jsonl) に登録し翌日(quota回復後)再request (3) Next.jsのキャッシュ purge を post_publish_hook で確実に実行",
       "detection": "GSC URL Inspection で verdict=NEUTRAL かつ coverage=Excluded by noindex なのに、実HTMLには noindex meta なし",
       "agent": "gsc_indexing",
+      "resolved_at": "2026-05-07"
+    },
+    "event_data_silent_rot": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "2026-04-24に build_events.py 厳格化 (タイトル内 会場+日付+アーティスト 必須) で events.json/comebacks.json が0件出力。UIは「現在情報なし」と表示するだけで2週間誰も気づかなかった (silent rot)",
+      "fix": "(1) data/events_manual.json + comebacks_manual.json を手動キュレーション (再発時の最低保証ライン) (2) lib/event_data_health.py を build_events.py / build_comebacks.py に組み込み、0件が連続2回以上で Discord WARNING 通知 (3) 抽出条件は厳格化と同時に手動キュレーション運用を必ずセットアップする",
+      "agent": "pipeline",
+      "resolved_at": "2026-05-07"
+    },
+    "llm_proofreader_member_count_false_positive": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "17626 (kpop-may-idol-2026) が AUTO-ARCHIVE。理由「TWICE・ITZY・STRAY KIDS が所属する」を「TWICEのメンバー数誤り」とLLMが幻覚。実際は所属関係の記述で人数主張なし",
+      "fix": "pipeline/llm_proofreader.py prompt強化: グループ名列挙はメンバー数主張ではない、「N人」明記時のみcritical報告、所属関係はメンバー数と無関係、と明示",
+      "detection": "logs/draft_auto_publisher.log で AUTO-ARCHIVE の reasons 中に「メンバー人数が間違っています」が頻出するが本文には N人 表記なし",
+      "agent": "pipeline.llm_proofreader",
+      "resolved_at": "2026-05-07"
+    },
+    "title_truncated_in_serp_loses_clicks": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "bts-v-childhood-photo-2025 が pos 1.0 で 0 click。タイトル末尾の「【秘蔵10枚公開】」がSERP切断で見えず、「軌跡」で終わる印象のため魅力なし",
+      "fix": "タイトル42字以内＋フック語(数字/疑問形/最新)を冒頭・中盤に配置。末尾のみのフックは禁止。high_imp_optimizerに反映済",
+      "detection": "GSCで position<=2 かつ click=0 のページを抽出 → タイトルの末尾切断状況を確認",
+      "agent": "lib.title_optimizer",
       "resolved_at": "2026-05-07"
     }
   },
