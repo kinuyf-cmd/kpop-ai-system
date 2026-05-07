@@ -23,14 +23,20 @@ CONFIG = Path("/home/aiuser/kpop-ai-system/config/source_domains.json")
 
 @lru_cache(maxsize=1)
 def load_domains() -> tuple:
-    """信頼ソースドメインのリストを返す (lru_cacheで実質キャッシュ)"""
+    """信頼ソースドメインのリストを返す (lru_cacheで実質キャッシュ)
+    2026-05-07: trusted_global_media (billboard等) も結合
+    """
     if not CONFIG.exists():
         return tuple()
     try:
         d = json.loads(CONFIG.read_text())
     except Exception:
         return tuple()
-    return tuple(d.get("trusted_korean_media", []) + d.get("trusted_japan_media", []))
+    return tuple(
+        d.get("trusted_korean_media", []) +
+        d.get("trusted_japan_media", []) +
+        d.get("trusted_global_media", [])
+    )
 
 
 def source_url_regex() -> str:

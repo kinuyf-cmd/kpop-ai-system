@@ -1,31 +1,42 @@
 {
   "_comment": "信頼ソース判定用ドメインリスト。post_publish_hook / llm_proofreader / comprehensive_audit が共通参照する。collectors追加時はここに追加すること。lib/source_domains.py 経由で読み込む。",
   "_last_updated": "2026-05-07",
-  "_history": "2026-05-07: collectors追加に伴い9ドメイン追加 (mydaily/newsen/starnews/sportschosun/topstarnews/xportsnews/kstyle/koreaherald/prtimes)。原因はcommit b42163e巻き込みでpost_publish_hookのregexが古いまま新collectors記事を全BLOCKしていた事故。",
+  "_history": "2026-05-07: collectors追加に伴い9ドメイン追加 (mydaily/newsen/starnews/sportschosun/topstarnews/xportsnews/kstyle/koreaherald/prtimes)。原因はcommit b42163e巻き込みでpost_publish_hookのregexが古いまま新collectors記事を全BLOCKしていた事故。 / 2026-05-07: 直近X投稿0件→draft化問題の解決のため、collectorで実使用していた natalie.mu(143)/hellokpop.com(124)/eplus.jp(115)/billboard.com(109)/jp.yna.co.kr(92)/t.pia.jp(60)/l-tike.com(17)/tickebo.jp(12)/breaknews.com(3) を追加",
   "trusted_korean_media": [
-    "koreaboo",
     "allkpop",
-    "soompi",
-    "tenasia",
-    "stoo",
     "bntnews",
-    "naver",
-    "kpophit",
-    "newsis",
+    "breaknews",
+    "hellokpop",
     "joynews24",
-    "osen",
-    "mhns",
-    "tvreport",
-    "mydaily",
-    "newsen",
-    "starnews",
-    "sportschosun",
-    "topstarnews",
-    "xportsnews",
+    "koreaboo",
+    "koreaherald",
+    "kpophit",
     "kstyle",
-    "koreaherald"
+    "mhns",
+    "mydaily",
+    "naver",
+    "newsen",
+    "newsis",
+    "osen",
+    "soompi",
+    "sportschosun",
+    "starnews",
+    "stoo",
+    "tenasia",
+    "topstarnews",
+    "tvreport",
+    "xportsnews"
   ],
   "trusted_japan_media": [
-    "prtimes"
+    "eplus",
+    "l-tike",
+    "natalie",
+    "pia",
+    "prtimes",
+    "tickebo",
+    "yna"
+  ],
+  "trusted_global_media": [
+    "billboard"
   ]
 }
