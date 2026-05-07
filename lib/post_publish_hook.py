@@ -131,21 +131,43 @@ def run_post_publish(post_id, post_type='post'):
     # 2. カテゴリ修正
     _fix_categories(post_id, categories)
 
-    # 3. full_audit (再取得してチェック)
+    # 3. pre_publish_gate 再実行（公開後の全項目チェック — 公開前ゲートと同一ロジック）
     try:
         post_fresh = _fetch_post(post_id)
         if post_fresh:
-            from lib.full_audit_engine import full_audit
-            issues = full_audit(post_fresh, post_type)
-            high_issues = [i for i in issues if i.get('severity') == 'high']
-            if high_issues:
-                result['issues'].extend([i['type'] for i in high_issues])
-                # HIGH issue 2件以上ならdraft化
-                if len(high_issues) >= 2:
-                    _draft_post(post_id, f"HIGH issues: {[i['type'] for i in high_issues]}")
-                    result['status'] = 'draft'
+            _pf_title = post_fresh.get('title', {}).get('rendered', '')
+            _pf_content = post_fresh.get('content', {}).get('rendered', '')
+            _pf_excerpt = post_fresh.get('excerpt', {}).get('rendered', '')
+            _pf_slug = post_fresh.get('slug', '')
+            _pf_fm = post_fresh.get('featured_media', 0)
+            _pf_cats = post_fresh.get('categories', [])
+
+            # 記事本文からソースURLを抽出（no_source誤BLOCKを防止）
+            import re as _re_hook
+            _src_urls = _re_hook.findall(r'href="(https?://(?:www\.)?(?:koreaboo|allkpop|soompi|tenasia|stoo|bntnews|naver|kpophit|newsis|joynews24|osen|mhns|tvreport)[^"]+)"', _pf_content)
+            _src_url = _src_urls[0] if _src_urls else None
+            _src_signals = [{'url': u, 'title': ''} for u in _src_urls[:3]] if _src_urls else None
+
+            from lib.pre_publish_gate import pre_publish_gate as _recheck_gate
+            _gate_r = _recheck_gate(
+                title=_pf_title, body_html=_pf_content,
+                post_type=post_type, kind='news',
+                source_url=_src_url, source_signals=_src_signals,
+                slug=_pf_slug, featured_media=_pf_fm,
+                categories=_pf_cats, excerpt=_pf_excerpt,
+                status='publish',
+            )
+            if _gate_r['verdict'] == 'BLOCK':
+                block_reasons = _gate_r.get('block_reasons', [])
+                _draft_post(post_id, f"post-publish gate BLOCK: {block_reasons[:2]}")
+                result['status'] = 'draft'
+                result['issues'].extend([f'gate_block: {r[:50]}' for r in block_reasons])
+                print(f"  [hook] post-publish gate BLOCK: {block_reasons[:2]}")
+            elif _gate_r.get('warn_reasons'):
+                result['issues'].extend([f'gate_warn: {r[:50]}' for r in _gate_r['warn_reasons'][:3]])
+                print(f"  [hook] post-publish gate WARN: {len(_gate_r['warn_reasons'])}件")
     except Exception as e:
-        print(f"  [hook] audit err: {e}")
+        print(f"  [hook] gate recheck err: {e}")
 
     # 4. fact_check (浅いチェック)
     try:
@@ -196,20 +218,33 @@ def run_post_publish(post_id, post_type='post'):
                 result['issues'].append('summary_table_leak')
         # enricherが走った後なのでsummaryなしは警告のみ
 
-    # 6. Phase 30: 新規投稿ハイブリッドCTA自動配置 (5/4以降のみ)
+    # === Phase 30 CTA injection DISABLED (2026-05-07 emergency removal) ===
+    # 視覚崩壊のため Phase 30.3 再設計まで停止。
+    # if result.get('status') != 'draft':
+    #     try:
+    #         from cta.new_post_injector import inject_hybrid_cta
+    #         cta_result = inject_hybrid_cta(post_id)
+    #         if cta_result['status'] == 'success':
+    #             result['changes'].append(f"hybrid_cta: {cta_result['injected_positions']}")
+    #             print(f"  [hook] Phase30 CTA: {cta_result['injected_positions']}")
+    #         elif cta_result['status'] == 'skipped':
+    #             pass
+    #         elif cta_result['status'] == 'error':
+    #             print(f"  [hook] Phase30 CTA err: {cta_result.get('reason', '?')}")
+    #     except Exception as e:
+    #         print(f"  [hook] Phase30 CTA import err: {e}")
+
+    # 7. OGP/Twitterカード設定（全enricher/CTA完了後の最終ステップ）
+    # enricherやCTAが記事を更新した後にOGPを設定することで上書きを防ぐ
     if result.get('status') != 'draft':
         try:
-            from cta.new_post_injector import inject_hybrid_cta
-            cta_result = inject_hybrid_cta(post_id)
-            if cta_result['status'] == 'success':
-                result['changes'].append(f"hybrid_cta: {cta_result['injected_positions']}")
-                print(f"  [hook] Phase30 CTA: {cta_result['injected_positions']}")
-            elif cta_result['status'] == 'skipped':
-                pass  # 既存記事/cutoff前/注入済み — 正常スキップ
-            elif cta_result['status'] == 'error':
-                print(f"  [hook] Phase30 CTA err: {cta_result.get('reason', '?')}")
-        except Exception as e:
-            print(f"  [hook] Phase30 CTA import err: {e}")
+            from lib.ogp_twitter_card_optimizer import fix_post_meta as _fix_ogp
+            _ogp_r = _fix_ogp(post_id)
+            if _ogp_r.get('fixes'):
+                result['changes'].append(f"ogp_final: {_ogp_r['fixes']}")
+                print(f"  [hook] OGP最終設定: {_ogp_r['fixes']}")
+        except Exception as _oe:
+            print(f"  [hook] OGP err: {_oe}")
 
     # ログ記録
     status_label = result['status']
