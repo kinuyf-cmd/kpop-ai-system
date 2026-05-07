@@ -104,12 +104,29 @@ def main():
             # カテゴリからkindを推定: 速報(2)以外はfeatureとして扱う
             NEWS_CATS = {2, 7, 58}  # 速報記事, 出演情報, 今日話題のニュース
             _kind = 'news' if set(cats) & NEWS_CATS else 'feature'
+
+            # 本文に既に埋め込まれた信頼ソースリンクを抽出 (2026-05-07追加)
+            # config/source_domains.json 参照で全collectorsドメインに対応
+            # これがないと pre_publish_gate が source_url=None で BLOCK判定 → 3回繰り返しで trash化
+            _source_url = None
+            _source_signals = None
+            try:
+                from lib.source_domains import source_url_regex as _src_re_dap
+                _embedded_urls = re.findall(_src_re_dap(), content)
+                if _embedded_urls:
+                    _source_url = _embedded_urls[0]
+                    _source_signals = [{'url': u, 'title': ''} for u in _embedded_urls[:3]]
+            except Exception:
+                pass
+
             gate = pre_publish_gate(
                 title=title, body_html=content,
                 post_type='post', kind=_kind,
                 slug=slug, featured_media=fm,
                 categories=cats, excerpt=excerpt,
                 status='publish',
+                source_url=_source_url,
+                source_signals=_source_signals,
             )
             if gate['verdict'] != 'BLOCK':
                 # publish前にslugを検証・修正
