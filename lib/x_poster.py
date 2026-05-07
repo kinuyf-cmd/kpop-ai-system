@@ -332,13 +332,35 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
     if not text or len(text.strip()) < 5:
         return {'success': False, 'error': 'テキストが空または短すぎる'}
 
-    # --- URL事前検証 ---
+    # --- WP記事status再検証 (2026-05-07: 投稿後trash化されたbroken linkをXに送る事故防止) ---
+    if post_id:
+        try:
+            import urllib.request as _ur, urllib.error as _ue, base64 as _b64, json as _json
+            _AUTH = _b64.b64encode(b'kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh').decode()
+            _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status,featured_media,link&status=any'
+            _req = _ur.Request(_u, headers={'Authorization': f'Basic {_AUTH}'})
+            with _ur.urlopen(_req, timeout=10) as _r:
+                _wp = _json.loads(_r.read())
+            if _wp.get('status') != 'publish':
+                return {'success': False,
+                        'error': f'WP記事 {post_id} status={_wp.get("status")} (publish以外) — X投稿スキップ'}
+            # featured_media が無い記事は og-default になりサムネ不一致 → スキップ
+            if _wp.get('featured_media', 0) == 0:
+                return {'success': False,
+                        'error': f'WP記事 {post_id} featured_media未設定 — X投稿スキップ'}
+        except Exception as _e:
+            print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+
+    # --- URL事前検証 (soft-404 + OGP og-default 検出) ---
     if url:
         try:
             from lib.x_post_url_validator import validate_url
             url_check = validate_url(url)
-            if not url_check.get('ok') and 'soft-404' in url_check.get('reason', ''):
-                return {'success': False, 'error': f'URL検証NG: {url_check.get("reason")}'}
+            if not url_check.get('ok'):
+                _reason = url_check.get('reason', '')
+                # soft-404 / OGP問題 (og-default.png) いずれもサムネ不一致直結のためスキップ
+                if 'soft-404' in _reason or 'og-default' in _reason or 'OGP問題' in _reason:
+                    return {'success': False, 'error': f'URL検証NG: {_reason}'}
         except Exception:
             pass
 

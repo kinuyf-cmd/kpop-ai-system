@@ -1,43 +1,7 @@
 {
-  "updated": "2026-05-07 16:40",
-  "count": 99,
+  "updated": "2026-05-07 18:10",
+  "count": 41,
   "queue": [
-    {
-      "title": "TWSが5th EPでオリコンチャート首位獲得",
-      "url": "https://www.kpopjournal.tokyo/tws-5th-ep-oricon-chart-top/",
-      "post_id": 17231,
-      "genre": "breaking",
-      "artist": "TXT",
-      "priority": "high",
-      "queued_at": "2026-05-06T19:58:51.464152"
-    },
-    {
-      "title": "日本のK-POP練習生、失踪後出国禁止措置",
-      "url": "https://www.kpopjournal.tokyo/nippon-kpop-trainee-disappearance-export-ban/",
-      "post_id": 17236,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T19:59:50.158839"
-    },
-    {
-      "title": "ジエウンとバタ、子供の日にカップルショット公開",
-      "url": "https://www.kpopjournal.tokyo/jieun-butter-couple-shot-children-day/",
-      "post_id": 17264,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:01:22.545204"
-    },
-    {
-      "title": "ジエウンとバタ、子供の日にカップルショット公開",
-      "url": "https://www.kpopjournal.tokyo/jieun-butter-couple-shot-kodomo-no-hi/",
-      "post_id": 17272,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:01:40.430098"
-    },
     {
       "title": "BLACKPINKのジスに関するデザイナー発言解消",
       "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-designer-comments/",
@@ -46,78 +10,6 @@
       "artist": "BLACKPINK",
       "priority": "high",
       "queued_at": "2026-05-06T20:01:52.851416"
-    },
-    {
-      "title": "Mnet、「第68回グラミー賞」を生中継",
-      "url": "https://www.kpopjournal.tokyo/mnet-68th-grammy-awards-live/",
-      "post_id": 17285,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:02:29.324534"
-    },
-    {
-      "title": "ILLITユナ、運転免許取得を発表",
-      "url": "https://www.kpopjournal.tokyo/illit-yuna-drivers-license-announcement/",
-      "post_id": 17290,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:02:36.991504"
-    },
-    {
-      "title": "Mnet、「第68回グラミー賞」を独占生中継",
-      "url": "https://www.kpopjournal.tokyo/mnet-68th-grammy-awards-live-2/",
-      "post_id": 17294,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:02:40.867787"
-    },
-    {
-      "title": "BLACKPINKジス衣装問題、デザイナーが釈明",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-costume-issue-designer-explanation-2/",
-      "post_id": 17305,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:03:53.520597"
-    },
-    {
-      "title": "アイユ、子供の日に1億ウォン寄付実施",
-      "url": "https://www.kpopjournal.tokyo/aiyu-1oku-won-kodomo-no-hi/",
-      "post_id": 17316,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:04:40.429087"
-    },
-    {
-      "title": "BLACKPINKジス衣装返却問題で海外デザイナー釈明",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-costume-return-issue/",
-      "post_id": 17317,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:04:41.038017"
-    },
-    {
-      "title": "BLACKPINKジス衣装問題、デザイナーが釈明",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-costume-issue-designer-explanation-3/",
-      "post_id": 17323,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:04:48.924199"
-    },
-    {
-      "title": "ILLITユナ、運転免許取得を明かす",
-      "url": "https://www.kpopjournal.tokyo/illit-yuna-unten-menkyoshutoku/",
-      "post_id": 17327,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:04:56.408683"
     },
     {
       "title": "ILLITユナ、運転免許取得を発表",
@@ -129,96 +21,6 @@
       "queued_at": "2026-05-06T20:05:41.008039"
     },
     {
-      "title": "ヤン・ジュニル「コーヒー一杯持って散歩",
-      "url": "https://www.kpopjournal.tokyo/yan-junior-coffee-walk/",
-      "post_id": 17336,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:05:46.651952"
-    },
-    {
-      "title": "ILLIT、日本の音楽フェス中止で韓国帰国",
-      "url": "https://www.kpopjournal.tokyo/illit-japan-music-festival-cancellation/",
-      "post_id": 17343,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:06:39.251863"
-    },
-    {
-      "title": "エリック・ナムが健康問題と活動状況を語る",
-      "url": "https://www.kpopjournal.tokyo/eric-nam-health-issues-activities/",
-      "post_id": 17348,
-      "genre": "breaking",
-      "artist": "에릭남",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:06:57.348580"
-    },
-    {
-      "title": "アイユ、子供の日に「アイユエナ」で1億ウォン寄付",
-      "url": "https://www.kpopjournal.tokyo/aiyu-children-day-donation-100-million-won/",
-      "post_id": 17355,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:08:10.327139"
-    },
-    {
-      "title": "ヤン・ジュニル「コーヒー一杯持って散歩」発言",
-      "url": "https://www.kpopjournal.tokyo/yan-junior-coffee-walk-2/",
-      "post_id": 17360,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:08:46.667738"
-    },
-    {
-      "title": "ヤン・ジュニル「コーヒー持って散歩気分",
-      "url": "https://www.kpopjournal.tokyo/yan-junior-coffee-walk-feeling/",
-      "post_id": 17364,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:09:19.405604"
-    },
-    {
-      "title": "IU、こどもの日に子役たちへサプライズプレゼント",
-      "url": "https://www.kpopjournal.tokyo/iu-surprise-gift-children-day/",
-      "post_id": 17372,
-      "genre": "breaking",
-      "artist": "IU",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:10:53.465312"
-    },
-    {
-      "title": "I.O.Iチョン・ソミとキム・ドヨン衝撃のキスティーザー",
-      "url": "https://www.kpopjournal.tokyo/ioi-chung-somi-kim-doyeon-kiss-teaser/",
-      "post_id": 17377,
-      "genre": "breaking",
-      "artist": "아이오아이",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:11:05.324881"
-    },
-    {
-      "title": "RIIZEウンソク、差別用語使用を謝罪",
-      "url": "https://www.kpopjournal.tokyo/riize-eunseok-apology-discriminatory-terms/",
-      "post_id": 17386,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:20:32.967747"
-    },
-    {
-      "title": "B:DAWN本日デビュー、タイトル曲「BEOM」MV公開",
-      "url": "https://www.kpopjournal.tokyo/b-dawn-debut-beom-mv-release/",
-      "post_id": 17398,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-05-06T20:30:40.732165"
-    },
-    {
       "title": "BLACKPINKのジェニー、仁川空港での行動注目",
       "url": "https://www.kpopjournal.tokyo/blackpink-jennie-incheon-airport-action/",
       "post_id": 17416,
@@ -226,15 +28,6 @@
       "artist": "BLACKPINK",
       "priority": "high",
       "queued_at": "2026-05-06T21:10:36.091598"
-    },
-    {
-      "title": "HybeとGeffen、多国籍ガールグループ最終選定へ",
-      "url": "https://www.kpopjournal.tokyo/hybe-geffen-multinational-girl-group-final-selection/",
-      "post_id": 17421,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-06T21:11:49.786596"
     },
     {
       "title": "BLACKPINKリサ、2026年メットガラで男性セレブと親密な姿",
@@ -291,24 +84,6 @@
       "queued_at": "2026-05-06T22:38:20.558030"
     },
     {
-      "title": "BLACKPINKのJennie、2026 Met Galaメイク話題",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-2026-met-gala-makeup/",
-      "post_id": 17554,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:04:48.367740"
-    },
-    {
-      "title": "少女時代スヨン 父の闘病とメンバー支え",
-      "url": "https://www.kpopjournal.tokyo/snsd-suyoung-father-illness-support/",
-      "post_id": 17560,
-      "genre": "breaking",
-      "artist": "소녀시대",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:06:35.825396"
-    },
-    {
       "title": "クギ、新シングル「ス턱」5月6日リリース",
       "url": "https://www.kpopjournal.tokyo/kugi-new-single-stuck-release-may-6/",
       "post_id": 17564,
@@ -316,24 +91,6 @@
       "artist": "",
       "priority": "high",
       "queued_at": "2026-05-07T07:07:39.606337"
-    },
-    {
-      "title": "NEXZが「Show Champion」で初勝利を獲得",
-      "url": "https://www.kpopjournal.tokyo/nexz-show-champion-first-win/",
-      "post_id": 17568,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:10:30.212809"
-    },
-    {
-      "title": "BTS、メキシコ大統領室訪問決定と公演準備",
-      "url": "https://www.kpopjournal.tokyo/bts-mexico-president-visit-concert-preparation/",
-      "post_id": 17573,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:20:29.982994"
     },
     {
       "title": "BTS Jin「ステイ・アット・ホーム」哲学明らかに",
@@ -354,51 +111,6 @@
       "queued_at": "2026-05-07T07:22:49.716979"
     },
     {
-      "title": "キム・ミンギョン「6年無職」から「パジュアイドル」へ",
-      "url": "https://www.kpopjournal.tokyo/kim-mingyung-6years-unemployed-paju-idol/",
-      "post_id": 17590,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:24:29.115355"
-    },
-    {
-      "title": "キム・ビョンオク、ドラマ『オシププロ』で復帰",
-      "url": "https://www.kpopjournal.tokyo/kim-byung-ok-drama-oshippro-return/",
-      "post_id": 17594,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:25:30.078629"
-    },
-    {
-      "title": "韓国U-17代表、UAEと1-1引き分けスタート",
-      "url": "https://www.kpopjournal.tokyo/korea-u17-uae-draw-start/",
-      "post_id": 17598,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T07:26:30.277704"
-    },
-    {
-      "title": "JISOOがV Magazineに登場、魅力発揮",
-      "url": "https://www.kpopjournal.tokyo/jisoo-v-magazine-charm/",
-      "post_id": 17617,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-05-07T09:04:58.181215"
-    },
-    {
-      "title": "イ・ソジン、デビュー27年目初舞台『バーニャおじさん』出演",
-      "url": "https://www.kpopjournal.tokyo/lee-soojin-debut-27th-year-banya-ojisan/",
-      "post_id": 17621,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T09:06:12.057713"
-    },
-    {
       "title": "BTS、メキシコ大統領府バルコニーに登場",
       "url": "https://www.kpopjournal.tokyo/bts-mexico-president-balcony/",
       "post_id": 17650,
@@ -408,15 +120,6 @@
       "queued_at": "2026-05-07T10:17:44.636443"
     },
     {
-      "title": "SMエンターテインメント「SMiniz」新イベント実施",
-      "url": "https://www.kpopjournal.tokyo/sm-entertainment-sminiz-new-event/",
-      "post_id": 17655,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T10:18:51.164112"
-    },
-    {
       "title": "パク・ジンジュ、ミュージカル「アナと雪の女王」出演決定",
       "url": "https://www.kpopjournal.tokyo/park-jinju-anna-snow-queen-musical/",
       "post_id": 17664,
@@ -424,15 +127,6 @@
       "artist": "",
       "priority": "high",
       "queued_at": "2026-05-07T10:20:37.159056"
-    },
-    {
-      "title": "パク・ジンジュ、ミュージカル「アナと雪の女王」出演決定",
-      "url": "https://www.kpopjournal.tokyo/park-jinju-anna-yuki-no-joou/",
-      "post_id": 17667,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T10:20:40.744600"
     },
     {
       "title": "オマイガールヒョジョン「子供3人欲しい」育児挑戦",
@@ -498,15 +192,6 @@
       "queued_at": "2026-05-07T10:42:24.878441"
     },
     {
-      "title": "あ홉、6月新曲発表とソウル公演計画",
-      "url": "https://www.kpopjournal.tokyo/a-hop-new-song-june-seoul-concert/",
-      "post_id": 17686,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T11:03:13.966095"
-    },
-    {
       "title": "UNCHILDデビュー、メンバー魅力を分析",
       "url": "https://www.kpopjournal.tokyo/unchild-debut-member-analysis/",
       "post_id": 17715,
@@ -534,15 +219,6 @@
       "queued_at": "2026-05-07T13:17:56.496850"
     },
     {
-      "title": "無名伝説 全国ツアーコンサート予約開始",
-      "url": "https://www.kpopjournal.tokyo/unmei-densetsu-tour-concert-reservation-start/",
-      "post_id": 17743,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:20:00.963699"
-    },
-    {
       "title": "イ・ジェウク、5月18日に現役軍人入隊",
       "url": "https://www.kpopjournal.tokyo/lee-jae-wook-military-enlistment-may-18/",
       "post_id": 17747,
@@ -559,87 +235,6 @@
       "artist": "I.O.I",
       "priority": "high",
       "queued_at": "2026-05-07T13:22:49.753382"
-    },
-    {
-      "title": "I.O.I、10周年で練習室再集結しカムバック予告",
-      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-reunion-2/",
-      "post_id": 17766,
-      "genre": "breaking",
-      "artist": "I.O.I",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:23:14.669773"
-    },
-    {
-      "title": "I.O.I、10周年で練習室再集結しカムバック予告",
-      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-reunion-comeback/",
-      "post_id": 17769,
-      "genre": "breaking",
-      "artist": "I.O.I",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:23:34.918348"
-    },
-    {
-      "title": "イ・ジェウク、5月18日に現役軍人入隊",
-      "url": "https://www.kpopjournal.tokyo/lee-jae-wook-military-enlistment-may-18-2/",
-      "post_id": 17774,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:24:05.084762"
-    },
-    {
-      "title": "ジョスミ、40周年アルバム「コンティニューム」リリース",
-      "url": "https://www.kpopjournal.tokyo/jossy-40th-anniversary-album-continuum/",
-      "post_id": 17786,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:26:18.186157"
-    },
-    {
-      "title": "I.O.Iが10周年、練習室で再集結カムバック予告",
-      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-reunion-3/",
-      "post_id": 17790,
-      "genre": "breaking",
-      "artist": "I.O.I",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:26:40.223802"
-    },
-    {
-      "title": "ジョスミ、40周年アルバム「コンティニューム」リリース",
-      "url": "https://www.kpopjournal.tokyo/jossy-40th-anniversary-album-continuum-2/",
-      "post_id": 17793,
-      "genre": "breaking",
-      "artist": "",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:27:04.678393"
-    },
-    {
-      "title": "aespa 2026年日本ファンミーティング「MY CLASSMaeTE」開",
-      "url": "https://www.kpopjournal.tokyo/aespa-my-classmate-fanmeeting-2026/",
-      "post_id": 17823,
-      "genre": "breaking",
-      "artist": "aespa",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:32:20.985455"
-    },
-    {
-      "title": "RIIZE 日本ファンミーティング2026 RPG開催決定",
-      "url": "https://www.kpopjournal.tokyo/riize-fanmeeting-2026-rpg/",
-      "post_id": 17827,
-      "genre": "breaking",
-      "artist": "RIIZE",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:34:57.198944"
-    },
-    {
-      "title": "NMIXX 初のワールドツアー「EPISODE 1」日本開催",
-      "url": "https://www.kpopjournal.tokyo/nmixx-world-tour-episode-1-japan/",
-      "post_id": 17831,
-      "genre": "breaking",
-      "artist": "NMIXX",
-      "priority": "high",
-      "queued_at": "2026-05-07T13:37:40.159554"
     },
     {
       "title": "カナダの大家族、BTS旅行地で挑戦中",
@@ -660,15 +255,6 @@
       "queued_at": "2026-05-07T15:07:40.308480"
     },
     {
-      "title": "BTSのジョングク、人気書籍に初登場",
-      "url": "https://www.kpopjournal.tokyo/bts-jungkook-first-appearance-popular-book/",
-      "post_id": 17985,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-05-07T15:10:22.733021"
-    },
-    {
       "title": "82メイジャー、カムバックステージで存在感示す",
       "url": "https://www.kpopjournal.tokyo/82major-comeback-stage-presence/",
       "post_id": 17993,
@@ -687,78 +273,6 @@
       "queued_at": "2026-05-07T15:31:30.506160"
     },
     {
-      "title": "OSAKA Ojo Gang、SWF3大阪での活躍",
-      "url": "https://www.kpopjournal.tokyo/osaka-ojo-gang-swf3-osaka-katsuyaku/",
-      "post_id": 17037,
-      "genre": "feature",
-      "artist": "",
-      "priority": "normal",
-      "queued_at": "2026-05-06T16:01:32.476385"
-    },
-    {
-      "title": "ビッグバン コーチェラ2026での新たな魅力",
-      "url": "https://www.kpopjournal.tokyo/bigbang-coachella-2026-new-attractions/",
-      "post_id": 17040,
-      "genre": "feature",
-      "artist": "",
-      "priority": "normal",
-      "queued_at": "2026-05-06T16:01:42.308373"
-    },
-    {
-      "title": "IVE、2027年公開「ナミヤ雑貨店の奇蹟」出演決定",
-      "url": "https://www.kpopjournal.tokyo/ive-namiya-zakkaten-kiseki/",
-      "post_id": 17611,
-      "genre": "feature",
-      "artist": "IVE",
-      "priority": "normal",
-      "queued_at": "2026-05-07T09:00:52.612142"
-    },
-    {
-      "title": "IVE、2027年実写版「ナミヤ雑貨店の奇蹟」出演決定",
-      "url": "https://www.kpopjournal.tokyo/ive-namiya-zakkaten-kiseki-2027/",
-      "post_id": 17638,
-      "genre": "feature",
-      "artist": "IVE",
-      "priority": "normal",
-      "queued_at": "2026-05-07T10:00:43.150636"
-    },
-    {
-      "title": "IVE、ディズニープラス新作映画出演決定",
-      "url": "https://www.kpopjournal.tokyo/ive-disney-plus-movie-appearance/",
-      "post_id": 17682,
-      "genre": "feature",
-      "artist": "IVE",
-      "priority": "normal",
-      "queued_at": "2026-05-07T11:00:53.369109"
-    },
-    {
-      "title": "IVE出演！ディズニープラス実写「ナミヤ雑貨店」2027年公開",
-      "url": "https://www.kpopjournal.tokyo/ive-namiya-zakkaten-2027/",
-      "post_id": 17723,
-      "genre": "feature",
-      "artist": "IVE",
-      "priority": "normal",
-      "queued_at": "2026-05-07T13:02:03.793815"
-    },
-    {
-      "title": "PUBG MOBILE 聖水ガーデンイベント ソウル国際庭園博覧会コラボ",
-      "url": "https://www.kpopjournal.tokyo/popup/seoul-seongsu/17052/",
-      "post_id": 17052,
-      "genre": "",
-      "artist": "",
-      "priority": "normal",
-      "queued_at": "2026-05-06T16:35:06.101844"
-    },
-    {
-      "title": "MONSTA Xショヌ・ヒョンウォン新EP「LOVE ME」トラックリスト公",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-shownu-hyunwon-love-me-tracklist-2/",
-      "post_id": 18020,
-      "genre": "breaking",
-      "artist": "monsta x",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:01:04.317094"
-    },
-    {
       "title": "TREASUREが「NEW WAV」トレーラー公開、カムバック予告",
       "url": "https://www.kpopjournal.tokyo/treasure-new-wav-trailer-comeback/",
       "post_id": 18023,
@@ -766,24 +280,6 @@
       "artist": "TREASURE",
       "priority": "high",
       "queued_at": "2026-05-07T16:01:08.429785"
-    },
-    {
-      "title": "USPEER、メンバー脱退で6人体制に変更",
-      "url": "https://www.kpopjournal.tokyo/uspeer-member-departure-six-member-system/",
-      "post_id": 18031,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:03:22.568611"
-    },
-    {
-      "title": "BABYMONSTER アサ、サントリー新商品WEBCM出演",
-      "url": "https://www.kpopjournal.tokyo/babymonster-asa-suntory-webcm/",
-      "post_id": 18046,
-      "genre": "breaking",
-      "artist": "BABYMONSTER",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:08:20.683571"
     },
     {
       "title": "パク・ジフン、日韓「SINGLES」カバー登場",
@@ -813,24 +309,6 @@
       "queued_at": "2026-05-07T16:13:09.242771"
     },
     {
-      "title": "IVEリズ、K-SWISSイベントに出席",
-      "url": "https://www.kpopjournal.tokyo/ive-rizu-k-swiss-event-attendance/",
-      "post_id": 18067,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:13:20.268040"
-    },
-    {
-      "title": "IVEリズ、K-SWISSイベントに出席【速報】",
-      "url": "https://www.kpopjournal.tokyo/ive-rizu-k-swiss-event-attendance-2/",
-      "post_id": 18071,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:14:11.616336"
-    },
-    {
       "title": "BTSジン、TXTボムギュにトラブル回避アドバイス",
       "url": "https://www.kpopjournal.tokyo/bts-jin-txt-bomgyu-advice-trouble-avoidance/",
       "post_id": 18094,
@@ -838,15 +316,6 @@
       "artist": "BTS",
       "priority": "high",
       "queued_at": "2026-05-07T16:30:27.790315"
-    },
-    {
-      "title": "BTSジン、TXTボムギュにトラブル回避アドバイス",
-      "url": "https://www.kpopjournal.tokyo/bts-jin-txt-bomgyu-advice-trouble-avoidance-2/",
-      "post_id": 18100,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-05-07T16:30:56.606273"
     },
     {
       "title": "『暴君のシェフ』主演ユナが4週連続で話題性1位を獲得",
@@ -892,6 +361,15 @@
       "artist": "",
       "priority": "high",
       "queued_at": "2026-05-07T16:40:22.454277"
+    },
+    {
+      "title": "IVE、2027年公開「ナミヤ雑貨店の奇蹟」出演決定",
+      "url": "https://www.kpopjournal.tokyo/ive-namiya-zakkaten-kiseki/",
+      "post_id": 17611,
+      "genre": "feature",
+      "artist": "IVE",
+      "priority": "normal",
+      "queued_at": "2026-05-07T09:00:52.612142"
     }
   ]
 }

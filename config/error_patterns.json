@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T17:59:51.650973",
+  "updated_at": "2026-05-07T18:11:21.513967",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1341,6 +1341,15 @@
       "fix": "タイトル42字以内＋フック語(数字/疑問形/最新)を冒頭・中盤に配置。末尾のみのフックは禁止。high_imp_optimizerに反映済",
       "detection": "GSCで position<=2 かつ click=0 のページを抽出 → タイトルの末尾切断状況を確認",
       "agent": "lib.title_optimizer",
+      "resolved_at": "2026-05-07"
+    },
+    "x_post_to_trashed_article": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "本日X投稿18件中6件が trash 記事(__trashed slug)へリンク。X queue picks publishing記事 → 数時間後に AUTO-ARCHIVE で trash → X既投稿は broken link に変質。Next.js cache stale で 502 多発",
+      "fix": "lib/x_poster.py post_hook_and_reply に2層guard追加: (1) WP REST で post_id status を直前再取得、publish以外なら abort (2) URL validator の og-default/OGP問題もスキップ条件に追加",
+      "detection": "logs/x_posts.jsonl の post_id を WP API で照合し、status!=publish が一定割合超える",
+      "agent": "lib.x_poster",
       "resolved_at": "2026-05-07"
     }
   },
