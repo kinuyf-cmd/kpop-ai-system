@@ -264,7 +264,54 @@ def process_queue(dry_run: bool = False) -> dict:
 
     result = {'processed': processed, 'remaining': len(new_queue)}
     print(f"[scheduler] 投稿: {processed}件 / 残キュー: {len(new_queue)}件")
+
+    # 2026-05-07: silent rot 検知用 alert
+    # ガード厳格化により全rejectされ続けた場合の早期警告
+    # cond: queue>=10あるのに 連続3回以上 processed=0 ならalert
+    _alert_silent_rot(processed, len(new_queue))
+
     return result
+
+
+def _alert_silent_rot(processed: int, remaining: int):
+    """0件alert: queue 残あるのに連続skipが続いたら警告"""
+    alert_log = BASE / 'logs' / 'x_scheduler_silent_rot.jsonl'
+    alert_log.parent.mkdir(exist_ok=True)
+    # 直近5回の processed history を読む
+    history = []
+    if alert_log.exists():
+        try:
+            for line in alert_log.read_text(errors='replace').splitlines()[-5:]:
+                d = json.loads(line)
+                history.append(d.get('processed', 0))
+        except Exception:
+            history = []
+    # 直近の processed をlogに append
+    entry = {
+        'ts': datetime.now().isoformat(),
+        'processed': processed,
+        'remaining': remaining,
+    }
+    with alert_log.open('a', encoding='utf-8') as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+
+    # alert: 直近(本回含む)4回連続 processed=0 かつ queue 残>=10
+    history.append(processed)
+    if remaining >= 10 and len(history) >= 4 and all(h == 0 for h in history[-4:]):
+        msg = (f"[ALERT] x_scheduled_poster: 連続4回 0投稿 / queue残 {remaining}件 — "
+               f"全guard rejected (trash/og-default疑い) もしくは外部要因。要調査")
+        print(msg)
+        # logs/alerts.jsonl に追加 (運用alert集約)
+        alerts_path = BASE / 'logs' / 'alerts.jsonl'
+        with alerts_path.open('a', encoding='utf-8') as f:
+            f.write(json.dumps({
+                'ts': datetime.now().isoformat(),
+                'severity': 'high',
+                'source': 'x_scheduled_poster',
+                'msg': msg,
+                'history': history[-4:],
+                'remaining': remaining,
+            }, ensure_ascii=False) + '\n')
 
 
 def show_status():
