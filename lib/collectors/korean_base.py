@@ -71,6 +71,10 @@ def is_kpop_related(text):
     """K-POP関連シグナルかつアーティスト名を抽出。
     返却順序保証: 固有アーティスト名 → ジェネリック語 → 事務所名
     breaking_news_detector の arts[0] が必ず固有名詞優先で選ばれる
+
+    マッチ規則 (2026-05-07):
+      - ハングルKW: substring + 前文字hangul排除 (後ろは助詞許容)
+      - ASCII KW: 単語境界 \b で囲む (live → IVE / sam smith → SM 等の誤検知防止)
     """
     import re as _re
     tl = text.lower()
@@ -84,17 +88,30 @@ def is_kpop_related(text):
     _matched_text = tl
     for kw in sorted_kw:
         kw_lower = kw.lower()
-        if kw_lower not in _matched_text:
-            continue
-        if _re.search(r'[\uac00-\ud7af]', kw):
-            pattern = _re.escape(kw_lower)
-            m = _re.search(pattern, _matched_text)
-            if m:
-                start, end = m.start(), m.end()
-                before = _matched_text[start-1] if start > 0 else ' '
-                after = _matched_text[end] if end < len(_matched_text) else ' '
-                if _re.match(r'[\uac00-\ud7af]', before) or _re.match(r'[\uac00-\ud7af]', after):
+        has_hangul = bool(_re.search(r'[\uac00-\ud7af]', kw))
+        if has_hangul:
+            # ハングルKW: substring検出 + 直前ハングルなら部分一致疑いで却下
+            # 直後はハングル許容 (助詞만/는/이/가/의/에 等を弾かないため)
+            if kw_lower not in _matched_text:
+                continue
+            m = _re.search(_re.escape(kw_lower), _matched_text)
+            if m and m.start() > 0:
+                before = _matched_text[m.start()-1]
+                if _re.match(r'[\uac00-\ud7af]', before):
                     continue
+        else:
+            # ASCII KW: ASCII単語境界必須 (\bがCJK文字を語と認識する問題回避)
+            # BTS新曲 / (G)I-DLE Tour なども正しくマッチ
+            found = False
+            for m in _re.finditer(_re.escape(kw_lower), _matched_text):
+                s, e = m.start(), m.end()
+                before_ok = s == 0 or not (_matched_text[s-1].isascii() and _matched_text[s-1].isalnum())
+                after_ok = e == len(_matched_text) or not (_matched_text[e].isascii() and _matched_text[e].isalnum())
+                if before_ok and after_ok:
+                    found = True
+                    break
+            if not found:
+                continue
         if kw in GENERIC_EVENT_KW:
             generic_matches.append(kw)
         else:
@@ -103,7 +120,19 @@ def is_kpop_related(text):
 
     if proper_artist_matches or generic_matches:
         return proper_artist_matches + generic_matches
-    agency_matches = [kw for kw in KPOP_KW if kw in AGENCY_ONLY_KW and kw.lower() in tl]
+    # AGENCY_ONLY: ASCII略号は単語境界必須 ("Sam Smith"の"sm"誤検知防止)
+    agency_matches = []
+    for kw in KPOP_KW:
+        if kw not in AGENCY_ONLY_KW:
+            continue
+        # ASCII単語境界 (Sam Smith の sm 誤検知防止)
+        for m in _re.finditer(_re.escape(kw.lower()), tl):
+            s, e = m.start(), m.end()
+            before_ok = s == 0 or not (tl[s-1].isascii() and tl[s-1].isalnum())
+            after_ok = e == len(tl) or not (tl[e].isascii() and tl[e].isalnum())
+            if before_ok and after_ok:
+                agency_matches.append(kw)
+                break
     return agency_matches
 
 

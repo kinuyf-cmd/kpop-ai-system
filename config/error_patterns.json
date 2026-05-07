@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T16:44:31.516250",
+  "updated_at": "2026-05-07T17:01:14.995007",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1234,6 +1234,24 @@
       "fix": "別件 (今回はOGPチェックの過程で発見)。trashed記事はWPがog-default.pngに切替えるため OGP-default 比率が高く見える。POST_AUDIT_GATE が正しくブロックしているため X 側の被害はゼロ。今後は LLM事実検証を上流で強化する必要あり",
       "detection": "logs/draft_auto_publisher.log に \"AUTO-ARCHIVE: 3回BLOCK超過\" が頻発",
       "agent": "pipeline.draft_auto_publisher",
+      "resolved_at": "2026-05-07"
+    },
+    "kpop_kw_substring_false_positive": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "\"Sam Smith engaged\" の \"sm\" / \"Live show\" の \"ive\" が ASCII KW にsubstring一致しK-POP判定True",
+      "fix": "lib/collectors/korean_base.py is_kpop_related: ASCII KW は単語境界必須に変更。\\b は CJK を語と認識する問題があるため手動 ASCII alnum 境界判定 (前後文字が ASCII alnum でないこと)",
+      "detection": "英語ニュース見出しが trend_signals.jsonl に source_id=ASCII系で混入する",
+      "agent": "lib.collectors.korean_base",
+      "resolved_at": "2026-05-07"
+    },
+    "kpop_kw_korean_particle_overskip": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "\"데뷔만 발표\" の 데뷔 が直後の助詞 만 (hangul) で部分一致疑いになり却下されていた",
+      "fix": "is_kpop_related の after-char ハングル排除を削除。前文字のみチェックに緩和。長い KW 優先 + マッチ済み除去戦略があるため副作用なし",
+      "detection": "韓国語シグナルで 데뷔/컴백/발매 等のジェネリック語が is_kpop_related から空配列で返る",
+      "agent": "lib.collectors.korean_base",
       "resolved_at": "2026-05-07"
     }
   },
