@@ -119,12 +119,12 @@ def unified_publish(
     log = []
 
     # 1. タイトル最適化
+    # ユーザー指示 (2026-05-07): 速報タイトルの【速報】prefix廃止。低信頼度の【韓国メディア速報】は維持
     optimized = optimize_title(raw_title, body_html[:500] if body_html else '')
-    if kind == 'breaking' or confidence == 'low':
-        prefix = '【速報】' if kind == 'breaking' else '【韓国メディア速報】'
-        title_final = f"{prefix}{optimized}"[:42]  # 監査基準42字厳守
+    if kind != 'breaking' and confidence == 'low':
+        title_final = f"【韓国メディア速報】{optimized}"[:42]
     else:
-        title_final = optimized
+        title_final = optimized[:42]
     log.append(f"title: {title_final} ({len(title_final)}字)")
 
     # 2. スラッグ (検証ゲート付き: ASCII/適切長/非自動生成を保証)

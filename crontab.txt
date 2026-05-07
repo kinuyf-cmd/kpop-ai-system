@@ -211,26 +211,25 @@
 30 8 * * * python3 scripts/winning_pattern_expander.py >> logs/winning_pattern_expander.log 2>&1
 # 柱2: 既存記事最適化 (毎週水曜6:00)
 0 6 * * 3 cd /home/aiuser/kpop-ai-system && python3 scripts/high_imp_optimizer.py --limit 10 >> logs/high_imp_optimizer.log 2>&1
-# === K-POPメディア collectors (2026-05-06改定) ===
-# --- 2時間毎 (7:00-22:00) 韓国主要+Soompi ---
+# === K-POPメディア collectors (2026-05-07改定) ===
+# --- 2時間毎 (07,09,11,13,15,17,19,21時台) 韓国主要+Soompi ---
 0 7-21/2 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.osen_collector >> logs/osen_collector.log 2>&1
-2 7-21/2 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.mydaily_collector >> logs/mydaily_collector.log 2>&1
-4 7-21/2 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.newsen_collector >> logs/newsen_collector.log 2>&1
-6 7-21/2 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.soompi_collector >> logs/soompi_collector.log 2>&1
-# --- 3時間毎 (7:00-22:00) 英語メディア+韓国スポーツ紙 ---
-10 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.allkpop_collector >> logs/allkpop_collector.log 2>&1
-12 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.koreaboo_collector >> logs/koreaboo_collector.log 2>&1
-14 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.starnews_collector >> logs/starnews_collector.log 2>&1
-16 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.sportschosun_collector >> logs/sportschosun_collector.log 2>&1
+10 7-21/2 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.mydaily_collector >> logs/mydaily_collector.log 2>&1
+25 7-21/2 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.newsen_collector >> logs/newsen_collector.log 2>&1
+40 7-21/2 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.soompi_collector >> logs/soompi_collector.log 2>&1
+# --- 5回/日 (08,12,14,16,20時台) 英語メディア+韓国スポーツ紙+トレンド ---
+0 8,12,14,16,20 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.allkpop_collector >> logs/allkpop_collector.log 2>&1
+5 8,12,14,16,20 * * *  cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.koreaherald_collector >> logs/koreaherald_collector.log 2>&1
+10 8,12,14,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.koreaboo_collector >> logs/koreaboo_collector.log 2>&1
+20 8,12,14,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.starnews_collector >> logs/starnews_collector.log 2>&1
+30 8,12,14,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.sportschosun_collector >> logs/sportschosun_collector.log 2>&1
+40 8,12,14,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.gtrends_collector >> logs/gtrends_collector.log 2>&1
+50 8,12,14,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.kstyle_collector >> logs/kstyle_collector.log 2>&1
+# --- topstarnews残置 (品質中位ノイズ少なめ) / xportsnews停止 (drama・sports混入のため2026-05-07除外) ---
 18 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.topstarnews_collector >> logs/topstarnews_collector.log 2>&1
-20 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.xportsnews_collector >> logs/xportsnews_collector.log 2>&1
-# --- 4回/日 (8:00,12:00,16:00,22:00) ---
-0 8,12,16,22 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.gtrends_collector >> logs/gtrends_collector.log 2>&1
-2 8,12,16,22 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.kstyle_collector >> logs/kstyle_collector.log 2>&1
-4 8,12,16,22 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.koreaherald_collector >> logs/koreaherald_collector.log 2>&1
-# --- 12時間毎 (7:00,19:00) ---
-0 7,19 * * *    cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.mnet_collector >> logs/mnet_collector.log 2>&1
-5 7,19 * * *    cd /home/aiuser/kpop-ai-system && python3 -m pipeline.korea_official_collector >> logs/korea_official.log 2>&1
+# --- 1日2回 ---
+0 12,18 * * *   cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.mnet_collector >> logs/mnet_collector.log 2>&1
+0 10,19 * * *   cd /home/aiuser/kpop-ai-system && python3 -m pipeline.korea_official_collector >> logs/korea_official.log 2>&1
 
 # 検索駆動記事生成: GSCデータから検索需要を特定 (2026-05-04追加)
 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.search_driven_generator >> logs/search_driven_generator.log 2>&1

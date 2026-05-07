@@ -375,24 +375,25 @@ def publish_breaking(artist, sigs, typ):
         '元の見出しが言っていることだけを日本語にする。'
         '「出席禁止」「衝撃」等ソースにない語句を追加しない。'
     )
+    # ユーザー指示 (2026-05-07): タイトル先頭の【速報】prefix は付けない
     if best.get('language') == 'ko':
         title_r = translate_ko_to_ja(best['title'], _title_context)
         if not title_r.get('success'):
             return None
-        raw_title = '【速報】' + title_r['translated'].strip().strip('「」""【】')
+        raw_title = title_r['translated'].strip().strip('「」""【】')
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
     elif best.get('language') == 'ja':
-        raw_title = '【速報】' + best['title'].strip().strip('【】')
+        raw_title = best['title'].strip().strip('【】')
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
     else:
         # 英語ソース
         title_r = translate_ko_to_ja(best['title'], _title_context)
         if title_r.get('success'):
-            raw_title = '【速報】' + title_r['translated'].strip().strip('「」""【】')
+            raw_title = title_r['translated'].strip().strip('「」""【】')
         else:
-            raw_title = '【速報】' + best['title']
+            raw_title = best['title']
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
         body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
 
