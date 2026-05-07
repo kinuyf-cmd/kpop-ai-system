@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T13:18:11.227513",
+  "updated_at": "2026-05-07T14:00:17.532562",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1147,6 +1147,22 @@
       "agent": "post_publish_hook",
       "resolved_at": "2026-05-07",
       "trigger_origin": "commit b42163e で post_publish_hook.py の Step3 = full_audit→pre_publish_gate 再実行への変更を巻き込んだことが副次的に表面化させた"
+    },
+    "translation_residue_hangul": {
+      "count": 14,
+      "last_seen": "2026-05-07",
+      "example": "タイトル『あ홉』(AHOF未訳)、本文に韓国語固有名詞・曲名・グループ名が残存。translate_ko_to_jaの訳し漏れ",
+      "fix": "lib/translation_residue_check.py 共通lib化 + lib/pre_publish_gate.py に translation_residue_block / translation_residue_warn を追加 (タイトル/altに1字でもBLOCK / 本文20字超でBLOCK / 5字超でWARN)。再発時は publishを止めてdraft化",
+      "agent": "pre_publish_gate",
+      "resolved_at": "2026-05-07"
+    },
+    "translation_residue_hangul_title": {
+      "count": 2,
+      "last_seen": "2026-05-07",
+      "example": "#17686『あ홉』(AHOF) #17564『ス턱』(Stuck) — タイトルにハングル混入で公開破壊",
+      "fix": "pre_publish_gate.assess_residue でタイトル1字でもBLOCK。translate_ko_to_ja の固有名詞辞書を強化",
+      "agent": "pre_publish_gate",
+      "resolved_at": "2026-05-07"
     }
   },
   "recurring_errors": [

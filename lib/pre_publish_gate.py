@@ -186,6 +186,30 @@ def pre_publish_gate(
     # 1c. contamination
     issues.extend(_check_contamination(body_html))
 
+    # 1c1. ハングル混入検査 (translate_ko_to_ja の訳し漏れ検出)
+    # タイトル/altに1字でもBLOCK / 本文20字超でBLOCK / 5字超でWARN
+    try:
+        from lib.translation_residue_check import assess_residue
+        _plain_for_hangul = re.sub(r'<[^>]+>', '', body_html or '')
+        _alt_collected = ''
+        for _m in re.finditer(r'<img[^>]*\salt=["\']([^"\']*)["\']', body_html or ''):
+            _alt_collected += ' ' + _m.group(1)
+        _residue = assess_residue(title or '', _plain_for_hangul, _alt_collected)
+        if _residue['verdict'] == 'BLOCK':
+            issues.append({
+                'type': 'translation_residue_block',
+                'severity': 'block',
+                'detail': f"翻訳残存ハングル: {_residue['reason']} samples={_residue['samples'][:2]}",
+            })
+        elif _residue['verdict'] == 'WARN':
+            issues.append({
+                'type': 'translation_residue_warn',
+                'severity': 'warn',
+                'detail': f"翻訳残存ハングル: {_residue['reason']}",
+            })
+    except Exception:
+        pass
+
     # 1d. AI mention 直接検出 (TYPO_PATTERNSの\bが日本語境界で不発のため補完)
     _plain = re.sub(r'<[^>]+>', ' ', body_html or '')
     if re.search(r'(?:ChatGPT|GPT-[34]|Claude\s*(?:Code|API)?|Anthropic)', _plain, re.IGNORECASE):
