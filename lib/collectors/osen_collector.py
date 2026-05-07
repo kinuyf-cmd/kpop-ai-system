@@ -13,14 +13,16 @@ def collect():
         log(f"OSEN fetch error: {e}")
         return 0
 
+    # OSENは1記事につき画像anchor + タイトルanchorの2連リンクを出す。
+    # メインセクションは<strong>、サブセクションは<p class="txt">を使うため両対応
     patterns = [
-        r'<a[^>]+href="(/article/[A-Z0-9]+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
-        r'<a[^>]+href="(https://www\.osen\.co\.kr/article/[A-Z0-9]+)"[^>]*>\s*((?:<[^>]*>|[^<]){10,200})\s*</a>',
+        r'<a[^>]+href="(/article/[A-Z0-9]+)"[^>]*>\s*<strong>([^<]{5,200})</strong>',
+        r'<a[^>]+href="(/article/[A-Z0-9]+)"[^>]*class="btn-txt"[^>]*>\s*<p[^>]*>([^<]{5,200})</p>',
     ]
     seen = set()
     for pat in patterns:
         for m in re.finditer(pat, html, re.DOTALL):
-            path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
+            path, title = m.group(1), m.group(2).strip()
             url = path if path.startswith('http') else 'https://www.osen.co.kr' + path
             if url in seen or len(title) < 5:
                 continue

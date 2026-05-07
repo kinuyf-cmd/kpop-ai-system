@@ -9,20 +9,27 @@ KPOP_KW = [
     'K-POP', 'KPOP', '케이팝', '아이돌', 'BTS', '방탄소년단', 'BLACKPINK', '블랙핑크',
     'aespa', '에스파', 'NewJeans', '뉴진스', 'SEVENTEEN', '세븐틴', 'TWICE', '트와이스',
     'IVE', '아이브', 'LE SSERAFIM', '르세라핌', 'ILLIT', '아일릿', 'ITZY', '있지',
-    '방탄소년단', 'BABYMONSTER', '베이비몬스터', 'RIIZE', 'NMIXX', 'BOYNEXTDOOR',
-    'ZEROBASEONE', 'I.O.I', 'Wanna One', '워너원', 'FIFTY FIFTY', '피프티피프티',
+    '방탄소년단', 'BABYMONSTER', '베이비몬스터', 'RIIZE', '라이즈', 'NMIXX', '엔믹스',
+    'BOYNEXTDOOR', '보이넥스트도어',
+    'ZEROBASEONE', '제로베이스원', 'I.O.I', 'Wanna One', '워너원', 'FIFTY FIFTY', '피프티피프티',
     'Red Velvet', '레드벨벳', 'TXT', '투모로우바이투게더', 'Stray Kids', '스트레이키즈',
     'ENHYPEN', '엔하이픈', 'NCT', 'ATEEZ', '에이티즈',
-    '(G)I-DLE', '여자아이들', '(여자)아이들', 'TWS',
-    'KISS OF LIFE', '키스오브라이프', '&TEAM', 'IU', '아이유', 'LISA', 'JENNIE', 'JISOO',
+    '(G)I-DLE', '여자아이들', '(여자)아이들', 'TWS', '티더블유에스',
+    'KISS OF LIFE', '키스오브라이프', '&TEAM', '앤팀', 'IU', '아이유', 'LISA', 'JENNIE', 'JISOO', 'ROSÉ', '로제',
+    'THE BOYZ', '더보이즈', 'TREASURE', '트레저', 'KEP1ER', '케플러',
+    'STAYC', '스테이씨', 'WJSN', '우주소녀', 'VIVIZ', '비비지', 'Billlie', '빌리',
+    'Weeekly', '위클리', 'Kep1er', 'Cravity', '크래비티', 'P1Harmony', '피원하모니',
+    'TEMPEST', '템페스트', 'ATBO', 'XG', 'EVNNE', 'EL7Z UP', '엘즈업',
+    'monsta x', '몬스타엑스', '셔누', '형원', '민혁',
     '컴백', '신곡', '발매', '데뷔', '콘서트', '팬미팅', 'HYBE', 'SM', 'YG', 'JYP',
     # 韓国語一般K-POPキーワード（アーティスト名以外）
     '걸그룹', '보이그룹', '아이돌', '음방', '엠카', '인기가요', '뮤뱅', '엠넷',
-    '가수', '솔로곡', '타이틀곡', '앨범', '음원', '차트', '1위',
+    '가수', '솔로곡', '타이틀곡', '앨범', '음원', '차트', '1위', '시구',
     # 追加アーティスト名（韓国語）
     '지드래곤', '에릭남', '소녀시대', '빅뱅', '엑소', '동방신기',
     '슈퍼주니어', '마마무', '오마이걸', '에이핑크', '보아',
-    '아이오아이', '카라', '씨스타',
+    '아이오아이', '카라', '씨스타', '프로미스나인', 'fromis_9',
+    '청하', '효린', '솔라', '화사', '휘인', '문별', '태연', '제시',
 ]
 
 URGENT_KW = [

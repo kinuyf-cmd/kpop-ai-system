@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T14:00:17.532562",
+  "updated_at": "2026-05-07T16:02:11.525738",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1162,6 +1162,24 @@
       "example": "#17686『あ홉』(AHOF) #17564『ス턱』(Stuck) — タイトルにハングル混入で公開破壊",
       "fix": "pre_publish_gate.assess_residue でタイトル1字でもBLOCK。translate_ko_to_ja の固有名詞辞書を強化",
       "agent": "pre_publish_gate",
+      "resolved_at": "2026-05-07"
+    },
+    "collector_dual_anchor_dedup": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "OSEN/MyDaily等が記事ごとに画像anchor+タイトルanchorの2連リンクを出すサイトで、画像anchor先発でtitleが空→24h dedupで全dup扱いになりシグナル0件",
+      "fix": "<strong>または<p class=\"txt\">直下のタイトルを正規表現で直接抽出。既存の<a><img></a>パターンより<strong>を優先する",
+      "detection": "logs/{site}_collector.log で saved 0 signals (skipped N dups) が連続している",
+      "agent": "lib.collectors",
+      "resolved_at": "2026-05-07"
+    },
+    "collector_kpop_kw_dictionary": {
+      "count": 1,
+      "last_seen": "2026-05-07",
+      "example": "is_kpop_related辞書に더보이즈/라이즈/케플러等の主要グループが欠落しており、Newsen等の韓国語媒体で正当なK-POP記事が0件まで弾かれていた",
+      "fix": "lib/collectors/korean_base.py KPOP_KWに主要韓国グループ12組+韓国語表記を追加。新規グループのデビュー時は同辞書に追加すること",
+      "detection": "trend_signals.jsonlでsource_id=newsen等の件数が0または極小で、当該媒体の記事タイトルに有名グループ名が含まれているのにmatchしない",
+      "agent": "lib.collectors.korean_base",
       "resolved_at": "2026-05-07"
     }
   },
