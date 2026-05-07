@@ -1,0 +1,16 @@
+{
+  "name": "KCON setlist速報",
+  "title_pattern": "【KCON 2026速報】{day} {artist}のセットリスト全曲一挙公開",
+  "h1": "{artist}が披露した{day}のステージ全曲リスト",
+  "structure": [
+    {"type": "h2", "text": "{day}の{artist}セットリスト"},
+    {"type": "ol", "label": "曲名+アルバム+発売年"},
+    {"type": "h2", "text": "ステージのハイライト"},
+    {"type": "p", "text": "MC内容、衣装、演出、ファン反応"},
+    {"type": "h2", "text": "ファンの反応 (X/Twitter)"},
+    {"type": "blockquote", "label": "X投稿引用 5-10件"},
+    {"type": "h2", "text": "よくある質問"},
+    {"type": "faq", "items": ["セットリストの全曲数は？", "アンコール曲は？"]},
+    {"type": "cta_block", "items": ["airtrip", "esim", "prime_video"]}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "KCONリアルタイム速報",
+  "title_pattern": "【KCON 2026速報】{event} - {time}更新",
+  "h1": "KCON JAPAN 2026 {day} リアルタイム速報",
+  "structure": [
+    {"type": "h2", "text": "速報内容"},
+    {"type": "p", "text": "{event_detail}"},
+    {"type": "h2", "text": "タイムライン"},
+    {"type": "ul", "label": "時系列の出来事"},
+    {"type": "h2", "text": "出演アーティスト情報"},
+    {"type": "table", "cols": ["時間", "アーティスト", "ステージ"]},
+    {"type": "h2", "text": "現地の様子"},
+    {"type": "ul", "label": "ファンの目撃情報"},
+    {"type": "cta_block", "items": ["airtrip", "esim"]}
+  ]
+}

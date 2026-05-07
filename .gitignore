@@ -69,3 +69,29 @@ config/x_retry_queue.json
 config/chart_compare_latest.json
 google_metrics/metrics_yesterday.json
 static/news-sitemap.xml
+
+# AI生成プロンプトキャッシュ (大量、git管理外)
+ai_prompts/
+
+# Claude Code セッション固有 (個人別、git管理外)
+.claude/
+
+# 旧バックアップ
+*.bak.*
+
+# 一時画像 (DALL-E生成 / サムネ作業)
+dalle_v6_*.png
+dalle_v6_*.jpg
+thumb_v6_*.jpg
+
+# 運用追加データ (cron実行で更新、2026-05-07追加)
+data/ctr_baseline_*.json
+data/draft_block_history.json
+data/factcheck_blocked.json
+data/kcon_monitor_state.json
+data/kcon_sources.json
+data/thumbnail_used_images.json
+data/tickebo_state.json
+data/x_repost_tracker.json
+lessons_learned.json
+

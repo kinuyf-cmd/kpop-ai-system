@@ -1,0 +1,18 @@
+{
+  "name": "KCON出演者レポート",
+  "title_pattern": "【KCON 2026】{artist}が{day}のステージで魅せた{highlight}",
+  "h1": "{artist} KCON 2026 {day} 出演レポート",
+  "structure": [
+    {"type": "h2", "text": "ステージ概要"},
+    {"type": "table", "cols": ["項目", "内容"], "rows": ["出演時間", "所属レーベル", "代表曲", "メンバー"]},
+    {"type": "h2", "text": "披露楽曲一覧"},
+    {"type": "ol", "label": "セットリスト"},
+    {"type": "h2", "text": "見どころポイント"},
+    {"type": "ul", "label": "ハイライト3-5項目"},
+    {"type": "h2", "text": "ファン熱狂の瞬間"},
+    {"type": "p", "text": "MC・コラボ・サプライズ"},
+    {"type": "h2", "text": "よくある質問"},
+    {"type": "faq", "items": ["出演時間は何分だった？", "サプライズゲストはいた？"]},
+    {"type": "cta_block", "items": ["airtrip", "esim", "prime_video"]}
+  ]
+}
