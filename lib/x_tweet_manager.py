@@ -33,21 +33,29 @@ def delete_tweet(tweet_id):
 
 
 def find_tweets_for_post(post_id):
-    """x_posts.jsonl から特定記事のtweet_idを検索"""
+    """x_posts.jsonl から特定記事のtweet_idを検索
+    2026-05-07: post_id 直接フィールドで一致させる (旧: substring検索で誤検出/取りこぼし)
+    """
     log_path = '/home/aiuser/kpop-ai-system/logs/x_posts.jsonl'
     tweet_ids = []
     if not os.path.exists(log_path):
         return tweet_ids
+    pid_int = int(post_id) if str(post_id).isdigit() else post_id
     for line in open(log_path):
         try:
             e = json.loads(line)
-            # post_id一致 or URL内にpost_id
-            if (str(post_id) in str(e.get('url', '')) or 
-                str(post_id) in str(e.get('text', ''))):
+            # 1) post_id field 直接一致 (推奨) 2) フォールバック: URL/text substring
+            ep = e.get('post_id')
+            match = False
+            if ep is not None and (ep == pid_int or str(ep) == str(post_id)):
+                match = True
+            elif str(post_id) in str(e.get('url', '')) or str(post_id) in str(e.get('text', '')):
+                match = True
+            if match:
                 tid = e.get('tweet_id')
-                if tid:
+                if tid and e.get('status') == 'ok':
                     tweet_ids.append(tid)
-        except:
+        except Exception:
             pass
     return tweet_ids
 
