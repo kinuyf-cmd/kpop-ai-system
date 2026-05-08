@@ -232,6 +232,32 @@ def process_queue(dry_run: bool = False) -> dict:
 
         print(f"  posting: {title[:50]}...")
 
+        # 2026-05-08: WP status verify (draft/trash の即時投稿事故防止 — 18765事案)
+        # unauthenticated REST APIは publish のみ200を返す。401/404は draft/trash として扱う
+        if post_id:
+            try:
+                import urllib.request, urllib.error, json as _json
+                _req = urllib.request.Request(
+                    f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status",
+                    headers={'User-Agent': 'kpopjournal-scheduler/1.0'})
+                _is_publish = False
+                try:
+                    with urllib.request.urlopen(_req, timeout=10) as _r:
+                        _wp = _json.loads(_r.read().decode())
+                    _is_publish = (_wp.get('status') == 'publish')
+                except urllib.error.HTTPError as _he:
+                    if _he.code in (401, 403, 404):
+                        _is_publish = False  # draft/trash/deleted
+                    else:
+                        raise
+                if not _is_publish:
+                    print(f"    ✗ WP not-publish — skip & remove from queue (pid={post_id})")
+                    new_queue.remove(entry)
+                    processed += 1
+                    continue
+            except Exception as _e:
+                print(f"    [warn] WP status check failed ({_e}) — proceeding")
+
         if dry_run:
             processed += 1
             new_queue.remove(entry)
