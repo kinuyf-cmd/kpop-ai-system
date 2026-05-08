@@ -274,6 +274,39 @@ def check_artist_triplet(post_id: int) -> dict:
     }
 
 
+# ─── 検査4.5: 同タイトル重複記事検出 ──────────────────────────────────
+def check_duplicate_titles(posts: list[dict], normalize: bool = True) -> list[dict]:
+    """post listのうち同一タイトルが複数件あるグループを返す。
+
+    normalize=Trueでタイトルを正規化(全角半角・スペース除去)してから比較。
+    Returns: [{'title': '...', 'post_ids': [a, b], 'dates': [...]}]
+    """
+    import unicodedata
+    by_title: dict[str, list[dict]] = {}
+    for p in posts:
+        raw = (p.get('title') or {}).get('rendered') or (p.get('title') or {}).get('raw', '')
+        if not raw:
+            continue
+        if normalize:
+            key = unicodedata.normalize('NFKC', raw).replace(' ', '').strip()
+        else:
+            key = raw
+        by_title.setdefault(key, []).append(p)
+
+    dups = []
+    for title, plist in by_title.items():
+        if len(plist) >= 2:
+            plist_sorted = sorted(plist, key=lambda x: x.get('date', ''))
+            dups.append({
+                'title': title,
+                'post_ids': [p['id'] for p in plist_sorted],
+                'dates': [p.get('date', '') for p in plist_sorted],
+                'keep_id': plist_sorted[0]['id'],
+                'trash_ids': [p['id'] for p in plist_sorted[1:]],
+            })
+    return dups
+
+
 # ─── 検査4: WP ⇄ X queue 整合 ──────────────────────────────────────
 def check_wp_xqueue_consistency(queue_path: str = None) -> dict:
     """x_post_queue.json内のpost_idとWP status を突合。

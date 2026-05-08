@@ -238,3 +238,7 @@
 */5 * 8,9,10 5 * cd /home/aiuser/kpop-ai-system && python3 -m lib.kcon_monitor >> logs/kcon_monitor.log 2>&1
 0 9 * * * cd /home/aiuser/kpop-ai-system && python3 google_metrics/fetch_yesterday_metrics.py >> logs/fetch_yesterday_metrics.log 2>&1
 5 9 * * * cd /home/aiuser/kpop-ai-system && python3 lib/check_metrics_fetch_health.py >> logs/metrics_health.log 2>&1
+
+# 日次バッチ監査(2026-05-08新設): 公開24h以内全件×4項目+横断突合+auto-fix
+# letterbox/サムネ重複/draft⇄Xqueue/三点不整合/重複記事 を毎朝7時にチェック
+0 7 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/daily_batch_audit.py --auto-fix --quiet >> logs/daily_batch_audit_cron.log 2>&1

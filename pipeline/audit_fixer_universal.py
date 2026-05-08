@@ -66,6 +66,59 @@ def update_post(post_id, post_type, payload):
         return False
 
 
+def _extract_balanced_div(content, class_name):
+    """指定class名の<div>から開始し、対応する閉じdivまでを抽出。
+
+    nested <div>のカウントをトラックして balanced match を返す。
+    Returns: list of matched HTML strings.
+    """
+    matches = []
+    pattern = re.compile(r'<div\s+class="' + re.escape(class_name) + r'"[^>]*>')
+    for m in pattern.finditer(content):
+        start = m.start()
+        depth = 1
+        i = m.end()
+        while i < len(content) and depth > 0:
+            nxt_open = content.find('<div', i)
+            nxt_close = content.find('</div>', i)
+            if nxt_close == -1:
+                break
+            if nxt_open != -1 and nxt_open < nxt_close:
+                depth += 1
+                i = nxt_open + 4
+            else:
+                depth -= 1
+                i = nxt_close + 6
+        if depth == 0:
+            matches.append(content[start:i])
+    return matches
+
+
+def _extract_preserved_blocks(content):
+    """内部リンク/CTA/プロフィール等の構造ブロックをcontentから抜き出す。
+
+    GPT書き直し時に失われないよう、書き直し対象は本文部分のみとし、
+    これらのブロックはそのまま末尾に再付与する。
+    Returns: (main_content, preserved_blocks_html)
+    """
+    preserved = []
+    main = content
+    # CTA / プロフィール: balanced-div抽出
+    for cls in ('kpj-cta-block', 'kpj-artist-profile'):
+        for blk in _extract_balanced_div(main, cls):
+            preserved.append(blk)
+            main = main.replace(blk, '', 1)
+    # 関連記事段落: <p>関連記事:...</p>
+    for p in re.findall(r'<p>関連記事:\s*<a[^>]*kpopjournal\.tokyo[\s\S]*?</p>', main):
+        preserved.append(p)
+        main = main.replace(p, '', 1)
+    # 関連記事 section: <section class="related-articles">...</section>
+    for s in re.findall(r'<section class="related-articles"[\s\S]*?</section>', main):
+        preserved.append(s)
+        main = main.replace(s, '', 1)
+    return main, '\n'.join(preserved)
+
+
 def rewrite_with_gpt(post, issues, post_type):
     """GPT-4o-miniで本文修正"""
     key = os.getenv('OPENAI_API_KEY')
@@ -75,6 +128,9 @@ def rewrite_with_gpt(post, issues, post_type):
     title = post.get('title', {}).get('rendered', '') if isinstance(post.get('title'), dict) else ''
     content = post.get('content', {}).get('rendered', '') if isinstance(post.get('content'), dict) else ''
     issue_types = list(set(i['type'] for i in issues if i['type'] in FIXABLE_TYPES))
+
+    # 2026-05-08: 構造ブロック保護(18781の内部リンク6→0剥離事案修正)
+    main_content, preserved_html = _extract_preserved_blocks(content)
 
     if post_type == 'popup':
         structure = """必須h2: イベント概要/開催詳細/特典・限定アイテム/アクセス
@@ -108,7 +164,7 @@ def rewrite_with_gpt(post, issues, post_type):
     prompt = f"""以下のK-POP記事を問題を解消した自然な記事に書き直してください。
 
 【タイトル】{title}
-【現在の本文】{content[:2500]}
+【現在の本文】{main_content[:2500]}
 【検出問題】{', '.join(issue_types)}
 
 【修正要件】
@@ -145,6 +201,9 @@ def rewrite_with_gpt(post, issues, post_type):
         # markdown見出しリーク対応
         result = re.sub(r'^##\s+(.+?)$', r'<h2>\1</h2>', result, flags=re.MULTILINE)
         result = re.sub(r'^###\s+(.+?)$', r'<h3>\1</h3>', result, flags=re.MULTILINE)
+        # 保護ブロック(CTA/プロフィール/関連記事)を末尾に再付与
+        if preserved_html:
+            result = result.strip() + '\n\n' + preserved_html
         return result.strip()
     except Exception as e:
         print(f"  GPT err: {e}")

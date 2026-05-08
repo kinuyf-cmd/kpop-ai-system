@@ -35,6 +35,7 @@ BLOCK_TYPES = frozenset({
     'slug_short',             # slug短すぎはSEO壊滅 → BLOCK (2026-05-02追加)
     'no_thumbnail',           # サムネなしは公開禁止 (2026-05-02追加)
     'thumbnail_portrait',     # 縦長サムネはOGP壊滅 (2026-05-02追加)
+    'thumbnail_letterbox',    # 縦長コンテンツのpadding/blurコピー検出 (2026-05-08追加)
     'artist_profile_mismatch', # メンバー人数/デビュー年の事実誤認 (2026-05-04追加)
     'template_placeholder',    # XX月/TBD等のテンプレ残存 (2026-05-04追加)
     'internal_ops_leak',       # GSC横展開/CTR/IMP等の内部施策用語混入 (2026-05-04追加)
@@ -494,6 +495,21 @@ def pre_publish_gate(
                     'severity': 'warn',
                     'detail': f'サムネにタイトルのアーティスト名({_title_artist})が含まれない。別人の写真の可能性',
                 })
+
+            # letterbox/縦長コンテンツpadding 検出 (2026-05-08追加: 18762/18779事案)
+            try:
+                _media_url = media_data.get('source_url', '')
+                if _media_url:
+                    from lib.cross_audit import check_letterbox
+                    _lb = check_letterbox(_media_url)
+                    if _lb.get('is_letterbox'):
+                        issues.append({
+                            'type': 'thumbnail_letterbox',
+                            'severity': 'block',
+                            'detail': f"letterbox検出 (mode={_lb.get('mode')} L_sim={_lb.get('left_color_sim')})",
+                        })
+            except Exception:
+                pass  # letterbox検査失敗時は通す
         except Exception:
             pass  # メディアAPI取得失敗は投稿をブロックしない
 

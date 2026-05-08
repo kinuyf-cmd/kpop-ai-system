@@ -33,6 +33,7 @@ from lib.cross_audit import (
     check_thumb_duplicate_today,
     check_artist_triplet,
     check_wp_xqueue_consistency,
+    check_duplicate_titles,
     detect_title_artist,
 )
 
@@ -133,8 +134,10 @@ def audit_cross_batch(posts: list[dict]) -> dict:
     pids = [p['id'] for p in posts]
 
     # 同日サムネ重複
-    dups = check_thumb_duplicate_today(pids)
-    findings['thumb_duplicates'] = dups
+    findings['thumb_duplicates'] = check_thumb_duplicate_today(pids)
+
+    # 同タイトル重複記事
+    findings['duplicate_titles'] = check_duplicate_titles(posts)
 
     # WP-Xqueue整合
     findings['wp_xqueue'] = check_wp_xqueue_consistency()
@@ -145,6 +148,24 @@ def audit_cross_batch(posts: list[dict]) -> dict:
 def auto_fix(per_post_results: list[dict], cross: dict) -> list[str]:
     """自動修正可能な違反だけを修正。重大判断はユーザー任せ。"""
     fixes = []
+    home_auth = f'{HOME}/.wp_auth'
+
+    # 0. 同タイトル重複記事の trash化(古い方を残し、新しい方をtrash)
+    for dup in cross.get('duplicate_titles', []):
+        for trash_id in dup['trash_ids']:
+            r = subprocess.run(
+                ['curl', '-s', '-X', 'POST', '-K', home_auth,
+                 f'{WP_BASE}/wp-json/wp/v2/posts/{trash_id}',
+                 '-H', 'Content-Type: application/json',
+                 '-d', '{"status":"draft"}'],
+                capture_output=True, text=True, timeout=15)
+            try:
+                d = json.loads(r.stdout)
+                if d.get('status') == 'draft':
+                    fixes.append(f'duplicate post: pid={trash_id} drafted (kept {dup["keep_id"]})')
+            except Exception:
+                pass
+
     # 1. WP-Xqueue: draft/trashの除去 + artistフィールド再生成
     queue_path = BASE / 'config' / 'x_post_queue.json'
     if queue_path.exists():
@@ -214,6 +235,7 @@ def main():
 
     cross_violations = (
         len(cross.get('thumb_duplicates', [])) +
+        len(cross.get('duplicate_titles', [])) +
         len(cross.get('wp_xqueue', {}).get('wp_status_violations', [])) +
         len(cross.get('wp_xqueue', {}).get('artist_field_mismatches', []))
     )
@@ -223,6 +245,7 @@ def main():
         print(f"  per-post: critical={crit_count} high={high_count} medium={med_count}")
         print(f"  cross-batch violations: {cross_violations}")
         print(f"  thumb_duplicates: {len(cross.get('thumb_duplicates', []))}")
+        print(f"  duplicate_titles: {len(cross.get('duplicate_titles', []))}")
         print(f"  wp_xqueue draft/trash: {len(cross.get('wp_xqueue', {}).get('wp_status_violations', []))}")
         print(f"  artist field mismatches: {len(cross.get('wp_xqueue', {}).get('artist_field_mismatches', []))}")
 
