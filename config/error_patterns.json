@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07T19:18:27.992517",
+  "updated_at": "2026-05-08T21:25:09.929807",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1369,6 +1369,53 @@
       "detection": "logs/breaking_news.log で「[hook] DRAFT化: post-publish gate BLOCK: ['ソースURL/シグナルなし']」が連続発生 / x_scheduled_poster の0件alertでも検知",
       "agent": "lib.source_domains",
       "resolved_at": "2026-05-07"
+    },
+    "kstyle_title_pollution": {
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "kstyle記事タイトルが「...判決2026/05/08 15:47【PHOTO】ITZY、ワールドツアーのた」のように隣接記事タイトルと日付が混入し、tag/X queueのartistフィールドに伝播してITZY誤付与",
+      "fix": "lib/collectors/kstyle_collector.py で title 抽出後に \\d{4}/\\d{2}/\\d{2} と 【PHOTO】等で分割して1セグメント目のみ採用 (commit 0d029eb)",
+      "agent": "kstyle_collector",
+      "resolved_at": "2026-05-08"
+    },
+    "thumbnail_letterbox": {
+      "count": 2,
+      "last_seen": "2026-05-08",
+      "example": "TikTok/Shorts等の縦長動画素材を1200x675横長に合成する際、左右にぼかしコピーのpaddingが入る(post 18762/18779)",
+      "fix": "lib/cross_audit.check_letterbox(色相関+エッジ密度) で検出。pre_publish_gate に statement追加で公開前BLOCK化 (commit 5ceda0d)",
+      "agent": "compositor",
+      "resolved_at": "2026-05-08"
+    },
+    "wp_xqueue_drift": {
+      "count": 8,
+      "last_seen": "2026-05-08",
+      "example": "WPでdraft化済みの記事が x_post_queue.json に残存しscheduler発動時にX投稿される(post 18765事案+他7件)",
+      "fix": "scheduler に投稿直前 WP status verify 追加(commit 5d800d3) + daily_batch_audit で除去(commit 5ceda0d)",
+      "agent": "x_scheduled_poster",
+      "resolved_at": "2026-05-08"
+    },
+    "duplicate_post_creation": {
+      "count": 4,
+      "last_seen": "2026-05-08",
+      "example": "同タイトル記事が秒差で複数作成される(18881≡18882 / 18892≡18896)。slug衝突で-2サフィックスが付く",
+      "fix": "lib/cross_audit.check_duplicate_titles で検出+daily_batch_audit auto-fixで新しい方を draft化(commit 5ceda0d)",
+      "agent": "publisher",
+      "last_observed": "2026-05-08"
+    },
+    "rewrite_strips_structure_blocks": {
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "comprehensive_audit→audit_fixer_universal.rewrite_with_gpt が content[:2500] truncate+800-1200字書き直しで CTA/プロフィール/関連記事内部リンク を消失させる (post 18781で内部リンク6→0)",
+      "fix": "_extract_preserved_blocks で構造ブロックを書き直し前に抽出、GPT結果末尾に再付与 (本commitで対処予定)",
+      "agent": "audit_fixer_universal"
+    },
+    "thumbnail_cat_tag_fm_triple_mismatch": {
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "ティファニー(SNSD)記事に cat=164(TXT)/tag=100(TXT)/featured_media=TXT風男性5人写真 が一斉に付く三点不整合",
+      "fix": "lib/cross_audit.check_artist_triplet(title主語⇄category⇄fmファイル名 三点照合) で検出 (commit 5ceda0d)",
+      "agent": "publisher",
+      "resolved_at": "2026-05-08"
     }
   },
   "recurring_errors": [
@@ -1737,6 +1784,42 @@
       "fix": "4層再発防止: (1)カフェ/レストラン/グルメ○選テンプレートをfeature_article_generatorから削除 (2)GPTプロンプトに架空店舗禁止+4点セット必須ルール追加 (3)pre_publish_gateにshop_no_practical_info BLOCKチェック追加 (4)agent_lessons/feature_article_writer.mdに警告#10追加",
       "agent": "feature_article_generator",
       "resolved_at": "2026-04-30"
+    },
+    {
+      "key": "kstyle_title_pollution",
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "kstyle記事タイトルが「...判決2026/05/08 15:47【PHOTO】ITZY、ワールドツアーのた」のように隣接記事タイトルと日付が混入し、tag/X queueのartistフィールドに伝播してITZY誤付与"
+    },
+    {
+      "key": "thumbnail_letterbox",
+      "count": 2,
+      "last_seen": "2026-05-08",
+      "example": "TikTok/Shorts等の縦長動画素材を1200x675横長に合成する際、左右にぼかしコピーのpaddingが入る(post 18762/18779)"
+    },
+    {
+      "key": "wp_xqueue_drift",
+      "count": 8,
+      "last_seen": "2026-05-08",
+      "example": "WPでdraft化済みの記事が x_post_queue.json に残存しscheduler発動時にX投稿される(post 18765事案+他7件)"
+    },
+    {
+      "key": "duplicate_post_creation",
+      "count": 4,
+      "last_seen": "2026-05-08",
+      "example": "同タイトル記事が秒差で複数作成される(18881≡18882 / 18892≡18896)。slug衝突で-2サフィックスが付く"
+    },
+    {
+      "key": "rewrite_strips_structure_blocks",
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "comprehensive_audit→audit_fixer_universal.rewrite_with_gpt が content[:2500] truncate+800-1200字書き直しで CTA/プロフィール/関連記事内部リンク を消失させる (post 18781で内部リンク6→0)"
+    },
+    {
+      "key": "thumbnail_cat_tag_fm_triple_mismatch",
+      "count": 1,
+      "last_seen": "2026-05-08",
+      "example": "ティファニー(SNSD)記事に cat=164(TXT)/tag=100(TXT)/featured_media=TXT風男性5人写真 が一斉に付く三点不整合"
     }
   ],
   "resolved_errors": [
