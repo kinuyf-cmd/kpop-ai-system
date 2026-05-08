@@ -30,6 +30,11 @@ def collect():
     for m in pattern.finditer(html):
         path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
         url = path if path.startswith('http') else 'https://www.kstyle.com/' + path.lstrip('/')
+        # 隣接記事タイトル/タイムスタンプ混入除去 (2026-05-08: 18765で発覚)
+        # kstyleのリスト<a>は日付+次記事タイトルを内包する場合がある
+        title = re.split(r'\s*\d{4}/\d{2}/\d{2}', title, 1)[0]
+        title = re.split(r'【PHOTO】|【IMG】|【動画】|【写真】', title, 1)[0]
+        title = re.sub(r'\s+', ' ', title).strip()
         if url in seen or len(title) < 5:
             continue
         seen.add(url)
