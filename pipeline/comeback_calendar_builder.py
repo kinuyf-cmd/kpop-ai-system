@@ -335,6 +335,15 @@ def main():
     except Exception:
         pass
 
+    # GSC indexing
+    try:
+        from lib.gsc_indexing import notify_url_updated
+        r = notify_url_updated('https://www.kpopjournal.tokyo/comeback-calendar/')
+        if r.get('status') == 'ok':
+            print(f"  GSC indexed")
+    except Exception as e:
+        print(f"  GSC submit err: {e}")
+
 
 if __name__ == '__main__':
     main()

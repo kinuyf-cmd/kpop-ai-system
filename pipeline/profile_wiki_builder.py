@@ -361,6 +361,17 @@ def build_one(client, artist: str, slug: str) -> bool:
         purge_paths([f'/artist-{slug}/'])
     except Exception:
         pass
+
+    # GSC indexing API (sticky pageを早期indexさせる)
+    try:
+        from lib.gsc_indexing import notify_url_updated
+        full_url = f'https://www.kpopjournal.tokyo/artist-{slug}/'
+        r = notify_url_updated(full_url)
+        if r.get('status') == 'ok':
+            print(f"  GSC indexed", flush=True)
+    except Exception as e:
+        print(f"  GSC submit err: {e}", flush=True)
+
     return page_id > 0
 
 
