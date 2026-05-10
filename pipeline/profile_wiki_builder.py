@@ -204,102 +204,274 @@ def _build_schema_org(artist: str, profile: dict) -> str:
     return f'<script type="application/ld+json">{json.dumps(schema, ensure_ascii=False)}</script>'
 
 
+_GRAD_POOL = [
+    ('#FF1493', '#FF6B9D'), ('#9B59B6', '#6C5CE7'), ('#00BCD4', '#2196F3'),
+    ('#FF6B9D', '#FF8A65'), ('#E91E63', '#FF1493'), ('#26A69A', '#00897B'),
+    ('#FFB300', '#FF8F00'), ('#AB47BC', '#9B59B6'), ('#42A5F5', '#00BCD4'),
+    ('#EC407A', '#FF1493'),
+]
+
+
+def _calc_age(birth_str: str) -> str:
+    """YYYY-MM-DD → 年齢"""
+    try:
+        bd = datetime.strptime(birth_str[:10], '%Y-%m-%d')
+        today = datetime.now()
+        age = today.year - bd.year - ((today.month, today.day) < (bd.month, bd.day))
+        return str(age)
+    except Exception:
+        return ''
+
+
+def _format_birth(birth_str: str) -> str:
+    """YYYY-MM-DD → 1994年9月12日"""
+    try:
+        bd = datetime.strptime(birth_str[:10], '%Y-%m-%d')
+        return f'{bd.year}年{bd.month}月{bd.day}日'
+    except Exception:
+        return birth_str
+
+
+def _years_since(date_str: str) -> str:
+    try:
+        dd = datetime.strptime(date_str[:10], '%Y-%m-%d')
+        years = datetime.now().year - dd.year
+        return f'{years}年目'
+    except Exception:
+        return ''
+
+
 def render_html(artist: str, profile: dict) -> str:
-    """Profile JSON → WordPress page HTML"""
+    """Profile JSON → WordPress page HTML (namu-wiki スタイル v2)"""
     today = datetime.now(JST).strftime('%Y年%m月%d日')
-    parts = [
-        _build_schema_org(artist, profile),
-        f'<div class="artist-profile">',
-        f'<p class="last-updated"><small>最終更新: {today}</small></p>',
-    ]
+    members = profile.get('members', []) or []
+    debut = profile.get('debut_date', '')
+    agency = profile.get('agency', '')
+    fandom = profile.get('fandom_name', '')
+    summary = profile.get('summary_ja', '')
+
+    # Hero gradient (artist名から決定的に選択)
+    hero_grad = _GRAD_POOL[hash(artist) % len(_GRAD_POOL)]
+    initial = artist[0].upper()
+
+    # 国籍breakdown
+    natl_count = {}
+    for m in members:
+        n = m.get('nationality', '不明')
+        natl_count[n] = natl_count.get(n, 0) + 1
+    natl_str = ' / '.join(f'{k} {v}名' for k, v in natl_count.items())
+
+    parts = [_build_schema_org(artist, profile)]
+
+    # ── HERO ──
+    parts.append(f'''<div class="ap-hero" style="background:linear-gradient(135deg,{hero_grad[0]},{hero_grad[1]});">
+  <div class="ap-hero-inner">
+    <div class="ap-hero-avatar" style="background:rgba(255,255,255,0.18);">{initial}</div>
+    <div class="ap-hero-info">
+      <h1 class="ap-hero-name">{artist}</h1>
+      <p class="ap-hero-tagline">{agency}{(" ・ デビュー " + debut[:7].replace("-","年") + "月") if debut else ""}</p>
+      <div class="ap-hero-stats">
+        <span class="ap-stat">👥 {len(members)}名</span>
+        {(f'<span class="ap-stat">⭐ {fandom}</span>') if fandom else ''}
+        {(f'<span class="ap-stat">🎂 {_years_since(debut)}</span>') if debut else ''}
+      </div>
+    </div>
+  </div>
+</div>''')
+
+    parts.append('<div class="artist-profile">')
+    parts.append(f'<p class="ap-updated">最終更新: {today}</p>')
 
     # 概要
-    summary = profile.get('summary_ja', '')
     if summary:
-        parts.append(f'<div class="profile-intro"><p>{summary}</p></div>')
+        parts.append(f'<div class="ap-intro"><p>{summary}</p></div>')
 
-    # 基本情報table
-    parts.append('<h2>基本情報</h2>')
-    parts.append('<table class="profile-basic">')
-    if profile.get('agency'):
-        parts.append(f'<tr><th>所属事務所</th><td>{profile["agency"]}</td></tr>')
-    if profile.get('debut_date'):
-        parts.append(f'<tr><th>デビュー日</th><td>{profile["debut_date"]}</td></tr>')
-    if profile.get('fandom_name'):
-        f_meaning = f' — {profile["fandom_meaning"]}' if profile.get('fandom_meaning') else ''
-        parts.append(f'<tr><th>ファンダム名</th><td><strong>{profile["fandom_name"]}</strong>{f_meaning}</td></tr>')
-    parts.append(f'<tr><th>メンバー数</th><td>{len(profile.get("members",[]))}人</td></tr>')
-    parts.append('</table>')
+    # 基本情報 grid
+    parts.append('<h2 class="ap-h2">📋 基本情報</h2>')
+    parts.append('<dl class="ap-info-grid">')
+    if agency:
+        parts.append(f'<div class="ap-info-item"><dt>所属事務所</dt><dd>{agency}</dd></div>')
+    if debut:
+        debut_disp = _format_birth(debut)
+        parts.append(f'<div class="ap-info-item"><dt>デビュー</dt><dd>{debut_disp} <small>({_years_since(debut)})</small></dd></div>')
+    if fandom:
+        meaning = profile.get('fandom_meaning', '')
+        meaning_html = f'<br><small>{meaning}</small>' if meaning else ''
+        parts.append(f'<div class="ap-info-item"><dt>ファンダム</dt><dd><strong>{fandom}</strong>{meaning_html}</dd></div>')
+    parts.append(f'<div class="ap-info-item"><dt>メンバー数</dt><dd>{len(members)}名</dd></div>')
+    if natl_str:
+        parts.append(f'<div class="ap-info-item"><dt>国籍</dt><dd>{natl_str}</dd></div>')
+    parts.append('</dl>')
 
-    # メンバー
-    members = profile.get('members', [])
+    # ── メンバーカード grid ──
     if members:
-        parts.append('<h2>メンバー</h2>')
-        parts.append('<table class="profile-members">')
-        parts.append('<thead><tr><th>名前</th><th>ポジション</th><th>生年月日</th><th>出身</th></tr></thead>')
-        parts.append('<tbody>')
-        for m in members:
-            name_disp = m.get('name_ja') or m.get('name_en', '')
+        parts.append('<h2 class="ap-h2">👥 メンバー</h2>')
+        parts.append('<div class="ap-members-grid">')
+        for i, m in enumerate(members):
+            name_ja = m.get('name_ja', '')
             name_en = m.get('name_en', '')
             real = m.get('real_name_en') or m.get('name_kr', '')
-            name_html = f'<strong>{name_disp}</strong>'
-            if name_en and name_en != name_disp:
-                name_html += f'<br><small>{name_en}</small>'
-            if real:
-                name_html += f'<br><small>本名: {real}</small>'
-            parts.append(
-                f'<tr><td>{name_html}</td><td>{m.get("position","")}</td>'
-                f'<td>{m.get("birth","")}</td><td>{m.get("nationality","")}</td></tr>'
-            )
-        parts.append('</tbody></table>')
+            position = m.get('position', '')
+            birth = m.get('birth', '')
+            age = _calc_age(birth)
+            natl = m.get('nationality', '')
+            grad = _GRAD_POOL[(hash(artist) + i) % len(_GRAD_POOL)]
+            mi = (name_en or name_ja or '?')[0].upper()
 
-    # ディスコグラフィ
+            display_name = name_ja or name_en
+            sub_name = name_en if name_ja and name_en and name_ja != name_en else ''
+
+            parts.append(f'''<div class="ap-member-card">
+  <div class="ap-member-avatar" style="background:linear-gradient(135deg,{grad[0]},{grad[1]});">{mi}</div>
+  <div class="ap-member-name">{display_name}</div>
+  {f'<div class="ap-member-en">{sub_name}</div>' if sub_name else ''}
+  {f'<div class="ap-member-real"><small>本名: {real}</small></div>' if real else ''}
+  <div class="ap-member-position">{position}</div>
+  {f'<div class="ap-member-birth">{_format_birth(birth)}{f" ({age}歳)" if age else ""}</div>' if birth else ''}
+  {f'<div class="ap-member-natl">🌏 {natl}</div>' if natl else ''}
+</div>''')
+        parts.append('</div>')
+
+    # ── ディスコグラフィー timeline ──
     disco = profile.get('discography_highlights', [])
     if disco:
-        parts.append('<h2>主要作品</h2>')
-        parts.append('<ul class="profile-disco">')
-        type_label = {'album': '🎵 アルバム', 'ep': '💿 EP', 'single': '🎵 シングル',
-                      'japanese': '🇯🇵 日本盤', 'ost': '🎞️ OST'}
-        for d in sorted(disco, key=lambda x: x.get('year','9999'), reverse=True):
-            tl = type_label.get(d.get('type',''), '📌')
-            note = f' — {d["note"]}' if d.get('note') else ''
-            parts.append(f'<li><strong>{d.get("year","")}</strong> {tl} {d.get("title","")}{note}</li>')
-        parts.append('</ul>')
+        parts.append('<h2 class="ap-h2">🎵 主要ディスコグラフィー</h2>')
+        parts.append('<div class="ap-disco-timeline">')
+        type_meta = {
+            'album': ('🎵', '#FF1493', 'アルバム'),
+            'ep': ('💿', '#9B59B6', 'ミニアルバム'),
+            'single': ('🎶', '#00BCD4', 'シングル'),
+            'japanese': ('🇯🇵', '#E91E63', '日本盤'),
+            'ost': ('🎞️', '#FFB300', 'OST'),
+        }
+        for d in sorted(disco, key=lambda x: x.get('year', '9999'), reverse=True):
+            t = d.get('type', '')
+            icon, color, label = type_meta.get(t, ('📌', '#888', 'その他'))
+            note = d.get('note', '')
+            parts.append(f'''<div class="ap-disco-item">
+  <div class="ap-disco-year">{d.get("year","")}</div>
+  <div class="ap-disco-icon" style="background:{color};">{icon}</div>
+  <div class="ap-disco-body">
+    <div class="ap-disco-title"><strong>{d.get("title","")}</strong></div>
+    <div class="ap-disco-meta"><span class="ap-disco-type" style="color:{color};">{label}</span>{f" / {note}" if note else ""}</div>
+  </div>
+</div>''')
+        parts.append('</div>')
 
-    # 公式リンク
+    # ── 公式SNS rich cards ──
     links = profile.get('official_links', {}) or {}
     if any(links.values()):
-        parts.append('<h2>公式SNS / リンク</h2>')
-        parts.append('<ul class="profile-links">')
-        link_label = {
-            'twitter': '🐦 X (Twitter)', 'instagram': '📷 Instagram',
-            'weverse': '💜 Weverse', 'youtube': '▶️ YouTube',
-            'tiktok': '🎵 TikTok', 'japan_official': '🇯🇵 日本公式',
+        parts.append('<h2 class="ap-h2">🔗 公式SNS</h2>')
+        parts.append('<div class="ap-sns-grid">')
+        sns_meta = {
+            'twitter': ('𝕏', '#000', 'X (Twitter)'),
+            'instagram': ('📷', 'linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)', 'Instagram'),
+            'weverse': ('💜', '#7B1FA2', 'Weverse'),
+            'youtube': ('▶', '#FF0000', 'YouTube'),
+            'tiktok': ('🎵', '#000', 'TikTok'),
+            'japan_official': ('🇯🇵', '#D62929', '日本公式'),
         }
         for k in ['twitter', 'instagram', 'weverse', 'youtube', 'tiktok', 'japan_official']:
             v = links.get(k)
-            if v:
-                parts.append(f'<li><a href="{v}" target="_blank" rel="noopener">{link_label[k]}</a></li>')
-        parts.append('</ul>')
+            if not v: continue
+            icon, bg, label = sns_meta[k]
+            parts.append(f'''<a href="{v}" target="_blank" rel="noopener" class="ap-sns-card">
+  <div class="ap-sns-icon" style="background:{bg};">{icon}</div>
+  <div class="ap-sns-label">{label}</div>
+</a>''')
+        parts.append('</div>')
 
-    # カレンダー誘導
-    parts.append('<h2>関連</h2>')
-    parts.append(
-        f'<p>👉 <a href="/release-calendar/" target="_blank">{artist} を含むK-POP主要グループの今後90日のリリースカレンダー</a></p>'
-    )
-    parts.append(f'<p>📰 <a href="/?s={artist.replace(" ", "+")}">{artist} の最新ニュース記事</a></p>')
+    # ── 関連 ──
+    parts.append('<h2 class="ap-h2">📰 関連リンク</h2>')
+    parts.append('<div class="ap-related">')
+    parts.append(f'<a href="/release-calendar/" class="ap-related-card ap-related-cal">'
+                 f'<span class="ap-related-icon">📅</span>'
+                 f'<div><strong>{artist} の今後の予定</strong><br><small>カムバック・カレンダーで確認 →</small></div></a>')
+    parts.append(f'<a href="/?s={artist.replace(" ", "+")}" class="ap-related-card ap-related-news">'
+                 f'<span class="ap-related-icon">📰</span>'
+                 f'<div><strong>{artist} の最新ニュース</strong><br><small>記事一覧 →</small></div></a>')
+    parts.append(f'<a href="/artists/" class="ap-related-card ap-related-hub">'
+                 f'<span class="ap-related-icon">🎤</span>'
+                 f'<div><strong>他のアーティスト</strong><br><small>全プロフィール →</small></div></a>')
+    parts.append('</div>')
 
-    parts.extend([
-        '</div>',
-        '<style>',
-        '.artist-profile table { width:100%; border-collapse:collapse; margin:1em 0; }',
-        '.artist-profile th, .artist-profile td { padding:0.6em; border:1px solid #ddd; text-align:left; vertical-align:top; }',
-        '.artist-profile .profile-basic th { width:30%; background:#f4f4f8; }',
-        '.artist-profile .profile-members th { background:#f4f4f8; }',
-        '.artist-profile .profile-intro { background:#f8f4ff; padding:1em; border-left:4px solid #9c27b0; margin:1em 0; }',
-        '.artist-profile .last-updated { color:#888; }',
-        '</style>',
-    ])
+    parts.append('</div>')  # /artist-profile
+
+    # ── インラインCSS (namu-wiki風) ──
+    parts.append('''<style>
+/* ========== Hero ========== */
+.ap-hero { border-radius: 16px; padding: 2.5em 1.5em; margin: 1em 0 2em; color: white; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+.ap-hero-inner { display: flex; align-items: center; gap: 1.5em; max-width: 900px; margin: 0 auto; flex-wrap: wrap; }
+.ap-hero-avatar { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3em; font-weight: bold; backdrop-filter: blur(10px); border: 3px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+.ap-hero-info { flex: 1; min-width: 200px; }
+.ap-hero-name { font-size: 2.5em; font-weight: 800; margin: 0 0 0.2em; line-height: 1.1; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.ap-hero-tagline { font-size: 1em; opacity: 0.95; margin: 0 0 1em; }
+.ap-hero-stats { display: flex; gap: 0.6em; flex-wrap: wrap; }
+.ap-stat { background: rgba(255,255,255,0.22); padding: 0.4em 0.9em; border-radius: 99px; font-size: 0.85em; font-weight: 600; backdrop-filter: blur(8px); }
+
+/* ========== Sections ========== */
+.artist-profile { max-width: 900px; margin: 0 auto; padding: 0 1em; }
+.ap-updated { color: #999; font-size: 0.85em; text-align: right; margin: 0.5em 0; }
+.ap-h2 { font-size: 1.5em; font-weight: 700; margin: 2em 0 1em; padding-bottom: 0.4em; border-bottom: 3px solid #FF1493; }
+.ap-intro { background: linear-gradient(135deg, #fff8fc, #f8f4ff); padding: 1.4em 1.6em; border-radius: 12px; margin: 1em 0 2em; border-left: 4px solid #FF1493; line-height: 1.7; }
+
+/* ========== 基本情報 grid ========== */
+.ap-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.8em; margin: 1em 0; }
+.ap-info-item { background: #f8f9fb; padding: 1em 1.2em; border-radius: 10px; border-left: 3px solid #FF1493; }
+.ap-info-item dt { font-size: 0.78em; font-weight: 700; color: #888; letter-spacing: 0.05em; margin: 0 0 0.3em; text-transform: uppercase; }
+.ap-info-item dd { margin: 0; font-size: 1em; color: #222; line-height: 1.5; }
+.ap-info-item dd small { color: #666; }
+
+/* ========== Members grid ========== */
+.ap-members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1em; margin: 1em 0; }
+.ap-member-card { background: white; border-radius: 12px; padding: 1.2em 1em; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.2s, box-shadow 0.2s; }
+.ap-member-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,20,147,0.12); }
+.ap-member-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.7em; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.ap-member-name { font-size: 1.15em; font-weight: 700; color: #222; margin-bottom: 0.1em; }
+.ap-member-en { font-size: 0.85em; color: #999; margin-bottom: 0.3em; }
+.ap-member-real { font-size: 0.75em; color: #aaa; margin-bottom: 0.4em; }
+.ap-member-position { font-size: 0.85em; color: #555; margin: 0.5em 0 0.3em; line-height: 1.3; }
+.ap-member-birth { font-size: 0.8em; color: #777; }
+.ap-member-natl { font-size: 0.75em; color: #999; margin-top: 0.2em; }
+
+/* ========== Discography timeline ========== */
+.ap-disco-timeline { position: relative; padding-left: 0; }
+.ap-disco-item { display: flex; align-items: flex-start; gap: 0.9em; padding: 0.7em 0; border-bottom: 1px dashed #eee; }
+.ap-disco-year { font-size: 1em; font-weight: 700; color: #888; flex-shrink: 0; width: 50px; padding-top: 0.2em; }
+.ap-disco-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1em; flex-shrink: 0; }
+.ap-disco-body { flex: 1; }
+.ap-disco-title { font-size: 1em; color: #222; }
+.ap-disco-meta { font-size: 0.8em; color: #888; margin-top: 0.2em; }
+.ap-disco-type { font-weight: 600; }
+
+/* ========== SNS grid ========== */
+.ap-sns-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8em; margin: 1em 0; }
+.ap-sns-card { display: flex; align-items: center; gap: 0.8em; padding: 0.9em 1em; background: white; border-radius: 10px; border: 1px solid #eee; text-decoration: none; color: #222; transition: transform 0.2s, box-shadow 0.2s; }
+.ap-sns-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+.ap-sns-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; font-weight: bold; flex-shrink: 0; }
+.ap-sns-label { font-size: 0.9em; font-weight: 600; }
+
+/* ========== Related ========== */
+.ap-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.8em; margin: 1em 0; }
+.ap-related-card { display: flex; align-items: center; gap: 0.8em; padding: 1em 1.2em; border-radius: 12px; text-decoration: none; color: #222; transition: transform 0.2s; }
+.ap-related-card:hover { transform: translateY(-2px); }
+.ap-related-icon { font-size: 1.6em; }
+.ap-related-cal { background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 4px solid #ffc107; }
+.ap-related-news { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 4px solid #2196F3; }
+.ap-related-hub { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border-left: 4px solid #e91e63; }
+
+/* ========== Mobile ========== */
+@media (max-width: 600px) {
+  .ap-hero { padding: 1.8em 1em; }
+  .ap-hero-name { font-size: 1.8em; }
+  .ap-hero-avatar { width: 80px; height: 80px; font-size: 2.4em; }
+  .ap-h2 { font-size: 1.25em; }
+  .ap-members-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7em; }
+  .ap-member-card { padding: 0.9em 0.6em; }
+  .ap-member-avatar { width: 56px; height: 56px; font-size: 1.6em; }
+  .ap-member-name { font-size: 1em; }
+}
+</style>''')
     return '\n'.join(parts)
 
 
