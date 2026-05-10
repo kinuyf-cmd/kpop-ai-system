@@ -360,6 +360,21 @@ def unified_publish(
     except Exception as e:
         log.append(f"internal_links err: {e}")
 
+    # 6.3.1b. K-POPカムバックカレンダーCTA挿入 (sticky page promotion)
+    try:
+        from lib.comeback_calendar_inject import maybe_inject_calendar_cta
+        _artist_for_cta = ''
+        for _g in ['BTS','BLACKPINK','TWICE','aespa','NewJeans','IVE','LE SSERAFIM',
+                   'Stray Kids','SEVENTEEN','ENHYPEN','NMIXX','ITZY','TXT','BABYMONSTER',
+                   'RIIZE','ILLIT','ATEEZ','TREASURE','BOYNEXTDOOR','TWS','KISS OF LIFE',
+                   'CORTIS','KATSEYE','IU']:
+            if _g.lower() in title_final.lower():
+                _artist_for_cta = _g
+                break
+        content = maybe_inject_calendar_cta(content, artist=_artist_for_cta)
+    except Exception as e:
+        log.append(f"calendar_cta err: {e}")
+
     # 6.3.2. CTA/リンク挿入後に再サニタイズ (unclosed_p 再発防止)
     content = sanitize_gpt_html(content)
 

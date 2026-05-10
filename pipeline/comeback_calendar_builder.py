@@ -33,65 +33,104 @@ WP_PASS = os.getenv('WP_PASS', '')
 AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
 JST = timezone(timedelta(hours=9))
 
-# Stage 1: Claude Web search でcomeback情報を集約
-def fetch_comebacks_via_claude() -> dict:
-    """主要グループ + 直近2週間の comeback announcements を集約"""
-    today = datetime.now(JST).strftime('%Y-%m-%d')
-    end_date = (datetime.now(JST) + timedelta(days=90)).strftime('%Y-%m-%d')
+# Stage 1: Claude Web search でcomeback情報を集約 (チャンク分割実行)
+ARTIST_BATCHES = [
+    ['BTS', 'BLACKPINK', 'NewJeans', 'aespa'],
+    ['IVE', 'LE SSERAFIM', 'ITZY', 'TWICE'],
+    ['SEVENTEEN', 'Stray Kids', 'ENHYPEN', 'TXT'],
+    ['ATEEZ', 'TREASURE', 'NMIXX', 'ILLIT'],
+    ['BABYMONSTER', 'BOYNEXTDOOR', 'RIIZE', 'TWS'],
+    ['KISS OF LIFE', 'CORTIS', 'KATSEYE', 'IU'],
+]
 
-    client = anthropic.Anthropic()
+SCHEMA = {
+    "type": "object",
+    "properties": {
+        "comebacks": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "artist": {"type": "string"},
+                    "release_date": {"type": "string"},
+                    "title": {"type": "string"},
+                    "type": {"type": "string", "enum": ["album", "single", "mv", "ost", "tour", "fanmeeting", "other"]},
+                    "source_url": {"type": "string"},
+                    "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+                },
+                "required": ["artist", "release_date", "title", "type", "confidence"],
+                "additionalProperties": False,
+            },
+        },
+        "summary": {"type": "string"},
+    },
+    "required": ["comebacks", "summary"],
+    "additionalProperties": False,
+}
+
+
+def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, end_date: str) -> dict:
+    """1バッチ (4組) のcomeback情報を取得"""
     prompt = f"""今日: {today}
 これから {end_date} までの K-POP comeback / リリース情報を調べてください。
 
-検索対象アーティスト (優先順):
-BTS, BLACKPINK, NewJeans, aespa, IVE, LE SSERAFIM, ITZY, TWICE,
-SEVENTEEN, Stray Kids, ENHYPEN, TXT, ATEEZ, TREASURE, NMIXX, ILLIT,
-BABYMONSTER, BOYNEXTDOOR, RIIZE, TWS, KISS OF LIFE, CORTIS, KATSEYE
+検索対象 (4組のみ — 必ず全員調査):
+{', '.join(artists)}
 
-各アーティストについて web_search で以下を確認:
-1. 公式発表済の comeback / 新譜リリース日 (今後 90日)
-2. ティーザー公開予定
-3. ツアー/コンサート日程
+各アーティストについて web_search で:
+1. 公式発表済の comeback / 新譜リリース日 (今後 90日以内)
+2. ツアー/コンサート/ファンミ日程
+
+ヒント: 検索クエリは「[artist] comeback 2026」「[artist] tour 2026」が効率的。
+公式情報がないアーティストはスキップしてOK。
 
 結果を JSON schema に従って返却してください。"""
 
-    schema = {
-        "type": "object",
-        "properties": {
-            "comebacks": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "artist": {"type": "string"},
-                        "release_date": {"type": "string"},
-                        "title": {"type": "string"},
-                        "type": {"type": "string", "enum": ["album", "single", "mv", "ost", "tour", "fanmeeting", "other"]},
-                        "source_url": {"type": "string"},
-                        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
-                    },
-                    "required": ["artist", "release_date", "title", "type", "confidence"],
-                    "additionalProperties": False,
-                },
-            },
-            "summary": {"type": "string"},
-        },
-        "required": ["comebacks", "summary"],
-        "additionalProperties": False,
-    }
-
-    response = client.messages.create(
-        model='claude-sonnet-4-6',
-        max_tokens=8000,
-        tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 5}],
-        output_config={"format": {"type": "json_schema", "schema": schema}},
-        messages=[{"role": "user", "content": prompt}],
-    )
-    text = next((b.text for b in response.content if b.type == 'text'), '{}')
     try:
+        response = client.messages.create(
+            model='claude-sonnet-4-6',
+            max_tokens=4000,
+            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}],
+            output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
+            messages=[{"role": "user", "content": prompt}],
+        )
+        text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
-    except json.JSONDecodeError:
-        return {"comebacks": [], "summary": "parse error"}
+    except Exception as e:
+        print(f"  batch err ({artists[0]}...): {e}", flush=True)
+        return {"comebacks": [], "summary": ""}
+
+
+def fetch_comebacks_via_claude() -> dict:
+    """全バッチを順次実行して統合"""
+    today = datetime.now(JST).strftime('%Y-%m-%d')
+    end_date = (datetime.now(JST) + timedelta(days=90)).strftime('%Y-%m-%d')
+    client = anthropic.Anthropic()
+
+    all_comebacks = []
+    summaries = []
+    for i, batch in enumerate(ARTIST_BATCHES, 1):
+        print(f"  [{i}/{len(ARTIST_BATCHES)}] {','.join(batch)} ...", flush=True)
+        result = _fetch_batch(client, batch, today, end_date)
+        n = len(result.get('comebacks', []))
+        print(f"    → {n} entries", flush=True)
+        all_comebacks.extend(result.get('comebacks', []))
+        if result.get('summary'):
+            summaries.append(result['summary'])
+
+    # de-dup by (artist, release_date, title)
+    seen = set()
+    deduped = []
+    for cb in all_comebacks:
+        key = (cb.get('artist',''), cb.get('release_date',''), cb.get('title','')[:30])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(cb)
+
+    return {
+        "comebacks": deduped,
+        "summary": "\n\n".join(summaries[:3]),
+    }
 
 
 def render_html(data: dict) -> str:
