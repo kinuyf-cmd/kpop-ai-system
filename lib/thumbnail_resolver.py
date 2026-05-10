@@ -90,21 +90,36 @@ def smart_crop(image_path, target_w=1200, target_h=675):
             cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
             return True
 
-        # 顔検出
+        # 顔検出 — 偽陽性対策強化 (2026-05-10: ジーンズ模様等を顔と誤検出する事案)
         faces = []
         try:
             cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = cascade.detectMultiScale(gray, 1.1, 4, minSize=(30, 30))
+            # minNeighbors=8 (厳格化: 4→8で誤検出半減)、minSize=画像短辺の5% (小領域の偽顔除外)
+            min_face = max(60, int(min(w, h) * 0.05))
+            faces_raw = cascade.detectMultiScale(gray, 1.1, 8, minSize=(min_face, min_face))
+            faces = list(faces_raw) if len(faces_raw) > 0 else []
         except Exception:
             pass
 
         if len(faces) > 0:
-            # 全顔のbbox + マージン
-            fx_min = max(0, min(f[0] for f in faces) - int(w * 0.05))
-            fy_min = max(0, min(f[1] for f in faces) - int(h * 0.08))
-            fx_max = min(w, max(f[0] + f[2] for f in faces) + int(w * 0.05))
-            fy_max = min(h, max(f[1] + f[3] for f in faces) + int(h * 0.15))
+            # 主役推定: 最大面積の顔 (本人写真ではメイン顔が最大)
+            faces_by_area = sorted(faces, key=lambda f: f[2] * f[3], reverse=True)
+            main_face = faces_by_area[0]
+            main_area = main_face[2] * main_face[3]
+            # 主役顔と同等サイズ(>=70%)で位置が画像上半分の顔のみ採用 (下半分の偽陽性除外)
+            keep = []
+            for f in faces:
+                area_ratio = (f[2] * f[3]) / main_area
+                fy_center = f[1] + f[3] // 2
+                if area_ratio >= 0.7 and fy_center < int(h * 0.6):
+                    keep.append(f)
+            if not keep:
+                keep = [main_face]  # 主役だけは必ず残す
+            fx_min = max(0, min(f[0] for f in keep) - int(w * 0.05))
+            fy_min = max(0, min(f[1] for f in keep) - int(h * 0.08))
+            fx_max = min(w, max(f[0] + f[2] for f in keep) + int(w * 0.05))
+            fy_max = min(h, max(f[1] + f[3] for f in keep) + int(h * 0.15))
             face_cx = (fx_min + fx_max) // 2
             face_cy = (fy_min + fy_max) // 2
         else:

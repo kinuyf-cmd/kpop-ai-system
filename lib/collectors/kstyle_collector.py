@@ -35,6 +35,23 @@ def collect():
         title = re.split(r'\s*\d{4}/\d{2}/\d{2}', title, 1)[0]
         title = re.split(r'【PHOTO】|【IMG】|【動画】|【写真】', title, 1)[0]
         title = re.sub(r'\s+', ' ', title).strip()
+        # 2026-05-10: 複数記事タイトル連結の検出と切り捨て (18881事案で発覚)
+        # 同一<a>内で複数記事ヘッドラインが連結 → 1記事目だけ採用
+        # ヘッドライン終端パターン: 「決定！」「続く」「話題」「公開」「謝罪」など完結語の後ろを次記事と判定
+        _multi_title_split = re.split(
+            r'(?<=決定！)|(?<=続く)|(?<=話題)|(?<=公開)|(?<=謝罪)|(?<=判明)|(?<=開催)|(?<=出演)(?=[A-Z]|[ぁ-んァ-ヶ一-龥])',
+            title, maxsplit=1
+        )
+        if len(_multi_title_split) > 1 and len(_multi_title_split[0]) >= 15:
+            title = _multi_title_split[0].strip()
+        # 80文字超の長すぎるタイトルは多重連結の可能性高 → 句読点で切る
+        if len(title) > 80:
+            for _sep in ['…', '！', '。', '？']:
+                if _sep in title[:80]:
+                    title = title.split(_sep, 1)[0] + _sep
+                    break
+            else:
+                title = title[:80]
         if url in seen or len(title) < 5:
             continue
         seen.add(url)

@@ -30,6 +30,10 @@ KPOP_KW = [
     '슈퍼주니어', '마마무', '오마이걸', '에이핑크', '보아',
     '아이오아이', '카라', '씨스타', '프로미스나인', 'fromis_9',
     '청하', '효린', '솔라', '화사', '휘인', '문별', '태연', '제시',
+    # 2026-05-10: 個別solo artists追加 (18881事案 — チョ・スンヨン未登録で誤分類)
+    'WOODZ', '우즈', '조승연', 'チョ・スンヨン', 'チョスンヨン',
+    'カン・ダニエル', '강다니엘', 'KANG DANIEL', 'カンダニエル',
+    'BIBI', '비비', 'YOONA', '윤아', 'TAEYANG', '태양',
 ]
 
 URGENT_KW = [
@@ -119,6 +123,9 @@ def is_kpop_related(text):
         _matched_text = _matched_text.replace(kw_lower, ' ', 1)
 
     if proper_artist_matches or generic_matches:
+        # 2026-05-10: 主語優先 — タイトル内で先に出現するartistを返す
+        # (元: 長さDESC順 → 18881事案で「BLACKPINK ジス…BOYNEXTDOOR…」の先頭BOYNEXTDOORが負けてた)
+        proper_artist_matches.sort(key=lambda kw: tl.find(kw.lower()))
         return proper_artist_matches + generic_matches
     # AGENCY_ONLY: ASCII略号は単語境界必須 ("Sam Smith"の"sm"誤検知防止)
     agency_matches = []
