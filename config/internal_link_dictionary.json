@@ -3,9 +3,9 @@
   "aespa": "/tag/aespa/",
   "BABYMONSTER": "/tag/babymonster/",
   "BIG BANG": "/category/big-bang/",
-  "BLACKPINK": "/tag/blackpink/",
+  "BLACKPINK": "/artist-blackpink/",
   "BOA": "/category/boa/",
-  "BTS": "/tag/bts/",
+  "BTS": "/artist-bts/",
   "CORTIS": "/category/cortis/",
   "ENHYPEN": "/tag/enhypen/",
   "EXO": "/category/exo/",
@@ -213,5 +213,11 @@
   "弘大": "/tag/hongdae/",
   "明洞": "/tag/myeongdong/",
   "トレカ": "/tag/photocard/",
-  "ファンダム": "/tag/fandom/"
+  "ファンダム": "/tag/fandom/",
+  "BTSメンバー": "/artist-bts/",
+  "BTS事務所": "/artist-bts/",
+  "BTSファンダム": "/artist-bts/",
+  "BLACKPINKメンバー": "/artist-blackpink/",
+  "BLACKPINK事務所": "/artist-blackpink/",
+  "BLACKPINKファンダム": "/artist-blackpink/"
 }

@@ -364,6 +364,36 @@ def build_one(client, artist: str, slug: str) -> bool:
     return page_id > 0
 
 
+def update_internal_link_dictionary():
+    """profile JSON存在artistを internal_link_dictionary.jsonに反映"""
+    dict_path = Path('/home/aiuser/kpop-ai-system/config/internal_link_dictionary.json')
+    if not dict_path.exists():
+        return
+    try:
+        d = json.loads(dict_path.read_text(encoding='utf-8'))
+    except Exception:
+        return
+
+    artist_to_slug = {a['name']: a['slug'] for a in PRIORITY_ARTISTS}
+    changed = False
+    for artist, slug in artist_to_slug.items():
+        if not (PROFILE_DIR / f'{slug}.json').exists():
+            continue
+        new_url = f'/artist-{slug}/'
+        if d.get(artist) != new_url:
+            d[artist] = new_url
+            changed = True
+        # long-tail keywords
+        for suffix in ['メンバー', '事務所', 'ファンダム', 'プロフィール']:
+            kw = f'{artist}{suffix}'
+            if d.get(kw) != new_url:
+                d[kw] = new_url
+                changed = True
+    if changed:
+        dict_path.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding='utf-8')
+        print(f"  internal_link_dictionary updated ({len(d)} entries)", flush=True)
+
+
 def main():
     sys.stdout.reconfigure(line_buffering=True)
     args = sys.argv[1:]
@@ -392,6 +422,9 @@ def main():
             success += 1
 
     print(f"\n=== Done: {success}/{len(targets)} succeeded ===", flush=True)
+
+    # internal_link_dictionary 更新
+    update_internal_link_dictionary()
 
 
 if __name__ == '__main__':
