@@ -175,7 +175,11 @@ def _web_factcheck_context(title, plain):
 
 
 def proofread_post(post):
-    """GPT-4o-miniで1件校閲 + artist_profiles照合 + 外部ファクトチェック"""
+    """GPT-4o-miniで1件校閲 + artist_profiles照合 + 外部ファクトチェック
+
+    2026-05-10: FACTCHECK_V2=1 環境変数で Claude Sonnet 4.6 + Web search の
+    新版factcheckにswitch可能。決定的なartist_profile照合は両方で実施。
+    """
     title = post['title']['rendered'] if isinstance(post.get('title'), dict) else post.get('title', '')
     content = post['content']['rendered'] if isinstance(post.get('content'), dict) else post.get('content', '')
     plain = re.sub(r'<[^>]+>', ' ', content)
@@ -183,6 +187,20 @@ def proofread_post(post):
 
     # --- Layer 1: artist_profiles.json照合（deterministic） ---
     profile_issues = _check_artist_profile(title, plain)
+
+    # 2026-05-10: FACTCHECK_V2 envフラグでClaude版に切替
+    if os.environ.get('FACTCHECK_V2') == '1':
+        try:
+            from lib.factcheck_v2 import proofread_post_v2
+            v2_result = proofread_post_v2(post, use_web_search=True)
+            # Layer 1の決定的profile照合をmerge (v2はLLM判定だけなので)
+            if profile_issues:
+                v2_result.setdefault('critical', []).extend(profile_issues)
+                v2_result['score'] = min(v2_result.get('score', 100), 50)
+            return v2_result
+        except Exception as e:
+            # v2失敗時はOpenAI版にフォールバック
+            print(f"  [factcheck] v2 fallback to v1: {e}")
 
     # --- Layer 1b: 記事に登場するアーティストのprofile情報を取得（GPT誤検知防止） ---
     profile_context = ''
