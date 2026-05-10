@@ -106,23 +106,56 @@ def vision_validate(image_path: str, expected_artist: str,
     with open(image_path, 'rb') as f:
         image_b64 = base64.standard_b64encode(f.read()).decode('utf-8')
 
-    prompt = (
-        f"K-pop画像審査。この画像を以下の手順で厳密に判定してください。\n\n"
+    # Prompt cachingで K-pop審査基準のprefixをcache。同じ判定基準を毎回送らず90%コスト削減
+    # 巨大prefix (1024+ tokens) を最初のtext blockに置き、cache_control で固定
+    K_POP_AUDIT_PREFIX = (
+        "あなたはK-popに精通した画像審査AIです。以下の規則で画像を判定してください。\n\n"
+        "## 主要K-popグループ覚え書き\n"
+        "- BLACKPINK (YG, 4人, 女性): Jisoo/Jennie/Rosé/Lisa\n"
+        "- aespa (SM, 4人, 女性): Karina/Giselle/Winter/Ningning — SMTOWN OFFICIAL\n"
+        "- BTS (HYBE/Bighit, 7人, 男性): RM/Jin/Suga/J-Hope/Jimin/V/Jungkook\n"
+        "- TWICE (JYP, 9人, 女性): Nayeon/Jeongyeon/Momo/Sana/Jihyo/Mina/Dahyun/Chaeyoung/Tzuyu\n"
+        "- NewJeans (ADOR/HYBE, 5人, 女性): Minji/Hanni/Danielle/Haerin/Hyein\n"
+        "- IVE (Starship, 6人, 女性): Yujin/Gaeul/Rei/Wonyoung/Liz/Leeseo\n"
+        "- LE SSERAFIM (Source/HYBE, 5人, 女性): Sakura/Chaewon/Yunjin/Kazuha/Eunchae\n"
+        "- ITZY (JYP, 5人, 女性): Yeji/Lia/Ryujin/Chaeryeong/Yuna\n"
+        "- SEVENTEEN (Pledis/HYBE, 13人, 男性)\n"
+        "- Stray Kids (JYP, 8人, 男性)\n"
+        "- ENHYPEN (Belift/HYBE, 7人, 男性)\n"
+        "- TXT/TOMORROW X TOGETHER (Bighit, 5人, 男性)\n"
+        "- ATEEZ (KQ, 8人, 男性)\n"
+        "- TREASURE (YG, 10人, 男性)\n"
+        "- NMIXX (JYP, 6人, 女性)\n"
+        "- ILLIT (Belift/HYBE, 5人, 女性)\n"
+        "- BABYMONSTER (YG, 7人, 女性)\n"
+        "- BOYNEXTDOOR (KOZ/HYBE, 6人, 男性)\n"
+        "- RIIZE (SM, 7人, 男性)\n"
+        "- TWS (Pledis/HYBE, 6人, 男性)\n"
+        "- KISS OF LIFE (S2, 4人, 女性)\n\n"
+        "## 判定手順\n"
         "ステップ1: 画像に何が写っているか観察 (人物/動物/物体/イラスト/ロゴ/抽象)\n"
-        "ステップ2: 人物が写っている場合、推定できる特徴 (人数/性別/年齢層/服装/背景/ロゴ等)\n"
-        f"ステップ3: それが「{expected_artist}」のメンバーと整合するか判定\n\n"
+        "ステップ2: 人物の特徴 (人数/性別/年齢層/服装/背景/公式ロゴ)\n"
+        "ステップ3: 期待アーティストと整合するか判定\n\n"
+        "## 判定ルール\n"
+        "- 期待アーティスト本人 or 所属メンバー確実 → YES\n"
+        "- 別アーティスト/抽象アート/関係ない人物 → NO\n"
+        "- 公式ロゴ (SMTOWN, YG OFFICIAL, ADOR, JYP等) で所属事務所が確認できる場合は重要な手がかり\n"
+        "  例: SMTOWN ロゴ → SM所属artist (aespa/Red Velvet/NCT等) でなければ NO\n"
+        "  例: YG OFFICIAL → YG所属 (BLACKPINK/TREASURE/BABYMONSTER等) でなければ NO\n"
+        "- 人数が大幅に違う (例: 7人男性group記事に女性3人写真) → NO\n"
+        "- 性別不一致は決定的 → NO\n"
+        "- K-pop知識で特定できない曖昧な画像は、見た目で判断 (公式ロゴあり=寄りYES)\n\n"
+        "## 出力形式\n"
+        '必ず以下のJSON1行で返答 (前後のテキストなし):\n'
+        '{"verdict": "YES" or "NO", "reason": "判定理由 (200字以内)"}\n'
+    )
+    prompt_specific = (
+        f"\n## 今回の判定タスク\n"
+        f"期待アーティスト: 「{expected_artist}」\n"
     )
     if article_title:
-        prompt += f"参考: 記事タイトル「{article_title}」\n\n"
-    prompt += (
-        f"判定:\n"
-        f"- {expected_artist}本人 or 所属メンバー確実 → YES\n"
-        f"- 別アーティスト/抽象アート/関係ない人物 → NO\n"
-        "- K-pop知識で特定できない場合は曖昧でNOにせず、画像の見た目だけで判定 (例: 公式ロゴあり=YES寄り、無名スナップ=曖昧でも本人写真ならYES)\n"
-        "- 不一致を疑う具体的根拠 (人数違い/明らかに別人) があるときのみNO\n\n"
-        "1行のJSONで返答:\n"
-        '{"verdict": "YES", "reason": "理由"}'
-    )
+        prompt_specific += f"記事タイトル: 「{article_title}」\n"
+    prompt_specific += "\n上記K-pop覚え書きと判定ルールに従って、画像が「{expected_artist}」を写しているか判定してください。".format(expected_artist=expected_artist)
 
     try:
         client = _get_client()
@@ -130,13 +163,18 @@ def vision_validate(image_path: str, expected_artist: str,
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=400,
+            system=[{
+                "type": "text",
+                "text": K_POP_AUDIT_PREFIX,
+                "cache_control": {"type": "ephemeral"},  # Prompt caching: 最大4ブレークポイント
+            }],
             messages=[{
                 'role': 'user',
                 'content': [
                     {'type': 'image', 'source': {'type': 'base64',
                                                   'media_type': media_type,
                                                   'data': image_b64}},
-                    {'type': 'text', 'text': prompt},
+                    {'type': 'text', 'text': prompt_specific},
                 ],
             }],
         )
