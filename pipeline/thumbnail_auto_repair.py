@@ -136,8 +136,8 @@ def repair_one(item: dict, dry_run: bool = False) -> dict:
             result['reason'] = 'smart_crop_failed'
             return result
 
-        # 2026-05-10: 公開前gate (Shorts/portrait/極小をBLOCK)
-        valid, reason = _validate_thumbnail(temp_path)
+        # 2026-05-10: 公開前gate (Shorts/portrait/極小 + Vision artist照合をBLOCK)
+        valid, reason = _validate_thumbnail(temp_path, expected_artist=artist, article_title=title)
         if not valid:
             result['reason'] = f'gate_block: {reason}'
             return result

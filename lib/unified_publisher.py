@@ -55,7 +55,8 @@ def _detect_category_slug(title, body, kind='news'):
     return 'news'
 
 
-def _validate_thumbnail(image_path: str) -> tuple[bool, str]:
+def _validate_thumbnail(image_path: str, expected_artist: str = '',
+                        article_title: str = '') -> tuple[bool, str]:
     """公開前gate: サムネ画像の品質を検証 (2026-05-10完璧化)
 
     返却: (passed, reason)
@@ -63,6 +64,7 @@ def _validate_thumbnail(image_path: str) -> tuple[bool, str]:
       - 縦長画像 (height > width): 16:9枠で破綻
       - 極小サイズ (<300x200): 解像度不足
       - YouTube Shortsパターン (左右ブラー+縦コンテンツ)
+      - Claude Vision: expected_artist が画像に写ってない (artist指定時のみ)
     """
     try:
         from PIL import Image
@@ -72,7 +74,7 @@ def _validate_thumbnail(image_path: str) -> tuple[bool, str]:
             return False, f"portrait image rejected ({w}x{h})"
         if w < 300 or h < 200:
             return False, f"too small ({w}x{h})"
-        # Shorts pattern check (lib/thumbnail_source_resolver の関数を再利用)
+        # Shorts pattern check
         try:
             import sys as _sys
             _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
@@ -81,6 +83,15 @@ def _validate_thumbnail(image_path: str) -> tuple[bool, str]:
                 return False, "YouTube Shorts pattern detected (vertical content with blurred sides)"
         except Exception:
             pass
+        # Vision check (artist指定時のみ実行 — DALL-E art等のartist無し記事はskip)
+        if expected_artist:
+            try:
+                from lib.thumbnail_vision_gate import vision_validate
+                vision_ok, vision_reason = vision_validate(image_path, expected_artist, article_title)
+                if not vision_ok:
+                    return False, f"vision_gate: {vision_reason}"
+            except Exception:
+                pass  # FAIL OPEN: vision障害時は他のチェックだけ通す
         return True, "ok"
     except Exception as e:
         return False, f"validate err: {e}"
