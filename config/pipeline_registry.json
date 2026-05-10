@@ -160,42 +160,60 @@
       "max_silence_min": 120,
       "category": "high",
       "log": "logs/staff_dispatcher.log",
-      "module": "pipeline.staff_dispatcher"
+      "module": "pipeline.staff_dispatcher",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "morning_meeting": {
       "cron": "30 7 * * *",
       "max_silence_min": 1500,
       "category": "high",
       "log": "logs/morning_meeting.log",
-      "module": "pipeline.morning_meeting"
+      "module": "pipeline.morning_meeting",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "evening_closing": {
       "cron": "0 23 * * *",
       "max_silence_min": 1500,
       "category": "medium",
       "log": "logs/evening_closing.log",
-      "module": "pipeline.evening_closing"
+      "module": "pipeline.evening_closing",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "board_daily_report": {
       "cron": "0 21 * * *",
       "max_silence_min": 1500,
       "category": "medium",
       "log": "logs/board_daily_report.log",
-      "module": "pipeline.board_daily_report"
+      "module": "pipeline.board_daily_report",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "hr_manager": {
       "cron": "0 9 * * *",
       "max_silence_min": 1500,
       "category": "medium",
       "log": "logs/hr_manager.log",
-      "module": "pipeline.hr_manager"
+      "module": "pipeline.hr_manager",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "dept_chatter": {
       "cron": "20 */2 * * *",
       "max_silence_min": 180,
       "category": "low",
       "log": "logs/dept_chatter.log",
-      "module": "pipeline.dept_chatter"
+      "module": "pipeline.dept_chatter",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "daily_editor": {
       "cron": "*/30 * * * *",
@@ -299,7 +317,10 @@
       "cron": "0 8,10,12,14,16,18,20 * * *",
       "max_silence_min": 150,
       "category": "high",
-      "log": "logs/dashboard_refresh.log"
+      "log": "logs/dashboard_refresh.log",
+      "disabled": true,
+      "disabled_at": "2026-04-29",
+      "disabled_reason": "4/29-5/6 cron刷新で停止 (commit 3090adf)"
     },
     "event_calendar_refresh": {
       "cron": "0 7 * * *",

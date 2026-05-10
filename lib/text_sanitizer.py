@@ -84,6 +84,11 @@ def sanitize_gpt_html(html: str) -> str:
     # テンプレートラベル除去
     html = strip_template_labels(html)
 
+    # Markdownコードブロックマーカー除去 (```html ... ``` / ``` ... ```)
+    # 2026-05-11: popup_publisher GATE BLOCK 70件中最多。LLM出力が ```html で囲まれたまま流入
+    html = re.sub(r'```[a-zA-Z]*\s*\n?', '', html)
+    html = re.sub(r'\n?```\s*', '', html)
+
     # style block除去
     html = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
     # inline style attributes

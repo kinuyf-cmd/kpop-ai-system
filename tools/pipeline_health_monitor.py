@@ -94,6 +94,8 @@ def check_all_pipelines():
     warning = []
 
     for name, info in reg['pipelines'].items():
+        if info.get('disabled'):
+            continue
         log_path = info['log']
         cat = info.get('category', 'medium')
         max_min = info.get('max_silence_min', 180)

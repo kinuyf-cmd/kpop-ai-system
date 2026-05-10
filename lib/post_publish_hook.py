@@ -47,8 +47,37 @@ def _fetch_post(post_id):
         return None
 
 
+X_QUEUE_PATH = '/home/aiuser/kpop-ai-system/config/x_post_queue.json'
+
+
+def _purge_from_x_queue(post_id):
+    """draft化された記事を x_post_queue から除去 (skip & remove ループ防止)"""
+    try:
+        if not os.path.exists(X_QUEUE_PATH):
+            return 0
+        with open(X_QUEUE_PATH, encoding='utf-8') as f:
+            data = json.load(f)
+        queue = data.get('queue', [])
+        target = int(post_id)
+        before = len(queue)
+        new_queue = [e for e in queue if int(e.get('post_id', 0) or 0) != target]
+        if len(new_queue) == before:
+            return 0
+        data['queue'] = new_queue
+        data['count'] = len(new_queue)
+        data['updated'] = datetime.now(JST).strftime('%Y-%m-%d %H:%M')
+        tmp = X_QUEUE_PATH + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, X_QUEUE_PATH)
+        return before - len(new_queue)
+    except Exception as e:
+        print(f"  [hook] x_queue purge err: {e}")
+        return 0
+
+
 def _draft_post(post_id, reason):
-    """記事をdraft化 + Next.js ISRキャッシュパージ"""
+    """記事をdraft化 + Next.js ISRキャッシュパージ + x_queue除去"""
     try:
         body = json.dumps({'status': 'draft'}).encode()
         url = f"{WP_API}/posts/{post_id}"
@@ -66,6 +95,10 @@ def _draft_post(post_id, reason):
                 print(f"  [hook] cache purge: /{slug}/")
             except Exception:
                 pass
+        # x_post_queue から除去 (scheduler の skip ループ防止)
+        removed = _purge_from_x_queue(post_id)
+        if removed:
+            print(f"  [hook] x_queue purge: pid={post_id} ({removed}件除去)")
         return True
     except Exception as e:
         print(f"  [hook] draft err: {e}")
