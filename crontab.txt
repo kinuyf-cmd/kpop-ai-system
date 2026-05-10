@@ -243,3 +243,4 @@
 # letterbox/サムネ重複/draft⇄Xqueue/三点不整合/重複記事 を毎朝7時にチェック
 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/daily_batch_audit.py --auto-fix --quiet >> logs/daily_batch_audit_cron.log 2>&1
 0 11 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/thumbnail_contamination_audit.py >> logs/thumbnail_contamination_audit.log 2>&1
+0 8 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/cron_health_check.py >> logs/cron_health_check.log 2>&1

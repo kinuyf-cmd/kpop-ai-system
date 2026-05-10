@@ -52,13 +52,59 @@ def get_thumb_url(media_id: int) -> str:
         return ''
 
 
+def get_media_meta(media_id: int) -> dict:
+    """media のalt/title/source_urlを取得 (サムネ provenance 用)"""
+    try:
+        url = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{media_id}?_fields=source_url,alt_text,title'
+        req = urllib.request.Request(url, headers={'User-Agent': 'kpj-audit/1.0'})
+        return json.loads(urllib.request.urlopen(req, timeout=8).read())
+    except Exception:
+        return {}
+
+
+def detect_artist_mismatch(post_title: str, thumb_alt: str, thumb_url: str) -> str:
+    """記事タイトルと thumbnail alt/url間のartist不一致を検出
+    Returns: empty if OK, or detail string
+    """
+    import html
+    sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+    from lib.collectors.korean_base import is_kpop_related
+    title_artists = set(is_kpop_related(html.unescape(post_title or '')))
+    if not title_artists:
+        return ''  # 記事側にartist識別なし → 検証不能
+    # alt + URL内のartist候補
+    combined = (thumb_alt or '') + ' ' + (thumb_url or '')
+    thumb_artists = set(is_kpop_related(html.unescape(combined)))
+    if not thumb_artists:
+        return ''  # サムネ側情報不足 → 判定保留
+    # メンバー→グループ展開: 個別member名 → group名と等価扱い
+    try:
+        with open('/home/aiuser/kpop-ai-system/config/member_to_group.json') as f:
+            member_to_group = json.load(f)
+    except Exception:
+        member_to_group = {}
+    def expand(s):
+        out = set(s)
+        for a in s:
+            g = member_to_group.get(a)
+            if g: out.add(g)
+        return out
+    title_expanded = expand(title_artists)
+    thumb_expanded = expand(thumb_artists)
+    if title_expanded & thumb_expanded:
+        return ''  # 共通artistあり → OK
+    return f"title={list(title_artists)[:3]} vs thumb={list(thumb_artists)[:3]}"
+
+
 def check_thumbnail(post: dict) -> dict:
     """1記事のサムネを検査して結果dictを返す"""
     pid = post['id']
     fm = post.get('featured_media', 0)
     if not fm:
         return {'pid': pid, 'status': 'no_thumb'}
-    thumb_url = get_thumb_url(fm)
+    media_meta = get_media_meta(fm)
+    thumb_url = media_meta.get('source_url', '')
+    thumb_alt = media_meta.get('alt_text', '')
     if not thumb_url:
         return {'pid': pid, 'status': 'media_unreachable'}
     # 意図的な非写真サムネはFP対策で除外 (DALL-E art / template texts)
@@ -83,6 +129,10 @@ def check_thumbnail(post: dict) -> dict:
                 issues.append(f'too_small_{w}x{h}')
             if _is_shorts_thumbnail(path):
                 issues.append('shorts_pattern')
+            # 2026-05-10完璧化: 別アーティスト混入検出
+            mismatch = detect_artist_mismatch(post['title']['rendered'], thumb_alt, thumb_url)
+            if mismatch:
+                issues.append(f'artist_mismatch: {mismatch}')
             return {
                 'pid': pid, 'title': post['title']['rendered'][:50],
                 'slug': post['slug'], 'thumb_url': thumb_url,
@@ -159,8 +209,35 @@ def main():
     else:
         print(f"[thumb-audit] clean ({len(posts)} scanned)")
 
+    # 2026-05-10完璧化: cron sentinel — 最後にheartbeatを残してsilent failure検知
+    # 翌日のcronで「前日のheartbeatが古すぎ」ならcron故障とみなしDiscord通知
+    SENTINEL = '/home/aiuser/kpop-ai-system/logs/thumb_audit_heartbeat'
+    try:
+        from datetime import datetime as _dt
+        with open(SENTINEL, 'w') as _f:
+            _f.write(_dt.now().isoformat())
+    except Exception:
+        pass
+
     print(f"[thumb-audit] done. log: {LOG_PATH}")
     return len(contaminated)
+
+
+def check_heartbeat_freshness():
+    """cron silent failure検知 — heartbeatが30h以上古ければアラート"""
+    import os as _os
+    from datetime import datetime as _dt, timedelta as _td
+    SENTINEL = '/home/aiuser/kpop-ai-system/logs/thumb_audit_heartbeat'
+    if not _os.path.exists(SENTINEL):
+        return False, 'no heartbeat file'
+    try:
+        mtime = _dt.fromtimestamp(_os.path.getmtime(SENTINEL))
+        age = _dt.now() - mtime
+        if age > _td(hours=30):
+            return False, f'heartbeat stale ({age.total_seconds()/3600:.1f}h)'
+        return True, 'fresh'
+    except Exception as e:
+        return False, f'check err: {e}'
 
 
 if __name__ == '__main__':

@@ -31,6 +31,40 @@ def _registered_domain(host):
     return '.'.join(parts[-2:])
 
 
+def _is_artist_mismatch(og_url, title, body):
+    """og:image URL内に記事タイトル subject と異なるartistが含まれるか判定
+
+    例: 記事タイトル「TWICE新曲」 + og_url「...blackpink-album-cover.jpg」 → mismatch=True
+    既知K-popアーティスト名がURLに含まれ、それがタイトルの主役と異なる場合にTrue。
+    """
+    try:
+        import sys as _sys
+        _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+        from lib.collectors.korean_base import is_kpop_related
+        title_artists = set(is_kpop_related(title or ''))
+        if not title_artists:
+            return False  # title側にartist識別なし → 判定不能
+        url_lower = og_url.lower()
+        # URL上で検出されるK-popキーワード
+        url_artists = set(is_kpop_related(url_lower.replace('-', ' ').replace('_', ' ')))
+        if not url_artists:
+            return False  # URL側にartist識別なし → 判定不能 (画像名がgeneric)
+        # member→group展開
+        try:
+            import json as _json
+            with open('/home/aiuser/kpop-ai-system/config/member_to_group.json') as _f:
+                m2g = _json.load(_f)
+            for s in [title_artists, url_artists]:
+                for a in list(s):
+                    g = m2g.get(a)
+                    if g: s.add(g)
+        except Exception:
+            pass
+        return not (title_artists & url_artists)
+    except Exception:
+        return False
+
+
 def _is_suspicious_og_image(og_url, source_url):
     """OG画像URLが広告/動画プレーヤー由来で記事と無関係の可能性が高いか判定
 
@@ -305,14 +339,21 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
         src_out = os.path.join(output_dir, f'source_img_post{post_id}.jpg')
         r = fetch_source_image(source_url, src_out)
         if r:
-            print(f"  source image OK: {r['image_url'][:60]}")
-            return {
-                'path': src_out,
-                'source': 'source_site',
-                'attribution': '画像: 元記事より',
-                'image_url': r['image_url'],
-                'source_url': r['source_url'],
-            }
+            # 2026-05-10完璧化: og:image URLに別artist名が含まれてないか検証
+            # 例: TWICE記事 + og_url が "...blackpink-album.jpg" → REJECT
+            if _is_artist_mismatch(r['image_url'], title, body):
+                print(f"  REJECT og:image (artist mismatch): {r['image_url'][:80]}")
+                try: os.remove(src_out)
+                except: pass
+            else:
+                print(f"  source image OK: {r['image_url'][:60]}")
+                return {
+                    'path': src_out,
+                    'source': 'source_site',
+                    'attribution': '画像: 元記事より',
+                    'image_url': r['image_url'],
+                    'source_url': r['source_url'],
+                }
 
     # 段階2: アーティスト写真 (YouTube/Wikimedia/cache)
     try:
