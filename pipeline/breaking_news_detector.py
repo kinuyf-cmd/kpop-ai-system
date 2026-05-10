@@ -126,21 +126,50 @@ def detect_breaking(signals):
 
     # 3. 高engagement単独シグナル (2026-05-01追加)
     # engagement_score >= 2.0 かつ未処理のK-POP関連シグナルを速報候補に
+    # 2026-05-10: 高活動artist (BABYMONSTER等) が17シグナル/日でも1件しか拾えない問題の対処
+    # 同一artist 最大2件まで許容 (異なるangleの場合)
+    MAX_PER_ARTIST = 2
     high_eng = sorted(
         [s for s in signals if s.get('engagement_score', 0) >= 2.0],
         key=lambda x: -x.get('engagement_score', 0)
     )
+    artist_count = {}  # artist → 既選candidate数
+    artist_titles = {}  # artist → 既選titles (重複検出用)
     for s in high_eng:
         arts = is_kpop_related(s.get('title', ''))
         artist = _pick_artist(arts)
-        if not artist or artist in seen:
+        if not artist:
             continue
         if is_processed(s.get('url', '')):
             continue
+        # 同一artistでもcountが上限未達なら通す
+        cnt = artist_count.get(artist, 0)
+        if artist in seen and cnt == 0:
+            continue  # 既にmulti/urgentで選ばれてればhigh_engagementで重複させない
+        if cnt >= MAX_PER_ARTIST:
+            continue
+        # 既選titleと類似 (共通名詞50%以上) なら却下
+        title = s.get('title', '')
+        if any(_titles_too_similar(title, t) for t in artist_titles.get(artist, [])):
+            continue
+        artist_count[artist] = cnt + 1
+        artist_titles.setdefault(artist, []).append(title)
         seen.add(artist)
         candidates.append((artist, [s], 'high_engagement'))
 
     return candidates
+
+
+def _titles_too_similar(t1: str, t2: str) -> bool:
+    """2タイトルが意味的に類似してるか (共通4文字以上単語が3個以上)"""
+    import re as _re
+    # 4字以上のハングル/カタカナ/英単語を抽出
+    words1 = set(_re.findall(r'[가-힯]{2,}|[ァ-ヶー]{3,}|[A-Za-z]{4,}', t1))
+    words2 = set(_re.findall(r'[가-힯]{2,}|[ァ-ヶー]{3,}|[A-Za-z]{4,}', t2))
+    if not words1 or not words2:
+        return False
+    common = words1 & words2
+    return len(common) >= 3
 
 
 def _inject_followup_theme(artist, ja_title, en_title):
