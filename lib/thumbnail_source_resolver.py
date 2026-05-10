@@ -391,6 +391,12 @@ def resolve_youtube(artist_name: str, prefer: str = "popular") -> dict | None:
                     url = f"https://img.youtube.com/vi/{vid}/{quality}.jpg"
                     dest = str(CACHE_DIR / f"yt_{artist_key}_{vid[:8]}_{quality[:3]}.jpg")
                     if os.path.exists(dest) and os.path.getsize(dest) > 5000:
+                        # 2026-05-10完璧化: cache読込時にもShorts判定 (古い汚染cache遮断)
+                        if _is_shorts_thumbnail(dest):
+                            sys.stderr.write(f"[resolver] PURGE Shorts cache: {dest}\n")
+                            try: os.remove(dest)
+                            except: pass
+                            continue
                         if _is_image_used_today(dest):
                             sys.stderr.write(f"[resolver] SKIP used today: {dest}\n")
                             continue
@@ -423,14 +429,20 @@ def resolve_youtube(artist_name: str, prefer: str = "popular") -> dict | None:
         url = f"https://img.youtube.com/vi/{vid}/maxresdefault.jpg"
         dest = str(CACHE_DIR / f"yt_{artist_key}_{vid[:8]}.jpg")
         if os.path.exists(dest):
-            return {
-                "image_path": dest,
-                "source": "youtube_official",
-                "source_url": f"https://www.youtube.com/watch?v={vid}",
-                "license": "YouTube embed (fair use for editorial thumbnail)",
-                "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
-                "fetch_mode": "static",
-            }
+            # 2026-05-10完璧化: 静的cache読込時もShorts判定で汚染遮断
+            if _is_shorts_thumbnail(dest):
+                sys.stderr.write(f"[resolver] PURGE Shorts static cache: {dest}\n")
+                try: os.remove(dest)
+                except: pass
+            else:
+                return {
+                    "image_path": dest,
+                    "source": "youtube_official",
+                    "source_url": f"https://www.youtube.com/watch?v={vid}",
+                    "license": "YouTube embed (fair use for editorial thumbnail)",
+                    "attribution": f"YouTube: {account.get('channel_name', artist_name)}",
+                    "fetch_mode": "static",
+                }
         if _download(url, dest):
             return {
                 "image_path": dest,

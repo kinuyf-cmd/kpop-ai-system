@@ -55,7 +55,44 @@ def _detect_category_slug(title, body, kind='news'):
     return 'news'
 
 
+def _validate_thumbnail(image_path: str) -> tuple[bool, str]:
+    """公開前gate: サムネ画像の品質を検証 (2026-05-10完璧化)
+
+    返却: (passed, reason)
+    BLOCK条件:
+      - 縦長画像 (height > width): 16:9枠で破綻
+      - 極小サイズ (<300x200): 解像度不足
+      - YouTube Shortsパターン (左右ブラー+縦コンテンツ)
+    """
+    try:
+        from PIL import Image
+        img = Image.open(image_path).convert('RGB')
+        w, h = img.size
+        if h > w:
+            return False, f"portrait image rejected ({w}x{h})"
+        if w < 300 or h < 200:
+            return False, f"too small ({w}x{h})"
+        # Shorts pattern check (lib/thumbnail_source_resolver の関数を再利用)
+        try:
+            import sys as _sys
+            _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
+            from lib.thumbnail_source_resolver import _is_shorts_thumbnail
+            if _is_shorts_thumbnail(image_path):
+                return False, "YouTube Shorts pattern detected (vertical content with blurred sides)"
+        except Exception:
+            pass
+        return True, "ok"
+    except Exception as e:
+        return False, f"validate err: {e}"
+
+
 def _upload_media(image_path, alt_text=''):
+    # 公開前gate: 不正サムネはアップロードしない
+    ok, reason = _validate_thumbnail(image_path)
+    if not ok:
+        import sys as _sys
+        _sys.stderr.write(f"[publisher] BLOCK upload: {image_path} ({reason})\n")
+        return None
     try:
         with open(image_path, 'rb') as f:
             data = f.read()
