@@ -166,10 +166,43 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
         return {}
 
 
+def _build_schema_org(artist: str, profile: dict) -> str:
+    """Schema.org MusicGroup JSON-LD (Google rich snippets用)"""
+    members = profile.get('members', []) or []
+    same_as = []
+    for k in ['twitter', 'instagram', 'weverse', 'youtube', 'tiktok']:
+        v = (profile.get('official_links') or {}).get(k)
+        if v: same_as.append(v)
+
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "MusicGroup" if len(members) > 1 else "Person",
+        "name": artist,
+        "url": f"https://www.kpopjournal.tokyo/artist-{artist.lower().replace(' ', '-')}/",
+    }
+    if profile.get('debut_date'):
+        schema["foundingDate"] = profile['debut_date']
+    if profile.get('agency'):
+        schema["recordLabel"] = profile['agency']
+    if same_as:
+        schema["sameAs"] = same_as
+    if len(members) > 1:
+        schema["member"] = [
+            {
+                "@type": "Person",
+                "name": (m.get('name_en') or m.get('name_ja','')).strip(),
+                "alternateName": m.get('name_kr','') or m.get('name_ja',''),
+            }
+            for m in members if (m.get('name_en') or m.get('name_ja',''))
+        ]
+    return f'<script type="application/ld+json">{json.dumps(schema, ensure_ascii=False)}</script>'
+
+
 def render_html(artist: str, profile: dict) -> str:
     """Profile JSON → WordPress page HTML"""
     today = datetime.now(JST).strftime('%Y年%m月%d日')
     parts = [
+        _build_schema_org(artist, profile),
         f'<div class="artist-profile">',
         f'<p class="last-updated"><small>最終更新: {today}</small></p>',
     ]
