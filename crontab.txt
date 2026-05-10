@@ -246,3 +246,4 @@
 0 8 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/cron_health_check.py >> logs/cron_health_check.log 2>&1
 0 6 * * * cd /home/aiuser/kpop-ai-system && python3 -m pytest tests/test_thumbnail_defenses.py --quiet >> logs/regression_tests.log 2>&1
 0 9 * * 1 python3 pipeline/kpop_kw_expansion_suggester.py >> logs/kpop_kw_suggestions.log 2>&1
+0 22 * * * python3 pipeline/daily_kpi_report.py >> logs/daily_kpi_report.log 2>&1
