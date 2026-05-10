@@ -171,21 +171,55 @@ def _current_slot_limit() -> int:
     return SLOTS.get(hour, DEFAULT_SLOT_SIZE)
 
 
+QUEUE_MAX_AGE_HOURS = 48  # 48h超のqueue itemsは古ニュース扱いでdrop
+
+
+def _drop_stale(queue: list) -> list:
+    """48h超のqueue itemsを除外 (古いニュースは投稿価値が低い)"""
+    cutoff = datetime.now() - timedelta(hours=QUEUE_MAX_AGE_HOURS)
+    fresh = []
+    for e in queue:
+        qa = e.get('queued_at', '')
+        try:
+            qt = datetime.fromisoformat(qa)
+            if qt >= cutoff:
+                fresh.append(e)
+        except (ValueError, TypeError):
+            fresh.append(e)  # 日時不明はとりあえず残す
+    if len(fresh) < len(queue):
+        print(f"[scheduler] {len(queue) - len(fresh)}件を48h超でdrop")
+    return fresh
+
+
 def _sort_queue(queue: list) -> list:
-    """優先度ソート: breaking/news > 通常 > popup/travel"""
+    """優先度ソート: breaking/news > 通常 > popup/travel
+    同一優先度内では新しい記事を先に投稿 (ニュース鮮度優先)"""
     def priority_key(e):
         if e.get('priority') == 'high' or e.get('genre') in PRIORITY_GENRES:
-            return 0
-        if e.get('genre') in ('travel', 'default', ''):
-            return 2
-        return 1
+            klass = 0
+        elif e.get('genre') in ('travel', 'default', ''):
+            klass = 2
+        else:
+            klass = 1
+        # queued_at が新しいほど先 — 文字列比較を逆順に
+        return (klass, -1 * _ts_to_int(e.get('queued_at', '')))
     return sorted(queue, key=priority_key)
+
+
+def _ts_to_int(ts: str) -> int:
+    try:
+        return int(datetime.fromisoformat(ts).timestamp())
+    except (ValueError, TypeError):
+        return 0
 
 
 def process_queue(dry_run: bool = False) -> dict:
     """キューからピーク時間帯に合わせて投稿（フック+URLリプライ方式）"""
 
-    queue = load_queue()
+    raw_queue = load_queue()
+    queue = _drop_stale(raw_queue)
+    if len(queue) < len(raw_queue):
+        save_queue(queue)  # stale drop を永続化
     if not queue:
         print("[scheduler] キュー空")
         return {'processed': 0, 'remaining': 0}

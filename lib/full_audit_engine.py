@@ -374,8 +374,8 @@ def check_distribution(post, post_type, criteria):
     except:
         return issues
 
-    if age_h < 6:
-        return issues  # 投稿後6時間は猶予（GSC indexing + X投稿の遅延考慮）
+    if age_h < 24:
+        return issues  # 投稿後24時間は猶予（X queue最大1日backlog + GSC indexing遅延考慮）
 
     # GSC（URLベースで照合 — GSCログにはpost_idがない）
     if criteria.get('require_gsc_indexing'):

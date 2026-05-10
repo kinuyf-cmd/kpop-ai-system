@@ -26,7 +26,7 @@ def purge_paths(paths: list[str]) -> dict:
     Returns:
         {'success': bool, 'results': list}
     """
-    url = f'{FRONTEND_URL}/api/revalidate'
+    url = f'{FRONTEND_URL}/api/revalidate/'
     payload = json.dumps({
         'paths': paths,
         'secret': REVALIDATE_SECRET,

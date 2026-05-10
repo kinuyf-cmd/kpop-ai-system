@@ -66,18 +66,18 @@ HOOKS = {
     # ── ニュース速報 ────────────────────────────────────────────────────────
     # カバー範囲: 速報・カムバック・チャート・ライブ・炎上・コラボ
     "news": [
+        # 事実駆動型 — 何が起きたか先に言う
+        "{artist}、{event}が確定した",
+        "{artist}に新展開があった",
+        "{artist}、{event}を発表",
+        "{artist}が{number}冠を達成",
+        "{artist}来日、{number}都市で公演決定",
+        "{artist}、最新動向はこちら",
+        "{artist}関連の話題をまとめた",
+        # 抑えめのドラマ語(残置・頻度減)
         "速報…{artist}が動いた",
-        "{artist}から緊急発表",
-        "{artist}がついに動いた",
-        "{artist}が{number}冠の衝撃",
-        "K-POPに衝撃が走った",
-        "速報、誰も予想しなかった",
-        "ファン騒然…{artist}の真相",
-        "{artist}来日、{number}都市で開催",
-        "衝撃…{artist}の決断とは",
-        "{artist}に重大発表あり",
-        "まさかの展開…{artist}速報",
-        "緊急…{artist}の新情報",
+        "{artist}から発表があった",
+        "{artist}に注目が集まっている",
     ],
     # ── 分析/解説 ─────────────────────────────────────────────────────────
     # カバー範囲: 考察・比較ランキング・歴史・業界解説・なぜ系
@@ -128,17 +128,17 @@ HOOKS = {
     ],
     # ── デフォルト（後方互換・旧ジャンル名） ──────────────────────────────
     "default": [
-        "{artist}に衝撃の変化が起きた",
+        # 事実駆動型
+        "{artist}、最新の話題はこちら",
+        "{artist}に動きがあった",
+        "{artist}関連、{event}を整理",
+        "{artist}ファン向けの新情報",
+        "{artist}が話題になっている",
+        "{artist}、ここに注目",
+        # 抑えめのドラマ語(頻度減)
         "ついに{artist}が動いた",
-        "{artist}の真相、判明した",
-        "速報…{artist}に何かが起きた",
-        "{artist}ファン、これ知ってた？",
-        "衝撃…{artist}の最新動向",
-        "まさか…{artist}の新事実",
-        "判明…{artist}の本当の姿",
+        "{artist}に新展開",
         "ファン必見…{artist}速報",
-        "{artist}に驚きの展開が",
-        "K-POPファン騒然の真相",
     ],
     # 旧ジャンル名エイリアス（後方互換）
     "breaking":    ["速報…{artist}が動いた", "{artist}から緊急発表", "K-POPに衝撃が走った",
@@ -205,16 +205,17 @@ COMMENT_TRIGGERS = {
 EMOTION_LINES = {
     # ── ニュース速報: 緊迫感・予想外・拡散欲求 ─────────────────────────────
     "news": [
-        "ファンの間で賛否が広がっている…",
-        "この展開、誰も予想していなかった",
-        "関係者の間でも困惑が広がっている",
-        "真相はまだ明かされていない",
-        "ファンの反応が二極化している",
-        "その勢いはまだ止まっていない",
-        "SNSでは騒然となっている",
-        "この速報、まだ知らない人が多い",
-        "事態は予想以上に動いている",
-        "世界中のファンが注目している",
+        # 事実駆動型 — 内容に踏み込む
+        "詳細は記事にまとめている",
+        "発表内容を整理した",
+        "ファンの注目が集まっている",
+        "関連情報をまとめている",
+        "新展開の背景はこちら",
+        "現時点で分かっていること",
+        # 抑えめのドラマ語(残置・頻度減)
+        "SNSでも話題になっている",
+        "ファンの反応はさまざま",
+        "事態は今も動いている",
     ],
     # ── 分析/解説: 知的好奇心・「実は知らなかった」 ─────────────────────────
     "analysis": [
@@ -422,30 +423,63 @@ def _random_idx(items_len: int, title: str = "") -> int:
     return seed % items_len
 
 
-def select_hook(genre: str, title: str, artist: str) -> str:
-    """ジャンルに基づいてフックをランダム選択し、プレースホルダを埋める"""
-    hooks = HOOKS.get(genre, HOOKS["default"])
-    # アーティスト名が有効な場合は {artist} を含むフックを優先選択
-    if artist and artist not in ("K-POP", "K-POPアイドル", ""):
-        artist_hooks = [h for h in hooks if "{artist}" in h]
-        if artist_hooks:
-            idx = _random_idx(len(artist_hooks), title)
-            hook = artist_hooks[idx]
-        else:
-            idx = _random_idx(len(hooks), title)
-            hook = hooks[idx]
-    else:
-        # アーティスト不明: {artist}を含まないフックのみ使う
-        no_artist_hooks = [h for h in hooks if "{artist}" not in h]
-        if no_artist_hooks:
-            idx = _random_idx(len(no_artist_hooks), title)
-            hook = no_artist_hooks[idx]
-        else:
-            idx = _random_idx(len(hooks), title)
-            hook = hooks[idx]
+def _recently_used_hooks(days: int = 5) -> set:
+    """直近N日間のX投稿で使われたhookパターン(1行目)を返す。
+    novelty向上のため同一テンプレ再利用を回避する。
+    """
+    import json as _json
+    from datetime import datetime as _dt, timedelta as _td
+    log_path = '/home/aiuser/kpop-ai-system/logs/x_posts.jsonl'
+    cutoff = _dt.now() - _td(days=days)
+    used = set()
+    try:
+        with open(log_path, encoding='utf-8') as _f:
+            for _line in _f:
+                try:
+                    d = _json.loads(_line)
+                    ts = d.get('ts', '')
+                    if ts:
+                        if _dt.fromisoformat(ts) < cutoff:
+                            continue
+                    text = d.get('text', '')
+                    first_line = text.split('\n', 1)[0].strip()
+                    if first_line:
+                        used.add(first_line)
+                except (ValueError, _json.JSONDecodeError):
+                    continue
+    except OSError:
+        pass
+    return used
 
+
+def _hook_signature(hook_template: str, artist: str, event: str, number: str) -> str:
+    """hook templateを実際の投稿1行目相当に展開してシグネチャ化"""
+    s = hook_template.replace('{artist}', artist or 'K-POP')
+    s = s.replace('{event}', event or '')
+    s = s.replace('{number}', number or '')
+    return s.strip()
+
+
+def select_hook(genre: str, title: str, artist: str) -> str:
+    """ジャンルに基づいてフックをランダム選択し、プレースホルダを埋める。
+    直近5日に使ったhookは可能な限り回避 (novelty確保)"""
+    hooks = HOOKS.get(genre, HOOKS["default"])
     event = extract_event(title)
     number = extract_number(title)
+    recent_used = _recently_used_hooks(days=5)
+
+    # アーティスト名が有効な場合は {artist} を含むフックを優先選択
+    if artist and artist not in ("K-POP", "K-POPアイドル", ""):
+        candidates = [h for h in hooks if "{artist}" in h] or hooks
+    else:
+        candidates = [h for h in hooks if "{artist}" not in h] or hooks
+
+    # recent dedup: 直近使われたhookを除外したプールを優先
+    fresh = [h for h in candidates
+             if _hook_signature(h, artist, event, number) not in recent_used]
+    pool = fresh if fresh else candidates  # 全部使用済みならフォールバック
+    idx = _random_idx(len(pool), title)
+    hook = pool[idx]
 
     hook = hook.replace("{artist}", artist or "K-POP")
     hook = hook.replace("{event}", event)
