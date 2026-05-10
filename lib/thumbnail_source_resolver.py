@@ -111,16 +111,50 @@ def _slug(name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_]+", "_", name.lower()).strip("_")[:40]
 
 
+def _is_shorts_thumbnail(image_path: str) -> bool:
+    """YouTube Shortsの縦長サムネ検出 — 16:9枠内に縦長コンテンツ+左右ブラー/暗パディング
+    左右1/4ずつと中央1/2の標準偏差を比較。左右が中央の50%未満ならShortsと判定。
+    """
+    try:
+        from PIL import Image
+        import numpy as np
+        img = Image.open(image_path).convert('RGB')
+        if img.width < 600:
+            return False
+        arr = np.array(img.resize((600, int(600 * img.height / img.width))))
+        w = arr.shape[1]
+        left = arr[:, :w//4]
+        center = arr[:, w//4:w*3//4]
+        right = arr[:, w*3//4:]
+        cs = float(center.std())
+        ss = float((left.std() + right.std()) / 2)
+        return cs > 0 and ss < cs * 0.5
+    except Exception:
+        return False
+
+
 def _download(url: str, dest: str, timeout: int = 15) -> bool:
-    """Download a URL to a local file. Returns True on success."""
+    """Download a URL to a local file. Returns True on success.
+
+    2026-05-10: Shorts/縦長コンテンツ検出を追加 (uePW57oH/Y8mML3Zp事案)
+    左右ブラーパディング付きの縦長サムネはダウンロード後に判定して破棄。
+    """
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "KpopJournalBot/1.0"})
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             data = resp.read()
-            if len(data) < 5000:  # Too small, likely an error page
+            if len(data) < 5000:
                 return False
             with open(dest, "wb") as f:
                 f.write(data)
+            # Shorts pattern判定: 縦長コンテンツの左右ブラー検出
+            if _is_shorts_thumbnail(dest):
+                sys.stderr.write(f"[resolver] REJECT Shorts pattern: {dest}\n")
+                try:
+                    os.remove(dest)
+                except Exception:
+                    pass
+                return False
             return True
     except Exception as e:
         sys.stderr.write(f"[resolver] download failed {url}: {e}\n")
@@ -191,31 +225,57 @@ _YT_QUOTA_EXHAUSTED_UNTIL = None  # quota超過時に日付を記録しAPIスキ
 
 
 def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int = 3) -> list:
-    """YouTube Data API v3 で公式チャネルから動画リストを取得"""
+    """YouTube Data API v3 で公式チャネルから動画リストを取得
+
+    2026-05-10 (19311/19452事案): order='date'(最新)はShorts/Vlog/コラボを優先するため
+    MV以外の無関係画像が選ばれる。下記フィルタで非MVを除外:
+    - title に Shorts/ep.([0-9]+)/vlog/behind/reaction/fancam/interview/live cam等を含む動画を排除
+    """
     global _YT_QUOTA_EXHAUSTED_UNTIL
     yt_key = os.environ.get("YOUTUBE_API_KEY", "")
     if not yt_key or not channel_id:
         return []
 
-    # quota超過済みなら当日中はAPIスキップ (キャッシュ/staticで対応)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     if _YT_QUOTA_EXHAUSTED_UNTIL == today:
         return []
 
+    # 非MVキーワード — タイトルにこれらを含む動画はサムネ候補から除外
+    NON_MV_PATTERNS = [
+        '#shorts', 'shorts', 'short ver', 'short ver.',
+        'ep.', 'episode ', 'vlog', 'vlogs',
+        'behind', 'making', 'bts cam', 'cam ver',
+        'reaction', 'react ', 'reacting',
+        'fancam', 'fan cam', 'live clip', 'live cam',
+        'interview', 'q&a', 'practice', 'rehearsal',
+        'unboxing', 'cover ',
+    ]
+
     try:
         import urllib.parse
+        # max_resultsは8に増やしてフィルタ後に十分な選択肢を確保
+        api_max = max(8, max_results * 3)
         params = urllib.parse.urlencode({
             "key": yt_key, "channelId": channel_id, "type": "video",
-            "order": order, "maxResults": max_results, "part": "snippet",
+            "order": order, "maxResults": api_max, "part": "snippet",
         })
         url = f"https://www.googleapis.com/youtube/v3/search?{params}"
         req = urllib.request.Request(url, headers={"User-Agent": "KpopJournalBot/1.0"})
         data = json.loads(urllib.request.urlopen(req, timeout=15).read())
-        return [
+        all_videos = [
             {"video_id": item["id"]["videoId"], "title": item["snippet"]["title"]}
             for item in data.get("items", [])
             if item.get("id", {}).get("videoId")
         ]
+        # フィルタ: 非MVを除外
+        filtered = []
+        for v in all_videos:
+            title_lower = v.get("title", "").lower()
+            if any(pat in title_lower for pat in NON_MV_PATTERNS):
+                sys.stderr.write(f"[resolver] SKIP non-MV video: '{v['title'][:50]}'\n")
+                continue
+            filtered.append(v)
+        return filtered[:max_results]
     except urllib.error.HTTPError as e:
         if e.code == 403:
             _YT_QUOTA_EXHAUSTED_UNTIL = today
