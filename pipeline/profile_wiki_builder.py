@@ -485,7 +485,7 @@ def render_html(artist: str, profile: dict) -> str:
 .ap-disco-year { font-size: 0.85em; font-weight: 700; color: #888; flex-shrink: 0; width: 44px; }
 .ap-disco-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9em; flex-shrink: 0; }
 .ap-disco-body { flex: 1; min-width: 0; }
-.ap-disco-title { font-size: 0.9em; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-disco-title { font-size: 0.9em; color: #222; line-height: 1.3; word-break: break-word; }
 .ap-disco-meta { font-size: 0.7em; color: #888; }
 .ap-disco-type { font-weight: 600; }
 

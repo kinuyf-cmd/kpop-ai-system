@@ -160,18 +160,38 @@ def fetch_comebacks_via_claude() -> dict:
 
 
 def render_html(data: dict) -> str:
-    """構造化データをHTMLに変換"""
+    """構造化データをHTMLに変換 (compact card grid版)"""
     today = datetime.now(JST).strftime('%Y年%m月%d日')
     comebacks = sorted(data.get('comebacks', []), key=lambda x: x.get('release_date', '9999'))
 
-    html_parts = [
-        '<div class="release-calendar">',
-        f'<p class="last-updated"><small>最終更新: {today}</small></p>',
-        '<p>K-POP主要グループの今後90日間の公式カムバック・リリース情報をまとめています。毎日5時に最新情報に自動更新されます。</p>',
+    type_meta = {
+        'album':      ('🎵', '#FF1493', 'アルバム'),
+        'single':     ('💿', '#9B59B6', 'シングル'),
+        'ep':         ('💿', '#9B59B6', 'EP'),
+        'mv':         ('🎬', '#00BCD4', 'MV'),
+        'ost':        ('🎞️', '#FFB300', 'OST'),
+        'tour':       ('🎤', '#26A69A', 'ツアー'),
+        'fanmeeting': ('👥', '#EC407A', 'ファンミ'),
+        'other':      ('📌', '#888', 'その他'),
+    }
+    conf_meta = {
+        'high':   ('✅', '#16A34A', '確定'),
+        'medium': ('🔵', '#2196F3', '公式予定'),
+        'low':    ('🟡', '#EAB308', '予想'),
+    }
+
+    parts = [
+        '<div class="rc-page">',
+        '<div class="rc-hero">',
+        '<h1 class="rc-hero-title">📅 K-POP リリース・カレンダー</h1>',
+        '<p class="rc-hero-sub">K-POP主要グループの今後90日間の公式カムバック・ツアー情報</p>',
+        f'<p class="rc-hero-meta">最終更新: {today} ・ 毎朝5時自動更新</p>',
+        '</div>',
     ]
 
     if data.get('summary'):
-        html_parts.append(f'<div class="summary"><strong>📌 注目ポイント</strong><br>{data["summary"]}</div>')
+        sm = (data['summary'] or '').strip()[:240]
+        parts.append(f'<div class="rc-summary"><strong>📌 注目</strong> {sm}…</div>')
 
     # 月別grouping
     by_month = {}
@@ -182,46 +202,93 @@ def render_html(data: dict) -> str:
         by_month.setdefault(month, []).append(cb)
 
     for month in sorted(by_month.keys()):
-        html_parts.append(f'<h2>{month[:4]}年{int(month[5:7])}月</h2>')
-        html_parts.append('<table class="comeback-table">')
-        html_parts.append('<thead><tr><th>日付</th><th>アーティスト</th><th>タイトル</th><th>種別</th><th>信頼度</th></tr></thead>')
-        html_parts.append('<tbody>')
+        parts.append(f'<h2 class="rc-month">{month[:4]}年{int(month[5:7])}月</h2>')
+        parts.append('<div class="rc-grid">')
         for cb in sorted(by_month[month], key=lambda x: x['release_date']):
-            date_disp = cb['release_date'][8:10] + '日' if len(cb['release_date']) >= 10 else cb['release_date']
-            type_badge = {
-                'album': '🎵 アルバム', 'single': '💿 シングル', 'mv': '🎬 MV',
-                'ost': '🎞️ OST', 'tour': '🎤 ツアー', 'fanmeeting': '👥 ファンミ',
-                'other': '📌 その他',
-            }.get(cb.get('type', 'other'), '📌')
-            conf = cb.get('confidence', 'low')
-            conf_badge = {'high': '✅ 確定', 'medium': '🔵 公式予定', 'low': '🟡 予想'}.get(conf, '?')
+            date_str = cb['release_date']
+            day = date_str[8:10] if len(date_str) >= 10 else '?'
+            mon_short = int(date_str[5:7]) if len(date_str) >= 7 else 0
+            t = cb.get('type', 'other')
+            ticon, tcolor, tlabel = type_meta.get(t, type_meta['other'])
+            c = cb.get('confidence', 'low')
+            cicon, ccolor, clabel = conf_meta.get(c, conf_meta['low'])
             src = cb.get('source_url', '')
-            artist_text = cb['artist']
-            if src:
-                artist_text = f'<a href="{src}" target="_blank" rel="noopener">{cb["artist"]}</a>'
-            html_parts.append(
-                f'<tr><td>{date_disp}</td><td><strong>{artist_text}</strong></td>'
-                f'<td>{cb.get("title","")}</td><td>{type_badge}</td><td>{conf_badge}</td></tr>'
-            )
-        html_parts.append('</tbody></table>')
+            artist = cb['artist']
+            artist_link = (f'<a href="{src}" target="_blank" rel="noopener">{artist}</a>' if src else artist)
+            parts.append(f'''<div class="rc-card">
+  <div class="rc-card-date" style="background:{tcolor};">
+    <div class="rc-day">{day}</div>
+    <div class="rc-mon">{mon_short}月</div>
+  </div>
+  <div class="rc-card-body">
+    <div class="rc-card-artist">{artist_link}</div>
+    <div class="rc-card-title">{cb.get("title","")}</div>
+    <div class="rc-card-tags">
+      <span class="rc-tag" style="color:{tcolor};">{ticon} {tlabel}</span>
+      <span class="rc-tag rc-conf" style="color:{ccolor};">{cicon} {clabel}</span>
+    </div>
+  </div>
+</div>''')
+        parts.append('</div>')
 
-    html_parts.extend([
-        '<h3>📚 関連情報</h3>',
-        '<ul>',
-        '<li>各アーティスト公式 (Twitter/Weverse/Bubble) で最新情報を確認</li>',
-        '<li>本ページは Anthropic Claude Web search で日次自動更新</li>',
-        '<li>確定/予定/予想は信頼度欄で識別</li>',
-        '</ul>',
+    parts.extend([
+        '<div class="rc-foot">',
+        '<h3 class="rc-foot-h">📚 関連リンク</h3>',
+        '<div class="rc-foot-links">',
+        '<a href="/artists/" class="rc-foot-link">🎤 アーティスト一覧</a>',
+        '<a href="/category/news/" class="rc-foot-link">📰 最新ニュース</a>',
         '</div>',
-        '<style>',
-        '.release-calendar table { width: 100%; border-collapse: collapse; margin: 1em 0; }',
-        '.release-calendar th, .release-calendar td { padding: 0.5em; border: 1px solid #ddd; text-align: left; }',
-        '.release-calendar th { background: #f4f4f8; }',
-        '.release-calendar .summary { background: #fff8e1; padding: 1em; border-left: 4px solid #ffc107; margin: 1em 0; }',
-        '.release-calendar .last-updated { color: #888; }',
-        '</style>',
+        '<p class="rc-disclaimer"><small>各アーティスト公式 (Twitter/Weverse) で最新情報を確認 ・ 本ページは Claude Web search で日次自動更新 ・ 確定/予定/予想は信頼度バッジで識別</small></p>',
+        '</div>',
+        '</div>',
+        '''<style>
+.rc-page { max-width: 980px; margin: 0 auto; padding: 0 0.8em; }
+.rc-hero { background: linear-gradient(135deg, #FF1493, #FF8A65); border-radius: 14px; padding: 1.5em 1.4em; margin: 0.5em 0 1.2em; color: white; box-shadow: 0 6px 24px rgba(255,20,147,0.18); }
+.rc-hero-title { font-size: 1.6em; font-weight: 800; margin: 0 0 0.3em; color: white; line-height: 1.2; }
+.rc-hero-sub { font-size: 0.92em; margin: 0 0 0.5em; opacity: 0.95; }
+.rc-hero-meta { font-size: 0.78em; margin: 0; opacity: 0.85; }
+.rc-summary { background: linear-gradient(135deg, #fff8e1, #ffecb3); padding: 0.9em 1.1em; border-radius: 10px; border-left: 3px solid #ffc107; margin: 0.8em 0 1.5em; font-size: 0.9em; line-height: 1.55; }
+.rc-month { font-size: 1.2em; font-weight: 700; margin: 1.5em 0 0.7em; padding-bottom: 0.3em; border-bottom: 2px solid #FF1493; }
+.rc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.7em; margin: 0.8em 0; }
+.rc-card { display: flex; align-items: stretch; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.18s, box-shadow 0.18s; }
+.rc-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,20,147,0.12); }
+.rc-card-date { width: 70px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 0.7em 0.3em; }
+.rc-day { font-size: 1.7em; font-weight: 800; line-height: 1; }
+.rc-mon { font-size: 0.7em; opacity: 0.92; margin-top: 0.15em; }
+.rc-card-body { flex: 1; min-width: 0; padding: 0.7em 0.85em; }
+.rc-card-artist { font-size: 1em; font-weight: 700; color: #222; line-height: 1.2; }
+.rc-card-artist a { color: #FF1493; text-decoration: none; }
+.rc-card-artist a:hover { text-decoration: underline; }
+.rc-card-title { font-size: 0.85em; color: #555; margin-top: 0.2em; line-height: 1.3; word-break: break-word; }
+.rc-card-tags { display: flex; gap: 0.6em; flex-wrap: wrap; margin-top: 0.4em; font-size: 0.72em; font-weight: 600; }
+.rc-tag { background: #f8f9fb; padding: 0.18em 0.5em; border-radius: 99px; }
+.rc-foot { margin: 2em 0 1em; padding: 1em 1.2em; background: #fafbfd; border-radius: 10px; }
+.rc-foot-h { font-size: 1em; margin: 0 0 0.6em; }
+.rc-foot-links { display: flex; gap: 0.6em; flex-wrap: wrap; margin-bottom: 0.7em; }
+.rc-foot-link { display: inline-flex; align-items: center; padding: 0.45em 0.9em; background: white; border: 1px solid #eee; border-radius: 99px; text-decoration: none; color: #222; font-size: 0.85em; font-weight: 600; transition: transform 0.18s; }
+.rc-foot-link:hover { transform: translateY(-1px); border-color: #FF1493; color: #FF1493; }
+.rc-disclaimer { color: #999; font-size: 0.78em; margin: 0.6em 0 0; line-height: 1.5; }
+
+@media (max-width: 600px) {
+  .rc-page { padding: 0 0.5em; }
+  .rc-hero { padding: 1.1em 0.9em; }
+  .rc-hero-title { font-size: 1.3em; }
+  .rc-hero-sub { font-size: 0.82em; }
+  .rc-hero-meta { font-size: 0.7em; }
+  .rc-summary { font-size: 0.82em; padding: 0.7em 0.9em; }
+  .rc-month { font-size: 1.05em; }
+  .rc-grid { grid-template-columns: 1fr; gap: 0.5em; }
+  .rc-card-date { width: 56px; }
+  .rc-day { font-size: 1.4em; }
+  .rc-card-body { padding: 0.6em 0.7em; }
+  .rc-card-artist { font-size: 0.92em; }
+  .rc-card-title { font-size: 0.78em; }
+  .rc-card-tags { font-size: 0.68em; }
+  .rc-foot-link { font-size: 0.78em; padding: 0.4em 0.7em; }
+}
+</style>''',
     ])
-    return '\n'.join(html_parts)
+    return '\n'.join(parts)
 
 
 def find_or_create_calendar_page(html: str) -> int:
