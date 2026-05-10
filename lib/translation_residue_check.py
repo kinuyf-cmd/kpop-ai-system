@@ -47,6 +47,15 @@ def find_hangul_samples(text: str, n: int = 3) -> list[str]:
     return samples
 
 
+def _strip_quoted_proper_nouns(text: str) -> str:
+    """引用符内 ('...' "..." 「...」) は固有名詞 (楽曲名/番組名) なので残存判定対象から除外
+    例: BABYMONSTER「춤(CHOOM)」ライブ → 「춤(CHOOM)」を除いた残りで判定
+    2026-05-10: 楽曲名のhangul残存で速報記事BLOCKされる事故対策
+    """
+    # 「」 ‘’ '' "" 内をスペース置換
+    return re.sub(r"[「『\"'‘’“”][^」』\"'‘’“”]{1,30}[」』\"'‘’“”]", ' ', text)
+
+
 def assess_residue(title: str, body_text: str, alt_text: str = '') -> dict:
     """記事の翻訳残存ハングルを評価して verdict を返す
 
@@ -60,17 +69,21 @@ def assess_residue(title: str, body_text: str, alt_text: str = '') -> dict:
             'samples': [...],
         }
     """
-    th = count_hangul(title)
-    ah = count_hangul(alt_text)
+    # 引用符内 (楽曲名・番組名) の固有名詞hangulは除外して判定
+    title_check = _strip_quoted_proper_nouns(title)
+    alt_check = _strip_quoted_proper_nouns(alt_text)
+
+    th = count_hangul(title_check)
+    ah = count_hangul(alt_check)
     bh = count_hangul(body_text)
 
-    # タイトル / alt は1字でもアウト（公開破壊レベル）
+    # タイトル / alt は1字でもアウト（公開破壊レベル、ただし引用符内固有名詞は許容）
     if th > 0:
         return {
             'verdict': 'BLOCK',
             'title_hangul': th, 'body_hangul': bh, 'alt_hangul': ah,
             'reason': f'タイトルにハングル{th}字混入 (翻訳漏れ)',
-            'samples': find_hangul_samples(title),
+            'samples': find_hangul_samples(title_check),
         }
     if ah > 0:
         return {
