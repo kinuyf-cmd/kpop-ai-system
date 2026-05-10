@@ -9,7 +9,7 @@
         "音源", "配信", "公開", "解禁", "先行公開"
       ],
       "prefer_artist_photo": true,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "kpop music video stage performance",
       "dalle_prompt": "K-pop music video scene, neon stage lights with pink and blue gradient, dynamic performance setting, abstract musical energy, microphone and speakers, bright vibrant atmosphere, 16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
@@ -25,7 +25,7 @@
         "SoFi Stadium", "MetLife"
       ],
       "prefer_artist_photo": false,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "concert stage lights crowd kpop",
       "dalle_prompt": "Spectacular concert stage with dramatic spotlights, excited crowd silhouettes, confetti and stage effects, vibrant pink purple and blue lighting, photorealistic concert photography atmosphere, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette only, Text overlay, Watermark, Logo"
@@ -59,7 +59,7 @@
         "ファン交流", "VLOGスタイル"
       ],
       "prefer_artist_photo": true,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "entertainment show fun bright colorful",
       "dalle_prompt": "Bright colorful entertainment show set, fun playful atmosphere, pastel balloons and confetti, cheerful studio setting with warm lighting, pop art inspired background, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
@@ -72,7 +72,7 @@
         "BBMA", "AMA", "VMA", "EMA", "BRIT Awards"
       ],
       "prefer_artist_photo": false,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "award ceremony trophy stage glamorous",
       "dalle_prompt": "Elegant award ceremony scene, golden trophy on stage, dramatic spotlight, red carpet atmosphere, glamorous black and gold color scheme, celebration confetti, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
@@ -88,7 +88,7 @@
         "PDRN", "グロウ"
       ],
       "prefer_artist_photo": false,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "korean fashion beauty elegant style",
       "dalle_prompt": "High-end fashion editorial, elegant East Asian style, luxury brand accessories on marble surface, soft pastel pink and lavender tones, professional studio lighting, shallow depth of field, magazine quality, bright and airy atmosphere, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Neon lighting only, Dark stage, Night scene without lighting, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
@@ -103,7 +103,7 @@
         "SNS", "発言", "コメント", "声明"
       ],
       "prefer_artist_photo": true,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "press conference microphone news media",
       "dalle_prompt": "News media atmosphere, professional press conference setting with microphones, subtle blue and gray tones, serious journalistic mood, clean minimalist composition, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
@@ -115,14 +115,14 @@
         "練習生", "メンバー公開", "ティーザー公開"
       ],
       "prefer_artist_photo": true,
-      "youtube_order": "date",
+      "youtube_order": "viewCount",
       "unsplash_query": "new beginning spotlight debut stage",
       "dalle_prompt": "Fresh new debut concept, bright spotlight on empty stage, sparkles and stardust, hopeful and energetic atmosphere, vibrant pink and white gradient, new beginning feeling, 16:9 aspect ratio, NO TEXT, NO WORDS",
       "dalle_negative": "Dark background, Black background, Low key lighting, Silhouette, Text overlay, Watermark, Logo"
     }
   },
   "default_theme": {
-    "youtube_order": "date",
+    "youtube_order": "viewCount",
     "unsplash_query": "kpop korean music culture",
     "dalle_prompt": "Modern K-pop magazine editorial, abstract musical and cultural elements, pink coral and lavender gradient, minimal elegant composition, 16:9 aspect ratio, NO TEXT, NO WORDS, NO LOGOS"
   }

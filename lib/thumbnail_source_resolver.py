@@ -112,8 +112,13 @@ def _slug(name: str) -> str:
 
 
 def _is_shorts_thumbnail(image_path: str) -> bool:
-    """YouTube Shortsの縦長サムネ検出 — 16:9枠内に縦長コンテンツ+左右ブラー/暗パディング
-    左右1/4ずつと中央1/2の標準偏差を比較。左右が中央の50%未満ならShortsと判定。
+    """YouTube Shortsの縦長サムネ検出
+
+    Shortsは縦長動画を16:9に埋める際、中央に動画+左右にブラー拡張で埋める。
+    Logo/単色背景画像との識別が重要:
+      - Shorts: 左右stdが低い (ブラー) + 左右colorrangeあり (色変化あり、ただし弱い)
+      - Logo:  左右stdが低い + 左右colorrangeほぼゼロ (完全単色)
+      - 普通の写真: 左右stdが中央と同等
     """
     try:
         from PIL import Image
@@ -123,12 +128,24 @@ def _is_shorts_thumbnail(image_path: str) -> bool:
             return False
         arr = np.array(img.resize((600, int(600 * img.height / img.width))))
         w = arr.shape[1]
-        left = arr[:, :w//4]
-        center = arr[:, w//4:w*3//4]
-        right = arr[:, w*3//4:]
+        left = arr[:, :w//4].astype(float)
+        center = arr[:, w//4:w*3//4].astype(float)
+        right = arr[:, w*3//4:].astype(float)
         cs = float(center.std())
         ss = float((left.std() + right.std()) / 2)
-        return cs > 0 and ss < cs * 0.5
+        if cs <= 0:
+            return False
+        ratio = ss / cs
+        # 中央が高std、左右が中央の20-50%程度ならShortsの可能性
+        if ratio >= 0.55 or ratio < 0.10:
+            return False  # legit写真 or 単色logo
+        # Logo判定: 左右の channel-wise range が極小 (完全単色)
+        side = np.concatenate([left, right], axis=1)
+        side_range = float(side.max(axis=(0,1)).mean() - side.min(axis=(0,1)).mean())
+        if side_range < 30:  # ほぼ単色 → Shortsではなく単色背景logo
+            return False
+        # この時点で: 中央 > 左右(中等)、左右が単色でない → Shortsパターン
+        return True
     except Exception:
         return False
 
@@ -342,10 +359,13 @@ def _resolve_channel_id_DEPRECATED(artist_name: str, accounts: dict) -> str:
     return ""
 
 
-def resolve_youtube(artist_name: str, prefer: str = "latest") -> dict | None:
+def resolve_youtube(artist_name: str, prefer: str = "popular") -> dict | None:
     """Get YouTube MV thumbnail — 最新MV or 高再生MVから自動取得
 
-    prefer: "latest" = 最新動画優先, "popular" = 高再生数優先, "static" = 固定リストのみ
+    prefer: "popular" = 高再生数優先(default), "latest" = 最新動画, "static" = 固定リストのみ
+    2026-05-10: defaultを latest → popular に変更。最新動画はShorts/Vlog/コラボが
+    K-pop公式チャンネルで日次投稿されるため Shorts汚染が多発した。人気順なら
+    アイコニックなMVサムネが安定して取得できる。
     """
     if not artist_name:
         return None
@@ -590,7 +610,7 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
     If no source available, returns a fallback dict with source='gradient_fallback'.
     """
     tc = theme_config or {}
-    yt_order = tc.get("youtube_order", "date")
+    yt_order = tc.get("youtube_order", "viewCount")  # 2026-05-10: date → viewCount
     unsplash_q = tc.get("unsplash_query", "")
     dalle_prompt = tc.get("dalle_prompt", "")
     dalle_negative = tc.get("dalle_negative", "")

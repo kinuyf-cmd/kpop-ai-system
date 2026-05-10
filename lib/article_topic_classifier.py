@@ -318,7 +318,7 @@ def classify_theme(title: str, body: str = "") -> dict:
     return {
         "theme": best_theme,
         "theme_config": {
-            "youtube_order": theme_config.get("youtube_order", default.get("youtube_order", "date")),
+            "youtube_order": theme_config.get("youtube_order", default.get("youtube_order", "viewCount")),
             "unsplash_query": theme_config.get("unsplash_query", default.get("unsplash_query", "")),
             "dalle_prompt": theme_config.get("dalle_prompt", default.get("dalle_prompt", "")),
         },
