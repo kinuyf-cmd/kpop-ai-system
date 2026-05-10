@@ -179,6 +179,10 @@ def _detect_unknown_artist(title: str) -> str:
         'SHOW', 'STAGE', 'ROYAL', 'FINAL', 'FIRST', 'LAST', 'NEXT',
         'BREAKING', 'NEWS', 'JAPAN', 'KOREA', 'TOKYO', 'SEOUL',
         'CONCERT', 'FESTIVAL', 'AWARDS', 'ALBUM', 'SINGLE', 'TOUR',
+        # 2026-05-10: フルネーム (TOMORROW X TOGETHER等) の最初の単語が単独で artist 採用
+        # されないよう除外。KPOP_KWのフルネームマッチで signal側は既に正規化される
+        'TOMORROW', 'FUTURE', 'DREAM', 'KISS', 'LOVE', 'STAR', 'MOON',
+        'BABY', 'GIRL', 'BOY', 'KING', 'QUEEN', 'GOLDEN', 'BLACK', 'WHITE',
     }
 
     # パターン1: タイトル先頭の大文字英語 (句読点・括弧の前まで)

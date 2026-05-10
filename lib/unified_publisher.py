@@ -218,13 +218,25 @@ def unified_publish(
             'fromis_9', 'KEP1ER', 'STAYC', 'XG', 'P1Harmony',
         ]
         # 主語抽出: タイトル先頭部分 (最初の読点・句読点まで) のみ走査
+        # 2026-05-10: \s を分割対象から除外 — "TOMORROW X TOGETHER"等の複数単語artist対応
         import re as _re_subj
-        _title_subject = _re_subj.split(r'[、。「」!?！？\s]', title_final, maxsplit=1)[0]
-        for _g in _known_groups:
-            if _g.lower() in _title_subject.lower():
-                artist = _g
-                log.append(f"artist auto-detected (subject): {artist}")
+        _title_subject = _re_subj.split(r'[、。「」!?！？]', title_final, maxsplit=1)[0]
+        # alias map: フルネーム → 短い登録名 (TXTで統一する等)
+        _alias_to_short = {
+            'TOMORROW X TOGETHER': 'TXT',
+        }
+        # フルネーム → alias変換を先に試行 (順序重要: フルネームが短縮名より先にマッチ)
+        for _full, _short in _alias_to_short.items():
+            if _full.lower() in _title_subject.lower():
+                artist = _short
+                log.append(f"artist auto-detected (alias): {_full} → {_short}")
                 break
+        if not artist:
+            for _g in _known_groups:
+                if _g.lower() in _title_subject.lower():
+                    artist = _g
+                    log.append(f"artist auto-detected (subject): {artist}")
+                    break
         # 主語に固有名詞がない場合は artist=空のまま (非K-POP記事の可能性)
         # 別アーティスト誤検出より、テーマ画像/abstract fallbackの方が安全
 
