@@ -151,6 +151,12 @@ NEGATIVE_KEYWORDS = [
     "food", "cuisine", "restaurant", "street", "city", "airport",
     # 同名バンド/言葉対策
     "and also the trees", "stranger things",
+    # 2026-05-10: 「TREASURE」=宝物/ドラゴン誤マッチ対策 (19350事案)
+    "dragon", "fantasy", "national treasure", "national_treasure",
+    "treasure chest", "treasure_chest", "buried treasure", "treasure hunt",
+    "pensive bodhisattva",
+    # 同名一般語の対策 (誤マッチ多発単語の文脈分離)
+    "shipwreck", "pirate", "gold coin",
 ]
 
 # アーティスト名として最低限必要な文字数

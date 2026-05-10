@@ -198,5 +198,11 @@
   },
   "hearts2hearts": {
     "channel_id": "UC7Q3HUnJA3nvjZR2JeMn2Cw"
+  },
+  "treasure": {
+    "channel_name": "TREASURE (트레저)",
+    "youtube_channel_id": "UCpglvCYfpAwa45A_nnuDDdg",
+    "instagram": "treasuremembers",
+    "_note": "2026-05-10 added — Wikimedia fallback alone matched \"treasure\" 英単語=dragon art"
   }
 }
