@@ -442,90 +442,113 @@ def render_html(artist: str, profile: dict) -> str:
 
     parts.append('</div>')  # /artist-profile
 
-    # ── インラインCSS (namu-wiki風) ──
+    # ── インラインCSS (compact + mobile optimized) ──
     parts.append('''<style>
-/* ========== Hero ========== */
-.ap-hero { border-radius: 16px; padding: 2.5em 1.5em; margin: 1em 0 2em; color: white; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
-.ap-hero-inner { display: flex; align-items: center; gap: 1.5em; max-width: 900px; margin: 0 auto; flex-wrap: wrap; }
-.ap-hero-avatar { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3em; font-weight: bold; backdrop-filter: blur(10px); border: 3px solid rgba(255,255,255,0.4); flex-shrink: 0; }
-.ap-hero-info { flex: 1; min-width: 200px; }
-.ap-hero-name { font-size: 2.5em; font-weight: 800; margin: 0 0 0.2em; line-height: 1.1; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-.ap-hero-tagline { font-size: 1em; opacity: 0.95; margin: 0 0 1em; }
-.ap-hero-stats { display: flex; gap: 0.6em; flex-wrap: wrap; }
-.ap-stat { background: rgba(255,255,255,0.22); padding: 0.4em 0.9em; border-radius: 99px; font-size: 0.85em; font-weight: 600; backdrop-filter: blur(8px); }
+/* ========== Hero (compact) ========== */
+.ap-hero { border-radius: 16px; padding: 1.6em 1.4em; margin: 0.5em 0 1.5em; color: white; box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+.ap-hero-inner { display: flex; align-items: center; gap: 1.2em; max-width: 900px; margin: 0 auto; flex-wrap: wrap; }
+.ap-hero-avatar { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; backdrop-filter: blur(10px); border: 3px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+.ap-hero-info { flex: 1; min-width: 180px; }
+.ap-hero-name { font-size: 1.9em; font-weight: 800; margin: 0 0 0.15em; line-height: 1.1; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.ap-hero-tagline { font-size: 0.9em; opacity: 0.95; margin: 0 0 0.7em; }
+.ap-hero-stats { display: flex; gap: 0.5em; flex-wrap: wrap; }
+.ap-stat { background: rgba(255,255,255,0.22); padding: 0.3em 0.75em; border-radius: 99px; font-size: 0.78em; font-weight: 600; backdrop-filter: blur(8px); }
 
 /* ========== Sections ========== */
-.artist-profile { max-width: 900px; margin: 0 auto; padding: 0 1em; }
-.ap-updated { color: #999; font-size: 0.85em; text-align: right; margin: 0.5em 0; }
-.ap-h2 { font-size: 1.5em; font-weight: 700; margin: 2em 0 1em; padding-bottom: 0.4em; border-bottom: 3px solid #FF1493; }
-.ap-intro { background: linear-gradient(135deg, #fff8fc, #f8f4ff); padding: 1.4em 1.6em; border-radius: 12px; margin: 1em 0 2em; border-left: 4px solid #FF1493; line-height: 1.7; }
+.artist-profile { max-width: 900px; margin: 0 auto; padding: 0 0.8em; }
+.ap-updated { color: #999; font-size: 0.78em; text-align: right; margin: 0.3em 0; }
+.ap-h2 { font-size: 1.25em; font-weight: 700; margin: 1.4em 0 0.8em; padding-bottom: 0.35em; border-bottom: 2px solid #FF1493; }
+.ap-intro { background: linear-gradient(135deg, #fff8fc, #f8f4ff); padding: 1em 1.2em; border-radius: 10px; margin: 0.8em 0 1.2em; border-left: 3px solid #FF1493; line-height: 1.6; font-size: 0.92em; }
 
-/* ========== 基本情報 grid ========== */
-.ap-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.8em; margin: 1em 0; }
-.ap-info-item { background: #f8f9fb; padding: 1em 1.2em; border-radius: 10px; border-left: 3px solid #FF1493; }
-.ap-info-item dt { font-size: 0.78em; font-weight: 700; color: #888; letter-spacing: 0.05em; margin: 0 0 0.3em; text-transform: uppercase; }
-.ap-info-item dd { margin: 0; font-size: 1em; color: #222; line-height: 1.5; }
-.ap-info-item dd small { color: #666; }
+/* ========== 基本情報 (compact 2-col grid) ========== */
+.ap-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
+.ap-info-item { background: #f8f9fb; padding: 0.6em 0.9em; border-radius: 8px; border-left: 3px solid #FF1493; }
+.ap-info-item dt { font-size: 0.7em; font-weight: 700; color: #888; letter-spacing: 0.04em; margin: 0 0 0.15em; text-transform: uppercase; }
+.ap-info-item dd { margin: 0; font-size: 0.92em; color: #222; line-height: 1.4; }
+.ap-info-item dd small { color: #666; font-size: 0.85em; }
 
-/* ========== Members grid ========== */
-.ap-members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1em; margin: 1em 0; }
-.ap-member-card { background: white; border-radius: 12px; padding: 1.2em 1em; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.2s, box-shadow 0.2s; }
-.ap-member-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,20,147,0.12); }
-.ap-member-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.7em; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.ap-member-name { font-size: 1.15em; font-weight: 700; color: #222; margin-bottom: 0.1em; }
-.ap-member-en { font-size: 0.85em; color: #999; margin-bottom: 0.3em; }
-.ap-member-real { font-size: 0.75em; color: #aaa; margin-bottom: 0.4em; }
-.ap-member-position { font-size: 0.85em; color: #555; margin: 0.5em 0 0.3em; line-height: 1.3; }
-.ap-member-birth { font-size: 0.8em; color: #777; }
-.ap-member-natl { font-size: 0.75em; color: #999; margin-top: 0.2em; }
+/* ========== Members (compact, dense) ========== */
+.ap-members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6em; margin: 0.8em 0; }
+.ap-member-card { background: white; border-radius: 10px; padding: 0.8em 0.5em; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: transform 0.18s, box-shadow 0.18s; }
+.ap-member-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,20,147,0.12); }
+.ap-member-avatar { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 0.4em; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: 800; color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+.ap-member-name { font-size: 1em; font-weight: 700; color: #222; line-height: 1.2; }
+.ap-member-en { font-size: 0.72em; color: #999; margin-top: 0.05em; }
+.ap-member-real { font-size: 0.65em; color: #aaa; margin-top: 0.1em; line-height: 1.2; }
+.ap-member-position { font-size: 0.72em; color: #555; margin-top: 0.4em; line-height: 1.3; }
+.ap-member-birth { font-size: 0.7em; color: #777; margin-top: 0.25em; }
+.ap-member-natl { font-size: 0.65em; color: #999; margin-top: 0.1em; }
 
-/* ========== Discography timeline ========== */
-.ap-disco-timeline { position: relative; padding-left: 0; }
-.ap-disco-item { display: flex; align-items: flex-start; gap: 0.9em; padding: 0.7em 0; border-bottom: 1px dashed #eee; }
-.ap-disco-year { font-size: 1em; font-weight: 700; color: #888; flex-shrink: 0; width: 50px; padding-top: 0.2em; }
-.ap-disco-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1em; flex-shrink: 0; }
-.ap-disco-body { flex: 1; }
-.ap-disco-title { font-size: 1em; color: #222; }
-.ap-disco-meta { font-size: 0.8em; color: #888; margin-top: 0.2em; }
+/* ========== Discography (2-col grid + compact) ========== */
+.ap-disco-timeline { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.4em; margin: 0.8em 0; }
+.ap-disco-item { display: flex; align-items: center; gap: 0.6em; padding: 0.5em 0.7em; background: #f8f9fb; border-radius: 8px; border-left: 3px solid #ddd; }
+.ap-disco-year { font-size: 0.85em; font-weight: 700; color: #888; flex-shrink: 0; width: 44px; }
+.ap-disco-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9em; flex-shrink: 0; }
+.ap-disco-body { flex: 1; min-width: 0; }
+.ap-disco-title { font-size: 0.9em; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-disco-meta { font-size: 0.7em; color: #888; }
 .ap-disco-type { font-weight: 600; }
 
-/* ========== SNS grid ========== */
-.ap-sns-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8em; margin: 1em 0; }
-.ap-sns-card { display: flex; align-items: center; gap: 0.8em; padding: 0.9em 1em; background: white; border-radius: 10px; border: 1px solid #eee; text-decoration: none; color: #222; transition: transform 0.2s, box-shadow 0.2s; }
-.ap-sns-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
-.ap-sns-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; font-weight: bold; flex-shrink: 0; }
-.ap-sns-label { font-size: 0.9em; font-weight: 600; }
+/* ========== SNS (icon-only chips on mobile) ========== */
+.ap-sns-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
+.ap-sns-card { display: flex; align-items: center; gap: 0.6em; padding: 0.55em 0.8em; background: white; border-radius: 8px; border: 1px solid #eee; text-decoration: none; color: #222; transition: transform 0.18s, box-shadow 0.18s; }
+.ap-sns-card:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+.ap-sns-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1em; font-weight: bold; flex-shrink: 0; }
+.ap-sns-label { font-size: 0.82em; font-weight: 600; }
 
-/* ========== Articles grid (関連記事カード) ========== */
-.ap-articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1em; margin: 1em 0; }
-.ap-article-card { display: block; background: white; border-radius: 12px; overflow: hidden; text-decoration: none; color: #222; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.2s, box-shadow 0.2s; }
-.ap-article-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,20,147,0.12); }
+/* ========== Articles grid ========== */
+.ap-articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.7em; margin: 0.8em 0; }
+.ap-article-card { display: block; background: white; border-radius: 10px; overflow: hidden; text-decoration: none; color: #222; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: transform 0.18s, box-shadow 0.18s; }
+.ap-article-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,20,147,0.1); }
 .ap-article-thumb { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: linear-gradient(135deg,#ffe1ec,#fff8e1); display: flex; align-items: center; justify-content: center; }
 .ap-article-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ap-article-noimg { font-size: 2.5em; opacity: 0.5; }
-.ap-article-body { padding: 0.8em 1em; }
-.ap-article-title { font-size: 0.95em; font-weight: 600; line-height: 1.4; color: #222; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.ap-article-date { font-size: 0.75em; color: #999; margin-top: 0.4em; }
+.ap-article-noimg { font-size: 2em; opacity: 0.5; }
+.ap-article-body { padding: 0.6em 0.8em; }
+.ap-article-title { font-size: 0.85em; font-weight: 600; line-height: 1.35; color: #222; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ap-article-date { font-size: 0.7em; color: #999; margin-top: 0.3em; }
 
-/* ========== Related ========== */
-.ap-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.8em; margin: 1em 0; }
-.ap-related-card { display: flex; align-items: center; gap: 0.8em; padding: 1em 1.2em; border-radius: 12px; text-decoration: none; color: #222; transition: transform 0.2s; }
+/* ========== Related (compact) ========== */
+.ap-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
+.ap-related-card { display: flex; align-items: center; gap: 0.6em; padding: 0.7em 0.9em; border-radius: 10px; text-decoration: none; color: #222; transition: transform 0.18s; }
 .ap-related-card:hover { transform: translateY(-2px); }
-.ap-related-icon { font-size: 1.6em; }
-.ap-related-cal { background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 4px solid #ffc107; }
-.ap-related-news { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 4px solid #2196F3; }
-.ap-related-hub { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border-left: 4px solid #e91e63; }
+.ap-related-icon { font-size: 1.3em; flex-shrink: 0; }
+.ap-related-card div { font-size: 0.85em; line-height: 1.3; }
+.ap-related-card small { font-size: 0.78em; }
+.ap-related-cal { background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 3px solid #ffc107; }
+.ap-related-news { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 3px solid #2196F3; }
+.ap-related-hub { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border-left: 3px solid #e91e63; }
 
-/* ========== Mobile ========== */
+/* ========== Mobile (<= 600px) ========== */
 @media (max-width: 600px) {
-  .ap-hero { padding: 1.8em 1em; }
-  .ap-hero-name { font-size: 1.8em; }
-  .ap-hero-avatar { width: 80px; height: 80px; font-size: 2.4em; }
-  .ap-h2 { font-size: 1.25em; }
-  .ap-members-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7em; }
-  .ap-member-card { padding: 0.9em 0.6em; }
-  .ap-member-avatar { width: 56px; height: 56px; font-size: 1.6em; }
-  .ap-member-name { font-size: 1em; }
+  .ap-hero { padding: 1.2em 0.9em; border-radius: 12px; }
+  .ap-hero-inner { gap: 0.9em; }
+  .ap-hero-avatar { width: 56px; height: 56px; font-size: 1.6em; }
+  .ap-hero-name { font-size: 1.4em; }
+  .ap-hero-tagline { font-size: 0.78em; margin-bottom: 0.5em; }
+  .ap-stat { font-size: 0.72em; padding: 0.25em 0.6em; }
+  .ap-h2 { font-size: 1.05em; margin: 1em 0 0.5em; }
+  .artist-profile { padding: 0 0.5em; }
+  .ap-info-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4em; }
+  .ap-info-item { padding: 0.5em 0.7em; }
+  .ap-members-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5em; }
+  .ap-member-card { padding: 0.7em 0.4em; }
+  .ap-member-avatar { width: 44px; height: 44px; font-size: 1.25em; }
+  .ap-member-name { font-size: 0.92em; }
+  .ap-disco-timeline { grid-template-columns: 1fr; gap: 0.35em; }
+  .ap-sns-grid { grid-template-columns: repeat(3, 1fr); }
+  .ap-sns-card { padding: 0.5em; flex-direction: column; gap: 0.3em; text-align: center; }
+  .ap-sns-icon { width: 26px; height: 26px; font-size: 0.9em; }
+  .ap-sns-label { font-size: 0.7em; }
+  .ap-articles-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5em; }
+  .ap-article-title { font-size: 0.78em; }
+  .ap-related { grid-template-columns: 1fr; }
+  .ap-related-card { padding: 0.6em 0.8em; }
+}
+
+/* ========== 超小型 (<= 380px) ========== */
+@media (max-width: 380px) {
+  .ap-info-grid { grid-template-columns: 1fr; }
+  .ap-articles-grid { grid-template-columns: 1fr; }
 }
 </style>''')
     return '\n'.join(parts)
