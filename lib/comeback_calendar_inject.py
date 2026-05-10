@@ -1,7 +1,7 @@
-"""記事末尾にカムバックカレンダーCTAを自動挿入
+"""記事末尾にカムバックカレンダーCTA + Artist Profile Wiki誘導を自動挿入
 
-comeback_calendar_builder.py で生成された /comeback-calendar/ への動線を
-全K-POP関連記事末尾に自動追加。bounce下げ + sticky page promotion。
+sticky page promotion + bounce下げ。/comeback-calendar/ + /artist-{slug}/ の
+2方向にinternal link流す。
 
 統合方法 (unified_publisher内):
     from lib.comeback_calendar_inject import maybe_inject_calendar_cta
@@ -14,6 +14,18 @@ from datetime import datetime
 from pathlib import Path
 
 CALENDAR_PATH = Path('/home/aiuser/kpop-ai-system/config/comeback_calendar_v2.json')
+PROFILE_DIR = Path('/home/aiuser/kpop-ai-system/config/artist_profiles')
+
+# artist名→slug map (profile page用)
+ARTIST_SLUG_MAP = {
+    'BTS': 'bts', 'BLACKPINK': 'blackpink', 'NewJeans': 'newjeans',
+    'aespa': 'aespa', 'IVE': 'ive', 'LE SSERAFIM': 'le-sserafim',
+    'ITZY': 'itzy', 'TWICE': 'twice', 'SEVENTEEN': 'seventeen',
+    'Stray Kids': 'stray-kids', 'ENHYPEN': 'enhypen', 'TXT': 'txt',
+    'NMIXX': 'nmixx', 'BABYMONSTER': 'babymonster', 'RIIZE': 'riize',
+    'ILLIT': 'illit', 'BOYNEXTDOOR': 'boynextdoor',
+    'KISS OF LIFE': 'kiss-of-life', 'IU': 'iu', 'KATSEYE': 'katseye',
+}
 
 
 def _get_recent_comebacks_for_artist(artist: str, limit: int = 3) -> list[dict]:
@@ -63,6 +75,15 @@ def maybe_inject_calendar_cta(body_html: str, artist: str = '') -> str:
         '<a href="https://www.kpopjournal.tokyo/comeback-calendar/" '
         'target="_blank" rel="noopener"><strong>カレンダー全体を見る →</strong></a></p>'
     )
+
+    # Artist profile page誘導 (/artist-{slug}/)
+    profile_slug = ARTIST_SLUG_MAP.get(artist)
+    if profile_slug and (PROFILE_DIR / f'{profile_slug}.json').exists():
+        cta_lines.append(
+            f'<p>📖 <a href="https://www.kpopjournal.tokyo/artist-{profile_slug}/" '
+            f'target="_blank" rel="noopener"><strong>{artist} のメンバー・所属事務所・公式SNSなど詳細プロフィール →</strong></a></p>'
+        )
+
     cta_lines.append('</div>')
 
     return body_html + '\n' + '\n'.join(cta_lines)
