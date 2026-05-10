@@ -248,3 +248,4 @@
 0 9 * * 1 python3 pipeline/kpop_kw_expansion_suggester.py >> logs/kpop_kw_suggestions.log 2>&1
 0 22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/daily_kpi_report.py >> logs/daily_kpi_report.log 2>&1
 0 5 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/comeback_calendar_builder.py >> logs/comeback_calendar_builder.log 2>&1
+0 6 * * 0 cd /home/aiuser/kpop-ai-system && python3 pipeline/profile_wiki_builder.py >> logs/profile_wiki_builder.log 2>&1
