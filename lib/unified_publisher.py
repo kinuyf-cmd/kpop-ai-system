@@ -180,12 +180,29 @@ def unified_publish(
         # 主語に固有名詞がない場合は artist=空のまま (非K-POP記事の可能性)
         # 別アーティスト誤検出より、テーマ画像/abstract fallbackの方が安全
 
-    # サムネ優先順位 (2026-05-07修正: アーティスト本人写真を最優先に逆転)
-    # 速報/ニュース: アーティスト写真 → ソースog:image → DALL-E
-    # 理由: source og:imageが無関係画像 (例: ソ・イニョン記事にTWICEアルバムカバー、
-    #       IVE記事に映画キャストの写真) を返す事故を多発したため。
-    #       本人写真は確実に主役を映す。og:imageは検証手段なくfallbackに後退。
-    #       ユーザールール「アイドル記事サムネは必ず本人写真」を厳守するため
+    # サムネ優先順位 (2026-05-10再修正: ソース先og:image最優先に戻す)
+    # 速報/ニュース: ソースog:image → アーティスト写真 → DALL-E
+    # 理由: 5/7修正で本人写真最優先化したが、artist識別ミス時に間違ったアーティスト写真が
+    #       確定する事故が発生 (例: 18881チョ・スンヨン記事がBOYNEXTDOORに誤分類)。
+    #       元記事のog:imageは少なくとも当該記事の文脈写真である可能性が高いため最優先。
+    if not media_id and source_url:
+        try:
+            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
+        except Exception as e:
+            log.append(f"source_thumb error: {e}")
+            thumb = None
+        if thumb and thumb.get('path'):
+            _src_alt = f"{title_final}のサムネイル画像"
+            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
+            if media_id:
+                log.append(f"media_id: {media_id} (source_og_primary: {thumb.get('source','')})")
+                if thumb.get('source_url'):
+                    attribution_html = (
+                        f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
+                        f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
+                    )
+
+    # ソース og:image が取得できなかった場合のフォールバック: アーティスト本人写真
     if not media_id and artist:
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
@@ -199,7 +216,7 @@ def unified_publish(
                     _thumb_alt = f"{title_final}のサムネイル画像"
                     media_id = _upload_media(_resized, alt_text=_thumb_alt)
                     if media_id:
-                        log.append(f"media_id: {media_id} (artist_resolver: {_artist_thumb.get('source')})")
+                        log.append(f"media_id: {media_id} (artist_fallback: {_artist_thumb.get('source')})")
                         if _artist_thumb.get('source') == 'source_site' and _artist_thumb.get('source_url'):
                             attribution_html = (
                                 f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
@@ -207,41 +224,6 @@ def unified_publish(
                             )
         except Exception as e:
             log.append(f"artist_resolver error: {e}")
-
-    # アーティスト写真が取得できなかった場合のフォールバック: ソース記事og:image
-    if not media_id and source_url:
-        try:
-            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
-        except Exception as e:
-            log.append(f"source_thumb error: {e}")
-            thumb = None
-        if thumb and thumb.get('path'):
-            _src_alt = f"{title_final}のサムネイル画像"
-            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
-            if media_id:
-                log.append(f"media_id: {media_id} (source_og_fallback)")
-                if thumb.get('source_url'):
-                    attribution_html = (
-                        f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
-                        f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
-                    )
-
-    # source_url経由のサムネ取得（アーティスト写真で取得できなかった場合のフォールバック）
-    if not media_id and source_url:
-        try:
-            thumb = resolve_thumbnail(source_url, title_final, body_html[:500] if body_html else '', 0)
-        except Exception as e:
-            log.append(f"thumb error: {e}")
-
-    if not media_id and thumb and thumb.get('path'):
-        _src_alt = f"{title_final}のサムネイル画像"
-        media_id = _upload_media(thumb['path'], alt_text=_src_alt)
-        log.append(f"media_id: {media_id} ({thumb.get('source')})")
-        if thumb.get('source') == 'source_site' and thumb.get('source_url'):
-            attribution_html = (
-                f'<p style="font-size:11px;color:#888;text-align:right;margin:8px 0;">'
-                f'画像: <a href="{thumb["source_url"]}" target="_blank" rel="noopener">元記事より</a></p>\n'
-            )
 
     # 5.1. サムネ未解決時のDALL-Eフォールバック
     if not media_id:
