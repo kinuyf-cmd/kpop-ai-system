@@ -360,7 +360,14 @@ def unified_publish(
     except Exception as e:
         log.append(f"internal_links err: {e}")
 
-    # 6.3.1b. K-POPカムバックカレンダーCTA挿入 (sticky page promotion)
+    # 6.3.1b. K-POP Artist Profile への inline link 注入 (本文中の初出のみ)
+    try:
+        from lib.comeback_calendar_inject import inject_profile_inline_links
+        content = inject_profile_inline_links(content)
+    except Exception as e:
+        log.append(f"profile_link err: {e}")
+
+    # 6.3.1c. K-POPカムバックカレンダーCTA挿入 (sticky page promotion)
     try:
         from lib.comeback_calendar_inject import maybe_inject_calendar_cta
         _artist_for_cta = ''

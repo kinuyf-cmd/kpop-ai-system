@@ -48,6 +48,56 @@ def _get_recent_comebacks_for_artist(artist: str, limit: int = 3) -> list[dict]:
     return upcoming[:limit]
 
 
+def inject_profile_inline_links(body_html: str) -> str:
+    """本文中のartist名 (1度目出現) を /artist-{slug}/ へのlinkに変換。
+    既存linkは触らない。同artistの2度目以降は変換しない (link spam防止)。"""
+    if not body_html:
+        return body_html
+
+    # 既存 profile JSON が存在するartistのみ対象 (空page誘導防止)
+    available_slugs = set()
+    if PROFILE_DIR.exists():
+        for p in PROFILE_DIR.glob('*.json'):
+            available_slugs.add(p.stem)
+
+    result = body_html
+    used = set()
+    # 長い名前から優先 (LE SSERAFIM > IVE 等の部分マッチ防止)
+    for artist, slug in sorted(ARTIST_SLUG_MAP.items(), key=lambda x: -len(x[0])):
+        if slug not in available_slugs or slug in used:
+            continue
+        # 既にlink内にあるartist名は触らない (negative lookbehind/ahead)
+        # シンプルに: 最初の出現のみ置換、ただし既存<a>内は除外
+        import re
+        # \w境界で囲み、artist名がword一部にならないようにする
+        # 韓国語/日本語の前後はOK ("BTSの" は match させたい)
+        pattern = re.compile(r'(?<![A-Za-z0-9])' + re.escape(artist) + r'(?![A-Za-z0-9])')
+        # 既存<a>...</a>を一時退避してからmatch
+        anchor_re = re.compile(r'<a\b[^>]*>.*?</a>', re.DOTALL)
+        anchors = []
+        def _stash(m):
+            anchors.append(m.group(0))
+            return f'\x00ANCHOR{len(anchors)-1}\x00'
+        stashed = anchor_re.sub(_stash, result)
+
+        # 最初の1回のみlink化
+        replaced_once = [False]
+        def _link(m):
+            if replaced_once[0]:
+                return m.group(0)
+            replaced_once[0] = True
+            return f'<a href="/artist-{slug}/" rel="noopener">{m.group(0)}</a>'
+        new_stashed = pattern.sub(_link, stashed, count=1)
+
+        # anchor復元
+        for i, a in enumerate(anchors):
+            new_stashed = new_stashed.replace(f'\x00ANCHOR{i}\x00', a)
+        if replaced_once[0]:
+            used.add(slug)
+            result = new_stashed
+    return result
+
+
 def maybe_inject_calendar_cta(body_html: str, artist: str = '') -> str:
     """記事body末尾にカレンダーCTAを挿入。artistマッチがあれば該当行も表示"""
     cta_lines = [
