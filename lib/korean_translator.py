@@ -87,6 +87,13 @@ def _update_threshold(used):
 
 
 def translate_ko_to_ja(text, context='K-POP entertainment news'):
+    # 2026-05-10: TRANSLATOR_V2=1 で Claude Sonnet 4.6版に切替
+    if os.environ.get('TRANSLATOR_V2') == '1':
+        try:
+            from lib.translator_v2 import translate_ko_to_ja_v2
+            return translate_ko_to_ja_v2(text, context=context)
+        except Exception as e:
+            print(f"  [translation] v2 fallback to v1: {e}")
     key = os.getenv('OPENAI_API_KEY')
     if not key:
         return {'success': False, 'translated': text, 'reason': 'OPENAI_API_KEY未設定'}
