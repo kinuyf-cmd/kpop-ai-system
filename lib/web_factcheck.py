@@ -234,9 +234,22 @@ def verify_article(title: str, body_text: str, kind: str = 'news',
             'verdict': 'PASS',
         }
 
-    # 2. Tavily Web検索による裏取り（最も信頼性が高い）
+    # 2. Web検索による裏取り (Tavily → 失敗時 Claude web_search にフォールバック)
     tavily_result = _verify_with_tavily(title, body_text)
     tavily_found = tavily_result.get('found')
+    # Tavilyがquota超過/未設定/エラーの場合 Claude web_search に切り替え
+    if tavily_found is None and ('quota' in tavily_result.get('reason', '').lower()
+                                  or '未設定' in tavily_result.get('reason', '')
+                                  or 'error' in tavily_result.get('reason', '').lower()):
+        try:
+            from lib.claude_websearch_factcheck import verify_with_claude_websearch
+            cw = verify_with_claude_websearch(title)
+            if cw.get('found') is not None:
+                tavily_result = cw
+                tavily_found = cw.get('found')
+                tavily_result['reason'] = f"[Claude WS fallback] {cw.get('reason','')[:150]}"
+        except Exception:
+            pass
 
     if tavily_result.get('sources'):
         for s in tavily_result['sources'][:3]:
