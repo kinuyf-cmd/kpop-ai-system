@@ -241,6 +241,20 @@ def _years_since(date_str: str) -> str:
         return ''
 
 
+def _fetch_recent_articles_for_artist(artist: str, limit: int = 6) -> list[dict]:
+    """指定 artist の最新記事を WP REST から取得 (search経由)"""
+    import urllib.parse as _urlp
+    q = _urlp.quote(artist)
+    url = (f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts'
+           f'?search={q}&per_page={limit}&orderby=date&order=desc'
+           f'&_fields=id,slug,title,date,featured_media,_links,_embedded&_embed=wp:featuredmedia')
+    try:
+        req = urllib.request.Request(url, headers={'Authorization': f'Basic {AUTH}'})
+        return json.loads(urllib.request.urlopen(req, timeout=10).read())
+    except Exception:
+        return []
+
+
 def render_html(artist: str, profile: dict) -> str:
     """Profile JSON → WordPress page HTML (namu-wiki スタイル v2)"""
     today = datetime.now(JST).strftime('%Y年%m月%d日')
@@ -381,15 +395,46 @@ def render_html(artist: str, profile: dict) -> str:
 </a>''')
         parts.append('</div>')
 
-    # ── 関連 ──
-    parts.append('<h2 class="ap-h2">📰 関連リンク</h2>')
+    # ── 最新記事カード grid ──
+    recent_posts = _fetch_recent_articles_for_artist(artist, limit=6)
+    if recent_posts:
+        parts.append(f'<h2 class="ap-h2">📰 {artist} の最新記事</h2>')
+        parts.append('<div class="ap-articles-grid">')
+        for post in recent_posts:
+            title = post.get('title', {}).get('rendered', '')
+            slug = post.get('slug', '')
+            date_str = post.get('date', '')[:10].replace('-', '/')
+            # featured_media URL
+            thumb = ''
+            embedded = post.get('_embedded', {}).get('wp:featuredmedia', [])
+            if embedded and embedded[0].get('source_url'):
+                thumb = embedded[0]['source_url']
+                # WP のmedium-large サムネがあれば優先
+                sizes = embedded[0].get('media_details', {}).get('sizes', {})
+                if sizes.get('medium_large', {}).get('source_url'):
+                    thumb = sizes['medium_large']['source_url']
+                elif sizes.get('medium', {}).get('source_url'):
+                    thumb = sizes['medium']['source_url']
+            thumb_html = (f'<img src="{thumb}" alt="{title}" loading="lazy" />'
+                          if thumb else '<div class="ap-article-noimg">📰</div>')
+            parts.append(f'''<a href="/{slug}/" class="ap-article-card">
+  <div class="ap-article-thumb">{thumb_html}</div>
+  <div class="ap-article-body">
+    <div class="ap-article-title">{title}</div>
+    <div class="ap-article-date">{date_str}</div>
+  </div>
+</a>''')
+        parts.append('</div>')
+
+    # ── 関連リンク ──
+    parts.append('<h2 class="ap-h2">🔗 関連</h2>')
     parts.append('<div class="ap-related">')
     parts.append(f'<a href="/release-calendar/" class="ap-related-card ap-related-cal">'
                  f'<span class="ap-related-icon">📅</span>'
                  f'<div><strong>{artist} の今後の予定</strong><br><small>カムバック・カレンダーで確認 →</small></div></a>')
     parts.append(f'<a href="/?s={artist.replace(" ", "+")}" class="ap-related-card ap-related-news">'
-                 f'<span class="ap-related-icon">📰</span>'
-                 f'<div><strong>{artist} の最新ニュース</strong><br><small>記事一覧 →</small></div></a>')
+                 f'<span class="ap-related-icon">🔍</span>'
+                 f'<div><strong>{artist} 関連を全件検索</strong><br><small>サイト内検索 →</small></div></a>')
     parts.append(f'<a href="/artists/" class="ap-related-card ap-related-hub">'
                  f'<span class="ap-related-icon">🎤</span>'
                  f'<div><strong>他のアーティスト</strong><br><small>全プロフィール →</small></div></a>')
@@ -450,6 +495,17 @@ def render_html(artist: str, profile: dict) -> str:
 .ap-sns-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
 .ap-sns-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; font-weight: bold; flex-shrink: 0; }
 .ap-sns-label { font-size: 0.9em; font-weight: 600; }
+
+/* ========== Articles grid (関連記事カード) ========== */
+.ap-articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1em; margin: 1em 0; }
+.ap-article-card { display: block; background: white; border-radius: 12px; overflow: hidden; text-decoration: none; color: #222; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; transition: transform 0.2s, box-shadow 0.2s; }
+.ap-article-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,20,147,0.12); }
+.ap-article-thumb { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: linear-gradient(135deg,#ffe1ec,#fff8e1); display: flex; align-items: center; justify-content: center; }
+.ap-article-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ap-article-noimg { font-size: 2.5em; opacity: 0.5; }
+.ap-article-body { padding: 0.8em 1em; }
+.ap-article-title { font-size: 0.95em; font-weight: 600; line-height: 1.4; color: #222; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ap-article-date { font-size: 0.75em; color: #999; margin-top: 0.4em; }
 
 /* ========== Related ========== */
 .ap-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.8em; margin: 1em 0; }
