@@ -38,6 +38,15 @@ KPOP_KW = [
     'TOMORROW X TOGETHER', 'TOMORROW_X_TOGETHER',
     "CAT'S EYE", "CAT’S EYE", 'CATS EYE', 'KATSEYE',  # U+2019(’)対応
     'FANOMENON', 'WHIB',
+    # 2026-05-10: 速報シグナル取りこぼし対策
+    '씨야', 'See Ya', 'SEE YA',  # ガールズグループ復帰
+    '코르티스', 'CORTIS',  # BIGHIT新人group
+    'tripleS', '트리플에스',
+    'PLAVE', '플레이브', 'CRAVITY', '크래비티',
+    'VERIVERY', '베리베리',
+    '양준일', 'Yang Joon Il',  # 名物SOLO singer
+    '아이즈원', 'IZ*ONE', 'IZONE',
+    '宇宙少女', 'Cosmic Girls',
 ]
 
 URGENT_KW = [
