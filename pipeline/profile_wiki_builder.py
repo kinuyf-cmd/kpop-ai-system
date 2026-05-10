@@ -381,6 +381,16 @@ def build_one(client, artist: str, slug: str) -> bool:
     return page_id > 0
 
 
+def update_frontend_slug_list():
+    """frontend が /artists/ で参照する profile slug list をpublic/dataに書き出す"""
+    slugs = sorted(p.stem for p in PROFILE_DIR.glob('*.json') if p.stem != 'fromis9')
+    out = Path('/home/aiuser/kpopjournal-frontend/public/data/artist-profile-slugs.json')
+    if not out.parent.exists():
+        return
+    out.write_text(json.dumps(slugs), encoding='utf-8')
+    print(f"  frontend slug list updated: {len(slugs)} slugs", flush=True)
+
+
 def update_internal_link_dictionary():
     """profile JSON存在artistを internal_link_dictionary.jsonに反映"""
     dict_path = Path('/home/aiuser/kpop-ai-system/config/internal_link_dictionary.json')
@@ -442,6 +452,9 @@ def main():
 
     # internal_link_dictionary 更新
     update_internal_link_dictionary()
+
+    # frontend slug list 更新 (/artists/ハブで /artist-{slug}/にlinkするため)
+    update_frontend_slug_list()
 
 
 if __name__ == '__main__':
