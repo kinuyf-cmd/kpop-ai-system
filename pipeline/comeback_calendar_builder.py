@@ -102,30 +102,56 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
 
 
 def fetch_comebacks_via_claude() -> dict:
-    """全バッチを順次実行して統合"""
+    """全バッチを順次実行して統合 (incremental save付き)"""
     today = datetime.now(JST).strftime('%Y-%m-%d')
     end_date = (datetime.now(JST) + timedelta(days=90)).strftime('%Y-%m-%d')
     client = anthropic.Anthropic()
 
-    all_comebacks = []
+    # 既存データを base にして上書き (timeout時の進捗保護)
+    existing_comebacks = []
+    if CALENDAR_PATH.exists():
+        try:
+            existing_comebacks = json.loads(CALENDAR_PATH.read_text(encoding='utf-8')).get('comebacks', [])
+        except Exception:
+            pass
+
+    all_comebacks = list(existing_comebacks)
     summaries = []
     for i, batch in enumerate(ARTIST_BATCHES, 1):
         print(f"  [{i}/{len(ARTIST_BATCHES)}] {','.join(batch)} ...", flush=True)
         result = _fetch_batch(client, batch, today, end_date)
         n = len(result.get('comebacks', []))
         print(f"    → {n} entries", flush=True)
+
+        # このバッチで取得したアーティストの古いentryを削除 (上書き) してから新規append
+        batch_artists_lower = [a.lower() for a in batch]
+        all_comebacks = [cb for cb in all_comebacks
+                         if not any(a in (cb.get('artist','').lower()) for a in batch_artists_lower)]
         all_comebacks.extend(result.get('comebacks', []))
         if result.get('summary'):
             summaries.append(result['summary'])
 
-    # de-dup by (artist, release_date, title)
-    seen = set()
-    deduped = []
+        # incremental save (timeoutで死んでも進捗は残る)
+        seen = set(); deduped = []
+        for cb in all_comebacks:
+            key = (cb.get('artist',''), cb.get('release_date',''), cb.get('title','')[:30])
+            if key not in seen:
+                seen.add(key); deduped.append(cb)
+        partial = {
+            "comebacks": deduped,
+            "summary": "\n\n".join(summaries[:3]),
+            "last_updated": datetime.now(JST).isoformat(),
+            "_progress": f"{i}/{len(ARTIST_BATCHES)}",
+        }
+        with open(CALENDAR_PATH, 'w', encoding='utf-8') as f:
+            json.dump(partial, f, ensure_ascii=False, indent=2)
+
+    # 最終de-dup
+    seen = set(); deduped = []
     for cb in all_comebacks:
         key = (cb.get('artist',''), cb.get('release_date',''), cb.get('title','')[:30])
         if key not in seen:
-            seen.add(key)
-            deduped.append(cb)
+            seen.add(key); deduped.append(cb)
 
     return {
         "comebacks": deduped,
