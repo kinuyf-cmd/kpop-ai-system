@@ -1,0 +1,128 @@
+{
+  "agency": "ADOR (under HYBE)",
+  "debut_date": "2022-07-22",
+  "fandom_name": "Bunnies",
+  "fandom_meaning": "ウサギのように可愛らしく、グループのそばに寄り添うファンを表している。NewJeansのロゴにもウサギのモチーフが使われており、ファンとグループの親密な関係を象徴している。",
+  "members": [
+    {
+      "name_en": "Minji",
+      "name_kr": "김민지",
+      "name_ja": "ミンジ",
+      "real_name_en": "Kim Minji",
+      "position": "リーダー、ボーカル",
+      "birth": "2004-05-07",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Hanni",
+      "name_kr": "팜하니",
+      "name_ja": "ハニ",
+      "real_name_en": "Pham Ngoc Han",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-10-06",
+      "nationality": "オーストラリア（ベトナム系）",
+      "note": "ベトナム系オーストラリア人"
+    },
+    {
+      "name_en": "Danielle",
+      "name_kr": "모다니엘",
+      "name_ja": "ダニエル",
+      "real_name_en": "Danielle Marsh",
+      "position": "ボーカル、ダンサー",
+      "birth": "2005-04-11",
+      "nationality": "オーストラリア（韓国系）",
+      "note": "韓国系オーストラリア人"
+    },
+    {
+      "name_en": "Haerin",
+      "name_kr": "강해린",
+      "name_ja": "ヘリン",
+      "real_name_en": "Kang Haerin",
+      "position": "ボーカル、ダンサー",
+      "birth": "2006-05-15",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Hyein",
+      "name_kr": "이혜인",
+      "name_ja": "ヘイン",
+      "real_name_en": "Lee Hyein",
+      "position": "ボーカル、マンネ",
+      "birth": "2008-04-21",
+      "nationality": "韓国",
+      "note": "グループ最年少メンバー"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2022",
+      "title": "New Jeans",
+      "type": "ep",
+      "note": "デビューEP。「Attention」「Hype Boy」「Cookie」などを収録"
+    },
+    {
+      "year": "2022",
+      "title": "OMG",
+      "type": "single",
+      "note": "先行シングル「Ditto」と共にリリース"
+    },
+    {
+      "year": "2023",
+      "title": "OMG",
+      "type": "ep",
+      "note": "「OMG」「Ditto」収録の1st EP"
+    },
+    {
+      "year": "2023",
+      "title": "Get Up",
+      "type": "ep",
+      "note": "「Super Shy」「ETA」「Cool With You」収録、国際的大ヒット作"
+    },
+    {
+      "year": "2023",
+      "title": "NewJeans 1st Album 'Get Up'",
+      "type": "album",
+      "note": "米ビルボードなど各国チャートで上位を記録"
+    },
+    {
+      "year": "2023",
+      "title": "New Jeans (Bunny Island)",
+      "type": "japanese",
+      "note": "日本デビューシングル"
+    },
+    {
+      "year": "2024",
+      "title": "Supernatural",
+      "type": "single",
+      "note": "NAVER WEBTOON「How to Fight」コラボ曲"
+    },
+    {
+      "year": "2024",
+      "title": "How Sweet",
+      "type": "single",
+      "note": "爽やかなサマーチューン、MVが話題に"
+    },
+    {
+      "year": "2024",
+      "title": "Bubble Gum",
+      "type": "single",
+      "note": "How Sweetと両A面シングルとしてリリース"
+    },
+    {
+      "year": "2025",
+      "title": "Right Now",
+      "type": "single",
+      "note": "ADOR離脱後、独自活動として発表した復帰シングル"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/NewJeans_ADOR",
+    "instagram": "https://www.instagram.com/newjeans_official/",
+    "weverse": "https://weverse.io/newjeans",
+    "youtube": "https://www.youtube.com/@NewJeans_official",
+    "tiktok": "https://www.tiktok.com/@newjeans_official",
+    "japan_official": "https://newjeans.jp/"
+  },
+  "summary_ja": "NewJeans（ニュージーンズ）は、2022年7月22日にHYBE傘下のレーベルADORからデビューした5人組K-POPガールズグループ。ミンジ、ハニ、ダニエル、ヘリン、ヘインの5名で構成される。Y2Kやシティポップなど懐かしさとトレンドを融合させた独自の音楽スタイルと、シンプルながらスタイリッシュなビジュアルで、デビュー直後から国内外で大きな注目を集めた。「Attention」「Hype Boy」「Ditto」「Super Shy」など次々とヒット曲を生み出し、K-POP第4世代を代表するグループとして急速に成長。2024年にはレーベルとの契約問題が話題となり、2025年に独立した形で活動を再開。多国籍メンバーによる多様な魅力と高い音楽性で、世界中のファン「Bunnies」から愛され続けている。",
+  "_last_updated": "2026-05-10T17:54:22.673977+09:00"
+}

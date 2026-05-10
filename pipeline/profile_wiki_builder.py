@@ -121,7 +121,7 @@ PROFILE_SCHEMA = {
 }
 
 
-def fetch_profile(client, artist: str) -> dict:
+def fetch_profile(client, artist: str, timeout_s: int = 180) -> dict:
     today = datetime.now(JST).strftime('%Y-%m-%d')
     prompt = f"""今日: {today}
 K-POP アーティスト「{artist}」の包括的プロフィールを web_search で集約してください。
@@ -151,18 +151,24 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
 
 ソロアーティストの場合は members に1人だけ入れる。
 """
+    use_web_search = os.getenv('PROFILE_USE_WEBSEARCH') == '1'
+
     try:
-        response = client.messages.create(
-            model='claude-sonnet-4-6',
-            max_tokens=6000,
-            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 5}],
-            output_config={"format": {"type": "json_schema", "schema": PROFILE_SCHEMA}},
-            messages=[{"role": "user", "content": prompt}],
-        )
+        import httpx
+        timeout_client = anthropic.Anthropic(timeout=httpx.Timeout(timeout_s, connect=10.0))
+        kwargs = {
+            'model': 'claude-sonnet-4-6',
+            'max_tokens': 4500,
+            'output_config': {"format": {"type": "json_schema", "schema": PROFILE_SCHEMA}},
+            'messages': [{"role": "user", "content": prompt}],
+        }
+        if use_web_search:
+            kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}]
+        response = timeout_client.messages.create(**kwargs)
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
     except Exception as e:
-        print(f"  err: {e}", flush=True)
+        print(f"  err: {type(e).__name__}: {str(e)[:200]}", flush=True)
         return {}
 
 

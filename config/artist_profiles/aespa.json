@@ -1,0 +1,114 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2020-11-17",
+  "fandom_name": "MY",
+  "fandom_meaning": "「MY」はaespaのメンバーが大切にしたい存在という意味で、「私の（My）」という言葉に由来し、メンバーとファンが互いにとって唯一無二の存在であることを表しています。",
+  "members": [
+    {
+      "name_en": "Karina",
+      "name_kr": "유지민",
+      "name_ja": "カリナ",
+      "real_name_en": "Yu Jimin",
+      "position": "リーダー、メインダンサー、サブボーカル、センター",
+      "birth": "2000-04-11",
+      "nationality": "韓国",
+      "note": "グループの公式リーダー。ビジュアル担当としても知られる。"
+    },
+    {
+      "name_en": "Giselle",
+      "name_kr": "닝이줘",
+      "name_ja": "ジゼル",
+      "real_name_en": "Aeri Uchinaga",
+      "position": "メインラッパー、サブボーカル",
+      "birth": "2000-10-30",
+      "nationality": "日本",
+      "note": "日本生まれの韓国系日本人。日本語・英語・韓国語・中国語に堪能。"
+    },
+    {
+      "name_en": "Winter",
+      "name_kr": "김민정",
+      "name_ja": "ウィンター",
+      "real_name_en": "Kim Minjeong",
+      "position": "メインボーカル、サブダンサー",
+      "birth": "2001-01-01",
+      "nationality": "韓国",
+      "note": "透き通った高音が特徴のメインボーカル。"
+    },
+    {
+      "name_en": "Ningning",
+      "name_kr": "닝이줘",
+      "name_ja": "ニンニン",
+      "real_name_en": "Ning Yizhuo",
+      "position": "メインボーカル",
+      "birth": "2002-10-23",
+      "nationality": "中国",
+      "note": "中国・黒龍江省出身。パワフルな歌声でグループの歌唱力を支える末っ子メンバー。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2020",
+      "title": "Black Mamba",
+      "type": "single",
+      "note": "デビュー曲。MVが公開24時間でK-POPガールズグループ最速1億回再生を記録。"
+    },
+    {
+      "year": "2021",
+      "title": "Next Level",
+      "type": "single",
+      "note": "映画『ワイルド・スピード』の楽曲をサンプリングし大ヒット。"
+    },
+    {
+      "year": "2021",
+      "title": "Savage",
+      "type": "ep",
+      "note": "1stミニアルバム。「Savage」がタイトル曲。"
+    },
+    {
+      "year": "2022",
+      "title": "Girls",
+      "type": "ep",
+      "note": "2ndミニアルバム。メタバースの世界観をさらに深化させた作品。"
+    },
+    {
+      "year": "2023",
+      "title": "My World",
+      "type": "ep",
+      "note": "3rdミニアルバム。「Spicy」がタイトル曲としてヒット。"
+    },
+    {
+      "year": "2023",
+      "title": "Drama",
+      "type": "ep",
+      "note": "4thミニアルバム。シネマティックな世界観が話題に。"
+    },
+    {
+      "year": "2024",
+      "title": "Armageddon",
+      "type": "album",
+      "note": "1stフルアルバム。グループの集大成的作品としてグローバルに注目を集めた。"
+    },
+    {
+      "year": "2024",
+      "title": "Whiplash",
+      "type": "ep",
+      "note": "5thミニアルバム。タイトル曲「Whiplash」がチャート上位を記録。"
+    },
+    {
+      "year": "2025",
+      "title": "Crazy World",
+      "type": "ep",
+      "note": "2025年リリースのミニアルバム。ダークかつポップなコンセプトで好評を博した。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/aespa_official",
+    "instagram": "https://www.instagram.com/aespa_official/",
+    "weverse": "https://weverse.io/aespa",
+    "youtube": "https://www.youtube.com/channel/UCbTfHuU0aY4aaRbIkSuAVTQ",
+    "tiktok": "https://www.tiktok.com/@aespa_official",
+    "japan_official": "https://www.aespa.jp"
+  },
+  "summary_ja": "aespa（エスパ）は、2020年11月17日にSMエンターテインメントからデビューした4人組K-POPガールズグループ。カリナ、ジゼル、ウィンター、ニンニンの4名で構成される。グループ名は「avatar×experience」の造語で、現実世界のメンバーとバーチャル世界のアバター（æ）が共存するというSMの独自のメタバース世界観「KWANGYA」をコンセプトに掲げている。デビュー曲「Black Mamba」はK-POPガールズグループ最速でMVの1億回再生を達成し、「Next Level」「Savage」などのヒットを連発。2024年には初のフルアルバム「Armageddon」をリリースし、グローバルなアーティストとしての地位を確固たるものとした。圧倒的なビジュアルとダンスパフォーマンス、独特の世界観でワールドワイドに活躍している。",
+  "_last_updated": "2026-05-10T17:54:50.332308+09:00"
+}

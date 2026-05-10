@@ -1,0 +1,150 @@
+{
+  "agency": "HYBE Labels (Big Hit Music)",
+  "debut_date": "2013-06-13",
+  "fandom_name": "ARMY",
+  "fandom_meaning": "「ARMY」はAdenorable Representative MC for Youthの頭文字であり、「防弾少年団（BTS）には常に軍隊（ARMY）が共にある」という意味も込められている。BTSのアーマー（鎧）とARMYが常に一体であることを表すファンダム名。",
+  "members": [
+    {
+      "name_en": "RM",
+      "name_kr": "김남준",
+      "name_ja": "アールエム",
+      "real_name_en": "Kim Nam-joon",
+      "position": "リーダー、メインラッパー",
+      "birth": "1994-09-12",
+      "nationality": "韓国",
+      "note": "元ステージネームはRap Monster。英語を独学でマスターした高IQのメンバー。2023年12月に入隊、2025年6月除隊予定。"
+    },
+    {
+      "name_en": "Jin",
+      "name_kr": "김석진",
+      "name_ja": "ジン",
+      "real_name_en": "Kim Seok-jin",
+      "position": "サブボーカル、ビジュアル",
+      "birth": "1992-12-04",
+      "nationality": "韓国",
+      "note": "メンバー最年長。自称「Worldwide Handsome」。2022年12月入隊、2024年6月12日除隊済み。"
+    },
+    {
+      "name_en": "Suga",
+      "name_kr": "민윤기",
+      "name_ja": "シュガ",
+      "real_name_en": "Min Yoon-gi",
+      "position": "リードラッパー",
+      "birth": "1993-03-09",
+      "nationality": "韓国",
+      "note": "ソロ名義「Agust D」でも活動。2023年9月入隊、2025年6月除隊予定。"
+    },
+    {
+      "name_en": "J-Hope",
+      "name_kr": "정호석",
+      "name_ja": "ジェイホープ",
+      "real_name_en": "Jung Ho-seok",
+      "position": "メインダンサー、リードラッパー、サブボーカル",
+      "birth": "1994-02-18",
+      "nationality": "韓国",
+      "note": "グループの「サンシャイン」的存在。2023年4月入隊、2024年10月17日除隊済み。"
+    },
+    {
+      "name_en": "Jimin",
+      "name_kr": "박지민",
+      "name_ja": "ジミン",
+      "real_name_en": "Park Ji-min",
+      "position": "メインダンサー、リードボーカル",
+      "birth": "1995-10-13",
+      "nationality": "韓国",
+      "note": "BTS最後に加入したメンバー。2023年12月入隊、2025年6月除隊予定。"
+    },
+    {
+      "name_en": "V",
+      "name_kr": "김태형",
+      "name_ja": "ブイ",
+      "real_name_en": "Kim Tae-hyung",
+      "position": "ビジュアル、サブボーカル",
+      "birth": "1995-12-30",
+      "nationality": "韓国",
+      "note": "ハスキーで深みのある声が特徴。2023年12月入隊、2025年6月除隊予定。"
+    },
+    {
+      "name_en": "Jungkook",
+      "name_kr": "전정국",
+      "name_ja": "ジョングク",
+      "real_name_en": "Jeon Jung-kook",
+      "position": "メインボーカル、サブラッパー、サブダンサー、センター、マクネ",
+      "birth": "1997-09-01",
+      "nationality": "韓国",
+      "note": "最年少の「ゴールデン・マクネ」。マルチタレントで知られる。2023年12月入隊、2025年6月除隊予定。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2013",
+      "title": "2 Cool 4 Skool",
+      "type": "ep",
+      "note": "デビューシングルアルバム。「No More Dream」収録。"
+    },
+    {
+      "year": "2016",
+      "title": "Wings",
+      "type": "album",
+      "note": "2ndスタジオアルバム。Billboard 200で当時最高位を記録したK-popアルバム。"
+    },
+    {
+      "year": "2017",
+      "title": "Love Yourself: Her",
+      "type": "ep",
+      "note": "「DNA」収録。BTSのグローバルブレイクのきっかけとなった作品。"
+    },
+    {
+      "year": "2018",
+      "title": "Love Yourself: Tear",
+      "type": "album",
+      "note": "Billboard 200で初の1位を獲得。K-popアルバム史上初の全米チャート首位。"
+    },
+    {
+      "year": "2020",
+      "title": "Map of the Soul: 7",
+      "type": "album",
+      "note": "世界的大ヒット作。「ON」「Black Swan」収録。"
+    },
+    {
+      "year": "2020",
+      "title": "BE",
+      "type": "album",
+      "note": "コロナ禍に制作。「Life Goes On」がBillboard Hot 100で1位獲得。"
+    },
+    {
+      "year": "2021",
+      "title": "Butter",
+      "type": "single",
+      "note": "グラミー賞ノミネートシングル。Billboard Hot 100で10週連続1位。"
+    },
+    {
+      "year": "2022",
+      "title": "Proof",
+      "type": "album",
+      "note": "グループ初のアンソロジーアルバム。活動10周年に向けたベスト的作品。"
+    },
+    {
+      "year": "2024",
+      "title": "BTS: The Best (Japan Compilation)",
+      "type": "japanese",
+      "note": "日本活動を振り返るコンピレーション。"
+    },
+    {
+      "year": "2026",
+      "title": "BTS Comeback Album (Spring 2026)",
+      "type": "album",
+      "note": "全員除隊後の完全体カムバック作品として2026年3月20日リリース予定と報道。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/BTS_twt",
+    "instagram": "https://www.instagram.com/bts.bighitofficial/",
+    "weverse": "https://weverse.io/bts",
+    "youtube": "https://www.youtube.com/@HYBE_LABELS",
+    "tiktok": "https://www.tiktok.com/@bts_official_bighit",
+    "japan_official": "https://twitter.com/BTS_jp_official"
+  },
+  "summary_ja": "BTS（防弾少年団）は、2013年6月13日にBig Hit Entertainment（現HYBE傘下のBig Hit Music）からデビューした韓国の7人組ボーイズグループ。RM・Jin・Suga・J-Hope・Jimin・V・Jungkookからなるグループは、自作詞・自作曲にこだわったヒップホップベースのサウンドで世界を席巻。「Dynamite」「Butter」でBillboard Hot 100首位を獲得し、グラミー賞にもノミネートされるなど、K-pop史上最大のグローバルアーティストとして不動の地位を確立した。国連総会でのスピーチやLove Myselfキャンペーンなど社会的影響力も大きく、公式ファンダム「ARMY」と強固な絆で結ばれている。2022年以降は順次兵役に就き、2025〜2026年にかけて全員が除隊を完了。2026年春には完全体での待望のカムバックが予定されており、世界中のARMYが再集結を心待ちにしている。",
+  "_last_updated": "2026-05-10T17:33:47.332906+09:00"
+}

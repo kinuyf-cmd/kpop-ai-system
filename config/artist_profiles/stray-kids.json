@@ -1,0 +1,154 @@
+{
+  "agency": "JYP Entertainment",
+  "debut_date": "2018-03-25",
+  "fandom_name": "STAY",
+  "fandom_meaning": "「STAY」はStray Kidsのファンダム名で、「迷子の子供たち（Stray Kids）と共にいつもそばにいる存在」という意味を持ち、グループとファンが互いに支え合う関係を表している。",
+  "members": [
+    {
+      "name_en": "Bang Chan",
+      "name_kr": "방찬",
+      "name_ja": "バンチャン",
+      "real_name_en": "Bang Christopher Chan",
+      "position": "リーダー、ボーカル、ラップ、プロデューサー",
+      "birth": "1997-10-03",
+      "nationality": "韓国（オーストラリア育ち）",
+      "note": "3RACHAのメンバーとしてプロデューサーとしても活躍。JYPに練習生として入所し、グループを牽引する。"
+    },
+    {
+      "name_en": "Lee Know",
+      "name_kr": "이민호",
+      "name_ja": "リノ",
+      "real_name_en": "Lee Minho",
+      "position": "ボーカル、ダンサー",
+      "birth": "1998-10-25",
+      "nationality": "韓国",
+      "note": "BTS「DNA」MVのバックダンサーとして知られ、優れたダンススキルを持つ。"
+    },
+    {
+      "name_en": "Changbin",
+      "name_kr": "서창빈",
+      "name_ja": "チャンビン",
+      "real_name_en": "Seo Changbin",
+      "position": "メインラッパー",
+      "birth": "1999-08-11",
+      "nationality": "韓国",
+      "note": "3RACHAメンバー。力強いラップが特徴で、作詞・作曲にも精力的に取り組む。"
+    },
+    {
+      "name_en": "Hyunjin",
+      "name_kr": "황현진",
+      "name_ja": "ヒョンジン",
+      "real_name_en": "Hwang Hyunjin",
+      "position": "ボーカル、ダンサー、ビジュアル",
+      "birth": "2000-03-20",
+      "nationality": "韓国",
+      "note": "絵画やアートへの造詣が深く、グループのアートワーク制作にも参加。"
+    },
+    {
+      "name_en": "Han",
+      "name_kr": "한지성",
+      "name_ja": "ハン",
+      "real_name_en": "Han Jisung",
+      "position": "ボーカル、ラップ、プロデューサー",
+      "birth": "2000-09-14",
+      "nationality": "韓国",
+      "note": "3RACHAメンバー。感情豊かな歌詞と多彩な表現力が魅力。"
+    },
+    {
+      "name_en": "Felix",
+      "name_kr": "이용복",
+      "name_ja": "フィリックス",
+      "real_name_en": "Lee Yongbok",
+      "position": "ボーカル、ダンサー",
+      "birth": "2000-09-15",
+      "nationality": "韓国（オーストラリア育ち）",
+      "note": "深みのある低音ボイスと表情豊かなダンスパフォーマンスで人気。"
+    },
+    {
+      "name_en": "Seungmin",
+      "name_kr": "김승민",
+      "name_ja": "スンミン",
+      "real_name_en": "Kim Seungmin",
+      "position": "ボーカル",
+      "birth": "2000-09-22",
+      "nationality": "韓国",
+      "note": "野球への情熱を持ち、グループの澄んだ歌声を担う。"
+    },
+    {
+      "name_en": "I.N",
+      "name_kr": "양정인",
+      "name_ja": "アイエン",
+      "real_name_en": "Yang Jeongin",
+      "position": "ボーカル、マknae",
+      "birth": "2001-02-08",
+      "nationality": "韓国",
+      "note": "グループ最年少（マンネ）。清涼感あふれるボーカルとナチュラルなキャラクターが人気。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2018",
+      "title": "Mixtape",
+      "type": "ep",
+      "note": "デビューミニアルバム。オーディション番組『Stray Kids』を経て発表。"
+    },
+    {
+      "year": "2019",
+      "title": "Clé 1 : MIROH",
+      "type": "ep",
+      "note": "「MIROH」が収録され、グループの代表曲の一つとなった作品。"
+    },
+    {
+      "year": "2020",
+      "title": "GO生 (GO LIVE)",
+      "type": "album",
+      "note": "1stフルアルバム。「神메뉴(God's Menu)」が大ヒットし、国際的認知度が急上昇。"
+    },
+    {
+      "year": "2021",
+      "title": "NOEASY",
+      "type": "album",
+      "note": "2ndフルアルバム。「MIROH」「Thunderous(소리꾼)」等を収録し、Billboardチャートで上位を記録。"
+    },
+    {
+      "year": "2022",
+      "title": "ODDINARY",
+      "type": "ep",
+      "note": "「MANIAC」収録。米Billboard 200で1位を獲得した歴史的作品。"
+    },
+    {
+      "year": "2022",
+      "title": "MAXIDENT",
+      "type": "ep",
+      "note": "「CASE 143」を収録。再びBillboard 200首位を達成。"
+    },
+    {
+      "year": "2023",
+      "title": "5-STAR",
+      "type": "album",
+      "note": "3rdフルアルバム。「S-Class」「Miroh」など多彩な楽曲を収録。"
+    },
+    {
+      "year": "2024",
+      "title": "ATE",
+      "type": "album",
+      "note": "4thフルアルバム。グループの音楽的進化を示す意欲作。"
+    },
+    {
+      "year": "2023",
+      "title": "Social Path (feat. LiSA)",
+      "type": "japanese",
+      "note": "日本語楽曲。LiSAとのコラボレーションが話題を呼んだシングル。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/Stray_Kids",
+    "instagram": "https://www.instagram.com/stray_kids/",
+    "weverse": "https://weverse.io/straykids",
+    "youtube": "https://www.youtube.com/channel/UCnc6ePFBbBNKKDJFTcgWkNQ",
+    "tiktok": "https://www.tiktok.com/@straykids",
+    "japan_official": "https://straykids.jype.com/jp"
+  },
+  "summary_ja": "Stray Kids（ストレイキッズ）は、2018年3月25日にJYP Entertainmentからデビューした8人組韓国男性アイドルグループ。メンバー自らが楽曲制作に携わる「自作自演」スタイルが最大の特徴で、Bang Chan・Changbin・Hanによるプロデューサーユニット「3RACHA」を中心に、エッジの効いたサウンドと骨太なメッセージ性を持つ楽曲を発信し続けている。2022年にはアルバム「ODDINARY」と「MAXIDENT」でBillboard 200首位を2度獲得し、K-POP第4世代を牽引するトップグループへと成長。ファンダム「STAY」とともに「迷子でも共に歩む」という絆を大切にしながら、ワールドツアーや多彩なコンテンツで世界中のファンを魅了している。",
+  "_last_updated": "2026-05-10T17:57:41.995907+09:00"
+}
