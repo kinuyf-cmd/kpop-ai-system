@@ -163,6 +163,29 @@ NEGATIVE_KEYWORDS = [
 _MIN_ARTIST_NAME_LEN = 2
 
 
+# 西洋人名と被るK-POP solo artist → 必須コンテキスト (グループ名 or 固有識別子)
+# 「korean」「concert」等のジェネリック語ではPASSしない (Lisa Korean vocalistの誤マッチ防止)
+_SOLO_ARTIST_REQUIRED_CONTEXT = {
+    'jennie':       ['blackpink', '제니', 'jennie kim', 'kim jennie'],
+    'lisa':         ['blackpink', '리사', 'lalisa', 'manoban'],
+    'lisa manoban': ['blackpink', '리사', 'lalisa', 'manoban'],
+    'jisoo':        ['blackpink', '지수', 'kim jisoo', 'jisoo kim'],
+    'rose':         ['blackpink', '로제', 'park chaeyoung', 'roseanne'],
+    'rosé':         ['blackpink', '로제', 'park chaeyoung'],
+    'iu':           ['아이유', 'lee ji-eun', 'lee jieun', 'kpop iu'],
+    'sunmi':        ['선미', 'wonder girls', 'jyp'],
+    'taeyeon':      ['snsd', "girls' generation", '소녀시대', '태연'],
+    'wendy':        ['red velvet', '웬디', 'son seungwan'],
+    'yeri':         ['red velvet', '예리', 'kim yerim'],
+    'irene':        ['red velvet', '아이린', 'bae joohyun'],
+    'seulgi':       ['red velvet', '슬기', 'kang seulgi'],
+    'joy':          ['red velvet', '조이', 'park sooyoung'],
+    'jihyo':        ['twice', '지효', 'park jihyo'],
+    'mina':         ['twice', '미나', 'myoui mina'],
+    'sana':         ['twice', '사나', 'minatozaki sana'],
+}
+
+
 def is_relevant_title(title, artist_name):
     """ファイル名にアー名が単語境界で含まれているかチェック"""
     title_lower = title.lower()
@@ -186,6 +209,14 @@ def is_relevant_title(title, artist_name):
     pattern = r"(?:^|[^a-z0-9])" + _re.escape(artist_lower) + r"(?:$|[^a-z0-9])"
     if not _re.search(pattern, title_lower):
         return False
+
+    # 2026-05-10: 西洋人名/同名者と被るsolo artist は必須コンテキスト (グループ名等) を要求
+    # 例: "Peter Gabriel Tour Jennie Abrahamson" → BLACKPINK含まず → False
+    # 例: "Lisa (Korean vocalist)" → BLACKPINK含まず → False (本物BLACKPINK Lisaではない)
+    if artist_lower in _SOLO_ARTIST_REQUIRED_CONTEXT:
+        required = _SOLO_ARTIST_REQUIRED_CONTEXT[artist_lower]
+        if not any(kw in title_lower for kw in required):
+            return False
 
     return True
 

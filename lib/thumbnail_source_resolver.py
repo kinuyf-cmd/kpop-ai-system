@@ -266,6 +266,13 @@ def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int
         'fancam', 'fan cam', 'live clip', 'live cam',
         'interview', 'q&a', 'practice', 'rehearsal',
         'unboxing', 'cover ',
+        # 2026-05-10: variety series追加 (3992 RUN BTS事案)
+        'run bts', 'run! bts', 'go!', 'go se', 'gose',
+        'workdol', 'babymonster house', 'le play',
+        'itzy?itzy!', 'itzy? itzy!', 'sf9 official',
+        'aespa world', 'inkigayo', 'show champion',
+        'happening', 'realityshow', 'reality show',
+        '하루의', '오늘의', 'eps ',  # 韓国語の番組タイトル
     ]
 
     try:
