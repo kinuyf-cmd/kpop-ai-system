@@ -8,7 +8,7 @@
 
 Output:
 - config/comeback_calendar_v2.json
-- HTML page in WordPress at /comeback-calendar/
+- HTML page in WordPress at /release-calendar/
 
 Cron:
   毎朝 5:00 JST に実行 → 1日1回更新で sticky page 維持
@@ -165,7 +165,7 @@ def render_html(data: dict) -> str:
     comebacks = sorted(data.get('comebacks', []), key=lambda x: x.get('release_date', '9999'))
 
     html_parts = [
-        '<div class="comeback-calendar">',
+        '<div class="release-calendar">',
         f'<p class="last-updated"><small>最終更新: {today}</small></p>',
         '<p>K-POP主要グループの今後90日間の公式カムバック・リリース情報をまとめています。毎日5時に最新情報に自動更新されます。</p>',
     ]
@@ -214,21 +214,21 @@ def render_html(data: dict) -> str:
         '</ul>',
         '</div>',
         '<style>',
-        '.comeback-calendar table { width: 100%; border-collapse: collapse; margin: 1em 0; }',
-        '.comeback-calendar th, .comeback-calendar td { padding: 0.5em; border: 1px solid #ddd; text-align: left; }',
-        '.comeback-calendar th { background: #f4f4f8; }',
-        '.comeback-calendar .summary { background: #fff8e1; padding: 1em; border-left: 4px solid #ffc107; margin: 1em 0; }',
-        '.comeback-calendar .last-updated { color: #888; }',
+        '.release-calendar table { width: 100%; border-collapse: collapse; margin: 1em 0; }',
+        '.release-calendar th, .release-calendar td { padding: 0.5em; border: 1px solid #ddd; text-align: left; }',
+        '.release-calendar th { background: #f4f4f8; }',
+        '.release-calendar .summary { background: #fff8e1; padding: 1em; border-left: 4px solid #ffc107; margin: 1em 0; }',
+        '.release-calendar .last-updated { color: #888; }',
         '</style>',
     ])
     return '\n'.join(html_parts)
 
 
 def find_or_create_calendar_page(html: str) -> int:
-    """WP page slug=comeback-calendar を作成 or 更新"""
+    """WP page slug=release-calendar を作成 or 更新"""
     # find existing
     req = urllib.request.Request(
-        'https://www.kpopjournal.tokyo/wp-json/wp/v2/pages?slug=comeback-calendar&_fields=id',
+        'https://www.kpopjournal.tokyo/wp-json/wp/v2/pages?slug=release-calendar&_fields=id',
         headers={'Authorization': f'Basic {AUTH}'})
     try:
         existing = json.loads(urllib.request.urlopen(req, timeout=15).read())
@@ -249,7 +249,7 @@ def find_or_create_calendar_page(html: str) -> int:
         'title': title,
         'content': html,
         'status': 'publish',
-        'slug': 'comeback-calendar',
+        'slug': 'release-calendar',
     }
     req = urllib.request.Request(
         url, data=json.dumps(payload).encode(), method=method,
@@ -326,19 +326,19 @@ def main():
     html = render_html(data)
     page_id = find_or_create_calendar_page(html)
     print(f"  published page_id={page_id}")
-    print(f"  URL: https://www.kpopjournal.tokyo/comeback-calendar/")
+    print(f"  URL: https://www.kpopjournal.tokyo/release-calendar/")
 
     # Cache purge
     try:
         from lib.frontend_cache import purge_paths
-        purge_paths(['/comeback-calendar/'])
+        purge_paths(['/release-calendar/'])
     except Exception:
         pass
 
     # GSC indexing
     try:
         from lib.gsc_indexing import notify_url_updated
-        r = notify_url_updated('https://www.kpopjournal.tokyo/comeback-calendar/')
+        r = notify_url_updated('https://www.kpopjournal.tokyo/release-calendar/')
         if r.get('status') == 'ok':
             print(f"  GSC indexed")
     except Exception as e:

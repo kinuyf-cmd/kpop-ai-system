@@ -285,7 +285,7 @@ def render_html(artist: str, profile: dict) -> str:
     # カレンダー誘導
     parts.append('<h2>関連</h2>')
     parts.append(
-        f'<p>👉 <a href="/comeback-calendar/" target="_blank">{artist} を含むK-POP主要グループの今後90日のカムバック・カレンダー</a></p>'
+        f'<p>👉 <a href="/release-calendar/" target="_blank">{artist} を含むK-POP主要グループの今後90日のリリースカレンダー</a></p>'
     )
     parts.append(f'<p>📰 <a href="/?s={artist.replace(" ", "+")}">{artist} の最新ニュース記事</a></p>')
 

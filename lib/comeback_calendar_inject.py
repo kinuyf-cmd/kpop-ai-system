@@ -1,6 +1,6 @@
 """記事末尾にカムバックカレンダーCTA + Artist Profile Wiki誘導を自動挿入
 
-sticky page promotion + bounce下げ。/comeback-calendar/ + /artist-{slug}/ の
+sticky page promotion + bounce下げ。/release-calendar/ + /artist-{slug}/ の
 2方向にinternal link流す。
 
 統合方法 (unified_publisher内):
@@ -122,7 +122,7 @@ def maybe_inject_calendar_cta(body_html: str, artist: str = '') -> str:
 
     cta_lines.append(
         '<p>K-POP主要22グループの今後90日の公式カムバック・リリース情報をまとめています。'
-        '<a href="https://www.kpopjournal.tokyo/comeback-calendar/" '
+        '<a href="https://www.kpopjournal.tokyo/release-calendar/" '
         'target="_blank" rel="noopener"><strong>カレンダー全体を見る →</strong></a></p>'
     )
 
