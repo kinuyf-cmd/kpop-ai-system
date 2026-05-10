@@ -160,14 +160,29 @@ def vision_validate(image_path: str, expected_artist: str,
     try:
         client = _get_client()
         # K-pop識別精度のため Sonnet 4.6 採用 (Haikuはaespa↔TWICE誤認)
+        # 2026-05-10: structured outputs (output_config.format) で JSON schema 強制
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=400,
             system=[{
                 "type": "text",
                 "text": K_POP_AUDIT_PREFIX,
-                "cache_control": {"type": "ephemeral"},  # Prompt caching: 最大4ブレークポイント
+                "cache_control": {"type": "ephemeral"},
             }],
+            output_config={
+                "format": {
+                    "type": "json_schema",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "verdict": {"type": "string", "enum": ["YES", "NO"]},
+                            "reason": {"type": "string"},
+                        },
+                        "required": ["verdict", "reason"],
+                        "additionalProperties": False,
+                    },
+                },
+            },
             messages=[{
                 'role': 'user',
                 'content': [
@@ -178,23 +193,16 @@ def vision_validate(image_path: str, expected_artist: str,
                 ],
             }],
         )
-        text = next((b.text for b in response.content if b.type == 'text'), '')
-        # JSON抽出 (前後のテキストを許容)
-        import re as _re
-        m = _re.search(r'\{[^{}]*"verdict"[^{}]*\}', text)
-        if not m:
-            # フォールバック: テキストから YES/NO 推定
-            ok = 'YES' in text.upper() and 'NO' not in text.upper()[:20]
-            reason = text[:200]
-        else:
-            try:
-                parsed = json.loads(m.group())
-                verdict = (parsed.get('verdict') or '').upper()
-                ok = verdict == 'YES'
-                reason = parsed.get('reason', '')[:200]
-            except json.JSONDecodeError:
-                ok = 'YES' in text.upper()
-                reason = text[:200]
+        # output_config.format で1個目のtext blockに valid JSON が保証される
+        text = next((b.text for b in response.content if b.type == 'text'), '{}')
+        try:
+            parsed = json.loads(text)
+            verdict = (parsed.get('verdict') or '').upper()
+            ok = verdict == 'YES'
+            reason = parsed.get('reason', '')[:200]
+        except json.JSONDecodeError:
+            ok = False
+            reason = f'schema parse err: {text[:100]}'
 
         cache[cache_key] = {
             'ok': ok, 'reason': reason,

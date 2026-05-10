@@ -65,17 +65,43 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
                 "name": "web_search",
                 "max_uses": max_searches,
             }],
+            output_config={
+                "format": {
+                    "type": "json_schema",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "found": {"type": "boolean"},
+                            "reason": {"type": "string"},
+                            "sources": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "url": {"type": "string"},
+                                        "title": {"type": "string"},
+                                    },
+                                    "required": ["url", "title"],
+                                    "additionalProperties": False,
+                                },
+                            },
+                        },
+                        "required": ["found", "reason", "sources"],
+                        "additionalProperties": False,
+                    },
+                },
+            },
             messages=[{
                 "role": "user",
                 "content": (
                     f"次のK-pop記事タイトルが事実か信頼メディアで検証してください:\n"
                     f"\"{title}\"\n\n"
-                    f"web_searchツールで {max_searches}回まで調べ、最後に必ず以下のJSON形式で回答:\n"
-                    '{"found": true/false, "reason": "1-2文の要約", "sources": [{"url": "...", "title": "..."}]}\n\n'
+                    f"web_searchツールで {max_searches}回まで調べ、結果をJSONで返してください。\n"
                     f"判定基準:\n"
                     f"- 信頼メディアで同内容が確認できた → found=true\n"
                     f"- 検索したが裏付けなし → found=false\n"
-                    f"- 関連情報あるが直接裏付けなし → found=false (reason に「関連のみ」と明記)"
+                    f"- 関連情報あるが直接裏付けなし → found=false (reason に「関連のみ」と明記)\n"
+                    f"信頼メディア例: soompi, allkpop, billboard, starnewskorea, naver, newsen等"
                 ),
             }],
         )
@@ -91,35 +117,22 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
                         if hasattr(item, 'url') and hasattr(item, 'title'):
                             sources.append({'url': item.url, 'title': item.title[:80]})
 
-        # parse final text JSON
-        text = ''
-        for block in response.content:
-            if block.type == 'text':
-                text += block.text
-
-        import re as _re
-        m = _re.search(r'\{[^{}]*"found"[^{}]*\}', text, _re.DOTALL)
-        if m:
-            try:
-                parsed = json.loads(m.group())
-                # merge cited sources from tool results if not already in parsed
-                if not parsed.get('sources') and sources:
-                    parsed['sources'] = sources[:3]
-                _log({
-                    'title': title[:60],
-                    'found': parsed.get('found'),
-                    'reason': parsed.get('reason', '')[:100],
-                    'tokens': response.usage.input_tokens + response.usage.output_tokens,
-                })
-                return parsed
-            except json.JSONDecodeError:
-                pass
-
-        # fallback: detect YES/NO from text
-        text_low = text.lower()
-        if 'true' in text_low and 'false' not in text_low[:50]:
-            return {'found': True, 'reason': text[:200], 'sources': sources[:3]}
-        return {'found': False, 'reason': text[:200] or 'Could not parse response', 'sources': sources[:3]}
+        # output_config.format で1個目のtext blockに valid JSON 保証
+        text = next((b.text for b in response.content if b.type == 'text'), '{}')
+        try:
+            parsed = json.loads(text)
+            # tool結果のsourcesも統合 (modelが出した sources が空ならfallback)
+            if not parsed.get('sources') and sources:
+                parsed['sources'] = sources[:3]
+            _log({
+                'title': title[:60],
+                'found': parsed.get('found'),
+                'reason': parsed.get('reason', '')[:100],
+                'tokens': response.usage.input_tokens + response.usage.output_tokens,
+            })
+            return parsed
+        except json.JSONDecodeError:
+            return {'found': None, 'reason': f'schema parse err: {text[:100]}', 'sources': sources[:3]}
 
     except anthropic.RateLimitError:
         return {'found': None, 'reason': 'Claude rate limit', 'sources': []}
