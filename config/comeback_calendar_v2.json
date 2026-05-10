@@ -1,0 +1,94 @@
+{
+  "comebacks": [
+    {
+      "artist": "NMIXX",
+      "release_date": "2026-05-11",
+      "title": "Heavy Serenade",
+      "type": "single",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "ITZY",
+      "release_date": "2026-05-18",
+      "title": "Motto",
+      "type": "ep",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "ZEROBASEONE",
+      "release_date": "2026-05-18",
+      "title": "TOP 5",
+      "type": "ep",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "xikers",
+      "release_date": "2026-05-19",
+      "title": "OKay",
+      "type": "ep",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "LE SSERAFIM",
+      "release_date": "2026-05-22",
+      "title": "BOOMPALA",
+      "type": "ep",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "aespa",
+      "release_date": "2026-05-29",
+      "title": "LEMONADE",
+      "type": "ep",
+      "source_url": "",
+      "confidence": "high"
+    },
+    {
+      "artist": "BTS",
+      "release_date": "2026-03-20",
+      "title": "ARIRANG",
+      "type": "album",
+      "source_url": "https://en.wikipedia.org/wiki/Arirang_(album)",
+      "confidence": "high"
+    },
+    {
+      "artist": "BTS",
+      "release_date": "2026-04-09",
+      "title": "ARIRANG World Tour – Seoul (Goyang)",
+      "type": "tour",
+      "source_url": "https://en.wikipedia.org/wiki/Arirang_World_Tour",
+      "confidence": "high"
+    },
+    {
+      "artist": "BTS",
+      "release_date": "2026-04-25",
+      "title": "ARIRANG World Tour – Tampa, FL",
+      "type": "tour",
+      "source_url": "https://en.wikipedia.org/wiki/Arirang_World_Tour",
+      "confidence": "high"
+    },
+    {
+      "artist": "BTS",
+      "release_date": "2026-05-09",
+      "title": "ARIRANG World Tour – Mexico City (Night 1)",
+      "type": "tour",
+      "source_url": "https://www.billboard.com/music/concerts/bts-arirang-world-tour-mexico-city-show-recap-1236242803/",
+      "confidence": "high"
+    },
+    {
+      "artist": "BTS",
+      "release_date": "2026-05-10",
+      "title": "ARIRANG World Tour – Mexico City (Night 2/3)",
+      "type": "tour",
+      "source_url": "https://www.billboard.com/music/concerts/bts-arirang-world-tour-mexico-city-show-recap-1236242803/",
+      "confidence": "high"
+    }
+  ],
+  "summary": "⚠️ 検索レート制限により、BTS以外のアーティスト情報を今回の実行では取得できませんでした。取得できた情報のみを掲載しています。\n\n【BTS】\n• アルバム「ARIRANG」が2026年3月20日にリリース済（全7メンバー復帰後初作品）。\n• ARIRANG World Tour は2026年4月9日（韓国・高陽）にスタート。85公演以上・34都市・23カ国を回る大規模ツアー。現在メキシコシティ公演（5/9〜10）進行中。北米・欧州は2026年9月まで継続予定。\n\n【その他アーティスト（BLACKPINK, NewJeans, aespa, IVE, LE SSERAFIM, ITZY, TWICE, SEVENTEEN, Stray Kids, ENHYPEN, TXT, ATEEZ, TREASURE, NMIXX, ILLIT, BABYMONSTER, BOYNEXTDOOR, RIIZE, TWS, KISS OF LIFE, CORTIS, KATSEYE）】\n検索APIのレート制限に達したため、今回は情報取得ができませんでした。再度お試しいただくか、時間をおいてから再実行をお願いします。\n\n信頼度について：BTSの情報はWikipedia・Rolling Stone・Billboardなど複数の信頼性の高いソースから確認済みのためhigh。",
+  "last_updated": "2026-05-10T17:42:58.618323+09:00"
+}

@@ -262,13 +262,58 @@ def find_or_create_calendar_page(html: str) -> int:
         return 0
 
 
+def _load_manual_seed() -> list[dict]:
+    """data/comebacks_manual.json から手動キュレーション分をload"""
+    p = Path('/home/aiuser/kpop-ai-system/data/comebacks_manual.json')
+    if not p.exists():
+        return []
+    try:
+        d = json.loads(p.read_text(encoding='utf-8'))
+        items = d.get('items', []) if isinstance(d, dict) else d
+        out = []
+        type_map = {'シングル': 'single', 'ミニアルバム': 'ep', 'フルアルバム': 'album',
+                    'アルバム': 'album', 'EP': 'ep', 'OST': 'ost', 'ツアー': 'tour'}
+        for it in items:
+            out.append({
+                'artist': it.get('artist', ''),
+                'release_date': it.get('date', ''),
+                'title': it.get('title', ''),
+                'type': type_map.get(it.get('type', ''), 'other'),
+                'source_url': it.get('source_url', ''),
+                'confidence': 'high',  # 手動curationはhigh
+            })
+        return out
+    except Exception as e:
+        print(f"  manual seed load err: {e}", flush=True)
+        return []
+
+
 def main():
     import sys as _sys
     _sys.stdout.reconfigure(line_buffering=True)  # print() を即時flush
-    print(f"[calendar] Building K-POP comeback calendar via Claude Web search...", flush=True)
+    print(f"[calendar] Building K-POP comeback calendar...", flush=True)
+
+    # 1. Manual curation を base にload (web search失敗時の最低保証)
+    manual = _load_manual_seed()
+    print(f"  manual seed: {len(manual)} entries", flush=True)
+
+    # 2. Claude Web search で補強
+    print(f"  Claude web search...", flush=True)
     data = fetch_comebacks_via_claude()
-    n = len(data.get('comebacks', []))
-    print(f"  fetched {n} entries", flush=True)
+    n_claude = len(data.get('comebacks', []))
+    print(f"  claude fetched: {n_claude} entries", flush=True)
+
+    # 3. Merge: manual + claude (de-dup by artist+date+title)
+    all_items = list(manual) + data.get('comebacks', [])
+    seen = set(); deduped = []
+    for cb in all_items:
+        key = (cb.get('artist','').lower(), cb.get('release_date',''), cb.get('title','')[:30])
+        if key in seen:
+            continue
+        seen.add(key); deduped.append(cb)
+    data['comebacks'] = deduped
+    n = len(deduped)
+    print(f"  merged total: {n} entries", flush=True)
 
     # Save JSON
     CALENDAR_PATH.parent.mkdir(parents=True, exist_ok=True)
