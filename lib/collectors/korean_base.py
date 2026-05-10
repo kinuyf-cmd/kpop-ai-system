@@ -34,6 +34,10 @@ KPOP_KW = [
     'WOODZ', '우즈', '조승연', 'チョ・スンヨン', 'チョスンヨン',
     'カン・ダニエル', '강다니엘', 'KANG DANIEL', 'カンダニエル',
     'BIBI', '비비', 'YOONA', '윤아', 'TAEYANG', '태양',
+    # フルネーム形 (TXT/CATS EYE等の検出漏れ対策)
+    'TOMORROW X TOGETHER', 'TOMORROW_X_TOGETHER',
+    "CAT'S EYE", "CAT’S EYE", 'CATS EYE', 'KATSEYE',  # U+2019(’)対応
+    'FANOMENON', 'WHIB',
 ]
 
 URGENT_KW = [

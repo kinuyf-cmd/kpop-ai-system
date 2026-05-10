@@ -61,6 +61,12 @@ def check_thumbnail(post: dict) -> dict:
     thumb_url = get_thumb_url(fm)
     if not thumb_url:
         return {'pid': pid, 'status': 'media_unreachable'}
+    # 意図的な非写真サムネはFP対策で除外 (DALL-E art / template texts)
+    fn = thumb_url.split('/')[-1].lower()
+    KNOWN_NON_SHORTS = ['v6_regen_', 'dalle', 'kpop-v4-thumb', 'buzzlab',
+                        'kpop_journal_', 'korea-voltage', 'fanchant']
+    if any(p in fn for p in KNOWN_NON_SHORTS):
+        return {'pid': pid, 'status': 'intentional_design', 'date': post.get('date', '')}
     try:
         with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tf:
             with urllib.request.urlopen(thumb_url, timeout=12) as r:
@@ -128,6 +134,28 @@ def main():
         for c in contaminated[:10]:
             msg_lines.append(f"- [{c['pid']}] {c.get('title','')[:30]} → {','.join(c['issues'])}")
         post_to_discord('\n'.join(msg_lines))
+        # 2026-05-10完璧化: 検出→自動修復チェーン
+        # 真の完璧は「検出後に放置せず即修復」。FP分は自動的にskipされる
+        try:
+            print(f"[thumb-audit] triggering auto-repair on {len(contaminated)} items...")
+            import subprocess, tempfile
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tf:
+                json.dump(contaminated, tf, ensure_ascii=False)
+                tf_path = tf.name
+            r = subprocess.run(
+                ['python3', '/home/aiuser/kpop-ai-system/pipeline/thumbnail_auto_repair.py',
+                 '--input', tf_path, '--auto'],
+                capture_output=True, text=True, timeout=600
+            )
+            print(r.stdout[-500:] if r.stdout else '')
+            if r.returncode != 0:
+                print(f"[thumb-audit] auto-repair err code={r.returncode}: {r.stderr[-300:]}")
+            else:
+                # repaired分をDiscordに通知
+                post_to_discord(f"♻️ Auto-repair完了: {r.stdout.split('Summary:')[-1][:100] if 'Summary:' in r.stdout else 'see log'}")
+            os.unlink(tf_path)
+        except Exception as e:
+            print(f"[thumb-audit] auto-repair chain err: {e}")
     else:
         print(f"[thumb-audit] clean ({len(posts)} scanned)")
 

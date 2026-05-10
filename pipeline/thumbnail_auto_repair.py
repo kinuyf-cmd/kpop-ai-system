@@ -50,7 +50,9 @@ NON_ARTIST_KEYWORDS = [
 
 
 def detect_artist(title: str) -> str:
-    """タイトルからartist推定 (subject-first)"""
+    """タイトルからartist推定 (subject-first)。HTML entityをdecodeして判定"""
+    import html
+    title = html.unescape(title)
     arts = is_kpop_related(title)
     if not arts:
         return ''
@@ -104,13 +106,14 @@ def repair_one(item: dict, dry_run: bool = False) -> dict:
     slug = item.get('slug', '')
     result = {'pid': pid, 'title': title[:50], 'action': 'skip', 'reason': ''}
 
-    # 非アーティスト記事はskip (旅行ガイド等)
-    if is_non_artist_article(title):
-        result['reason'] = 'non_artist_article'
-        return result
-
+    # まずartist検出 — 取れたら「ガイド/まとめ」記事でも本人写真化を試みる
+    # (例: "TXT、日本5大ドームツアー決定...まとめ" → TXT記事)
     artist = detect_artist(title)
     if not artist:
+        # artist不明 + 非アーティスト記事キーワード → skip確定
+        if is_non_artist_article(title):
+            result['reason'] = 'non_artist_article'
+            return result
         result['reason'] = 'no_artist_detected'
         return result
     result['artist'] = artist

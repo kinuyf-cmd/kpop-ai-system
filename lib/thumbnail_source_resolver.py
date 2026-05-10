@@ -139,12 +139,20 @@ def _is_shorts_thumbnail(image_path: str) -> bool:
         # 中央が高std、左右が中央の20-50%程度ならShortsの可能性
         if ratio >= 0.55 or ratio < 0.10:
             return False  # legit写真 or 単色logo
-        # Logo判定: 左右の channel-wise range が極小 (完全単色)
+        # Side color rangeで Shorts vs その他 を識別:
+        # - 真Shorts: 30-150 (ブラー拡張で限定的color range)
+        # - Logo: <30 (完全単色)
+        # - text design/legit写真: 255 (full color range)
         side = np.concatenate([left, right], axis=1)
         side_range = float(side.max(axis=(0,1)).mean() - side.min(axis=(0,1)).mean())
-        if side_range < 30:  # ほぼ単色 → Shortsではなく単色背景logo
-            return False
-        # この時点で: 中央 > 左右(中等)、左右が単色でない → Shortsパターン
+        if side_range < 30:
+            return False  # 単色logo
+        if side_range > 150:
+            return False  # text design / legit photo (KCON/2PM等のFP対策)
+        # 左右の輝度差が大きい → 異なる被写体 → 普通の写真
+        side_brightness_diff = abs(float(left.mean()) - float(right.mean()))
+        if side_brightness_diff > 30:
+            return False  # 左右非対称な普通の写真
         return True
     except Exception:
         return False
