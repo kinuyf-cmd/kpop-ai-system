@@ -277,21 +277,21 @@ def render_html(artist: str, profile: dict) -> str:
 
     parts = [_build_schema_org(artist, profile)]
 
-    # ── HERO ──
-    parts.append(f'''<div class="ap-hero" style="background:linear-gradient(135deg,{hero_grad[0]},{hero_grad[1]});">
-  <div class="ap-hero-inner">
-    <div class="ap-hero-avatar" style="background:rgba(255,255,255,0.18);">{initial}</div>
-    <div class="ap-hero-info">
-      <h1 class="ap-hero-name">{artist}</h1>
-      <p class="ap-hero-tagline">{agency}{(" ・ デビュー " + debut[:7].replace("-","年") + "月") if debut else ""}</p>
-      <div class="ap-hero-stats">
-        <span class="ap-stat">👥 {len(members)}名</span>
-        {(f'<span class="ap-stat">⭐ {fandom}</span>') if fandom else ''}
-        {(f'<span class="ap-stat">🎂 {_years_since(debut)}</span>') if debut else ''}
-      </div>
-    </div>
-  </div>
-</div>''')
+    # ── HERO (single-line — wpautop汚染回避) ──
+    stats_html = f'<span class="ap-stat">👥 {len(members)}名</span>'
+    if fandom: stats_html += f'<span class="ap-stat">⭐ {fandom}</span>'
+    if debut: stats_html += f'<span class="ap-stat">🎂 {_years_since(debut)}</span>'
+    tagline = f'{agency}{(" ・ デビュー " + debut[:7].replace("-","年") + "月") if debut else ""}'
+    parts.append(
+        f'<div class="ap-hero" style="background:linear-gradient(135deg,{hero_grad[0]},{hero_grad[1]});">'
+        f'<div class="ap-hero-inner">'
+        f'<div class="ap-hero-avatar">{initial}</div>'
+        f'<div class="ap-hero-info">'
+        f'<h1 class="ap-hero-name">{artist}</h1>'
+        f'<p class="ap-hero-tagline">{tagline}</p>'
+        f'<div class="ap-hero-stats">{stats_html}</div>'
+        f'</div></div></div>'
+    )
 
     parts.append('<div class="artist-profile">')
     parts.append(f'<p class="ap-updated">最終更新: {today}</p>')
@@ -317,10 +317,10 @@ def render_html(artist: str, profile: dict) -> str:
         parts.append(f'<div class="ap-info-item"><dt>国籍</dt><dd>{natl_str}</dd></div>')
     parts.append('</dl>')
 
-    # ── メンバーカード grid ──
+    # ── メンバーカード grid (single-line + compact) ──
     if members:
         parts.append('<h2 class="ap-h2">👥 メンバー</h2>')
-        parts.append('<div class="ap-members-grid">')
+        member_cards = []
         for i, m in enumerate(members):
             name_ja = m.get('name_ja', '')
             name_en = m.get('name_en', '')
@@ -331,224 +331,215 @@ def render_html(artist: str, profile: dict) -> str:
             natl = m.get('nationality', '')
             grad = _GRAD_POOL[(hash(artist) + i) % len(_GRAD_POOL)]
             mi = (name_en or name_ja or '?')[0].upper()
-
             display_name = name_ja or name_en
             sub_name = name_en if name_ja and name_en and name_ja != name_en else ''
 
-            parts.append(f'''<div class="ap-member-card">
-  <div class="ap-member-avatar" style="background:linear-gradient(135deg,{grad[0]},{grad[1]});">{mi}</div>
-  <div class="ap-member-name">{display_name}</div>
-  {f'<div class="ap-member-en">{sub_name}</div>' if sub_name else ''}
-  {f'<div class="ap-member-real"><small>本名: {real}</small></div>' if real else ''}
-  <div class="ap-member-position">{position}</div>
-  {f'<div class="ap-member-birth">{_format_birth(birth)}{f" ({age}歳)" if age else ""}</div>' if birth else ''}
-  {f'<div class="ap-member-natl">🌏 {natl}</div>' if natl else ''}
-</div>''')
-        parts.append('</div>')
+            inner = (
+                f'<div class="ap-member-avatar" style="background:linear-gradient(135deg,{grad[0]},{grad[1]});">{mi}</div>'
+                f'<div class="ap-member-name">{display_name}</div>'
+            )
+            if sub_name: inner += f'<div class="ap-member-en">{sub_name}</div>'
+            if birth:
+                age_txt = f' ・ {age}歳' if age else ''
+                inner += f'<div class="ap-member-birth">{_format_birth(birth)}{age_txt}</div>'
+            if position: inner += f'<div class="ap-member-position">{position}</div>'
+            meta = []
+            if real: meta.append(real)
+            if natl: meta.append(natl)
+            if meta: inner += f'<div class="ap-member-meta">{" ・ ".join(meta)}</div>'
+            member_cards.append(f'<div class="ap-member-card">{inner}</div>')
+        parts.append(f'<div class="ap-members-grid">{"".join(member_cards)}</div>')
 
-    # ── ディスコグラフィー timeline ──
+    # ── ディスコグラフィー (single-line + compact card) ──
     disco = profile.get('discography_highlights', [])
     if disco:
         parts.append('<h2 class="ap-h2">🎵 主要ディスコグラフィー</h2>')
-        parts.append('<div class="ap-disco-timeline">')
         type_meta = {
             'album': ('🎵', '#FF1493', 'アルバム'),
-            'ep': ('💿', '#9B59B6', 'ミニアルバム'),
+            'ep': ('💿', '#9B59B6', 'ミニ'),
             'single': ('🎶', '#00BCD4', 'シングル'),
             'japanese': ('🇯🇵', '#E91E63', '日本盤'),
             'ost': ('🎞️', '#FFB300', 'OST'),
         }
+        disco_items = []
         for d in sorted(disco, key=lambda x: x.get('year', '9999'), reverse=True):
             t = d.get('type', '')
-            icon, color, label = type_meta.get(t, ('📌', '#888', 'その他'))
+            icon, color, label = type_meta.get(t, ('📌', '#888', '他'))
             note = d.get('note', '')
-            parts.append(f'''<div class="ap-disco-item">
-  <div class="ap-disco-year">{d.get("year","")}</div>
-  <div class="ap-disco-icon" style="background:{color};">{icon}</div>
-  <div class="ap-disco-body">
-    <div class="ap-disco-title"><strong>{d.get("title","")}</strong></div>
-    <div class="ap-disco-meta"><span class="ap-disco-type" style="color:{color};">{label}</span>{f" / {note}" if note else ""}</div>
-  </div>
-</div>''')
-        parts.append('</div>')
+            note_html = f' <span class="ap-disco-note">{note}</span>' if note else ''
+            disco_items.append(
+                f'<div class="ap-disco-item" style="border-left-color:{color};">'
+                f'<span class="ap-disco-year">{d.get("year","")}</span>'
+                f'<span class="ap-disco-title">{d.get("title","")}</span>'
+                f'<span class="ap-disco-type" style="color:{color};">{icon} {label}</span>'
+                f'{note_html}'
+                f'</div>'
+            )
+        parts.append(f'<div class="ap-disco-list">{"".join(disco_items)}</div>')
 
-    # ── 公式SNS rich cards ──
+    # ── 公式SNS pill chips (single-line) ──
     links = profile.get('official_links', {}) or {}
     if any(links.values()):
         parts.append('<h2 class="ap-h2">🔗 公式SNS</h2>')
-        parts.append('<div class="ap-sns-grid">')
         sns_meta = {
-            'twitter': ('𝕏', '#000', 'X (Twitter)'),
+            'twitter': ('𝕏', '#000', 'X'),
             'instagram': ('📷', 'linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)', 'Instagram'),
             'weverse': ('💜', '#7B1FA2', 'Weverse'),
             'youtube': ('▶', '#FF0000', 'YouTube'),
             'tiktok': ('🎵', '#000', 'TikTok'),
             'japan_official': ('🇯🇵', '#D62929', '日本公式'),
         }
+        sns_chips = []
         for k in ['twitter', 'instagram', 'weverse', 'youtube', 'tiktok', 'japan_official']:
             v = links.get(k)
             if not v: continue
             icon, bg, label = sns_meta[k]
-            parts.append(f'''<a href="{v}" target="_blank" rel="noopener" class="ap-sns-card">
-  <div class="ap-sns-icon" style="background:{bg};">{icon}</div>
-  <div class="ap-sns-label">{label}</div>
-</a>''')
-        parts.append('</div>')
+            sns_chips.append(
+                f'<a href="{v}" target="_blank" rel="noopener" class="ap-sns-chip">'
+                f'<span class="ap-sns-icon" style="background:{bg};">{icon}</span>'
+                f'<span class="ap-sns-label">{label}</span>'
+                f'</a>'
+            )
+        parts.append(f'<div class="ap-sns-chips">{"".join(sns_chips)}</div>')
 
-    # ── 最新記事カード grid ──
-    recent_posts = _fetch_recent_articles_for_artist(artist, limit=6)
+    # ── 最新記事カード (compact, single-line) ──
+    recent_posts = _fetch_recent_articles_for_artist(artist, limit=8)
     if recent_posts:
         parts.append(f'<h2 class="ap-h2">📰 {artist} の最新記事</h2>')
-        parts.append('<div class="ap-articles-grid">')
+        article_cards = []
         for post in recent_posts:
             title = post.get('title', {}).get('rendered', '')
             slug = post.get('slug', '')
             date_str = post.get('date', '')[:10].replace('-', '/')
-            # featured_media URL
             thumb = ''
             embedded = post.get('_embedded', {}).get('wp:featuredmedia', [])
             if embedded and embedded[0].get('source_url'):
                 thumb = embedded[0]['source_url']
-                # WP のmedium-large サムネがあれば優先
                 sizes = embedded[0].get('media_details', {}).get('sizes', {})
-                if sizes.get('medium_large', {}).get('source_url'):
-                    thumb = sizes['medium_large']['source_url']
-                elif sizes.get('medium', {}).get('source_url'):
+                if sizes.get('medium', {}).get('source_url'):
                     thumb = sizes['medium']['source_url']
-            thumb_html = (f'<img src="{thumb}" alt="{title}" loading="lazy" />'
+            thumb_html = (f'<img src="{thumb}" alt="{title}" loading="lazy"/>'
                           if thumb else '<div class="ap-article-noimg">📰</div>')
-            parts.append(f'''<a href="/{slug}/" class="ap-article-card">
-  <div class="ap-article-thumb">{thumb_html}</div>
-  <div class="ap-article-body">
-    <div class="ap-article-title">{title}</div>
-    <div class="ap-article-date">{date_str}</div>
-  </div>
-</a>''')
-        parts.append('</div>')
+            article_cards.append(
+                f'<a href="/{slug}/" class="ap-article-card">'
+                f'<div class="ap-article-thumb">{thumb_html}</div>'
+                f'<div class="ap-article-body">'
+                f'<div class="ap-article-title">{title}</div>'
+                f'<div class="ap-article-date">{date_str}</div>'
+                f'</div></a>'
+            )
+        parts.append(f'<div class="ap-articles-grid">{"".join(article_cards)}</div>')
 
-    # ── 関連リンク ──
+    # ── 関連 (single-line, pill style) ──
     parts.append('<h2 class="ap-h2">🔗 関連</h2>')
-    parts.append('<div class="ap-related">')
-    parts.append(f'<a href="/release-calendar/" class="ap-related-card ap-related-cal">'
-                 f'<span class="ap-related-icon">📅</span>'
-                 f'<div><strong>{artist} の今後の予定</strong><br><small>カムバック・カレンダーで確認 →</small></div></a>')
-    parts.append(f'<a href="/?s={artist.replace(" ", "+")}" class="ap-related-card ap-related-news">'
-                 f'<span class="ap-related-icon">🔍</span>'
-                 f'<div><strong>{artist} 関連を全件検索</strong><br><small>サイト内検索 →</small></div></a>')
-    parts.append(f'<a href="/artists/" class="ap-related-card ap-related-hub">'
-                 f'<span class="ap-related-icon">🎤</span>'
-                 f'<div><strong>他のアーティスト</strong><br><small>全プロフィール →</small></div></a>')
-    parts.append('</div>')
+    rel_chips = (
+        f'<a href="/release-calendar/" class="ap-rel-chip ap-rel-cal">📅 カムバック予定</a>'
+        f'<a href="/?s={artist.replace(" ", "+")}" class="ap-rel-chip ap-rel-search">🔍 関連を全件検索</a>'
+        f'<a href="/artists/" class="ap-rel-chip ap-rel-hub">🎤 他のアーティスト</a>'
+    )
+    parts.append(f'<div class="ap-rel-chips">{rel_chips}</div>')
 
     parts.append('</div>')  # /artist-profile
 
-    # ── インラインCSS (compact + mobile optimized) ──
+    # ── インラインCSS (洗練・compact・shareable typography) ──
     parts.append('''<style>
-/* ========== Hero (compact) ========== */
-.ap-hero { border-radius: 16px; padding: 1.6em 1.4em; margin: 0.5em 0 1.5em; color: white; box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
-.ap-hero-inner { display: flex; align-items: center; gap: 1.2em; max-width: 900px; margin: 0 auto; flex-wrap: wrap; }
-.ap-hero-avatar { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; backdrop-filter: blur(10px); border: 3px solid rgba(255,255,255,0.4); flex-shrink: 0; }
-.ap-hero-info { flex: 1; min-width: 180px; }
-.ap-hero-name { font-size: 1.9em; font-weight: 800; margin: 0 0 0.15em; line-height: 1.1; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-.ap-hero-tagline { font-size: 0.9em; opacity: 0.95; margin: 0 0 0.7em; }
-.ap-hero-stats { display: flex; gap: 0.5em; flex-wrap: wrap; }
-.ap-stat { background: rgba(255,255,255,0.22); padding: 0.3em 0.75em; border-radius: 99px; font-size: 0.78em; font-weight: 600; backdrop-filter: blur(8px); }
+.artist-profile,.ap-hero,.ap-hero *,.ap-h2{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif}
+.ap-hero{border-radius:14px;padding:1.4em 1.3em;margin:.5em 0 1em;color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.13);position:relative;overflow:hidden}
+.ap-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.18),transparent 50%);pointer-events:none}
+.ap-hero-inner{display:flex;align-items:center;gap:1.1em;max-width:900px;margin:0 auto;flex-wrap:wrap;position:relative}
+.ap-hero-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.85em;font-weight:800;background:rgba(255,255,255,.18);backdrop-filter:blur(12px);border:2.5px solid rgba(255,255,255,.55);flex-shrink:0;letter-spacing:-.03em}
+.ap-hero-info{flex:1;min-width:180px}
+.ap-hero-name{font-size:1.85em;font-weight:800;margin:0 0 .15em;line-height:1.05;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.18);letter-spacing:-.02em}
+.ap-hero-tagline{font-size:.86em;opacity:.95;margin:0 0 .55em;font-weight:500}
+.ap-hero-stats{display:flex;gap:.4em;flex-wrap:wrap}
+.ap-stat{background:rgba(255,255,255,.22);padding:.28em .72em;border-radius:99px;font-size:.74em;font-weight:600;backdrop-filter:blur(8px);letter-spacing:.01em}
+.artist-profile{max-width:900px;margin:0 auto;padding:0 .7em}
+.ap-updated{color:#aaa;font-size:.72em;text-align:right;margin:.2em 0 .5em;letter-spacing:.05em}
+.ap-h2{font-size:1.18em;font-weight:700;margin:1.6em 0 .7em;color:#1a1a1a;letter-spacing:-.01em;display:flex;align-items:center;gap:.5em}
+.ap-h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,#FF1493 0%,transparent 70%);margin-left:.4em}
+.ap-intro{background:linear-gradient(135deg,#fff8fc,#f8f4ff);padding:.95em 1.1em;border-radius:10px;margin:.6em 0 1.1em;border-left:3px solid #FF1493;line-height:1.6;font-size:.9em;color:#444}
 
-/* ========== Sections ========== */
-.artist-profile { max-width: 900px; margin: 0 auto; padding: 0 0.8em; }
-.ap-updated { color: #999; font-size: 0.78em; text-align: right; margin: 0.3em 0; }
-.ap-h2 { font-size: 1.25em; font-weight: 700; margin: 1.4em 0 0.8em; padding-bottom: 0.35em; border-bottom: 2px solid #FF1493; }
-.ap-intro { background: linear-gradient(135deg, #fff8fc, #f8f4ff); padding: 1em 1.2em; border-radius: 10px; margin: 0.8em 0 1.2em; border-left: 3px solid #FF1493; line-height: 1.6; font-size: 0.92em; }
+/* 基本情報 */
+.ap-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.45em;margin:.6em 0}
+.ap-info-item{background:#fafbfd;padding:.55em .85em;border-radius:8px;border-left:3px solid #FF1493}
+.ap-info-item dt{font-size:.66em;font-weight:700;color:#888;letter-spacing:.05em;margin:0 0 .12em;text-transform:uppercase}
+.ap-info-item dd{margin:0;font-size:.9em;color:#222;line-height:1.4}
+.ap-info-item dd small{color:#666;font-size:.85em}
 
-/* ========== 基本情報 (compact 2-col grid) ========== */
-.ap-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
-.ap-info-item { background: #f8f9fb; padding: 0.6em 0.9em; border-radius: 8px; border-left: 3px solid #FF1493; }
-.ap-info-item dt { font-size: 0.7em; font-weight: 700; color: #888; letter-spacing: 0.04em; margin: 0 0 0.15em; text-transform: uppercase; }
-.ap-info-item dd { margin: 0; font-size: 0.92em; color: #222; line-height: 1.4; }
-.ap-info-item dd small { color: #666; font-size: 0.85em; }
+/* メンバー — dense, less padding */
+.ap-members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:.5em;margin:.6em 0}
+.ap-member-card{background:#fff;border-radius:10px;padding:.65em .35em .55em;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid #f3f3f3;transition:transform .18s,box-shadow .18s,border-color .18s}
+.ap-member-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,20,147,.13);border-color:#ffe0ed}
+.ap-member-avatar{width:46px;height:46px;border-radius:50%;margin:0 auto .35em;display:flex;align-items:center;justify-content:center;font-size:1.35em;font-weight:800;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.1);letter-spacing:-.02em}
+.ap-member-name{font-size:.95em;font-weight:700;color:#1a1a1a;line-height:1.15}
+.ap-member-en{font-size:.66em;color:#999;margin-top:.08em;letter-spacing:.02em}
+.ap-member-birth{font-size:.66em;color:#666;margin-top:.35em;font-weight:500}
+.ap-member-position{font-size:.66em;color:#888;margin-top:.18em;line-height:1.25}
+.ap-member-meta{font-size:.6em;color:#aaa;margin-top:.18em;line-height:1.25}
 
-/* ========== Members (compact, dense) ========== */
-.ap-members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6em; margin: 0.8em 0; }
-.ap-member-card { background: white; border-radius: 10px; padding: 0.8em 0.5em; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: transform 0.18s, box-shadow 0.18s; }
-.ap-member-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,20,147,0.12); }
-.ap-member-avatar { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 0.4em; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: 800; color: white; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
-.ap-member-name { font-size: 1em; font-weight: 700; color: #222; line-height: 1.2; }
-.ap-member-en { font-size: 0.72em; color: #999; margin-top: 0.05em; }
-.ap-member-real { font-size: 0.65em; color: #aaa; margin-top: 0.1em; line-height: 1.2; }
-.ap-member-position { font-size: 0.72em; color: #555; margin-top: 0.4em; line-height: 1.3; }
-.ap-member-birth { font-size: 0.7em; color: #777; margin-top: 0.25em; }
-.ap-member-natl { font-size: 0.65em; color: #999; margin-top: 0.1em; }
+/* ディスコ — flex inline rows, 1col list with type chip */
+.ap-disco-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.35em;margin:.6em 0}
+.ap-disco-item{display:flex;align-items:center;gap:.55em;padding:.4em .75em;background:#fafbfd;border-radius:7px;border-left:3px solid #ddd;font-size:.82em}
+.ap-disco-year{font-weight:700;color:#666;flex-shrink:0;width:38px;font-size:.95em}
+.ap-disco-title{flex:1;color:#222;min-width:0;font-weight:500;line-height:1.3;word-break:break-word}
+.ap-disco-type{font-size:.78em;font-weight:600;flex-shrink:0;white-space:nowrap}
+.ap-disco-note{font-size:.78em;color:#999;margin-left:.3em}
 
-/* ========== Discography (2-col grid + compact) ========== */
-.ap-disco-timeline { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.4em; margin: 0.8em 0; }
-.ap-disco-item { display: flex; align-items: center; gap: 0.6em; padding: 0.5em 0.7em; background: #f8f9fb; border-radius: 8px; border-left: 3px solid #ddd; }
-.ap-disco-year { font-size: 0.85em; font-weight: 700; color: #888; flex-shrink: 0; width: 44px; }
-.ap-disco-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9em; flex-shrink: 0; }
-.ap-disco-body { flex: 1; min-width: 0; }
-.ap-disco-title { font-size: 0.9em; color: #222; line-height: 1.3; word-break: break-word; }
-.ap-disco-meta { font-size: 0.7em; color: #888; }
-.ap-disco-type { font-weight: 600; }
+/* SNS — pill chips inline flex */
+.ap-sns-chips{display:flex;flex-wrap:wrap;gap:.45em;margin:.6em 0 1em}
+.ap-sns-chip{display:inline-flex;align-items:center;gap:.45em;padding:.4em .85em .4em .4em;background:#fff;border:1px solid #eee;border-radius:99px;text-decoration:none;color:#222;font-size:.82em;font-weight:600;transition:transform .18s,border-color .18s,box-shadow .18s}
+.ap-sns-chip:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08);border-color:#FF1493}
+.ap-sns-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85em;font-weight:bold;flex-shrink:0}
+.ap-sns-label{font-size:.92em}
 
-/* ========== SNS (icon-only chips on mobile) ========== */
-.ap-sns-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
-.ap-sns-card { display: flex; align-items: center; gap: 0.6em; padding: 0.55em 0.8em; background: white; border-radius: 8px; border: 1px solid #eee; text-decoration: none; color: #222; transition: transform 0.18s, box-shadow 0.18s; }
-.ap-sns-card:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
-.ap-sns-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1em; font-weight: bold; flex-shrink: 0; }
-.ap-sns-label { font-size: 0.82em; font-weight: 600; }
+/* 関連記事 — compact card, 4col on desktop */
+.ap-articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.55em;margin:.6em 0}
+.ap-article-card{display:block;background:#fff;border-radius:9px;overflow:hidden;text-decoration:none;color:#222;box-shadow:0 1px 3px rgba(0,0,0,.05);border:1px solid #f3f3f3;transition:transform .18s,box-shadow .18s}
+.ap-article-card:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(255,20,147,.1)}
+.ap-article-thumb{width:100%;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,#ffe1ec,#fff8e1);display:flex;align-items:center;justify-content:center}
+.ap-article-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ap-article-noimg{font-size:1.5em;opacity:.45}
+.ap-article-body{padding:.5em .65em .55em}
+.ap-article-title{font-size:.78em;font-weight:600;line-height:1.35;color:#222;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ap-article-date{font-size:.62em;color:#aaa;margin-top:.25em;letter-spacing:.04em}
 
-/* ========== Articles grid ========== */
-.ap-articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.7em; margin: 0.8em 0; }
-.ap-article-card { display: block; background: white; border-radius: 10px; overflow: hidden; text-decoration: none; color: #222; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: transform 0.18s, box-shadow 0.18s; }
-.ap-article-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,20,147,0.1); }
-.ap-article-thumb { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: linear-gradient(135deg,#ffe1ec,#fff8e1); display: flex; align-items: center; justify-content: center; }
-.ap-article-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ap-article-noimg { font-size: 2em; opacity: 0.5; }
-.ap-article-body { padding: 0.6em 0.8em; }
-.ap-article-title { font-size: 0.85em; font-weight: 600; line-height: 1.35; color: #222; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.ap-article-date { font-size: 0.7em; color: #999; margin-top: 0.3em; }
+/* 関連 — pill chips */
+.ap-rel-chips{display:flex;flex-wrap:wrap;gap:.45em;margin:.6em 0 .8em}
+.ap-rel-chip{display:inline-flex;align-items:center;padding:.5em 1em;border-radius:99px;text-decoration:none;font-size:.85em;font-weight:600;transition:transform .18s;border:1px solid transparent}
+.ap-rel-chip:hover{transform:translateY(-1px)}
+.ap-rel-cal{background:linear-gradient(135deg,#fff8e1,#ffecb3);color:#a68000;border-color:#ffe082}
+.ap-rel-search{background:linear-gradient(135deg,#e3f2fd,#bbdefb);color:#0d47a1;border-color:#90caf9}
+.ap-rel-hub{background:linear-gradient(135deg,#fce4ec,#f8bbd0);color:#ad1457;border-color:#f48fb1}
 
-/* ========== Related (compact) ========== */
-.ap-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5em; margin: 0.8em 0; }
-.ap-related-card { display: flex; align-items: center; gap: 0.6em; padding: 0.7em 0.9em; border-radius: 10px; text-decoration: none; color: #222; transition: transform 0.18s; }
-.ap-related-card:hover { transform: translateY(-2px); }
-.ap-related-icon { font-size: 1.3em; flex-shrink: 0; }
-.ap-related-card div { font-size: 0.85em; line-height: 1.3; }
-.ap-related-card small { font-size: 0.78em; }
-.ap-related-cal { background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 3px solid #ffc107; }
-.ap-related-news { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 3px solid #2196F3; }
-.ap-related-hub { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border-left: 3px solid #e91e63; }
-
-/* ========== Mobile (<= 600px) ========== */
-@media (max-width: 600px) {
-  .ap-hero { padding: 1.2em 0.9em; border-radius: 12px; }
-  .ap-hero-inner { gap: 0.9em; }
-  .ap-hero-avatar { width: 56px; height: 56px; font-size: 1.6em; }
-  .ap-hero-name { font-size: 1.4em; }
-  .ap-hero-tagline { font-size: 0.78em; margin-bottom: 0.5em; }
-  .ap-stat { font-size: 0.72em; padding: 0.25em 0.6em; }
-  .ap-h2 { font-size: 1.05em; margin: 1em 0 0.5em; }
-  .artist-profile { padding: 0 0.5em; }
-  .ap-info-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4em; }
-  .ap-info-item { padding: 0.5em 0.7em; }
-  .ap-members-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5em; }
-  .ap-member-card { padding: 0.7em 0.4em; }
-  .ap-member-avatar { width: 44px; height: 44px; font-size: 1.25em; }
-  .ap-member-name { font-size: 0.92em; }
-  .ap-disco-timeline { grid-template-columns: 1fr; gap: 0.35em; }
-  .ap-sns-grid { grid-template-columns: repeat(3, 1fr); }
-  .ap-sns-card { padding: 0.5em; flex-direction: column; gap: 0.3em; text-align: center; }
-  .ap-sns-icon { width: 26px; height: 26px; font-size: 0.9em; }
-  .ap-sns-label { font-size: 0.7em; }
-  .ap-articles-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5em; }
-  .ap-article-title { font-size: 0.78em; }
-  .ap-related { grid-template-columns: 1fr; }
-  .ap-related-card { padding: 0.6em 0.8em; }
+/* Mobile */
+@media (max-width:600px){
+  .ap-hero{padding:1.05em .85em;border-radius:11px}
+  .ap-hero-avatar{width:50px;height:50px;font-size:1.45em}
+  .ap-hero-name{font-size:1.32em}
+  .ap-hero-tagline{font-size:.74em;margin-bottom:.4em}
+  .ap-stat{font-size:.66em;padding:.22em .55em}
+  .ap-h2{font-size:1em;margin:1em 0 .5em}
+  .artist-profile{padding:0 .5em}
+  .ap-info-grid{grid-template-columns:repeat(2,1fr);gap:.35em}
+  .ap-info-item{padding:.45em .65em}
+  .ap-members-grid{grid-template-columns:repeat(3,1fr);gap:.4em}
+  .ap-member-card{padding:.55em .25em .5em}
+  .ap-member-avatar{width:38px;height:38px;font-size:1.05em;margin-bottom:.25em}
+  .ap-member-name{font-size:.85em}
+  .ap-member-en,.ap-member-birth,.ap-member-position{font-size:.6em}
+  .ap-disco-list{grid-template-columns:1fr;gap:.3em}
+  .ap-disco-item{padding:.35em .55em;font-size:.78em}
+  .ap-sns-chips{gap:.35em}
+  .ap-sns-chip{font-size:.74em;padding:.32em .65em .32em .32em}
+  .ap-sns-icon{width:20px;height:20px;font-size:.75em}
+  .ap-articles-grid{grid-template-columns:repeat(2,1fr);gap:.4em}
+  .ap-article-title{font-size:.72em}
+  .ap-rel-chips{gap:.35em}
+  .ap-rel-chip{font-size:.75em;padding:.4em .8em}
 }
-
-/* ========== 超小型 (<= 380px) ========== */
-@media (max-width: 380px) {
-  .ap-info-grid { grid-template-columns: 1fr; }
-  .ap-articles-grid { grid-template-columns: 1fr; }
+@media (max-width:380px){
+  .ap-info-grid{grid-template-columns:1fr}
+  .ap-members-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>''')
     return '\n'.join(parts)

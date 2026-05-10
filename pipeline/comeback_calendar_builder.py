@@ -181,16 +181,16 @@ def render_html(data: dict) -> str:
     }
 
     parts = [
-        '<div class="rc-page">',
-        '<div class="rc-hero">',
-        '<h1 class="rc-hero-title">📅 K-POP リリース・カレンダー</h1>',
-        '<p class="rc-hero-sub">K-POP主要グループの今後90日間の公式カムバック・ツアー情報</p>',
-        f'<p class="rc-hero-meta">最終更新: {today} ・ 毎朝5時自動更新</p>',
-        '</div>',
+        '<div class="rc-page">'
+        '<div class="rc-hero">'
+        '<h1 class="rc-hero-title">📅 K-POP リリース・カレンダー</h1>'
+        '<p class="rc-hero-sub">主要22組の今後90日間の公式カムバック・ツアー情報</p>'
+        f'<p class="rc-hero-meta">最終更新: {today} ・ 毎朝5時自動更新</p>'
+        '</div>'
     ]
 
     if data.get('summary'):
-        sm = (data['summary'] or '').strip()[:240]
+        sm = (data['summary'] or '').strip()[:200]
         parts.append(f'<div class="rc-summary"><strong>📌 注目</strong> {sm}…</div>')
 
     # 月別grouping
@@ -202,8 +202,7 @@ def render_html(data: dict) -> str:
         by_month.setdefault(month, []).append(cb)
 
     for month in sorted(by_month.keys()):
-        parts.append(f'<h2 class="rc-month">{month[:4]}年{int(month[5:7])}月</h2>')
-        parts.append('<div class="rc-grid">')
+        cards = []
         for cb in sorted(by_month[month], key=lambda x: x['release_date']):
             date_str = cb['release_date']
             day = date_str[8:10] if len(date_str) >= 10 else '?'
@@ -215,32 +214,36 @@ def render_html(data: dict) -> str:
             src = cb.get('source_url', '')
             artist = cb['artist']
             artist_link = (f'<a href="{src}" target="_blank" rel="noopener">{artist}</a>' if src else artist)
-            parts.append(f'''<div class="rc-card">
-  <div class="rc-card-date" style="background:{tcolor};">
-    <div class="rc-day">{day}</div>
-    <div class="rc-mon">{mon_short}月</div>
-  </div>
-  <div class="rc-card-body">
-    <div class="rc-card-artist">{artist_link}</div>
-    <div class="rc-card-title">{cb.get("title","")}</div>
-    <div class="rc-card-tags">
-      <span class="rc-tag" style="color:{tcolor};">{ticon} {tlabel}</span>
-      <span class="rc-tag rc-conf" style="color:{ccolor};">{cicon} {clabel}</span>
-    </div>
-  </div>
-</div>''')
-        parts.append('</div>')
+            cards.append(
+                f'<div class="rc-card">'
+                f'<div class="rc-card-date" style="background:{tcolor};">'
+                f'<div class="rc-day">{day}</div>'
+                f'<div class="rc-mon">{mon_short}月</div>'
+                f'</div>'
+                f'<div class="rc-card-body">'
+                f'<div class="rc-card-artist">{artist_link}</div>'
+                f'<div class="rc-card-title">{cb.get("title","")}</div>'
+                f'<div class="rc-card-tags">'
+                f'<span class="rc-tag" style="color:{tcolor};">{ticon} {tlabel}</span>'
+                f'<span class="rc-tag rc-conf" style="color:{ccolor};">{cicon} {clabel}</span>'
+                f'</div>'
+                f'</div>'
+                f'</div>'
+            )
+        parts.append(f'<h2 class="rc-month">{month[:4]}年{int(month[5:7])}月</h2>')
+        parts.append(f'<div class="rc-grid">{"".join(cards)}</div>')
 
+    parts.append(
+        '<div class="rc-foot">'
+        '<div class="rc-foot-links">'
+        '<a href="/artists/" class="rc-foot-link">🎤 アーティスト一覧</a>'
+        '<a href="/category/news/" class="rc-foot-link">📰 最新ニュース</a>'
+        '</div>'
+        '<p class="rc-disclaimer"><small>本ページは Claude Web search で日次自動更新 ・ 確定/予定/予想は信頼度バッジで識別</small></p>'
+        '</div>'
+        '</div>'
+    )
     parts.extend([
-        '<div class="rc-foot">',
-        '<h3 class="rc-foot-h">📚 関連リンク</h3>',
-        '<div class="rc-foot-links">',
-        '<a href="/artists/" class="rc-foot-link">🎤 アーティスト一覧</a>',
-        '<a href="/category/news/" class="rc-foot-link">📰 最新ニュース</a>',
-        '</div>',
-        '<p class="rc-disclaimer"><small>各アーティスト公式 (Twitter/Weverse) で最新情報を確認 ・ 本ページは Claude Web search で日次自動更新 ・ 確定/予定/予想は信頼度バッジで識別</small></p>',
-        '</div>',
-        '</div>',
         '''<style>
 .rc-page { max-width: 980px; margin: 0 auto; padding: 0 0.8em; }
 .rc-hero { background: linear-gradient(135deg, #FF1493, #FF8A65); border-radius: 14px; padding: 1.5em 1.4em; margin: 0.5em 0 1.2em; color: white; box-shadow: 0 6px 24px rgba(255,20,147,0.18); }
