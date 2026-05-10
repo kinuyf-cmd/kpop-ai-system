@@ -123,12 +123,21 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     plain = re.sub(r'\s+', ' ', plain).strip()[:2500]
 
     today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
+
+    # 過去の検出事例 (lessons learned) を prompt に注入 — 自己学習
+    try:
+        from lib.factcheck_lessons import get_recent_lessons, format_lessons_for_prompt
+        lessons = get_recent_lessons(days=30, max_count=12)
+        lessons_section = format_lessons_for_prompt(lessons)
+    except Exception:
+        lessons_section = ''
+
     user_prompt = f"""今日の日付: {today}
 
 ## 校閲対象記事
 【タイトル】{title}
 【本文抜粋】{plain}
-
+{('\n' + lessons_section + '\n') if lessons_section else ''}
 上記K-pop知識基盤と判定ルールに従って校閲し、JSONで返却してください。
 不明な事実 (新曲名/最新リリース日等) があれば web_search ツールで信頼メディアで裏取りしてからJSON結果を返してください。
 """
@@ -182,6 +191,14 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
                 'cache_read': getattr(response.usage, 'cache_read_input_tokens', 0),
             },
         })
+
+        # 自己学習: critical/high issue を lessons.jsonl に追加
+        try:
+            from lib.factcheck_lessons import append_lessons
+            append_lessons(post.get('id', 0), title, result)
+        except Exception:
+            pass
+
         return result
 
     except anthropic.RateLimitError:
