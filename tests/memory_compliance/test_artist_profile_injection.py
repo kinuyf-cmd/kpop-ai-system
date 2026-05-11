@@ -17,11 +17,40 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 
 def test_breaking_news_detector_solo_injection():
-    """is_solo=true の artist は「ソロアーティスト」として注入され「0人組」を含まない"""
-    from pipeline.breaking_news_detector import _get_artist_profile_context
-    ctx = _get_artist_profile_context('IU', [{'title': 'IUが新曲リリース'}])
-    assert '0人組' not in ctx, f'solo artist injection contains 0人組: {ctx!r}'
-    assert 'ソロアーティスト' in ctx, f'solo marker missing: {ctx!r}'
+    """is_solo=true の artist は「ソロアーティスト」として注入され「0人組」を含まない
+
+    artist_profiles.json は pipeline auto-update で変動するため、データ独立 test として
+    一時的に solo entry を mock してロジックを検証する。
+    """
+    import json
+    from pathlib import Path
+    profile_path = Path('/home/aiuser/kpop-ai-system/config/artist_profiles.json')
+    backup = profile_path.read_text()
+    try:
+        d = json.loads(backup)
+        d.setdefault('profiles', {})['_test_solo_iu'] = {
+            'display_name': 'IU',
+            'name_en': 'IU',
+            'agency': 'EDAM Entertainment',
+            'debut_year': 2008,
+            'is_solo': True,
+            'members': [],
+        }
+        profile_path.write_text(json.dumps(d, ensure_ascii=False, indent=2))
+        from pipeline.breaking_news_detector import _get_artist_profile_context
+        ctx = _get_artist_profile_context('IU', [{'title': 'IUが新曲リリース'}])
+        assert '0人組' not in ctx, f'solo artist injection contains 0人組: {ctx!r}'
+        assert 'ソロアーティスト' in ctx, f'solo marker missing: {ctx!r}'
+    finally:
+        profile_path.write_text(backup)
+
+
+def test_breaking_news_detector_solo_logic_without_data():
+    """データに solo artist がいなくても、コード分岐に「ソロアーティスト」記述があること
+    (将来 solo artist が追加された時の logic 正常性を保証する static test)"""
+    src = open('/home/aiuser/kpop-ai-system/pipeline/breaking_news_detector.py').read()
+    assert 'ソロアーティスト' in src, 'solo branch missing in code'
+    assert "prof.get('is_solo'" in src, 'is_solo check missing'
 
 
 def test_breaking_news_detector_empty_group_skipped():

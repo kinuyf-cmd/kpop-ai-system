@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T15:47:13.959762+09:00",
+  "updated_at": "2026-05-11T15:58:10.451709+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1519,6 +1519,14 @@
       "example": "5/11 recovery で raw balanced でも rendered で wpautop が <p> を壊す",
       "fix": "CTA block を新フォーム (<p class=\"kpj-cta-link\"> 包み) で完全再生成",
       "agent": "cta_injector",
+      "resolved_at": "2026-05-11"
+    },
+    "ai_translation_style_residue": {
+      "count": 2,
+      "last_seen": "2026-05-11",
+      "example": "5/11 監査で AI翻訳調表現を発見: 21006 RIIZE/ANTON「心温まる瞬間を提供した」、20445 BLACKPINKリサ「呼び起こしています」等の直訳テンプレ。日本語ネイティブが書かない不自然パターン",
+      "fix": "pipeline/llm_proofreader.py の prompt に「AI翻訳調 検出パターン」セクションを追加。「呼び起こしています/心温まる瞬間/彼の彼女の過剰使用/〜と述べた4回以上反復」等を high で報告するよう指示。閾値で false positive 抑制",
+      "agent": "llm_proofreader",
       "resolved_at": "2026-05-11"
     }
   },
