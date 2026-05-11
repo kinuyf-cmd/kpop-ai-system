@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T15:58:10.451709+09:00",
+  "updated_at": "2026-05-11T17:55:00.000000+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1521,12 +1521,28 @@
       "agent": "cta_injector",
       "resolved_at": "2026-05-11"
     },
-    "ai_translation_style_residue": {
-      "count": 2,
+    "yonhap_reporter_image_face_fallback": {
+      "count": 1,
       "last_seen": "2026-05-11",
-      "example": "5/11 監査で AI翻訳調表現を発見: 21006 RIIZE/ANTON「心温まる瞬間を提供した」、20445 BLACKPINKリサ「呼び起こしています」等の直訳テンプレ。日本語ネイティブが書かない不自然パターン",
-      "fix": "pipeline/llm_proofreader.py の prompt に「AI翻訳調 検出パターン」セクションを追加。「呼び起こしています/心温まる瞬間/彼の彼女の過剰使用/〜と述べた4回以上反復」等を high で報告するよう指示。閾値で false positive 抑制",
-      "agent": "llm_proofreader",
+      "example": "post 21662 (NCT 10周年ポップアップ) のサムネが yonhap 記者署名画像 (img3.yna.co.kr/reporter/36393239393937_144153.jpg) になる事故。og:image顔検出なし→記事内画像 fallback で reporter/ パスの画像を顔検出 ok と判定して採用",
+      "fix": "lib/thumbnail_resolver.py の article_imgs 収集時に /reporter/ /journalist/ /author/ /byline/ /staff/ /editor/ 等のbylineパスを skip list へ追加",
+      "agent": "thumbnail_resolver",
+      "resolved_at": "2026-05-11"
+    },
+    "audit_engine_format_mismatch": {
+      "count": 1,
+      "last_seen": "2026-05-10",
+      "example": "full_audit_engine が返す issue dict の形式が pre_publish_gate の期待形式と食い違い、CRIT検出が pre_publish_gate を素通りした",
+      "fix": "_map_audit_issues() を導入し full_audit_engine の severity を gate の block/warn にマッピング (lib/pre_publish_gate.py 2026-05-10)",
+      "agent": "publish",
+      "resolved_at": "2026-05-10"
+    },
+    "thumbnail_priority_inverted": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "thumbnail_source_resolver.resolve() が artist photo を最優先し og:image を試行せずに artist 画像で確定。記事内容と画像の乖離が継続",
+      "fix": "resolve() に source_url 引数を追加し concrete分岐で resolve_source_og_image() を最優先で呼ぶように修正 (2026-05-11)",
+      "agent": "publish",
       "resolved_at": "2026-05-11"
     }
   },
@@ -2397,15 +2413,15 @@
     "prevention": "text_meta_phrase: パターン分析して共通lib化で再発防止"
   },
   "few_internal_links": {
-    "count": 12,
+    "count": 14,
     "first_seen": "2026-04-30T17:50:08.710307+09:00",
-    "last_seen": "2026-05-01T16:15:31.942267+09:00",
+    "last_seen": "2026-05-11T17:25:26.467143+09:00",
     "example_post_ids": [
-      6054,
-      6185,
       6174,
       6172,
-      6170
+      6170,
+      20982,
+      21004
     ],
     "prevention": "post_publish_enricher で内部リンク2本以上を保証"
   },
@@ -2445,15 +2461,15 @@
     "prevention": "title_long: パターン分析して共通lib化で再発防止"
   },
   "content_short": {
-    "count": 25,
+    "count": 34,
     "first_seen": "2026-05-01T10:00:59.184987+09:00",
-    "last_seen": "2026-05-07T16:05:37.351048+09:00",
+    "last_seen": "2026-05-11T17:26:14.159491+09:00",
     "example_post_ids": [
-      18012,
-      17762,
-      17747,
-      17743,
-      17564
+      20982,
+      20985,
+      21006,
+      20996,
+      20972
     ],
     "prevention": "LLM生成時の最低文字数指定を2000字以上に"
   },
@@ -2599,28 +2615,28 @@
     "prevention": "LLMプロンプトにfact-check指示を追加。事実誤認検出時はDraft化"
   },
   "summary_not_3lines": {
-    "count": 10,
+    "count": 11,
     "first_seen": "2026-05-07T16:03:18.713660+09:00",
-    "last_seen": "2026-05-07T16:05:40.044979+09:00",
+    "last_seen": "2026-05-11T17:21:36.142427+09:00",
     "example_post_ids": [
-      17664,
       17655,
       17650,
       17583,
-      17560
+      17560,
+      21554
     ],
     "prevention": "summary_not_3lines: パターン分析して共通lib化で再発防止"
   },
   "source_content_mismatch": {
-    "count": 6,
+    "count": 10,
     "first_seen": "2026-05-07T16:04:08.248538+09:00",
-    "last_seen": "2026-05-07T16:05:15.531045+09:00",
+    "last_seen": "2026-05-11T17:25:49.415283+09:00",
     "example_post_ids": [
-      17786,
-      17743,
-      17672,
-      17664,
-      17650
+      17650,
+      21527,
+      21246,
+      21004,
+      20996
     ],
     "prevention": "source_content_mismatch: パターン分析して共通lib化で再発防止"
   },
@@ -2636,13 +2652,25 @@
     "prevention": "summary_title_mismatch: パターン分析して共通lib化で再発防止"
   },
   "meta_desc_short": {
-    "count": 2,
+    "count": 3,
     "first_seen": "2026-05-07T16:05:14.808542+09:00",
-    "last_seen": "2026-05-07T16:05:40.035703+09:00",
+    "last_seen": "2026-05-11T17:21:36.127961+09:00",
     "example_post_ids": [
       17743,
-      17560
+      17560,
+      21594
     ],
     "prevention": "excerpt生成プロンプトの最低文字数を80字に"
+  },
+  "fabricated_name": {
+    "count": 3,
+    "first_seen": "2026-05-11T17:22:01.763731+09:00",
+    "last_seen": "2026-05-11T17:22:02.232618+09:00",
+    "example_post_ids": [
+      21381,
+      21376,
+      21368
+    ],
+    "prevention": "LLM生成コンテンツの架空名称検出。即Draft化+ソース付きで再生成必須"
   }
 }

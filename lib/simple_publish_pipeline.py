@@ -49,25 +49,13 @@ def _load_kpop_names() -> frozenset:
         except Exception:
             pass
     # 補助: registry 未登録だが速報対象となる主要 K-POP groups/solo (2026-05-11追加)
-    EXTRA = {
-        'SHINee', 'Red Velvet', 'EXO', 'ATEEZ', 'TXT', 'TOMORROW X TOGETHER',
-        'MONSTA X', '(G)I-DLE', 'GIDLE', 'MAMAMOO', 'ZEROBASEONE', 'ZB1',
-        'P1Harmony', 'fromis_9', 'KISS OF LIFE', 'CORTIS', 'WJSN', 'NMIXX',
-        'BIGBANG', '2NE1', '2PM', 'SUPER JUNIOR', 'Girls\' Generation', 'SNSD',
-        'GD', 'G-DRAGON', 'BIBI', 'Bewhy', '비와이', 'JESSI', '제시',
-        '샤이니', '레드벨벳', '엑소', '에이티즈', '몬스타엑스', '여자아이들',
-    }
-    names.update(EXTRA)
+    names.update({'SHINee','Red Velvet','EXO','ATEEZ','TXT','TOMORROW X TOGETHER','MONSTA X','(G)I-DLE','GIDLE','MAMAMOO','ZEROBASEONE','ZB1','P1Harmony','fromis_9','KISS OF LIFE','CORTIS','WJSN','NMIXX','BIGBANG','2NE1','2PM','SUPER JUNIOR',"Girls' Generation",'SNSD','GD','G-DRAGON','BIBI','Bewhy','비와이','JESSI','제시','샤이니','레드벨벳','엑소','에이티즈','몬스타엑스','여자아이들'})
     _KPOP_NAMES_CACHE = frozenset(n for n in names if len(n) >= 2)
     return _KPOP_NAMES_CACHE
 
 
 def is_kpop_relevant(title: str) -> bool:
-    """og:title に K-POP artist 名が含まれるか判定。off-topic publish 防止用。
-
-    short ASCII 名 (≤4 chars: BTS, IU, GD, RM 等) は word boundary 必須で
-    false match (warm, drumkit 等) を避ける。長い名/非ASCII は substring で OK。
-    """
+    """og:title に K-POP artist 名が含まれるか判定。short ASCII 名 (≤4 chars) は word boundary 必須で false match 回避。長い名/非ASCII は substring 一致。"""
     if not title:
         return False
     names = _load_kpop_names()
@@ -101,8 +89,7 @@ def fetch_source(url: str) -> dict:
 
 
 def _extract_h1(html):
-    m = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.S | re.I)
-    return re.sub(r'<[^>]+>', '', m.group(1)).strip() if m else ''
+    m = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.S | re.I); return re.sub(r'<[^>]+>', '', m.group(1)).strip() if m else ''
 
 
 def _extract_article_body(html):
@@ -281,10 +268,8 @@ def simple_publish_from_source(source_url: str, slug: str = '',
         slug = generate_slug(title_ja)
 
     if not media_id and status == 'publish':
-        # サムネなし: status='private' で保留 (draft_auto_publisher の auto-archive 回避)
-        # draft 化すると draft_auto_publisher が pre_publish_gate BLOCK → 3回で auto-archive で
-        # 失われる。private は admin のみ可視で frontend 非公開、人手で thumbnail 補修して
-        # publish 化する想定。
+        # サムネ取得失敗時: status = 'draft' は draft_auto_publisher の pre_publish_gate BLOCK → 3回で
+        # auto-archive により失われるため、private (admin 可視/frontend 非公開) を採用する。
         print('  サムネ取得失敗 → status=private で保留 (draft_auto_publisher対象外)')
         status = 'private'
 
