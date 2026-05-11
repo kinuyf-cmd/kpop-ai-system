@@ -78,11 +78,18 @@ def _log(msg: str):
 
 
 def _fetch_post(post_id: int) -> dict | None:
+    """post 取得 — context=edit で content.raw まで含めて取得 (2026-05-11修正)。
+    旧実装は認証なし default view (rendered のみ) で取得し、enricher が rendered を
+    そのまま raw に PUT し直すため wpautop 二重適用で <p> が壊れる事故が頻発していた
+    (post 21006 等)。
+    """
     import requests
+    headers = _wp_headers() or {}
     try:
         resp = requests.get(
             f"{WP_DOMAIN}/wp-json/wp/v2/posts/{post_id}",
-            params={"_fields": "id,slug,title,content,featured_media,categories"},
+            params={"_fields": "id,slug,title,content,featured_media,categories", "context": "edit"},
+            headers=headers,
             timeout=15,
         )
         if resp.status_code == 200:
@@ -445,7 +452,10 @@ def enrich_post(post_id: int) -> dict:
         return result
 
     title = post.get("title", {}).get("rendered", "")
-    content = post.get("content", {}).get("rendered", "")
+    # content は raw 優先 — rendered を読んで PUT すると wpautop 二重適用で <p> が壊れる
+    # (2026-05-11: pid 21006 ほか「<p> open=12 close=9 (差分-3)」事故の真因)
+    content_obj = post.get("content", {})
+    content = content_obj.get("raw") or content_obj.get("rendered", "")
     featured_media = post.get("featured_media", 0)
 
     modified = content
