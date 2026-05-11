@@ -55,6 +55,7 @@ data/buzzlab_processed_urls.txt
 data/gsc_indexing_log.jsonl
 data/popup_processed.jsonl
 data/popup_signals.jsonl
+data/simple_publish_processed.jsonl
 data/thumbnail_sources.jsonl
 data/trend_signals.jsonl
 data/audit_fixer_skip.json
