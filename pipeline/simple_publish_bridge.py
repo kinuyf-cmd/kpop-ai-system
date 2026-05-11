@@ -22,11 +22,11 @@ from lib.simple_publish_pipeline import simple_publish_from_source
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 PROCESSED_LOG = '/home/aiuser/kpop-ai-system/data/simple_publish_processed.jsonl'
 
-# 信頼ソース (og:image + 翻訳しやすい英語)
-# 韓国語ソース (osen/newsen/mydaily/sportschosun) は collector title 汚染
-# (連結記事のtitleが1つの signal の title フィールドに同居) のため一旦保留。
-# og:title ベースの K-POP 関連性チェックを追加後に再投入予定。
+# 信頼ソース (og:image + 翻訳しやすい英語/韓国語)
+# 韓国語ソースは collector title 汚染が残るが、pipeline 側 is_kpop_relevant() で
+# og:title (URL fetch 後の清浄 title) を artist registry と照合して off-topic 弾く。
 TRUSTED_DOMAINS = {
+    # 英語ソース
     'soompi.com': 4.0,         # 信頼度高
     'koreaboo.com': 3.5,
     'allkpop.com': 3.5,
@@ -34,6 +34,11 @@ TRUSTED_DOMAINS = {
     'kstyle.com': 3.5,
     'kpoppost.com': 3.0,
     'hellokpop.com': 3.0,
+    # 韓国語ソース (2026-05-11 再追加, pipeline側 K-POP filter で off-topic弾く)
+    'osen.co.kr': 3.0,
+    'newsen.com': 3.0,
+    'mydaily.co.kr': 3.0,
+    'sportschosun.com': 2.5,
 }
 
 
@@ -64,6 +69,7 @@ def select_candidates(since_hours: int = 6, limit: int = 10) -> list:
     cutoff = cutoff.replace(tzinfo=None) - timedelta(hours=since_hours)
     processed = load_processed_urls()
     candidates = []
+    seen_urls = set()  # 2026-05-11: 同一 URL を複数 collector が拾うケースの dedup
     with open(SIGNALS, encoding='utf-8') as f:
         for line in f:
             try:
@@ -79,8 +85,9 @@ def select_candidates(since_hours: int = 6, limit: int = 10) -> list:
             if ts < cutoff:
                 continue
             url = s.get('url', '')
-            if not url or url in processed:
+            if not url or url in processed or url in seen_urls:
                 continue
+            seen_urls.add(url)
             domain = next((d for d in TRUSTED_DOMAINS if d in url), '')
             if not domain:
                 continue

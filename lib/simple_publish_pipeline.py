@@ -32,6 +32,71 @@ AUTH = base64.b64encode(f'{WP_USER}:{WP_PASS}'.encode()).decode()
 LOG_PATH = '/home/aiuser/kpop-ai-system/logs/simple_publish.jsonl'
 
 
+# ── K-POP 関連性チェック (2026-05-11追加) ──────────────────────
+_KPOP_NAMES_CACHE = None
+
+def _load_kpop_names() -> frozenset:
+    """artist_master + artist_profiles + 補助 whitelist から K-POP artist 名を構築"""
+    global _KPOP_NAMES_CACHE
+    if _KPOP_NAMES_CACHE is not None:
+        return _KPOP_NAMES_CACHE
+    from pathlib import Path
+    base = Path('/home/aiuser/kpop-ai-system/config')
+    names = set()
+    try:
+        master = json.loads((base / 'artist_master.json').read_text(encoding='utf-8'))
+        for a in master.get('artists', []):
+            for k in ('name_en', 'name_ko', 'name_ja'):
+                if a.get(k): names.add(a[k])
+            for m in a.get('members', []):
+                for k in ('name', 'name_ko', 'name_ja'):
+                    if m.get(k): names.add(m[k])
+    except Exception:
+        pass
+    for p in (base / 'artist_profiles').glob('*.json'):
+        try:
+            d = json.loads(p.read_text(encoding='utf-8'))
+            names.add(p.stem.replace('-', '').upper())
+            names.add(p.stem)
+            for m in d.get('members', []):
+                for k in ('name_en', 'name_kr', 'name_ja', 'real_name_en'):
+                    if m.get(k): names.add(m[k])
+        except Exception:
+            pass
+    # 補助: registry 未登録だが速報対象となる主要 K-POP groups/solo (2026-05-11追加)
+    EXTRA = {
+        'SHINee', 'Red Velvet', 'EXO', 'ATEEZ', 'TXT', 'TOMORROW X TOGETHER',
+        'MONSTA X', '(G)I-DLE', 'GIDLE', 'MAMAMOO', 'ZEROBASEONE', 'ZB1',
+        'P1Harmony', 'fromis_9', 'KISS OF LIFE', 'CORTIS', 'WJSN', 'NMIXX',
+        'BIGBANG', '2NE1', '2PM', 'SUPER JUNIOR', 'Girls\' Generation', 'SNSD',
+        'GD', 'G-DRAGON', 'BIBI', 'Bewhy', '비와이', 'JESSI', '제시',
+        '샤이니', '레드벨벳', '엑소', '에이티즈', '몬스타엑스', '여자아이들',
+    }
+    names.update(EXTRA)
+    _KPOP_NAMES_CACHE = frozenset(n for n in names if len(n) >= 2)
+    return _KPOP_NAMES_CACHE
+
+
+def is_kpop_relevant(title: str) -> bool:
+    """og:title に K-POP artist 名が含まれるか判定。off-topic publish 防止用。
+
+    short ASCII 名 (≤4 chars: BTS, IU, GD, RM 等) は word boundary 必須で
+    false match (warm, drumkit 等) を避ける。長い名/非ASCII は substring で OK。
+    """
+    if not title:
+        return False
+    names = _load_kpop_names()
+    t_lower = title.lower()
+    for n in names:
+        if all(c.isascii() for c in n) and len(n) <= 4:
+            if re.search(rf'\b{re.escape(n)}\b', title, re.I):
+                return True
+        else:
+            if n.lower() in t_lower:
+                return True
+    return False
+
+
 # ── 1. Source 取得 ──────────────────────────────────────────────
 def fetch_source(url: str) -> dict:
     """sourceから title/body/og_image_url を抽出"""
@@ -188,6 +253,12 @@ def simple_publish_from_source(source_url: str, slug: str = '',
 
     # html.unescape source text (RSS等の数値entity混入対策)
     src_title = _html.unescape(src['title'])
+
+    # K-POP 関連性チェック (2026-05-11): og:title に K-POP artist 名が無ければ
+    # off-topic とみなし publish しない。post 21729 のようなドラマ記事を防ぐ
+    if not is_kpop_relevant(src_title):
+        print(f'  off-topic skip: {src_title[:80]}')
+        return {'success': False, 'reason': f'non-kpop content: {src_title[:60]}'}
     src_body = _html.unescape(src['body'])
     title_ja = _html.unescape(translate(src_title, context='K-POP entertainment news title'))
     body_excerpt = src_body[:2500]  # 翻訳context上限
