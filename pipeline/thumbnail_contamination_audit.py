@@ -160,6 +160,7 @@ def post_to_discord(message: str):
 
 
 def main():
+    from lib.audit_steps_log import record_step
     posts = fetch_recent_posts(hours=24)
     print(f"[thumb-audit] scanning {len(posts)} posts (last 24h)")
     contaminated = []
@@ -168,6 +169,10 @@ def main():
         if r.get('status') == 'contaminated':
             contaminated.append(r)
             print(f"  [{r['pid']}] {r.get('title','')} → {','.join(r['issues'])}")
+        record_step(p['id'], 'thumbnail',
+                    status='fail' if r.get('status') == 'contaminated' else 'ok',
+                    detail=','.join(r.get('issues', [])) if r.get('status') == 'contaminated' else 'clean',
+                    source='thumbnail_contamination_audit')
 
     summary = {
         'ts': datetime.now(timezone(timedelta(hours=9))).isoformat(),

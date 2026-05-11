@@ -3,6 +3,7 @@
 import sys, os
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.full_audit_engine import full_audit, fetch_posts, save_audit_state, get_x_post_summary
+from lib.audit_steps_log import record_step
 
 
 def main():
@@ -25,6 +26,12 @@ def main():
             issues = full_audit(p, post_type)
             save_audit_state(p['id'], post_type, issues)
             s['audited'] += 1
+
+            _structure_ok = not any(i.get('severity') == 'high' for i in issues)
+            record_step(p['id'], 'structure',
+                        status='ok' if _structure_ok else 'fail',
+                        detail=f'issues={len(issues)}',
+                        source='full_audit_runner')
 
             # X投稿確認（毎回レポート）
             x_info = get_x_post_summary(p['id'], post_slug=p.get('slug'), post_url=p.get('link'))
