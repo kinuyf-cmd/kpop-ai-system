@@ -76,6 +76,13 @@ PRIORITY_ARTISTS = [
     {'name': '1VERSE', 'slug': '1verse'},
     {'name': 'MEOVV', 'slug': 'meovv'},
     {'name': 'STAYC', 'slug': 'stayc'},
+    # 2026-05-12 追加 (第2弾): TWS / NEXZ / NiziU / IZNA / (G)I-DLE / ALLDAY PROJECT
+    {'name': 'TWS', 'slug': 'tws'},
+    {'name': 'NEXZ', 'slug': 'nexz'},
+    {'name': 'NiziU', 'slug': 'niziu'},
+    {'name': 'IZNA', 'slug': 'izna'},
+    {'name': '(G)I-DLE', 'slug': 'gidle'},
+    {'name': 'ALLDAY PROJECT', 'slug': 'allday-project'},
 ]
 
 PROFILE_SCHEMA = {

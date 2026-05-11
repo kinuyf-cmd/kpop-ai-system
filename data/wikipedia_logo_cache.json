@@ -124,5 +124,31 @@
   "fromis_9": {
     "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fromis%209%20logo%20%28TEXT%29.svg",
     "source": "commons_verified"
+  },
+  "TWS": {
+    "url": "",
+    "source": "manual_blank",
+    "note": "Wikidata P154 無し / Commons にも公式ロゴファイル無し (2024 新人 PLEDIS)"
+  },
+  "NEXZ": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/NEXZ%20logo.png",
+    "source": "wikidata"
+  },
+  "NiziU": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/NiziU%20logo.png",
+    "source": "wikidata"
+  },
+  "IZNA": {
+    "url": "",
+    "source": "manual_blank",
+    "note": "Wikidata P154 無し / Commons Category:Izna はあるがロゴ無し (2024 新人 WAKE ONE)"
+  },
+  "(G)I-DLE": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/%28G%29I-dle%20logo.svg",
+    "source": "commons_verified"
+  },
+  "ALLDAY PROJECT": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/AllDay%20Project%20logo%20%28black%29.png",
+    "source": "commons_verified"
   }
 }

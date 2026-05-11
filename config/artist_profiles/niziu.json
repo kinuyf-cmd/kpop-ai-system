@@ -1,0 +1,187 @@
+{
+  "agency": "JYP Entertainment / Sony Music Entertainment Japan",
+  "debut_date": "2020-12-02",
+  "fandom_name": "WithU",
+  "fandom_meaning": "「WithU」はNiziUと共に歩むファンを意味し、「あなたと一緒に（With You）」という言葉を由来とする。NiziUとファンが常に寄り添い合う存在であることを表現している。",
+  "members": [
+    {
+      "name_en": "Mako",
+      "name_kr": "오카자키 마코",
+      "name_ja": "マコ",
+      "real_name_en": "Okazaki Mako",
+      "position": "リーダー、メインダンサー、ボーカル",
+      "birth": "2000-12-01",
+      "nationality": "日本",
+      "height_cm": "163",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "日出学園中学校・高等学校 卒業",
+      "hobbies": "ダンス, 映画鑑賞, ショッピング",
+      "instagram_personal": "https://www.instagram.com/mako_niziu/"
+    },
+    {
+      "name_en": "Riku",
+      "name_kr": "야마다 리쿠",
+      "name_ja": "リク",
+      "real_name_en": "Yamada Riku",
+      "position": "メインボーカル",
+      "birth": "2001-04-02",
+      "nationality": "日本",
+      "height_cm": "158",
+      "blood_type": "O",
+      "mbti": "ENFP",
+      "hobbies": "歌, ダンス, 読書",
+      "instagram_personal": "https://www.instagram.com/riku_niziu/"
+    },
+    {
+      "name_en": "Mayuka",
+      "name_kr": "이토 마유카",
+      "name_ja": "マユカ",
+      "real_name_en": "Ito Mayuka",
+      "position": "メインダンサー、ボーカル、ラッパー",
+      "birth": "2001-05-25",
+      "nationality": "日本",
+      "height_cm": "165",
+      "blood_type": "B",
+      "hobbies": "料理, ショッピング, 音楽鑑賞",
+      "instagram_personal": "https://www.instagram.com/mayuka_niziu/"
+    },
+    {
+      "name_en": "Ayaka",
+      "name_kr": "야마시타 아야카",
+      "name_ja": "アヤカ",
+      "real_name_en": "Yamashita Ayaka",
+      "position": "ボーカル",
+      "birth": "2001-06-30",
+      "nationality": "日本",
+      "height_cm": "163",
+      "blood_type": "A",
+      "hobbies": "ダンス, 映画鑑賞, カフェ巡り",
+      "instagram_personal": "https://www.instagram.com/ayaka_niziu/"
+    },
+    {
+      "name_en": "Rio",
+      "name_kr": "히노 리오",
+      "name_ja": "リオ",
+      "real_name_en": "Hino Rio",
+      "position": "ボーカル、ダンサー",
+      "birth": "2001-05-24",
+      "nationality": "日本",
+      "height_cm": "168",
+      "blood_type": "O",
+      "mbti": "ENFJ",
+      "hobbies": "ダンス, 歌, ファッション",
+      "instagram_personal": "https://www.instagram.com/rio_niziu/"
+    },
+    {
+      "name_en": "Nina",
+      "name_kr": "니나",
+      "name_ja": "ニナ",
+      "real_name_en": "Nina Hillman",
+      "position": "ボーカル",
+      "birth": "",
+      "nationality": "日本/アメリカ",
+      "note": "テキサス出身の日米ハーフ、最年少メンバー"
+    },
+    {
+      "name_en": "Miihi",
+      "name_kr": "스즈키 미이히",
+      "name_ja": "ミイヒ",
+      "real_name_en": "Suzuki Miihi",
+      "position": "メインボーカル",
+      "birth": "2003-06-27",
+      "nationality": "日本",
+      "height_cm": "155",
+      "blood_type": "B",
+      "hobbies": "歌, ダンス, 料理",
+      "instagram_personal": "https://www.instagram.com/miihi_niziu/"
+    },
+    {
+      "name_en": "Maya",
+      "name_kr": "오자키 마야",
+      "name_ja": "マヤ",
+      "real_name_en": "Ozaki Maya",
+      "position": "ボーカル、ダンサー",
+      "birth": "2002-10-11",
+      "nationality": "日本",
+      "height_cm": "162",
+      "blood_type": "A",
+      "hobbies": "ダンス, 映画鑑賞, 音楽",
+      "instagram_personal": "https://www.instagram.com/maya_niziu/"
+    },
+    {
+      "name_en": "Rima",
+      "name_kr": "리마",
+      "name_ja": "リマ",
+      "real_name_en": "Tokita Rima",
+      "position": "リードラッパー",
+      "birth": "",
+      "nationality": "日本"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2020",
+      "title": "Make you happy",
+      "type": "single",
+      "note": "デビューシングル、JYP×ソニーMusic合同プロデュース"
+    },
+    {
+      "year": "2021",
+      "title": "Step and a step",
+      "type": "ep",
+      "note": "1stミニアルバム"
+    },
+    {
+      "year": "2021",
+      "title": "Take a picture / Poppin' Shakin'",
+      "type": "single"
+    },
+    {
+      "year": "2021",
+      "title": "Super Summer",
+      "type": "single"
+    },
+    {
+      "year": "2022",
+      "title": "COCONUT",
+      "type": "single"
+    },
+    {
+      "year": "2022",
+      "title": "SWEET ACTUALLY",
+      "type": "ep"
+    },
+    {
+      "year": "2023",
+      "title": "HEARTRIS",
+      "type": "ep"
+    },
+    {
+      "year": "2023",
+      "title": "CLAP CLAP",
+      "type": "single"
+    },
+    {
+      "year": "2024",
+      "title": "RULE YOUR WORLD",
+      "type": "album",
+      "note": "1stフルアルバム"
+    },
+    {
+      "year": "2025",
+      "title": "SHINING ONE",
+      "type": "ep"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/NiziU_official",
+    "instagram": "https://www.instagram.com/niziu_official/",
+    "weverse": "https://weverse.io/niziu",
+    "youtube": "https://www.youtube.com/c/NiziU",
+    "tiktok": "https://www.tiktok.com/@niziu_official",
+    "japan_official": "https://niziu.com/"
+  },
+  "summary_ja": "NiziU（ニジュー）は、JYP EntertainmentとSony Music Entertainment Japanが共同制作したオーディション番組『Nizi Project』から誕生した9人組（現在実質8人）の日本人ガールズグループ。2020年12月2日にデビューし、デビュー曲「Make you happy」のロープ跳びダンスが大きな話題を呼んだ。グループ名は「虹（Niji）」と「あなた（You）」を組み合わせた造語で、ファンとともに虹のように輝くという意味が込められている。K-POPの本格的なトレーニングを受けた日本人メンバーたちが韓国と日本のカルチャーを融合させたパフォーマンスで活躍し、国内外に多くのファン「WithU」を持つ。",
+  "_last_updated": "2026-05-12T03:48:01.035089+09:00"
+}

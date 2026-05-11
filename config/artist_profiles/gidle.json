@@ -1,0 +1,177 @@
+{
+  "agency": "Cube Entertainment",
+  "debut_date": "2018-05-02",
+  "fandom_name": "Neverland",
+  "fandom_meaning": "「Neverland（ネバーランド）」は、現実から離れた夢の場所を意味し、(G)I-DLEとファンが共に永遠に存在し続ける理想郷を表している。",
+  "members": [
+    {
+      "name_en": "Miyeon",
+      "name_kr": "미연",
+      "name_ja": "ミヨン",
+      "real_name_en": "Cho Mi-yeon",
+      "position": "メインボーカル",
+      "birth": "1997-01-26",
+      "nationality": "韓国",
+      "height_cm": "163",
+      "blood_type": "B",
+      "mbti": "ISFJ",
+      "education": "韓国芸術高校",
+      "hobbies": "映画鑑賞, 料理, 読書",
+      "solo_works": "My Everything (2023年)",
+      "instagram_personal": "https://www.instagram.com/miyeon_mmmm/"
+    },
+    {
+      "name_en": "Minnie",
+      "name_kr": "민니",
+      "name_ja": "ミンニ",
+      "real_name_en": "Nicha Yontararak",
+      "position": "リードボーカル",
+      "birth": "1997-10-23",
+      "nationality": "タイ",
+      "height_cm": "163",
+      "blood_type": "B",
+      "mbti": "INFP",
+      "education": "タイ・バンコク出身、韓国留学後YGトレーニー経験",
+      "hobbies": "ギター演奏, 作曲, 読書",
+      "solo_works": "MINNIE (2024年)",
+      "instagram_personal": "https://www.instagram.com/minnie_nicha/"
+    },
+    {
+      "name_en": "Soojin",
+      "name_kr": "수진",
+      "name_ja": "スジン",
+      "real_name_en": "Seo Soo-jin",
+      "position": "メインダンサー、サブボーカル",
+      "birth": "1998-03-09",
+      "nationality": "韓国",
+      "note": "2021年8月に活動休止を経て脱退",
+      "height_cm": "165",
+      "blood_type": "A",
+      "education": "ソウル芸術高校",
+      "hobbies": "ダンス, 映画鑑賞, ネイルアート",
+      "solo_works": "AGASSY (2023年), MONA LISA (2024年)",
+      "instagram_personal": "https://www.instagram.com/soojin_0809/"
+    },
+    {
+      "name_en": "Soyeon",
+      "name_kr": "소연",
+      "name_ja": "ソヨン",
+      "real_name_en": "Jeon So-yeon",
+      "position": "リーダー、メインラッパー、メインボーカル、プロデューサー",
+      "birth": "1998-08-26",
+      "nationality": "韓国",
+      "note": "グループのほぼ全楽曲の作詞・作曲・プロデュースを担当",
+      "height_cm": "158",
+      "blood_type": "B",
+      "mbti": "ENTJ",
+      "education": "韓国芸術高校 → 韓国芸術綜合学校",
+      "hobbies": "作曲, ラップ制作, ファッション",
+      "solo_works": "BEAM BEAM (2021年), WINDY (2022年)",
+      "instagram_personal": "https://www.instagram.com/jeon.soyeon/"
+    },
+    {
+      "name_en": "Yuqi",
+      "name_kr": "우기",
+      "name_ja": "ウギ",
+      "real_name_en": "Song Yu-qi",
+      "position": "リードラッパー、リードダンサー、サブボーカル",
+      "birth": "1999-09-23",
+      "nationality": "中国",
+      "height_cm": "165",
+      "blood_type": "B",
+      "mbti": "ESFP",
+      "education": "中国・四川省出身、韓国留学",
+      "hobbies": "料理, 旅行, 絵画",
+      "solo_works": "A Page (2021年), Patchwork (2023年)",
+      "instagram_personal": "https://www.instagram.com/yuqi_0908/"
+    },
+    {
+      "name_en": "Shuhua",
+      "name_kr": "슈화",
+      "name_ja": "シュファ",
+      "real_name_en": "Yeh Shu-hua",
+      "position": "サブボーカル、サブダンサー",
+      "birth": "2000-01-06",
+      "nationality": "台湾",
+      "height_cm": "167",
+      "blood_type": "AB",
+      "mbti": "ISFP",
+      "education": "台湾出身、韓国留学",
+      "hobbies": "ゲーム, 映画鑑賞, ショッピング",
+      "solo_works": "(g)i-dle ソロ活動準備中",
+      "instagram_personal": "https://www.instagram.com/yeh.shuhua/"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2018",
+      "title": "I Am",
+      "type": "ep",
+      "note": "デビューEP。「LATATA」収録"
+    },
+    {
+      "year": "2019",
+      "title": "I Made",
+      "type": "ep",
+      "note": "「Senorita」「Hann (Alone)」収録"
+    },
+    {
+      "year": "2020",
+      "title": "I Trust",
+      "type": "ep",
+      "note": "「Oh my god」収録、独自のダークコンセプトで話題"
+    },
+    {
+      "year": "2021",
+      "title": "I Burn",
+      "type": "ep",
+      "note": "「火花 (HWAA)」収録、全世界で大ヒット"
+    },
+    {
+      "year": "2022",
+      "title": "I Never Die",
+      "type": "album",
+      "note": "初のフルアルバム。「TOMBOY」「VILLAIN DIES」収録"
+    },
+    {
+      "year": "2022",
+      "title": "I Love",
+      "type": "ep",
+      "note": "「Nxde」収録、マリリン・モンローオマージュで話題"
+    },
+    {
+      "year": "2023",
+      "title": "2集 '2'",
+      "type": "album",
+      "note": "2ndフルアルバム。「Queencard」収録、大ヒット"
+    },
+    {
+      "year": "2024",
+      "title": "2集 HEAT",
+      "type": "ep",
+      "note": "「Super Lady」収録"
+    },
+    {
+      "year": "2024",
+      "title": "7집 Fate",
+      "type": "ep",
+      "note": "「Wife」収録"
+    },
+    {
+      "year": "2025",
+      "title": "PEACEMINUSONE",
+      "type": "single",
+      "note": "2025年リリースシングル"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/GIDLE_official",
+    "instagram": "https://www.instagram.com/official_g_i_dle/",
+    "weverse": "https://weverse.io/gidle",
+    "youtube": "https://www.youtube.com/@GIDLE",
+    "tiktok": "https://www.tiktok.com/@gidle_official",
+    "japan_official": "https://gidle.jp/"
+  },
+  "summary_ja": "(G)I-DLE（ジャイドゥル）は、2018年5月2日にCube Entertainmentからデビューした韓国の6人組（現5人）ガールズグループ。グループ名は「나 (I) ＋ 들 (DLE＝複数形)」を組み合わせ、「私たち自身」を意味する。リーダーのソヨンが楽曲の大半を自ら作詞・作曲・プロデュースするという自己主導型のアーティスト性が最大の特徴で、「LATATA」「Oh my god」「TOMBOY」「Queencard」など次々とヒット曲を生み出してきた。ダークでアーティスティックなコンセプトからポップでキャッチーなサウンドまで幅広いジャンルを操り、Kポップシーンにおける「自作アーティスト」の先駆けとして高く評価されている。ファンダム名は「Neverland（ネバーランド）」。",
+  "_last_updated": "2026-05-12T03:48:06.211335+09:00"
+}

@@ -66,6 +66,13 @@ WIKI_TITLE_EN = {
     'MOMOLAND': 'Momoland',
     'Hearts2Hearts': 'Hearts2Hearts',
     'BoA': 'BoA',
+    # 2026-05-12 第2弾: 34→40 拡張
+    'TWS': 'TWS (group)',
+    'NEXZ': 'Nexz',
+    'NiziU': 'NiziU',
+    'IZNA': 'Izna',
+    '(G)I-DLE': '(G)I-dle',
+    'ALLDAY PROJECT': 'AllDay Project',
 }
 
 
@@ -199,6 +206,17 @@ LOGO_MANUAL_OVERRIDE: dict[str, str] = {
     'BoA': '',
     # EXO: 検索だと "Exo Platform" (企業ソフトウェア) を誤マッチ。V-neck 公式ロゴ (Commons "Exo (musical group) logos" カテゴリ) を直接指定
     'EXO': 'https://commons.wikimedia.org/wiki/Special:FilePath/Exo-logo-v-neck%20design.png',
+    # 2026-05-12 第2弾追加 (TWS / NEXZ / NiziU / IZNA / (G)I-DLE / ALLDAY PROJECT)
+    # TWS: Wikidata P154 無し / Commons 検索もヒット無し (2024 新人 PLEDIS)。空で非表示
+    'TWS': '',
+    'NEXZ': 'https://commons.wikimedia.org/wiki/Special:FilePath/NEXZ%20logo.png',
+    'NiziU': 'https://commons.wikimedia.org/wiki/Special:FilePath/NiziU%20logo.png',
+    # IZNA: Wikidata P154 無し / Commons "Category:Izna" あるがロゴ無し (2024 新人 WAKE ONE)。空で非表示
+    'IZNA': '',
+    # (G)I-DLE: 検索だと album-era ロゴと衝突。Commons "(G)I-dle logos" カテゴリの SVG を直接指定
+    '(G)I-DLE': 'https://commons.wikimedia.org/wiki/Special:FilePath/%28G%29I-dle%20logo.svg',
+    # ALLDAY PROJECT: black 版 (white background 想定)
+    'ALLDAY PROJECT': 'https://commons.wikimedia.org/wiki/Special:FilePath/AllDay%20Project%20logo%20%28black%29.png',
 }
 
 
