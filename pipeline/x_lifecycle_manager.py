@@ -287,8 +287,10 @@ def find_thumbnail_updated_posts(days: int = 3) -> list:
     return candidates
 
 
-def repost_updated_thumbnails(dry_run: bool = False, max_repost: int = 5) -> dict:
-    """サムネ更新された記事: 旧ツイート削除 → OGP修復 → 新ツイート投稿"""
+def repost_updated_thumbnails(dry_run: bool = False, max_repost: int = 2) -> dict:
+    """サムネ更新された記事: 旧ツイート削除 → OGP修復 → 新ツイート投稿
+    2026-05-11: max=5→2 に削減。daily_kpi_report で「99件/日 (1tweet 7imp)」
+    スパム判定指摘あり。新規15/日 + repost 2/日 = 17/日 で目標15-20範囲内。"""
     from lib.x_tweet_manager import delete_tweet
     from lib.ogp_twitter_card_optimizer import fix_post_meta
     from lib.x_poster import post_tweet

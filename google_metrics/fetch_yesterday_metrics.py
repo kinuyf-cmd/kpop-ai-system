@@ -315,27 +315,31 @@ def get_cta_events():
             if ev in CTA_EVENTS:
                 event_counts[ev] = cnt
 
-        # 記事タイプ別内訳
-        type_req = RunReportRequest(
-            property=f"properties/{GA4_PROPERTY_ID}",
-            dimensions=[
-                Dimension(name="eventName"),
-                Dimension(name="customEvent:article_type"),
-            ],
-            metrics=[Metric(name="eventCount")],
-            date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
-        )
-        type_res = client.run_report(type_req)
+        # 記事タイプ別内訳 (customEvent:article_type が GA4 に未登録なら skip)
+        # 2026-05-11: dimension 不正で全体落ち→ cta_ctr_real=0 になる事故の修正
         type_breakdown = {}
-        for row in type_res.rows:
-            ev       = row.dimension_values[0].value
-            art_type = row.dimension_values[1].value or "不明"
-            cnt      = int(row.metric_values[0].value)
-            if ev in CTA_EVENTS and "cta_click" in ev:
-                pos = ev.replace("cta_click_", "")
-                if art_type not in type_breakdown:
-                    type_breakdown[art_type] = {}
-                type_breakdown[art_type][pos] = type_breakdown[art_type].get(pos, 0) + cnt
+        try:
+            type_req = RunReportRequest(
+                property=f"properties/{GA4_PROPERTY_ID}",
+                dimensions=[
+                    Dimension(name="eventName"),
+                    Dimension(name="customEvent:article_type"),
+                ],
+                metrics=[Metric(name="eventCount")],
+                date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+            )
+            type_res = client.run_report(type_req)
+            for row in type_res.rows:
+                ev       = row.dimension_values[0].value
+                art_type = row.dimension_values[1].value or "不明"
+                cnt      = int(row.metric_values[0].value)
+                if ev in CTA_EVENTS and "cta_click" in ev:
+                    pos = ev.replace("cta_click_", "")
+                    if art_type not in type_breakdown:
+                        type_breakdown[art_type] = {}
+                    type_breakdown[art_type][pos] = type_breakdown[art_type].get(pos, 0) + cnt
+        except Exception as _te:
+            type_breakdown = {"_error": f"customEvent:article_type 取得失敗 (GA4にcustom dimension未登録?): {str(_te)[:80]}"}
 
         clicks_top   = event_counts.get("cta_click_top", 0)
         clicks_mid   = event_counts.get("cta_click_middle", 0)
