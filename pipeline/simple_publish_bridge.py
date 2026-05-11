@@ -22,9 +22,11 @@ from lib.simple_publish_pipeline import simple_publish_from_source
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 PROCESSED_LOG = '/home/aiuser/kpop-ai-system/data/simple_publish_processed.jsonl'
 
-# 信頼ソース (og:image + 翻訳しやすい英語/日本語/韓国語)
+# 信頼ソース (og:image + 翻訳しやすい英語)
+# 韓国語ソース (osen/newsen/mydaily/sportschosun) は collector title 汚染
+# (連結記事のtitleが1つの signal の title フィールドに同居) のため一旦保留。
+# og:title ベースの K-POP 関連性チェックを追加後に再投入予定。
 TRUSTED_DOMAINS = {
-    # 英語ソース
     'soompi.com': 4.0,         # 信頼度高
     'koreaboo.com': 3.5,
     'allkpop.com': 3.5,
@@ -32,11 +34,6 @@ TRUSTED_DOMAINS = {
     'kstyle.com': 3.5,
     'kpoppost.com': 3.0,
     'hellokpop.com': 3.0,
-    # 韓国語ソース (2026-05-11 追加)
-    'osen.co.kr': 3.0,
-    'newsen.com': 3.0,
-    'mydaily.co.kr': 3.0,
-    'sportschosun.com': 2.5,   # スポーツ混入リスクで低め
 }
 
 
@@ -86,6 +83,15 @@ def select_candidates(since_hours: int = 6, limit: int = 10) -> list:
                 continue
             domain = next((d for d in TRUSTED_DOMAINS if d in url), '')
             if not domain:
+                continue
+            # title-keyword フィルタ (2026-05-11 追加): K-POP off-topic 混入防止。
+            # collector tag した keyword が title 内に出現するもののみ採用。
+            # 例: 韓国語 collector が「발매(release)」keyword で V-League 記事を拾った場合、
+            # title に該当keywordがなければ除外。
+            title = (s.get('title') or '').lower()
+            kw_list = [s.get('keyword', '')] + s.get('raw_data', {}).get('all_keywords', [])
+            kw_list = [k for k in kw_list if k]
+            if not kw_list or not any(k.lower() in title for k in kw_list):
                 continue
             score = TRUSTED_DOMAINS[domain] + s.get('engagement_score', 0)
             if s.get('urgency') == 'high':
