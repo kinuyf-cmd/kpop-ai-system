@@ -125,19 +125,22 @@ def generate_cta_block(programs_keys, article_title=''):
         if not link_html:
             continue
 
+        # 2026-05-11: link_html を <p class="kpj-cta-link"> で明示的に包む。
+        # 包まないと wpautop が <a>...</a>\n<img/> を自動<p>化する際に
+        # </p> 閉じが落ちて pre_publish_gate (open=N close=N-3) で BLOCK される事故が頻発。
         items_html.append(f'''<div class="kpj-cta-item">
   <div class="kpj-cta-icon">{_get_icon(meta)}</div>
   <div class="kpj-cta-content">
     <div class="kpj-cta-title">{meta['name']}</div>
     <div class="kpj-cta-desc">{_get_desc(meta)}</div>
-    {link_html}
+    <p class="kpj-cta-link">{link_html}</p>
   </div>
 </div>''')
 
     if not items_html:
         return ''
 
-    return f'''
+    block = f'''
 <div class="kpj-cta-block">
   <h3 class="kpj-cta-heading">関連おすすめ</h3>
   <div class="kpj-cta-grid">
@@ -145,6 +148,14 @@ def generate_cta_block(programs_keys, article_title=''):
   </div>
 </div>
 '''
+    # 2026-05-11: A8素材HTMLが <p>未閉じを含むため BeautifulSoupで正規化
+    # (24h記事14件すべてで unclosed_p 検出されたバグの根本対策)
+    try:
+        from bs4 import BeautifulSoup
+        block = str(BeautifulSoup(block, 'html.parser'))
+    except Exception:
+        pass
+    return block
 
 
 def inject_cta_into_content(title, content, force_genre=None):
