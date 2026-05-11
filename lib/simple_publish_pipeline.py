@@ -1,22 +1,7 @@
 #!/usr/bin/env python3
-"""
-SIMPLE PUBLISH PIPELINE (2026-05-11新設)
-
-source URL から: タイトル+本文翻訳 → og:image → WP公開 を1関数で完結。
-
-「ソースがある記事を拾ってきて、翻訳して、ソース先から画像を取って貼る」
-という基本動作の canonical 実装。複雑な generator 13本を deprecate していくための原器。
-
-Usage:
-    from lib.simple_publish_pipeline import simple_publish_from_source
-    r = simple_publish_from_source('https://www.koreaboo.com/news/sample-article/')
-    # r = {'post_id': 12345, 'media_id': 67890, 'link': 'https://...'}
-
-事前条件:
-    - .env に OPENAI_API_KEY / WP_USER / WP_PASS
-    - lib/korean_translator.translate_ko_to_ja() が動く
-    - lib/thumbnail_source_resolver.resolve_source_og_image() が動く
-"""
+"""SIMPLE PUBLISH PIPELINE (2026-05-11) — source URL → 翻訳 → og:image → WP公開 を1関数で完結する canonical 実装。複雑な generator 13本を deprecate していくための原器。
+Usage: r = simple_publish_from_source('https://www.koreaboo.com/news/sample/')  # → {'post_id', 'media_id', 'link'}
+事前: .env に OPENAI_API_KEY/WP_USER/WP_PASS / lib.korean_translator.translate_ko_to_ja / lib.thumbnail_source_resolver.resolve_source_og_image"""
 import os, sys, json, re, urllib.request, base64, tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -222,11 +207,16 @@ def upload_media(image_path: str, alt_text: str, filename: str = '') -> int:
     return mid
 
 
+SPEED_NEWS_CAT = 2  # WP cat 2 = 速報記事 (daily_editor の breaking 計測対象)
+BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
+
+
 def publish_post(title: str, body_html: str, slug: str, media_id: int,
                  source_url: str, status: str = 'publish') -> dict:
     payload = {
         'title': title, 'content': body_html, 'slug': slug,
         'status': status, 'featured_media': media_id,
+        'categories': [SPEED_NEWS_CAT],   # 2026-05-11: KPI 計測 + 速報カテゴリ表示
         'excerpt': body_html[:140].replace('<', ''),
         'meta': {'_aioseo_description': body_html[:140].replace('<', '')},
     }
@@ -236,6 +226,16 @@ def publish_post(title: str, body_html: str, slug: str, media_id: int,
         method='POST'
     )
     return json.load(urllib.request.urlopen(req, timeout=60))
+
+
+def _log_breaking(post_id: int):
+    """daily_editor の breaking 計測対象として logs/breaking_articles.jsonl に追加。
+    publish=success かつ status=publish の simple_publish 由来記事を全て記録する。"""
+    record = {'date': datetime.now().date().isoformat(), 'post_id': post_id,
+              'source': 'simple_publish', 'ts': datetime.now(timezone.utc).isoformat()}
+    os.makedirs(os.path.dirname(BREAKING_LOG), exist_ok=True)
+    with open(BREAKING_LOG, 'a', encoding='utf-8') as f:
+        f.write(json.dumps(record, ensure_ascii=False) + '\n')
 
 
 # ── 5. メイン ────────────────────────────────────────────────────
@@ -281,10 +281,17 @@ def simple_publish_from_source(source_url: str, slug: str = '',
         slug = generate_slug(title_ja)
 
     if not media_id and status == 'publish':
-        print('  サムネ取得失敗 → status=draft強制')
-        status = 'draft'
+        # サムネなし: status='private' で保留 (draft_auto_publisher の auto-archive 回避)
+        # draft 化すると draft_auto_publisher が pre_publish_gate BLOCK → 3回で auto-archive で
+        # 失われる。private は admin のみ可視で frontend 非公開、人手で thumbnail 補修して
+        # publish 化する想定。
+        print('  サムネ取得失敗 → status=private で保留 (draft_auto_publisher対象外)')
+        status = 'private'
 
     res = publish_post(title_ja, body_html, slug, media_id, source_url, status=status)
+    # KPI 計測のため breaking_articles.jsonl に追記 (status=publish のみ)
+    if res.get('status') == 'publish' and res.get('id'):
+        _log_breaking(int(res['id']))
     record = {
         'ts': datetime.now(timezone.utc).isoformat(),
         'source_url': source_url, 'post_id': res.get('id'), 'media_id': media_id,
