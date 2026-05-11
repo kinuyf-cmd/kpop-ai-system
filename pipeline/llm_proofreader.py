@@ -203,6 +203,7 @@ def proofread_post(post):
             print(f"  [factcheck] v2 fallback to v1: {e}")
 
     # --- Layer 1b: 記事に登場するアーティストのprofile情報を取得（GPT誤検知防止） ---
+    # 2026-05-11改定: is_solo考慮 + members=[] スキップ + 「記載なし=矛盾」と誤読される文言を緩和
     profile_context = ''
     try:
         profiles = _load_artist_profiles()
@@ -211,15 +212,28 @@ def proofread_post(post):
         for key, prof in profiles.items():
             names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
             names = [n.lower() for n in names if n]
-            if any(n in text_lower for n in names):
-                members = prof.get('members', [])
+            if not any(n in text_lower for n in names):
+                continue
+            members = prof.get('members', [])
+            is_solo = prof.get('is_solo', False)
+            display = prof.get('display_name', key)
+            debut = prof.get('debut_year', '?')
+            if is_solo:
+                # ソロアーティストは人数情報を出さない
+                matched_profiles.append(f"  - {display}: ソロアーティスト, {debut}年デビュー")
+            elif members:
                 matched_profiles.append(
-                    f"  - {prof.get('display_name', key)}: {len(members)}人組, "
-                    f"{prof.get('debut_year', '?')}年デビュー, "
+                    f"  - {display}: {len(members)}人組, {debut}年デビュー, "
                     f"メンバー={', '.join(members)}"
                 )
+            # members=[] かつ is_solo=False の場合は注入しない (誤情報源化防止)
         if matched_profiles:
-            profile_context = "\n\n## 参考: アーティスト正式情報（以下は確定事実です。記事の内容がこれと矛盾していればcriticalで報告してください）\n" + '\n'.join(matched_profiles)
+            profile_context = (
+                "\n\n## 参考: アーティスト正式情報（背景情報のみ）\n"
+                + '\n'.join(matched_profiles)
+                + "\n注: 記事に上記情報の記載がないこと自体は問題ではない。"
+                + "記事が *明確に異なる数値* (例: 「KATSEYEは5人組」「2023年デビュー」) を書いた場合のみ critical。"
+            )
     except Exception:
         pass
 
@@ -262,6 +276,9 @@ def proofread_post(post):
 - **「TWICE・ITZY・STRAY KIDS」のようなグループ名の列挙は「TWICEはX人」と主張していない。メンバー数誤りとして報告してはならない**
 - **「JYP所属のTWICE」「HYBE傘下のBTS」のような所属関係の記述は事実関係。メンバー数とは無関係**
 - **slug_short や URL長さ等、本文の事実とは無関係なメタ情報は critical で報告しないこと**
+- **異なる指標の数値を「矛盾」と報告しないこと**：「首都圏13.5％・全国13.3％」「初週CD12万枚・配信再生5,000万回」「分間最高15.4％・平均13.5％」などは比較対象が違うため矛盾ではない。同一指標で異なる数字が併記されている場合のみ報告
+- **タイトルと本文の整合性は、固有名詞（人名・グループ名・作品名）の登場有無のみで判定すること**：「タイトルが具体的でない」「より良いタイトルが考えられる」などスタイル批評は high として報告しない
+- **3行まとめは要約なので、本文全項目を網羅していない場合でも問題と報告しないこと**
 
 ## スコア基準
 - 95-100: 問題なし
@@ -464,6 +481,16 @@ def main():
                     f.write(f"{now.isoformat()} id={pid} C={nc} H={nh} "
                             f"critical={r.get('critical',[])} high={r.get('high',[])}\n")
                 queue_to_audit_state(pid, pt, r)
+
+            # 4項目監査procedural: factcheck step を記録
+            try:
+                from lib.audit_steps_log import record_step as _record_step
+                fc_status = 'error' if nc > 0 else ('warn' if nh > 0 else 'ok')
+                _record_step(pid, 'factcheck', fc_status,
+                             f'C={nc} H={nh} score={r.get("score", 0)}',
+                             source='llm_proofreader')
+            except Exception as _se:
+                pass
 
         except Exception as e:
             print(f"  [{i+1}/{len(targets)}] id={pid} ERR: {e}")

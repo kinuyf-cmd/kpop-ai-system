@@ -320,16 +320,24 @@ def _get_artist_profile_context(artist, sigs=None):
                     if any(n and n.lower() in title.lower() for n in names):
                         search_names.add(key.lower())
 
+        # 2026-05-11改定: is_solo考慮 + members=[] スキップ (0人組 注入で hallucination 誘発する事故対策)
         matched = []
         for key, prof in profiles.items():
             names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
-            if any(n and n.lower() in search_names for n in names):
-                members = prof.get('members', [])
+            if not any(n and n.lower() in search_names for n in names):
+                continue
+            members = prof.get('members', [])
+            is_solo = prof.get('is_solo', False)
+            display = prof['display_name']
+            debut = prof.get('debut_year', '?')
+            agency = prof.get('agency', '?')
+            if is_solo:
+                matched.append(f"- {display}: ソロアーティスト, {debut}年デビュー, 所属: {agency}")
+            elif members:
                 matched.append(
-                    f"- {prof['display_name']}: {len(members)}人組, "
-                    f"{prof.get('debut_year', '?')}年デビュー, "
-                    f"所属: {prof.get('agency', '?')}, "
-                    f"メンバー: {', '.join(members)}")
+                    f"- {display}: {len(members)}人組, {debut}年デビュー, "
+                    f"所属: {agency}, メンバー: {', '.join(members)}")
+            # members=[] かつ is_solo=False は profile データ不完全 → 注入しない
 
         if matched:
             return ("\n【アーティスト正式情報（これと矛盾する内容を絶対に書かないこと）】\n"
