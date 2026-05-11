@@ -48,7 +48,7 @@
 0 6 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_improvement_queue >> /opt/grant-ops/data/logs/cron_improvement_queue_notify.log 2>&1 # grant-ops-managed
 0 6 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_publishing.py >> /opt/grant-ops/data/logs/meeting_publishing.log 2>&1 # grant-ops-managed
 0 6 * * * /opt/grant-ops/venv/bin/python -m ops.auto_article_x_linker --apply --notify >> /opt/grant-ops/data/logs/cron_article_x_linker.log 2>&1
-0 6 * * * /usr/bin/python3 tools/site_health_check.py >> logs/cron_site_health.log 2>&1
+0 6 * * * cd /home/aiuser/kpop-ai-system && /usr/bin/python3 tools/site_health_check.py >> logs/cron_site_health.log 2>&1
 0 7 * * 1 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/user_analytics.py >> /opt/grant-ops/data/logs/cron_analytics.log 2>&1 # grant-ops-managed
 0 7,9,11,13,15,17 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.x_daily_scheduler --apply --auto >> /opt/grant-ops/data/logs/cron_x_scheduler.log 2>&1 # grant-ops-managed
 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.event_calendar_refresh >> logs/event_calendar_refresh.log 2>&1
@@ -202,14 +202,14 @@
 0 6 15 5 * cd /home/aiuser/kpop-ai-system && python3 scripts/ctr_baseline_snapshot.py --compare >> logs/ctr_comparison.log 2>&1
 # GSCバックフィル (5/1追加) — 未インデックス記事を毎日quota上限まで送信
 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/gsc_backfill_daily.py >> logs/gsc_backfill.log 2>&1
-0 8 * * 1 python3 tools/scrape_circle_chart.py >> logs/scrape_circle_chart.log 2>&1
-5 8 * * 1 python3 scripts/chart_article_generator.py >> logs/chart_article.log 2>&1
+0 8 * * 1 cd /home/aiuser/kpop-ai-system && python3 tools/scrape_circle_chart.py >> logs/scrape_circle_chart.log 2>&1
+5 8 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/chart_article_generator.py >> logs/chart_article.log 2>&1
 # コンサート情報自動収集 (5/1追加) — wowKoreaから毎日取得
 30 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.concert_collector >> logs/concert_collector.log 2>&1
-0 6 * * 1 python3 scripts/strategy_review.py >> logs/strategy_review.log 2>&1
+0 6 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/strategy_review.py >> logs/strategy_review.log 2>&1
 30 6 1 * * cd /home/aiuser/kpop-ai-system && python3 scripts/strategy_review.py --monthly >> logs/strategy_review.log 2>&1
 # 柱1: 当たりパターン横展開 (毎日8:30)
-30 8 * * * python3 scripts/winning_pattern_expander.py >> logs/winning_pattern_expander.log 2>&1
+30 8 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/winning_pattern_expander.py >> logs/winning_pattern_expander.log 2>&1
 # 柱2: 既存記事最適化 (毎週水曜6:00)
 0 6 * * 3 cd /home/aiuser/kpop-ai-system && python3 scripts/high_imp_optimizer.py --limit 10 >> logs/high_imp_optimizer.log 2>&1
 # === K-POPメディア collectors (2026-05-07改定) ===
@@ -246,7 +246,7 @@
 0 11 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/thumbnail_contamination_audit.py >> logs/thumbnail_contamination_audit.log 2>&1
 0 8 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/cron_health_check.py >> logs/cron_health_check.log 2>&1
 0 6 * * * cd /home/aiuser/kpop-ai-system && python3 -m pytest tests/test_thumbnail_defenses.py --quiet >> logs/regression_tests.log 2>&1
-0 9 * * 1 python3 pipeline/kpop_kw_expansion_suggester.py >> logs/kpop_kw_suggestions.log 2>&1
+0 9 * * 1 cd /home/aiuser/kpop-ai-system && python3 pipeline/kpop_kw_expansion_suggester.py >> logs/kpop_kw_suggestions.log 2>&1
 0 22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/daily_kpi_report.py >> logs/daily_kpi_report.log 2>&1
 0 5 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/comeback_calendar_builder.py >> logs/comeback_calendar_builder.log 2>&1
 0 6 * * 0 cd /home/aiuser/kpop-ai-system && python3 pipeline/profile_wiki_builder.py >> logs/profile_wiki_builder.log 2>&1

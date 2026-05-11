@@ -177,6 +177,26 @@ CRITICAL/HIGH があった記事の本文 Read 結果:
 | 2026-05-10 | 「12時間以内の投稿の監査して」要求にscriptで2件報告 → ユーザー指摘で残り3項目実行 → CRITICAL含む追加6件発覚 | scriptが回ったこと ≠ 監査が完了したこと。4項目セット必須 |
 | 過去多数 | factcheck cache に当たって `_already_proofread=True` で skip → factcheckしてないのに「PASS」報告 | Stage 3 で必ず新規 proofread_post 実行、cache無視 |
 | 過去多数 | サムネサイズだけ見て「OGP表示OK」報告 → 実は別アーティスト混入 | Stage 2 で Read ツールで画像を実際に見る |
+| 2026-05-11 | factcheck LLM が NCT WISH (subunit) と NCT 本体を混同して「人数誤り」CRITICAL 連発 (pid 21219) | 下記 NCT subunit knowledge 参照。LLM 提供の人数指摘は WISH/DOJAEJUNG/127/DREAM/U など subunit名 と本体 NCT を区別できない既知バグ。本文に subunit 名がある場合は LLM 主張の override 可 |
+
+## NCT subunit knowledge (factcheck false positive 防止)
+
+| subunit | メンバー数 | デビュー年 | メンバー (主要) |
+|---|---|---|---|
+| NCT (本体) | (固定数なし、SM公式は "無制限" 概念) | 2016 | 旗艦コンセプト |
+| NCT 127 | 9人 | 2016 | TAEYONG, MARK, JAEHYUN, DOYOUNG, HAECHAN, JOHNNY, YUTA, JUNGWOO, TAEIL |
+| NCT DREAM | 7人 | 2016 | MARK, RENJUN, JENO, HAECHAN, JAEMIN, CHENLE, JISUNG |
+| NCT U | 流動 | 2016 | 都度組成、固定なし |
+| WayV | 7人 | 2019 | KUN, TEN, WINWIN, LUCAS (脱退), XIAOJUN, HENDERY, YANGYANG |
+| **NCT WISH** | **6人** | **2024** | **Sion, Riku, Yushi, Jaehee, Ryo, Sakuya** |
+| NCT DOJAEJUNG | 3人 | 2023 | DOYOUNG, JAEHYUN, JUNGWOO |
+
+**factcheck LLM の典型ハルシネーション**:
+- 「NCT WISH は5人組」と主張 → ❌ 6人 (Sion/Riku/Yushi/Jaehee/Ryo/Sakuya)
+- 「NCT は5人組 (TAEYONG, MARK, JAEHYUN, DOYOUNG, HAECHAN)」 → ❌ それは NCT 127 のサブセット
+- 「NCT WISH のメンバー数を明示せよ」CRITICAL → ❌ chart 集計記事ではメンバー言及不要、過剰要求
+
+これらは Stage 3 factcheck で `record_step(pid, 'factcheck', 'warn', detail='LLM false positive: NCT subunit confusion')` で warn override 可。
 
 ## やってはいけないこと
 
