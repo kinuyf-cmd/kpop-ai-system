@@ -1,88 +1,164 @@
 {
+  "agency": "ASND",
+  "debut_date": "2018-01-24",
+  "fandom_name": "flover (플로버)",
+  "fandom_meaning": "「fromis」と「clover（クローバー）」を組み合わせた造語。fromis_9とファンが幸せなひとときをともに過ごすという約束を意味する。",
   "members": [
     {
-      "name_en": "Lee Serom",
-      "name_kr": "이서롬",
-      "name_ja": "イ・セロム",
-      "position": "リーダー、メインボーカル",
-      "birth": "1999-03-07",
-      "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": "元I.O.I"
-    },
-    {
-      "name_en": "Song Hayoung",
+      "name_en": "Hayoung",
       "name_kr": "송하영",
-      "name_ja": "ソン・ハヨン",
-      "position": "センター、リードボーカル",
-      "birth": "2000-05-29",
+      "name_ja": "ハヨン",
+      "real_name_en": "Song Ha-young",
+      "position": "リーダー、メインボーカル、メインダンサー",
+      "birth": "1997-09-29",
       "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
+      "note": "2025年のASND移籍後、実質的なリーダーを務める"
     },
     {
-      "name_en": "Chang Gyuri",
-      "name_kr": "장규리",
-      "name_ja": "チャン・ギュリ",
-      "position": "メインラッパー、サブボーカル",
-      "birth": "1999-05-14",
-      "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
-    },
-    {
-      "name_en": "Park Jiwon",
+      "name_en": "Jiwon",
       "name_kr": "박지원",
-      "name_ja": "パク・ジウォン",
-      "position": "リードボーカル",
-      "birth": "2003-03-20",
+      "name_ja": "ジウォン",
+      "real_name_en": "Park Ji-won",
+      "position": "メインボーカル、リードダンサー",
+      "birth": "1998-03-20",
       "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
+      "note": ""
     },
     {
-      "name_en": "Noh Jisun",
-      "name_kr": "노지선",
-      "name_ja": "ノ・ジソン",
-      "position": "リードボーカル",
-      "birth": "2001-02-20",
+      "name_en": "Chaeyoung",
+      "name_kr": "이채영",
+      "name_ja": "チェヨン",
+      "real_name_en": "Lee Chae-young",
+      "position": "リードラッパー、ボーカル",
+      "birth": "1999-11-05",
       "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
+      "note": ""
     },
     {
-      "name_en": "Lee Suyoung",
-      "name_kr": "이수영",
-      "name_ja": "イ・スヨン",
-      "position": "サブボーカル",
-      "birth": "2001-09-14",
+      "name_en": "Nagyung",
+      "name_kr": "이나경",
+      "name_ja": "ナギョン",
+      "real_name_en": "Lee Na-gyung",
+      "position": "ボーカル、ダンサー",
+      "birth": "1999-09-02",
       "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
+      "note": ""
     },
     {
-      "name_en": "Baek Jiheon",
+      "name_en": "Jiheon",
       "name_kr": "백지헌",
-      "name_ja": "ペク・ジホン",
-      "position": "サブボーカル",
-      "birth": "2003-02-27",
+      "name_ja": "ジホン",
+      "real_name_en": "Baek Ji-heon",
+      "position": "ボーカル、末っ子（マンネ）",
+      "birth": "2003-04-17",
       "nationality": "韓国",
-      "height": null,
-      "blood_type": null,
-      "mbti": null,
-      "note": null
+      "note": "グループ最年少メンバー"
+    },
+    {
+      "name_en": "Saerom",
+      "name_kr": "이새롬",
+      "name_ja": "セロム",
+      "real_name_en": "Lee Sae-rom",
+      "position": "元リーダー、リードダンサー、ボーカル",
+      "birth": "1997-01-07",
+      "nationality": "韓国",
+      "note": "2024年12月31日にPledis Entertainment契約終了に伴い脱退。2025年10月に333 Entertainmentと契約"
+    },
+    {
+      "name_en": "Jisun",
+      "name_kr": "노지선",
+      "name_ja": "ジソン",
+      "real_name_en": "Roh Ji-sun",
+      "position": "リードダンサー、ボーカル、センター",
+      "birth": "1998-11-23",
+      "nationality": "韓国",
+      "note": "2024年12月31日に契約終了に伴い脱退"
+    },
+    {
+      "name_en": "Seoyeon",
+      "name_kr": "이서연",
+      "name_ja": "ソヨン",
+      "real_name_en": "Lee Seo-yeon",
+      "position": "メインラッパー、ボーカル",
+      "birth": "2000-01-27",
+      "nationality": "韓国",
+      "note": "2024年12月31日に契約終了に伴い脱退。2025年にステージネームY:SYとしてソロデビュー"
+    },
+    {
+      "name_en": "Gyuri",
+      "name_kr": "장규리",
+      "name_ja": "ギュリ",
+      "real_name_en": "Jang Gyu-ri",
+      "position": "リードボーカル、ビジュアル",
+      "birth": "1997-12-27",
+      "nationality": "韓国",
+      "note": "2022年7月31日に脱退。その後女優として活動中"
     }
-  ]
+  ],
+  "discography_highlights": [
+    {
+      "year": "2018",
+      "title": "To. Heart",
+      "type": "ep",
+      "note": "デビューEP。タイトル曲「To. Heart」がGaonアルバムチャート4位"
+    },
+    {
+      "year": "2019",
+      "title": "Fun Factory",
+      "type": "single",
+      "note": "1stシングルアルバム。リード曲「Fun!」収録"
+    },
+    {
+      "year": "2019",
+      "title": "LOVE BOMB",
+      "type": "ep",
+      "note": "3rd EP。タイトル曲「LOVE BOMB」が人気を博す"
+    },
+    {
+      "year": "2022",
+      "title": "Midnight Guest",
+      "type": "ep",
+      "note": "4th EP。「#Love」収録"
+    },
+    {
+      "year": "2022",
+      "title": "from our Memento Box",
+      "type": "ep",
+      "note": "5th EP。サークルアルバムチャート1位を獲得"
+    },
+    {
+      "year": "2023",
+      "title": "Unlock My World",
+      "type": "album",
+      "note": "初のフルアルバム。リード曲「#menow」収録。NMEが4/5の評価"
+    },
+    {
+      "year": "2024",
+      "title": "Supersonic",
+      "type": "single",
+      "note": "サークルアルバムチャート1位。ハンタ初日売上46,200枚"
+    },
+    {
+      "year": "2025",
+      "title": "From Our 20's",
+      "type": "ep",
+      "note": "ASND移籍後初EP。5人体制での新スタート。リード曲「Like You Better」"
+    },
+    {
+      "year": "2026",
+      "title": "LIKE YOU BETTER (Japanese ver.)",
+      "type": "japanese",
+      "note": "日本デビューEP（2026年4月1日リリース）。Sky Runnerなど収録"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/realfromis_9",
+    "instagram": "https://www.instagram.com/officialfromis_9",
+    "weverse": "https://weverse.io/fromis9",
+    "youtube": "https://www.youtube.com/@officialfromis_9",
+    "tiktok": "https://www.tiktok.com/@official_fromis9",
+    "japan_official": "https://fromis9.jp"
+  },
+  "summary_ja": "fromis_9（プロミスナイン）は、2017年のMnet音楽サバイバル番組「Idol School」を通じて結成された韓国のガールグループ。2018年1月24日にEP「To. Heart」でデビュー。グループ名は「From Idol School」の頭字語であり、「Promise（約束）」の韓国語読みとも重なるとおり、ファンへの誠実な姿勢をコンセプトに掲げる。2022年にジャン・ギュリが脱退し、2024年末にプレディスエンタテインメントとの契約終了に伴いイ・セロム、ノ・ジソン、イ・ソヨンが不参加を表明。2025年1月より5人体制でASNDに移籍し、同年6月に6thミニアルバム「From Our 20's」をリリース。明るくポップなサウンドから成熟したシンセポップ・R&Bへと音楽性を進化させ、2026年4月には日本デビューEPを発表するなど、5人の「fromis_9」としての新たな章を歩み始めている。",
+  "_last_updated": "2026-05-12T02:21:35.047374+09:00"
 }
