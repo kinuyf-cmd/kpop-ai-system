@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T15:03:18.735491+09:00",
+  "updated_at": "2026-05-11T15:20:20.697348+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1487,6 +1487,14 @@
       "example": "breaking_articles.jsonl 14件記録 vs WP publish 3件 (21%) の publish率低下に誰も気付かなかった。draft落ち11件は上記3バグの複合だが、ratio監視がなく silent rot 化",
       "fix": "pipeline/draft_rate_monitor.py を新設、日次9時 cron で breaking 24h publish率<50% を Discord 通知。ALERT_MIN_ATTEMPTS=5 / ALERT_PUBLISH_RATIO=0.5",
       "agent": "monitoring",
+      "resolved_at": "2026-05-11"
+    },
+    "korean_media_html_concat_title_pollution": {
+      "count": 47,
+      "last_seen": "2026-05-11",
+      "example": "trend_signals.jsonl で source=korean_media の title 列に HTML タグ (koreaherald 14件) や記者署名/隣接記事タイトル連結 (newsen 15件, topstarnews 22件) が混入。直近24h 181件中 47件 (26%) で発生し、後段の artist 識別精度低下",
+      "fix": "lib/collectors/korean_base.py に clean_title() を共通化し newsen/koreaherald/topstarnews で使用。HTML strip + 連続改行/tab で先頭タイトルのみ採用 + 記者署名/日付除去。test_korean_media_clean_title.py で機械検証",
+      "agent": "collectors",
       "resolved_at": "2026-05-11"
     }
   },

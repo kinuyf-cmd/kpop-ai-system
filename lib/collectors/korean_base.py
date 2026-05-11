@@ -1,6 +1,53 @@
 """韓国メディアcollector共通基盤"""
-import json, os, urllib.request
+import json, os, re, urllib.request
 from datetime import datetime, timedelta
+
+
+def clean_title(raw: str) -> str:
+    """韓国メディア記事タイトルから HTML / 連結タイトル / 記者署名を除去
+
+    複数 collector が同種のクリーニングを重複実装していたのを共通化 (2026-05-11)。
+    新規collector追加時は必ずこの関数経由で title を整形すること。
+
+    処理:
+      1. HTML タグ除去 (<...>)
+      2. 空白 (改行/tab) を1スペースに正規化
+      3. 記者署名「○○○ 기자」「MM.DD HH:MM」以降をカット
+      4. 完結語 (했다/됐다/공개/발매/컴백 等) で隣接記事タイトルと分離
+      5. 80字超は句読点で切断
+    """
+    if not raw:
+        return ''
+    # 1. HTML タグ除去
+    title = re.sub(r'<[^>]+>', '', raw)
+    # 2. 連続改行や複数tab列(隣接記事タイトルの境界)で先頭部分のみ採用
+    # newsen/topstarnews 等は HTML strip 後に 「title1\n\t\t\t\ntitle2」形式で
+    # 隣接記事タイトルが連結する。空白正規化前に分離する必要あり
+    boundary = re.search(r'\n\s*\n|\t{3,}', title)
+    if boundary and boundary.start() >= 10:
+        title = title[:boundary.start()]
+    # 3. 空白正規化
+    title = re.sub(r'\s+', ' ', title).strip()
+    # 3. 記者署名 / 日付以降カット
+    title = re.split(r'\s*\d{2}\.\d{2}\s*\d{2}:\d{2}', title, 1)[0]
+    title = re.split(r'\s+\S+\s*기자(\s|$)', title, 1)[0]
+    # 4. 完結語で次記事分離
+    m_split = re.split(
+        r'(?<=했다)|(?<=됐다)|(?<=했다고)|(?<=공개)|(?<=발매)|(?<=출연)|(?<=결정)|(?<=컴백)|(?<=합류)(?=[A-Z]|[가-힯])',
+        title, maxsplit=1
+    )
+    if len(m_split) > 1 and len(m_split[0]) >= 10:
+        title = m_split[0].strip()
+    # 5. 80字超は句読点で切断
+    if len(title) > 80:
+        for sep in ['…', '!', '?', '。', '．']:
+            if sep in title[:80]:
+                title = title.split(sep, 1)[0] + sep
+                break
+        else:
+            title = title[:80]
+    return title.strip()
+
 
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 os.makedirs(os.path.dirname(SIGNALS), exist_ok=True)

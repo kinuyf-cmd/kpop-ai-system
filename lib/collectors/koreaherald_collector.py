@@ -2,7 +2,7 @@
 """Korea Herald K-POP (koreaherald.com) — 韓国最大の英字紙"""
 import sys, re
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
-from lib.collectors.korean_base import fetch_html, save_signals, log
+from lib.collectors.korean_base import fetch_html, save_signals, log, clean_title
 from datetime import datetime
 
 KPOP_KW = [
@@ -29,7 +29,7 @@ def collect():
     seen = set()
     for pat in patterns:
         for m in pat.finditer(html):
-            link, title = m.group(1), m.group(2).strip()
+            link, title = m.group(1), clean_title(m.group(2))
             if link in seen or len(title) < 10:
                 continue
             seen.add(link)
