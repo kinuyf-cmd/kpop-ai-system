@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T14:20:56.918618+09:00",
+  "updated_at": "2026-05-11T15:03:18.735491+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1455,6 +1455,38 @@
       "example": "Circle Chart API が week 19/20 (当週/前週) を ResultStatus:Error で返却、week 18 まで2週ラグ。scraper fallback が [week, week-1] のみで取得失敗",
       "fix": "scrape_circle_chart.py の fallback を [week, week-1, week-2] に拡張。test_scraper_fallback_covers_two_week_lag で機械検証",
       "agent": "circle_chart_scraper",
+      "resolved_at": "2026-05-11"
+    },
+    "cta_wpautop_p_imbalance": {
+      "count": 9,
+      "last_seen": "2026-05-11",
+      "example": "breaking 14件のうち 9件が <p> open=N close=N-3 で gate_block→draft化。cta_injector の A8リンク <a>...</a>\\n<img/> を WP に POST すると wpautop が自動<p>補完するが、末尾</div>直前で</p>が落ちる WP quirk",
+      "fix": "cta_injector.py で link_html を <p class=\"kpj-cta-link\">{link_html}</p> 明示包み (commit 744494e)。test_cta_wpautop_p_balance.py で機械検証",
+      "agent": "cta_injector",
+      "resolved_at": "2026-05-11"
+    },
+    "factcheck_profile_overdefense_empty_members": {
+      "count": 5,
+      "last_seen": "2026-05-11",
+      "example": "factcheck CRITICAL 5件 (CORTIS 0人組記載/KATSEYE 6人組注記抜け/BABYMONSTER デビュー年2023→2024 等)。artist_profiles.json で members=[]の group や is_solo=true の solo を「0人組」として注入→ LLM が認知不協和起こし CRITICAL 報告",
+      "fix": "breaking_news_detector + llm_proofreader で is_solo考慮 + members=[]スキップ + 注入文言「記載なしは問題ではない、明確に異なる数値のみcritical」に緩和 (commit 99eb80f)",
+      "agent": "factcheck_pipeline",
+      "resolved_at": "2026-05-11"
+    },
+    "post_publish_hook_kind_hardcoded_news": {
+      "count": 2,
+      "last_seen": "2026-05-11",
+      "example": "breaking 2件 (21360 IVE/レイ 1467字, 21527 2PM 1349字) が content_short BLOCK→draft化。本文は breaking 閾値ならWARNだったが post_publish_hook が kind='news' をハードコードして medium→BLOCK昇格させていた",
+      "fix": "post_publish_hook で breaking_articles.jsonl 参照し post_id が記録されていれば kind='breaking' を渡す (commit 0f0f56e)。test_post_publish_hook_kind_detection.py で機械検証",
+      "agent": "post_publish_hook",
+      "resolved_at": "2026-05-11"
+    },
+    "breaking_publish_silent_rot": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "breaking_articles.jsonl 14件記録 vs WP publish 3件 (21%) の publish率低下に誰も気付かなかった。draft落ち11件は上記3バグの複合だが、ratio監視がなく silent rot 化",
+      "fix": "pipeline/draft_rate_monitor.py を新設、日次9時 cron で breaking 24h publish率<50% を Discord 通知。ALERT_MIN_ATTEMPTS=5 / ALERT_PUBLISH_RATIO=0.5",
+      "agent": "monitoring",
       "resolved_at": "2026-05-11"
     }
   },

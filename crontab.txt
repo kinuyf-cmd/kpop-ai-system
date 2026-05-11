@@ -267,3 +267,6 @@
 
 # 月次 generator 品質メトリクス (Phase 4 後 silent rot 監視 / 2026-05-11新設)
 0 6 1 * * cd /home/aiuser/kpop-ai-system && python3 lib/generator_quality_metrics.py >> logs/generator_quality_monthly.log 2>&1
+
+# 日次 draft 落ち率監視 (breaking publish silent rot 検出 / 2026-05-11新設)
+0 9 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/draft_rate_monitor.py >> logs/draft_rate_monitor.log 2>&1
