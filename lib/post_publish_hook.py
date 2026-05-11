@@ -183,10 +183,27 @@ def run_post_publish(post_id, post_type='post'):
             _src_url = _src_urls[0] if _src_urls else None
             _src_signals = [{'url': u, 'title': ''} for u in _src_urls[:3]] if _src_urls else None
 
+            # 2026-05-11: kind を breaking_articles.jsonl から判定 (hardcoded 'news' は
+            # breaking 記事の content_short を BLOCK に昇格させてしまう事故対策)
+            _detected_kind = 'news'
+            try:
+                _ba_path = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
+                with open(_ba_path, encoding='utf-8') as _baf:
+                    for _bal in _baf:
+                        try:
+                            _bad = json.loads(_bal)
+                            if _bad.get('post_id') == post_id:
+                                _detected_kind = 'breaking'
+                                break
+                        except Exception:
+                            continue
+            except FileNotFoundError:
+                pass
+
             from lib.pre_publish_gate import pre_publish_gate as _recheck_gate
             _gate_r = _recheck_gate(
                 title=_pf_title, body_html=_pf_content,
-                post_type=post_type, kind='news',
+                post_type=post_type, kind=_detected_kind,
                 source_url=_src_url, source_signals=_src_signals,
                 slug=_pf_slug, featured_media=_pf_fm,
                 categories=_pf_cats, excerpt=_pf_excerpt,
