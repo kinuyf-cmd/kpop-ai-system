@@ -165,6 +165,20 @@ def unified_publish(
 ) -> dict:
     """統一投稿関数"""
     log = []
+    auto_draft_reasons = []
+
+    # 0. source_text 取得確認: news kind で <1500字 → draft化
+    # memory: feedback_must_read_source.md
+    if source_url and kind in ('news', 'breaking', 'feature'):
+        try:
+            from lib.source_reader import read_source as _read_source
+            _src = _read_source(source_url) or {}
+            _src_text = _src.get('text', '') if isinstance(_src, dict) else str(_src or '')
+            if len(_src_text) < 1500:
+                auto_draft_reasons.append('source_text_short')
+                log.append(f"source_text_short: {len(_src_text)}字 (<1500) → 自動draft化")
+        except Exception as _e:
+            log.append(f"source_reader skip: {_e}")
 
     # 1. タイトル最適化
     # ユーザー指示 (2026-05-07): 速報タイトルの【速報】prefix廃止。低信頼度の【韓国メディア速報】は維持
@@ -477,11 +491,14 @@ def unified_publish(
     cat_id = cat_ids[0] if cat_ids else None
 
     # 8. WP投稿
+    _post_status = 'draft' if auto_draft_reasons else 'publish'
+    if auto_draft_reasons:
+        log.append(f"auto_draft_reasons={auto_draft_reasons} → status=draft")
     data = {
         'title': title_final,
         'content': content,
         'excerpt': meta_desc,
-        'status': 'publish',
+        'status': _post_status,
         'meta': {
             '_aioseo_description': meta_desc,
         },

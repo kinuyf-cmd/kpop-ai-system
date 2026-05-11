@@ -9,6 +9,32 @@ API = "https://api.openai.com/v1/chat/completions"
 MAX_TITLE = 42
 
 
+def _safe_truncate_title(title: str, max_len: int = MAX_TITLE) -> str:
+    """文字境界保護トランケート — 単語の途中で切らず、句読点/区切り文字で詰める"""
+    if not title or len(title) <= max_len:
+        return title or ''
+    cut = title[:max_len]
+    for delim in ('】', '」', '』', ')', '）', '。', '、', ' ', '/', '・'):
+        idx = cut.rfind(delim)
+        if idx >= max_len - 8:
+            return cut[:idx + len(delim)] if delim in ('】', '」', '』', ')', '）') else cut[:idx]
+    return cut
+
+
+_BRACKET_PAIRS = (('【', '】'), ('「', '」'), ('『', '』'), ('(', ')'), ('（', '）'), ('[', ']'))
+
+
+def _balance_brackets(title: str) -> str:
+    """未閉じ括弧を末尾に補完"""
+    if not title:
+        return title or ''
+    out = title
+    for op, cl in _BRACKET_PAIRS:
+        if out.count(op) > out.count(cl):
+            out += cl * (out.count(op) - out.count(cl))
+    return out
+
+
 def optimize_title(raw_title: str, body: str = '') -> str:
     key = os.getenv('OPENAI_API_KEY')
     if not key:
