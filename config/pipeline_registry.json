@@ -11,8 +11,8 @@
       "module": "pipeline.breaking_news_detector"
     },
     "trend_collector": {
-      "cron": "*/30 * * * *",
-      "max_silence_min": 90,
+      "cron": "0 7-21/2 * * *",
+      "max_silence_min": 700,
       "category": "critical",
       "log": "logs/trend_collector.log",
       "module": "lib.trend_collector",
@@ -34,15 +34,15 @@
       "run_cmd": "python3 tools/pipeline_health_monitor.py"
     },
     "popup_prtimes": {
-      "cron": "5 * * * *",
-      "max_silence_min": 70,
+      "cron": "5 7-21/3 * * *",
+      "max_silence_min": 700,
       "category": "high",
       "log": "logs/popup_prtimes.log",
       "module": "lib.collectors.popup_prtimes_collector"
     },
     "popup_kbuzz": {
-      "cron": "15 * * * *",
-      "max_silence_min": 120,
+      "cron": "15 7-21/3 * * *",
+      "max_silence_min": 700,
       "category": "high",
       "log": "logs/popup_kbuzz.log",
       "module": "lib.collectors.popup_kbuzz_collector"
@@ -69,8 +69,8 @@
       "module": "pipeline.auto_comeback_article"
     },
     "auto_event_article": {
-      "cron": "20 */3 * * *",
-      "max_silence_min": 240,
+      "cron": "20 9,15 * * *",
+      "max_silence_min": 1200,
       "category": "high",
       "log": "logs/auto_event_article.log",
       "module": "pipeline.auto_event_article"
@@ -230,8 +230,8 @@
       "module": "pipeline.comeback_predictor"
     },
     "korea_official_collector": {
-      "cron": "35 * * * *",
-      "max_silence_min": 120,
+      "cron": "0 10,19 * * *",
+      "max_silence_min": 1000,
       "category": "high",
       "log": "logs/korea_official.log",
       "module": "pipeline.korea_official_collector"

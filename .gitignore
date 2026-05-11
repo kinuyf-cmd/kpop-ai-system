@@ -92,6 +92,7 @@ data/kcon_monitor_state.json
 data/kcon_sources.json
 data/thumbnail_used_images.json
 data/tickebo_state.json
+data/tavily_quota_exhausted.json
 data/x_repost_tracker.json
 lessons_learned.json
 

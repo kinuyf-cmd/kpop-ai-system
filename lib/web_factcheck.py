@@ -19,6 +19,44 @@ from datetime import datetime, timezone, timedelta
 
 _JST = timezone(timedelta(hours=9))
 _LOG_PATH = '/home/aiuser/kpop-ai-system/logs/web_factcheck.jsonl'
+_TAVILY_QUOTA_CACHE = '/home/aiuser/kpop-ai-system/data/tavily_quota_exhausted.json'
+
+
+def _tavily_quota_exhausted() -> bool:
+    """Tavily月次プラン上限到達状態か判定。
+    True なら呼び出しスキップ。月初リセット (UTC) で自動復活。
+    """
+    try:
+        if not os.path.exists(_TAVILY_QUOTA_CACHE):
+            return False
+        with open(_TAVILY_QUOTA_CACHE) as f:
+            d = json.load(f)
+        expires_at = d.get('expires_at')
+        if not expires_at:
+            return False
+        return datetime.now(timezone.utc).isoformat() < expires_at
+    except Exception:
+        return False
+
+
+def _mark_tavily_quota_exhausted():
+    """上限到達を記録。月末まで以降の呼び出しを skip。"""
+    try:
+        os.makedirs(os.path.dirname(_TAVILY_QUOTA_CACHE), exist_ok=True)
+        now = datetime.now(timezone.utc)
+        # 翌月1日 00:00 UTC を expires に
+        if now.month == 12:
+            nxt = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        else:
+            nxt = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        with open(_TAVILY_QUOTA_CACHE, 'w') as f:
+            json.dump({
+                'exhausted_at': now.isoformat(),
+                'expires_at': nxt.isoformat(),
+                'reason': 'plan usage limit',
+            }, f, indent=2)
+    except Exception:
+        pass
 
 # 一次情報源（チケット販売／公式番組／公式イベント等）。
 # これらに該当するシグナルが当たればWeb検索が空でもPASS同等の確信度を与える。
@@ -64,6 +102,9 @@ def _search_tavily(query: str, num_results: int = 5) -> list[dict]:
     tavily_key = os.environ.get('TAVILY_API_KEY', '')
     if not tavily_key:
         return []
+    # 上限到達済みなら以降スキップ (月初UTCで自動復活)
+    if _tavily_quota_exhausted():
+        return []
 
     try:
         from tavily import TavilyClient
@@ -79,6 +120,9 @@ def _search_tavily(query: str, num_results: int = 5) -> list[dict]:
             })
         return results
     except Exception as e:
+        # plan上限到達を検知してキャッシュ
+        if 'usage limit' in str(e).lower() or 'exceeds your plan' in str(e).lower():
+            _mark_tavily_quota_exhausted()
         return []
 
 
@@ -87,6 +131,9 @@ def _verify_with_tavily(title: str, body_text: str) -> dict:
     tavily_key = os.environ.get('TAVILY_API_KEY', '')
     if not tavily_key:
         return {'found': None, 'reason': 'TAVILY_API_KEY未設定', 'sources': []}
+    # 上限到達済みなら以降スキップ (月初UTCで自動復活)
+    if _tavily_quota_exhausted():
+        return {'found': None, 'reason': 'Tavily月次上限到達 (Claude WS等のfallbackへ)', 'sources': []}
 
     try:
         from tavily import TavilyClient
@@ -149,6 +196,8 @@ def _verify_with_tavily(title: str, body_text: str) -> dict:
                 'sources': [],
             }
     except Exception as e:
+        if 'usage limit' in str(e).lower() or 'exceeds your plan' in str(e).lower():
+            _mark_tavily_quota_exhausted()
         return {'found': None, 'reason': f'Tavily error: {str(e)[:60]}', 'sources': []}
 
 
