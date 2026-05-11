@@ -62,6 +62,20 @@ PRIORITY_ARTISTS = [
     {'name': 'KISS OF LIFE', 'slug': 'kiss-of-life'},
     {'name': 'IU', 'slug': 'iu'},
     {'name': 'KATSEYE', 'slug': 'katseye'},
+    {'name': 'fromis_9', 'slug': 'fromis9'},
+    {'name': 'BIGBANG', 'slug': 'big-bang'},
+    {'name': 'NCT', 'slug': 'nct'},
+    {'name': 'EXO', 'slug': 'exo'},
+    {'name': 'CORTIS', 'slug': 'cortis'},
+    {'name': 'XG', 'slug': 'xg'},
+    {'name': 'MOMOLAND', 'slug': 'momoland'},
+    {'name': 'ZEROBASEONE', 'slug': 'zerobaseone'},
+    {'name': 'Hearts2Hearts', 'slug': 'hearts2hearts'},
+    {'name': 'TREASURE', 'slug': 'treasure'},
+    {'name': 'BoA', 'slug': 'boa'},
+    {'name': '1VERSE', 'slug': '1verse'},
+    {'name': 'MEOVV', 'slug': 'meovv'},
+    {'name': 'STAYC', 'slug': 'stayc'},
 ]
 
 PROFILE_SCHEMA = {

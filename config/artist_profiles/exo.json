@@ -1,0 +1,217 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2012-04-08",
+  "fandom_name": "EXO-L",
+  "fandom_meaning": "「L」はアルファベットの「K」と「M」の間に位置する文字であり、EXO-KとEXO-Mの間をつなぐ存在としてファンを表す。また「Love」の頭文字でもあり、EXOを愛するファンという意味も込められている。",
+  "members": [
+    {
+      "name_en": "Suho",
+      "name_kr": "김준면",
+      "name_ja": "スホ",
+      "real_name_en": "Kim Junmyeon",
+      "position": "リーダー、ボーカル",
+      "birth": "1991-05-22",
+      "nationality": "韓国",
+      "height_cm": "173",
+      "blood_type": "AB",
+      "education": "ソウル芸術高校 → 漢陽大学校 (演劇映画学科)",
+      "hobbies": "読書, 映画鑑賞, バドミントン",
+      "solo_works": "Self-Portrait (2020年), 松雪 (2021年)",
+      "instagram_personal": "https://www.instagram.com/kimjuncotton/"
+    },
+    {
+      "name_en": "Xiumin",
+      "name_kr": "김민석",
+      "name_ja": "シウミン",
+      "real_name_en": "Kim Minseok",
+      "position": "ボーカル",
+      "birth": "1990-03-26",
+      "nationality": "韓国",
+      "note": "EXO最年長メンバー",
+      "height_cm": "173",
+      "blood_type": "B",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "ゲーム, コーヒー, サッカー",
+      "solo_works": "Brand New (2023年), You (2023年)",
+      "instagram_personal": "https://www.instagram.com/xiumin_ex_o/"
+    },
+    {
+      "name_en": "Lay",
+      "name_kr": "张艺兴",
+      "name_ja": "レイ",
+      "real_name_en": "Zhang Yixing",
+      "position": "ボーカル、ダンサー",
+      "birth": "1991-10-07",
+      "nationality": "中国",
+      "note": "中国での活動を中心に行っており、EXOの活動には不定期参加",
+      "height_cm": "177",
+      "blood_type": "O",
+      "education": "芸術専門高校",
+      "hobbies": "ダンス, 作曲, 料理",
+      "solo_works": "NAMANANA (2018年), LIT (2019年)",
+      "instagram_personal": "https://www.instagram.com/layzhang/"
+    },
+    {
+      "name_en": "Baekhyun",
+      "name_kr": "변백현",
+      "name_ja": "ベクヒョン",
+      "real_name_en": "Byun Baekhyun",
+      "position": "メインボーカル",
+      "birth": "1992-05-06",
+      "nationality": "韓国",
+      "note": "2024年8月に除隊後グループ活動再開",
+      "height_cm": "174",
+      "blood_type": "O",
+      "education": "ソウル芸術高校 → 韓国放送通信大学校",
+      "hobbies": "ゲーム, 歌, ギター",
+      "solo_works": "City Lights (2019年), Delight (2020年)",
+      "instagram_personal": "https://www.instagram.com/baekhyunee_exo/"
+    },
+    {
+      "name_en": "Chen",
+      "name_kr": "김종대",
+      "name_ja": "チェン",
+      "real_name_en": "Kim Jongdae",
+      "position": "メインボーカル",
+      "birth": "1992-09-21",
+      "nationality": "韓国",
+      "height_cm": "173",
+      "blood_type": "B",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "音楽鑑賞, ゲーム, 料理",
+      "solo_works": "April, and a Flower (2019年), Dear My Dear (2019年)"
+    },
+    {
+      "name_en": "Chanyeol",
+      "name_kr": "박찬열",
+      "name_ja": "チャニョル",
+      "real_name_en": "Park Chanyeol",
+      "position": "メインラッパー、ボーカル",
+      "birth": "1992-11-27",
+      "nationality": "韓国",
+      "height_cm": "185",
+      "blood_type": "A",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "ドラム, ギター, ゲーム",
+      "solo_works": "SSFW (with 10cm, 2017年), Tomorrow (2018年)",
+      "instagram_personal": "https://www.instagram.com/real__pcy/"
+    },
+    {
+      "name_en": "D.O.",
+      "name_kr": "도경수",
+      "name_ja": "ディオ",
+      "real_name_en": "Do Kyungsoo",
+      "position": "メインボーカル",
+      "birth": "1993-01-12",
+      "nationality": "韓国",
+      "note": "俳優としても活躍",
+      "height_cm": "173",
+      "blood_type": "A",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "料理, 映画鑑賞, バスケットボール",
+      "solo_works": "Empathy (2019年), 공감 (2021年)"
+    },
+    {
+      "name_en": "Kai",
+      "name_kr": "김종인",
+      "name_ja": "カイ",
+      "real_name_en": "Kim Jongin",
+      "position": "メインダンサー、ボーカル、ラッパー",
+      "birth": "1994-01-14",
+      "nationality": "韓国",
+      "height_cm": "182",
+      "blood_type": "A",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "ダンス, 写真撮影, ゴルフ",
+      "solo_works": "KAI (2020年), Peaches (2021年)",
+      "instagram_personal": "https://www.instagram.com/zkdlin/"
+    },
+    {
+      "name_en": "Sehun",
+      "name_kr": "오세훈",
+      "name_ja": "セフン",
+      "real_name_en": "Oh Sehun",
+      "position": "ラッパー、ボーカル",
+      "birth": "1994-04-12",
+      "nationality": "韓国",
+      "note": "EXO最年少メンバー",
+      "height_cm": "183",
+      "blood_type": "O",
+      "education": "ソウル芸術高校 → 慶熙大学校 (ポストモダン音楽学科)",
+      "hobbies": "バスケットボール, ファッション, ゴルフ",
+      "solo_works": "What a Life (with Chanyeol as EXO-SC, 2019年), 1 Billion Views (2020年)",
+      "instagram_personal": "https://www.instagram.com/ohhsehun/"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2012",
+      "title": "MAMA",
+      "type": "ep",
+      "note": "デビューEP。タイトル曲「MAMA」でデビュー"
+    },
+    {
+      "year": "2013",
+      "title": "XOXO",
+      "type": "album",
+      "note": "韓国1stフルアルバム。「Wolf」「Growl」収録、100万枚以上のセールスを記録"
+    },
+    {
+      "year": "2015",
+      "title": "EXODUS",
+      "type": "album",
+      "note": "3rdフルアルバム。「Call Me Baby」収録"
+    },
+    {
+      "year": "2015",
+      "title": "Love Me Right",
+      "type": "album",
+      "note": "3rdアルバムリパッケージ。タイタル曲が大ヒット"
+    },
+    {
+      "year": "2016",
+      "title": "EX'ACT",
+      "type": "album",
+      "note": "4thフルアルバム。「Monster」「Lucky One」収録"
+    },
+    {
+      "year": "2017",
+      "title": "The War",
+      "type": "album",
+      "note": "4thアルバム。「Ko Ko Bop」が大ヒット"
+    },
+    {
+      "year": "2018",
+      "title": "Don't Mess Up My Tempo",
+      "type": "album",
+      "note": "5thフルアルバム。タイトル曲「Tempo」収録"
+    },
+    {
+      "year": "2019",
+      "title": "OBSESSION",
+      "type": "album",
+      "note": "6thフルアルバム。タイトル曲「Obsession」収録"
+    },
+    {
+      "year": "2022",
+      "title": "Exist",
+      "type": "album",
+      "note": "7thフルアルバム。約3年ぶりのカムバック作品"
+    },
+    {
+      "year": "2023",
+      "title": "Don't fight the feeling",
+      "type": "ep",
+      "note": "スペシャルアルバム。爽やかなサマーチューン"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/weareoneEXO",
+    "instagram": "https://www.instagram.com/weareone.exo/",
+    "weverse": "https://weverse.io/exo",
+    "youtube": "https://www.youtube.com/channel/UCGIdoMGGGOZOuFr1OduimBA",
+    "japan_official": "https://exo-jp.net/"
+  },
+  "summary_ja": "EXO（엑소）は、2012年4月8日にSMエンタテインメントからデビューした韓国の男性グループ。スホ、シウミン、レイ、ベクヒョン、チェン、チャニョル、D.O.、カイ、セフンの9名で構成される（元メンバーのクリス、ルハン、タオ、リュウミンは脱退）。「地球外から来た超能力を持つ存在」というコンセプトを持ち、デビュー当初はEXO-K（韓国語）とEXO-M（中国語）の二チームに分かれて活動した。「Growl」「Ko Ko Bop」「Tempo」など数々のヒット曲を生み出し、2013年から2017年まで韓国3大音楽授賞式で大賞を連続受賞するという偉業を達成。K-POPを代表するグループとして世界中に熱狂的なファンベース「EXO-L」を持つ。",
+  "_last_updated": "2026-05-11T20:50:31.186377+09:00"
+}

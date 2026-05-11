@@ -1,0 +1,203 @@
+{
+  "agency": "WakeOne Entertainment",
+  "debut_date": "2023-07-10",
+  "fandom_name": "ZEFIT",
+  "fandom_meaning": "「ZEFIT」は「ZEROBASEONE」と「FIT（ぴったり合う）」を組み合わせた造語で、メンバーとファンが一つにぴったりと合わさるという意味が込められている。",
+  "members": [
+    {
+      "name_en": "Kim Ji-woong",
+      "name_kr": "김지웅",
+      "name_ja": "キム・ジウン",
+      "real_name_en": "Kim Ji-woong",
+      "position": "ボーカル",
+      "birth": "1997-04-20",
+      "nationality": "韓国",
+      "height_cm": "183",
+      "blood_type": "A",
+      "mbti": "INFP",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "映画鑑賞, 音楽制作, ゲーム",
+      "instagram_personal": "https://www.instagram.com/kimjiwoong__/"
+    },
+    {
+      "name_en": "Zhang Hao",
+      "name_kr": "장호",
+      "name_ja": "チャン・ハオ",
+      "real_name_en": "Zhang Hao",
+      "position": "ボーカル、ダンサー",
+      "birth": "2002-02-28",
+      "nationality": "中国",
+      "height_cm": "178",
+      "blood_type": "O",
+      "mbti": "ENFJ",
+      "education": "北京舞蹈学院附属中学卒業",
+      "hobbies": "ダンス, 料理, 旅行",
+      "instagram_personal": "https://www.instagram.com/zhanghao__official/"
+    },
+    {
+      "name_en": "Sung Han-bin",
+      "name_kr": "성한빈",
+      "name_ja": "ソン・ハンビン",
+      "real_name_en": "Sung Han-bin",
+      "position": "リーダー、ボーカル",
+      "birth": "2002-10-08",
+      "nationality": "韓国",
+      "height_cm": "182",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "作曲, 読書, 運動",
+      "instagram_personal": "https://www.instagram.com/sunghanbin__/"
+    },
+    {
+      "name_en": "Seok Matthew",
+      "name_kr": "석매튜",
+      "name_ja": "ソク・マシュー",
+      "real_name_en": "Seok Jihun",
+      "position": "ボーカル",
+      "birth": "2002-10-18",
+      "nationality": "韓国（カナダ育ち）",
+      "height_cm": "180",
+      "blood_type": "O",
+      "mbti": "ENFP",
+      "education": "カナダ高校卒業後韓国活動",
+      "hobbies": "バスケットボール, 音楽鑑賞, 料理",
+      "instagram_personal": "https://www.instagram.com/seokmatthew__/"
+    },
+    {
+      "name_en": "Kim Tae-rae",
+      "name_kr": "김태래",
+      "name_ja": "キム・テレ",
+      "real_name_en": "Kim Tae-rae",
+      "position": "メインボーカル",
+      "birth": "2002-12-19",
+      "nationality": "韓国",
+      "height_cm": "178",
+      "blood_type": "B",
+      "mbti": "ISFP",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "ゲーム, 映画鑑賞, 絵画",
+      "instagram_personal": "https://www.instagram.com/kimtaerae__/"
+    },
+    {
+      "name_en": "Ricky",
+      "name_kr": "리키",
+      "name_ja": "リッキー",
+      "real_name_en": "Kim Hyunsuk",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-12-09",
+      "nationality": "韓国（米国育ち）",
+      "height_cm": "175",
+      "blood_type": "B",
+      "mbti": "ENTP",
+      "education": "中国の高校卒業後韓国活動",
+      "hobbies": "ダンス, 音楽鑑賞, 写真撮影",
+      "instagram_personal": "https://www.instagram.com/ricky__zb1/"
+    },
+    {
+      "name_en": "Kim Gyu-vin",
+      "name_kr": "김규빈",
+      "name_ja": "キム・ギュビン",
+      "real_name_en": "Kim Gyu-vin",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-07-07",
+      "nationality": "韓国",
+      "height_cm": "181",
+      "blood_type": "A",
+      "mbti": "ENFP",
+      "education": "釜山芸術高校卒業",
+      "hobbies": "運動, ゲーム, 音楽鑑賞",
+      "instagram_personal": "https://www.instagram.com/kimgyuvin__/"
+    },
+    {
+      "name_en": "Park Gun-wook",
+      "name_kr": "박건욱",
+      "name_ja": "パク・グヌク",
+      "real_name_en": "Park Gun-wook",
+      "position": "メインダンサー、ボーカル",
+      "birth": "2005-06-05",
+      "nationality": "韓国",
+      "height_cm": "180",
+      "blood_type": "B",
+      "mbti": "ISTP",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "ギター, 作曲, 映画鑑賞",
+      "instagram_personal": "https://www.instagram.com/parkgunwook__/"
+    },
+    {
+      "name_en": "Han Yu-jin",
+      "name_kr": "한유진",
+      "name_ja": "ハン・ユジン",
+      "real_name_en": "Han Yu-jin",
+      "position": "マンネ、ダンサー、ボーカル",
+      "birth": "2005-09-01",
+      "nationality": "韓国",
+      "height_cm": "185",
+      "blood_type": "O",
+      "mbti": "ENFJ",
+      "education": "韓国芸術高校在学",
+      "hobbies": "ダンス, 運動, ゲーム",
+      "instagram_personal": "https://www.instagram.com/hanyujin__/"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2023",
+      "title": "YOUTH IN THE SHADE",
+      "type": "ep",
+      "note": "デビューEP、タイトル曲「In Bloom」"
+    },
+    {
+      "year": "2023",
+      "title": "MELTING POINT",
+      "type": "ep",
+      "note": "2ndミニアルバム、タイトル曲「Feel the POP」"
+    },
+    {
+      "year": "2024",
+      "title": "You had me at HELLO",
+      "type": "ep",
+      "note": "3rdミニアルバム、タイトル曲「HELLO」"
+    },
+    {
+      "year": "2024",
+      "title": "ICON",
+      "type": "ep",
+      "note": "4thミニアルバム、タイトル曲「CRUSH」"
+    },
+    {
+      "year": "2024",
+      "title": "SNOWY NIGHT",
+      "type": "single",
+      "note": "冬季スペシャルシングル"
+    },
+    {
+      "year": "2024",
+      "title": "EXHIBITION : ZEROBASEONE",
+      "type": "album",
+      "note": "1stフルアルバム、タイトル曲「SWEAT」"
+    },
+    {
+      "year": "2025",
+      "title": "TIMELESS",
+      "type": "ep",
+      "note": "5thミニアルバム"
+    },
+    {
+      "year": "2025",
+      "title": "FUTURISTIC",
+      "type": "ep",
+      "note": "6thミニアルバム"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/ZEROBASEONE_official",
+    "instagram": "https://www.instagram.com/zerobaseone_official/",
+    "weverse": "https://weverse.io/zerobaseone",
+    "youtube": "https://www.youtube.com/@ZEROBASEONE_official",
+    "tiktok": "https://www.tiktok.com/@zerobaseone_official",
+    "japan_official": "https://zerobaseone-jp.com/"
+  },
+  "summary_ja": "ZEROBASEONE（ゼロベースワン、通称ZB1）は、Mnet主催のサバイバルオーディション番組『Boys Planet』（2023年）から誕生した9人組K-POPボーイズグループ。WakeOne Entertainment所属で、2023年7月10日にデビューEP『YOUTH IN THE SHADE』でデビュー。グループ名は「ゼロ（無）からひとつのベース（基盤）を築き上げる」という意味を持ち、韓国・中国・カナダ・米国にルーツを持つ多国籍メンバーで構成される。デビュー直後からチャートを席巻し、メジャーな音楽授賞式での新人賞を総なめにするなど、第4世代K-POPを代表するグループとして急速に存在感を高めている。日本でも積極的な活動を展開し、アジア全域に熱狂的なファンダム「ZEFIT」を持つ。",
+  "_last_updated": "2026-05-11T20:52:42.918438+09:00"
+}

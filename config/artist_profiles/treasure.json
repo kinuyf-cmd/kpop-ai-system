@@ -1,0 +1,257 @@
+{
+  "agency": "YG Entertainment",
+  "debut_date": "2020-08-07",
+  "fandom_name": "TREASURE MAKER",
+  "fandom_meaning": "TREASUREのファンダム名「TREASURE MAKER」は、ファンがTREASUREの宝物（トレジャー）を一緒に作り上げる存在であることを意味しています。",
+  "members": [
+    {
+      "name_en": "Choi Hyun Suk",
+      "name_kr": "최현석",
+      "name_ja": "チェ・ヒョンソク",
+      "real_name_en": "Choi Hyun Suk",
+      "position": "リーダー、ラッパー",
+      "birth": "2000-04-03",
+      "nationality": "韓国",
+      "height_cm": "178",
+      "blood_type": "A",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ゲーム, 音楽制作, 映画鑑賞",
+      "instagram_personal": "https://www.instagram.com/treasurechyunsuk/"
+    },
+    {
+      "name_en": "Jihoon",
+      "name_kr": "박지훈",
+      "name_ja": "パク・ジフン",
+      "real_name_en": "Park Ji Hoon",
+      "position": "ラッパー、ダンサー",
+      "birth": "2001-10-17",
+      "nationality": "韓国",
+      "height_cm": "178",
+      "blood_type": "O",
+      "mbti": "INFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ダンス, ゲーム, 音楽鑑賞",
+      "instagram_personal": "https://www.instagram.com/treasurejihoon/"
+    },
+    {
+      "name_en": "Yoshi",
+      "name_kr": "요시",
+      "name_ja": "ヨシ",
+      "real_name_en": "Kanemoto Yoshinori",
+      "position": "ラッパー、ダンサー",
+      "birth": "2002-05-15",
+      "nationality": "日本",
+      "height_cm": "181",
+      "blood_type": "B",
+      "mbti": "ENFP",
+      "education": "大阪府立登美丘高校",
+      "hobbies": "ダンス, ファッション, ゲーム",
+      "instagram_personal": "https://www.instagram.com/treasureyoshi/"
+    },
+    {
+      "name_en": "Junkyu",
+      "name_kr": "김준규",
+      "name_ja": "キム・ジュンギュ",
+      "real_name_en": "Kim Jun Kyu",
+      "position": "メインボーカル",
+      "birth": "2000-09-09",
+      "nationality": "韓国",
+      "height_cm": "174",
+      "blood_type": "O",
+      "mbti": "ISFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "歌, ギター, 映画鑑賞",
+      "solo_works": "JUNKYU (2023年)",
+      "instagram_personal": "https://www.instagram.com/treasurejunkyu/"
+    },
+    {
+      "name_en": "Mashiho",
+      "name_kr": "마시호",
+      "name_ja": "マシホ",
+      "real_name_en": "Taguchi Masahiro",
+      "position": "ボーカル、ダンサー",
+      "birth": "2001-11-02",
+      "nationality": "日本",
+      "height_cm": "162",
+      "blood_type": "A",
+      "mbti": "INFP",
+      "education": "大阪府内の高校",
+      "hobbies": "ダンス, ファッション, 料理",
+      "instagram_personal": "https://www.instagram.com/treasuremashiho/"
+    },
+    {
+      "name_en": "Jaehyuk",
+      "name_kr": "강재혁",
+      "name_ja": "カン・ジェヒョク",
+      "real_name_en": "Kang Jae Hyuk",
+      "position": "ラッパー、ダンサー",
+      "birth": "2002-01-31",
+      "nationality": "韓国",
+      "height_cm": "178",
+      "blood_type": "AB",
+      "mbti": "ENFJ",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ゲーム, 映画鑑賞, 音楽",
+      "instagram_personal": "https://www.instagram.com/treasurejaehyuk/"
+    },
+    {
+      "name_en": "Asahi",
+      "name_kr": "아사히",
+      "name_ja": "アサヒ",
+      "real_name_en": "Hamada Asahi",
+      "position": "ボーカル、ダンサー",
+      "birth": "2002-08-20",
+      "nationality": "日本",
+      "height_cm": "180",
+      "blood_type": "B",
+      "mbti": "ISFP",
+      "education": "愛知県内の高校",
+      "hobbies": "ギター, 音楽制作, スポーツ",
+      "instagram_personal": "https://www.instagram.com/treasureasahi/"
+    },
+    {
+      "name_en": "Yedam",
+      "name_kr": "박예담",
+      "name_ja": "パク・イェダム",
+      "real_name_en": "Park Ye Dam",
+      "position": "メインボーカル",
+      "birth": "2002-01-05",
+      "nationality": "韓国",
+      "note": "2023年にグループを脱退",
+      "height_cm": "174",
+      "blood_type": "B",
+      "mbti": "INFJ",
+      "education": "ソウル芸術高校",
+      "hobbies": "ピアノ, 作曲, 読書",
+      "solo_works": "WAYO (2021年)",
+      "instagram_personal": "https://www.instagram.com/treasureyedam/"
+    },
+    {
+      "name_en": "Doyoung",
+      "name_kr": "도영",
+      "name_ja": "ドヨン",
+      "real_name_en": "Kim Do Young",
+      "position": "ボーカル、ラッパー",
+      "birth": "2003-12-04",
+      "nationality": "韓国",
+      "height_cm": "177",
+      "blood_type": "O",
+      "mbti": "ENTP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ゲーム, 映画鑑賞, ダンス",
+      "instagram_personal": "https://www.instagram.com/treasuredoyoung/"
+    },
+    {
+      "name_en": "Haruto",
+      "name_kr": "하루토",
+      "name_ja": "ハルト",
+      "real_name_en": "Watanabe Haruto",
+      "position": "ラッパー",
+      "birth": "2004-04-05",
+      "nationality": "日本",
+      "height_cm": "181",
+      "blood_type": "O",
+      "mbti": "ISTP",
+      "education": "静岡県内の高校",
+      "hobbies": "ギター, スポーツ, ゲーム",
+      "instagram_personal": "https://www.instagram.com/treasureharuto/"
+    },
+    {
+      "name_en": "Jeongwoo",
+      "name_kr": "박정우",
+      "name_ja": "パク・ジョンウ",
+      "real_name_en": "Park Jeong Woo",
+      "position": "ボーカル",
+      "birth": "2004-06-26",
+      "nationality": "韓国",
+      "height_cm": "177",
+      "blood_type": "A",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "歌, 映画鑑賞, ゲーム",
+      "instagram_personal": "https://www.instagram.com/treasurejeongwoo/"
+    },
+    {
+      "name_en": "Hyunsuk",
+      "name_kr": "소정환",
+      "name_ja": "ソ・ジョンファン",
+      "real_name_en": "So Jung Hwan",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-10-25",
+      "nationality": "韓国",
+      "height_cm": "178",
+      "blood_type": "A",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ゲーム, 音楽制作, 映画鑑賞",
+      "instagram_personal": "https://www.instagram.com/treasurechyunsuk/"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2020",
+      "title": "THE FIRST STEP : TREASURE EFFECT",
+      "type": "album",
+      "note": "デビューアルバム。「BOY」「MY TREASURE」など収録"
+    },
+    {
+      "year": "2021",
+      "title": "THE SECOND STEP : CHAPTER ONE",
+      "type": "ep",
+      "note": "「MMM」「DARARI」収録、チャート上位を記録"
+    },
+    {
+      "year": "2021",
+      "title": "THE SECOND STEP : CHAPTER TWO",
+      "type": "ep",
+      "note": "「YOUNG BLOOD」収録"
+    },
+    {
+      "year": "2022",
+      "title": "THE SECOND STEP : CHAPTER THREE",
+      "type": "ep",
+      "note": "「JIKJIN」収録、ダイナミックなパフォーマンスで人気"
+    },
+    {
+      "year": "2022",
+      "title": "REBOOT",
+      "type": "album",
+      "note": "1stフルアルバム。「BONA BONA」「HELLO」など収録"
+    },
+    {
+      "year": "2023",
+      "title": "TREASUREMACKERS",
+      "type": "ep",
+      "note": "「MOVE」収録、新体制での新たなスタート"
+    },
+    {
+      "year": "2023",
+      "title": "HELLO (Japanese ver.)",
+      "type": "japanese",
+      "note": "日本でのシングルリリース"
+    },
+    {
+      "year": "2024",
+      "title": "GOLDEN HOUR",
+      "type": "ep",
+      "note": "「SLOW MOTION」収録、成熟したサウンドを披露"
+    },
+    {
+      "year": "2025",
+      "title": "딴따라 (DDANDARA)",
+      "type": "single",
+      "note": "明るくエネルギッシュなカムバック曲"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/YGTREASURE_twt",
+    "instagram": "https://www.instagram.com/treasuremembers/",
+    "weverse": "https://weverse.io/treasure",
+    "youtube": "https://www.youtube.com/channel/UC7pFUPdTWmiAy4e4FVMM0Qg",
+    "tiktok": "https://www.tiktok.com/@ygtreasure_official",
+    "japan_official": "https://ygtreasure.jp"
+  },
+  "summary_ja": "TREASUREは2020年8月7日にYGエンターテインメントからデビューした韓国の多国籍ボーイズグループです。韓国・日本出身のメンバーで構成され、ボーカル・ラップ・ダンスの三拍子揃ったパフォーマンスで注目を集めています。デビュー曲「BOY」から「JIKJIN」「BONA BONA」まで幅広い楽曲スタイルを持ち、2022年の1stフルアルバム「REBOOT」では音楽的な成熟度を示しました。日本でも積極的に活動しており、多くの日本人ファンを獲得。ファンダム「TREASURE MAKER」とともに成長を続け、2024年以降もコンスタントに新曲をリリースし、アジア全域でその存在感を高めているグループです。",
+  "_last_updated": "2026-05-11T20:53:53.660658+09:00"
+}

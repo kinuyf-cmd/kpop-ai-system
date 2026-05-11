@@ -1,0 +1,163 @@
+{
+  "agency": "High Up Entertainment",
+  "debut_date": "2021-11-12",
+  "fandom_name": "SWITH",
+  "fandom_meaning": "「STAY WITH STAYC（STAYCと共にいる）」を略したもの。ファンとSTAYCがいつも一緒にいるという意味が込められている。",
+  "members": [
+    {
+      "name_en": "Sumin",
+      "name_kr": "수민",
+      "name_ja": "スミン",
+      "real_name_en": "Kim Sumin",
+      "position": "リーダー、メインボーカル",
+      "birth": "2000-07-26",
+      "nationality": "韓国",
+      "height_cm": "173",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "音楽鑑賞, 映画鑑賞, ショッピング"
+    },
+    {
+      "name_en": "Sieun",
+      "name_kr": "시은",
+      "name_ja": "シウン",
+      "real_name_en": "Park Sieun",
+      "position": "メインラッパー、ボーカル",
+      "birth": "2001-05-28",
+      "nationality": "韓国",
+      "height_cm": "168",
+      "blood_type": "O",
+      "mbti": "ISFJ",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "読書, 映画鑑賞, 料理"
+    },
+    {
+      "name_en": "ISA",
+      "name_kr": "이사",
+      "name_ja": "イサ",
+      "real_name_en": "Kim Gaeun",
+      "position": "リードボーカル、ビジュアル",
+      "birth": "2002-02-11",
+      "nationality": "韓国",
+      "height_cm": "167",
+      "blood_type": "B",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "音楽鑑賞, ダンス, ショッピング"
+    },
+    {
+      "name_en": "Seeun",
+      "name_kr": "세은",
+      "name_ja": "セウン",
+      "real_name_en": "Shin Seeun",
+      "position": "リードボーカル、リードダンサー",
+      "birth": "2002-08-01",
+      "nationality": "韓国",
+      "height_cm": "168",
+      "blood_type": "A",
+      "mbti": "INFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "絵画, 音楽鑑賞, 映画鑑賞"
+    },
+    {
+      "name_en": "Yoon",
+      "name_kr": "윤",
+      "name_ja": "ユン",
+      "real_name_en": "Yoon Jaeyoon",
+      "position": "メインダンサー、ボーカル",
+      "birth": "2003-04-21",
+      "nationality": "韓国",
+      "height_cm": "162",
+      "blood_type": "AB",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "料理, 音楽鑑賞, ショッピング"
+    },
+    {
+      "name_en": "J",
+      "name_kr": "제이",
+      "name_ja": "ジェイ",
+      "real_name_en": "Jeon Jimin",
+      "position": "メインダンサー、ラッパー、マknee",
+      "birth": "2004-06-22",
+      "nationality": "韓国",
+      "height_cm": "163",
+      "blood_type": "O",
+      "mbti": "ISFP",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ダンス, 音楽鑑賞, 映画鑑賞"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2021",
+      "title": "STAR TO A YOUNG CULTURE",
+      "type": "ep",
+      "note": "デビューEP。タイトル曲「ASAP」でデビュー"
+    },
+    {
+      "year": "2021",
+      "title": "STAYC STEP",
+      "type": "ep",
+      "note": "タイトル曲「STEREOTYPE」が大きな話題に"
+    },
+    {
+      "year": "2022",
+      "title": "WE NEED LOVE",
+      "type": "ep",
+      "note": "タイトル曲「YOUNG-LUV.COM」収録"
+    },
+    {
+      "year": "2022",
+      "title": "TEENFRESH",
+      "type": "ep",
+      "note": "タイトル曲「BEAUTIFUL MONSTER」収録"
+    },
+    {
+      "year": "2023",
+      "title": "HIDDEN GEM",
+      "type": "ep",
+      "note": "タイトル曲「BUBBLE」収録"
+    },
+    {
+      "year": "2023",
+      "title": "Teddy Bear",
+      "type": "single",
+      "note": "日本デビューシングル。韓国版も大ヒット"
+    },
+    {
+      "year": "2024",
+      "title": "JOYFULL",
+      "type": "album",
+      "note": "初フルアルバム。タイトル曲「Cheeky Icy Thang」収録"
+    },
+    {
+      "year": "2024",
+      "title": "EXOTIC BLOOM",
+      "type": "ep",
+      "note": "タイトル曲「EENSY」収録"
+    },
+    {
+      "year": "2025",
+      "title": "SWITH ME",
+      "type": "ep",
+      "note": "ファンダム名を冠した記念EP"
+    },
+    {
+      "year": "2025",
+      "title": "Teddy Bear -Japanese Ver.-",
+      "type": "japanese",
+      "note": "日本でのリリース活動を本格化"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/STAYC_official",
+    "instagram": "https://www.instagram.com/stayc_official/",
+    "weverse": "https://weverse.io/stayc",
+    "youtube": "https://www.youtube.com/@STAYCofficial",
+    "tiktok": "https://www.tiktok.com/@stayc_official"
+  },
+  "summary_ja": "STAYCは2021年11月12日にHigh Up Entertainmentからデビューした6人組韓国ガールズグループ。グループ名は「Star To A Young Culture（若い文化への星）」の頭文字を取ったもので、プロデューサーのBLACKEYED PEASEとMonoが手がけるサウンドが特徴的。デビュー曲「ASAP」から注目を集め、「STEREOTYPE」「Young-Luv.com」「Teddy Bear」などの楽曲で国内外のチャートを席巻。清潔感あふれるビジュアルとキャッチーなポップサウンドで「4世代ガールズグループ」の代表格として評価されており、2024年には初のフルアルバム『JOYFULL』をリリースし、アーティストとしての成長を証明した。",
+  "_last_updated": "2026-05-11T20:55:52.598322+09:00"
+}

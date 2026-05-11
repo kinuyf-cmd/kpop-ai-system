@@ -1,0 +1,146 @@
+{
+  "agency": "YG Entertainment",
+  "debut_date": "2006-08-19",
+  "fandom_name": "VIP",
+  "fandom_meaning": "「Very Important Person」の略で、BIGBANGにとって最も大切な存在であるファンへの敬意を込めた名称。メンバーたちがファンを特別なVIPとして扱うという意味が込められている。",
+  "members": [
+    {
+      "name_en": "G-Dragon",
+      "name_kr": "권지용",
+      "name_ja": "ジードラゴン",
+      "real_name_en": "Kwon Ji-yong",
+      "position": "リーダー、メインラッパー、メインボーカル",
+      "birth": "1988-08-18",
+      "nationality": "韓国",
+      "note": "作詞・作曲・プロデュースを手がけるグループの中心的存在。2018年に入隊し2019年除隊。",
+      "height_cm": "177",
+      "blood_type": "A",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "絵画, ファッション, 音楽制作",
+      "solo_works": "Heartbreaker (2009年), One of a Kind (2012年)",
+      "instagram_personal": "https://www.instagram.com/xxxibgdrgn/"
+    },
+    {
+      "name_en": "T.O.P",
+      "name_kr": "최승현",
+      "name_ja": "ティーオーピー",
+      "real_name_en": "Choi Seung-hyun",
+      "position": "リードラッパー",
+      "birth": "1987-11-04",
+      "nationality": "韓国",
+      "note": "俳優としても活動。2017年に社会服務要員として入隊。",
+      "height_cm": "181",
+      "blood_type": "B",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "アート収集, 映画鑑賞, 写真撮影",
+      "solo_works": "Turn It Up (2010年), Doom Dada (2013年)",
+      "instagram_personal": "https://www.instagram.com/choi_seung_hyun_tttop/"
+    },
+    {
+      "name_en": "Taeyang",
+      "name_kr": "동영배",
+      "name_ja": "テヤン",
+      "real_name_en": "Dong Young-bae",
+      "position": "メインボーカル",
+      "birth": "1988-05-18",
+      "nationality": "韓国",
+      "note": "ソロアーティストとしても高い評価を受ける。2023年に再デビュー活動を本格化。",
+      "height_cm": "174",
+      "blood_type": "B",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "ダンス, 筋トレ, 映画鑑賞",
+      "solo_works": "SOLAR (2010年), RISE (2014年)",
+      "instagram_personal": "https://www.instagram.com/youngbeezzy/"
+    },
+    {
+      "name_en": "Daesung",
+      "name_kr": "강대성",
+      "name_ja": "デソン",
+      "real_name_en": "Kang Dae-sung",
+      "position": "サブボーカル",
+      "birth": "1989-04-26",
+      "nationality": "韓国",
+      "note": "日本での人気が特に高く、日本ソロ活動も精力的に行う。",
+      "height_cm": "177",
+      "blood_type": "O",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "歌, 料理, ゲーム",
+      "solo_works": "D'scover (2013年 日本), D-Day (2015年 韓国)",
+      "instagram_personal": "https://www.instagram.com/daesungisgood/"
+    },
+    {
+      "name_en": "Seungri",
+      "name_kr": "이승현",
+      "name_ja": "スンリ",
+      "real_name_en": "Lee Seung-hyun",
+      "position": "サブボーカル、サブダンサー、サブラッパー",
+      "birth": "1990-12-12",
+      "nationality": "韓国",
+      "note": "2019年にスキャンダルを受けてグループ及び芸能界を引退。",
+      "height_cm": "177",
+      "blood_type": "AB",
+      "education": "韓国芸術高校卒業",
+      "hobbies": "ビジネス, ダンス, 料理",
+      "solo_works": "VVIP (2011年), 1, 2, 3! (2013年)"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2007",
+      "title": "Always",
+      "type": "album",
+      "note": "1stフルアルバム"
+    },
+    {
+      "year": "2008",
+      "title": "Remember",
+      "type": "album",
+      "note": "2ndフルアルバム"
+    },
+    {
+      "year": "2011",
+      "title": "BIGBANG",
+      "type": "ep",
+      "note": "「Fantastic Baby」「Blue」などを収録した代表作シリーズ"
+    },
+    {
+      "year": "2012",
+      "title": "Still Alive",
+      "type": "ep",
+      "note": "日韓でスマッシュヒットを記録"
+    },
+    {
+      "year": "2015",
+      "title": "MADE SERIES",
+      "type": "ep",
+      "note": "「Bang Bang Bang」「Loser」を収録したシリーズ作品"
+    },
+    {
+      "year": "2016",
+      "title": "MADE",
+      "type": "album",
+      "note": "初のワールドワイドフルアルバム"
+    },
+    {
+      "year": "2022",
+      "title": "Still Life",
+      "type": "single",
+      "note": "約4年ぶりの4人での復帰シングル"
+    },
+    {
+      "year": "2023",
+      "title": "0.TO.10 (The Final in Seoul)",
+      "type": "single",
+      "note": "日本デビュー記念ライブを経てリリース"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/BIGBANG",
+    "instagram": "https://www.instagram.com/bigbang/",
+    "weverse": "https://weverse.io/bigbang",
+    "youtube": "https://www.youtube.com/user/BIGBANG",
+    "japan_official": "https://bigbang-official.com"
+  },
+  "summary_ja": "BIGBANGは2006年8月にYGエンターテインメントからデビューした韓国の5人組（現在は実質4人）ボーイズグループ。G-Dragon、T.O.P、テヤン、デソン、スンリで構成され、K-POPを世界規模に押し広げた先駆者として知られる。「Fantastic Baby」「Bang Bang Bang」「Loser」など数多くのヒット曲を生み出し、音楽・ファッション・カルチャーにわたる影響力は絶大。日本でも圧倒的な人気を誇り、東京ドームや大阪ドームでの公演を複数回成功させてきた。2019年以降メンバーの軍入隊・スキャンダルで活動休止期間を経たが、2022年に「Still Life」で4人として復活。K-POP第1世代を代表するレジェンドグループとして今もVIPの心を掴み続けている。",
+  "_last_updated": "2026-05-11T20:48:17.532843+09:00"
+}

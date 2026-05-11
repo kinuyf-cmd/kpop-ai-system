@@ -1,0 +1,162 @@
+{
+  "agency": "MLD Entertainment",
+  "debut_date": "2016-11-10",
+  "fandom_name": "Merry-Go-Round",
+  "fandom_meaning": "「メリーゴーランド」を意味し、MOMOLANDのファンが楽しく夢のような世界をメンバーと一緒に回り続けるという思いが込められている。",
+  "members": [
+    {
+      "name_en": "Hyebin",
+      "name_kr": "이혜빈",
+      "name_ja": "ヘビン",
+      "real_name_en": "Lee Hyebin",
+      "position": "リーダー、ボーカル",
+      "birth": "1996-01-03",
+      "nationality": "韓国",
+      "height_cm": "163",
+      "blood_type": "A",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "料理, 映画鑑賞, ショッピング",
+      "instagram_personal": "https://www.instagram.com/hyebin_official_/"
+    },
+    {
+      "name_en": "Jane",
+      "name_kr": "박시내",
+      "name_ja": "ジェーン",
+      "real_name_en": "Park Sinae",
+      "position": "ボーカル",
+      "birth": "1996-12-04",
+      "nationality": "韓国",
+      "height_cm": "167",
+      "blood_type": "O",
+      "education": "韓国芸術高校",
+      "hobbies": "歌, ダンス, 読書",
+      "instagram_personal": "https://www.instagram.com/jane_momoland/"
+    },
+    {
+      "name_en": "Nayun",
+      "name_kr": "임나윤",
+      "name_ja": "ナユン",
+      "real_name_en": "Im Nayun",
+      "position": "ボーカル",
+      "birth": "1997-02-08",
+      "nationality": "韓国",
+      "height_cm": "162",
+      "blood_type": "A",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "料理, ショッピング, 映画鑑賞",
+      "instagram_personal": "https://www.instagram.com/nayun_momoland/"
+    },
+    {
+      "name_en": "JooE",
+      "name_kr": "최주이",
+      "name_ja": "ジュイ",
+      "real_name_en": "Choi Jooe",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1999-02-16",
+      "nationality": "韓国",
+      "height_cm": "160",
+      "blood_type": "B",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "ダンス, 音楽鑑賞, 料理",
+      "solo_works": "Banana Chacha (2018年)",
+      "instagram_personal": "https://www.instagram.com/jooe_official/"
+    },
+    {
+      "name_en": "Ahin",
+      "name_kr": "이아인",
+      "name_ja": "アイン",
+      "real_name_en": "Lee Ain",
+      "position": "ボーカル、ダンサー",
+      "birth": "1999-06-09",
+      "nationality": "韓国",
+      "height_cm": "163",
+      "blood_type": "O",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "絵画, 映画鑑賞, ショッピング",
+      "instagram_personal": "https://www.instagram.com/ahin_momoland/"
+    },
+    {
+      "name_en": "Nancy",
+      "name_kr": "맥도날 낸시",
+      "name_ja": "ナンシー",
+      "real_name_en": "Nancy Jewel McDonie",
+      "position": "ボーカル、ダンサー",
+      "birth": "2000-04-18",
+      "nationality": "韓国/米国",
+      "note": "韓国系アメリカ人",
+      "height_cm": "163",
+      "blood_type": "B",
+      "mbti": "ENFJ",
+      "education": "ソウル公演芸術高校",
+      "hobbies": "料理, 映画鑑賞, ショッピング",
+      "solo_works": "Attention (2022年)",
+      "instagram_personal": "https://www.instagram.com/nancy_momoland/"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2016",
+      "title": "Welcome to Momoland",
+      "type": "ep",
+      "note": "デビューEP"
+    },
+    {
+      "year": "2017",
+      "title": "Freeze!",
+      "type": "ep"
+    },
+    {
+      "year": "2018",
+      "title": "Fun to the World",
+      "type": "ep",
+      "note": "「BBoom BBoom」収録、ヒット作"
+    },
+    {
+      "year": "2018",
+      "title": "BBoom BBoom",
+      "type": "single",
+      "note": "音楽番組9冠を獲得した代表曲"
+    },
+    {
+      "year": "2018",
+      "title": "Show Champion",
+      "type": "ep"
+    },
+    {
+      "year": "2018",
+      "title": "Great!",
+      "type": "ep",
+      "note": "「I'm So Hot」収録"
+    },
+    {
+      "year": "2019",
+      "title": "Thumbs Up!",
+      "type": "ep"
+    },
+    {
+      "year": "2019",
+      "title": "Starry Night",
+      "type": "japanese",
+      "note": "日本デビューシングル"
+    },
+    {
+      "year": "2020",
+      "title": "Boom Boom (with NOIR)",
+      "type": "single"
+    },
+    {
+      "year": "2022",
+      "title": "Wrap Me in Plastic",
+      "type": "single",
+      "note": "英語楽曲、海外向けリリース"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/MOMOLAND_MLD",
+    "instagram": "https://www.instagram.com/momoland_mld/",
+    "youtube": "https://www.youtube.com/channel/UCceY7-QfGWzKJTRMrXD4_Jg",
+    "tiktok": "https://www.tiktok.com/@momoland_official"
+  },
+  "summary_ja": "MOMOLANDは2016年11月10日にMLD Entertainment（旧MBK Entertainment）よりデビューした韓国の女性アイドルグループ。Mnet番組「Finding Momoland」オーディションを経て結成され、当初9人でスタート後、現在は6人体制で活動している。2018年にリリースした「BBoom BBoom」が国内外で爆発的な人気を獲得し、音楽番組で9冠を達成。明るくエネルギッシュなパフォーマンスと中毒性の高い楽曲で知られ、アジアを中心に幅広い人気を誇る。近年はメンバーのソロ活動も活発で、グループとしても国際的なファン層を着実に拡大している。",
+  "_last_updated": "2026-05-11T20:52:04.172661+09:00"
+}
