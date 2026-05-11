@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-08T21:25:09.929807",
+  "updated_at": "2026-05-11T09:09:29.492679",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1820,6 +1820,60 @@
       "count": 1,
       "last_seen": "2026-05-08",
       "example": "ティファニー(SNSD)記事に cat=164(TXT)/tag=100(TXT)/featured_media=TXT風男性5人写真 が一斉に付く三点不整合"
+    },
+    {
+      "key": "x_queue_skip_loop_on_draft",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "post_publish_hook が記事を draft 化しても x_post_queue から該当 pid を除去しなかったため、x_scheduler が15分毎に \"WP not-publish — skip\" を吐き続けるループ (直近1h で 6/7件)",
+      "fix": "lib/post_publish_hook.py の _draft_post() で _purge_from_x_queue() を呼ぶように改修。test_x_queue_purged_on_draft.py で再発検知",
+      "agent": "post_publish_hook",
+      "resolved_at": "2026-05-11"
+    },
+    {
+      "key": "sanitize_missing_codeblock_marker_strip",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "sanitize_gpt_html がMarkdownコードブロックマーカー (```html / ```) を除去しなかったため、popup_publisher の GATE BLOCK 70件 (40%) の最多原因となっていた",
+      "fix": "lib/text_sanitizer.py の sanitize_gpt_html に regex で ``` 除去を追加。test_codeblock_marker_ban.py に sanitize テスト追加",
+      "agent": "text_sanitizer",
+      "resolved_at": "2026-05-11"
+    },
+    {
+      "key": "feature_publish_with_untrusted_source",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "feature_article_generator が DuckDuckGo の一般ドメインを source_signals に積んで pre_publish_gate をすり抜けさせ、publish 後 hook で BLOCK→draft化→x_queue ゴミ pid のループ (post 20962 推し活で学ぶ韓国語学習法)",
+      "fix": "pipeline/feature_article_generator.py の post_to_wp 冒頭で source_url/source_signals に信頼ドメインが1件もなければ unified_publish 試行をスキップ。test_feature_skip_no_trusted_source.py で再発検知",
+      "agent": "feature_article_generator",
+      "resolved_at": "2026-05-11"
+    },
+    {
+      "key": "pipeline_health_stale_registry_alarm",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "4/29-5/6 cron 刷新で停止された 7 pipeline (staff_dispatcher/morning_meeting/evening_closing/board_daily_report/hr_manager/dept_chatter/dashboard_refresh) が pipeline_registry.json に残っており、pipeline_health_monitor が永続 false alarm を出していた (warning 22件)",
+      "fix": "config/pipeline_registry.json に disabled フラグ追加 + tools/pipeline_health_monitor.py で skip 対応。warning 22件→4件に削減",
+      "agent": "pipeline_health_monitor",
+      "resolved_at": "2026-05-11"
+    },
+    {
+      "key": "popup_portrait_thumb_uploaded",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "popup_publisher が OG画像のアスペクト比を確認せずWPアップロード→pre_publish_gate で「サムネイル縦長」BLOCK 28件",
+      "fix": "pipeline/popup_publisher.py の upload_image_to_wp で PIL によりアップロード前に h>w を弾く",
+      "agent": "popup_publisher",
+      "resolved_at": "2026-05-11"
+    },
+    {
+      "key": "popup_kor_title_residue",
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "kbuzzlab等の韓国ソースは原題が韓国語のまま流入し、popup_publisher が翻訳せず WP に投げて pre_publish_gate の translation_residue で BLOCK",
+      "fix": "post_to_wp_popup 冒頭で title にハングルが含まれていれば translate_ko_to_ja で日本語化",
+      "agent": "popup_publisher",
+      "resolved_at": "2026-05-11"
     }
   ],
   "resolved_errors": [
