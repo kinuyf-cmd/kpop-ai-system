@@ -163,7 +163,7 @@ MEMBER_DETAILS_SCHEMA = {
 }
 
 
-def fetch_profile(client, artist: str, timeout_s: int = 180) -> dict:
+def fetch_profile(client, artist: str, timeout_s: int = int(os.getenv('PROFILE_FETCH_TIMEOUT', '180'))) -> dict:
     today = datetime.now(JST).strftime('%Y-%m-%d')
     prompt = f"""今日: {today}
 K-POP アーティスト「{artist}」の包括的プロフィールを web_search で集約してください。
@@ -214,7 +214,7 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
         return {}
 
 
-def fetch_member_details(client, artist: str, members: list[dict], timeout_s: int = 180) -> dict:
+def fetch_member_details(client, artist: str, members: list[dict], timeout_s: int = int(os.getenv('PROFILE_FETCH_TIMEOUT', '180'))) -> dict:
     """個人プロフィール (身長/MBTI/学歴等) を 2nd API call で取得 (schema-too-complex回避)"""
     if not members:
         return {'members': []}

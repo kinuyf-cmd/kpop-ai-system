@@ -68,20 +68,24 @@
     "source": "wikidata"
   },
   "fromis9": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fromis%209%20-%20To%20Heart%20logo.png",
-    "source": "commons"
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fromis%209%20logo%20%28TEXT%29.svg",
+    "source": "commons_verified"
   },
   "BIGBANG": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wtilth%20logo%20Dark%20grey%20copy-2.svg",
-    "source": "commons"
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Big%20Bang%20logo%20%282%29.png",
+    "source": "wikidata"
   },
   "NCT": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/NCT%20DOJAEJUNG%20logo.png",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/NCT-logo.jpg",
+    "source": "wikidata"
+  },
+  "SEVENTEEN": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seventeen%20new%20logo.jpg",
     "source": "commons"
   },
   "EXO": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/EXo%20logo.png",
-    "source": "commons"
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Exo-logo-v-neck%20design.png",
+    "source": "commons_verified"
   },
   "CORTIS": {
     "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cortis%20logo%20%28type%20only%29.svg",
@@ -92,8 +96,9 @@
     "source": "commons"
   },
   "MOMOLAND": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boom%20Boom%20-%20logo.png",
-    "source": "commons"
+    "url": "",
+    "source": "manual_blank",
+    "note": "Wikidata P154 無し / Commons 検索は楽曲ロゴ (Boom Boom) を誤マッチ。空"
   },
   "ZEROBASEONE": {
     "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Zerobaseone%20Logo.png",
@@ -108,11 +113,16 @@
     "source": "commons"
   },
   "BoA": {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/BoA-logo-1998-vs-2018.png",
-    "source": "commons"
+    "url": "",
+    "source": "manual_blank",
+    "note": "Commons の 'BoA-logo-1998-vs-2018.png' は Bank of America 比較画像。K-POP BoA の正規ロゴは Commons/Wikidata に存在せず、空にして非表示"
   },
   "STAYC": {
     "url": "https://commons.wikimedia.org/wiki/Special:FilePath/STAYC%20logo%20%282022%29.jpg",
     "source": "wikidata"
+  },
+  "fromis_9": {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fromis%209%20logo%20%28TEXT%29.svg",
+    "source": "commons_verified"
   }
 }
