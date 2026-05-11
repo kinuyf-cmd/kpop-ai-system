@@ -897,6 +897,17 @@ def _detect_artist(title, content=''):
 def post_to_wp(title, content, category_id, artist=None, source_url=None, source_signals=None):
     """unified_publish 経由で投稿 + 公開後監査"""
     from lib.unified_publisher import unified_publish
+    # 2026-05-11: 信頼ソース0件なら publish 試行をスキップ。
+    # 旧挙動は DuckDuckGo の一般ドメインを source_signals に積んで pre をすり抜け、
+    # publish後 hook で BLOCK→draft化→x_queue ゴミ pid のループになっていた (post 20962)。
+    from lib.source_domains import is_trusted_source as _is_trusted_src
+    _trusted = (source_url and _is_trusted_src(source_url)) or any(
+        _is_trusted_src((s.get('url', '') if isinstance(s, dict) else (s or '')))
+        for s in (source_signals or [])
+    )
+    if not _trusted:
+        print(f"  publish skip: 信頼ソース0件 (DuckDuckGo一般ドメインのみ → 公開後hook BLOCK確実)")
+        return None
     # アーティスト名を自動検出（未指定時）
     if not artist:
         artist = _detect_artist(title, content)
