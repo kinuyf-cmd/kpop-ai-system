@@ -201,6 +201,7 @@ def update_strategy(tiers, recommendations):
     strategy['next_review'] = (now + timedelta(days=7)).strftime('%Y-%m-%d')
 
     # ティア更新
+    strategy.setdefault('theme_performance', {})
     for tier_name, themes in tiers.items():
         strategy['theme_performance'][tier_name] = {}
         comments = {
