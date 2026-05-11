@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""seo_longtail_generator.py — ロングテールキーワードから記事テーマを自動生成
+"""[DEPRECATED 2026-05-11] seo_longtail_generator.py — ロングテールキーワードから記事テーマを自動生成
+
+廃止理由 (Phase 4 / GENERATOR_DEPRECATION_PLAN.md):
+- 2026-04-17 を最後に未稼働 (run_seo_daily.sh が crontab 未登録 → silent rot)
+- 出力 logs/seo_longtail_themes.json の消費者が存在しない
+- auto_directives.json への注入経路も実績 0 (現 focus_themes 46件中 source=seo_longtail は0件)
+- 同等機能は search_driven_generator / pv_kpi_winner_expansion / gsc_unmet_demand が代替済
 
 GSCデータ + 競合分析レポートから「低難易度×高ニーズ」のロングテールキーワードを抽出し、
 strategy_pipeline / kpop_pipeline に投入可能な記事テーマを自動生成する。

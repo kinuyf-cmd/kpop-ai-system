@@ -5,11 +5,13 @@
 # 実行順序:
 #   1. GSCメトリクス取得（gsc_metrics_fetcher.py）
 #   2. 競合キーワード分析（seo_competitor_analyzer.py）
-#   3. ロングテールテーマ生成＋auto_directives注入（seo_longtail_generator.py）
-#   4. 内部リンク最適化（seo_internal_link_engine.py）
-#   5. Discord通知
+#   3. 内部リンク最適化（seo_internal_link_engine.py）
+#   4. Discord通知
 #
-# cron: 30 5 * * *（毎日05:30 JST = GSCデータ更新後）
+# 2026-05-11: seo_longtail_generator は Phase 4 で deprecated 化 (silent rot)。
+# 旧Step3 の longtail生成は削除済。GENERATOR_DEPRECATION_PLAN.md 参照。
+#
+# cron: 30 5 * * *（毎日05:30 JST = GSCデータ更新後）※現状未登録
 # ============================================================
 set -uo pipefail
 
@@ -57,13 +59,10 @@ run_step "GSCメトリクス取得" "python3 lib/gsc_metrics_fetcher.py --days 2
 # Step 2: 競合キーワード分析 + CEO提案キュー投入
 run_step "競合分析" "python3 lib/seo_competitor_analyzer.py --to-ceo --actionable"
 
-# Step 3: ロングテールテーマ生成 + auto_directives注入
-run_step "ロングテール生成" "python3 lib/seo_longtail_generator.py --inject --generate-prompts"
-
-# Step 4: 内部リンク最適化（本番: --dry-runなし、最大100記事）
+# Step 3: 内部リンク最適化（本番: --dry-runなし、最大100記事）
 run_step "内部リンク最適化" "python3 lib/seo_internal_link_engine.py --limit 100"
 
-# Step 5: SEOレポートサマリをDiscordに送信
+# Step 4: SEOレポートサマリをDiscordに送信
 SEO_SUMMARY=""
 if [ -f "$SCRIPT_DIR/logs/seo_competitor_report.json" ]; then
   SEO_SUMMARY=$(python3 -c "
@@ -78,18 +77,6 @@ if top3: print(f\"TOP3: {', '.join(top3[:3])}\")
 " 2>/dev/null || echo "")
 fi
 
-LONGTAIL_SUMMARY=""
-if [ -f "$SCRIPT_DIR/logs/seo_longtail_themes.json" ]; then
-  LONGTAIL_SUMMARY=$(python3 -c "
-import json
-r = json.load(open('logs/seo_longtail_themes.json'))
-themes = r.get('themes', [])[:3]
-print(f\"テーマ: {r.get('total_themes',0)}件\")
-for t in themes:
-    print(f\"  - {t['query']} (pos={t['position']} imp={t['impressions']})\")
-" 2>/dev/null || echo "")
-fi
-
 # Discord通知
 source "$SCRIPT_DIR/lib/discord_channels.sh" 2>/dev/null || true
 WEBHOOK=$(get_discord_webhook "seo_insights" 2>/dev/null || echo "")
@@ -101,10 +88,7 @@ if [ -n "$WEBHOOK" ]; then
 成功: ${SUCCESSES} / 失敗: ${ERRORS}
 
 📊 競合分析:
-${SEO_SUMMARY}
-
-📝 ロングテール:
-${LONGTAIL_SUMMARY}"
+${SEO_SUMMARY}"
 
   curl -s -o /dev/null -X POST "$WEBHOOK" \
     -H "Content-Type: application/json" \

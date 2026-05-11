@@ -264,3 +264,6 @@
 
 # simple_publish_bridge: trusted source → simple pipeline (2026-05-11新設)
 0 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/simple_publish_bridge.py --limit 3 >> logs/simple_publish_bridge.log 2>&1
+
+# 月次 generator 品質メトリクス (Phase 4 後 silent rot 監視 / 2026-05-11新設)
+0 6 1 * * cd /home/aiuser/kpop-ai-system && python3 lib/generator_quality_metrics.py >> logs/generator_quality_monthly.log 2>&1

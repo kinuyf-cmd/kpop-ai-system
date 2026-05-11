@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""stock_topic_generator.py — 勝ちテーマ抽出 → stock_topics.json 生成
+"""[DEPRECATED 2026-05-11] stock_topic_generator.py — 勝ちテーマ抽出 → stock_topics.json 生成
+
+廃止理由 (Phase 4 / GENERATOR_DEPRECATION_PLAN.md):
+- 2026-04-16 を最後に未稼働 (cron 未登録 → silent rot)
+- 出力 logs/stock_topics.json の消費者が存在しない (Python import / 参照 0)
+- winning_title_patterns.py の docstring に名前があるだけで実呼出なし
+- 同等機能は winning_pattern_expander / pv_kpi_winner_expansion が代替済
 
 ソース:
   - logs/title_performance.jsonl
