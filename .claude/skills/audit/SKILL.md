@@ -141,6 +141,9 @@ if m and int(m.group(1)) < 2025:
 if _re.search(r'<h[23][^>]*>関連記事</h[23]>', content[:len(content)//2]):
     issues_found.append('related_block_inline')
 # タイトル乖離: タイトル中の固有名詞が本文に出現するか
+# 注意: `w not in title` で除外しない (タイトル内重複は本文不在を打ち消さない)
+# 例: title="RIIZEのANTONが母の…" で本文に Anton (mixed case) しか出ないと
+# "ANTON" 不在を見逃す (false negative) — 大文字小文字も区別する
 title_keywords = [w for w in _re.findall(r'[A-Z][A-Za-z]+|[一-鿿]{2,}', title) if len(w) >= 2]
 plain = _re.sub(r'<[^>]+>', '', content)
 missing = [w for w in title_keywords if w not in plain]

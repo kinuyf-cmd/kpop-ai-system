@@ -528,8 +528,17 @@ def _get_recent_llm_result(post_id):
             continue
         try:
             data = json.load(open(os.path.join(llm_dir, fname)))
+            # bp_audit 等の bare list 形式 (= [{id, critical, high, ...}, ...]) 対応
+            # (2026-05-11追加: pid 21004 recover時に AttributeError で発覚)
+            if isinstance(data, list):
+                for r in data:
+                    if isinstance(r, dict) and r.get('id') == post_id:
+                        return r
+                continue
+            if not isinstance(data, dict):
+                continue
             for r in data.get('results', []):
-                if r.get('id') == post_id:
+                if isinstance(r, dict) and r.get('id') == post_id:
                     return r
         except:
             pass
