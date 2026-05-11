@@ -577,6 +577,7 @@ def render_html(artist: str, profile: dict):
 
     # ── メンバーカード grid (個別ページlink + 新フィールド表示) ──
     group_slug = artist.lower().replace(' ', '-')
+    member_pages_enabled = bool(profile.get('member_pages_enabled'))
     if members:
         parts.append('<h2 class="ap-h2">👥 メンバー</h2>')
         member_cards = []
@@ -625,8 +626,8 @@ def render_html(artist: str, profile: dict):
             if note:
                 inner += f'<div class="ap-member-note">{note}</div>'
 
-            # 個別ページへの link footer (slug が取れた場合のみ)
-            if member_url:
+            # 個別ページへの link footer (実在グループのみ)
+            if member_url and member_pages_enabled:
                 inner += f'<a href="{member_url}" class="ap-member-link">▶ {display_name}のページ</a>'
 
             member_cards.append(f'<div class="ap-member-card">{inner}</div>')
