@@ -163,6 +163,19 @@ def upload_image_to_wp(image_url, title):
         if len(img_data) < 1000 or len(img_data) > 5_000_000:
             return None
 
+        # 縦長サムネ REJECT (2026-05-11: pre_publish_gate で 28件 BLOCK 発生中)
+        # OGP表示が壊れるためアップロード前に弾く
+        try:
+            from io import BytesIO
+            from PIL import Image
+            with Image.open(BytesIO(img_data)) as _im:
+                _w, _h = _im.size
+                if _h > _w:
+                    print(f"  upload skip: 縦長画像 ({_w}x{_h}) — OGP壊れる")
+                    return None
+        except Exception:
+            pass  # PIL なし or 解析失敗時はそのまま続行 (gate側で再判定される)
+
         ext = 'jpg'
         if '.png' in image_url.lower():
             ext = 'png'
@@ -218,7 +231,13 @@ def generate_article_with_gpt(signal, full_text):
         'seoul-hongdae': 'ソウル弘大', 'seoul-myeongdong': 'ソウル明洞',
     }.get(city, city)
 
-    prompt = f"""以下のポップアップ情報から、K-POPファン向けのSEO最適化記事を生成してください。
+    _now = datetime.now(JST)
+    prompt = f"""現在: {_now.year}年{_now.month}月{_now.day}日。
+本文に書く年号は{_now.year}年または{_now.year - 1}年のみ。
+{_now.year - 2}年以前の年号 (例: 2023年) は元情報にあっても絶対に書かない。
+日付不明の項目は「日時調整中」とし、「XX月」「XX日」のような placeholder を残さないこと。
+
+以下のポップアップ情報から、K-POPファン向けのSEO最適化記事を生成してください。
 
 【元情報】
 タイトル: {signal['title']}
@@ -291,6 +310,19 @@ def post_to_wp_popup(signal, content, status, extra_meta=None, featured_media=0)
     from lib.text_sanitizer import strip_template_labels, sanitize_gpt_html
     from lib.title_optimizer import generate_slug, validate_slug
     title = _clean_prtimes_title(strip_template_labels(signal.get('title', '')))
+    # ハングル残存対策 (2026-05-11): kbuzzlab等の韓国ソースは原題が韓国語のまま流入する。
+    # pre_publish_gate の translation_residue で BLOCK されるため、ここで日本語化する。
+    if re.search(r'[가-힯]', title):
+        try:
+            from lib.korean_translator import translate_ko_to_ja
+            _r = translate_ko_to_ja(title, context='K-POP popup event title')
+            if _r.get('success') and _r.get('translated'):
+                _t2 = _r['translated'].strip().strip('「」"')
+                if not re.search(r'[가-힯]', _t2):
+                    print(f"  title翻訳: {title[:30]}... → {_t2[:30]}...")
+                    title = _t2
+        except Exception as _te:
+            print(f"  title翻訳skip: {_te}")
     # 長すぎるタイトルは末尾を自然な区切りで切る (省略記号なし)
     if len(title) > 80:
         # 句読点・括弧・スペースで区切れる位置を探す
