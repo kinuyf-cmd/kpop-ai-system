@@ -17,6 +17,8 @@ from dotenv import load_dotenv
 load_dotenv('/home/aiuser/kpop-ai-system/.env')
 
 DISCORD_WEBHOOK = os.getenv('DISCORD_WEBHOOK_URL', '')
+BASE_DIR = '/home/aiuser/kpop-ai-system'
+WEEKLY_JOB_CONFIG = os.path.join(BASE_DIR, 'config', 'weekly_job_health.json')
 
 # 監視対象のheartbeatファイル一覧
 HEARTBEATS = {
@@ -26,6 +28,45 @@ HEARTBEATS = {
         'stale_threshold_hours': 30,
     },
 }
+
+
+def check_weekly_jobs() -> list[dict]:
+    """config/weekly_job_health.json を読み、各週次ジョブの出力ファイル古さを判定"""
+    if not os.path.exists(WEEKLY_JOB_CONFIG):
+        return []
+    try:
+        cfg = json.load(open(WEEKLY_JOB_CONFIG))
+    except Exception as e:
+        return [{'name': 'weekly_job_config_load_error', 'status': 'error', 'detail': str(e)}]
+    default_max = cfg.get('default_max_age_days', 8)
+    results = []
+    for job_id, job in cfg.get('jobs', {}).items():
+        path = os.path.join(BASE_DIR, job['output_file'])
+        max_age = job.get('max_age_days', default_max)
+        if not os.path.exists(path):
+            results.append({
+                'name': f'weekly:{job_id}',
+                'status': 'missing',
+                'detail': f"{job['output_file']} 未生成 (cron 一度も成功していない可能性) — recovery: {job.get('recovery','')[:80]}",
+            })
+            continue
+        mtime = datetime.fromtimestamp(os.path.getmtime(path))
+        age_days = (datetime.now() - mtime).total_seconds() / 86400
+        if age_days > max_age:
+            results.append({
+                'name': f'weekly:{job_id}',
+                'status': 'stale',
+                'age_hours': round(age_days * 24, 1),
+                'detail': f"{job['output_file']} {age_days:.1f}日経過 (>{max_age}d) — {job.get('description','')[:60]}",
+            })
+        else:
+            results.append({
+                'name': f'weekly:{job_id}',
+                'status': 'fresh',
+                'age_hours': round(age_days * 24, 1),
+                'detail': f"{job['output_file']} {age_days:.1f}日前",
+            })
+    return results
 
 
 def check_heartbeat(path: str, cfg: dict) -> dict:
@@ -66,6 +107,13 @@ def main():
         print(f"  [{r['name']}] {r['status']} {r.get('age_hours', '?')}h - {r['detail']}")
         if r['status'] in ('stale', 'missing', 'error'):
             failures.append(r)
+
+    # 週次ジョブの silent rot 検出 (2026-05-11追加, chart pipeline事故対策)
+    for r in check_weekly_jobs():
+        print(f"  [{r['name']}] {r['status']} {r.get('age_hours', '?')}h - {r['detail']}")
+        if r['status'] in ('stale', 'missing', 'error'):
+            failures.append(r)
+
     if failures:
         msg_lines = [f"⚠️ Cron health alert ({len(failures)}件)"]
         for f in failures:

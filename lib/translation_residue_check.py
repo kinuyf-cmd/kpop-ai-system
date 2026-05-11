@@ -70,12 +70,14 @@ def assess_residue(title: str, body_text: str, alt_text: str = '') -> dict:
         }
     """
     # 引用符内 (楽曲名・番組名) の固有名詞hangulは除外して判定
+    # 2026-05-11: body_text にも適用 (チャート記事の楽曲名hangul誤検知対策)
     title_check = _strip_quoted_proper_nouns(title)
     alt_check = _strip_quoted_proper_nouns(alt_text)
+    body_check = _strip_quoted_proper_nouns(body_text)
 
     th = count_hangul(title_check)
     ah = count_hangul(alt_check)
-    bh = count_hangul(body_text)
+    bh = count_hangul(body_check)
 
     # タイトル / alt は1字でもアウト（公開破壊レベル、ただし引用符内固有名詞は許容）
     if th > 0:

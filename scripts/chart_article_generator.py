@@ -47,11 +47,19 @@ ARTIST_JA = {
     '동해': 'DONGHAE(東海)',
     '화사': 'HWASA(ファサ)',
     '손태진': 'ソン・テジン',
+    '박지훈': 'パク・ジフン',
+    '넥스지': 'NEXZ',
+    '투어스': 'TWS',
 }
 
 
 def _to_ja(name):
     """韓国語アーティスト名を日本語表記に変換"""
+    # 「English (Korean)」形式なら先頭英語部分を採用
+    m = re.match(r'^([A-Za-z][\w\s\.\-&]*?)\s*\([^A-Za-z]*\)\s*$', name)
+    if m:
+        return m.group(1).strip()
+    # マッピング辞書
     for ko, ja in ARTIST_JA.items():
         if ko in name:
             return ja
@@ -140,7 +148,7 @@ def build_article(chart):
             change = f'{prev}位→'
         parts.append(
             f'<tr><td><strong>{rank}</strong></td>'
-            f'<td>{e["title"]}</td>'
+            f'<td>「{e["title"]}」</td>'
             f'<td>{_to_ja(e["artist"])}</td>'
             f'<td>{change}</td></tr>'
         )
@@ -170,7 +178,7 @@ def build_article(chart):
     # NEWエントリー
     if new_entries:
         parts.append('<p>今週の新規ランクインは')
-        news = [f'{e["artist"]}「{e["title"]}」（{e["rank"]}位）' for e in new_entries]
+        news = [f'{_to_ja(e["artist"])}「{e["title"]}」（{e["rank"]}位）' for e in new_entries]
         parts.append('、'.join(news) + 'です。</p>')
 
     # データソース

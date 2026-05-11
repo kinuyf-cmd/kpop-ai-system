@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T09:09:29.492679",
+  "updated_at": "2026-05-11T14:20:56.918618+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1416,6 +1416,46 @@
       "fix": "lib/cross_audit.check_artist_triplet(title主語⇄category⇄fmファイル名 三点照合) で検出 (commit 5ceda0d)",
       "agent": "publisher",
       "resolved_at": "2026-05-08"
+    },
+    "cron_cd_prefix_missing": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "chart_article_generator/scrape_circle_chart の cron entry に \"cd /home/aiuser/kpop-ai-system &&\" 欠落 → cwd=/home/aiuser でファイル不在 → silent fail (log すら出力されない)",
+      "fix": "crontab.txt の全 python3 エントリに cd プレフィックスを徹底。test_chart_cron_entries_have_cd_prefix で機械検証。同種の cron entry 追加時は必ず cd 込みで",
+      "agent": "cron_config",
+      "resolved_at": "2026-05-11"
+    },
+    "weekly_job_silent_rot": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "chart_article (週1回 月曜) が cd 欠落で 2週連続失敗。週次cronは1週間気付かれない盲点でログ蓄積も起きず",
+      "fix": "config/weekly_job_health.json に「期待出力ファイル+max_age_days」を登録 → cron_health_check が日次で stale 検出 → Discord 通知。週次cron 追加時は必ずこの JSON にも entry 追加",
+      "agent": "cron_health",
+      "resolved_at": "2026-05-11"
+    },
+    "residue_body_hangul_in_quotes_overdefense": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "pre_publish_gate の assess_residue が body_text 中の 「楽曲名」 内 hangul を除外せず、チャート記事 (Korean曲名10件で78字) を BLOCK。memory feedback_quality_gate_overdefense 違反",
+      "fix": "translation_residue_check.assess_residue で body_text にも _strip_quoted_proper_nouns を適用 (title/altと整合)。test_residue_check_strips_quoted_proper_nouns_in_body で機械検証",
+      "agent": "pre_publish_gate",
+      "resolved_at": "2026-05-11"
+    },
+    "chart_artist_ja_mapping_outdated": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "chart_article_generator.ARTIST_JA に NEXZ/TWS/박지훈 等の新人アーティスト未登録 + _to_ja の regex が \"English (Korean)\" 形式を扱えず Korean 残存",
+      "fix": "_to_ja に \"English (Korean)\" 形式パターンマッチを優先追加 + 未登録artistを mapping に追加。新人アーティストがチャートTOP10入りした場合は ARTIST_JA を即更新",
+      "agent": "chart_article_generator",
+      "resolved_at": "2026-05-11"
+    },
+    "circle_chart_api_2week_lag": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "Circle Chart API が week 19/20 (当週/前週) を ResultStatus:Error で返却、week 18 まで2週ラグ。scraper fallback が [week, week-1] のみで取得失敗",
+      "fix": "scrape_circle_chart.py の fallback を [week, week-1, week-2] に拡張。test_scraper_fallback_covers_two_week_lag で機械検証",
+      "agent": "circle_chart_scraper",
+      "resolved_at": "2026-05-11"
     }
   },
   "recurring_errors": [

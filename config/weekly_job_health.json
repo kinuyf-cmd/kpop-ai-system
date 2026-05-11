@@ -1,0 +1,60 @@
+{
+  "_comment": "週次ジョブの silent rot 検出設定 — cron_health_check が読む",
+  "_history": [
+    {
+      "date": "2026-05-11",
+      "reason": "chart pipeline 4層 silent rot 事故 (cd欠落/2週ラグ/gate誤検知/未登録artist) を契機に新設。週次cronは1週間気付かない盲点なので一元化"
+    }
+  ],
+  "default_max_age_days": 8,
+  "jobs": {
+    "chart_scraper": {
+      "output_file": "data/chart_weekly_manual.json",
+      "max_age_days": 8,
+      "cron_pattern": "0 8 * * 1",
+      "description": "Circle Chart 週次データ取得",
+      "recovery": "cd /home/aiuser/kpop-ai-system && python3 tools/scrape_circle_chart.py",
+      "owner_doc": "tools/scrape_circle_chart.py"
+    },
+    "chart_article": {
+      "output_file": "logs/chart_article.jsonl",
+      "max_age_days": 8,
+      "cron_pattern": "5 8 * * 1",
+      "description": "週次チャート記事公開",
+      "recovery": "cd /home/aiuser/kpop-ai-system && python3 scripts/chart_article_generator.py",
+      "owner_doc": "scripts/chart_article_generator.py"
+    },
+    "chart_compare": {
+      "output_file": "logs/chart_compare.log",
+      "max_age_days": 8,
+      "cron_pattern": "0 10 * * 2",
+      "description": "週次チャート差分比較",
+      "recovery": "cd /home/aiuser/kpop-ai-system && python3 -m pipeline.chart_compare",
+      "owner_doc": "pipeline/chart_compare.py"
+    },
+    "profile_wiki_builder": {
+      "output_file": "logs/profile_wiki_builder.log",
+      "max_age_days": 8,
+      "cron_pattern": "0 6 * * 0",
+      "description": "週次 profile wiki 構築",
+      "recovery": "cd /home/aiuser/kpop-ai-system && python3 pipeline/profile_wiki_builder.py",
+      "owner_doc": "pipeline/profile_wiki_builder.py"
+    },
+    "kpop_kw_expansion_suggester": {
+      "output_file": "logs/kpop_kw_suggestions.jsonl",
+      "max_age_days": 8,
+      "cron_pattern": "0 9 * * 1",
+      "description": "週次KW expansion 提案 (script の実出力は .jsonl)",
+      "recovery": "cd /home/aiuser/kpop-ai-system && python3 pipeline/kpop_kw_expansion_suggester.py",
+      "owner_doc": "pipeline/kpop_kw_expansion_suggester.py"
+    },
+    "chart_article_generator_v2": {
+      "output_file": "logs/chart_article.log",
+      "max_age_days": 8,
+      "cron_pattern": "5 8 * * 1",
+      "description": "chart_article_generator cron 実行痕跡 (このファイルが古い = cron 自体が失敗)",
+      "recovery": "cron entry の cd プレフィックスを確認 → 手動 publish",
+      "owner_doc": "crontab.txt"
+    }
+  }
+}

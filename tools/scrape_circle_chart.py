@@ -43,8 +43,8 @@ def scrape():
     year = now.year
     week = now.isocalendar().week
 
-    # 当週→前週の順で試行（チャート公開に1週ラグがある場合）
-    for w in [week, week - 1]:
+    # 当週→前週→前々週の順で試行（Circle Chart の公開ラグは最大2週）
+    for w in [week, week - 1, week - 2]:
         if w < 1:
             continue
         try:
