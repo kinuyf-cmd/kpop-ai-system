@@ -22,6 +22,7 @@ import os
 import random
 import re
 import sys
+import tempfile
 import hashlib
 import urllib.request
 import urllib.error
@@ -619,8 +620,49 @@ def resolve_ai_prompt(topic_context: str = "", genre: str = "") -> dict:
 
 # ── Main resolver ──
 
+def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
+    """ソース記事から og:image を抽出し、portrait/極小をrejectして source_og_image dictを返す。
+
+    2026-05-11 規定: artist photo より先に毎回試行 (memory: feedback_artist_photo_absolute_rule)。
+    """
+    if not source_url or not source_url.startswith('http'):
+        return None
+    try:
+        import urllib.request
+        req = urllib.request.Request(source_url, headers={'User-Agent': 'KPJ-OG/1.0'})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            raw = r.read()
+        html = raw.decode('utf-8', errors='ignore') if isinstance(raw, (bytes, bytearray)) else str(raw)
+    except Exception:
+        return None
+    m = re.search(r'<meta\s+(?:property|name)=["\']og:image(?::secure_url)?["\']\s+content=["\']([^"\']+)["\']', html)
+    if not m:
+        m = re.search(r'<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:image["\']', html)
+    if not m:
+        return None
+    og_url = m.group(1)
+    if not og_url.startswith('http'):
+        return None
+    dest = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False).name
+    if not _download(og_url, dest):
+        try: os.unlink(dest)
+        except Exception: pass
+        return None
+    if _check_portrait(dest):
+        try: os.unlink(dest)
+        except Exception: pass
+        return None
+    return {
+        'image_path': dest,
+        'source': 'source_og_image',
+        'source_url': og_url,
+        'license': 'source_attribution',
+        'attribution': source_url,
+    }
+
+
 def resolve(artist_name: str, genre: str = "", post_id: str = "",
-            article_type: str = "concrete",
+            article_type: str = "concrete", source_url: str = "",
             theme: str = "", theme_config: dict | None = None) -> dict:
     """
     Resolve the best available image source for a thumbnail.
@@ -666,6 +708,11 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         if r:
             return r
 
+        # アーティスト本人のキャッシュ画像 (solo cache を group fallback より先に試行)
+        r = resolve_fallback_photo(artist)
+        if r:
+            return r
+
         # メンバー→グループフォールバック
         member_map = _load_member_to_group()
         group_name = member_map.get(artist, "")
@@ -683,17 +730,19 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
             if r:
                 return r
 
-        # アーティスト本人のキャッシュ画像
-        r = resolve_fallback_photo(artist)
-        if r:
-            return r
-
         return None
 
     if article_type == "concrete":
-        # ── concrete記事: アーティスト本人の写真を最優先 ──
-        # 鉄則: アイドル記事にはアイドルの写真。テーマはDALL-Eフォールバックのプロンプトにのみ影響。
-        # 優先順: YouTube → Wikimedia → グループFB → cache → Unsplash(テーマ) → DALL-E(テーマ)
+        # ── concrete記事: og:image最優先 → アーティスト本人写真 → fallback ──
+        # 2026-05-11 規定 (memory: feedback_artist_photo_absolute_rule):
+        #   og:image > artist photo > Unsplash > DALL-E
+        # source_url がある全 concrete 記事で og:image 取得を試行する
+        if source_url:
+            result = resolve_source_og_image(source_url, post_id)
+            if result:
+                _log_source(post_id, _tag(result))
+                return result
+
         if artist_name:
             sys.stderr.write(
                 f"[resolver] テーマ={theme}: アーティスト写真最優先 (artist={artist_name})\n"

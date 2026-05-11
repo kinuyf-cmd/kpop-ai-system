@@ -41,6 +41,30 @@ WP_PASS = os.getenv('WP_PASS', '')
 AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
 LOG_PATH = '/home/aiuser/kpop-ai-system/logs/thumbnail_auto_repair.jsonl'
 
+
+def _fetch_source_url_from_post(post_id: int) -> str:
+    """post id から WP REST で本文を取得し ソース URL を抽出。
+    og:image fallback (memory: feedback_artist_photo_absolute_rule, 2026-05-11) で使用。
+    """
+    try:
+        wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
+        req = urllib.request.Request(
+            f'{wp_api}/posts/{post_id}?_fields=content',
+            headers={'User-Agent': 'KPJ-Repair/1.0'},
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        content = data.get('content', {})
+        rendered = content.get('rendered', '') if isinstance(content, dict) else str(content)
+        import re
+        m = re.search(r'href=["\'](https?://(?:www\.)?(?:soompi|allkpop|koreaboo|osen|mydaily|hankyung|sportskhan|xportsnews|wikitree)\.[^"\']+)["\']', rendered)
+        if m:
+            return m.group(1)
+        m = re.search(r'(https?://(?:www\.)?(?:soompi|allkpop|koreaboo|osen|mydaily|hankyung|sportskhan|xportsnews|wikitree)\.[^\s"\'<>]+)', rendered)
+        return m.group(1) if m else ''
+    except Exception:
+        return ''
+
 # 「アーティスト写真」が必要ない記事タイプ — タイトルパターンでスキップ
 NON_ARTIST_KEYWORDS = [
     'ガイド', '完全ガイド', '保存版', 'まとめ',
