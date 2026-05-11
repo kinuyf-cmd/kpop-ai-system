@@ -1573,7 +1573,7 @@ def build_one(client, artist: str, slug: str) -> bool:
 
 def update_frontend_slug_list():
     """frontend が /artists/ で参照する profile slug list をpublic/dataに書き出す"""
-    slugs = sorted(p.stem for p in PROFILE_DIR.glob('*.json') if p.stem != 'fromis9')
+    slugs = sorted(p.stem for p in PROFILE_DIR.glob('*.json'))
     out = Path('/home/aiuser/kpopjournal-frontend/public/data/artist-profile-slugs.json')
     if not out.parent.exists():
         return
