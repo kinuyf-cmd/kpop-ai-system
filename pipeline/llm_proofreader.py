@@ -374,6 +374,23 @@ JSON出力のみ:
             if tavily_issues:
                 result.setdefault('high', []).extend(tavily_issues)
                 result['score'] = min(result.get('score', 100), 70)
+            # --- 2026-05-11: LLM hallucination filter ---
+            # 本文に「N人組」「メンバーはN人」がないのにLLMが「N人組として記載」と
+            # CRIT報告する hallucination (21219事案: 「5曲」を「5人組」と誤読) を除去
+            _has_member_pattern = bool(re.search(r'\d+\s*人組|メンバー[はが]?\s*\d+\s*[人名]', plain or ''))
+            if not _has_member_pattern:
+                filtered_crit = []
+                for item in result.get('critical', []):
+                    s = str(item)
+                    if 'メンバー人数' in s or '人組として記載' in s or 'メンバーが' in s:
+                        # 該当 CRIT は hallucination → 除外
+                        continue
+                    filtered_crit.append(item)
+                if len(filtered_crit) != len(result.get('critical', [])):
+                    result['critical'] = filtered_crit
+                    # スコア再計算 (CRIT 無くなれば最低 80 まで戻す)
+                    if not filtered_crit:
+                        result['score'] = max(result.get('score', 100), 80)
             return result
         except urllib.error.HTTPError as e:
             last_err = e

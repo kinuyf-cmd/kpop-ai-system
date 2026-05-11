@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T15:20:20.697348+09:00",
+  "updated_at": "2026-05-11T15:47:13.959762+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1493,8 +1493,32 @@
       "count": 47,
       "last_seen": "2026-05-11",
       "example": "trend_signals.jsonl で source=korean_media の title 列に HTML タグ (koreaherald 14件) や記者署名/隣接記事タイトル連結 (newsen 15件, topstarnews 22件) が混入。直近24h 181件中 47件 (26%) で発生し、後段の artist 識別精度低下",
-      "fix": "lib/collectors/korean_base.py に clean_title() を共通化し newsen/koreaherald/topstarnews で使用。HTML strip + 連続改行/tab で先頭タイトルのみ採用 + 記者署名/日付除去。test_korean_media_clean_title.py で機械検証",
+      "fix": "lib/collectors/korean_base.py に clean_title() を共通化し newsen/koreaherald/topstarnews で使用",
       "agent": "collectors",
+      "resolved_at": "2026-05-11"
+    },
+    "og_image_cdn_cross_domain_false_reject": {
+      "count": 4,
+      "last_seen": "2026-05-11",
+      "example": "5/11 監査で 12時間以内 publish 20件中 4件 (21554/21360/21368/21541) が source og:image 利用可能なのに artist_youtube/wikimedia/dalle に fallback",
+      "fix": "thumbnail_resolver に _KNOWN_IMAGE_CDN_PATTERNS whitelist 追加",
+      "agent": "thumbnail_resolver",
+      "resolved_at": "2026-05-11"
+    },
+    "llm_proofreader_member_count_hallucination": {
+      "count": 1,
+      "last_seen": "2026-05-11",
+      "example": "21219 NCT WISH 5曲 を 5人組 と誤読し CRIT 報告",
+      "fix": "本文に N人組 pattern がない場合 member-count CRIT を hallucination として除外",
+      "agent": "llm_proofreader",
+      "resolved_at": "2026-05-11"
+    },
+    "recovered_article_wpautop_residue": {
+      "count": 5,
+      "last_seen": "2026-05-11",
+      "example": "5/11 recovery で raw balanced でも rendered で wpautop が <p> を壊す",
+      "fix": "CTA block を新フォーム (<p class=\"kpj-cta-link\"> 包み) で完全再生成",
+      "agent": "cta_injector",
       "resolved_at": "2026-05-11"
     }
   },

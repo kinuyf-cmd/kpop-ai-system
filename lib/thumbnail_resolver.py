@@ -17,6 +17,27 @@ _SUSPICIOUS_OG_PATH_PATTERNS = (
     'video-thumbnail', 'player-thumbnail',
 )
 
+# 2026-05-11: 信頼できる image CDN ホストパターン (cross-domain check 免除)
+# 韓国/日本K-POPメディアは画像を専用 CDN に置くのが一般的:
+#   kstyle.com → cdn.livedoor.jp/kstyle/...
+#   naver.com → pstatic.net, nstatic.naver.net
+#   soompi.com → cdn.soompi.io, wp.com
+#   allkpop.com → pimg.allkpop.com, akamaihd.net
+# これらを reject すると og:image最優先の鉄則が崩壊する
+_KNOWN_IMAGE_CDN_PATTERNS = (
+    'cdn.livedoor.jp', 'livedoor.blogimg.jp',
+    'pstatic.net', 'nstatic.naver.net', 'phinf.pstatic.net',
+    'cdn.soompi.io', 'wp.com', 'wordpress.com',
+    'pimg.allkpop.com', 'akamaihd.net', 'akamaized.net',
+    'cdn.koreaboo.com', 'cloudfront.net',
+    'res.cloudinary.com', 'cloudinary.com',
+    'pds.joins.com', 'img.hankyung.com', 'img.kbs.co.kr',
+    'imgnews.pstatic.net', 'newsimg.hankookilbo.com',
+    'wimg.heraldcorp.com', 'heraldcorp.com',  # koreaherald
+    'static-cdn.', 'images.cdn.',  # 一般的 CDN host prefix
+    'img.cdn.', 'cdn-images.', 'static.naver.net',
+)
+
 
 def _registered_domain(host):
     """ホスト名から登録ドメイン（例: cdn.allkpop.com → allkpop.com）を抽出"""
@@ -88,6 +109,12 @@ def _is_suspicious_og_image(og_url, source_url):
     for pat in _SUSPICIOUS_OG_PATH_PATTERNS:
         if pat in og_path:
             return True, f'path blacklist: {pat}'
+
+    # 2026-05-11: 信頼できる image CDN は cross-domain 検査をスキップ
+    # (kstyle/naver/soompi 等は本記事画像を専用 CDN にホストしている)
+    for cdn_pat in _KNOWN_IMAGE_CDN_PATTERNS:
+        if cdn_pat in og_host:
+            return False, ''
 
     og_reg = _registered_domain(og_host)
     src_reg = _registered_domain(src_host)
