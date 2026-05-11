@@ -3,7 +3,7 @@
 
 実行: 毎時00分
 - 過去24hの投稿数集計
-- KPI: 速報+その他=計20本以上/日
+- KPI: 速報30+その他10 = 計40本以上/日 (2026-05-11 改定、旧目標は速報10+その他10)
 - 残り時間と必要本数から動的maxを算出
 - 大幅遅延時 → 即時生成
 - 結果を data/editor_state.json に記録
@@ -17,8 +17,8 @@ AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
 STATE = '/home/aiuser/kpop-ai-system/data/editor_state.json'
 KPI_LOG = '/home/aiuser/kpop-ai-system/logs/daily_kpi.jsonl'
 
-TARGET_DAILY_TOTAL = 20
-TARGET_BREAKING = 10
+TARGET_DAILY_TOTAL = 40
+TARGET_BREAKING = 30
 TARGET_OTHER = 10
 
 
