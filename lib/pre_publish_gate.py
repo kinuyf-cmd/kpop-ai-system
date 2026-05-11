@@ -45,6 +45,7 @@ BLOCK_TYPES = frozenset({
     'feature_no_source',       # ソースなしfeature記事 (2026-05-02追加)
     'css_leak',                # CSS生テキスト混入 (2026-05-06追加)
     'title_source_mismatch',   # タイトルがソースと乖離 (2026-05-06追加)
+    'llm_factcheck_critical',  # Claude v2 factcheck CRITICAL — 事実捏造/主語逆転等 (2026-05-11追加)
 })
 
 # fact_checker の critical → BLOCK にマッピングする type
@@ -97,10 +98,15 @@ def _map_audit_issues(issues):
     return mapped
 
 
+_CODEBLOCK_MARKER_RE = re.compile(r'```(?:html|HTML|python|json|css|javascript|js)?[\s\n]')
+_TEMPLATE_PLACEHOLDER_RE = re.compile(r'\[(?:ソース名|サイト名|メディア名|執筆者名|タイトル|未定|要確認|確認中|TBD|TODO)\]')
+
+
 def _check_contamination(body_html):
-    """レビューレポート/エラーメッセージ/Claudeメタ言及の混入検出"""
+    """レビューレポート/エラーメッセージ/Claudeメタ言及/codeblockマーカー/プレースホルダの混入検出"""
     issues = []
-    text = re.sub(r'<[^>]+>', ' ', body_html or '')
+    raw = body_html or ''
+    text = re.sub(r'<[^>]+>', ' ', raw)
     for pat in _CONTAMINATION_RE:
         m = pat.search(text)
         if m:
@@ -109,8 +115,53 @@ def _check_contamination(body_html):
                 'severity': 'block',
                 'detail': f'本文にシステムメッセージ混入: "{m.group()[:50]}"',
             })
-            break  # 1件見つかれば十分
+            break
+    cb = _CODEBLOCK_MARKER_RE.search(raw)
+    if cb:
+        issues.append({
+            'type': 'codeblock_marker',
+            'severity': 'block',
+            'detail': f'```マーカー混入: "{cb.group()}"',
+        })
+    ph = _TEMPLATE_PLACEHOLDER_RE.search(raw)
+    if ph:
+        issues.append({
+            'type': 'template_placeholder',
+            'severity': 'block',
+            'detail': f'未置換プレースホルダ {ph.group()} が残存',
+        })
     return issues
+
+
+def _check_html_structure(body_html):
+    """<p>/<div>等の open/close 不均衡を検出 (cta_injector A8 link事故の再発防止)"""
+    issues = []
+    if not body_html:
+        return issues
+    opens = len(re.findall(r'<p[\s>]', body_html))
+    closes = body_html.count('</p>')
+    if opens != closes:
+        issues.append({
+            'type': 'unclosed_p',
+            'severity': 'warn',
+            'detail': f'<p> open={opens} close={closes} 不均衡',
+        })
+    return issues
+
+
+def normalize_html_for_publish(html):
+    """BeautifulSoup(lxml) で <p>/<div> balance を自動修正して公開可能な HTML を返す"""
+    if not html:
+        return html or ''
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(html, 'lxml')
+        body = soup.body
+        if body is not None:
+            return ''.join(str(c) for c in body.children)
+        return str(soup)
+    except Exception:
+        return html
 
 
 def _check_content_empty(body_html):
@@ -539,12 +590,32 @@ def pre_publish_gate(
             'detail': f'fact_check skip: {e}',
         })
 
-    # --- 2b. LLMファクトチェック (公開前の捏造検出 — 2026-05-04追加) ---
-    # fact_checker.pyは構造チェックのみ。proofread_articleで事実の裏付けを検証
+    # --- 2b. LLMファクトチェック (公開前の捏造検出) ---
+    # 2026-05-11: publish時は Claude Sonnet 4.6 + web search 版 (factcheck_v2)
+    # を常時強制使用。env FACTCHECK_V2 未設定でも publish パスでは v2 必須
+    # (v1 OpenAI版は web search なしでCRIT検出力が弱く、過去181件CRIT通過した)
     if status == 'publish' and kind not in ('popup',):
         try:
-            from pipeline.llm_proofreader import proofread_article
-            pr = proofread_article(title or '', body_html or '')
+            from lib.factcheck_v2 import proofread_post_v2
+            fake_post = {'title': {'rendered': title or ''},
+                         'content': {'rendered': body_html or ''}}
+            pr = proofread_post_v2(fake_post, use_web_search=True)
+        except Exception as _e_v2:
+            # v2失敗時のみv1にフォールバック
+            try:
+                from pipeline.llm_proofreader import proofread_article
+                pr = proofread_article(title or '', body_html or '')
+            except ImportError:
+                pr = None
+            except Exception as e:
+                issues.append({
+                    'type': 'llm_factcheck_error',
+                    'severity': 'warn',
+                    'detail': f'LLM factcheck error: {str(e)[:60]}',
+                })
+                pr = None
+
+        if pr:
             for c in pr.get('critical', []):
                 issues.append({
                     'type': 'llm_factcheck_critical',
@@ -557,14 +628,6 @@ def pre_publish_gate(
                     'severity': 'warn',  # highはWARN（BLOCKは壊滅レベルのcriticalのみ）
                     'detail': str(h)[:100],
                 })
-        except ImportError:
-            pass  # proofread_article未実装ならスキップ
-        except Exception as e:
-            issues.append({
-                'type': 'llm_factcheck_error',
-                'severity': 'warn',
-                'detail': f'LLM factcheck error: {str(e)[:60]}',
-            })
 
     # --- 3. audit_engine チェック (既存を再利用) ---
     # 各 check_* は list[dict] を返す
