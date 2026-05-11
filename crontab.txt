@@ -1,11 +1,11 @@
 0 0 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_audit.py >> /opt/grant-ops/data/logs/meeting_audit.log 2>&1 # grant-ops-managed
-0 10 * * 1 python3 -m pipeline.popup_monthly_roundup >> logs/popup_roundup.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 10 * * 1 python3 -m pipeline.popup_monthly_roundup >> logs/popup_roundup.log 2>&1
 0 10 25 * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python data/ai_staff/scores/eval.py >> /opt/grant-ops/data/logs/cron_hr_eval.log 2>&1 # grant-ops-managed
 0 10 * * 2,5 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_editing.py >> /opt/grant-ops/data/logs/meeting_editing.log 2>&1 # grant-ops-managed
 0 10 * * 2 cd /home/aiuser/kpop-ai-system && python3 -m pipeline.chart_compare >> logs/chart_compare.log 2>&1
-0 10 * * 2 cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_region_pages >> logs/popup_region.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 10 * * 2 cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_region_pages >> logs/popup_region.log 2>&1
 # REMOVED: popup_region_pages重複 (コスト削減 2026-04-29)
-0 10 * * 3 cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_artist_pages >> logs/popup_artist.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 10 * * 3 cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_artist_pages >> logs/popup_artist.log 2>&1
 0 10 * * 3 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_revenue.py >> /opt/grant-ops/data/logs/meeting_revenue.log 2>&1 # grant-ops-managed
 0 10 * * 4 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_diagnosis.py >> /opt/grant-ops/data/logs/meeting_diagnosis.log 2>&1 # grant-ops-managed
 0 10 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_cs.py >> /opt/grant-ops/data/logs/meeting_cs.log 2>&1 # grant-ops-managed
@@ -23,7 +23,7 @@
 0 22 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.run_company_os --apply --notify --steps evening_group >> /opt/grant-ops/data/logs/cron_company_os_evening.log 2>&1 # grant-ops-managed
 0 23 * * 0 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.learning_loop >> /opt/grant-ops/data/logs/cron_learning_loop.log 2>&1 # grant-ops-managed
 # MOVED: gtrends_collector → 8,12,16,22 (下部のcollectorsブロックに統合)
-0 6-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_publisher >> logs/popup_publisher.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 6-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_publisher >> logs/popup_publisher.log 2>&1
 0 2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m crawler.scheduler --batch 5 --triggered-by cron >> /opt/grant-ops/data/logs/cron_scheduler.log 2>&1 # grant-ops-managed
 0 */2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.repair >> /opt/grant-ops/data/logs/cron_repair.log 2>&1 # grant-ops-managed
 0 2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/security_monitor.py >> /opt/grant-ops/data/logs/cron_security.log 2>&1 # grant-ops-managed
@@ -55,7 +55,7 @@
 0 7 * * * /opt/grant-ops/venv/bin/python -m ops.affiliate_visual_audit --limit 5 >> /opt/grant-ops/data/logs/affiliate_visual_audit_cron.log 2>&1
 0 8 * * 1 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.weekly_meeting >> /opt/grant-ops/data/logs/cron_weekly_meeting.log 2>&1 # grant-ops-managed
 0 8 * * 1 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.weekly_report >> /opt/grant-ops/data/logs/cron_weekly_report.log 2>&1 # grant-ops-managed
-0 8,12,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.feature_article_generator --max 4 >> logs/feature_article_generator.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 8,12,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.feature_article_generator --max 4 >> logs/feature_article_generator.log 2>&1
 # コンテンツ改革: トレンドソース収集 (2026-05-01追加)
 30 7,13,19 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.youtube_show_monitor >> logs/youtube_show_monitor.log 2>&1
 0 7,11,15,19 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.music_show_monitor >> logs/music_show_monitor.log 2>&1
@@ -66,7 +66,7 @@
 # SUSPENDED: notify_discord --type kpi → 10時のmorning briefに統合 (2026-05-05)
 # 0 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_discord --type kpi --log-file /opt/grant-ops/data/logs/cron_discord_notify.log >> /opt/grant-ops/data/logs/cron_discord_notify.log 2>&1 # grant-ops-managed
 0 9 * * 1,4 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_marketing.py >> /opt/grant-ops/data/logs/meeting_marketing.log 2>&1 # grant-ops-managed
-0 9 1 * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_monthly_roundup >> logs/popup_roundup.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 9 1 * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_monthly_roundup >> logs/popup_roundup.log 2>&1
 0 9 1 * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.monthly_board_meeting >> /opt/grant-ops/data/logs/cron_monthly_board.log 2>&1 # grant-ops-managed
 0 9 * * 2 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/departments/meeting_seo.py >> /opt/grant-ops/data/logs/meeting_seo.log 2>&1 # grant-ops-managed
 0 9 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_new_grants >> /opt/grant-ops/data/logs/cron_new_grants.log 2>&1 # grant-ops-managed
@@ -75,7 +75,7 @@
 0 * * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.health_check >> /opt/grant-ops/data/logs/cron_health_check.log 2>&1 # grant-ops-managed
 0 * * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.import_nginx_tracking --apply >> /opt/grant-ops/data/logs/cron_import_nginx_tracking.log 2>&1 # grant-ops-managed
 10 8,14,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.ticket_collector >> logs/ticket_collector.log 2>&1
-10 */3 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.auto_comeback_article >> logs/auto_comeback_article.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 10 */3 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.auto_comeback_article >> logs/auto_comeback_article.log 2>&1
 10 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.post_audit_feedback_loop >> logs/post_audit_feedback_loop.log 2>&1
 10 6 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.article_quality_check --notify >> /opt/grant-ops/data/logs/cron_quality_check.log 2>&1 # grant-ops-managed
 15 3 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.backfill_tags >> /opt/grant-ops/data/logs/cron_backfill_tags.log 2>&1 # grant-ops-managed
@@ -84,7 +84,7 @@
 15 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.popup_kbuzz_collector >> logs/popup_kbuzz.log 2>&1
 # REMOVED: rewrite_worker (audit_fixer_universalに統合、キュー空で空回り) (コスト削減 2026-04-29)
 17 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.morning_health --save --notify-on-failure >> /opt/grant-ops/data/logs/cron_morning_health.log 2>&1 # grant-ops-managed
-20 9,15 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.auto_event_article >> logs/auto_event_article.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 20 9,15 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.auto_event_article >> logs/auto_event_article.log 2>&1
 20 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.build_tracking_report --notify >> /opt/grant-ops/data/logs/cron_tracking_report.log 2>&1 # grant-ops-managed
 20 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.draft_auto_publisher >> logs/draft_auto_publisher.log 2>&1
 25 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m publisher.article_daily_report --notify >> /opt/grant-ops/data/logs/cron_article_daily_report.log 2>&1 # grant-ops-managed
@@ -105,7 +105,7 @@
 0 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.daily_editor >> logs/daily_editor.log 2>&1
 0 7-21/2 * * * cd /home/aiuser/kpop-ai-system && python3 tools/pipeline_health_monitor.py >> logs/pipeline_health.log 2>&1
 # MOVED: korea_official_collector → 7,19 (下部のcollectorsブロックに統合)
-35 8,12,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/buzzlab_full_publisher.py >> logs/buzzlab_full_publisher.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 35 8,12,16,20 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/buzzlab_full_publisher.py >> logs/buzzlab_full_publisher.log 2>&1
 40 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.post_publish_enricher >> logs/post_publish_enricher.log 2>&1
 45 5 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m publisher.article_update_queue --days 14 --notify >> /opt/grant-ops/data/logs/cron_article_update_queue.log 2>&1 # grant-ops-managed
 45 7 * * * /opt/grant-ops/venv/bin/python -m ops.kpi_collector --apply >> /opt/grant-ops/data/logs/cron_kpi_collector.log 2>&1 # grant-ops-managed
@@ -122,7 +122,7 @@
 # SUSPENDED: notify_discord --type audit → 10時のmorning briefに統合 (2026-05-05)
 # 5 8 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_discord --type audit --log-file /opt/grant-ops/data/logs/cron_discord_notify.log >> /opt/grant-ops/data/logs/cron_discord_notify.log 2>&1 # grant-ops-managed
 5 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.collectors.popup_prtimes_collector >> logs/popup_prtimes.log 2>&1
-*/10 6-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.breaking_news_detector >> logs/breaking_news.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): */10 6-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.breaking_news_detector >> logs/breaking_news.log 2>&1
 */5 * * * * PYTHONPATH=/opt/grant-ops flock -n /tmp/mufasa_daemon.lock /opt/grant-ops/venv/bin/python -m ops.mufasa_daemon --apply >> /opt/grant-ops/data/logs/mufasa_daemon.log 2>&1
 # affiliate_visual_audit: アフィリバナー自動監査 (毎日07:00 JST)
 # ── amount_missing夜間AI enrichバッチ（03:00）──────────
@@ -196,14 +196,14 @@
 0 5 * * * cd /home/aiuser/kpop-ai-system && python3 lib/gsc_metrics_fetcher.py --days 28 >> logs/gsc_metrics_fetcher.log 2>&1
 
 # --- トレンド記事監視 (2026-05-01追加) ---
-30 8,20 * * * cd /home/aiuser/kpop-ai-system && python3 lib/trend_article_monitor.py >> logs/trend_article_monitor.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 30 8,20 * * * cd /home/aiuser/kpop-ai-system && python3 lib/trend_article_monitor.py >> logs/trend_article_monitor.log 2>&1
 
 # --- CTR改善効果測定 5/15比較実行 (2026-05-01追加) ---
 0 6 15 5 * cd /home/aiuser/kpop-ai-system && python3 scripts/ctr_baseline_snapshot.py --compare >> logs/ctr_comparison.log 2>&1
 # GSCバックフィル (5/1追加) — 未インデックス記事を毎日quota上限まで送信
 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/gsc_backfill_daily.py >> logs/gsc_backfill.log 2>&1
 0 8 * * 1 cd /home/aiuser/kpop-ai-system && python3 tools/scrape_circle_chart.py >> logs/scrape_circle_chart.log 2>&1
-5 8 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/chart_article_generator.py >> logs/chart_article.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 5 8 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/chart_article_generator.py >> logs/chart_article.log 2>&1
 # コンサート情報自動収集 (5/1追加) — wowKoreaから毎日取得
 30 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.concert_collector >> logs/concert_collector.log 2>&1
 0 6 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/strategy_review.py >> logs/strategy_review.log 2>&1
@@ -233,7 +233,7 @@
 0 10,19 * * *   cd /home/aiuser/kpop-ai-system && python3 -m pipeline.korea_official_collector >> logs/korea_official.log 2>&1
 
 # 検索駆動記事生成: GSCデータから検索需要を特定 (2026-05-04追加)
-0 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.search_driven_generator >> logs/search_driven_generator.log 2>&1
+# STOPPED 2026-05-11 (速報30/日集中、SEO一旦停止): 0 7 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.search_driven_generator >> logs/search_driven_generator.log 2>&1
 
 # === KCON JAPAN 2026 期間限定 (5/8-10) 高頻度監視 ===
 */5 * 8,9,10 5 * cd /home/aiuser/kpop-ai-system && python3 -m lib.kcon_monitor >> logs/kcon_monitor.log 2>&1
@@ -263,7 +263,7 @@
 */15 * * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/x_post_backfill_cron.py >> logs/x_post_backfill_cron.log 2>&1
 
 # simple_publish_bridge: trusted source → simple pipeline (2026-05-11新設)
-0 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/simple_publish_bridge.py --limit 3 --publish >> logs/simple_publish_bridge.log 2>&1
+0 7-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/simple_publish_bridge.py --limit 6 --publish >> logs/simple_publish_bridge.log 2>&1
 
 # 月次 generator 品質メトリクス (Phase 4 後 silent rot 監視 / 2026-05-11新設)
 0 6 1 * * cd /home/aiuser/kpop-ai-system && python3 lib/generator_quality_metrics.py >> logs/generator_quality_monthly.log 2>&1
