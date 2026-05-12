@@ -175,7 +175,39 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
             'cost_usd': cost,
             'tokens': usage,
         }) + '\n')
+
+    # 2026-05-12: 出力にハングル残存があれば success=False を返す。
+    # gate でしか BLOCK されない状態だと「ハングル残存 publish 失敗」だけが残り
+    # 呼び出し側 (breaking/event/comeback) がリトライ・別ソース試行できないため、
+    # translator 層で潰して呼び出し側の `if not success: continue` で skip させる。
+    residue = _residue_verdict(translated)
+    if residue['verdict'] == 'BLOCK':
+        return {'success': False, 'translated': translated, 'cost_usd': cost,
+                'reason': f'hangul_residue: {residue["reason"]}'}
     return {'success': True, 'translated': translated, 'cost_usd': cost}
+
+
+def _residue_verdict(text: str) -> dict:
+    """翻訳出力の hangul 残存判定 (translation_residue_check の薄ラッパ)。
+    短い text (タイトル想定 <=100字) は1字でもBLOCK / 本文想定 (>100字) は20字以上でBLOCK。
+    """
+    try:
+        from lib.translation_residue_check import count_hangul, _strip_quoted_proper_nouns
+    except Exception:
+        return {'verdict': 'PASS', 'reason': ''}
+    if not text:
+        return {'verdict': 'PASS', 'reason': ''}
+    stripped = _strip_quoted_proper_nouns(text)
+    hangul = count_hangul(stripped)
+    if hangul == 0:
+        return {'verdict': 'PASS', 'reason': ''}
+    # タイトル想定: 短文で1字でもアウト
+    if len(text) <= 100 and hangul >= 1:
+        return {'verdict': 'BLOCK', 'reason': f'短文(タイトル想定)にハングル{hangul}字残存'}
+    # 本文想定: 20字以上で BLOCK (gate と同基準)
+    if hangul >= 20:
+        return {'verdict': 'BLOCK', 'reason': f'本文にハングル{hangul}字残存'}
+    return {'verdict': 'PASS', 'reason': ''}
 
 
 if __name__ == '__main__':

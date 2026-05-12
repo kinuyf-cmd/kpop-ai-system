@@ -433,11 +433,18 @@ def publish_breaking(artist, sigs, typ):
             return None
         raw_title = title_r['translated'].strip().strip('「」""【】')
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
-        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
+        # 2026-05-12: body fail 時に元韓国タイトルでfallbackすると hangul が本文に残るため skip
+        if not body_r.get('success'):
+            print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            return None
+        body_html = _wrap_body(body_r['translated'], best['title'], True)
     elif best.get('language') == 'ja':
         raw_title = best['title'].strip().strip('【】')
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の要約。ソースにない情報は絶対に追加しない')
-        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
+        if not body_r.get('success'):
+            print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            return None
+        body_html = _wrap_body(body_r['translated'], best['title'], True)
     else:
         # 英語ソース
         title_r = translate_ko_to_ja(best['title'], _title_context)
@@ -446,7 +453,10 @@ def publish_breaking(artist, sigs, typ):
         else:
             raw_title = best['title']
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
-        body_html = _wrap_body(body_r.get('translated', ''), best['title'], body_r.get('success'))
+        if not body_r.get('success'):
+            print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            return None
+        body_html = _wrap_body(body_r['translated'], best['title'], True)
 
     confidence = 'high' if typ == 'multi' else ('medium' if typ in ('urgent', 'single_multi') else 'low')
 

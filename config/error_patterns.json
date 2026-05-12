@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11T17:55:00.000000+09:00",
+  "updated_at": "2026-05-12T11:38:30+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1544,6 +1544,14 @@
       "fix": "resolve() に source_url 引数を追加し concrete分岐で resolve_source_og_image() を最優先で呼ぶように修正 (2026-05-11)",
       "agent": "publish",
       "resolved_at": "2026-05-11"
+    },
+    "hangul_residue_translator_no_post_check": {
+      "count": 39,
+      "last_seen": "2026-05-12",
+      "example": "本日 2026-05-12 朝 7-11時に39件の翻訳記事が pre_publish_gate translation_residue_block で停止。auto_comeback_article 経由が大半。translator は success=True を返していたため呼び出し側がリトライ/別ソース試行できなかった",
+      "fix": "lib/korean_translator.py / lib/translator_v2.py に出力 post-check を追加 (translation_residue_check 流用)。出力に hangul 残存→success=False を返し breaking/event/comeback の if not success: continue で自動 skip させる二段防御。併せて辞書 9件追加 (변우석/차주완/진해성/씨야/유주/은혁/조권/이보람/짐승돌)。test_translator_rejects_hangul_residue.py 6件追加",
+      "agent": "translator",
+      "resolved_at": "2026-05-12"
     }
   },
   "recurring_errors": [

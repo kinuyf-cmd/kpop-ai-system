@@ -172,6 +172,21 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
                 },
             }, ensure_ascii=False) + '\n')
 
+        # 2026-05-12: 出力に hangul 残存があれば success=False を返す。
+        # gate より上流で潰すことで、breaking/event/comeback の `if not success: continue` に
+        # 載せて自動 skip させる二段防御。
+        from lib.korean_translator import _residue_verdict
+        residue = _residue_verdict(translated)
+        if residue['verdict'] == 'BLOCK':
+            return {
+                'success': False,
+                'translated': translated,
+                'reason': f'hangul_residue: {residue["reason"]}',
+                'residual_korean_count': residual,
+                'proper_nouns_used': nouns,
+                'pre_replaced': replaced_count,
+            }
+
         return {
             'success': True,
             'translated': translated,
