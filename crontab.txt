@@ -275,3 +275,6 @@
 
 # Daily QA: 全 pytest 実行、失敗時のみ Discord error チャネル通知 (2026-05-12)
 15 5 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/daily_qa_run.py >> logs/daily_qa.log 2>&1
+
+# auto-auditor: 直近35分の publish を 4項目独立監査、FAIL は auto-draft 化 (2026-05-12)
+*/30 6-22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/auto_audit_recent.py >> logs/auto_audit_recent.log 2>&1

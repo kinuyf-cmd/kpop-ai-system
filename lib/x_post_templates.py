@@ -29,6 +29,8 @@ import sys
 import time
 
 # --- アーティスト名抽出用パターン ---
+# 2026-05-12: 新世代 (2023-2026 デビュー) を補強。本日 CORTIS が K-POP fallback
+# された事故対策。
 KNOWN_ARTISTS = [
     "BTS", "BLACKPINK", "aespa", "SEVENTEEN", "Stray Kids", "NewJeans",
     "IVE", "LE SSERAFIM", "XG", "TWICE", "NCT", "ILLIT", "RIIZE",
@@ -40,6 +42,11 @@ KNOWN_ARTISTS = [
     "SISTAR", "KARA", "T-ARA", "4MINUTE", "miss A", "After School",
     "DAY6", "PENTAGON", "VICTON", "CIX", "AB6IX", "CRAVITY",
     "TEMPEST", "TNX", "BOYNEXTDOOR", "KISS OF LIFE",
+    # 2023-2026 新世代追加
+    "CORTIS", "Hearts2Hearts", "MEOVV", "KATSEYE", "fromis_9", "fromis9",
+    "TWS", "NEXZ", "NiziU", "IZNA", "ALLDAY PROJECT", "AHOF", "UNCHILD",
+    "EVNNE", "EVAN", "P1Harmony", "TIOT", "ARTMS",
+    # メンバー名
     "ジミン", "テテ", "ジョングク", "RM", "SUGA", "J-HOPE", "JIN",
     "リサ", "ジェニ", "ロゼ", "ジス",
     "ウォニョン", "ユジン", "レイ", "ガウル", "リズ", "イソ",
