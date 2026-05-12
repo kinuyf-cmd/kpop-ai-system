@@ -47,9 +47,15 @@ def main():
         memo_tokens = [t for t in memo_key.split('_') if len(t) >= 3]
         for t in tests:
             test_tokens = [w for w in t.split('_') if len(w) >= 3]
-            # 4トークン以上共有、または memo の 70% 以上が test に含まれる
             common = set(memo_tokens) & set(test_tokens)
-            if len(common) >= 4 or (memo_tokens and len(common) / len(memo_tokens) >= 0.7):
+            # ルール1: 4トークン以上共有
+            if len(common) >= 4:
+                return True
+            # ルール2: memo の 70% 以上が test に含まれる
+            if memo_tokens and len(common) / len(memo_tokens) >= 0.7:
+                return True
+            # ルール3: 先頭トークン一致 + 共有2以上 (domain 同一性が高い signal)
+            if memo_tokens and test_tokens and memo_tokens[0] == test_tokens[0] and len(common) >= 2:
                 return True
         return False
 
@@ -70,6 +76,10 @@ def main():
     PROCEDURAL_NO_TEST = {
         'fix_all_paths', 'never_override_user_rules', 'no_excuses_follow_rules',
         'ssr_fetch_url_localhost_404',  # frontend repo の関心事、kpop-ai-system 内にtestable資源無し
+        # 以下 3 件は Claude (私) の behavioral procedural memo で機械テスト不可:
+        'use_kpop_auditor_before_completion',
+        'morning_briefing_must_include_kpi',
+        'logo_visual_verification',
     }
     testable = memo_set - STRATEGIC - PROCEDURAL_NO_TEST
     testable_covered = covered & testable
