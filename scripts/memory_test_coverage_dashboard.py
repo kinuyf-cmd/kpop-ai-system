@@ -48,6 +48,7 @@ def main():
     }
     PROCEDURAL_NO_TEST = {
         'fix_all_paths', 'never_override_user_rules', 'no_excuses_follow_rules',
+        'ssr_fetch_url_localhost_404',  # frontend repo の関心事、kpop-ai-system 内にtestable資源無し
     }
     testable = memo_set - STRATEGIC - PROCEDURAL_NO_TEST
     testable_covered = covered & testable

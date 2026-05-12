@@ -254,16 +254,47 @@ def main(dry_run=False, max_articles=None):
         if dry_run:
             continue
 
+        # 2026-05-12: memo feedback_pipeline_must_use_source_reader に従い、
+        # auto_comeback_article / breaking_news_detector と同じ source_reader +
+        # web_search 統合パターンに移行。headline だけで GPT に投げる旧実装は捏造の温床。
+        from lib.source_reader import read_sources
+        source_text = read_sources(sigs)
+        if not source_text or len(source_text) < 200:
+            print(f"  [auto_event] BLOCK: source_text 取得失敗 (200字未満)、捏造リスクで生成中止")
+            continue
+
+        _artist_name = key.split('-')[0] if '-' in key else key
+        _artist_kw = str(_artist_name).lower()
+        if _artist_kw and _artist_kw not in source_text.lower() and \
+           _artist_kw not in best['title'].lower():
+            print(f"  [auto_event] BLOCK: artist '{_artist_name}' がソース本文/タイトルに不在、クラスタ偽陽性")
+            continue
+
+        try:
+            from pipeline.breaking_news_detector import _enrich_with_web_search
+            web_facts = _enrich_with_web_search(best['title'], sigs)
+        except Exception as _we:
+            print(f"  [auto_event] web_search 失敗、続行: {_we}")
+            web_facts = ''
+
         title_r = translate_ko_to_ja(best['title'], 'K-POPイベント見出し')
         if not title_r['success']:
             continue
         raw_title = title_r['translated'].strip().strip('「」""')[:65]
 
         combined = "\n".join([s['title'] for s in sigs[:3]])
-        body_r = translate_ko_to_ja(
-            f"以下のK-POPイベント報道から1500-2000字の日本語HTML記事本文を事実ベースで作成。h2セクション2つ以上。推測禁止:\n\n{combined}",
-            'K-POPイベント記事',
+        web_facts_section = f"\n\n【Web検索で取得した補足情報】\n{web_facts}" if web_facts else ''
+        prompt = (
+            f"以下のK-POPイベント報道から1500-2000字の日本語HTML記事本文を事実ベースで作成。"
+            f"h2セクション2つ以上。ソース記事に書かれていない事実は絶対に追加しない。"
+            f"推測・SNS反応の捏造禁止。\n\n"
+            f"【ソース記事ヘッドライン】\n{combined}\n\n"
+            f"【ソース記事本文 (事実の根拠。ここに書かれている固有名詞/人名/日付を必ず記事に含める)】\n"
+            f"{source_text[:1500]}"
+            f"{web_facts_section}\n\n"
+            f"5W1H (誰が・いつ・何を・どこで・なぜ) を明確に。ソースに書かれていないことは書かない。"
         )
+        body_r = translate_ko_to_ja(prompt, 'K-POPイベント記事')
         if not body_r['success']:
             continue
 
