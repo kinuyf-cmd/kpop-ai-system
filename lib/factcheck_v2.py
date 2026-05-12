@@ -232,6 +232,37 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
                 "cache_control": {"type": "ephemeral", "ttl": "1h"},
             })
 
+        # 2026-05-12 (Phase 4): artist_master.json から生成した K-POP コーパスを
+        # document block で渡し、cache_control 1h で固定する。メンバー人数/デビュー日/
+        # 所属事務所等の確定情報を Web Search に頼らず参照可能になり、捏造検出が
+        # 決定的になる + Web Search 発火頻度をさらに削減できる。
+        # 注: Citations (citations.enabled=true) は structured outputs と非互換のため
+        # ここでは citations 無効で純粋な参考資料として渡す。
+        try:
+            from lib.factcheck_corpus import build_corpus
+            corpus = build_corpus()
+        except Exception:
+            corpus = ''
+
+        if corpus:
+            user_content = [
+                {
+                    "type": "document",
+                    "source": {
+                        "type": "text",
+                        "media_type": "text/plain",
+                        "data": corpus,
+                    },
+                    "title": "K-POP artist master data",
+                    "context": "確定済みの K-POP アーティスト基礎情報。本文と矛盾があれば指摘する根拠として使用。",
+                    "citations": {"enabled": False},
+                    "cache_control": {"type": "ephemeral", "ttl": "1h"},
+                },
+                {"type": "text", "text": user_prompt},
+            ]
+        else:
+            user_content = user_prompt
+
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=1500,
@@ -243,7 +274,7 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
                     "schema": _FACTCHECK_SCHEMA,
                 },
             },
-            messages=[{"role": "user", "content": user_prompt}],
+            messages=[{"role": "user", "content": user_content}],
         )
         # 最初のtext blockがschema-validated JSON
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
