@@ -20,6 +20,8 @@ from __future__ import annotations
 import os
 import json
 import re
+import hashlib
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,6 +30,8 @@ from dotenv import load_dotenv
 load_dotenv('/home/aiuser/kpop-ai-system/.env')
 
 LOG_PATH = Path('/home/aiuser/kpop-ai-system/logs/factcheck_v2.jsonl')
+CACHE_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_cache.json')
+CACHE_TTL_SEC = 6 * 3600  # 同一 title+content の連続呼び出し (pre_publish_gate → post_publish_hook → comprehensive_audit) を 1回に折り畳む
 
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
 KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
@@ -93,6 +97,7 @@ def _get_client() -> anthropic.Anthropic:
 
 
 # Claude structured outputs はnumerical constraints (minimum/maximum)非サポート
+# verified_facts は呼び出し側で参照されておらず output token を圧迫していたため削除 (2026-05-12)
 _FACTCHECK_SCHEMA = {
     "type": "object",
     "properties": {
@@ -100,11 +105,49 @@ _FACTCHECK_SCHEMA = {
         "critical": {"type": "array", "items": {"type": "string"}},
         "high": {"type": "array", "items": {"type": "string"}},
         "medium": {"type": "array", "items": {"type": "string"}},
-        "verified_facts": {"type": "array", "items": {"type": "string"}},
     },
     "required": ["score", "critical", "high", "medium"],
     "additionalProperties": False,
 }
+
+
+def _cache_key(title: str, plain: str) -> str:
+    h = hashlib.sha256()
+    h.update(title.encode('utf-8', errors='ignore'))
+    h.update(b'\x1f')
+    h.update(plain[:3000].encode('utf-8', errors='ignore'))
+    return h.hexdigest()[:24]
+
+
+def _cache_load() -> dict:
+    if not CACHE_PATH.exists():
+        return {}
+    try:
+        return json.loads(CACHE_PATH.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+
+
+def _cache_get(key: str) -> dict | None:
+    cache = _cache_load()
+    entry = cache.get(key)
+    if not entry:
+        return None
+    if time.time() - entry.get('ts', 0) > CACHE_TTL_SEC:
+        return None
+    return entry.get('result')
+
+
+def _cache_put(key: str, result: dict) -> None:
+    try:
+        cache = _cache_load()
+        now = time.time()
+        cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= CACHE_TTL_SEC}
+        cache[key] = {'ts': now, 'result': result}
+        CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
+    except OSError:
+        pass
 
 
 def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
@@ -115,12 +158,26 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
         use_web_search: True ならweb_searchツール有効化 (3回まで)
 
     Returns:
-        {'score', 'critical', 'high', 'medium', 'verified_facts'}
+        {'score', 'critical', 'high', 'medium'}
     """
     title = post['title']['rendered'] if isinstance(post.get('title'), dict) else post.get('title', '')
     content = post['content']['rendered'] if isinstance(post.get('content'), dict) else post.get('content', '')
     plain = re.sub(r'<[^>]+>', ' ', content)
     plain = re.sub(r'\s+', ' ', plain).strip()[:2500]
+
+    ck = _cache_key(title, plain)
+    cached = _cache_get(ck)
+    if cached is not None:
+        _log({
+            'pid': post.get('id'),
+            'title': title[:60],
+            'score': cached.get('score'),
+            'critical_count': len(cached.get('critical', [])),
+            'high_count': len(cached.get('high', [])),
+            'medium_count': len(cached.get('medium', [])),
+            'usage': {'cache_hit': True},
+        })
+        return cached
 
     today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
 
@@ -191,6 +248,9 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
                 'cache_read': getattr(response.usage, 'cache_read_input_tokens', 0),
             },
         })
+
+        # 同一 title+content の連続呼び出しを 1回に折り畳むため結果をキャッシュ
+        _cache_put(ck, result)
 
         # 自己学習: critical/high issue を lessons.jsonl に追加
         try:

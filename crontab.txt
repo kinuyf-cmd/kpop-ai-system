@@ -140,7 +140,7 @@
 5 10 * * * cd /home/aiuser/kpop-ai-system && bash morning_seo_report.sh >> logs/seo_report.log 2>&1
 
 # === 総合監査 (2026-04-30改定: 10/16/21時 ファクトチェック+サムネ+Discord報告) ===
-0 10,16,21 * * * cd /home/aiuser/kpop-ai-system && FACTCHECK_V2=1 python3 -m pipeline.comprehensive_audit >> logs/comprehensive_audit.log 2>&1
+0 10,21 * * * cd /home/aiuser/kpop-ai-system && FACTCHECK_V2=1 python3 -m pipeline.comprehensive_audit >> logs/comprehensive_audit.log 2>&1
 # 補助: quality_double_check (品質スコアリング、総合監査と別軸)
 0 8,20 * * * cd /home/aiuser/kpop-ai-system && python3 lib/quality_double_check.py >> logs/quality_check.log 2>&1
 # daily_audit_report (朝のみ残す、21時分は総合監査に統合)

@@ -100,3 +100,4 @@ data/tavily_quota_exhausted.json
 data/x_repost_tracker.json
 lessons_learned.json
 
+data/factcheck_v2_cache.json
