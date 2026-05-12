@@ -123,35 +123,34 @@ def compute_state():
 
 
 def force_generate(state):
+    # 2026-05-12: タイムアウト 600/900→120/180 に短縮。
+    # Tavily quota 超過時に DDG fallback でレスポンス取れず 10分タイムアウト連発で
+    # publish 経路が長時間 stall していたため、subprocess 単体での待ち時間を限定する。
+    # cron 側でも auto_event/auto_comeback/breaking_news を独立起動 (2026-05-12 再開) して
+    # subprocess 失敗時の publish 経路冗長性を確保。
     urgency = state['urgency']
     if urgency == 'high':
         print(f"  HIGH urgency -> forcing generation (event+comeback+feature)")
-        subprocess.run(
-            ['python3', 'pipeline/auto_event_article.py', '--max', '4'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=600,
-        )
-        subprocess.run(
-            ['python3', 'pipeline/auto_comeback_article.py', '--max', '3'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=600,
-        )
-        subprocess.run(
-            ['python3', 'pipeline/feature_article_generator.py', '--max', '4'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=900,
-        )
+        for cmd, to in [
+            (['python3', 'pipeline/auto_event_article.py', '--max', '4'], 120),
+            (['python3', 'pipeline/auto_comeback_article.py', '--max', '3'], 120),
+            (['python3', 'pipeline/feature_article_generator.py', '--max', '4'], 180),
+        ]:
+            try:
+                subprocess.run(cmd, cwd='/home/aiuser/kpop-ai-system', timeout=to)
+            except subprocess.TimeoutExpired:
+                print(f"  [force_generate] timeout({to}s) skip: {cmd[1]}")
     elif urgency == 'medium':
         print(f"  MEDIUM urgency -> supplemental generation")
-        subprocess.run(
-            ['python3', 'pipeline/auto_event_article.py', '--max', '3'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=400,
-        )
-        subprocess.run(
-            ['python3', 'pipeline/auto_comeback_article.py', '--max', '2'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=400,
-        )
-        subprocess.run(
-            ['python3', 'pipeline/feature_article_generator.py', '--max', '3'],
-            cwd='/home/aiuser/kpop-ai-system', timeout=600,
-        )
+        for cmd, to in [
+            (['python3', 'pipeline/auto_event_article.py', '--max', '3'], 90),
+            (['python3', 'pipeline/auto_comeback_article.py', '--max', '2'], 90),
+            (['python3', 'pipeline/feature_article_generator.py', '--max', '3'], 120),
+        ]:
+            try:
+                subprocess.run(cmd, cwd='/home/aiuser/kpop-ai-system', timeout=to)
+            except subprocess.TimeoutExpired:
+                print(f"  [force_generate] timeout({to}s) skip: {cmd[1]}")
 
 
 def main():

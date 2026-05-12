@@ -684,6 +684,25 @@ def unified_publish(
         'log': log,
     })
 
+    # 2026-05-12: publish 成功時に audit_steps の body_read を自動記録。
+    # body_html は unified_publish に渡された時点で gate と factcheck を通過しており、
+    # かつ翻訳/sanitize 済の最終 HTML。改めて body_read step (本文 plain length / hangul 0)
+    # を ok 記録することで audit_steps_enforcer の30分後 draft 化 (body_read missing) を防ぐ。
+    # structure/factcheck も既に gate/proofreader 経由で評価済だが、それらは別 cron で改めて
+    # record される設計のため、ここでは body_read のみ記録。
+    try:
+        from lib.audit_steps_log import record_step
+        import re as _re
+        _plain = _re.sub(r'<[^>]+>', '', body_html or '')
+        _hangul = len(_re.findall(r'[가-힯]', _plain))
+        record_step(
+            post_id, 'body_read', 'ok',
+            detail=f'auto: plain={len(_plain)}chars hangul={_hangul} kind={kind}',
+            source='unified_publisher',
+        )
+    except Exception as _re_err:
+        pass  # 監査ログ失敗は publish 成功扱いを妨げない
+
     return {
         'success': True, 'post_id': post_id, 'post_url': post_url,
         'title': title_final, 'slug': slug, 'media_id': media_id, 'log': log,

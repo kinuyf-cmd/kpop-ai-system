@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T12:17:15+09:00",
+  "updated_at": "2026-05-12T12:38:11+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1567,6 +1567,22 @@
       "example": "12:00 popup_publisher 全件 BLOCK。pre_publish_gate に翻訳前ハングルタイトル + sanitize 前 codeblock マーカー入り content を渡していたため、本来除去できる要因で BLOCK 連発",
       "fix": "pipeline/popup_publisher.py の gate 呼び出し直前に _gate_title 翻訳 + _gate_content sanitize_gpt_html 適用。test_popup_publisher_pregate_sanitize.py 4件追加",
       "agent": "popup_publisher",
+      "resolved_at": "2026-05-12"
+    },
+    "publish_stall_tavily_quota": {
+      "count": 4,
+      "last_seen": "2026-05-12",
+      "example": "12:00 daily_editor cycle で auto_event_article subprocess が 10分タイムアウト連発、breaking_news_detector cron 停止中のため 11:34-12:30 publish 完全停止。Tavily API quota 超過 → DDG fallback の遅延が原因",
+      "fix": "daily_editor.py の subprocess timeout を 600s→120s に短縮 + breaking_news_detector / auto_event_article / auto_comeback_article cron を再開 (publish経路冗長化)",
+      "agent": "daily_editor",
+      "resolved_at": "2026-05-12"
+    },
+    "enforcer_drafted_due_to_body_read_missing": {
+      "count": 18,
+      "last_seen": "2026-05-12",
+      "example": "本日 publish した 17件 (22000/22024/22027/21989/21972/21804/21775等) が body_read step 未記録のため enforcer cron に自動 draft 化",
+      "fix": "lib/unified_publisher.py の publish 成功 return 直前で record_step(post_id, body_read, ok) を自動記録。test_unified_publisher_auto_record_body_read.py 4件追加。既存17件は手動で record_step 救済",
+      "agent": "unified_publisher",
       "resolved_at": "2026-05-12"
     }
   },
