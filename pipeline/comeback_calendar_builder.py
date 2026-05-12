@@ -127,8 +127,155 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
         return {"comebacks": [], "summary": ""}
 
 
+def fetch_comebacks_via_batch_api() -> dict | None:
+    """全バッチを Anthropic Batch API で並列実行 (50% off)
+
+    Returns:
+        dict (成功時) / None (失敗時 — sync 版へ fallback)
+
+    2026-05-12 (Phase 7): 日次 5am cron なので 1h 程度の遅延許容、Batch API で半額。
+    Web Search tool は Batch API でも使用可能 (公式ドキュメント確認済)。
+    """
+    import time as _time
+    today = datetime.now(JST).strftime('%Y-%m-%d')
+    end_date = (datetime.now(JST) + timedelta(days=90)).strftime('%Y-%m-%d')
+    try:
+        client = anthropic.Anthropic()
+    except Exception as e:
+        print(f"  [batch] client init err: {e}", flush=True)
+        return None
+
+    # cost guard
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('comeback_calendar_builder_batch'):
+            return None
+    except ImportError:
+        pass
+
+    # 全 batch の requests を構築
+    requests = []
+    for i, batch in enumerate(ARTIST_BATCHES, 1):
+        prompt = f"""今日: {today}
+これから {end_date} までの K-POP comeback / リリース情報を調べてください。
+
+検索対象 (4組のみ — 必ず全員調査):
+{', '.join(batch)}"""
+        requests.append({
+            'custom_id': f'batch-{i}',
+            'params': {
+                'model': 'claude-sonnet-4-6',
+                'max_tokens': 4000,
+                'system': [{
+                    "type": "text",
+                    "text": _COMEBACK_SYSTEM,
+                    "cache_control": {"type": "ephemeral", "ttl": "1h"},
+                }],
+                'tools': [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}],
+                'output_config': {"format": {"type": "json_schema", "schema": SCHEMA}},
+                'messages': [{"role": "user", "content": prompt}],
+            },
+        })
+
+    try:
+        batch = client.messages.batches.create(requests=requests)
+        batch_id = batch.id
+        print(f"  [batch] submitted id={batch_id}, requests={len(requests)}", flush=True)
+    except Exception as e:
+        print(f"  [batch] create err: {e}", flush=True)
+        return None
+
+    # polling (max 30 分待機 — それ以上は sync fallback)
+    poll_max_sec = int(os.getenv('COMEBACK_BATCH_TIMEOUT', '1800'))
+    poll_interval = 15
+    elapsed = 0
+    while elapsed < poll_max_sec:
+        try:
+            batch = client.messages.batches.retrieve(batch_id)
+            status = getattr(batch, 'processing_status', 'unknown')
+            if status == 'ended':
+                break
+            print(f"  [batch] status={status} elapsed={elapsed}s", flush=True)
+        except Exception as e:
+            print(f"  [batch] retrieve err: {e}", flush=True)
+            return None
+        _time.sleep(poll_interval)
+        elapsed += poll_interval
+    else:
+        print(f"  [batch] timeout after {poll_max_sec}s — fallback to sync", flush=True)
+        try:
+            client.messages.batches.cancel(batch_id)
+        except Exception:
+            pass
+        return None
+
+    # 結果取得 + 集約
+    existing_comebacks = []
+    if CALENDAR_PATH.exists():
+        try:
+            existing_comebacks = json.loads(CALENDAR_PATH.read_text(encoding='utf-8')).get('comebacks', [])
+        except Exception:
+            pass
+
+    all_comebacks = list(existing_comebacks)
+    summaries = []
+    try:
+        for result in client.messages.batches.results(batch_id):
+            if getattr(result.result, 'type', '') != 'succeeded':
+                print(f"  [batch] {result.custom_id}: result type={getattr(result.result, 'type', '?')}", flush=True)
+                continue
+            msg = result.result.message
+            # cost ledger 記録
+            try:
+                from lib.anthropic_cost_guard import log_usage
+                log_usage('comeback_calendar_builder_batch', model='claude-sonnet-4-6', usage=msg.usage)
+            except Exception:
+                pass
+            text = next((b.text for b in msg.content if b.type == 'text'), '{}')
+            try:
+                parsed = json.loads(text)
+            except Exception:
+                continue
+            # ARTIST_BATCHES の idx から該当 batch を逆引き
+            custom = result.custom_id  # "batch-N"
+            try:
+                bidx = int(custom.split('-')[1]) - 1
+                batch_artists_lower = [a.lower() for a in ARTIST_BATCHES[bidx]]
+                all_comebacks = [cb for cb in all_comebacks
+                                 if not any(a in (cb.get('artist','').lower()) for a in batch_artists_lower)]
+            except Exception:
+                pass
+            all_comebacks.extend(parsed.get('comebacks', []))
+            if parsed.get('summary'):
+                summaries.append(parsed['summary'])
+    except Exception as e:
+        print(f"  [batch] results err: {e}", flush=True)
+        return None
+
+    # dedup
+    seen = set(); deduped = []
+    for cb in all_comebacks:
+        key = (cb.get('artist',''), cb.get('release_date',''), cb.get('title','')[:30])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(cb)
+
+    print(f"  [batch] claude fetched: {len(deduped)} entries", flush=True)
+    return {'comebacks': deduped, 'summary': ' / '.join(summaries[:3])}
+
+
 def fetch_comebacks_via_claude() -> dict:
-    """全バッチを順次実行して統合 (incremental save付き)"""
+    """全バッチを順次実行して統合 (incremental save付き)
+
+    2026-05-12 (Phase 7): COMEBACK_USE_BATCH=1 で Batch API 経由 (50% off) に切替可。
+    失敗時は自動で sync 版に fallback。
+    """
+    if os.getenv('COMEBACK_USE_BATCH') == '1':
+        batch_result = fetch_comebacks_via_batch_api()
+        if batch_result is not None:
+            return batch_result
+        print("  [batch] fallback to sync version", flush=True)
+
     today = datetime.now(JST).strftime('%Y-%m-%d')
     end_date = (datetime.now(JST) + timedelta(days=90)).strftime('%Y-%m-%d')
     client = anthropic.Anthropic()

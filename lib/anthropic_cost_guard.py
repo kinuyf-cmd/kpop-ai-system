@@ -264,7 +264,53 @@ def daily_summary() -> dict:
     }
 
 
+def _format_summary_for_discord(s: dict) -> tuple[str, str]:
+    """daily_summary を Discord 通知用の (title, body) に整形"""
+    icon = '🚨' if s['over_budget'] else '💰'
+    title = f"{icon} Claude API 日次コスト {s['date']}"
+    lines = [
+        f"**total calls**: {s['total_calls']:,}",
+        f"**total cost**: ${s['total_cost_usd']:.2f} / budget ${s['budget_usd']:.2f}",
+        '',
+        '**caller breakdown** (cost desc):',
+    ]
+    callers = sorted(s['by_caller'].items(), key=lambda kv: -kv[1]['cost'])
+    for caller, stats in callers[:10]:
+        lines.append(f"  - `{caller}`: {stats['calls']} calls / ${stats['cost']:.4f}")
+    if not callers:
+        lines.append('  (本日は cost_ledger に記録なし — まだ Anthropic 呼出なし)')
+    return title, '\n'.join(lines)
+
+
+def send_daily_summary_to_discord(force: bool = False) -> bool:
+    """日次サマリを Discord に push (cron から実行)
+
+    Args:
+        force: True なら通常モード (MORNING channel)、
+               False で予算超過時のみ ERROR channel に通知
+
+    Returns:
+        通知成功 True / 失敗 False (best-effort)
+    """
+    s = daily_summary()
+    if not force and not s['over_budget'] and s['total_calls'] == 0:
+        # 通常時で call なしの日は通知しない (低 SN ratio 回避)
+        return False
+    title, body = _format_summary_for_discord(s)
+    try:
+        from lib.discord_channel_router import send_to_channel, ChannelType
+        channel = ChannelType.ERROR if s['over_budget'] else ChannelType.MORNING
+        send_to_channel(channel, title, body)
+        return True
+    except Exception as e:
+        log.warning(f'discord notify failed: {e}')
+        return False
+
+
 if __name__ == '__main__':
-    # CLI: 本日の集計を表示
+    # CLI: 本日の集計を表示 + Discord 通知
     import pprint
-    pprint.pprint(daily_summary())
+    s = daily_summary()
+    pprint.pprint(s)
+    # cron 経由実行時は強制通知 (毎朝 8:30 cron で当日累計を見たい)
+    send_daily_summary_to_discord(force=True)

@@ -249,7 +249,9 @@
 0 6 * * * cd /home/aiuser/kpop-ai-system && python3 -m pytest tests/test_thumbnail_defenses.py --quiet >> logs/regression_tests.log 2>&1
 0 9 * * 1 cd /home/aiuser/kpop-ai-system && python3 pipeline/kpop_kw_expansion_suggester.py >> logs/kpop_kw_suggestions.log 2>&1
 0 22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/daily_kpi_report.py >> logs/daily_kpi_report.log 2>&1
-0 5 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/comeback_calendar_builder.py >> logs/comeback_calendar_builder.log 2>&1
+# 2026-05-12 (Phase 7): COMEBACK_USE_BATCH=1 で Anthropic Batch API 経由 50% off。
+# 失敗時は sync fallback (return None で自動切替) — 品質完全同一。
+0 5 * * * cd /home/aiuser/kpop-ai-system && COMEBACK_USE_BATCH=1 python3 pipeline/comeback_calendar_builder.py >> logs/comeback_calendar_builder.log 2>&1
 0 6 * * 0 cd /home/aiuser/kpop-ai-system && python3 pipeline/profile_wiki_builder.py >> logs/profile_wiki_builder.log 2>&1
 
 # 4項目監査未達の自動draft化 (2026-05-10新設, memory feedback_audit_script_is_not_audit)
