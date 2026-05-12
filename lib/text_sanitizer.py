@@ -108,6 +108,13 @@ def sanitize_gpt_html(html: str) -> str:
     html = re.sub(r'ご参考ください[、。!]?', '', html)
     html = re.sub(r'まとめると[、。]', '', html)
 
+    # LLM出力で section header の「h2: 〇〇」「h3: 〇〇」が plain text として
+    # <p> タグにラップされる事故対策 (2026-05-12 pid=22343 で OSEN 経由3か所残存)
+    # <p>h2: タイトル</p> → <h2>タイトル</h2> に変換
+    html = re.sub(r'<p[^>]*>\s*(h[2-6])\s*[:：]\s*([^<]+?)\s*</p>',
+                  lambda m: f'<{m.group(1).lower()}>{m.group(2).strip()}</{m.group(1).lower()}>',
+                  html)
+
     # 文字重複修正 (5文字以上の連続→2文字に)
     html = re.sub(r'(.)\1{4,}', r'\1\1', html)
 
