@@ -298,11 +298,22 @@ def fetch_source_image(source_url, output_path):
                 break
 
         # --- 記事内の画像URL候補を収集 ---
+        # 2026-05-11: yonhap記事の /reporter/ 署名画像を NCT 速報サムネに誤採用した事故対応 (post 21662)
+        # feedback_artist_photo_absolute_rule 違反防止 — 記者署名/編集者プロフィール画像は記事と無関係
+        _BYLINE_PATTERNS = (
+            '/reporter/', '/reporters/', '/journalist/', '/journalists/',
+            '/author/', '/authors/', '/byline/', '/columnist/', '/profile/',
+            '/staff/', '/editor/', '/writer/', '/contributor/',
+        )
         article_imgs = []
         for m in re.finditer(r'<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"', html, re.IGNORECASE):
             url = m.group(1)
-            if not any(skip in url.lower() for skip in ['avatar', 'logo', 'icon', 'emoji', 'ad-', 'banner']):
-                article_imgs.append(url)
+            ul = url.lower()
+            if any(skip in ul for skip in ['avatar', 'logo', 'icon', 'emoji', 'ad-', 'banner']):
+                continue
+            if any(pat in ul for pat in _BYLINE_PATTERNS):
+                continue
+            article_imgs.append(url)
 
         # og:imageが広告/動画プレーヤー由来なら拒否し、記事内画像にフォールバック
         if og_url:
