@@ -188,6 +188,10 @@
 45 9-21 * * * cd /home/aiuser/kpop-ai-system && python3 lib/x_retry_processor.py >> logs/x_retry.log 2>&1
 # --- X投稿スケジューラー (時間分散) ---
 */15 7-21 * * * cd /home/aiuser/kpop-ai-system && X_TWEET_LLM=1 python3 -m pipeline.x_scheduled_poster >> logs/x_scheduled.log 2>&1
+# --- v14 AI smell tweet 過去分削除 drainer (30件/30min, rate limit 安全幅): 2026-05-12 設置 ---
+*/30 * * * * cd /home/aiuser/kpop-ai-system && python3 lib/x_smell_drainer.py >> logs/x_smell_drainer.log 2>&1
+# --- trending_ranking.json regen (sidebar popular widget 用、cache が 16 日古かった事故対策 2026-05-12) ---
+0 */4 * * * cd /home/aiuser/kpop-ai-system && python3 -c "from lib.trending_widget import compute_trending; compute_trending()" >> logs/trending_refresh.log 2>&1
 # --- X投稿ライフサイクル管理 (404削除・OGP同期・サムネ再投稿) ---
 # 2026-05-11: 1日3回→1回に削減 (daily_kpi_report のスパム判定指摘 99件/日対策)
 0 10 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.x_lifecycle_manager >> logs/x_lifecycle.log 2>&1
