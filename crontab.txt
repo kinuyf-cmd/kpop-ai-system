@@ -24,6 +24,7 @@
 0 23 * * 0 cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.learning_loop >> /opt/grant-ops/data/logs/cron_learning_loop.log 2>&1 # grant-ops-managed
 # MOVED: gtrends_collector → 8,12,16,22 (下部のcollectorsブロックに統合)
 0 6-21/3 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.popup_publisher >> logs/popup_publisher.log 2>&1 # RESUMED 2026-05-12
+*/15 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 tools/sync_trending_to_wp_snippet.py >> logs/sync_trending.log 2>&1
 0 2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m crawler.scheduler --batch 5 --triggered-by cron >> /opt/grant-ops/data/logs/cron_scheduler.log 2>&1 # grant-ops-managed
 0 */2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.repair >> /opt/grant-ops/data/logs/cron_repair.log 2>&1 # grant-ops-managed
 0 2 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python scripts/security_monitor.py >> /opt/grant-ops/data/logs/cron_security.log 2>&1 # grant-ops-managed
