@@ -464,7 +464,17 @@ def pre_publish_gate(
     # 1h00. タイトルとソースヘッドラインの乖離チェック
     # 記事タイトルにソースにない固有名詞が追加されていたらBLOCK
     if source_title and title:
-        _src_text = source_title.lower()
+        # 2026-05-12: 한국어 ソース見出し中の artist/group hangul を英字 alias に
+        # 展開してから比較。「아일릿→ILLIT」等の **正しい翻訳** を「ソースにない語句が
+        # 追加」誤検知して OSEN/MyDaily 系の publish を 24h で 0 件まで落とした事故
+        # への根治。korean_proper_nouns.json の members+groups+labels を共有辞書として
+        # 使うことで translator と一貫性を保つ。
+        try:
+            from lib.korean_translator import apply_proper_noun_dict
+            _src_normalized, _ = apply_proper_noun_dict(source_title)
+        except Exception:
+            _src_normalized = source_title
+        _src_text = _src_normalized.lower()
         # 記事タイトルの英字固有名詞を抽出
         _title_proper = set(re.findall(r'[A-Z][A-Za-z]{2,}', title))
         _title_proper -= {'速報', 'KPOP'}

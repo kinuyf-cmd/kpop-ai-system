@@ -232,6 +232,10 @@ def _wrap_body(translated: str, fallback_title: str, success: bool) -> str:
     return f"<p>{text}</p>"
 
 
+# 2026-05-12: Tavily quota exhausted 後の連続失敗ログを抑制するための process-local flag
+_TAVILY_QUOTA_EXHAUSTED = False
+
+
 def _enrich_with_web_search(title, sigs):
     """速報記事生成前にWeb検索で事実を収集（捏造防止の根本対策）
 
@@ -252,23 +256,32 @@ def _enrich_with_web_search(title, sigs):
     parts = []
 
     # 1. Tavily (優先)
-    try:
-        tavily_key = os.environ.get('TAVILY_API_KEY', '')
-        if tavily_key:
-            from tavily import TavilyClient
-            client = TavilyClient(api_key=tavily_key)
-            query = f'{title} K-POP 2026'
-            response = client.search(query, max_results=5, search_depth='basic',
-                                     exclude_domains=['kpopjournal.tokyo'])
-            for r in response.get('results', [])[:4]:
-                content = r.get('content', '')[:400]
-                r_title = r.get('title', '')
-                if content and _is_relevant(r_title, content):
-                    parts.append(f'【{r_title}】{content}')
-            if parts:
-                return '\n'.join(parts)
-    except Exception as _te:
-        print(f"  [web_search] Tavily失敗: {_te}")
+    # 2026-05-12: 同一 process 内で quota exhausted エラーが一度出たら以後 skip。
+    # 毎回 Tavily API を叩いてエラーで落ちる無駄を防ぐ (cron 起動ごとには再試行)。
+    global _TAVILY_QUOTA_EXHAUSTED
+    if not _TAVILY_QUOTA_EXHAUSTED:
+        try:
+            tavily_key = os.environ.get('TAVILY_API_KEY', '')
+            if tavily_key:
+                from tavily import TavilyClient
+                client = TavilyClient(api_key=tavily_key)
+                query = f'{title} K-POP 2026'
+                response = client.search(query, max_results=5, search_depth='basic',
+                                         exclude_domains=['kpopjournal.tokyo'])
+                for r in response.get('results', [])[:4]:
+                    content = r.get('content', '')[:400]
+                    r_title = r.get('title', '')
+                    if content and _is_relevant(r_title, content):
+                        parts.append(f'【{r_title}】{content}')
+                if parts:
+                    return '\n'.join(parts)
+        except Exception as _te:
+            _msg = str(_te).lower()
+            if 'usage limit' in _msg or 'plan' in _msg or 'quota' in _msg or '429' in _msg:
+                _TAVILY_QUOTA_EXHAUSTED = True
+                print(f"  [web_search] Tavily quota exhausted → DuckDuckGo に固定 fallback")
+            else:
+                print(f"  [web_search] Tavily失敗: {_te}")
 
     # 2. DuckDuckGo フォールバック
     if not parts:
