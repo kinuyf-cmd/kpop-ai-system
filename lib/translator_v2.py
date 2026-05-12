@@ -43,6 +43,8 @@ TRANSLATOR_SYSTEM = """あなたはK-POP専門メディアの韓国語→日本�
 - 아이들→(G)I-DLE / 일릿→ILLIT / 베이비몬스터→BABYMONSTER
 - 라이즈→RIIZE / 보이넥스트도어→BOYNEXTDOOR / 트레저→TREASURE
 - 키스오브라이프→KISS OF LIFE / 코르티스→CORTIS
+- 1字メンバー名: 진→BTSメンバーはJIN / 뷔→V / 키→KEY / 비→Rain (歌手) / 탑→T.O.P
+  ただし「진해성」「진심」「비싸다」等は人名ではないので文脈判断
 
 【専門用語の統一】
 - 컴백→カムバック / 음방→音楽番組 / 솔로곡→ソロ曲

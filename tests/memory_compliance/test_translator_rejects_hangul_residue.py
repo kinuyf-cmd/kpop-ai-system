@@ -57,3 +57,26 @@ def test_apply_proper_noun_dict_replaces_new_entries():
     out, n = apply_proper_noun_dict('변우석이 21세기 대군부인 OST를 발표')
     assert '변우석' not in out, f'변우석 should be replaced: {out}'
     assert 'ピョン・ウソク' in out, f'expected katakana: {out}'
+
+
+def test_jin_single_char_entry_removed():
+    """2026-05-12: 「진」1字エントリ削除確認 — 진해성→JIN해성 substring trap 再発防止
+    factcheck CRITICAL @ 2026-05-12 で 진해성(トロット歌手)が BTS JIN と取り違えられた事故対策"""
+    from lib.korean_translator import _load_proper_nouns, apply_proper_noun_dict
+    _load_proper_nouns.cache_clear()
+    # 진해성 → JIN해성 のような substring 置換が起きていないこと
+    out, _ = apply_proper_noun_dict('진해성이 트로트 가수다')
+    # 진해성 は新規エントリで「ジン・ヘソン」に置換される (3字エントリ優先)
+    assert 'ジン・ヘソン' in out, f'진해성→ジン・ヘソン期待: {out}'
+    # 「진」単独残存はLLM 文脈翻訳に任せる (人名でない可能性も含む)
+    # 「진심」「진짜」等の他語が JIN심/JIN짜 にならないこと
+    out2, _ = apply_proper_noun_dict('진심으로 환영한다')
+    assert 'JIN' not in out2, f'진심→JIN심 substring trap: {out2}'
+
+
+def test_bi_single_char_entry_removed():
+    """비→Rain の1字エントリ削除確認 — 비밀/비싸다 等の他語に含まれる substring trap"""
+    from lib.korean_translator import _load_proper_nouns, apply_proper_noun_dict
+    _load_proper_nouns.cache_clear()
+    out, _ = apply_proper_noun_dict('이것은 비밀이다')
+    assert 'Rain' not in out, f'비밀→Rain밀 substring trap: {out}'
