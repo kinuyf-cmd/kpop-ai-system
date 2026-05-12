@@ -172,7 +172,8 @@ def vision_validate(image_path: str, expected_artist: str,
             system=[{
                 "type": "text",
                 "text": K_POP_AUDIT_PREFIX,
-                "cache_control": {"type": "ephemeral"},
+                # 2026-05-12 (Phase 2): 1h cache TTL でサムネ再生成連打時の cache hit 率改善
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
             }],
             output_config={
                 "format": {

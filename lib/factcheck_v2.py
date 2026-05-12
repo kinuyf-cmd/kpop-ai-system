@@ -31,7 +31,11 @@ load_dotenv('/home/aiuser/kpop-ai-system/.env')
 
 LOG_PATH = Path('/home/aiuser/kpop-ai-system/logs/factcheck_v2.jsonl')
 CACHE_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_cache.json')
-CACHE_TTL_SEC = 6 * 3600  # 同一 title+content の連続呼び出し (pre_publish_gate → post_publish_hook → comprehensive_audit) を 1回に折り畳む
+# 2026-05-12 (Phase 2 コスト削減): 6h → 30日 に拡張。
+# factcheck 結果は content (title+本文) が同じなら同じ判定が返るため、本文修正されない
+# 限り再評価する必要はない。これで pre_publish_gate → post_publish_hook → audit cron 群
+# の重複呼出しを恒久遮断 (品質完全同一)。
+CACHE_TTL_SEC = 30 * 86400  # 30 days
 
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
 KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
@@ -181,7 +185,9 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
     today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
 
-    # 過去の検出事例 (lessons learned) を prompt に注入 — 自己学習
+    # 2026-05-12 (Phase 2): lessons は system cached block 側に移動 (cache_read 0.1x で再利用)。
+    # 旧実装は user_prompt 末尾に注入していたため毎回 input token として課金されていた。
+    # lessons の追加は低頻度なので 1h cache TTL 内では同じ内容を返し cache hit する。
     try:
         from lib.factcheck_lessons import get_recent_lessons, format_lessons_for_prompt
         lessons = get_recent_lessons(days=30, max_count=12)
@@ -194,7 +200,7 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 ## 校閲対象記事
 【タイトル】{title}
 【本文抜粋】{plain}
-{('\n' + lessons_section + '\n') if lessons_section else ''}
+
 上記K-pop知識基盤と判定ルールに従って校閲し、JSONで返却してください。
 不明な事実 (新曲名/最新リリース日等) があれば web_search ツールで信頼メディアで裏取りしてからJSON結果を返してください。
 """
@@ -209,14 +215,27 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
     try:
         client = _get_client()
+        # 2026-05-12 (Phase 2): cache_control に ttl=1h を明示。
+        # default の 5min TTL は publish 散発時に頻繁に miss して cache_create 課金が
+        # 発生していた (write は read の 12.5x コスト)。1h TTL は write 1.6x だが、
+        # 並列racing + cron 間隔 (8h ごとの llm_proofreader) で hit 率が劇的に上がる。
+        # lessons は時間窓で動的なので 2つ目の cache breakpoint として独立 cache する。
+        system_blocks = [{
+            "type": "text",
+            "text": KPOP_FACTCHECK_PREFIX,
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
+        }]
+        if lessons_section:
+            system_blocks.append({
+                "type": "text",
+                "text": lessons_section,
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
+            })
+
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=1500,
-            system=[{
-                "type": "text",
-                "text": KPOP_FACTCHECK_PREFIX,
-                "cache_control": {"type": "ephemeral"},
-            }],
+            system=system_blocks,
             tools=tools,
             output_config={
                 "format": {

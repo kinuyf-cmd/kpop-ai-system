@@ -133,7 +133,8 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
             system=[{
                 "type": "text",
                 "text": TRANSLATOR_SYSTEM,
-                "cache_control": {"type": "ephemeral"},
+                # 2026-05-12 (Phase 2): 1h cache TTL で並列racingと cron 間 cache_create 重複を抑制
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
             }],
             output_config={
                 "format": {
