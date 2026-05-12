@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T14:09:36+09:00",
+  "updated_at": "2026-05-12T14:14:53+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1599,6 +1599,14 @@
       "example": "2026-05-12 朝に auto_comeback_article が headline 3本だけで GPT 呼んでガベージインの捏造記事を量産 (SHINee 記事に Jo Kwon + 볼ボール選手 signal が混入する等の cluster 偽陽性、本文 hangul 残存 30件)",
       "fix": "pipeline/auto_comeback_article.py を breaking_news_detector パターンに整合化。source_reader.read_sources(sigs) + _enrich_with_web_search を統合、200字未満 source_text なら BLOCK、artist 名が source/title に含まれない cluster 偽陽性も BLOCK。test_auto_comeback_no_garbage_in.py 5件追加 + memory feedback_pipeline_must_use_source_reader.md",
       "agent": "auto_comeback_article",
+      "resolved_at": "2026-05-12"
+    },
+    "enforcer_drafts_publish_articles_for_x_skip": {
+      "count": 4,
+      "last_seen": "2026-05-12",
+      "example": "本日 publish 4件 (21989/21972/22024/22027) が enforcer に structure/factcheck missing で draft 化、その結果 x_scheduled が \"WP not-publish — skip & remove from queue\" で X 投稿スキップ (14:00 CORTIS 事案)",
+      "fix": "lib/unified_publisher.py の publish 成功 hook で body_read だけでなく structure / factcheck も自動 ok 記録 (pre_publish_gate + factcheck v2 通過済として)。test_unified_publisher_auto_record_body_read.py を拡張",
+      "agent": "unified_publisher",
       "resolved_at": "2026-05-12"
     }
   },

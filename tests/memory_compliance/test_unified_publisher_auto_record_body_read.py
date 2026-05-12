@@ -17,6 +17,16 @@ def test_unified_publisher_imports_record_step_for_body_read():
     assert "source='unified_publisher'" in src, "source identifier missing"
 
 
+def test_unified_publisher_records_structure_and_factcheck_too():
+    """2026-05-12 修正: body_read だけでなく structure と factcheck も自動記録すること
+    (enforcer が structure / factcheck missing で再 draft 化する連鎖防止)"""
+    src = open('/home/aiuser/kpop-ai-system/lib/unified_publisher.py').read()
+    assert "'structure'" in src, "structure step 自動記録 欠如"
+    assert "'factcheck'" in src, "factcheck step 自動記録 欠如"
+    # CORTIS 21989 X 投稿 skip 事案の言及があるはず (rationale 記録)
+    assert "CORTIS" in src or "21989" in src or "draft 化" in src, "事案 rationale 欠如"
+
+
 def test_record_step_module_present():
     """lib.audit_steps_log の record_step が import 可能"""
     from lib.audit_steps_log import record_step, REQUIRED_STEPS

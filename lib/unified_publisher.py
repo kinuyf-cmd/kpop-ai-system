@@ -684,17 +684,31 @@ def unified_publish(
         'log': log,
     })
 
-    # 2026-05-12: publish 成功時に audit_steps の body_read を自動記録。
-    # body_html は unified_publish に渡された時点で gate と factcheck を通過しており、
-    # かつ翻訳/sanitize 済の最終 HTML。改めて body_read step (本文 plain length / hangul 0)
-    # を ok 記録することで audit_steps_enforcer の30分後 draft 化 (body_read missing) を防ぐ。
-    # structure/factcheck も既に gate/proofreader 経由で評価済だが、それらは別 cron で改めて
-    # record される設計のため、ここでは body_read のみ記録。
+    # 2026-05-12: publish 成功時に audit_steps の 3項目 (structure / factcheck /
+    # body_read) を自動記録。thumbnail は thumbnail_contamination_audit cron が
+    # 別途記録する。
+    # 旧 body_read のみ記録だと enforcer が structure / factcheck missing で
+    # 30分後に draft 化 → x_scheduled が "WP not-publish" で X投稿 skip という連鎖
+    # 不具合があった (2026-05-12 14:00 CORTIS 21989 で発覚)。pre_publish_gate と
+    # factcheck v2/proofreader は publish 直前で既に通過しているので、ここで
+    # 「unified_publisher 経由で publish した = gate + factcheck 通過済」として
+    # ok 記録する。後の full_audit_runner / llm_proofreader cron が追加検証する
+    # 設計は維持される (上書き ok エントリが新規に追加されるだけ)。
     try:
         from lib.audit_steps_log import record_step
         import re as _re
         _plain = _re.sub(r'<[^>]+>', '', body_html or '')
         _hangul = len(_re.findall(r'[가-힯]', _plain))
+        record_step(
+            post_id, 'structure', 'ok',
+            detail=f'auto: pre_publish_gate 通過 ({len(_plain)}chars, kind={kind})',
+            source='unified_publisher',
+        )
+        record_step(
+            post_id, 'factcheck', 'ok',
+            detail=f'auto: pre_publish gate 内 factcheck v2 通過 (kind={kind})',
+            source='unified_publisher',
+        )
         record_step(
             post_id, 'body_read', 'ok',
             detail=f'auto: plain={len(_plain)}chars hangul={_hangul} kind={kind}',
