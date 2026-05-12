@@ -29,8 +29,13 @@ from PIL import Image
 from lib.audit_steps_log import record_step
 from lib.full_audit_engine import full_audit
 from lib.thumbnail_vision_validator import validate_thumbnail
+from lib.thumbnail_vision_gate import vision_validate as _vision_validate
 from lib.discord_channel_router import send_to_channel, ChannelType
+from lib.collectors.korean_base import is_kpop_related
 from pipeline.llm_proofreader import proofread_post
+
+# Vision check skip override (cost セーブ用)
+VISION_CHECK = os.getenv('AUTO_AUDIT_VISION', '1') == '1'
 
 LOOKBACK_MIN = int(os.getenv('AUTO_AUDIT_LOOKBACK_MIN', '35'))
 NO_DRAFT = os.getenv('AUTO_AUDIT_NO_DRAFT', '0') == '1'
@@ -92,7 +97,11 @@ def already_audited_by_auto(post_id, since_ts):
 
 
 def audit_thumbnail(post):
-    """heuristic thumbnail check (Claude vision なしの cron 用)"""
+    """thumbnail check: heuristic (aspect / alt) + Claude Vision (artist identity)
+
+    Vision で 22024 BABYMONSTER → 6人組画像 のような artist 不一致を検出する。
+    AUTO_AUDIT_VISION=0 で vision check を無効化可。
+    """
     media = (post.get('_embedded') or {}).get('wp:featuredmedia') or []
     if not media:
         return 'fail', 'NO_THUMBNAIL'
@@ -101,18 +110,40 @@ def audit_thumbnail(post):
     if not src:
         return 'fail', 'NO_THUMBNAIL_URL'
     title = post['title']['rendered'] if isinstance(post['title'], dict) else post['title']
+
+    # heuristic check
+    pid = post.get('id', 'X')
+    ext = src.rsplit('.', 1)[-1].split('?')[0][:5] or 'jpg'
+    tmp_path = f'/tmp/auto_audit_thumb_{pid}.{ext}'
     try:
         with urllib.request.urlopen(src, timeout=20) as r:
             img_bytes = r.read()
+        with open(tmp_path, 'wb') as f:
+            f.write(img_bytes)
         img = Image.open(BytesIO(img_bytes))
         w, h = img.size
         if h > w:
             return 'fail', f'PORTRAIT w={w} h={h}'
-        if not alt:
-            return 'warn', f'EMPTY_ALT w={w} h={h}'
-        return 'ok', f'{w}x{h} alt_present'
     except Exception as e:
-        return 'warn', f'thumb_check_err: {str(e)[:60]}'
+        return 'warn', f'thumb_dl_err: {str(e)[:60]}'
+
+    # vision check (artist identity)
+    if VISION_CHECK:
+        try:
+            artists = is_kpop_related(title) or []
+            expected = artists[0] if artists else ''
+            if expected:
+                ok, reason = _vision_validate(tmp_path, expected, article_title=title)
+                if not ok:
+                    return 'fail', f'VISION_MISMATCH artist={expected} reason={reason[:120]}'
+                return 'ok', f'{w}x{h} vision_ok artist={expected}'
+        except Exception as e:
+            # vision API 失敗時は heuristic のみで通す (cron をブロックしない)
+            return 'warn', f'vision_err: {str(e)[:80]}'
+
+    if not alt:
+        return 'warn', f'EMPTY_ALT w={w} h={h}'
+    return 'ok', f'{w}x{h} alt_present (heuristic only)'
 
 
 def audit_body(post):
