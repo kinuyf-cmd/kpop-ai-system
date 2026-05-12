@@ -522,6 +522,134 @@ def generate_alert_block(daily_actuals: dict, targets: dict) -> str:
 # ──────────────────────────────────────────────
 # メイン: フルダッシュボード生成
 # ──────────────────────────────────────────────
+def _aggregate_openai_cost(date_str: str) -> tuple[int, float]:
+    """OpenAI 経由のコスト (translation.jsonl / llm_proofreader.log) を日付で集計
+
+    Returns:
+        (calls, usd)
+    """
+    import json as _json
+    paths = [
+        '/home/aiuser/kpop-ai-system/logs/translation.jsonl',
+    ]
+    calls = 0
+    usd = 0.0
+    for p in paths:
+        try:
+            with open(p, encoding='utf-8') as f:
+                for line in f:
+                    try:
+                        d = _json.loads(line)
+                        if d.get('date') == date_str or d.get('ts','').startswith(date_str):
+                            calls += 1
+                            usd += float(d.get('cost_usd', 0))
+                    except Exception:
+                        continue
+        except OSError:
+            continue
+    return calls, usd
+
+
+def _aggregate_claude_cost(date_str: str) -> tuple[int, float, dict]:
+    """Claude API コストを date_str で集計"""
+    import json as _json
+    calls = 0
+    usd = 0.0
+    by_caller = {}
+    try:
+        with open('/home/aiuser/kpop-ai-system/data/cost_ledger.jsonl', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    d = _json.loads(line)
+                    if d.get('date') != date_str:
+                        continue
+                    calls += 1
+                    c = float(d.get('cost_usd', 0))
+                    usd += c
+                    caller = d.get('caller', '?')
+                    entry = by_caller.setdefault(caller, {'calls': 0, 'cost': 0.0})
+                    entry['calls'] += 1
+                    entry['cost'] += c
+                except Exception:
+                    continue
+    except OSError:
+        pass
+    return calls, usd, by_caller
+
+
+def generate_api_cost_block() -> str:
+    """API コストセクション — 当日リアルタイム + 昨日確定 + 月累計"""
+    now = datetime.now(JST)
+    today_str = now.strftime('%Y-%m-%d')
+    yesterday_str = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+    month_prefix = now.strftime('%Y-%m')
+
+    # 為替 (cost_tracker 経由)
+    try:
+        from lib.cost_tracker import _get_exchange_rate
+        jpy_rate = _get_exchange_rate()
+    except Exception:
+        jpy_rate = 150.0
+
+    # 当日
+    cl_calls_today, cl_usd_today, cl_callers_today = _aggregate_claude_cost(today_str)
+    oa_calls_today, oa_usd_today = _aggregate_openai_cost(today_str)
+    # 昨日
+    cl_calls_y, cl_usd_y, _ = _aggregate_claude_cost(yesterday_str)
+    oa_calls_y, oa_usd_y = _aggregate_openai_cost(yesterday_str)
+    # 月累計 (Claude のみ、ledger から)
+    import json as _json
+    cl_month_usd = 0.0
+    cl_month_calls = 0
+    try:
+        with open('/home/aiuser/kpop-ai-system/data/cost_ledger.jsonl', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    d = _json.loads(line)
+                    if d.get('date','').startswith(month_prefix):
+                        cl_month_usd += float(d.get('cost_usd', 0))
+                        cl_month_calls += 1
+                except Exception:
+                    continue
+    except OSError:
+        pass
+
+    # 月間予算想定 (Phase 1-7 削減後 想定 $42-50/月、上限 $80)
+    MONTHLY_BUDGET = float(os.environ.get('CLAUDE_MONTHLY_BUDGET_USD', '80.0'))
+    days_in_month = 30
+    days_passed = max(1, now.day)
+    month_pace_pct = (cl_month_usd / MONTHLY_BUDGET * 100) if MONTHLY_BUDGET else 0
+    # 月末予測 (現在のペース)
+    month_projection = cl_month_usd / days_passed * days_in_month
+
+    pace_icon = '✅' if month_pace_pct < 50 else ('🟡' if month_pace_pct < 80 else '🔴')
+
+    lines = [
+        '┌─────────────────────────────────────────────────────────────────┐',
+        '│  💰 API コスト (Phase 1-7 削減後)                                 │',
+        '├──────────────────────────────┬──────────┬──────────┬───────────┤',
+        '│  期間 / プロバイダ           │  calls   │  USD     │  JPY換算  │',
+        '├──────────────────────────────┼──────────┼──────────┼───────────┤',
+        f'│  今日 ({today_str}) Claude  │  {cl_calls_today:>6}  │  ${cl_usd_today:>6.2f} │  ¥{int(cl_usd_today*jpy_rate):>6,}  │',
+        f'│  今日 ({today_str}) OpenAI  │  {oa_calls_today:>6}  │  ${oa_usd_today:>6.2f} │  ¥{int(oa_usd_today*jpy_rate):>6,}  │',
+        f'│  昨日 ({yesterday_str}) Claude │  {cl_calls_y:>6}  │  ${cl_usd_y:>6.2f} │  ¥{int(cl_usd_y*jpy_rate):>6,}  │',
+        f'│  昨日 ({yesterday_str}) OpenAI │  {oa_calls_y:>6}  │  ${oa_usd_y:>6.2f} │  ¥{int(oa_usd_y*jpy_rate):>6,}  │',
+        '├──────────────────────────────┼──────────┼──────────┼───────────┤',
+        f'│  {month_prefix} 月累計 Claude     │  {cl_month_calls:>6}  │  ${cl_month_usd:>6.2f} │  ¥{int(cl_month_usd*jpy_rate):>6,}  │',
+        f'│  月末予測 (current pace)     │   ---    │ ${month_projection:>6.2f}  │  ¥{int(month_projection*jpy_rate):>6,}  │',
+        f'│  月予算 / ペース            │   ---    │ ${MONTHLY_BUDGET:>6.2f}  │   {pace_icon} {month_pace_pct:>4.0f}%  │',
+        '└──────────────────────────────┴──────────┴──────────┴───────────┘',
+    ]
+    # caller breakdown (当日 top 5)
+    if cl_callers_today:
+        lines.append('')
+        lines.append('  [本日 Claude caller breakdown — top 5]')
+        top = sorted(cl_callers_today.items(), key=lambda kv: -kv[1]['cost'])[:5]
+        for caller, st in top:
+            lines.append(f'    - {caller}: {st["calls"]} calls / ${st["cost"]:.4f}')
+    return '\n'.join(lines)
+
+
 def generate_full_dashboard() -> str:
     now = datetime.now(JST)
     yesterday = now - timedelta(days=1)
@@ -566,6 +694,9 @@ def generate_full_dashboard() -> str:
 
     # 最終目標進捗
     sections.append(generate_ultimate_progress(monthly_actuals, targets))
+
+    # API コスト (Phase 1-7 削減後の観測)
+    sections.append(generate_api_cost_block())
 
     # アラート
     alert_body = generate_alert_block(daily_actuals, targets)
