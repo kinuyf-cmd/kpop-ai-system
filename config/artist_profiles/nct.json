@@ -5,21 +5,6 @@
   "fandom_meaning": "「NCT」と市民を意味する「Citizen」を組み合わせた造語。NCTの世界観である「無限拡張」を共に担う存在として、ファンをグループの一員と位置づけている。",
   "members": [
     {
-      "name_en": "Taeil",
-      "name_kr": "이태일",
-      "name_ja": "テイル",
-      "real_name_en": "Lee Taeil",
-      "position": "メインボーカル",
-      "birth": "1994-06-14",
-      "nationality": "韓国",
-      "note": "2023年に契約満了によりNCTを脱退。",
-      "height_cm": "168",
-      "blood_type": "A",
-      "education": "ソウル公演芸術高校 → 韓国放送通信大学",
-      "hobbies": "音楽鑑賞, 歌, ゲーム",
-      "solo_works": "Spring (2019年)"
-    },
-    {
       "name_en": "Johnny",
       "name_kr": "서영호",
       "name_ja": "ジョニー",
@@ -157,20 +142,6 @@
       "education": "ソウル公演芸術高校 → 韓国芸術綜合学校",
       "hobbies": "ゲーム, 映画鑑賞, 料理",
       "instagram_personal": "https://www.instagram.com/kimjungwoo_nct/"
-    },
-    {
-      "name_en": "Lucas",
-      "name_kr": "황관헌",
-      "name_ja": "ルーカス",
-      "real_name_en": "Wong Yukhei",
-      "position": "ラッパー、ダンサー",
-      "birth": "1999-01-25",
-      "nationality": "香港",
-      "note": "2023年にSMエンターテインメントとの契約を終了し脱退。",
-      "height_cm": "183",
-      "blood_type": "O",
-      "education": "香港・保良局唐乃勤小学校出身",
-      "hobbies": "バスケットボール, ダンス, 映画鑑賞"
     },
     {
       "name_en": "Mark",
@@ -416,5 +387,36 @@
     "japan_official": "https://www.nct127.jp/"
   },
   "summary_ja": "NCT（Neo Culture Technology）は、2016年にSMエンターテインメントが設立した韓国の男性グループ。「無限拡張」をコンセプトに、固定メンバーを持たず複数のユニット（NCT U・NCT 127・NCT DREAM・WayV）で活動する革新的なシステムを採用している。メンバーは韓国・中国・日本・タイ・カナダ・米国など多国籍で構成され、グローバル展開を重視した戦略が特徴だ。デビュー以来、独創的なビジュアルとパフォーマンスで世界中にファン「NCTzen」を獲得し、Billboard Hot 100やGaon Chartに多数の楽曲がランクイン。現在もユニット活動を中心に精力的にリリースと世界ツアーを続けており、第4世代K-POPを代表するグループの一つとして高い評価を受けている。",
-  "_last_updated": "2026-05-11T20:49:35.117067+09:00"
+  "_last_updated": "2026-05-11T20:49:35.117067+09:00",
+  "former_members": [
+    {
+      "name_en": "Taeil",
+      "name_kr": "이태일",
+      "name_ja": "テイル",
+      "real_name_en": "Lee Taeil",
+      "position": "メインボーカル",
+      "birth": "1994-06-14",
+      "nationality": "韓国",
+      "note": "2023年に契約満了によりNCTを脱退。",
+      "height_cm": "168",
+      "blood_type": "A",
+      "education": "ソウル公演芸術高校 → 韓国放送通信大学",
+      "hobbies": "音楽鑑賞, 歌, ゲーム",
+      "solo_works": "Spring (2019年)"
+    },
+    {
+      "name_en": "Lucas",
+      "name_kr": "황관헌",
+      "name_ja": "ルーカス",
+      "real_name_en": "Wong Yukhei",
+      "position": "ラッパー、ダンサー",
+      "birth": "1999-01-25",
+      "nationality": "香港",
+      "note": "2023年にSMエンターテインメントとの契約を終了し脱退。",
+      "height_cm": "183",
+      "blood_type": "O",
+      "education": "香港・保良局唐乃勤小学校出身",
+      "hobbies": "バスケットボール, ダンス, 映画鑑賞"
+    }
+  ]
 }

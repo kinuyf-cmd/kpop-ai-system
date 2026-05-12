@@ -65,19 +65,27 @@ TARGET_CORE  = "コア"   # ファン・カムバック速報
 HOOKS = {
     # ── ニュース速報 ────────────────────────────────────────────────────────
     # カバー範囲: 速報・カムバック・チャート・ライブ・炎上・コラボ
+    # 2026-05-12 刷新: 「動いた/注目が集まっている/動向」等の抽象 AI 臭テンプレを撲滅
+    # 数値・固有名詞を必ず含める設計に変更
+    # event/number が抽出できない場合は plain テンプレ ({event}/{number} なし) を採用
     "news": [
-        # 事実駆動型 — 何が起きたか先に言う
-        "{artist}、{event}が確定した",
-        "{artist}に新展開があった",
+        # 事実駆動型 — 数値・固有名詞を埋め込む (event/number 必須)
         "{artist}、{event}を発表",
-        "{artist}が{number}冠を達成",
-        "{artist}来日、{number}都市で公演決定",
-        "{artist}、最新動向はこちら",
-        "{artist}関連の話題をまとめた",
-        # 抑えめのドラマ語(残置・頻度減)
-        "速報…{artist}が動いた",
-        "{artist}から発表があった",
-        "{artist}に注目が集まっている",
+        "{artist}、{event}が確定",
+        "{artist}が{number}冠",
+        "{artist}、{number}都市で公演決定",
+        "{artist}来日、{event}の詳細",
+        "{artist}、新譜{event}リリース",
+        "{artist}、{event}の参加メンバー判明",
+        "{artist}、{event}で記録更新",
+        "{artist}が{event}で1位",
+        "{artist}、{event}発表",
+        # event/number 抽出失敗時用 plain テンプレ (placeholderなし)
+        "{artist}の最新ニュース",
+        "{artist}、公式発表",
+        "{artist}が話題に",
+        "{artist}、新情報",
+        "{artist}、ファン反応続出",
     ],
     # ── 分析/解説 ─────────────────────────────────────────────────────────
     # カバー範囲: 考察・比較ランキング・歴史・業界解説・なぜ系
@@ -127,33 +135,26 @@ HOOKS = {
         "行った人だけ知ってる場所",
     ],
     # ── デフォルト（後方互換・旧ジャンル名） ──────────────────────────────
+    # 2026-05-12 刷新: 「動いた/動きがあった/速報」抽象テンプレを撲滅
     "default": [
-        # 事実駆動型
-        "{artist}、最新の話題はこちら",
-        "{artist}に動きがあった",
-        "{artist}関連、{event}を整理",
-        "{artist}ファン向けの新情報",
-        "{artist}が話題になっている",
-        "{artist}、ここに注目",
-        # 抑えめのドラマ語(頻度減)
-        "ついに{artist}が動いた",
-        "{artist}に新展開",
-        "ファン必見…{artist}速報",
+        "{artist}、{event}の最新情報",
+        "{artist}、{event}を発表",
+        "{artist}、{event}で話題",
+        "{artist}が{event}",
     ],
-    # 旧ジャンル名エイリアス（後方互換) — 2026-05-10刷新: ドラマ語連発を排除
-    "breaking":    ["{artist}、{event}を発表", "{artist}に新展開があった",
-                    "{artist}関連の最新情報", "速報…{artist}が動いた",
-                    "{artist}、最新動向はこちら"],
-    "comeback":    ["{artist}、新譜リリース決定", "{artist}カムバック日程発表",
-                    "{artist}が新章へ", "{artist}、復帰の詳細はこちら"],
-    "controversy": ["{artist}、現状を整理", "{artist}に動きがあった",
-                    "{artist}関連の最新情報", "{artist}、ファンの反応まとめ"],
-    "live":        ["{artist}来日公演、{number}都市で開催", "{artist}ライブ詳細はこちら",
-                    "{artist}、追加公演決定", "{artist}ツアーの最新情報"],
-    "chart":       ["{artist}が{number}冠を達成", "{artist}、記録更新の詳細",
-                    "{artist}チャート速報はこちら", "{artist}、最新ランキング"],
-    "fashion":     ["{artist}の最新スタイル", "{artist}、コーデ詳細はこちら",
-                    "{artist}着用アイテム公開", "{artist}ファッション最新情報"],
+    # 旧ジャンル名エイリアス（後方互換) — 2026-05-12 刷新
+    "breaking":    ["{artist}、{event}を発表", "{artist}、{event}が確定",
+                    "{artist}、{event}でファン反応"],
+    "comeback":    ["{artist}、{event}リリース決定", "{artist}カムバック日程発表",
+                    "{artist}、新譜{event}", "{artist}、{event}で復帰"],
+    "controversy": ["{artist}、{event}の経緯", "{artist}、{event}に公式コメント",
+                    "{artist}、{event}に対する反応"],
+    "live":        ["{artist}来日公演、{number}都市で開催", "{artist}、{event}追加公演",
+                    "{artist}ツアー{event}", "{artist}、{event}決定"],
+    "chart":       ["{artist}が{number}冠を達成", "{artist}、{event}で記録更新",
+                    "{artist}、{event}ランキング", "{artist}、{number}位"],
+    "fashion":     ["{artist}、{event}スタイル公開", "{artist}着用{event}公開",
+                    "{artist}コーデ{event}"],
 }
 
 # ─── コメントトリガー (v13.0 — 4ジャンル対応) ──────────────────────────────
@@ -175,30 +176,25 @@ COMMENT_TRIGGER_TYPE = {
 }
 
 COMMENT_TRIGGERS = {
-    # 2026-05-10刷新: 「どう思う？」連発を排除、controversial言い換えを削減
+    # 2026-05-12 刷新: 「記事にまとめている」「ファンの反応はリプ欄へ」「どう感じた?」
+    # 等の AI 臭定型を撲滅。短い疑問・断定でユーザーに考える余白を作る。
     "論争系": [
-        "詳細はこちら",
-        "記事に続きをまとめている",
-        "コメントで意見聞かせて",
-        "ファンの反応はリプ欄へ",
-        "詳しくは記事で",
-        "あなたはどう感じた?",
+        "どう見る?",
+        "賛否は分かれそう",
+        "ファンの意見は?",
+        "詳細記事↓",
     ],
     "感動系": [
-        "詳細レポートはこちら",
-        "ファンのコメント募集中",
-        "リプライで感想を",
-        "詳しくは記事で",
-        "ぜひコメントを",
-        "応援メッセージ歓迎",
+        "応援したい",
+        "ファンの反応は?",
+        "続報待ち",
+        "詳細記事↓",
     ],
     "記録系": [
-        "数字の詳細は記事で",
-        "最新ランキングはこちら",
-        "詳細データを見る",
-        "記録の続きはこちら",
-        "詳しくは記事で",
-        "RTで応援を",
+        "新記録の意味",
+        "詳細データ↓",
+        "今後の展開は",
+        "詳細記事↓",
     ],
 }
 
@@ -206,18 +202,17 @@ COMMENT_TRIGGERS = {
 # 未完結・答えを書かない・感情を動かす
 EMOTION_LINES = {
     # ── ニュース速報: 緊迫感・予想外・拡散欲求 ─────────────────────────────
+    # 2026-05-12 刷新: 「動いている/注目が集まっている/分かっていること/まとめている」
+    # 等の AI 臭抽象テンプレを撲滅。タイトル断片を必ず含む形式に変更。
     "news": [
-        # 事実駆動型 — 内容に踏み込む
-        "詳細は記事にまとめている",
-        "発表内容を整理した",
-        "ファンの注目が集まっている",
-        "関連情報をまとめている",
-        "新展開の背景はこちら",
-        "現時点で分かっていること",
-        # 抑えめのドラマ語(残置・頻度減)
-        "SNSでも話題になっている",
-        "ファンの反応はさまざま",
-        "事態は今も動いている",
+        "{title_frag}",
+        "{title_frag}が判明",
+        "公式発表は{title_frag}",
+        "{title_frag} — その理由は",
+        "{title_frag}が話題",
+        "{title_frag}に反響",
+        "{title_frag}の背景",
+        "{title_frag}の詳細",
     ],
     # ── 分析/解説: 知的好奇心・「実は知らなかった」 ─────────────────────────
     "analysis": [
@@ -257,45 +252,42 @@ EMOTION_LINES = {
         "この場所、まだ穴場だった",
         "ファンが集まる理由がわかった",
     ],
-    # 2026-05-10刷新: 後方互換 alias もドラマ語連発を排除
+    # 2026-05-12 刷新: 後方互換 alias も AI 臭抽象テンプレを撲滅、title_frag 駆動に
     "breaking":    [
-        "詳細は記事にまとめている",
-        "発表内容を整理した",
-        "現時点で分かっていること",
+        "{title_frag}",
+        "{title_frag}が判明",
+        "公式発表は{title_frag}",
     ],
     "comeback":    [
-        "リリース詳細はこちら",
-        "新譜情報をまとめている",
-        "発表内容の詳細",
+        "{title_frag}",
+        "{title_frag}リリース確定",
+        "新譜は{title_frag}",
     ],
     "controversy": [
-        "現状を整理している",
-        "ファンの反応を整理",
-        "詳細は記事で確認",
+        "{title_frag}",
+        "公式は{title_frag}と発表",
+        "{title_frag}に反応",
     ],
     "live":        [
-        "公演詳細はこちら",
-        "ツアー情報まとめ",
-        "会場・日程の詳細",
+        "{title_frag}",
+        "公演詳細は{title_frag}",
+        "{title_frag}で開催",
     ],
     "chart":       [
-        "詳細データは記事で",
-        "最新ランキング情報",
-        "チャート速報まとめ",
+        "{title_frag}",
+        "新記録は{title_frag}",
+        "{title_frag}に到達",
     ],
     "fashion":     [
-        "アイテム詳細はこちら",
-        "コーデの詳細をまとめた",
-        "スタイル情報まとめ",
+        "{title_frag}",
+        "着用は{title_frag}",
+        "{title_frag}スタイル",
     ],
     "default":     [
-        "詳細は記事にまとめている",
-        "最新情報を整理",
-        "ファンの注目が集まっている",
-        "詳しい内容はこちら",
-        "関連情報をまとめている",
-        "新展開の背景はこちら",
-        "現時点で分かっていること",
+        "{title_frag}",
+        "{title_frag}が判明",
+        "公式は{title_frag}と発表",
+        "{title_frag}に反応",
     ],
 }
 
@@ -391,29 +383,36 @@ def extract_artist(title: str) -> str:
 
 
 def extract_event(title: str) -> str:
-    """タイトルからイベント/出来事キーワードを抽出する"""
+    """タイトルからイベント/出来事キーワードを抽出する。
+    2026-05-12: 「動向」fallback を廃止 (抽象 AI 臭の主犯)。
+    マッチしない場合は空文字を返し、呼び出し側で event 必須テンプレを skip させる。
+    """
     event_words = [
-        "カムバック", "復帰", "新曲", "MV", "アルバム", "ツアー", "来日",
-        "コンサート", "脱退", "炎上", "熱愛", "結婚", "入隊", "除隊",
-        "1位", "記録", "コラボ", "出演", "発表", "決定", "公開",
+        "カムバック", "復帰", "新曲", "MV", "ミニアルバム", "アルバム", "ツアー", "来日",
+        "コンサート", "ファンミーティング", "脱退", "炎上", "熱愛", "結婚", "入隊", "除隊",
+        "コラボ", "出演", "ソロデビュー", "ソロ曲", "シングル", "リリース",
+        "ペンライト", "グッズ", "OST", "ドラマ", "映画", "ファンサ", "サイン会",
+        "受賞", "ノミネート",
     ]
     for word in event_words:
         if word in title:
             return word
-    return "動向"
+    return ""
 
 
 def extract_number(title: str) -> str:
-    """タイトルから意味のある数字を抽出する（年号・日付は除外）"""
-    # 年号(2024〜2030)・日付(01〜31)を除いた数字を優先
+    """タイトルから意味のある数字を抽出する（年号・日付は除外）。
+    2026-05-12: fallback "新" を空文字に変更。
+    抽出失敗時は呼び出し側で {number} 必須テンプレを skip させる。
+    """
     for m in re.finditer(r'(\d+)', title):
         n = int(m.group(1))
-        if 2020 <= n <= 2035:  # 年号はスキップ
+        if 2020 <= n <= 2035:
             continue
-        if n > 100:  # 大きすぎる数字はスキップ
+        if n > 100:
             continue
         return str(n)
-    return "新"
+    return ""
 
 
 def _random_idx(items_len: int, title: str = "") -> int:
@@ -464,7 +463,12 @@ def _hook_signature(hook_template: str, artist: str, event: str, number: str) ->
 
 def select_hook(genre: str, title: str, artist: str) -> str:
     """ジャンルに基づいてフックをランダム選択し、プレースホルダを埋める。
-    直近5日に使ったhookは可能な限り回避 (novelty確保)"""
+    直近5日に使ったhookは可能な限り回避 (novelty確保)
+
+    2026-05-12: event/number が抽出できない場合、それを placeholder にもつ
+    テンプレを skip (空文字埋め込みで「{artist}、を発表」のような壊れた hook を
+    生成しないため)。
+    """
     hooks = HOOKS.get(genre, HOOKS["default"])
     event = extract_event(title)
     number = extract_number(title)
@@ -475,6 +479,12 @@ def select_hook(genre: str, title: str, artist: str) -> str:
         candidates = [h for h in hooks if "{artist}" in h] or hooks
     else:
         candidates = [h for h in hooks if "{artist}" not in h] or hooks
+
+    # event/number 必須テンプレを抽出失敗時に除外 (空埋め込み防止)
+    if not event:
+        candidates = [h for h in candidates if "{event}" not in h] or candidates
+    if not number:
+        candidates = [h for h in candidates if "{number}" not in h] or candidates
 
     # recent dedup: 直近使われたhookを除外したプールを優先
     fresh = [h for h in candidates
@@ -493,9 +503,17 @@ def select_hook(genre: str, title: str, artist: str) -> str:
 def build_emotion_line(genre: str, title: str, idx: int = 0) -> str:
     """v12.0 §3: 感情行（2行目）— 未完結・答えを書かない
     ランダム選択で毎回異なる感情行を生成する。
+    2026-05-12: {title_frag} placeholder をサポート (タイトル断片を埋め込む)。
+    title_frag が抽出できないテンプレは skip。
     """
     lines = EMOTION_LINES.get(genre, EMOTION_LINES["default"])
-    return lines[_random_idx(len(lines), title)]
+    artist = extract_artist(title)
+    title_frag = extract_title_fragment(title, artist)
+    # {title_frag} 必須テンプレは frag 抽出失敗時に skip
+    if not title_frag:
+        lines = [l for l in lines if "{title_frag}" not in l] or lines
+    line = lines[_random_idx(len(lines), title)]
+    return line.replace("{title_frag}", title_frag or "").strip()
 
 
 def build_comment_trigger(genre: str, idx: int = 0) -> str:
@@ -623,14 +641,12 @@ def extract_title_fragment(title: str, artist: str) -> str:
                 cut = i
                 break
         kw = kw[:cut]
+    # 2026-05-12 刷新: 「のあらまし」「のポイント」「を簡単に」等の AI 臭 suffix を撲滅。
+    # キーワードそのまま or 最小限の修飾 (「」括弧のみ) で具体性を保つ。
     fragment_patterns = [
-        # 2026-05-10刷新: 「真相とは…」「裏側」連発を排除し事実駆動に
-        '「{kw}」の詳細はこちら',
-        '"{kw}"について整理',
-        '「{kw}」のポイント',
-        '"{kw}"を簡単に',
-        '「{kw}」何があった?',
-        '"{kw}"のあらまし',
+        '「{kw}」',
+        '{kw}',
+        '"{kw}"',
     ]
     pattern = fragment_patterns[_random_idx(len(fragment_patterns), title)]
     return pattern.format(kw=kw)
@@ -662,6 +678,11 @@ def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -
         alt_hooks = []
         for h in HOOKS.get(genre, HOOKS["default"]):
             if "{artist}" in h:
+                continue
+            # event/number 必須テンプレを抽出失敗時に skip (2026-05-12 修正)
+            if "{event}" in h and not event:
+                continue
+            if "{number}" in h and not number:
                 continue
             h2 = h.replace("{number}", number).replace("{event}", event)
             if len(h2) <= 20:

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T14:31:59+09:00",
+  "updated_at": "2026-05-12T14:56:44+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1615,6 +1615,14 @@
       "example": "popup_publisher は post_to_wp_popup 独自実装で unified_publish 経由しないため、audit_steps record_step が呼ばれず、enforcer 30分後 draft 化 → X 投稿 skip 連鎖の同じ穴を抱えていた",
       "fix": "pipeline/popup_publisher.py の publish 成功 hook で 3項目 record_step (structure/factcheck/body_read) を独自呼び出し。test_popup_publisher_also_records_3_steps 追加",
       "agent": "popup_publisher",
+      "resolved_at": "2026-05-12"
+    },
+    "x_post_ai_smell_abstract_templates": {
+      "count": 1,
+      "last_seen": "2026-05-12",
+      "example": "X 投稿が全件「速報…X が動いた / 注目が集まっている / 詳細はこちら / 記事に続きをまとめている」テンプレ骨格で AI 量産アカウントと判別される状態",
+      "fix": "lib/x_post_templates.py の HOOKS/EMOTION_LINES/COMMENT_TRIGGERS/fragment_patterns 全面刷新。「動いた/動向/あらまし/ポイント/まとめている/事態」等の抽象 AI 臭テンプレを撲滅、title_frag (具体キーワード)/event/number 駆動の事実型に変更。extract_number/extract_event の空 fallback、select_hook の placeholder skip ロジック追加。test_x_post_templates_no_ai_smell.py 6件、memory feedback_x_post_no_ai_smell.md",
+      "agent": "x_post_templates",
       "resolved_at": "2026-05-12"
     }
   },

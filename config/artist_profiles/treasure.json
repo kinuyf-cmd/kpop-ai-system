@@ -111,23 +111,6 @@
       "instagram_personal": "https://www.instagram.com/treasureasahi/"
     },
     {
-      "name_en": "Yedam",
-      "name_kr": "박예담",
-      "name_ja": "パク・イェダム",
-      "real_name_en": "Park Ye Dam",
-      "position": "メインボーカル",
-      "birth": "2002-01-05",
-      "nationality": "韓国",
-      "note": "2023年にグループを脱退",
-      "height_cm": "174",
-      "blood_type": "B",
-      "mbti": "INFJ",
-      "education": "ソウル芸術高校",
-      "hobbies": "ピアノ, 作曲, 読書",
-      "solo_works": "WAYO (2021年)",
-      "instagram_personal": "https://www.instagram.com/treasureyedam/"
-    },
-    {
       "name_en": "Doyoung",
       "name_kr": "도영",
       "name_ja": "ドヨン",
@@ -253,5 +236,24 @@
     "japan_official": "https://ygtreasure.jp"
   },
   "summary_ja": "TREASUREは2020年8月7日にYGエンターテインメントからデビューした韓国の多国籍ボーイズグループです。韓国・日本出身のメンバーで構成され、ボーカル・ラップ・ダンスの三拍子揃ったパフォーマンスで注目を集めています。デビュー曲「BOY」から「JIKJIN」「BONA BONA」まで幅広い楽曲スタイルを持ち、2022年の1stフルアルバム「REBOOT」では音楽的な成熟度を示しました。日本でも積極的に活動しており、多くの日本人ファンを獲得。ファンダム「TREASURE MAKER」とともに成長を続け、2024年以降もコンスタントに新曲をリリースし、アジア全域でその存在感を高めているグループです。",
-  "_last_updated": "2026-05-11T20:53:53.660658+09:00"
+  "_last_updated": "2026-05-11T20:53:53.660658+09:00",
+  "former_members": [
+    {
+      "name_en": "Yedam",
+      "name_kr": "박예담",
+      "name_ja": "パク・イェダム",
+      "real_name_en": "Park Ye Dam",
+      "position": "メインボーカル",
+      "birth": "2002-01-05",
+      "nationality": "韓国",
+      "note": "2023年にグループを脱退",
+      "height_cm": "174",
+      "blood_type": "B",
+      "mbti": "INFJ",
+      "education": "ソウル芸術高校",
+      "hobbies": "ピアノ, 作曲, 読書",
+      "solo_works": "WAYO (2021年)",
+      "instagram_personal": "https://www.instagram.com/treasureyedam/"
+    }
+  ]
 }

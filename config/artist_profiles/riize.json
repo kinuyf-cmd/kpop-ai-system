@@ -43,16 +43,6 @@
       "nationality": "韓国"
     },
     {
-      "name_en": "Seunghan",
-      "name_kr": "승한",
-      "name_ja": "スンハン",
-      "real_name_en": "Im Seunghan",
-      "position": "ボーカル",
-      "birth": "2003-04-14",
-      "nationality": "韓国",
-      "note": "2023年11月に活動を一時休止し、2024年9月に正式脱退。"
-    },
-    {
       "name_en": "Sohee",
       "name_kr": "소희",
       "name_ja": "ソヒ",
@@ -130,5 +120,17 @@
     "japan_official": "https://riize-jp.com/"
   },
   "summary_ja": "RIIZEは2023年9月4日にSMエンタテインメントからデビューした7人組（現6人）K-POPボーイズグループ。グループ名は「Rise（上昇）」と「Realize（実現）」を組み合わせた造語で、夢を実現しながら共に高みへ昇るという意志を表している。デビュー曲「Get A Guitar」はギターサウンドを基調としたさわやかなポップチューンとして話題を呼び、短期間でグローバルなファンダム「BRIIZE」を獲得。元NCT/WayVメンバーのShotaro・Sungchan、韓国系アメリカ人のAntonなど多彩なバックグラウンドを持つメンバーが揃い、ダンス・ボーカル・ビジュアルすべてにおいて高水準を誇る。2025年には1stフルアルバムをリリースし、日本市場への本格進出も果たした次世代SMの主力グループ。",
-  "_last_updated": "2026-05-10T18:00:11.094852+09:00"
+  "_last_updated": "2026-05-10T18:00:11.094852+09:00",
+  "former_members": [
+    {
+      "name_en": "Seunghan",
+      "name_kr": "승한",
+      "name_ja": "スンハン",
+      "real_name_en": "Im Seunghan",
+      "position": "ボーカル",
+      "birth": "2003-04-14",
+      "nationality": "韓国",
+      "note": "2023年11月に活動を一時休止し、2024年9月に正式脱退。"
+    }
+  ]
 }
