@@ -56,6 +56,14 @@ ARTIST_NAMES = [
     "ENHYPEN", "TXT", "Stray Kids", "SEVENTEEN", "MAMAMOO", "EXO",
     "NCT", "RIIZE", "ZERO BASE ONE", "LE SSERAFIM", "Red Velvet",
     "GOT7", "MONSTA X", "ATEEZ", "THE BOYZ", "TOMORROW X TOGETHER",
+    # 2026-05-12: 22075 NMIXX / 21989 CORTIS / 22123 fromis_9 で artist 一致
+    # スコアが付かず Gummy/MOMOLAND 等の無関係 GENRE_KEYWORDS マッチ記事へ
+    # リンクが流れていた事故への対応。最近活動の主要グループを追加。
+    "NMIXX", "CORTIS", "fromis_9", "ITZY", "(G)I-DLE", "G)I-DLE", "GIDLE",
+    "Kep1er", "ZEROBASEONE", "TWS", "BOYNEXTDOOR", "EVNNE",
+    "NCT WISH", "NCT DREAM", "NCT 127", "WayV",
+    "TAEYONG", "TAEYEON", "JISOO", "JENNIE", "ROSE", "LISA",
+    "STAYC", "VIVIZ", "Billlie", "tripleS", "QWER",
 ]
 
 GENRE_KEYWORDS = [
