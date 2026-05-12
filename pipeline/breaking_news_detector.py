@@ -52,6 +52,131 @@ def today_breaking_count():
                if l.strip() and json.loads(l).get('date') == today)
 
 
+def _recent_breaking_titles(hours: int = 3) -> list:
+    """直近 hours 内に publish した breaking 記事のタイトル一覧を返す (WP search lag 回避)"""
+    if not os.path.exists(BREAKING_LOG):
+        return []
+    cutoff = datetime.now() - timedelta(hours=hours)
+    titles = []
+    try:
+        with open(BREAKING_LOG, encoding='utf-8') as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                ts_str = d.get('ts', '')
+                if not ts_str:
+                    continue
+                try:
+                    ts = datetime.fromisoformat(ts_str)
+                except Exception:
+                    continue
+                if ts < cutoff:
+                    continue
+                t = d.get('title', '')
+                if t:
+                    titles.append(t)
+    except Exception:
+        pass
+    return titles
+
+
+# アーティスト/メンバー名の表記揺れ正規化 (英字 ⇔ カタカナ)
+# V-Jimin 3重投稿 root cause (Jimin と ジミン が同一人物として認識されなかった事故) 対策
+_NAME_NORMALIZE = {
+    'Jimin': 'ジミン', 'jimin': 'ジミン', 'JIMIN': 'ジミン',
+    'Jungkook': 'ジョングク', 'JUNGKOOK': 'ジョングク',
+    'Jin': 'ジン', 'JIN': 'ジン',
+    'Suga': 'シュガ', 'SUGA': 'シュガ',
+    'V': 'V', 'テテ': 'V',  # V は英字短いが固有名詞として通す
+    'RM': 'RM',
+    'J-Hope': 'ジェイホープ', 'JHope': 'ジェイホープ',
+    'Taehyung': 'V', 'TAEHYUNG': 'V', 'テヒョン': 'V',
+    'BTS': 'BTS', '防弾少年団': 'BTS',
+    'BLACKPINK': 'BLACKPINK', 'ブラックピンク': 'BLACKPINK',
+    'Lisa': 'リサ', 'LISA': 'リサ',
+    'Jennie': 'ジェニ', 'JENNIE': 'ジェニ',
+    'Rose': 'ロゼ', 'ROSE': 'ロゼ', 'Rosé': 'ロゼ',
+    'Jisoo': 'ジス', 'JISOO': 'ジス',
+    'NewJeans': 'NewJeans', 'ニュージーンズ': 'NewJeans',
+    'IVE': 'IVE', 'アイブ': 'IVE',
+    'Wonyoung': 'ウォニョン', 'WONYOUNG': 'ウォニョン',
+    'Yujin': 'ユジン', 'YUJIN': 'ユジン',
+    'aespa': 'aespa', 'エスパ': 'aespa', 'Aespa': 'aespa',
+    'Karina': 'カリナ', 'KARINA': 'カリナ',
+    'Winter': 'ウィンター', 'WINTER': 'ウィンター',
+    'Ningning': 'ニンニン', 'NINGNING': 'ニンニン',
+    'Giselle': 'ジゼル', 'GISELLE': 'ジゼル',
+}
+
+
+def _normalize_keywords(words: set) -> set:
+    """表記揺れを統一して比較可能にする (Jimin → ジミン 等)"""
+    out = set()
+    for w in words:
+        out.add(_NAME_NORMALIZE.get(w, w))
+    return out
+
+
+def _is_duplicate_of_recent(candidate_title: str, recent_titles: list) -> bool:
+    """候補タイトルが直近 publish 済記事と重複するかチェック (cluster duplicate 防止)
+
+    V-Jimin 3重投稿 事故 (2026-05-12) を踏まえて以下を強化:
+      - アーティスト/メンバー名の表記揺れ正規化 (Jimin↔ジミン 等)
+      - 漢字熟語の包含関係チェック (写真投稿 ⊃ 写真)
+    """
+    import re as _re
+    _stop = {'ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見',
+             '発表', '公開', '判明', '披露', '批判', '反発', '受ける', '招く',
+             '無視', '扱い'}
+
+    def _extract_kw(t: str) -> set:
+        kw = set(_re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', t))
+        kw = _normalize_keywords(kw)
+        return kw - _stop
+
+    def _has_substring_kanji_match(s1: set, s2: set) -> int:
+        """漢字熟語の包含チェック: s1 中の漢字語が s2 中のどれかに含まれる/含むなら 1 個カウント"""
+        count = 0
+        kanji_s1 = {w for w in s1 if _re.match(r'^[一-龥]+$', w)}
+        kanji_s2 = {w for w in s2 if _re.match(r'^[一-龥]+$', w)}
+        matched = set()
+        for w1 in kanji_s1:
+            for w2 in kanji_s2:
+                if w1 == w2 or w1 in w2 or w2 in w1:
+                    if w1 not in matched:
+                        matched.add(w1)
+                        count += 1
+                    break
+        return count
+
+    new_kw = _extract_kw(candidate_title)
+    if not new_kw:
+        return False
+    for rt in recent_titles:
+        rt_kw = _extract_kw(rt)
+        if not rt_kw:
+            continue
+        exact_overlap = new_kw & rt_kw
+        # 固有名詞 (英字 / カタカナ) の exact 一致
+        proper_overlap = {w for w in exact_overlap
+                          if _re.match(r'[A-Za-z]|[ァ-ヶー]', w)}
+        # 漢字熟語の包含一致を追加カウント
+        kanji_overlap = _has_substring_kanji_match(new_kw, rt_kw)
+        total_overlap = len(exact_overlap) + max(0, kanji_overlap - len(exact_overlap & {w for w in exact_overlap if _re.match(r'^[一-龥]+$', w)}))
+
+        # 固有名詞2個以上、または全体3個以上で同テーマ判定
+        if len(proper_overlap) >= 2:
+            return True
+        # 固有名詞1個 + 漢字包含1個 でも同テーマ濃厚
+        if len(proper_overlap) >= 1 and kanji_overlap >= 1:
+            return True
+        if len(exact_overlap) >= 3:
+            return True
+    return False
+
+
 def _is_stale_source(sig) -> bool:
     """ソースURLに含まれる日付が7日以上前ならTrue（古いニュースの速報化を防止）"""
     url = sig.get('url', '')
@@ -541,17 +666,29 @@ def main(dry_run=False):
     candidates = detect_breaking(signals)
     print(f"速報候補: {len(candidates)}件")
 
+    # 直近 3h の publish 履歴と同テーマの候補を pre-filter
+    # (cluster duplicate 防止: V-Jimin 4重投稿 root cause 対策、2026-05-12)
+    recent_titles = _recent_breaking_titles(hours=3)
+
     published = 0
+    just_published_titles = []  # この回 cron 内での publish ガード
     import time as _time
     for artist, sigs, typ in candidates[:DAILY_BREAKING_LIMIT - count_today]:
         best = max(sigs, key=lambda s: len(s.get('title', '')))
         print(f"\n=== {artist} ({typ}): {best['title'][:60]} ===")
+        # 直近 publish 履歴 + 今回 cron 内 publish 済とのテーマ重複チェック
+        cand_title = best.get('title', '')
+        all_recent = recent_titles + just_published_titles
+        if _is_duplicate_of_recent(cand_title, all_recent):
+            print(f"  [dedup] 直近3h publish 済 cluster と重複 → skip")
+            continue
         if dry_run:
             continue
         r = publish_breaking(artist, sigs, typ)
         if r:
             print(f"  速報公開 ID={r.get('id')}")
             published += 1
+            just_published_titles.append(r.get('title', cand_title))
             # バースト防止: 記事間に30秒待機（X投稿がスケジューラーキューに入るため短縮可能）
             _time.sleep(30)
 
