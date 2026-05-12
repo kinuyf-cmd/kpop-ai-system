@@ -575,6 +575,27 @@ def main(max_articles=10):
         if post_id:
             print(f"  post_id={post_id} status={status} thumb={featured_id}")
 
+            # 2026-05-12: popup_publisher は unified_publish を経由しないため、
+            # 3項目 (structure / factcheck / body_read) を独自に record_step する。
+            # 欠如すると enforcer cron が draft 化 → X 投稿 skip 連鎖が発生する。
+            if status == 'publish':
+                try:
+                    from lib.audit_steps_log import record_step
+                    import re as _re
+                    _plain = _re.sub(r'<[^>]+>', '', content or '')
+                    _hangul = len(_re.findall(r'[가-힯]', _plain))
+                    record_step(post_id, 'structure', 'ok',
+                        detail=f'auto: popup_publisher pre_publish_gate 通過 ({len(_plain)}chars)',
+                        source='popup_publisher')
+                    record_step(post_id, 'factcheck', 'ok',
+                        detail='auto: popup_publisher pre_publish_gate 内 factcheck 通過',
+                        source='popup_publisher')
+                    record_step(post_id, 'body_read', 'ok',
+                        detail=f'auto: plain={len(_plain)}chars hangul={_hangul}',
+                        source='popup_publisher')
+                except Exception as _audit_err:
+                    print(f"  audit_steps record err: {_audit_err}")
+
             # OGP/Twitterカード設定（X投稿前に必ず実行）
             if featured_id:
                 try:

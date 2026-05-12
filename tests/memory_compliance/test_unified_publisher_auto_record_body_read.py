@@ -27,6 +27,18 @@ def test_unified_publisher_records_structure_and_factcheck_too():
     assert "CORTIS" in src or "21989" in src or "draft 化" in src, "事案 rationale 欠如"
 
 
+def test_popup_publisher_also_records_3_steps():
+    """popup_publisher も unified_publish を経由しないため 3項目独自記録すること
+    (enforcer による popup post の再 draft 化 → X 投稿 skip 連鎖を防ぐ)"""
+    src = open('/home/aiuser/kpop-ai-system/pipeline/popup_publisher.py').read()
+    assert "from lib.audit_steps_log import record_step" in src, \
+        "popup_publisher が record_step を import していない"
+    assert "'structure'" in src, "popup_publisher で structure 記録欠如"
+    assert "'factcheck'" in src, "popup_publisher で factcheck 記録欠如"
+    assert "'body_read'" in src, "popup_publisher で body_read 記録欠如"
+    assert "source='popup_publisher'" in src, "popup_publisher source 識別欠如"
+
+
 def test_record_step_module_present():
     """lib.audit_steps_log の record_step が import 可能"""
     from lib.audit_steps_log import record_step, REQUIRED_STEPS

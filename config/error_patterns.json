@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T14:14:53+09:00",
+  "updated_at": "2026-05-12T14:31:59+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1607,6 +1607,14 @@
       "example": "本日 publish 4件 (21989/21972/22024/22027) が enforcer に structure/factcheck missing で draft 化、その結果 x_scheduled が \"WP not-publish — skip & remove from queue\" で X 投稿スキップ (14:00 CORTIS 事案)",
       "fix": "lib/unified_publisher.py の publish 成功 hook で body_read だけでなく structure / factcheck も自動 ok 記録 (pre_publish_gate + factcheck v2 通過済として)。test_unified_publisher_auto_record_body_read.py を拡張",
       "agent": "unified_publisher",
+      "resolved_at": "2026-05-12"
+    },
+    "popup_publisher_missing_audit_steps_record": {
+      "count": 1,
+      "last_seen": "2026-05-12",
+      "example": "popup_publisher は post_to_wp_popup 独自実装で unified_publish 経由しないため、audit_steps record_step が呼ばれず、enforcer 30分後 draft 化 → X 投稿 skip 連鎖の同じ穴を抱えていた",
+      "fix": "pipeline/popup_publisher.py の publish 成功 hook で 3項目 record_step (structure/factcheck/body_read) を独自呼び出し。test_popup_publisher_also_records_3_steps 追加",
+      "agent": "popup_publisher",
       "resolved_at": "2026-05-12"
     }
   },
