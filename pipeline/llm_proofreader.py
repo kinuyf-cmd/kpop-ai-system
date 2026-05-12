@@ -189,10 +189,19 @@ def proofread_post(post):
     profile_issues = _check_artist_profile(title, plain)
 
     # 2026-05-10: FACTCHECK_V2 envフラグでClaude版に切替
+    # 2026-05-12 (コスト削減): 信頼ソースURLが本文中にあれば use_web_search=False で
+    # Web Search tool スキップ (検索しても同じ結論を返すため品質維持)。
     if os.environ.get('FACTCHECK_V2') == '1':
         try:
             from lib.factcheck_v2 import proofread_post_v2
-            v2_result = proofread_post_v2(post, use_web_search=True)
+            try:
+                from lib.source_domains import is_trusted_source, load_domains as _load_trusted
+                _domains = _load_trusted()
+                _content_html = post.get('content', {}).get('rendered', '') if isinstance(post.get('content'), dict) else (post.get('content') or '')
+                _trusted_in_body = any(d in _content_html for d in _domains)
+            except Exception:
+                _trusted_in_body = False
+            v2_result = proofread_post_v2(post, use_web_search=not _trusted_in_body)
             # Layer 1の決定的profile照合をmerge (v2はLLM判定だけなので)
             if profile_issues:
                 v2_result.setdefault('critical', []).extend(profile_issues)

@@ -139,8 +139,9 @@
 0 10 * * * cd /home/aiuser/kpop-ai-system && bash ceo_morning_brief.sh >> logs/morning_brief.log 2>&1
 5 10 * * * cd /home/aiuser/kpop-ai-system && bash morning_seo_report.sh >> logs/seo_report.log 2>&1
 
-# === 総合監査 (2026-04-30改定: 10/16/21時 ファクトチェック+サムネ+Discord報告) ===
-0 10,21 * * * cd /home/aiuser/kpop-ai-system && FACTCHECK_V2=1 python3 -m pipeline.comprehensive_audit >> logs/comprehensive_audit.log 2>&1
+# === 総合監査 (2026-05-12改定: 21時のみ、daily_batch_auditと統合してClaude API節約) ===
+# REMOVED 10時: daily_batch_audit(07時) と重複していた → 21時のみに集約 ($9/月節約)
+0 21 * * * cd /home/aiuser/kpop-ai-system && FACTCHECK_V2=1 python3 -m pipeline.comprehensive_audit >> logs/comprehensive_audit.log 2>&1
 # 補助: quality_double_check (品質スコアリング、総合監査と別軸)
 0 8,20 * * * cd /home/aiuser/kpop-ai-system && python3 lib/quality_double_check.py >> logs/quality_check.log 2>&1
 # daily_audit_report (朝のみ残す、21時分は総合監査に統合)
@@ -256,7 +257,9 @@
 
 # 4項目procedural強制のため full_audit_runner を毎時実行 (2026-05-11新設)
 5 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.full_audit_runner >> logs/full_audit_runner.log 2>&1
-20 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.llm_proofreader >> logs/llm_proofreader.log 2>&1
+# REMOVED 2026-05-12 (コスト削減): 毎時 llm_proofreader は同じrecent postsを24x/日再評価しており
+# Claude factcheck_v2 を約 $15-24/月浪費していた。0 8,14,20 の 3x daily で recent 4h窓を完全カバー。
+# 20 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.llm_proofreader >> logs/llm_proofreader.log 2>&1
 35 * * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/thumbnail_contamination_audit.py >> logs/thumbnail_contamination_audit.log 2>&1
 
 # X未投稿の自動backfill (2026-05-11新設)

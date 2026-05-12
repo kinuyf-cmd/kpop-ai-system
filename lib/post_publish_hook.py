@@ -201,6 +201,10 @@ def run_post_publish(post_id, post_type='post'):
                 pass
 
             from lib.pre_publish_gate import pre_publish_gate as _recheck_gate
+            # 2026-05-12 (コスト削減): publish 直前の pre_publish_gate で既に
+            # factcheck_v2 を実行済みのため、同じ content への再 LLM 呼出は
+            # 同じ結果を返すだけで純粋なロス。skip_llm_factcheck=True で構造/
+            # サムネ/HTMLバランス等の deterministic check のみ再実行する。
             _gate_r = _recheck_gate(
                 title=_pf_title, body_html=_pf_content,
                 post_type=post_type, kind=_detected_kind,
@@ -208,6 +212,7 @@ def run_post_publish(post_id, post_type='post'):
                 slug=_pf_slug, featured_media=_pf_fm,
                 categories=_pf_cats, excerpt=_pf_excerpt,
                 status='publish',
+                skip_llm_factcheck=True,
             )
             if _gate_r['verdict'] == 'BLOCK':
                 block_reasons = _gate_r.get('block_reasons', [])

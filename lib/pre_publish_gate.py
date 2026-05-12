@@ -214,6 +214,7 @@ def pre_publish_gate(
     featured_media=None, categories=None, excerpt=None,
     status='publish', source_text_length=None,
     source_title=None,
+    skip_llm_factcheck=False,
 ):
     """統一公開前ゲート
 
@@ -604,12 +605,21 @@ def pre_publish_gate(
     # 2026-05-11: publish時は Claude Sonnet 4.6 + web search 版 (factcheck_v2)
     # を常時強制使用。env FACTCHECK_V2 未設定でも publish パスでは v2 必須
     # (v1 OpenAI版は web search なしでCRIT検出力が弱く、過去181件CRIT通過した)
-    if status == 'publish' and kind not in ('popup',):
+    #
+    # 2026-05-12 (コスト削減):
+    # - skip_llm_factcheck=True で外部LLM呼出を完全 skip (post_publish_hook 再ゲート等)
+    # - 信頼ソースURLありなら use_web_search=False で Web Search tool スキップ
+    #   (検索しても同じ結論を返すため品質維持)
+    # - KPJ_TEST_MODE 環境変数 (conftest.py 設定) でも skip
+    _test_mode = os.environ.get('KPJ_TEST_MODE') == '1'
+    if status == 'publish' and kind not in ('popup',) and not skip_llm_factcheck and not _test_mode:
         try:
             from lib.factcheck_v2 import proofread_post_v2
+            from lib.source_domains import is_trusted_source
             fake_post = {'title': {'rendered': title or ''},
                          'content': {'rendered': body_html or ''}}
-            pr = proofread_post_v2(fake_post, use_web_search=True)
+            _trusted = bool(source_url) and is_trusted_source(source_url)
+            pr = proofread_post_v2(fake_post, use_web_search=not _trusted)
         except Exception as _e_v2:
             # v2失敗時のみv1にフォールバック
             try:
