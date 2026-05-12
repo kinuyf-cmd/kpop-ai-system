@@ -76,11 +76,15 @@ ai_prompts/
 
 # Claude Code セッション固有 (個人別、git管理外)
 .claude/*
-# ただし skill / agent 定義は drift防止のため git共有
+# ただし skill / agent / hook / プロジェクト settings は drift防止のため git共有
+# (settings.local.json は user 固有で除外維持)
 !.claude/skills/
 !.claude/skills/**
 !.claude/agents/
 !.claude/agents/**
+!.claude/hooks/
+!.claude/hooks/**
+!.claude/settings.json
 
 # 旧バックアップ
 *.bak.*

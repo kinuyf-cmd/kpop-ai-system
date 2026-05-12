@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/audit_completion_check.py",
+            "timeout": 5,
+            "statusMessage": "\u76e3\u67fb4\u9805\u76eeentry\u691c\u8a3c\u4e2d"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session_self_audit.py",
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/fix_all_paths_check.py",
+            "timeout": 5,
+            "statusMessage": "fix_all_paths grep証跡検証中"
+          }
+        ]
+      }
+    ]
+  }
+}
