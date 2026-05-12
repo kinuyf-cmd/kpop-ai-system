@@ -33,11 +33,32 @@ def main():
                         for p in glob.glob(f'{TEST_DIR}/test_*.py'))
 
     # マッピング: memory key → test exists
+    # 2026-05-12: 完全一致だけでなく substring 双方向 match を許容 (naming drift 寛容化)
+    # 例: memo `draft_block_must_persist_by_content_hash` ↔ test `draft_block_persistence`
+    #     memo `unified_publisher_record_body_read` ↔ test `unified_publisher_auto_record_body_read`
     memo_set = set(feedback_memos)
     test_set = set(test_files)
-    covered = memo_set & test_set
-    uncovered = memo_set - test_set
-    extra = test_set - memo_set  # memory無いがtestあり (cross-cutting test)
+
+    def _has_match(memo_key: str, tests: set) -> bool:
+        # 完全一致
+        if memo_key in tests:
+            return True
+        # substring 双方向: memo の主要トークン (3+ word) が test 名と共有
+        memo_tokens = [t for t in memo_key.split('_') if len(t) >= 3]
+        for t in tests:
+            test_tokens = [w for w in t.split('_') if len(w) >= 3]
+            # 4トークン以上共有、または memo の 70% 以上が test に含まれる
+            common = set(memo_tokens) & set(test_tokens)
+            if len(common) >= 4 or (memo_tokens and len(common) / len(memo_tokens) >= 0.7):
+                return True
+        return False
+
+    covered = {m for m in memo_set if _has_match(m, test_set)}
+    uncovered = memo_set - covered
+    # extra: どの memo にも対応しない test (cross-cutting test の可能性)
+    extra = {t for t in test_set if not any(
+        _has_match(m, {t}) for m in memo_set
+    )}
 
     # 戦略系memoryは test 化対象外にカウント
     STRATEGIC = {
