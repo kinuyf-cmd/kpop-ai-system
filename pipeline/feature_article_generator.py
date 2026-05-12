@@ -397,12 +397,14 @@ def _fetch_web_context(title: str, source_urls: list = None) -> tuple[str, list[
     source_signals = []
 
     # 1. ソースURLがあれば優先取得（元記事の内容を直接読む）
+    # 2026-05-11: text[:800]→text[:2500] に拡大。CRIT「重要事実の省略」が
+    # ソース短切りで頻発していたため、LLMに十分な grounding 文脈を与える。
     if source_urls:
         from lib.source_reader import read_source
         for src_url in source_urls[:2]:
-            text = read_source(src_url)
+            text = read_source(src_url, max_chars=3000)
             if text:
-                context_parts.append(f'- ソース記事({src_url[:40]}): {text[:800]}')
+                context_parts.append(f'- ソース記事({src_url[:40]}): {text[:2500]}')
                 source_signals.append({
                     'url': src_url,
                     'source_id': 'direct_source',
