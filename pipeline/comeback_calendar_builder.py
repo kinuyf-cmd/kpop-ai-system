@@ -92,6 +92,13 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
 検索対象 (4組のみ — 必ず全員調査):
 {', '.join(artists)}"""
 
+    # 2026-05-12 (Phase 6): cost guard
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('comeback_calendar_builder'):
+            return {'comebacks': [], 'summary': '[cost_guard_skip]'}
+    except ImportError:
+        pass
     try:
         # 2026-05-12 (Phase 3): max_uses 8 → 3 に削減。観測上 8 回まで使うことは稀で
         # 重複検索が多く、Web Search 課金 ($10/1000 searches) を節約しても品質は維持。
@@ -108,6 +115,11 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
             output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
             messages=[{"role": "user", "content": prompt}],
         )
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('comeback_calendar_builder', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
     except Exception as e:

@@ -125,6 +125,13 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
         f"上記をJSON schemaに従って自然な日本語に翻訳してください。"
     )
 
+    # 2026-05-12 (Phase 6): cost guard
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('translator_v2'):
+            return {'success': False, 'translated': text_pre, 'reason': 'cost_guard_skip'}
+    except ImportError:
+        pass
     try:
         client = _get_client()
         response = client.messages.create(
@@ -144,6 +151,11 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
             },
             messages=[{"role": "user", "content": user_prompt}],
         )
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('translator_v2', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
 
         text_resp = next((b.text for b in response.content if b.type == 'text'), '{}')
         try:

@@ -227,7 +227,19 @@ web_search で集約して JSON で返却してください。
         if use_web_search:
             # 2026-05-12 (Phase 3): max_uses 5 → 3 で Web Search 課金節約 (品質維持)。
             kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}]
+        # 2026-05-12 (Phase 6): cost guard + log_usage
+        try:
+            from lib.anthropic_cost_guard import guard_before_call, log_usage
+            if not guard_before_call('profile_wiki_builder'):
+                return {}
+        except ImportError:
+            log_usage = None
         response = timeout_client.messages.create(**kwargs)
+        if log_usage:
+            try:
+                log_usage('profile_wiki_builder', model='claude-sonnet-4-6', usage=response.usage)
+            except Exception:
+                pass
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
     except Exception as e:
@@ -282,7 +294,19 @@ web_search で集約してください。"""
         if os.getenv('PROFILE_USE_WEBSEARCH') == '1':
             # 2026-05-12 (Phase 3): max_uses 5 → 3 で Web Search 課金節約 (品質維持)。
             kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}]
+        # 2026-05-12 (Phase 6): cost guard + log_usage
+        try:
+            from lib.anthropic_cost_guard import guard_before_call, log_usage
+            if not guard_before_call('profile_wiki_builder'):
+                return {}
+        except ImportError:
+            log_usage = None
         response = timeout_client.messages.create(**kwargs)
+        if log_usage:
+            try:
+                log_usage('profile_wiki_builder', model='claude-sonnet-4-6', usage=response.usage)
+            except Exception:
+                pass
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
     except Exception as e:

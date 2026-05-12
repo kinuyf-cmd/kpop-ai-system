@@ -162,6 +162,13 @@ def vision_validate(image_path: str, expected_artist: str,
         prompt_specific += f"記事タイトル: 「{article_title}」\n"
     prompt_specific += "\n上記K-pop覚え書きと判定ルールに従って、画像が「{expected_artist}」を写しているか判定してください。".format(expected_artist=expected_artist)
 
+    # 2026-05-12 (Phase 6): cost guard
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('vision_gate'):
+            return True, 'cost_guard_skip'
+    except ImportError:
+        pass
     try:
         client = _get_client()
         # K-pop識別精度のため Sonnet 4.6 採用 (Haikuはaespa↔TWICE誤認)
@@ -200,6 +207,12 @@ def vision_validate(image_path: str, expected_artist: str,
                 ],
             }],
         )
+        # 2026-05-12 (Phase 6): cost ledger 記録
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('vision_gate', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
         # output_config.format で1個目のtext blockに valid JSON が保証される
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         try:

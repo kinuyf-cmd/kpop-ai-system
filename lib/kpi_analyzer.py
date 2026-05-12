@@ -98,6 +98,14 @@ def analyze_x_kpi(days: int = 14, focus: str = 'engagement_trend') -> dict:
         }
         user_prompt = prompts.get(focus, prompts['engagement_trend'])
 
+        # 2026-05-12 (Phase 6): cost guard
+        try:
+            from lib.anthropic_cost_guard import guard_before_call
+            if not guard_before_call('kpi_analyzer'):
+                return {'text': '[cost_guard_skip]', 'charts': [], 'code_runs': 0}
+        except ImportError:
+            pass
+
         # 3. Claude code_execution で分析
         response = client.beta.messages.create(
             model='claude-sonnet-4-6',
@@ -115,6 +123,11 @@ def analyze_x_kpi(days: int = 14, focus: str = 'engagement_trend') -> dict:
                 ],
             }],
         )
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('kpi_analyzer', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
 
         # 4. 結果抽出 — text + 全bash出力 + 生成file
         text_parts = []

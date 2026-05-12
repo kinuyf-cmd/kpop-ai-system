@@ -183,6 +183,17 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
         })
         return cached
 
+    # 2026-05-12 (Phase 6): cost guard — kill switch (ANTHROPIC_DISABLE=1) や
+    # KPJ_TEST_MODE で API 呼出を skip し、安全な中立結果を返す。
+    # 予算超過/rate 異常は warning のみで block しない (品質維持優先)。
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('factcheck_v2'):
+            return {'score': 80, 'critical': [], 'high': [], 'medium': [],
+                    '_skipped': 'cost_guard'}
+    except ImportError:
+        pass
+
     today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
 
     # 2026-05-12 (Phase 2): lessons は system cached block 側に移動 (cache_read 0.1x で再利用)。
@@ -301,6 +312,13 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
         # 同一 title+content の連続呼び出しを 1回に折り畳むため結果をキャッシュ
         _cache_put(ck, result)
+
+        # 2026-05-12 (Phase 6): cost ledger に記録 (予算アラート/監視用)
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('factcheck_v2', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
 
         # 自己学習: critical/high issue を lessons.jsonl に追加
         try:

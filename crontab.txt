@@ -257,6 +257,10 @@
 
 # 4項目procedural強制のため full_audit_runner を毎時実行 (2026-05-11新設)
 5 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.full_audit_runner >> logs/full_audit_runner.log 2>&1
+
+# Anthropic API cost 日次ダッシュボード (2026-05-12新設, Phase 6 予防的措置)
+# 朝 8:30 に当日累計を Discord に通知、予算超過 (default $10/日) 時は警告アイコン付き
+30 8 * * * cd /home/aiuser/kpop-ai-system && python3 -m lib.anthropic_cost_guard >> logs/anthropic_cost_summary.log 2>&1
 # REVISED 2026-05-12: hourly llm_proofreader → 4h 毎 (0 */4 * * *, 上部参照) に移行。
 # 元の hourly は同じrecent posts を 24x/日再評価して factcheck_v2 を $15-24/月浪費していた。
 # 4h cron は recent 4h窓 (--hours 4 default) と完全一致するので深夜帯の取りこぼしなし。

@@ -55,6 +55,14 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
             'sources': [{'url':..., 'title':...}],
         }
     """
+    # 2026-05-12 (Phase 6): cost guard
+    try:
+        from lib.anthropic_cost_guard import guard_before_call
+        if not guard_before_call('claude_websearch_factcheck'):
+            return {'verdict': 'PASS', 'confidence': 0.0, 'sources': [],
+                    'reason': 'cost_guard_skip'}
+    except ImportError:
+        pass
     client = _get_client()
     # 2026-05-12 (Phase 5): 判定基準と信頼メディアリストを system block に分離し
     # cache_control 1h で固定。これで cache_read 0.1x で繰り返し参照可能。
@@ -118,6 +126,12 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
                 ),
             }],
         )
+        # 2026-05-12 (Phase 6): cost ledger 記録
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('claude_websearch_factcheck', model='claude-sonnet-4-6', usage=response.usage)
+        except Exception:
+            pass
 
         # tool_use blocks → web_search citations
         sources = []
