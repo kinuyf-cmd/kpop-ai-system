@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T13:12:02+09:00",
+  "updated_at": "2026-05-12T14:09:36+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1591,6 +1591,14 @@
       "example": "sidebar の「今日読まれている記事」が orderby=comment_count で、コメントほぼ無いサイトのため新着順と同じ結果に。12:41 publish 直後のNMIXX記事が即2位表示される虚偽状態",
       "fix": "wordpress/kpopjournal-theme/sidebar.php と functions.php を改修。kpj_api_trending() 経由 + metrics_yesterday.json の正しいネスト構造 ($metrics[\"ga4\"][\"top_landing_pages\"]) アクセス。kpj-headless-api.php にも GA4 fallback 追加",
       "agent": "wordpress_theme",
+      "resolved_at": "2026-05-12"
+    },
+    "auto_comeback_garbage_in_no_source_reader": {
+      "count": 30,
+      "last_seen": "2026-05-12",
+      "example": "2026-05-12 朝に auto_comeback_article が headline 3本だけで GPT 呼んでガベージインの捏造記事を量産 (SHINee 記事に Jo Kwon + 볼ボール選手 signal が混入する等の cluster 偽陽性、本文 hangul 残存 30件)",
+      "fix": "pipeline/auto_comeback_article.py を breaking_news_detector パターンに整合化。source_reader.read_sources(sigs) + _enrich_with_web_search を統合、200字未満 source_text なら BLOCK、artist 名が source/title に含まれない cluster 偽陽性も BLOCK。test_auto_comeback_no_garbage_in.py 5件追加 + memory feedback_pipeline_must_use_source_reader.md",
+      "agent": "auto_comeback_article",
       "resolved_at": "2026-05-12"
     }
   },
