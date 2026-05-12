@@ -433,16 +433,21 @@ function kpj_api_trending(WP_REST_Request $request): WP_REST_Response {
         $metrics_file = dirname(KPJ_DIR, 2) . '/google_metrics/metrics_yesterday.json';
     }
 
+    $source_used = 'comment_count';
     if (file_exists($metrics_file)) {
         $raw = file_get_contents($metrics_file);
-        $ga_data = json_decode($raw, true);
+        $metrics = json_decode($raw, true);
 
-        if (!empty($ga_data) && is_array($ga_data)) {
-            // Sort by pageviews descending, take top 10
-            usort($ga_data, fn($a, $b) => ($b['pageviews'] ?? 0) - ($a['pageviews'] ?? 0));
-            $top = array_slice($ga_data, 0, 10);
+        // 2026-05-12: metrics_yesterday.json は dict 形式
+        //   {date, ga4: {top_landing_pages: [{page, pageviews, sessions, users, ...}]}, gsc, adsense, ...}
+        // 旧実装は list 形式を期待していたため常に空扱い→comment_count fallback していた。
+        $ga_pages = $metrics['ga4']['top_landing_pages'] ?? [];
 
-            foreach ($top as $item) {
+        if (!empty($ga_pages) && is_array($ga_pages)) {
+            // pageviews は文字列で入っているため intval して降順 sort
+            usort($ga_pages, fn($a, $b) => intval($b['pageviews'] ?? 0) - intval($a['pageviews'] ?? 0));
+
+            foreach ($ga_pages as $item) {
                 $path = $item['page'] ?? $item['pagePath'] ?? '';
                 if (empty($path) || $path === '/') continue;
 
@@ -454,13 +459,15 @@ function kpj_api_trending(WP_REST_Request $request): WP_REST_Response {
 
                 $entry = kpj_api_format_post($post);
                 $entry['ga4'] = [
-                    'pageviews' => (int) ($item['pageviews'] ?? 0),
-                    'users'     => (int) ($item['users'] ?? $item['activeUsers'] ?? 0),
+                    'pageviews' => intval($item['pageviews'] ?? 0),
+                    'users'     => intval($item['users'] ?? $item['activeUsers'] ?? 0),
+                    'sessions'  => intval($item['sessions'] ?? 0),
                 ];
                 $trending[] = $entry;
 
                 if (count($trending) >= 10) break;
             }
+            if (!empty($trending)) $source_used = 'ga4';
         }
     }
 
@@ -478,7 +485,7 @@ function kpj_api_trending(WP_REST_Request $request): WP_REST_Response {
 
     $data = [
         'posts'     => $trending,
-        'source'    => file_exists($metrics_file) ? 'ga4' : 'comment_count',
+        'source'    => $source_used,
         'generated' => current_time('c'),
     ];
 

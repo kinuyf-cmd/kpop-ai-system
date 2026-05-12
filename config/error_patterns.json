@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T12:38:11+09:00",
+  "updated_at": "2026-05-12T13:12:02+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1583,6 +1583,14 @@
       "example": "本日 publish した 17件 (22000/22024/22027/21989/21972/21804/21775等) が body_read step 未記録のため enforcer cron に自動 draft 化",
       "fix": "lib/unified_publisher.py の publish 成功 return 直前で record_step(post_id, body_read, ok) を自動記録。test_unified_publisher_auto_record_body_read.py 4件追加。既存17件は手動で record_step 救済",
       "agent": "unified_publisher",
+      "resolved_at": "2026-05-12"
+    },
+    "trending_widget_falsely_shows_newest_as_popular": {
+      "count": 1,
+      "last_seen": "2026-05-12",
+      "example": "sidebar の「今日読まれている記事」が orderby=comment_count で、コメントほぼ無いサイトのため新着順と同じ結果に。12:41 publish 直後のNMIXX記事が即2位表示される虚偽状態",
+      "fix": "wordpress/kpopjournal-theme/sidebar.php と functions.php を改修。kpj_api_trending() 経由 + metrics_yesterday.json の正しいネスト構造 ($metrics[\"ga4\"][\"top_landing_pages\"]) アクセス。kpj-headless-api.php にも GA4 fallback 追加",
+      "agent": "wordpress_theme",
       "resolved_at": "2026-05-12"
     }
   },

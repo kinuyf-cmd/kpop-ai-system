@@ -220,6 +220,41 @@ function kpj_api_trending_cb(WP_REST_Request $req): WP_REST_Response {
         }
     }
 
+    /* 2026-05-12: WP-Statistics 不在時は GA4 metrics_yesterday.json から trending を組み立てる。
+       旧実装は comment_count fallback のみで、本サイトはコメント機能ほぼ未使用のため
+       「過去30日新着順と区別がつかない」状態になっていた。 */
+    if (empty($trending)) {
+        $metrics_file = ABSPATH . '../../google_metrics/metrics_yesterday.json';
+        if (!file_exists($metrics_file) && defined('KPJ_DIR')) {
+            $metrics_file = dirname(KPJ_DIR, 2) . '/google_metrics/metrics_yesterday.json';
+        }
+        if (file_exists($metrics_file)) {
+            $metrics = json_decode(file_get_contents($metrics_file), true);
+            $ga_pages = $metrics['ga4']['top_landing_pages'] ?? [];
+            if (!empty($ga_pages) && is_array($ga_pages)) {
+                usort($ga_pages, fn($a, $b) => intval($b['pageviews'] ?? 0) - intval($a['pageviews'] ?? 0));
+                foreach ($ga_pages as $item) {
+                    $path = $item['page'] ?? '';
+                    if (empty($path) || $path === '/') continue;
+                    $post_id = url_to_postid(home_url($path));
+                    if (!$post_id) continue;
+                    $post = get_post($post_id);
+                    if (!$post || $post->post_status !== 'publish') continue;
+                    $entry = kpj_api_fmt($post);
+                    $entry['views'] = intval($item['pageviews'] ?? 0);
+                    $entry['ga4']   = [
+                        'pageviews' => intval($item['pageviews'] ?? 0),
+                        'users'     => intval($item['users'] ?? 0),
+                        'sessions'  => intval($item['sessions'] ?? 0),
+                    ];
+                    $trending[] = $entry;
+                    if (count($trending) >= 10) break;
+                }
+                if (!empty($trending)) $source = 'ga4';
+            }
+        }
+    }
+
     /* Fallback: comment count last 30 days */
     if (empty($trending)) {
         $trending = array_map('kpj_api_fmt', (new WP_Query([

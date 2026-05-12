@@ -8,26 +8,44 @@
         </h3>
         <div class="kpj-trending-list">
             <?php
-            $trending = new WP_Query([
-                'posts_per_page' => 5,
-                'orderby'        => 'comment_count',
-                'order'          => 'DESC',
-                'date_query'     => [['after' => '2 days ago']],
-            ]);
+            /* 2026-05-12: 旧実装は orderby=comment_count で「過去2日の新着順と区別つかない」
+               虚偽表示状態だった。kpj_api_trending() (GA4 metrics_yesterday.json ベース) を
+               使用して実 pageviews 順で表示する。GA4 不在時は endpoint 内部で
+               comment_count fallback。 */
+            $trending_posts = [];
+            if (function_exists('kpj_api_trending')) {
+                $resp = kpj_api_trending(new WP_REST_Request('GET', '/kpopjournal/v1/trending'));
+                $trending_posts = $resp->get_data()['posts'] ?? [];
+            }
+            if (empty($trending_posts)) {
+                $q = new WP_Query([
+                    'posts_per_page' => 5, 'post_status' => 'publish',
+                    'orderby' => 'comment_count', 'order' => 'DESC',
+                    'date_query' => [['after' => '30 days ago']],
+                ]);
+                foreach ($q->posts as $p) {
+                    $trending_posts[] = [
+                        'link'  => get_permalink($p->ID),
+                        'title' => get_the_title($p->ID),
+                        'date'  => get_the_date('c', $p->ID),
+                    ];
+                }
+                wp_reset_postdata();
+            }
             $rank = 1;
-            while ($trending->have_posts()): $trending->the_post();
+            foreach (array_slice($trending_posts, 0, 5) as $item):
+                $link  = $item['link']  ?? '#';
+                $title = $item['title'] ?? '';
+                $date  = !empty($item['date']) ? mysql2date('m.d', $item['date']) : '';
             ?>
-                <a href="<?php the_permalink(); ?>" class="kpj-trending-item">
+                <a href="<?php echo esc_url($link); ?>" class="kpj-trending-item">
                     <span class="kpj-trending-item__rank"><?php echo str_pad($rank++, 2, '0', STR_PAD_LEFT); ?></span>
                     <div class="kpj-trending-item__body">
-                        <h4 class="kpj-trending-item__title"><?php the_title(); ?></h4>
-                        <span class="kpj-trending-item__meta"><?php echo get_the_date('m.d'); ?></span>
+                        <h4 class="kpj-trending-item__title"><?php echo esc_html($title); ?></h4>
+                        <span class="kpj-trending-item__meta"><?php echo esc_html($date); ?></span>
                     </div>
                 </a>
-            <?php
-            endwhile;
-            wp_reset_postdata();
-            ?>
+            <?php endforeach; ?>
         </div>
     </div>
 
