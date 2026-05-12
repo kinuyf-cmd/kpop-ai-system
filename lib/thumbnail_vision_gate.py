@@ -134,20 +134,25 @@ def vision_validate(image_path: str, expected_artist: str,
         "- KISS OF LIFE (S2, 4人, 女性)\n\n"
         "## 判定手順\n"
         "ステップ1: 画像に何が写っているか観察 (人物/動物/物体/イラスト/ロゴ/抽象)\n"
-        "ステップ2: 人物の特徴 (人数/性別/年齢層/服装/背景/公式ロゴ)\n"
-        "ステップ3: 期待アーティストと整合するか判定\n\n"
+        "ステップ2: 画像内の人物を **必ず指差し数える** (左から1人ずつ)。\n"
+        "         この数を people_count に正確に出力。期待アーティスト人数に合わせて\n"
+        "         数を fudge してはならない (priming bias 回避)。\n"
+        "ステップ3: 人物の特徴 (性別/年齢層/服装/背景/公式ロゴ)\n"
+        "ステップ4: 期待アーティストと整合するか判定 (人数差を最重要視)\n\n"
         "## 判定ルール\n"
         "- 期待アーティスト本人 or 所属メンバー確実 → YES\n"
         "- 別アーティスト/抽象アート/関係ない人物 → NO\n"
         "- 公式ロゴ (SMTOWN, YG OFFICIAL, ADOR, JYP等) で所属事務所が確認できる場合は重要な手がかり\n"
         "  例: SMTOWN ロゴ → SM所属artist (aespa/Red Velvet/NCT等) でなければ NO\n"
         "  例: YG OFFICIAL → YG所属 (BLACKPINK/TREASURE/BABYMONSTER等) でなければ NO\n"
-        "- 人数が大幅に違う (例: 7人男性group記事に女性3人写真) → NO\n"
+        "- 人数差は最厳格チェック: 期待アーティスト人数と people_count の差が ±2 を超えれば NO\n"
+        "  (例: BABYMONSTER 7人組 → people_count=6 は -1 で borderline、=5 以下なら NO)\n"
+        "  promotional photo で 1人欠ける subset は許容、3人以上欠けるなら別アーティスト疑い\n"
         "- 性別不一致は決定的 → NO\n"
         "- K-pop知識で特定できない曖昧な画像は、見た目で判断 (公式ロゴあり=寄りYES)\n\n"
         "## 出力形式\n"
         '必ず以下のJSON1行で返答 (前後のテキストなし):\n'
-        '{"verdict": "YES" or "NO", "reason": "判定理由 (200字以内)"}\n'
+        '{"people_count": <integer>, "verdict": "YES" or "NO", "reason": "判定理由 (200字以内、まず people_count とその根拠を述べる)"}\n'
     )
     prompt_specific = (
         f"\n## 今回の判定タスク\n"
@@ -175,10 +180,11 @@ def vision_validate(image_path: str, expected_artist: str,
                     "schema": {
                         "type": "object",
                         "properties": {
+                            "people_count": {"type": "integer"},
                             "verdict": {"type": "string", "enum": ["YES", "NO"]},
                             "reason": {"type": "string"},
                         },
-                        "required": ["verdict", "reason"],
+                        "required": ["people_count", "verdict", "reason"],
                         "additionalProperties": False,
                     },
                 },
@@ -199,7 +205,10 @@ def vision_validate(image_path: str, expected_artist: str,
             parsed = json.loads(text)
             verdict = (parsed.get('verdict') or '').upper()
             ok = verdict == 'YES'
+            people_count = parsed.get('people_count')
             reason = parsed.get('reason', '')[:200]
+            if people_count is not None:
+                reason = f'count={people_count} | {reason}'
         except json.JSONDecodeError:
             ok = False
             reason = f'schema parse err: {text[:100]}'
