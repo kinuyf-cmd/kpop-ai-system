@@ -69,22 +69,28 @@ SCHEMA = {
 }
 
 
+# 2026-05-12 (Phase 5): system block に分離し cache_control 1h で固定。
+# 6 batches/日 × 30日 で system 部分は cache_read 0.1x で再利用される。
+_COMEBACK_SYSTEM = """あなたは K-POP の comeback / リリース情報リサーチアシスタントです。
+
+各アーティストについて web_search で:
+1. 公式発表済の comeback / 新譜リリース日 (今後 90日以内)
+2. ツアー/コンサート/ファンミ日程
+
+ヒント: 検索クエリは「[artist] comeback YYYY」「[artist] tour YYYY」が効率的。
+公式情報がないアーティストはスキップしてOK。
+
+結果は JSON schema に厳密に従って返却すること。release_date は YYYY-MM-DD 形式必須
+(四半期/半期表記 'Q2' 'H2' 等は禁止 — render 側で表示できない)。"""
+
+
 def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, end_date: str) -> dict:
     """1バッチ (4組) のcomeback情報を取得"""
     prompt = f"""今日: {today}
 これから {end_date} までの K-POP comeback / リリース情報を調べてください。
 
 検索対象 (4組のみ — 必ず全員調査):
-{', '.join(artists)}
-
-各アーティストについて web_search で:
-1. 公式発表済の comeback / 新譜リリース日 (今後 90日以内)
-2. ツアー/コンサート/ファンミ日程
-
-ヒント: 検索クエリは「[artist] comeback 2026」「[artist] tour 2026」が効率的。
-公式情報がないアーティストはスキップしてOK。
-
-結果を JSON schema に従って返却してください。"""
+{', '.join(artists)}"""
 
     try:
         # 2026-05-12 (Phase 3): max_uses 8 → 3 に削減。観測上 8 回まで使うことは稀で
@@ -93,6 +99,11 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=4000,
+            system=[{
+                "type": "text",
+                "text": _COMEBACK_SYSTEM,
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
+            }],
             tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}],
             output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
             messages=[{"role": "user", "content": prompt}],

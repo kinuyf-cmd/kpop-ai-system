@@ -32,7 +32,7 @@
 0 3 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.enrich_amount_batch --apply --notify >> /opt/grant-ops/data/logs/enrich_amount_$(date +\%Y-\%m-\%d).log 2>&1 # grant-ops-managed
 0 3 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.auto_close_expired_grants --apply --notify >> /opt/grant-ops/data/logs/cron_auto_close.log 2>&1 # grant-ops-managed
 0 4 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.comeback_predictor >> logs/comeback_predictor.log 2>&1
-0 8,14,20 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.llm_proofreader >> logs/llm_proofreader.log 2>&1
+0 */4 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.llm_proofreader >> logs/llm_proofreader.log 2>&1
 0 4 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.quarantine_cleaner >> logs/quarantine_cleaner.log 2>&1
 0 4 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m ops.recrawl_detail_batch --apply --notify --limit 500 >> /opt/grant-ops/data/logs/recrawl_detail_$(date +\%Y-\%m-\%d).log 2>&1 # grant-ops-managed
 0 4 * * * cd /opt/grant-ops && /opt/grant-ops/venv/bin/python -m scripts.notify_discord --type publish --log-file /opt/grant-ops/data/logs/cron_discord_notify.log >> /opt/grant-ops/data/logs/cron_discord_notify.log 2>&1 # grant-ops-managed
@@ -257,8 +257,10 @@
 
 # 4項目procedural強制のため full_audit_runner を毎時実行 (2026-05-11新設)
 5 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.full_audit_runner >> logs/full_audit_runner.log 2>&1
-# REMOVED 2026-05-12 (コスト削減): 毎時 llm_proofreader は同じrecent postsを24x/日再評価しており
-# Claude factcheck_v2 を約 $15-24/月浪費していた。0 8,14,20 の 3x daily で recent 4h窓を完全カバー。
+# REVISED 2026-05-12: hourly llm_proofreader → 4h 毎 (0 */4 * * *, 上部参照) に移行。
+# 元の hourly は同じrecent posts を 24x/日再評価して factcheck_v2 を $15-24/月浪費していた。
+# 4h cron は recent 4h窓 (--hours 4 default) と完全一致するので深夜帯の取りこぼしなし。
+# 永続cache (content_hash 30日) で再評価も cache hit するため API call は最小。
 # 20 * * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.llm_proofreader >> logs/llm_proofreader.log 2>&1
 35 * * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/thumbnail_contamination_audit.py >> logs/thumbnail_contamination_audit.log 2>&1
 

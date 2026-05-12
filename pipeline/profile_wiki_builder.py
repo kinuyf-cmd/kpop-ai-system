@@ -170,15 +170,9 @@ MEMBER_DETAILS_SCHEMA = {
 }
 
 
-def fetch_profile(client, artist: str, timeout_s: int = int(os.getenv('PROFILE_FETCH_TIMEOUT', '180'))) -> dict:
-    today = datetime.now(JST).strftime('%Y-%m-%d')
-    prompt = f"""今日: {today}
-K-POP アーティスト「{artist}」の包括的プロフィールを web_search で集約してください。
-
-検索クエリ例:
-- "{artist} members profile site:wikipedia.org"
-- "{artist} official Twitter Instagram"
-- "{artist} discography 2026"
+# 2026-05-12 (Phase 5): system block に分離し cache_control 1h で固定。
+# 60 artist × 週次でも 1h 窓内の連続 fetch で cache_read 0.1x の恩恵。
+_PROFILE_SYSTEM = """あなたは K-POP アーティストの包括的プロフィール作成アシスタントです。
 
 必要項目:
 1. agency (所属事務所、英語表記)
@@ -199,6 +193,20 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
 8. summary_ja: 200-300字でグループ概要 (日本語、ファン向けの読み応えある文章)
 
 ソロアーティストの場合は members に1人だけ入れる。
+JSON schema に厳密に従って返却すること。"""
+
+
+def fetch_profile(client, artist: str, timeout_s: int = int(os.getenv('PROFILE_FETCH_TIMEOUT', '180'))) -> dict:
+    today = datetime.now(JST).strftime('%Y-%m-%d')
+    prompt = f"""今日: {today}
+対象アーティスト: 「{artist}」
+
+検索クエリ例:
+- "{artist} members profile site:wikipedia.org"
+- "{artist} official Twitter Instagram"
+- "{artist} discography {today[:4]}"
+
+web_search で集約して JSON で返却してください。
 """
     use_web_search = os.getenv('PROFILE_USE_WEBSEARCH') == '1'
 
@@ -208,6 +216,11 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
         kwargs = {
             'model': 'claude-sonnet-4-6',
             'max_tokens': 4500,
+            'system': [{
+                "type": "text",
+                "text": _PROFILE_SYSTEM,
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
+            }],
             'output_config': {"format": {"type": "json_schema", "schema": PROFILE_SCHEMA}},
             'messages': [{"role": "user", "content": prompt}],
         }
@@ -228,12 +241,12 @@ def fetch_member_details(client, artist: str, members: list[dict], timeout_s: in
         return {'members': []}
     today = datetime.now(JST).strftime('%Y-%m-%d')
     names = ', '.join((m.get('name_en') or m.get('name_ja') or '') for m in members if m.get('name_en') or m.get('name_ja'))
-    prompt = f"""今日: {today}
-K-POPグループ「{artist}」のメンバー個人プロフィールを web_search で集約してください。
-対象メンバー: {names}
+    # 2026-05-12 (Phase 5): fetch_profile と同じ system block instruction を共有して
+    # cache_control 1h で固定。60 artist 連続 fetch で cache_read 0.1x の恩恵。
+    member_system = """あなたは K-POP メンバー個人プロフィールリサーチアシスタントです。
 
 各メンバーについて以下を埋めてください (確証無ければ空文字 "")。推測禁止。
-- name_en: stage name (上記対象と完全一致)
+- name_en: stage name (対象と完全一致)
 - height_cm: 身長 cm数字のみ。例 "162"
 - blood_type: A / B / O / AB のいずれか
 - mbti: 例 "INFP" (本人/事務所公表値のみ)
@@ -242,19 +255,27 @@ K-POPグループ「{artist}」のメンバー個人プロフィールを web_se
 - solo_works: 主要なソロ作品1-2作。例 "FLOWER (2023年), ME (2023年)"
 - instagram_personal: 個人 Instagram URL (グループ公式とは別)
 
-検索クエリ例:
-- "{artist} member height MBTI Wikipedia"
-- "{artist} members blood type birthday"
-- "{artist} members education school"
+検索クエリ例: "[artist] member height MBTI Wikipedia" / "[artist] members blood type birthday"
 
 メンバー全員分必ず members[] に入れること (1件も漏らさない)。
-"""
+JSON schema に厳密に従うこと。"""
+
+    prompt = f"""今日: {today}
+対象グループ: 「{artist}」
+対象メンバー: {names}
+
+web_search で集約してください。"""
     try:
         import httpx
         timeout_client = anthropic.Anthropic(timeout=httpx.Timeout(timeout_s, connect=10.0))
         kwargs = {
             'model': 'claude-sonnet-4-6',
             'max_tokens': 3500,
+            'system': [{
+                "type": "text",
+                "text": member_system,
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
+            }],
             'output_config': {"format": {"type": "json_schema", "schema": MEMBER_DETAILS_SCHEMA}},
             'messages': [{"role": "user", "content": prompt}],
         }

@@ -56,10 +56,29 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
         }
     """
     client = _get_client()
+    # 2026-05-12 (Phase 5): 判定基準と信頼メディアリストを system block に分離し
+    # cache_control 1h で固定。これで cache_read 0.1x で繰り返し参照可能。
+    # user message には title だけを残すことで cache hit を最大化。
+    _SYSTEM_PROMPT = (
+        "あなたはK-POP記事タイトルの事実検証アシスタントです。\n"
+        "受け取ったタイトルを web_search ツールで信頼メディアにて検証し、JSONで結果を返してください。\n\n"
+        "判定基準:\n"
+        "- 信頼メディアで同内容が確認できた → found=true\n"
+        "- 検索したが裏付けなし → found=false\n"
+        "- 関連情報あるが直接裏付けなし → found=false (reason に「関連のみ」と明記)\n\n"
+        "信頼メディア例: soompi, allkpop, billboard, starnewskorea, naver, newsen, "
+        "osen.mt.co.kr, mydaily.co.kr, koreaboo, koreaherald, koreatimes 等。\n"
+        "JSON以外の出力は禁止 (schema厳守)。"
+    )
     try:
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=800,
+            system=[{
+                "type": "text",
+                "text": _SYSTEM_PROMPT,
+                "cache_control": {"type": "ephemeral", "ttl": "1h"},
+            }],
             tools=[{
                 "type": "web_search_20260209",
                 "name": "web_search",
@@ -94,14 +113,8 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
             messages=[{
                 "role": "user",
                 "content": (
-                    f"次のK-pop記事タイトルが事実か信頼メディアで検証してください:\n"
-                    f"\"{title}\"\n\n"
-                    f"web_searchツールで {max_searches}回まで調べ、結果をJSONで返してください。\n"
-                    f"判定基準:\n"
-                    f"- 信頼メディアで同内容が確認できた → found=true\n"
-                    f"- 検索したが裏付けなし → found=false\n"
-                    f"- 関連情報あるが直接裏付けなし → found=false (reason に「関連のみ」と明記)\n"
-                    f"信頼メディア例: soompi, allkpop, billboard, starnewskorea, naver, newsen等"
+                    f"検証対象タイトル: \"{title}\"\n"
+                    f"web_search を最大 {max_searches} 回まで使い、JSONで結果を返してください。"
                 ),
             }],
         )
