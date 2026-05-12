@@ -538,11 +538,28 @@ def main(max_articles=10):
 
         featured_id = get_thumbnail(sig)
 
+        # 2026-05-12: gate チェック前に title 翻訳 + content sanitize を実施。
+        # 旧コードは post_to_wp_popup の中で翻訳/sanitize していたため、gate は
+        # 翻訳前ハングルタイトル / sanitize 前 codeblock マーカー を見て BLOCK していた。
+        from lib.text_sanitizer import strip_template_labels, sanitize_gpt_html
+        _gate_title = _clean_prtimes_title(strip_template_labels(sig.get('title', '')))
+        if re.search(r'[가-힯]', _gate_title):
+            try:
+                from lib.korean_translator import translate_ko_to_ja
+                _r = translate_ko_to_ja(_gate_title, context='K-POP popup event title')
+                if _r.get('success') and _r.get('translated'):
+                    _t2 = _r['translated'].strip().strip('「」"')
+                    if not re.search(r'[가-힯]', _t2):
+                        _gate_title = _t2
+            except Exception:
+                pass
+        _gate_content = sanitize_gpt_html(strip_template_labels(content))
+
         # Pre-publish factcheck
         try:
             from lib.pre_publish_gate import pre_publish_gate
             gate_result = pre_publish_gate(
-                sig.get('title', ''), content, post_type='popup', kind='popup',
+                _gate_title, _gate_content, post_type='popup', kind='popup',
                 source_url=sig.get('url'), status=status,
             )
             if gate_result.get('verdict') == 'BLOCK':

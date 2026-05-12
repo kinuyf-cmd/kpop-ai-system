@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T12:10:22+09:00",
+  "updated_at": "2026-05-12T12:17:15+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1559,6 +1559,14 @@
       "example": "辞書「진→JIN」が「진해성」(トロット歌手) を「JIN해성」と部分置換し、LLM が BTS JIN と取り違えた人物捏造記事を生成 (factcheck CRITICAL)",
       "fix": "1字エントリ「진」「비」を削除。LLMプロンプトに文脈判断指示追加。test_translator_rejects_hangul_residue.py に test_jin_single_char_entry_removed / test_bi_single_char_entry_removed 追加。memory feedback_no_single_char_hangul_dict_entries.md 新規",
       "agent": "translator",
+      "resolved_at": "2026-05-12"
+    },
+    "popup_gate_before_sanitize": {
+      "count": 5,
+      "last_seen": "2026-05-12",
+      "example": "12:00 popup_publisher 全件 BLOCK。pre_publish_gate に翻訳前ハングルタイトル + sanitize 前 codeblock マーカー入り content を渡していたため、本来除去できる要因で BLOCK 連発",
+      "fix": "pipeline/popup_publisher.py の gate 呼び出し直前に _gate_title 翻訳 + _gate_content sanitize_gpt_html 適用。test_popup_publisher_pregate_sanitize.py 4件追加",
+      "agent": "popup_publisher",
       "resolved_at": "2026-05-12"
     }
   },
