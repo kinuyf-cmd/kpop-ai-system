@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T14:56:44+09:00",
+  "updated_at": "2026-05-12T15:02:34+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1622,6 +1622,14 @@
       "last_seen": "2026-05-12",
       "example": "X 投稿が全件「速報…X が動いた / 注目が集まっている / 詳細はこちら / 記事に続きをまとめている」テンプレ骨格で AI 量産アカウントと判別される状態",
       "fix": "lib/x_post_templates.py の HOOKS/EMOTION_LINES/COMMENT_TRIGGERS/fragment_patterns 全面刷新。「動いた/動向/あらまし/ポイント/まとめている/事態」等の抽象 AI 臭テンプレを撲滅、title_frag (具体キーワード)/event/number 駆動の事実型に変更。extract_number/extract_event の空 fallback、select_hook の placeholder skip ロジック追加。test_x_post_templates_no_ai_smell.py 6件、memory feedback_x_post_no_ai_smell.md",
+      "agent": "x_post_templates",
+      "resolved_at": "2026-05-12"
+    },
+    "x_post_no_metric_no_specific_words": {
+      "count": 1,
+      "last_seen": "2026-05-12",
+      "example": "X投稿 hook が「BTS、7位」「LE SSERAFIM、位」「aespa、都市で開催」と数値・単位の文脈なしで AI 量産臭・誤情報",
+      "fix": "lib/x_post_templates.py に extract_metric() 追加 (7週連続TOP10 / 25都市40公演 / 13年ぶり 等の数値+単位を最優先抽出)。extract_number は metric があれば空 return で誤テンプレ回避。alias HOOKS にも plain fallback 追加。build_hashtags の bot タグ (#KPOP好きと繋がりたい / #推し活) 撲滅、アーティスト名タグ最優先。",
       "agent": "x_post_templates",
       "resolved_at": "2026-05-12"
     }

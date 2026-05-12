@@ -143,18 +143,26 @@ HOOKS = {
         "{artist}が{event}",
     ],
     # 旧ジャンル名エイリアス（後方互換) — 2026-05-12 刷新
+    # 各 alias に plain fallback (placeholder無し) を1件以上含めて、extract 失敗時の
+    # 「位」「冠を達成」「都市で開催」(数値空のまま) などの誤表示を回避
     "breaking":    ["{artist}、{event}を発表", "{artist}、{event}が確定",
-                    "{artist}、{event}でファン反応"],
+                    "{artist}、{event}でファン反応",
+                    "{artist}、新情報", "{artist}、公式発表"],
     "comeback":    ["{artist}、{event}リリース決定", "{artist}カムバック日程発表",
-                    "{artist}、新譜{event}", "{artist}、{event}で復帰"],
+                    "{artist}、新譜{event}", "{artist}、{event}で復帰",
+                    "{artist}、新曲リリース予定"],
     "controversy": ["{artist}、{event}の経緯", "{artist}、{event}に公式コメント",
-                    "{artist}、{event}に対する反応"],
+                    "{artist}、{event}に対する反応",
+                    "{artist}、公式声明発表"],
     "live":        ["{artist}来日公演、{number}都市で開催", "{artist}、{event}追加公演",
-                    "{artist}ツアー{event}", "{artist}、{event}決定"],
+                    "{artist}、新{event}発表", "{artist}、{event}決定",
+                    "{artist}、新公演発表", "{artist}、ツアー追加"],
     "chart":       ["{artist}が{number}冠を達成", "{artist}、{event}で記録更新",
-                    "{artist}、{event}ランキング", "{artist}、{number}位"],
+                    "{artist}、{event}ランキング", "{artist}、{number}位",
+                    "{artist}、新記録達成", "{artist}、チャート好調"],
     "fashion":     ["{artist}、{event}スタイル公開", "{artist}着用{event}公開",
-                    "{artist}コーデ{event}"],
+                    "{artist}コーデ{event}",
+                    "{artist}、新スタイル公開"],
 }
 
 # ─── コメントトリガー (v13.0 — 4ジャンル対応) ──────────────────────────────
@@ -402,9 +410,13 @@ def extract_event(title: str) -> str:
 
 def extract_number(title: str) -> str:
     """タイトルから意味のある数字を抽出する（年号・日付は除外）。
-    2026-05-12: fallback "新" を空文字に変更。
-    抽出失敗時は呼び出し側で {number} 必須テンプレを skip させる。
+    2026-05-12:
+      - fallback "新" を空文字に変更
+      - extract_metric が成立する時は空を返す (例: 「3冠達成」がある時に
+        「3位」誤テンプレを避ける)。metric 側で正確な数値+単位が拾われる。
     """
+    if extract_metric(title):
+        return ""
     for m in re.finditer(r'(\d+)', title):
         n = int(m.group(1))
         if 2020 <= n <= 2035:
@@ -412,6 +424,45 @@ def extract_number(title: str) -> str:
         if n > 100:
             continue
         return str(n)
+    return ""
+
+
+def extract_metric(title: str) -> str:
+    """タイトルから「数値+単位」を1つ抽出する (X投稿の具体性向上用)。
+    例: 「Billboard 200で7週連続TOP10」→「7週連続TOP10」
+        「25都市40公演」→「25都市40公演」
+        「13年ぶりミニアルバム」→「13年ぶり」
+        「3年ぶり韓国コンサート」→「3年ぶり」
+    年号 (2020-2035) は除外、日付パターン (5月12日) も除外。
+    """
+    metric_patterns = [
+        # 数値+単位+α (具体的な記録/達成)
+        r'(\d+週連続TOP\d+)',
+        r'(\d+週連続\d+位)',
+        r'(\d+冠達成)',
+        r'(TOP\d+)',
+        r'(\d+\.\d+万人)',
+        r'(\d+万人)',
+        r'(\d+都市\d+公演)',
+        r'(\d+都市)',
+        r'(\d+公演)',
+        r'(\d+ヶ国)',
+        r'(\d+年ぶり)',
+        r'(\d+周年)',
+        r'(\d+冠)',
+        r'(\d+位)',
+        r'(\d+連覇)',
+        r'(\d+万部)',
+        r'(\d+億)',
+    ]
+    for pat in metric_patterns:
+        m = re.search(pat, title)
+        if m:
+            v = m.group(1)
+            # 年号誤検出ガード
+            if re.match(r'^20[2-3]\d', v):
+                continue
+            return v
     return ""
 
 
@@ -526,46 +577,51 @@ def build_comment_trigger(genre: str, idx: int = 0) -> str:
 
 
 def build_hashtags(artist: str, genre: str) -> str:
-    """ハッシュタグを生成する（3-4個: KPOPJOURNAL固定 + ランダム2-3個）"""
-    # ブランドタグ固定（サイト認知用）
-    tags = ["#KPOPJOURNAL"]
-    # ベースタグプール（ここからランダムに1つ選ぶ）
-    base_pool = ["#KPOP", "#K-POP速報", "#韓国", "#推し活", "#KPOP好きと繋がりたい"]
-    base_tag = base_pool[_random_idx(len(base_pool))]
-    tags.append(base_tag)
+    """ハッシュタグを生成する。
+    2026-05-12 刷新: 検索されない bot タグ (#KPOP好きと繋がりたい / #推し活 /
+    #韓国エンタメ等) を削減し、**アーティスト名タグ + 検索される実タグ**を中心に。
+    順序: [#アーティスト名] → [#ジャンル関連] → 計 2-3個 (4個は過剰)。
+    #KPOPJOURNAL 自社ブランドタグは検索されないため最後尾、かつ高 CTR ジャンル
+    のみに付与 (毎回付ける必要なし)。
+    """
+    tags = []
 
-    # アーティスト名ハッシュタグ
+    # 1. アーティスト名タグ最優先 (ファンが検索する)
     artist_tag = artist.replace(" ", "")
-    # 汎用フォールバック・数字・年月は除外
-    _invalid = {"K-POP", "K-POPアイドル", "韓国K", "K-P"}
-    if (artist_tag and len(artist_tag) >= 2
-            and artist_tag not in _invalid
-            and not artist_tag.isdigit()
-            and not re.search(r'^\d{4}年', artist_tag)):
+    _invalid = {"K-POP", "K-POPアイドル", "韓国K", "K-P", ""}
+    has_artist_tag = (artist_tag and len(artist_tag) >= 2
+                      and artist_tag not in _invalid
+                      and not artist_tag.isdigit()
+                      and not re.search(r'^\d{4}年', artist_tag))
+    if has_artist_tag:
         tags.append(f"#{artist_tag}")
 
     # ジャンル別追加タグプール（複数候補からランダム選択）
     genre_tag_pools = {
-        "news":        ["#速報", "#韓国芸能", "#K-POPニュース", "#芸能ニュース"],
-        "breaking":    ["#速報", "#緊急速報", "#K-POP速報", "#芸能ニュース"],
-        "comeback":    ["#カムバック", "#新曲", "#MV", "#K-POP新曲"],
-        "controversy": ["#韓国芸能", "#芸能ニュース", "#K-POP", "#話題"],
-        "beauty":      ["#韓国コスメ", "#美容", "#スキンケア", "#コスメ好き"],
-        "travel":      ["#韓国旅行", "#ソウル", "#推し活旅行", "#聖地巡礼"],
-        "live":        ["#コンサート", "#ライブ", "#来日公演", "#チケット"],
-        "chart":       ["#チャート", "#1位", "#記録更新", "#K-POPチャート"],
-        "analysis":    ["#考察", "#K-POP解説", "#韓国芸能", "#分析"],
-        "fashion":     ["#韓国ファッション", "#コーデ", "#私服", "#ファッション"],
-        "default":     ["#韓国", "#推し活", "#K-POP好き", "#韓国エンタメ"],
+        # 2026-05-12 刷新: 検索される実タグだけ。bot ハッシュタグを排除
+        "news":        ["#KPOP", "#Kpopニュース"],
+        "breaking":    ["#速報", "#KPOP"],
+        "comeback":    ["#カムバック", "#新曲", "#kpopcomeback"],
+        "controversy": ["#KPOP", "#話題"],
+        "beauty":      ["#韓国コスメ", "#美容"],
+        "travel":      ["#韓国旅行", "#ソウル"],
+        "live":        ["#KPOPライブ", "#来日公演"],
+        "chart":       ["#KPOPチャート", "#Billboard"],
+        "analysis":    ["#KPOP考察"],
+        "fashion":     ["#韓国ファッション"],
+        "default":     ["#KPOP"],
     }
     pool = genre_tag_pools.get(genre, genre_tag_pools["default"])
-    # poolからランダムに1つ選ぶ（baseと重複しないもの）
     available = [t for t in pool if t not in tags]
     if available:
         extra = available[_random_idx(len(available))]
         tags.append(extra)
 
-    # 重複除去しつつ順序を維持
+    # ブランドタグ #KPOPJOURNAL は最後、ジャンルが news/breaking のみ付与
+    # (毎回付けると検索されない汚染タグになるため)
+    if genre in ("news", "breaking", "chart", "comeback") and "#KPOPJOURNAL" not in tags:
+        tags.append("#KPOPJOURNAL")
+
     seen = set()
     tags = [t for t in tags if not (t in seen or seen.add(t))]
 
@@ -605,7 +661,13 @@ def fragment_title(title: str, artist: str) -> str:
 def extract_title_fragment(title: str, artist: str) -> str:
     """タイトルからキーワード断片を抽出して引用テキストを生成する。
     毎回異なる引用フレーズを作ることで duplicate content を回避する。
+    2026-05-12: extract_metric で「数値+単位」を最優先抽出 (X 投稿の具体性向上)。
     """
+    # 「数値+単位」を最優先 (7週連続TOP10 / 25都市40公演 / 13年ぶり 等)
+    metric = extract_metric(title)
+    if metric:
+        return metric
+
     # タイトルから括弧・アーティスト名を除去して本体を取る
     clean = re.sub(r'【[^】]*】|（[^）]*）|\([^)]*\)', '', title).strip()
     clean = clean.replace(artist, '').strip() if artist else clean

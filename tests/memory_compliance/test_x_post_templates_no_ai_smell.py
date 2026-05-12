@@ -34,8 +34,11 @@ def test_extract_number_returns_empty_on_failure():
     from lib.x_post_templates import extract_number
     assert extract_number('IVE、Starshipが悪質投稿に法的措置発表') == ''
     assert extract_number('NewJeans著作権訴訟') == ''
-    # 数値があれば抽出
-    assert extract_number('SHINee、13年ぶりミニアルバム') == '13'
+    # 数値+単位 (metric) があれば extract_metric 側で拾うため number は空
+    # (誤テンプレ「3位」などを避ける設計)
+    assert extract_number('SHINee、13年ぶりミニアルバム') == ''
+    # 単独数値 (単位なし) は依然抽出される
+    assert extract_number('aespa、ファン3000人を動員') in ('', '3000')
 
 
 def test_extract_event_returns_empty_on_failure():
@@ -68,3 +71,32 @@ def test_fragment_patterns_no_suffix():
     assert "'\"{kw}\"のあらまし'" not in src, 'fragment_patterns に「のあらまし」suffix 残存'
     assert "'「{kw}」のポイント'" not in src, 'fragment_patterns に「のポイント」suffix 残存'
     assert "'\"{kw}\"を簡単に'" not in src, 'fragment_patterns に「を簡単に」suffix 残存'
+
+
+def test_extract_metric_picks_numeric_units():
+    """extract_metric は「数値+単位」を最優先抽出 (X 投稿の具体性向上用)"""
+    from lib.x_post_templates import extract_metric
+    assert extract_metric('BTSがBillboard 200で7週連続TOP10') == '7週連続TOP10'
+    assert extract_metric('BABYMONSTER「CHOOM」ツアー、25都市40公演を発表') == '25都市40公演'
+    assert extract_metric('SHINee、13年ぶりミニアルバム') == '13年ぶり'
+    assert extract_metric('LE SSERAFIM、3冠達成') == '3冠達成'
+    # 年号は除外
+    assert extract_metric('2026年5月の出来事') == ''
+
+
+def test_build_hashtags_no_bot_tags():
+    """hashtag 出力に「#KPOP好きと繋がりたい」「#推し活」等の bot タグが入らない"""
+    from lib.x_post_templates import build_hashtags
+    banned = ['#KPOP好きと繋がりたい', '#推し活', '#韓国エンタメ', '#K-POP好き']
+    for genre in ['news', 'comeback', 'chart', 'live', 'default']:
+        tags = build_hashtags('NewJeans', genre)
+        for b in banned:
+            assert b not in tags, f'{genre} の hashtag に bot タグ "{b}" 残存: {tags}'
+
+
+def test_build_hashtags_artist_first():
+    """hashtag は artist 名タグを最優先 (左端)"""
+    from lib.x_post_templates import build_hashtags
+    tags = build_hashtags('NewJeans', 'news')
+    first = tags.split()[0] if tags else ''
+    assert first == '#NewJeans', f'1個目が artist タグでない: {tags}'
