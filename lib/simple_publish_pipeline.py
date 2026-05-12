@@ -254,7 +254,7 @@ def simple_publish_from_source(source_url: str, slug: str = '',
     body_html = (
         f'<p>{body_ja}</p>\n'
         f'<h2>情報ソース</h2>\n'
-        f'<ul><li><a rel="noopener" href="{source_url}" target="_blank">DIRECT_SOURCE</a>: {src_title}</li></ul>\n'
+        f'<ul><li><a rel="noopener" href="{source_url}" target="_blank">DIRECT_SOURCE</a>: 記事を見る</li></ul>\n'
         f'<p><em>※ 最新情報は各公式発表をご確認ください。</em></p>\n'
     )
 

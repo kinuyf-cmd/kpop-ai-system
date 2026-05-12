@@ -71,7 +71,7 @@ def mark_processed(record):
 def generate_article_content(sigs, translated_body):
     source_links = ''.join(
         f'<li><a href="{s["url"]}" target="_blank" rel="noopener">{s.get("source_id", "?").upper()}</a>: '
-        f'{s["title"][:60]}</li>'
+        f'記事を見る</li>'
         for s in sigs[:5]
     )
     return f"""<p>{translated_body}</p>
@@ -94,7 +94,7 @@ def generate_article_content_v2(sigs, translated_body, confidence='high'):
     }
     source_links = ''.join(
         f'<li><a href="{s["url"]}" target="_blank" rel="noopener noreferrer">'
-        f'{s.get("source_id", "?").upper()}</a>: {s["title"][:60]}</li>'
+        f'{s.get("source_id", "?").upper()}</a>: 記事を見る</li>'
         for s in sigs[:5]
     )
     return f"""<p>{translated_body}</p>

@@ -345,7 +345,7 @@ def unified_publish(
     if source_signals:
         items = ''.join(
             f'<li><a href="{s.get("url","#")}" target="_blank" rel="noopener">'
-            f'{s.get("source_id","?").upper()}</a>: {s.get("title","")[:70]}</li>'
+            f'{s.get("source_id","?").upper()}</a>: 記事を見る</li>'
             for s in source_signals[:5]
         )
         sources_html = f'\n<h2>情報ソース</h2>\n<ul>{items}</ul>\n<p><em>※ 最新情報は各公式発表をご確認ください。</em></p>'
