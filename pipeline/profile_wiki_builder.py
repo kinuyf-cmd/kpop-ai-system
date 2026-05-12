@@ -1653,6 +1653,12 @@ def render_only_one(artist: str, slug: str) -> bool:
 def main():
     sys.stdout.reconfigure(line_buffering=True)
     args = sys.argv[1:]
+    if '--help' in args or '-h' in args:
+        print('usage: python3 -m pipeline.profile_wiki_builder [--render-only|--members] [artist_slug ...]')
+        print('  --render-only  既存JSONからHTML再生成のみ (Claude API skip)')
+        print('  --members      member個別page生成')
+        print('  artist_slug    PRIORITY_ARTISTS の slug or name (省略時は全件)')
+        sys.exit(0)
     render_only = '--render-only' in args
     members_only = '--members' in args
     if render_only:
