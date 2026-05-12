@@ -212,7 +212,8 @@ K-POP アーティスト「{artist}」の包括的プロフィールを web_sear
             'messages': [{"role": "user", "content": prompt}],
         }
         if use_web_search:
-            kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 5}]
+            # 2026-05-12 (Phase 3): max_uses 5 → 3 で Web Search 課金節約 (品質維持)。
+            kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}]
         response = timeout_client.messages.create(**kwargs)
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)
@@ -258,7 +259,8 @@ K-POPグループ「{artist}」のメンバー個人プロフィールを web_se
             'messages': [{"role": "user", "content": prompt}],
         }
         if os.getenv('PROFILE_USE_WEBSEARCH') == '1':
-            kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 5}]
+            # 2026-05-12 (Phase 3): max_uses 5 → 3 で Web Search 課金節約 (品質維持)。
+            kwargs['tools'] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}]
         response = timeout_client.messages.create(**kwargs)
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         return json.loads(text)

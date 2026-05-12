@@ -87,10 +87,13 @@ def _fetch_batch(client: 'anthropic.Anthropic', artists: list[str], today: str, 
 結果を JSON schema に従って返却してください。"""
 
     try:
+        # 2026-05-12 (Phase 3): max_uses 8 → 3 に削減。観測上 8 回まで使うことは稀で
+        # 重複検索が多く、Web Search 課金 ($10/1000 searches) を節約しても品質は維持。
+        # 1 batch あたりアーティスト 3-4 名なので 3 回検索で十分カバーできる。
         response = client.messages.create(
             model='claude-sonnet-4-6',
             max_tokens=4000,
-            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}],
+            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}],
             output_config={"format": {"type": "json_schema", "schema": SCHEMA}},
             messages=[{"role": "user", "content": prompt}],
         )
@@ -194,10 +197,15 @@ def render_html(data: dict) -> str:
         parts.append(f'<div class="rc-summary"><strong>📌 注目</strong> {sm}…</div>')
 
     # 月別grouping
+    # 2026-05-12 bug fix: 'Q2' / 'H2' のような四半期/半期表記は int() できないため
+    # YYYY-MM-DD 形式のみを対象に絞る (それ以外は描画スキップ)。
+    import re as _re
+    _DATE_RE = _re.compile(r'^\d{4}-\d{2}(-\d{2})?')
     by_month = {}
     for cb in comebacks:
         date = cb.get('release_date', '')
-        if not date or len(date) < 7: continue
+        if not date or len(date) < 7 or not _DATE_RE.match(date):
+            continue
         month = date[:7]
         by_month.setdefault(month, []).append(cb)
 
@@ -205,8 +213,11 @@ def render_html(data: dict) -> str:
         cards = []
         for cb in sorted(by_month[month], key=lambda x: x['release_date']):
             date_str = cb['release_date']
-            day = date_str[8:10] if len(date_str) >= 10 else '?'
-            mon_short = int(date_str[5:7]) if len(date_str) >= 7 else 0
+            day = date_str[8:10] if len(date_str) >= 10 and date_str[8:10].isdigit() else '?'
+            try:
+                mon_short = int(date_str[5:7])
+            except (ValueError, IndexError):
+                continue
             t = cb.get('type', 'other')
             ticon, tcolor, tlabel = type_meta.get(t, type_meta['other'])
             c = cb.get('confidence', 'low')
