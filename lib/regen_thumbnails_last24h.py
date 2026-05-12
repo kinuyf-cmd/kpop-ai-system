@@ -242,6 +242,21 @@ def main():
         ok = update_featured_media(post_id, media_id)
         status = "replaced" if ok else "update_fail"
         print(f"  media_id={media_id} featured_media_update={ok}")
+
+        # 2026-05-12: memo feedback_thumbnail_recovery_audit_log に従い、
+        # 差替成功時は audit_steps の thumbnail step を ok 上書き。
+        # 失念すると audit_steps_enforcer が status=error の旧 entry を見て
+        # 自動 draft 化する (21541 ユナ事例の再発防止)。
+        if ok:
+            try:
+                from lib.audit_steps_log import record_step
+                record_step(
+                    post_id, 'thumbnail', 'ok',
+                    detail=f'recovery: media_id={media_id} alt={alt[:40]}',
+                    source='regen_thumbnails_last24h',
+                )
+            except Exception as _re:
+                print(f"  [audit_steps] record_step err: {_re}")
         results.append({
             "post_id": post_id, "status": status,
             "new_media_id": media_id, "artist": artist, "copy": copy,
