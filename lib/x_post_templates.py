@@ -23,10 +23,23 @@ Output: 完成したツイートテキスト（そのまま投稿可能）
 """
 import argparse
 import hashlib
+import html as _html
 import random
 import re
 import sys
 import time
+
+
+def sanitize_tweet(text: str) -> str:
+    """ツイート本文の最終サニタイズ (lib/x_boost_selector.py 由来、import 循環回避のため内蔵)"""
+    if not text:
+        return ""
+    s = _html.unescape(text)
+    s = re.sub(r"\d[\d,]*impr[^|]*\|\s*", "", s)
+    s = re.sub(r"CTR[0-9.]+%\s*\|\s*", "", s)
+    s = s.replace("　", " ")
+    s = re.sub(r"[ \t]+\n", "\n", s).strip()
+    return s
 
 # --- アーティスト名抽出用パターン ---
 # 2026-05-12: 新世代 (2023-2026 デビュー) を補強。本日 CORTIS が K-POP fallback
@@ -722,63 +735,41 @@ def extract_title_fragment(title: str, artist: str) -> str:
 
 
 def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -> str:
-    """完成したツイートテキストを生成する (v12.0 + CTO指示 準拠)
+    """完成したツイートテキストを生成する (v14.0 — Phase 1 即時止血)
 
-    構造 (CTOハック: 1ポスト目にURLなし → IMP最大化):
-      1行目: フック（20文字以内・感情ワード・未完結）
-      2行目: 感情行 OR 断片化タイトル（寸止め）
-      3行目: 空白  ← スマホスクロール誘発
-      4行目: コメントトリガー（論争系/感動系/記録系）
-      5行目: 空白
-      6行目: URL（include_url=False の場合は省略 → リプライで後から挿入）
-      7行目: 空白
-      8行目: ハッシュタグ
+    2026-05-12 v14.0 刷新理由:
+      v13.0 まで「フック+感情行+title_frag+comment_trigger」の多行テンプレを
+      採用していたが、title_frag 抽出が「資格取得」「写真投稿」「満足度」等の
+      意味のない短語を引用し、同じ単語が3行繰り返される word salad を量産。
+      文法も破綻 (「公式発表は満足度」等) して X 上で表示品質が壊滅。
 
-    include_url=False: フック専用投稿（URLペナルティ回避）
-    include_url=True:  URL付き完全投稿（リプライ挿入用）
+      v14.0 Phase 1: faceless aggregator 戦略に回帰。タイトルそのまま +
+      最小限のハッシュタグ。AI 臭の煽り (まさかの展開/賛否は分かれそう) を
+      完全撤廃し、可読性と「文章として成立する」最低保証を確保する。
+
+      Phase 2 (別 PR): gpt-4o-mini で記事本文を読んで自然な引用+数値型の
+      ツイートを生成 (LLM 駆動)。Phase 1 で止血した上で実装する。
+
+    構造 (v14.0):
+      1行目: 記事タイトル (そのまま、整形のみ)
+      2行目: 空白
+      3行目: URL (include_url=True の場合のみ)
+      4行目: 空白
+      5行目: ハッシュタグ (artist + 1 topic、最大2個)
+
+    include_url=False: フック専用投稿（URLペナルティ回避）→ タイトル+タグのみ
+    include_url=True:  URL付き完全投稿
     """
     artist = extract_artist(title)
-
-    # フック生成（20文字以内）
-    hook = select_hook(genre, title, artist)
-    if len(hook) > 20:
-        number = extract_number(title)
-        event = extract_event(title)
-        alt_hooks = []
-        for h in HOOKS.get(genre, HOOKS["default"]):
-            if "{artist}" in h:
-                continue
-            # event/number 必須テンプレを抽出失敗時に skip (2026-05-12 修正)
-            if "{event}" in h and not event:
-                continue
-            if "{number}" in h and not number:
-                continue
-            h2 = h.replace("{number}", number).replace("{event}", event)
-            if len(h2) <= 20:
-                alt_hooks.append(h2)
-        hook = alt_hooks[_random_idx(len(alt_hooks), title)] if alt_hooks else hook[:19] + "…"
-
-    # 感情行: ランダム選択
-    emotion = build_emotion_line(genre, title)
-
-    # タイトル断片引用（duplicate content回避の要）
-    title_fragment = extract_title_fragment(title, artist)
-
-    # コメントトリガー（動的3タイプ、ランダム選択）
-    comment_trigger = build_comment_trigger(genre)
-
     hashtags = build_hashtags(artist, genre)
 
-    # タイトル断片がある場合は感情行の後に挿入
-    if title_fragment:
-        body = f"{hook}\n{emotion}\n{title_fragment}\n\n{comment_trigger}"
-    else:
-        body = f"{hook}\n{emotion}\n\n{comment_trigger}"
+    # タイトルを軽く整形 (Twitter 安全文字列化)
+    body = sanitize_tweet(title.strip())
 
+    # タイトル + URL + ハッシュタグの最小構成
     if include_url:
         tweet = f"{body}\n\n{url}\n\n{hashtags}"
     else:
-        # CTOハック: URLなし → IMP最大化フック投稿
         tweet = f"{body}\n\n{hashtags}"
     return tweet
 
