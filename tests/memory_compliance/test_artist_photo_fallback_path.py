@@ -16,7 +16,7 @@ def test_og_failure_then_artist_via_youtube():
         sequence.append('og_attempt')
         return None  # 失敗
 
-    def fake_yt(artist, prefer='viewCount'):
+    def fake_yt(artist, prefer='viewCount', prefer_keywords=None):
         sequence.append(f'yt_{artist}')
         return {'image_path': '/tmp/y.jpg', 'source': 'youtube_official', 'attribution': artist.lower()}
 

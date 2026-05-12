@@ -280,7 +280,9 @@ def unified_publish(
     if not media_id and artist:
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
-            _artist_thumb = _resolve_artist_thumb(artist_name=artist, article_type='concrete')
+            # 2026-05-12: 曲名 match で MV サムネを選定 (WDA 記事に THIRSTY MV 事故対策)
+            _artist_thumb = _resolve_artist_thumb(artist_name=artist, article_type='concrete',
+                                                  article_title=title_final)
             if _artist_thumb and _artist_thumb.get('image_path') and os.path.exists(_artist_thumb['image_path']):
                 from PIL import Image as _PILImage
                 import tempfile as _tf

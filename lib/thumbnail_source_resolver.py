@@ -375,10 +375,15 @@ def _resolve_channel_id_DEPRECATED(artist_name: str, accounts: dict) -> str:
     return ""
 
 
-def resolve_youtube(artist_name: str, prefer: str = "popular") -> dict | None:
+def resolve_youtube(artist_name: str, prefer: str = "popular",
+                    prefer_keywords: list | None = None) -> dict | None:
     """Get YouTube MV thumbnail — 最新MV or 高再生MVから自動取得
 
     prefer: "popular" = 高再生数優先(default), "latest" = 最新動画, "static" = 固定リストのみ
+    prefer_keywords: 動画タイトルに含まれていたら優先採用するキーワード (例: 曲名)
+      2026-05-12 追加: 記事タイトルの曲名 (例: WDA) と動画タイトルの曲名が一致する
+      動画を最優先採用。aespa の WDA 記事に THIRSTY MV サムネが付いた事故への
+      root cause 対策。
     2026-05-10: defaultを latest → popular に変更。最新動画はShorts/Vlog/コラボが
     K-pop公式チャンネルで日次投稿されるため Shorts汚染が多発した。人気順なら
     アイコニックなMVサムネが安定して取得できる。
@@ -396,7 +401,20 @@ def resolve_youtube(artist_name: str, prefer: str = "popular") -> dict | None:
         if channel_id:
             order = "date" if prefer == "latest" else "viewCount"
             blocked_ids = _load_blocked_video_ids()
-            videos = _fetch_youtube_videos(channel_id, order=order, max_results=3)
+            # prefer_keywords 指定時は候補を多めに取って曲名 match を上位 sort
+            _fetch_n = 10 if prefer_keywords else 3
+            videos = _fetch_youtube_videos(channel_id, order=order, max_results=_fetch_n)
+            if prefer_keywords and videos:
+                def _kw_score(v):
+                    t = (v.get("title", "") or "").lower()
+                    return sum(1 for kw in prefer_keywords if kw and kw.lower() in t)
+                videos = sorted(videos, key=lambda v: -_kw_score(v))
+                if videos and _kw_score(videos[0]) > 0:
+                    sys.stderr.write(
+                        f"[resolver] 曲名match優先: '{videos[0].get('title','')[:50]}' "
+                        f"(keywords={prefer_keywords[:3]})\n"
+                    )
+            videos = videos[:3]
             for v in videos:
                 vid = v["video_id"]
                 if vid in blocked_ids:
@@ -663,7 +681,8 @@ def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
 
 def resolve(artist_name: str, genre: str = "", post_id: str = "",
             article_type: str = "concrete", source_url: str = "",
-            theme: str = "", theme_config: dict | None = None) -> dict:
+            theme: str = "", theme_config: dict | None = None,
+            article_title: str = "") -> dict:
     """
     Resolve the best available image source for a thumbnail.
 
@@ -674,6 +693,9 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         article_type: "concrete" or "abstract" (from article_topic_classifier)
         theme: Article theme key (comeback/concert/chart/variety/award/fashion/personal/debut/general)
         theme_config: Theme-specific config dict with youtube_order, unsplash_query, dalle_prompt
+        article_title: 記事タイトル (2026-05-12 追加: 曲名 (WDA/THIRSTY 等) match で
+          MV サムネ選定を改善するため。aespa の WDA 記事に THIRSTY MV を出した
+          事故への対策)
 
     Returns dict with keys: image_path, source, source_url, license, attribution
     If no source available, returns a fallback dict with source='gradient_fallback'.
@@ -685,6 +707,20 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
     dalle_negative = tc.get("dalle_negative", "")
     result = None
 
+    # article_title から曲名キーワードを抽出 (「」内の固有名詞 + 英字大文字3-15字)
+    song_keywords = []
+    if article_title:
+        import re as _re_kw
+        # 「」または『』内の語
+        song_keywords.extend(_re_kw.findall(r'[「『]([^」』]{1,15})[」』]', article_title))
+        # 英字大文字 3-15字 (例: WDA, THIRSTY, BUTTER)
+        for w in _re_kw.findall(r'\b[A-Z][A-Z0-9]{2,14}\b', article_title):
+            # アーティスト名や一般語は除外
+            if w.lower() not in (artist_name.lower(), 'BTS', 'IVE', 'TXT', 'NCT',
+                                 'KPOP', 'JPOP', 'OST', 'MV', 'JST', 'KST', 'EP',
+                                 'CEO', 'AKA'):
+                song_keywords.append(w)
+
     def _tag(r):
         """結果dictにテーマ情報を付与"""
         if r:
@@ -693,7 +729,7 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
 
     def _resolve_artist_sources(artist: str) -> dict | None:
         """アーティスト本人画像を解決 (YouTube → Wikimedia → グループフォールバック → cache)"""
-        r = resolve_youtube(artist, prefer=yt_order)
+        r = resolve_youtube(artist, prefer=yt_order, prefer_keywords=song_keywords or None)
         if r:
             attr = (r.get("attribution", "") or "").lower()
             artist_lower = artist.lower()
@@ -720,7 +756,7 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
             sys.stderr.write(
                 f"[resolver] メンバー '{artist}' → グループ '{group_name}' にフォールバック\n"
             )
-            r = resolve_youtube(group_name, prefer=yt_order)
+            r = resolve_youtube(group_name, prefer=yt_order, prefer_keywords=song_keywords or None)
             if r:
                 return r
             r = resolve_wikimedia(group_name)
