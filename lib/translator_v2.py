@@ -189,6 +189,34 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
                 'pre_replaced': replaced_count,
             }
 
+        # 2026-05-12: TAEYONG (NCT 태용) ↔ TAEYEON (SNSD 태연) 取り違え検出。
+        # 22195 で en/ko 両方の表記が「テヨン」に潰れて生 publish された事故への二段防御。
+        # 入力に Taeyong/태용 があるのに出力に TAEYEON が混入 (またはその逆) なら BLOCK。
+        _src_lower = (text or '').lower()
+        _src_has_taeyong = ('taeyong' in _src_lower) or ('태용' in (text or ''))
+        _src_has_taeyeon = ('taeyeon' in _src_lower) or ('태연' in (text or ''))
+        _out_lower = (translated or '').lower()
+        _out_has_taeyong = 'taeyong' in _out_lower
+        _out_has_taeyeon = 'taeyeon' in _out_lower
+        if _src_has_taeyong and _out_has_taeyeon and not _src_has_taeyeon:
+            return {
+                'success': False,
+                'translated': translated,
+                'reason': 'taeyong_taeyeon_swap: source=Taeyong but output contains TAEYEON',
+                'residual_korean_count': residual,
+                'proper_nouns_used': nouns,
+                'pre_replaced': replaced_count,
+            }
+        if _src_has_taeyeon and _out_has_taeyong and not _src_has_taeyong:
+            return {
+                'success': False,
+                'translated': translated,
+                'reason': 'taeyong_taeyeon_swap: source=Taeyeon but output contains TAEYONG',
+                'residual_korean_count': residual,
+                'proper_nouns_used': nouns,
+                'pre_replaced': replaced_count,
+            }
+
         return {
             'success': True,
             'translated': translated,
