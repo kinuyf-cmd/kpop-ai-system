@@ -187,7 +187,7 @@
 0 4 * * 0 find /home/aiuser/kpop-ai-system/logs/ -name '*.log' -size +5M -exec truncate -s 1M {} \;
 45 9-21 * * * cd /home/aiuser/kpop-ai-system && python3 lib/x_retry_processor.py >> logs/x_retry.log 2>&1
 # --- X投稿スケジューラー (時間分散) ---
-*/15 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.x_scheduled_poster >> logs/x_scheduled.log 2>&1
+*/15 7-21 * * * cd /home/aiuser/kpop-ai-system && X_TWEET_LLM=1 python3 -m pipeline.x_scheduled_poster >> logs/x_scheduled.log 2>&1
 # --- X投稿ライフサイクル管理 (404削除・OGP同期・サムネ再投稿) ---
 # 2026-05-11: 1日3回→1回に削減 (daily_kpi_report のスパム判定指摘 99件/日対策)
 0 10 * * * cd /home/aiuser/kpop-ai-system && python3 -m pipeline.x_lifecycle_manager >> logs/x_lifecycle.log 2>&1
@@ -286,7 +286,9 @@
 */15 7-21 * * * cd /home/aiuser/kpop-ai-system && python3 tools/sync_trending_to_wp_snippet.py >> logs/sync_trending.log 2>&1
 
 # auto-auditor: 直近35分の publish を 4項目独立監査、FAIL は auto-draft 化 (2026-05-12)
-*/30 6-22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/auto_audit_recent.py >> logs/auto_audit_recent.log 2>&1
+# 2026-05-12 (Phase 7): 30min → 1h に削減。dedup ロジック (already_audited_by_auto)
+# が効いてるので detection latency は最大 1h で十分。Claude vision_gate 課金を半減。
+0 6-22 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/auto_audit_recent.py >> logs/auto_audit_recent.log 2>&1
 
 # WP本文プロフィール block stale-member scan (2026-05-12新設, 22075事故対応)
 10 6 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/scan_wp_profile_stale_member.py >> logs/scan_profile_stale.log 2>&1

@@ -408,13 +408,31 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
 
     # --- Step 1: フック投稿（URLなし） ---
     try:
-        from lib.x_post_templates import generate_tweet, CATEGORY_TO_GENRE
+        from lib.x_post_templates import generate_tweet, generate_tweet_llm, CATEGORY_TO_GENRE
         _genre = genre or 'default'
         if _genre not in ('news', 'analysis', 'beauty', 'travel',
                           'breaking', 'comeback', 'controversy', 'live',
                           'chart', 'fashion', 'default'):
             _genre = CATEGORY_TO_GENRE.get(_genre, 'default')
-        hook_text = generate_tweet(text, '', _genre, include_url=False)
+        # v14.0 Phase 2: X_TWEET_LLM=1 で LLM 駆動 (gpt-4o-mini) を有効化。
+        # post_id があれば WP から本文を取得して LLM に渡す。失敗時は Phase 1 にフォールバック。
+        _llm_enabled = os.getenv('X_TWEET_LLM', '0') == '1'
+        _source_text = ''
+        if _llm_enabled and post_id:
+            try:
+                import urllib.request as _ur
+                import json as _json
+                _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=content'
+                _r = _ur.urlopen(_u, timeout=10)
+                _wp = _json.loads(_r.read())
+                _raw = _wp.get('content', {}).get('rendered', '') or ''
+                _source_text = re.sub(r'<[^>]+>', '', _raw)[:1500]
+            except Exception:
+                _source_text = ''
+        if _llm_enabled and _source_text:
+            hook_text = generate_tweet_llm(text, '', _source_text, _genre, include_url=False)
+        else:
+            hook_text = generate_tweet(text, '', _genre, include_url=False)
     except Exception as _e:
         # フォールバック
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'

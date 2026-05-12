@@ -774,6 +774,113 @@ def generate_tweet(title: str, url: str, genre: str, include_url: bool = True) -
     return tweet
 
 
+def _llm_tweet_body(title: str, source_text: str, genre: str) -> str:
+    """gpt-4o-mini で記事本文を読んで自然な日本語ツイート本文 (タイトル相当) を生成。
+
+    禁止フレーズ:
+      - 煽り (まさかの展開, 賛否分かれそう, 衝撃の事実, ファン反応続出)
+      - engagement bait (みんなはどう思う?, 私はアリだと思うけど)
+      - meta (本記事では, この記事は, まとめている)
+
+    要件:
+      - 体言止め1-2文 (合計 200字以内、180字 推奨)
+      - 数値・固有名詞・日付があれば必ず含める
+      - 引用は「」 で囲む
+      - URL/ハッシュタグは含めない (呼び出し側で別途追加)
+      - 結果は1行 (改行禁止) — 改行は呼び出し側でレイアウト
+
+    失敗時は空文字を返し、呼び出し側で Phase 1 (タイトルそのまま) にフォールバック。
+    """
+    import os
+    import json
+    import urllib.request
+    api_key = os.getenv('OPENAI_API_KEY', '')
+    if not api_key or not source_text:
+        return ''
+
+    system = (
+        "あなたは K-POP ニュースサイトの編集者です。"
+        "記事から X (Twitter) 用のツイート本文を1つ書きます。"
+        "\n\n【禁止】"
+        "\n- 「まさかの展開」「賛否分かれそう」「衝撃の事実」「ファン反応続出」等の煽り文句"
+        "\n- 「みんなはどう思う?」「私はアリだと思うけど」等の engagement bait"
+        "\n- 「本記事では」「この記事は」「まとめている」等の meta 表現"
+        "\n- ハッシュタグ・URL・絵文字の出力"
+        "\n- 改行 (出力は必ず1行)"
+        "\n\n【要件】"
+        "\n- 体言止め1-2文、合計 180 字以内"
+        "\n- 数値・固有名詞・日付・場所がソースにあれば必ず含める"
+        "\n- 引用がある場合は「」で囲む"
+        "\n- タイトルを丸コピーしない (タイトル≠ツイート本文)"
+        "\n- 客観的・事実駆動の faceless aggregator スタイル"
+    )
+    user = f"タイトル: {title}\n\n本文 (抜粋): {source_text[:1200]}\n\nツイート本文 (1行のみ、ハッシュタグ・URL なし):"
+
+    body = json.dumps({
+        'model': 'gpt-4o-mini',
+        'messages': [
+            {'role': 'system', 'content': system},
+            {'role': 'user', 'content': user},
+        ],
+        'temperature': 0.3,
+        'max_tokens': 200,
+    }).encode()
+    req = urllib.request.Request(
+        'https://api.openai.com/v1/chat/completions',
+        data=body,
+        headers={'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            res = json.loads(r.read())
+        out = res['choices'][0]['message']['content'].strip()
+    except Exception:
+        return ''
+
+    # 後処理: 改行・URL・ハッシュタグ・エンコード残骸を除去
+    out = out.replace('\n', ' ').replace('\r', ' ').strip()
+    out = re.sub(r'https?://\S+', '', out).strip()
+    out = re.sub(r'#\S+', '', out).strip()
+    # 禁止フレーズ post-check (LLM がプロンプト指示を破った場合の二段防御)
+    forbidden = [
+        'まさかの展開', '賛否は分かれそう', '賛否分かれそう', '衝撃の事実',
+        'ファン反応続出', 'みんなはどう思う', '私はアリだと思う',
+        '本記事では', 'この記事は', 'まとめている', 'どう思う?', 'どう思う？',
+        '動向', 'あらまし', 'ポイント',
+    ]
+    for kw in forbidden:
+        if kw in out:
+            return ''
+    # 長すぎる場合は切る (200 字想定だが念のため)
+    if len(out) > 200:
+        out = out[:198] + '…'
+    return out if out else ''
+
+
+def generate_tweet_llm(title: str, url: str, source_text: str, genre: str,
+                      include_url: bool = True) -> str:
+    """v14.0 Phase 2: LLM 駆動ツイート生成。
+
+    記事本文 (source_text) を gpt-4o-mini に渡して、自然な事実駆動の
+    ツイート本文を生成する。失敗時は Phase 1 (generate_tweet) にフォールバック。
+
+    呼び出し側 (lib/x_poster.py 等) で X_TWEET_LLM=1 環境変数で有効化を制御。
+    """
+    body = _llm_tweet_body(title, source_text, genre)
+    if not body:
+        # LLM 失敗 → Phase 1 (タイトルそのまま) にフォールバック
+        return generate_tweet(title, url, genre, include_url=include_url)
+
+    artist = extract_artist(title)
+    hashtags = build_hashtags(artist, genre)
+    body = sanitize_tweet(body)
+
+    if include_url:
+        return f"{body}\n\n{url}\n\n{hashtags}"
+    else:
+        return f"{body}\n\n{hashtags}"
+
+
 def generate_url_reply(url: str, hashtags: str = "") -> str:
     """CTOハック §8: IMP条件達成後にリプライとして投稿するURL文
     毎回異なるリプライ文でduplicate contentを回避する。
