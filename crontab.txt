@@ -271,3 +271,6 @@
 # 日次 draft 落ち率監視 (breaking publish silent rot 検出 / 2026-05-11新設)
 0 9 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/draft_rate_monitor.py >> logs/draft_rate_monitor.log 2>&1
 0 10 * * 1 cd /home/aiuser/kpop-ai-system && python3 scripts/memory_archive_stale.py >> logs/memory_archive_cron.log 2>&1
+
+# Daily QA: 全 pytest 実行、失敗時のみ Discord error チャネル通知 (2026-05-12)
+15 5 * * * cd /home/aiuser/kpop-ai-system && python3 scripts/daily_qa_run.py >> logs/daily_qa.log 2>&1
