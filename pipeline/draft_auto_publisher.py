@@ -167,15 +167,30 @@ def main():
                 except Exception as _fe:
                     print(f"  [factcheck] Tavily skip: {_fe}")
 
-            gate = pre_publish_gate(
-                title=title, body_html=content,
-                post_type='post', kind=_kind,
-                slug=slug, featured_media=fm,
-                categories=cats, excerpt=excerpt,
-                status='publish',
-                source_url=_source_url,
-                source_signals=_source_signals,
-            )
+            # 2026-05-12: content_hash で BLOCK 永続化 (gate の stochastic な PASS で
+            # 過去 BLOCK 済記事が通過する事故を防ぐ)。22027 / 22024 hallucination 公開の
+            # root cause: 同 content で BLOCK 1/3 → BLOCK 2/3 → 3 回目に gate が偶発的に
+            # PASS を返して publish された。
+            content_hash = hashlib.sha256(
+                (title + content[:5000]).encode('utf-8', errors='ignore')
+            ).hexdigest()[:16]
+            prior = block_history.get(pid_str, {})
+            if prior.get('content_hash') == content_hash and prior.get('count', 0) >= 1:
+                # 同 content で過去に BLOCK 済 → gate 再実行せず BLOCK 維持
+                gate = {
+                    'verdict': 'BLOCK',
+                    'block_reasons': prior.get('reasons', ['同content_hashで過去BLOCK済 (stochastic-PASS回避)']),
+                }
+            else:
+                gate = pre_publish_gate(
+                    title=title, body_html=content,
+                    post_type='post', kind=_kind,
+                    slug=slug, featured_media=fm,
+                    categories=cats, excerpt=excerpt,
+                    status='publish',
+                    source_url=_source_url,
+                    source_signals=_source_signals,
+                )
             if gate['verdict'] != 'BLOCK':
                 # publish前にslugを検証・修正
                 slug = _fix_slug_if_needed(pid, slug, title)
@@ -200,6 +215,7 @@ def main():
                 block_history[pid_str]['count'] += 1
                 block_history[pid_str]['last_seen'] = datetime.now().isoformat()
                 block_history[pid_str]['reasons'] = reasons[:3]
+                block_history[pid_str]['content_hash'] = content_hash
 
                 if block_history[pid_str]['count'] >= MAX_BLOCK_COUNT:
                     _archive_draft(pid, reasons)
