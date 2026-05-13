@@ -837,6 +837,33 @@ def _llm_tweet_body(title: str, source_text: str, genre: str) -> str:
     except Exception:
         return ''
 
+    # 2026-05-13: cost ledger に記録 (kpi_dashboard で集計、Phase 2 重複呼出監視)
+    try:
+        from datetime import datetime, timezone, timedelta
+        from pathlib import Path
+        usage = res.get('usage', {})
+        in_tok = int(usage.get('prompt_tokens', 0))
+        out_tok = int(usage.get('completion_tokens', 0))
+        # gpt-4o-mini pricing: input $0.00015 / output $0.0006 per 1K
+        cost = in_tok / 1000 * 0.00015 + out_tok / 1000 * 0.0006
+        JST = timezone(timedelta(hours=9))
+        now = datetime.now(JST)
+        entry = {
+            'ts': now.isoformat(),
+            'date': now.strftime('%Y-%m-%d'),
+            'caller': 'x_tweet_llm',
+            'model': 'gpt-4o-mini',
+            'input': in_tok,
+            'output': out_tok,
+            'cost_usd': round(cost, 6),
+        }
+        log_path = Path('/home/aiuser/kpop-ai-system/logs/x_tweet_llm.jsonl')
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, 'a', encoding='utf-8') as _f:
+            _f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+    except Exception:
+        pass
+
     # 後処理: 改行・URL・ハッシュタグ・エンコード残骸を除去
     out = out.replace('\n', ' ').replace('\r', ' ').strip()
     out = re.sub(r'https?://\S+', '', out).strip()

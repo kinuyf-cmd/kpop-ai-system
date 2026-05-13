@@ -122,6 +122,7 @@ def _load_winning_patterns():
 
 def compute_trending():
     """急上昇ランキングを計算"""
+    print(f"[{datetime.now(JST).isoformat()}] compute_trending start", flush=True)
     metrics = _load_metrics()
     if not metrics:
         print("WARN: metrics_yesterday.json が読めません", file=sys.stderr)
@@ -229,6 +230,7 @@ def compute_trending():
         encoding="utf-8"
     )
 
+    print(f"[{datetime.now(JST).isoformat()}] compute_trending done count={len(result)}", flush=True)
     return result
 
 

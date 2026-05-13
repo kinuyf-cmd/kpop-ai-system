@@ -115,6 +115,13 @@ def sanitize_gpt_html(html: str) -> str:
                   lambda m: f'<{m.group(1).lower()}>{m.group(2).strip()}</{m.group(1).lower()}>',
                   html)
 
+    # 2026-05-13: <li>h2: 〇〇 <p>本文</p></li> 同型対策 (22343 リストblock内残存)
+    # <li>h2: タイトル ... </li> → <li><strong>タイトル</strong> ... </li>
+    # h2 が <li> 内に出るのは構造的に不正なので strong 強調に置換 (h2 として外に出すと list 構造崩壊)
+    html = re.sub(r'(<li[^>]*>)\s*(h[2-6])\s*[:：]\s*([^<\n]+?)(?=\s*<|\s*$)',
+                  lambda m: f'{m.group(1)}<strong>{m.group(3).strip()}</strong>',
+                  html, flags=re.IGNORECASE)
+
     # 文字重複修正 (5文字以上の連続→2文字に)
     html = re.sub(r'(.)\1{4,}', r'\1\1', html)
 

@@ -531,6 +531,7 @@ def _aggregate_openai_cost(date_str: str) -> tuple[int, float]:
     import json as _json
     paths = [
         '/home/aiuser/kpop-ai-system/logs/translation.jsonl',
+        '/home/aiuser/kpop-ai-system/logs/x_tweet_llm.jsonl',
     ]
     calls = 0
     usd = 0.0

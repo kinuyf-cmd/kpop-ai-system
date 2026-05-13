@@ -37,6 +37,13 @@ CACHE_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_cache.json')
 # の重複呼出しを恒久遮断 (品質完全同一)。
 CACHE_TTL_SEC = 30 * 86400  # 30 days
 
+# 2026-05-13 (Phase 8 コスト削減): pid 軸 24h dedup を追加。
+# enricher 等が記事本文を後追い編集するため content_hash が変動し永続cacheが
+# miss してしまう問題への対策。同じ post_id の記事を 24h 以内に再評価する場合は
+# 本文の微修正を無視して前回判定を返す。24h 経過後は再評価 (大きな修正検知)。
+PID_CACHE_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_pid_cache.json')
+PID_CACHE_TTL_SEC = 24 * 3600  # 24h
+
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
 KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
 
@@ -154,6 +161,41 @@ def _cache_put(key: str, result: dict) -> None:
         pass
 
 
+def _pid_cache_get(pid) -> dict | None:
+    """pid 軸 24h dedup cache の lookup。enricher 本文編集対策。"""
+    if not pid:
+        return None
+    if not PID_CACHE_PATH.exists():
+        return None
+    try:
+        cache = json.loads(PID_CACHE_PATH.read_text(encoding='utf-8'))
+    except Exception:
+        return None
+    entry = cache.get(str(pid))
+    if not entry:
+        return None
+    if time.time() - entry.get('ts', 0) > PID_CACHE_TTL_SEC:
+        return None
+    return entry.get('result')
+
+
+def _pid_cache_put(pid, result: dict) -> None:
+    if not pid:
+        return
+    try:
+        cache = json.loads(PID_CACHE_PATH.read_text(encoding='utf-8')) if PID_CACHE_PATH.exists() else {}
+    except Exception:
+        cache = {}
+    now = time.time()
+    cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= PID_CACHE_TTL_SEC}
+    cache[str(pid)] = {'ts': now, 'result': result}
+    try:
+        PID_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        PID_CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
+    except OSError:
+        pass
+
+
 def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     """Claude Sonnet 4.6で記事校閲
 
@@ -168,12 +210,30 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     content = post['content']['rendered'] if isinstance(post.get('content'), dict) else post.get('content', '')
     plain = re.sub(r'<[^>]+>', ' ', content)
     plain = re.sub(r'\s+', ' ', plain).strip()[:2500]
+    pid = post.get('id')
 
+    # Layer 1: pid 軸 24h dedup (enricher 本文編集対策、2026-05-13)。
+    # 同じ post_id の記事を 24h 以内に再評価する場合は本文の微修正を無視。
+    pid_cached = _pid_cache_get(pid)
+    if pid_cached is not None:
+        _log({
+            'pid': pid,
+            'title': title[:60],
+            'score': pid_cached.get('score'),
+            'critical_count': len(pid_cached.get('critical', [])),
+            'high_count': len(pid_cached.get('high', [])),
+            'medium_count': len(pid_cached.get('medium', [])),
+            'usage': {'pid_cache_hit': True},
+        })
+        return pid_cached
+
+    # Layer 2: content_hash 30日永続 cache (本文修正検知)
     ck = _cache_key(title, plain)
     cached = _cache_get(ck)
     if cached is not None:
+        _pid_cache_put(pid, cached)
         _log({
-            'pid': post.get('id'),
+            'pid': pid,
             'title': title[:60],
             'score': cached.get('score'),
             'critical_count': len(cached.get('critical', [])),
@@ -312,6 +372,8 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
         # 同一 title+content の連続呼び出しを 1回に折り畳むため結果をキャッシュ
         _cache_put(ck, result)
+        # pid 軸 24h dedup にも書き込み (enricher 編集後の再factcheck を遮断)
+        _pid_cache_put(pid, result)
 
         # 2026-05-12 (Phase 6): cost ledger に記録 (予算アラート/監視用)
         try:
