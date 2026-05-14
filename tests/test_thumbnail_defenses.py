@@ -204,6 +204,61 @@ def test_official_accounts_has_treasure():
     assert 'treasure' in accounts
 
 
+# === fallback_cache cross-artist mismatch (23224 事案) ===
+
+def test_resolve_fallback_photo_rejects_non_latin_name():
+    """非 Latin 名 (Hangul/Katakana) で _slug が空文字になる場合、
+    glob '**.*' が全 cache match で別アーティスト写真を pick する事故を防ぐ。
+
+    2026-05-15: post 23224 で アイキー → fallback_cache → IVE 写真混入の事故。
+    """
+    from lib.thumbnail_source_resolver import resolve_fallback_photo, _slug
+    # 前提: _slug 自体は短い文字列を返す (修正対象ではない)
+    assert _slug('アイキー') == ''
+    assert _slug('아이유') == ''
+    # 修正: 短すぎる slug は早期 return None
+    assert resolve_fallback_photo('アイキー') is None
+    assert resolve_fallback_photo('아이유') is None
+    assert resolve_fallback_photo('') is None
+    assert resolve_fallback_photo(None) is None
+
+
+def test_wikimedia_fetch_safe_image_rejects_short_slug():
+    """slug が空 → CACHE_INDEX に '' key を書き込んでしまう writer 側の事故防止。
+
+    2026-05-15: CACHE_INDEX['' ] = {name:'아이유',...} が混入し、
+    resolve_fallback_photo が空 slug lookup で IU を返していた。
+    """
+    from lib.wikimedia import fetch_safe_image
+    # 非 Latin 名は writer 側で早期 return → cache 汚染なし
+    assert fetch_safe_image('アイキー', '/tmp/test_cache_dummy') is None
+    assert fetch_safe_image('아이유', '/tmp/test_cache_dummy') is None
+
+
+def test_artist_cache_index_no_empty_keys():
+    """CACHE_INDEX に空 key entry が残っていないこと (data hygiene)。"""
+    idx_path = '/home/aiuser/kpop-ai-system/assets/artist_cache/index.json'
+    if not os.path.exists(idx_path):
+        pytest.skip('cache index 未生成')
+    idx = json.loads(open(idx_path).read())
+    bad = [k for k in idx.keys() if len(k) < 2]
+    assert not bad, f"短すぎる key entries (cross-artist mismatch 原因): {bad}"
+
+
+# === DALL-E → gpt-image-1 migration (2026-05-15) ===
+
+def test_dalle_thumbnail_gen_uses_gpt_image_1():
+    """dall-e-3 は OpenAI で廃止 ("model 'dall-e-3' does not exist")。
+    gpt-image-1 (または後続) に移行されていること。
+    """
+    from lib import dalle_thumbnail_gen
+    assert dalle_thumbnail_gen.MODEL != 'dall-e-3', \
+        'dall-e-3 は廃止: gpt-image-1 系に移行すること'
+    assert 'gpt-image' in dalle_thumbnail_gen.MODEL or \
+           dalle_thumbnail_gen.MODEL.startswith('chatgpt-image'), \
+        f'未知の image model: {dalle_thumbnail_gen.MODEL}'
+
+
 # === cache purge endpoint ===
 
 def test_cache_purge_url_has_trailing_slash():

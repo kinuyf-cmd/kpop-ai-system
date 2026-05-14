@@ -601,6 +601,15 @@ def resolve_fallback_photo(artist_name: str) -> dict | None:
         return None
 
     slug = _slug(artist_name)
+    # 非 Latin (例: 'アイキー' → '') を glob すると '**.*' = 全 cache match で
+    # 別アーティスト写真を誤ピックする。slug が短すぎる場合は cache 利用を放棄する。
+    if len(slug) < 2:
+        sys.stderr.write(
+            f"[resolver] fallback_cache skipped: slug too short for '{artist_name}' "
+            f"(slug={slug!r}) — non-Latin name 等で glob 全マッチ事故防止\n"
+        )
+        return None
+
     cache_dir = str(CACHE_DIR)
 
     # Find all cached files matching this artist slug
@@ -620,7 +629,7 @@ def resolve_fallback_photo(artist_name: str) -> dict | None:
     if CACHE_INDEX.exists():
         try:
             idx = json.loads(CACHE_INDEX.read_text(encoding="utf-8"))
-            entry = idx.get(slug, {})
+            entry = idx.get(slug, {}) if slug else {}
             files = entry.get("files", [])
             for fname in files:
                 fpath = str(CACHE_DIR / fname)

@@ -9,6 +9,7 @@ Usage:
     from lib.dalle_thumbnail_gen import generate_thumbnail
     result = generate_thumbnail(prompt="...", output_path="/tmp/thumb.png")
 """
+import base64
 import json
 import os
 import urllib.request
@@ -18,9 +19,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DALLE_API = "https://api.openai.com/v1/images/generations"
-MODEL = "dall-e-3"
+# 2026-05-15: dall-e-3 が OpenAI で廃止 ("model 'dall-e-3' does not exist")。
+# gpt-image-1 に移行。応答は b64_json (URL 形式は廃止)。
+MODEL = os.getenv("OPENAI_IMAGE_MODEL", "gpt-image-1")
 DAILY_LIMIT = 50
 COST_LOG = "/home/aiuser/kpop-ai-system/logs/dalle_cost.jsonl"
+
+# legacy dall-e-3 引数 → gpt-image-1 引数 へのマッピング (呼び出し側 API 互換維持)
+_SIZE_MAP = {
+    "1024x1024": "1024x1024",
+    "1792x1024": "1536x1024",  # landscape
+    "1024x1792": "1024x1536",  # portrait
+}
+_QUALITY_MAP = {
+    "standard": "medium",
+    "hd": "high",
+}
 
 
 def _count_today():
@@ -87,24 +101,25 @@ def generate_thumbnail(
             "reason": f"1日の上限{DAILY_LIMIT}件到達",
         }
 
+    # gpt-image-1 公称価格 (medium=標準, high=高品質)
     cost_map = {
-        ("1024x1024", "standard"): 0.040,
-        ("1024x1024", "hd"): 0.080,
-        ("1792x1024", "standard"): 0.080,
-        ("1792x1024", "hd"): 0.120,
-        ("1024x1792", "standard"): 0.080,
-        ("1024x1792", "hd"): 0.120,
+        ("1024x1024", "standard"): 0.042,
+        ("1024x1024", "hd"): 0.167,
+        ("1792x1024", "standard"): 0.063,
+        ("1792x1024", "hd"): 0.250,
+        ("1024x1792", "standard"): 0.063,
+        ("1024x1792", "hd"): 0.250,
     }
-    est_cost = cost_map.get((size, quality), 0.080)
+    est_cost = cost_map.get((size, quality), 0.063)
 
     body = json.dumps(
         {
             "model": MODEL,
             "prompt": prompt[:4000],
             "n": 1,
-            "size": size,
-            "quality": quality,
-            "response_format": "url",
+            "size": _SIZE_MAP.get(size, size),
+            "quality": _QUALITY_MAP.get(quality, quality),
+            # gpt-image-1 は b64_json のみ。response_format は使わない
         }
     ).encode("utf-8")
 
@@ -127,17 +142,19 @@ def generate_thumbnail(
     except Exception as e:
         return {"success": False, "path": "", "cost_usd": 0, "reason": f"{type(e).__name__}: {e}"}
 
-    if not res.get("data") or not res["data"][0].get("url"):
-        return {"success": False, "path": "", "cost_usd": 0, "reason": "レスポンスに画像URLなし"}
+    if not res.get("data") or not res["data"][0].get("b64_json"):
+        return {"success": False, "path": "", "cost_usd": 0, "reason": "レスポンスに b64_json なし"}
 
-    image_url = res["data"][0]["url"]
+    b64 = res["data"][0]["b64_json"]
     revised_prompt = res["data"][0].get("revised_prompt", prompt)[:300]
 
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     try:
-        urllib.request.urlretrieve(image_url, output_path)
+        img_bytes = base64.b64decode(b64)
+        with open(output_path, "wb") as f:
+            f.write(img_bytes)
     except Exception as e:
-        return {"success": False, "path": "", "cost_usd": 0, "reason": f"画像DL失敗: {e}"}
+        return {"success": False, "path": "", "cost_usd": 0, "reason": f"画像保存失敗: {e}"}
 
     _log_usage(prompt, est_cost, size, quality)
 

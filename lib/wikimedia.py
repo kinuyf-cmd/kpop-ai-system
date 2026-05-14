@@ -242,6 +242,11 @@ def fetch_safe_image(artist_name, cache_dir, max_attempts=8, prefer_landscape=Tr
         return None
 
     slug = slugify(artist_name)
+    # 非 Latin (Hangul/Katakana 等) で全て filter out された場合の保護:
+    # 空 slug を index key にすると resolve_fallback_photo 側で
+    # idx.get('') が IU/誰か別アーティストの entry を返す事故が出る (23224 IVE 誤マッチ)。
+    if len(slug) < 2:
+        return None
     index_path = os.path.join(cache_dir, "index.json")
     index = {}
     if os.path.exists(index_path):
