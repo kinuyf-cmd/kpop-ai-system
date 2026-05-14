@@ -31,8 +31,9 @@
       "blood_type": "O",
       "education": "韓国芸術高校",
       "hobbies": "歌, ダンス, 読書",
-      "instagram_personal": "",
-      "_instagram_removed_reason": "fake suffix pattern (@jane_momoland). Real handles verified: Jane=@janeeexxyeon, Nayun=@nayun_nannie."
+      "instagram_personal": "https://www.instagram.com/janeeexxyeon/",
+      "instagram_verified": true,
+      "_instagram_verified_at": "2026-05-15 WebSearch (Soompi MOMOLAND personal IG article)"
     },
     {
       "name_en": "Nayun",
@@ -46,8 +47,9 @@
       "blood_type": "A",
       "education": "ソウル公演芸術高校",
       "hobbies": "料理, ショッピング, 映画鑑賞",
-      "instagram_personal": "",
-      "_instagram_removed_reason": "fake suffix pattern (@nayun_momoland). Real handles verified: Jane=@janeeexxyeon, Nayun=@nayun_nannie."
+      "instagram_personal": "https://www.instagram.com/nayun_nannie/",
+      "instagram_verified": true,
+      "_instagram_verified_at": "2026-05-15 WebSearch (Soompi MOMOLAND personal IG article)"
     },
     {
       "name_en": "JooE",

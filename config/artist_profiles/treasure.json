@@ -264,7 +264,8 @@
       "education": "ソウル芸術高校",
       "hobbies": "ピアノ, 作曲, 読書",
       "solo_works": "WAYO (2021年)",
-      "instagram_personal": "https://www.instagram.com/treasureyedam/"
+      "instagram_personal": "",
+      "_instagram_removed_reason": "fake treasure* prefix pattern (cleanup missed in former_members[])"
     }
   ]
 }
