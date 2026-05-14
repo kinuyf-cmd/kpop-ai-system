@@ -140,3 +140,71 @@ def test_post_thumbnail_generator_uses_aspect_preserve():
                encoding='utf-8').read()
     assert 'aspect_preserve_resize' in src
     assert '.resize((1200, 675)' not in src
+
+
+def test_sharpening_increases_byte_size():
+    """post-resize unsharp mask が detail を保持し file size が無 sharpen より大きいこと"""
+    from PIL import Image, ImageFilter
+    from lib.image_utils import aspect_preserve_resize
+    import random
+    random.seed(7)
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as sf:
+        src = sf.name
+    img = Image.new('RGB', (2400, 1350))
+    px = img.load()
+    for x in range(0, 2400, 3):
+        for y in range(0, 1350, 3):
+            px[x, y] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    img.save(src, 'JPEG', quality=92)
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as df1:
+        dst_sharp = df1.name
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as df2:
+        dst_plain = df2.name
+    try:
+        aspect_preserve_resize(src, dst_sharp, sharpen=True)
+        aspect_preserve_resize(src, dst_plain, sharpen=False)
+        sz_sharp = os.path.getsize(dst_sharp)
+        sz_plain = os.path.getsize(dst_plain)
+        # sharpening は確実に size 増加 (詳細保持の指標)
+        assert sz_sharp > sz_plain, \
+            f'sharpening 後の size が増加してない sharp={sz_sharp} plain={sz_plain}'
+    finally:
+        for p in (src, dst_sharp, dst_plain):
+            try: os.unlink(p)
+            except Exception: pass
+
+
+def test_default_quality_is_editorial_92():
+    """JPEG quality default が editorial 標準の 92 以上"""
+    import inspect
+    from lib import image_utils
+    sig = inspect.signature(image_utils.aspect_preserve_resize)
+    q_default = sig.parameters['quality'].default
+    assert q_default >= 92, f'JPEG quality default {q_default} < 92 (editorial 標準下回り)'
+
+
+def test_upscale_warning_for_large_factor(capsys):
+    """upscale 1.5x 以上で stderr に warning が出ること"""
+    from PIL import Image
+    from lib.image_utils import aspect_preserve_resize
+    import random
+    random.seed(11)
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as sf:
+        src = sf.name
+    img = Image.new('RGB', (400, 400))
+    px = img.load()
+    for x in range(0, 400, 2):
+        for y in range(0, 400, 2):
+            px[x, y] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    img.save(src, 'JPEG', quality=85)
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as df:
+        dst = df.name
+    try:
+        aspect_preserve_resize(src, dst)
+        captured = capsys.readouterr()
+        assert 'WARN' in captured.err and 'upscale' in captured.err, \
+            f'large upscale 時の warn が出てない: {captured.err!r}'
+    finally:
+        for p in (src, dst):
+            try: os.unlink(p)
+            except Exception: pass
