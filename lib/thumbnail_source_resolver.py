@@ -651,6 +651,28 @@ def _is_low_quality_og_domain(url: str) -> bool:
     return any(d in url for d in _LOW_QUALITY_OG_DOMAINS)
 
 
+def _upgrade_low_quality_og_url(og_url: str) -> str | None:
+    """既知 domain の og:image URL を full-resolution 版に変換。
+
+    osen 例:
+      og: file.osen.co.kr/article_thumb/2026/05/14/{id}_300x.png  (300x portrait)
+      full: file.osen.co.kr/article/2026/05/14/{id}.png            (650x357 landscape)
+
+    Returns:
+        変換後 URL (full-res). 変換不能なら None。
+    """
+    if not og_url:
+        return None
+    # osen: article_thumb/{date}/{id}_300x.{ext} → article/{date}/{id}.{ext}
+    m = re.match(
+        r'^(https?://file\.osen\.co\.kr)/article_thumb/([0-9/]+)/([\w]+?)_\d+x\.(\w+)$',
+        og_url)
+    if m:
+        host, date, fid, ext = m.groups()
+        return f'{host}/article/{date}/{fid}.{ext}'
+    return None
+
+
 def _extract_high_res_body_img(html: str, base_url: str = '') -> str | None:
     """記事本文中の高解像 img を抽出 (og:image が低品質 / 不在の場合の fallback)。
     width/height 属性 ≥600 を優先、無ければ画像ダウンロードして実寸測定。
@@ -771,7 +793,16 @@ def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
             'attribution': source_url,
         }
 
-    # low-quality-og domain なら body img を先に試す
+    # low-quality-og domain は og URL を full-res に変換して先に試行
+    # osen: article_thumb/...{id}_300x.png → article/...{id}.png (650x357 landscape)
+    if og_url and _is_low_quality_og_domain(source_url):
+        upgraded = _upgrade_low_quality_og_url(og_url)
+        if upgraded:
+            r = _try_image(upgraded, 'source_og_image_upgraded')
+            if r:
+                return r
+
+    # low-quality-og domain で URL 変換失敗なら body img 試行
     if _is_low_quality_og_domain(source_url):
         bimg = _extract_high_res_body_img(html, source_url)
         if bimg:
@@ -779,7 +810,7 @@ def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
             if r:
                 return r
 
-    # og:image 試行
+    # og:image 試行 (通常 domain or 上記 fallback 失敗時)
     if og_url:
         r = _try_image(og_url, 'source_og_image')
         if r:
