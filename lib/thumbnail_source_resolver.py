@@ -189,9 +189,62 @@ def _download(url: str, dest: str, timeout: int = 15) -> bool:
 
 # ── Source 1: Wikimedia Commons ──
 
+# 2026-05-15: artist_master.json 登録名集合を cache
+_REGISTERED_ARTIST_NAMES = None
+ARTIST_MASTER = BASE_DIR / "config" / "artist_master.json"
+
+
+def _load_registered_artist_names() -> set:
+    """artist_master.json から登録 artist 名集合を構築 (lowercase)。
+    See Ya → F-16 型 Wikimedia 誤マッチを阻止するための allowlist。"""
+    global _REGISTERED_ARTIST_NAMES
+    if _REGISTERED_ARTIST_NAMES is not None:
+        return _REGISTERED_ARTIST_NAMES
+    names = set()
+    try:
+        with open(ARTIST_MASTER, encoding='utf-8') as f:
+            data = json.load(f)
+        for a in data.get('artists', []):
+            for k in ('name_en', 'name_ko', 'name_ja'):
+                v = a.get(k)
+                if v:
+                    names.add(v.lower())
+            for m in a.get('members', []):
+                for k in ('name', 'name_en', 'name_ko', 'name_ja'):
+                    v = m.get(k)
+                    if v:
+                        names.add(v.lower())
+            for m in a.get('former_members', []):
+                for k in ('name', 'name_en', 'name_ko', 'name_ja'):
+                    v = m.get(k)
+                    if v:
+                        names.add(v.lower())
+    except Exception:
+        pass
+    _REGISTERED_ARTIST_NAMES = names
+    return names
+
+
+def _is_registered_artist(name: str) -> bool:
+    if not name:
+        return False
+    return name.lower() in _load_registered_artist_names()
+
+
 def resolve_wikimedia(artist_name: str) -> dict | None:
-    """Check local cache first, then fetch from Wikimedia Commons API."""
+    """Check local cache first, then fetch from Wikimedia Commons API.
+
+    2026-05-15: artist_master.json 未登録の名前は Wikimedia call を skip。
+    See Ya → F-16 / Aiki → 合気道画像 等の誤マッチ事故への構造的根治。
+    """
     if not artist_name:
+        return None
+    # registry guard: 未登録 artist は cache も API も触らず None 返却
+    # 呼出元が次の fallback (artist_cache / DALL-E) に進める
+    if not _is_registered_artist(artist_name):
+        sys.stderr.write(
+            f"[resolver] '{artist_name}' は artist_master 未登録 → "
+            f"Wikimedia スキップ (誤マッチ防止)\n")
         return None
     slug = _slug(artist_name)
 
