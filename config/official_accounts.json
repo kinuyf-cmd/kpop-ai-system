@@ -220,9 +220,9 @@
     "_verified_at": "2026-05-15 WebSearch + YouTube Music"
   },
   "see-ya": {
-    "channel_name": "SEEYA 씨야",
+    "channel_name": "SEEYA 씨야 (2026 再結成、self-managed)",
     "youtube_channel_id": null,
-    "_pending": "再結成 official YT channel 要追加調査。Wikipedia + allkpop で 2006-02-24 debut / 2011-01-30 disband / 2026 完全再結成 (オリジナル 3 名: Kim Yeon-ji, Lee Bo-ram, Nam Gyu-ri) 確認済 (audit_session 2026-05-15)",
+    "_no_dedicated_channel": "2026 再結成 MV は 1theK channel (UCmaSJBQuO2-XF0XjGtVwTOg) 経由配信。SeeYa 専用の official YT channel は存在しない。resolver は artist_cache / DALL-E に降りる動作で問題なし。",
     "channel_id": null
   }
 }
