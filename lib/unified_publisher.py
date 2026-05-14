@@ -284,11 +284,12 @@ def unified_publish(
             _artist_thumb = _resolve_artist_thumb(artist_name=artist, article_type='concrete',
                                                   article_title=title_final)
             if _artist_thumb and _artist_thumb.get('image_path') and os.path.exists(_artist_thumb['image_path']):
-                from PIL import Image as _PILImage
                 import tempfile as _tf
                 with _tf.TemporaryDirectory(prefix='up_artist_') as _td:
                     _resized = os.path.join(_td, 'artist_thumb.jpg')
-                    _PILImage.open(_artist_thumb['image_path']).convert('RGB').resize((1200, 675), _PILImage.LANCZOS).save(_resized, 'JPEG', quality=85)
+                    # 2026-05-15: portrait Instagram 写真の水平 stretch を防ぐためアスペクト保存 crop
+                    from lib.image_utils import aspect_preserve_resize
+                    aspect_preserve_resize(_artist_thumb['image_path'], _resized)
                     _thumb_alt = f"{title_final}のサムネイル画像"
                     media_id = _upload_media(_resized, alt_text=_thumb_alt)
                     if media_id:
@@ -332,9 +333,10 @@ def unified_publish(
                 raw_path = os.path.join(td, 'dalle_raw.jpg')
                 dr = generate_thumbnail(prompt=dalle_prompt, output_path=raw_path, size="1792x1024", quality="standard")
                 if dr.get('success') and os.path.exists(raw_path):
-                    from PIL import Image
                     resized = os.path.join(td, 'dalle_1200x675.jpg')
-                    Image.open(raw_path).resize((1200, 675), Image.LANCZOS).save(resized, 'JPEG', quality=85)
+                    # 2026-05-15: DALL-E 1792x1024 → 1200x675 へアスペクト保存 crop
+                    from lib.image_utils import aspect_preserve_resize
+                    aspect_preserve_resize(raw_path, resized)
                     media_id = _upload_media(resized, alt_text=_thumb_alt)
                     log.append(f"media_id: {media_id} (dalle_fallback, alt={_thumb_alt[:30]})")
                 else:

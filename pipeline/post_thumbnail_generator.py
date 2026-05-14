@@ -178,11 +178,10 @@ def _dalle_fallback(post_id: int, title: str, body: str) -> str:
             print(f"     DALL-E err: {result.get('reason', '?')}")
             return ""
 
-        # リサイズ 1200x675
+        # リサイズ 1200x675 (アスペクト保存 crop、2026-05-15)
         resized_path = f"{out_dir}/dalle_resized.jpg"
-        img = Image.open(raw_path)
-        img = img.resize((1200, 675), Image.LANCZOS)
-        img.save(resized_path, "JPEG", quality=85, optimize=True)
+        from lib.image_utils import aspect_preserve_resize
+        aspect_preserve_resize(raw_path, resized_path)
         print(f"     DALL-E OK: {os.path.getsize(resized_path)} bytes")
         return resized_path
     except Exception as e:
