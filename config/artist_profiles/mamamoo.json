@@ -1,0 +1,144 @@
+{
+  "agency": "RBW Entertainment",
+  "debut_date": "2014-06-18",
+  "fandom_name": "MooMoo",
+  "fandom_meaning": "「MooMoo（무무）」は、MAMAMOOのファンダム名。「무」はMAMAMOOの韓国語読みの頭文字から取られており、ファンとアーティストが互いに呼び合える親しみやすい名前として名付けられた。",
+  "members": [
+    {
+      "name_en": "Solar",
+      "name_kr": "김용선",
+      "name_ja": "ソラ",
+      "real_name_en": "Kim Yong-sun",
+      "position": "リーダー、メインボーカル",
+      "birth": "1991-02-21",
+      "nationality": "韓国",
+      "note": "グループのリーダーを務め、強力な歌唱力で知られる。YouTubeチャンネル「솔라시도」でも活動。",
+      "height_cm": "163",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "檀国大学校 公演映像学科",
+      "hobbies": "ゲーム, 料理, YouTube配信",
+      "solo_works": "SOLAR SPECIAL ALBUM (2021年), VILLAIN (2023年)"
+    },
+    {
+      "name_en": "Moonbyul",
+      "name_kr": "문별이",
+      "name_ja": "ムンビョル",
+      "real_name_en": "Moon Byul-yi",
+      "position": "メインラッパー、リードダンサー",
+      "birth": "1992-12-22",
+      "nationality": "韓国",
+      "note": "MAMAMOOのメインラッパーであり、ボーイッシュなスタイルで人気を博す。",
+      "height_cm": "163",
+      "blood_type": "A",
+      "mbti": "ISTP",
+      "education": "漢陽女子大学校 実用音楽科",
+      "hobbies": "ダンス, 映画鑑賞, ゲーム",
+      "solo_works": "ECLIPSE (2019年), MOON (2021年)"
+    },
+    {
+      "name_en": "Wheein",
+      "name_kr": "정휘인",
+      "name_ja": "フィイン",
+      "real_name_en": "Jung Hwi-in",
+      "position": "メインダンサー、リードボーカル、ビジュアル",
+      "birth": "1995-04-17",
+      "nationality": "韓국",
+      "note": "画家としての才能も持ち、アート作品を発表することでも知られる。",
+      "height_cm": "159",
+      "blood_type": "A",
+      "mbti": "INFP",
+      "education": "ソウル芸術大学校 実用音楽科",
+      "hobbies": "絵画, 映画鑑賞, ショッピング",
+      "solo_works": "WATER COLOR (2021年), Redd (2022年)"
+    },
+    {
+      "name_en": "Hwasa",
+      "name_kr": "안혜진",
+      "name_ja": "ファサ",
+      "real_name_en": "Ahn Hye-jin",
+      "position": "リードラッパー、サブボーカル、セクシーコンセプト担当",
+      "birth": "1995-07-23",
+      "nationality": "韓国",
+      "note": "ソロ曲「Maria」や「Maria」などでも高い人気を誇り、独自のセクシーかつ自由なイメージで注目を集める。",
+      "height_cm": "160",
+      "blood_type": "O",
+      "mbti": "ISFP",
+      "education": "漢陽女子大学校 実用音楽科",
+      "hobbies": "料理, 映画鑑賞, ショッピング",
+      "solo_works": "María (2019年), Guilty Pleasure (2021年)"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2014",
+      "title": "Hello",
+      "type": "ep",
+      "note": "デビューEP。タイトル曲「Mr. Ambiguous」でデビュー。"
+    },
+    {
+      "year": "2016",
+      "title": "PINK FUNKY",
+      "type": "ep",
+      "note": "「You're the Best」収録。代表曲の一つ。"
+    },
+    {
+      "year": "2017",
+      "title": "Purple",
+      "type": "ep",
+      "note": "「Yes I Am」収録。グループの自信とポジティブさを表現した楽曲。"
+    },
+    {
+      "year": "2018",
+      "title": "Red Moon",
+      "type": "ep",
+      "note": "「Starry Night」収録。より成熟した音楽性を示した作品。"
+    },
+    {
+      "year": "2019",
+      "title": "White Wind",
+      "type": "ep",
+      "note": "「Gogobebe」収録。ポップなサウンドで大ヒット。"
+    },
+    {
+      "year": "2019",
+      "title": "reality in BLACK",
+      "type": "album",
+      "note": "初のフルアルバム。Hwasaソロ「Maria」収録。"
+    },
+    {
+      "year": "2021",
+      "title": "WAW (Where Are We Now)",
+      "type": "ep",
+      "note": "活動再開後の作品。「Mumumumuch」収録。"
+    },
+    {
+      "year": "2022",
+      "title": "MIC ON",
+      "type": "ep",
+      "note": "「Aya」「Illella」など収録。グループとしての力強さを再確認させた作品。"
+    },
+    {
+      "year": "2023",
+      "title": "I SAY MAMAMOO : THE BEST -Japan Edition-",
+      "type": "japanese",
+      "note": "日本向けベストアルバム。"
+    },
+    {
+      "year": "2024",
+      "title": "MAMAMOO+",
+      "type": "ep",
+      "note": "Solar・Moonbyulの2人組ユニット「MAMAMOO+」としての活動を含む最新作。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/RBW_MAMAMOO",
+    "instagram": "https://www.instagram.com/mamamoo_official/",
+    "weverse": "https://weverse.io/mamamoo",
+    "youtube": "https://www.youtube.com/channel/UCMbxTQMBW3Yv7H-h-YCXuLA",
+    "tiktok": "https://www.tiktok.com/@mamamoo_official",
+    "japan_official": "https://mamamoo-japan.com/"
+  },
+  "summary_ja": "MAMAMOO（마마무）は、2014年6月18日にRBW Entertainment（旧WA Entertainment）からデビューした韓国の4人組ガールズグループ。Solar・Moonbyul・Wheein・Hwasaの4人からなり、強力な生歌唱力とジャズ・R&B・レトロポップをベースにした独自の音楽性が特徴。デビュー当初からボーカルパフォーマンスの高さで注目を集め、「You're the Best」「Starry Night」「Gogobebe」「Aya」など数々のヒット曲を生み出してきた。ファンダム名は「MooMoo（무무）」。メンバー全員がソロ活動でも高い評価を受けており、グループとしてもソロとしても精力的に活動を続けるK-POPシーンを代表するグループの一つである。",
+  "_last_updated": "2026-05-15T02:13:57.817216+09:00"
+}

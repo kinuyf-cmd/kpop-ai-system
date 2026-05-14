@@ -1,0 +1,165 @@
+{
+  "agency": "Starship Entertainment",
+  "debut_date": "2015-05-14",
+  "fandom_name": "Monbebe",
+  "fandom_meaning": "フランス語の「Mon」（私の）と「Bébé」（赤ちゃん）を組み合わせた造語で、「私の愛しい存在」を意味し、メンバーとファンが互いにとって大切な存在であることを表している。",
+  "members": [
+    {
+      "name_en": "Shownu",
+      "name_kr": "손형준",
+      "name_ja": "ショヌ",
+      "real_name_en": "Son Hyunwoo",
+      "position": "リーダー、メインダンサー、ボーカル",
+      "birth": "1992-06-18",
+      "nationality": "韓国",
+      "note": "2022年に軍入隊、2023年12月除隊後復帰",
+      "height_cm": "182",
+      "blood_type": "A",
+      "mbti": "ISFJ",
+      "education": "漢陽大学校 スポーツ学部",
+      "hobbies": "運動, 料理, 映画鑑賞",
+      "solo_works": "PARALLEL (2022年)"
+    },
+    {
+      "name_en": "Minhyuk",
+      "name_kr": "이민혁",
+      "name_ja": "ミニョク",
+      "real_name_en": "Lee Minhyuk",
+      "position": "ボーカル、サブラッパー",
+      "birth": "1993-11-03",
+      "nationality": "韓国",
+      "height_cm": "179",
+      "blood_type": "A",
+      "mbti": "ENFP",
+      "education": "東国大学校 演劇学部",
+      "hobbies": "絵画, ゲーム, 写真撮影",
+      "solo_works": "ROMEO (2023年)"
+    },
+    {
+      "name_en": "Kihyun",
+      "name_kr": "유기현",
+      "name_ja": "キヒョン",
+      "real_name_en": "Yoo Kihyun",
+      "position": "メインボーカル",
+      "birth": "1993-11-22",
+      "nationality": "韓国",
+      "height_cm": "176",
+      "blood_type": "A",
+      "mbti": "ISFJ",
+      "education": "檀国大学校 音楽学部",
+      "hobbies": "料理, 映画鑑賞, ゲーム",
+      "solo_works": "VOYAGER (2022年), YOUTH (2023年)"
+    },
+    {
+      "name_en": "Hyungwon",
+      "name_kr": "최형원",
+      "name_ja": "ヒョンウォン",
+      "real_name_en": "Chae Hyungwon",
+      "position": "ボーカル、メインダンサー",
+      "birth": "1994-01-15",
+      "nationality": "韓国",
+      "height_cm": "183",
+      "blood_type": "B",
+      "mbti": "INFP",
+      "education": "漢陽大学校 演劇映画学部",
+      "hobbies": "音楽制作, 写真撮影, 睡眠"
+    },
+    {
+      "name_en": "Joohoney",
+      "name_kr": "이주헌",
+      "name_ja": "ジュホニー",
+      "real_name_en": "Lee Jooheon",
+      "position": "メインラッパー、ボーカル",
+      "birth": "1994-10-06",
+      "nationality": "韓国",
+      "note": "2022年に軍入隊、2024年除隊後復帰",
+      "height_cm": "176",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "文化芸術大学校",
+      "hobbies": "作曲, ゲーム, 映画鑑賞",
+      "solo_works": "PSYCHE (2022年), LIGHTS (2023年)"
+    },
+    {
+      "name_en": "I.M",
+      "name_kr": "임창균",
+      "name_ja": "アイエム",
+      "real_name_en": "Lim Changkyun",
+      "position": "メインラッパー、ボーカル",
+      "birth": "1996-01-26",
+      "nationality": "韓国",
+      "height_cm": "180",
+      "blood_type": "A",
+      "mbti": "ISTP",
+      "education": "ボストン バークリー音楽大学 (在学)",
+      "hobbies": "音楽制作, ゲーム, 映画鑑賞",
+      "solo_works": "DUALITY (2021年), SHOW (2022年)"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2015",
+      "title": "Trespass",
+      "type": "ep",
+      "note": "デビューミニアルバム"
+    },
+    {
+      "year": "2016",
+      "title": "The Clan Pt. 1 'Lost'",
+      "type": "ep",
+      "note": "「All In」収録、大ヒット作"
+    },
+    {
+      "year": "2017",
+      "title": "The Code",
+      "type": "ep",
+      "note": "「Dramarama」収録"
+    },
+    {
+      "year": "2018",
+      "title": "Take.1 Are You There?",
+      "type": "album",
+      "note": "初のフルアルバム"
+    },
+    {
+      "year": "2019",
+      "title": "Fatal Love",
+      "type": "album",
+      "note": "「Love Killa」収録"
+    },
+    {
+      "year": "2020",
+      "title": "FANTASIA X",
+      "type": "ep",
+      "note": "「FANTASIA」収録"
+    },
+    {
+      "year": "2022",
+      "title": "SHAPE of LOVE",
+      "type": "album",
+      "note": "「LOVE」収録、6人体制での充実作"
+    },
+    {
+      "year": "2023",
+      "title": "MONSTA X 8th Album 'REASON'",
+      "type": "album",
+      "note": "完全体復帰後の意欲作"
+    },
+    {
+      "year": "2024",
+      "title": "MONSTA X JAPAN BEST",
+      "type": "japanese",
+      "note": "日本活動のベストアルバム"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/OfficialMonstaX",
+    "instagram": "https://www.instagram.com/monstax.official/",
+    "weverse": "https://weverse.io/monstax",
+    "youtube": "https://www.youtube.com/c/MONSTAX",
+    "tiktok": "https://www.tiktok.com/@monstax.official",
+    "japan_official": "https://www.monstax-jp.com/"
+  },
+  "summary_ja": "MONSTA X（モンスタエックス）は、2015年5月14日にMnet『NO.MERCY』のサバイバル番組を経てStarship Entertainmentからデビューした6人組K-POPボーイズグループ。ショヌ、ミニョク、キヒョン、ヒョンウォン、ジュホニー、アイエムの6名で構成され、力強いパフォーマンスとラップ・ボーカルの融合が特徴。「All In」「Dramarama」「Love Killa」など数多くのヒット曲を誇り、米国ビルボードチャートへのランクインや北米・欧州でのワールドツアー開催など、グローバルな活躍で知られる。ファンダム「Monbebe」との絆を大切にし、デビューから10年以上経た現在も精力的に活動を続けている。",
+  "_last_updated": "2026-05-15T02:13:17.639318+09:00"
+}

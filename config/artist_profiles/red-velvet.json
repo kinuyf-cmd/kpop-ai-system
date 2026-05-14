@@ -1,0 +1,157 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2014-08-01",
+  "fandom_name": "ReVeluv",
+  "fandom_meaning": "「Red Velvet」と「Luv（愛）」を組み合わせた造語で、Red Velvetを愛するファンを意味する。",
+  "members": [
+    {
+      "name_en": "Irene",
+      "name_kr": "배주현",
+      "name_ja": "アイリーン",
+      "real_name_en": "Bae Joohyun",
+      "position": "リーダー、リードボーカル、センター",
+      "birth": "1991-03-29",
+      "nationality": "韓国",
+      "height_cm": "160",
+      "blood_type": "A",
+      "mbti": "ISFJ",
+      "education": "ソウル公演芸術高校卒業",
+      "hobbies": "映画鑑賞, 音楽鑑賞, ショッピング",
+      "solo_works": "LIKE A FLOWER (2023年)"
+    },
+    {
+      "name_en": "Seulgi",
+      "name_kr": "강슬기",
+      "name_ja": "スルギ",
+      "real_name_en": "Kang Seulgi",
+      "position": "メインダンサー、リードボーカル",
+      "birth": "1994-02-10",
+      "nationality": "韓国",
+      "height_cm": "163",
+      "blood_type": "A",
+      "mbti": "ISTP",
+      "education": "ソウル公演芸術高校卒業",
+      "hobbies": "絵画, ダンス, 映画鑑賞",
+      "solo_works": "28 Reasons (2022年), Something Stupid (2022年)"
+    },
+    {
+      "name_en": "Wendy",
+      "name_kr": "손승완",
+      "name_ja": "ウェンディ",
+      "real_name_en": "Son Seungwan",
+      "position": "メインボーカル",
+      "birth": "1994-02-21",
+      "nationality": "韓国",
+      "note": "カナダ育ち",
+      "height_cm": "161",
+      "blood_type": "O",
+      "mbti": "ENFJ",
+      "education": "カナダ・クレセントスクール → ソウル公演芸術高校卒業",
+      "hobbies": "料理, 読書, 音楽鑑賞",
+      "solo_works": "Like Water (2021年), Wish You Hell (2024年)"
+    },
+    {
+      "name_en": "Joy",
+      "name_kr": "박수영",
+      "name_ja": "ジョイ",
+      "real_name_en": "Park Sooyoung",
+      "position": "リードボーカル、メインダンサー",
+      "birth": "1996-09-03",
+      "nationality": "韓国",
+      "height_cm": "168",
+      "blood_type": "O",
+      "mbti": "ENFJ",
+      "education": "ソウル公演芸術高校卒業",
+      "hobbies": "映画鑑賞, カラオケ, 料理",
+      "solo_works": "Hello (2021年), Gleam (2023年)"
+    },
+    {
+      "name_en": "Yeri",
+      "name_kr": "김예림",
+      "name_ja": "イェリ",
+      "real_name_en": "Kim Yerim",
+      "position": "ボーカル、マンネ",
+      "birth": "1999-03-05",
+      "nationality": "韓国",
+      "note": "2015年3月に5人目のメンバーとして加入",
+      "height_cm": "162",
+      "blood_type": "B",
+      "mbti": "ENFP",
+      "education": "ソウル公演芸術高校卒業",
+      "hobbies": "読書, 映画鑑賞, 音楽鑑賞",
+      "solo_works": "SCARY (2024年)"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2014",
+      "title": "Happiness",
+      "type": "single",
+      "note": "デビューシングル"
+    },
+    {
+      "year": "2015",
+      "title": "Ice Cream Cake",
+      "type": "ep",
+      "note": "ファースト・ミニアルバム"
+    },
+    {
+      "year": "2016",
+      "title": "The Red Summer",
+      "type": "ep",
+      "note": "サマースペシャルミニアルバム、「Red Flavor」収録"
+    },
+    {
+      "year": "2017",
+      "title": "Perfect Velvet",
+      "type": "album",
+      "note": "セカンドフルアルバム、「Peek-A-Boo」収録"
+    },
+    {
+      "year": "2018",
+      "title": "Summer Magic",
+      "type": "ep",
+      "note": "「Power Up」収録、大ヒットサマーソング"
+    },
+    {
+      "year": "2019",
+      "title": "The ReVe Festival Day 1",
+      "type": "ep",
+      "note": "「Umpah Umpah」収録"
+    },
+    {
+      "year": "2021",
+      "title": "Queendom",
+      "type": "ep",
+      "note": "活動休止後の復帰作、タイトル曲「Queendom」"
+    },
+    {
+      "year": "2022",
+      "title": "The ReVe Festival 2022 - Feel My Rhythm",
+      "type": "ep",
+      "note": "クラシック音楽サンプリングで話題"
+    },
+    {
+      "year": "2023",
+      "title": "Chill Kill",
+      "type": "album",
+      "note": "サードフルアルバム、ダークコンセプト"
+    },
+    {
+      "year": "2025",
+      "title": "Cosmic",
+      "type": "album",
+      "note": "デビュー11周年記念リリース"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/RVsmtown",
+    "instagram": "https://www.instagram.com/redvelvet.smtown/",
+    "weverse": "https://weverse.io/redvelvet",
+    "youtube": "https://www.youtube.com/channel/UCxSHUMBKXeYMNmAPRRMFuQA",
+    "tiktok": "https://www.tiktok.com/@redvelvet.smtown",
+    "japan_official": "https://redvelvet-jp.smtown.com/"
+  },
+  "summary_ja": "Red Velvetは2014年8月にSMエンタテインメントからデビューした5人組女性グループ。アイリーン、スルギ、ウェンディ、ジョイ、イェリで構成される。グループ名の「Red」はポップで明るいコンセプト、「Velvet」はエレガントで成熟したコンセプトを表し、両面を行き来する独自のダブルコンセプトが最大の特徴。「Red Flavor」「Power Up」などの清涼系ヒットから「Peek-A-Boo」「Psycho」「Chill Kill」などのダークでアーティスティックな楽曲まで幅広い音楽性を誇る。韓国はもちろんアジア全域で絶大な人気を誇り、デビュー10年を超えた現在もK-POPシーンの第一線で活躍するトップグループのひとつ。",
+  "_last_updated": "2026-05-15T02:12:30.114205+09:00"
+}

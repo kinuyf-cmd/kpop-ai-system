@@ -1,0 +1,196 @@
+{
+  "agency": "KQ Entertainment",
+  "debut_date": "2018-10-24",
+  "fandom_name": "ATINY",
+  "fandom_meaning": "「ATEEZ」と「Destiny」を組み合わせた造語で、ATEEZと運命で結ばれた存在という意味を持つ。",
+  "members": [
+    {
+      "name_en": "Hongjoong",
+      "name_kr": "김홍중",
+      "name_ja": "ホンジュン",
+      "real_name_en": "Kim Hongjoong",
+      "position": "リーダー、メインラッパー",
+      "birth": "1998-11-07",
+      "nationality": "韓国",
+      "note": "グループのメインプロデューサーとして楽曲制作にも携わる",
+      "height_cm": "175",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "韓林芸術高校 → 漢陽大学校 (演劇映画学科)",
+      "hobbies": "作曲, ファッション, ゲーム"
+    },
+    {
+      "name_en": "Seonghwa",
+      "name_kr": "박성화",
+      "name_ja": "ソンファ",
+      "real_name_en": "Park Seonghwa",
+      "position": "ビジュアル、ボーカル",
+      "birth": "1998-04-03",
+      "nationality": "韓国",
+      "height_cm": "179",
+      "blood_type": "A",
+      "mbti": "ISFJ",
+      "education": "韓林芸術高校",
+      "hobbies": "料理, 映画鑑賞, 植物の世話"
+    },
+    {
+      "name_en": "Yunho",
+      "name_kr": "정윤호",
+      "name_ja": "ユノ",
+      "real_name_en": "Jeong Yunho",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1999-03-23",
+      "nationality": "韓国",
+      "note": "長身でダンスパフォーマンスが高く評価される",
+      "height_cm": "189",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "韓林芸術高校 → 漢陽大学校",
+      "hobbies": "バスケットボール, 映画鑑賞, ゲーム"
+    },
+    {
+      "name_en": "Yeosang",
+      "name_kr": "강여상",
+      "name_ja": "ヨサン",
+      "real_name_en": "Kang Yeosang",
+      "position": "ボーカル、ダンサー",
+      "birth": "1999-06-15",
+      "nationality": "韓国",
+      "height_cm": "175",
+      "blood_type": "A",
+      "mbti": "INFP",
+      "education": "韓林芸術高校",
+      "hobbies": "絵画, ゲーム, 映画鑑賞"
+    },
+    {
+      "name_en": "San",
+      "name_kr": "최산",
+      "name_ja": "サン",
+      "real_name_en": "Choi San",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1999-07-10",
+      "nationality": "韓国",
+      "note": "表現力豊かなパフォーマンスで人気が高い",
+      "height_cm": "176",
+      "blood_type": "B",
+      "mbti": "ENFP",
+      "education": "韓林芸術高校",
+      "hobbies": "ダンス, 運動, 映画鑑賞"
+    },
+    {
+      "name_en": "Mingi",
+      "name_kr": "송민기",
+      "name_ja": "ミンギ",
+      "real_name_en": "Song Mingi",
+      "position": "メインラッパー",
+      "birth": "1999-08-09",
+      "nationality": "韓国",
+      "height_cm": "185",
+      "blood_type": "B",
+      "mbti": "ENFP",
+      "education": "韓林芸術高校",
+      "hobbies": "ゲーム, ファッション, 音楽制作"
+    },
+    {
+      "name_en": "Wooyoung",
+      "name_kr": "정우영",
+      "name_ja": "ウヨン",
+      "real_name_en": "Jung Wooyoung",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1999-11-26",
+      "nationality": "韓国",
+      "note": "GOT7のJackson Wangとの親交でも知られる",
+      "height_cm": "177",
+      "blood_type": "AB",
+      "mbti": "ENTP",
+      "education": "韓林芸術高校",
+      "hobbies": "ゲーム, ショッピング, 料理"
+    },
+    {
+      "name_en": "Jongho",
+      "name_kr": "최종호",
+      "name_ja": "ジョンホ",
+      "real_name_en": "Choi Jongho",
+      "position": "メインボーカル",
+      "birth": "2000-10-12",
+      "nationality": "韓国",
+      "note": "力強い高音と生リンゴを素手で割るパフォーマンスで有名",
+      "height_cm": "178",
+      "blood_type": "O",
+      "mbti": "ISTJ",
+      "education": "韓林芸術高校",
+      "hobbies": "ギター演奏, 運動, 料理"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2018",
+      "title": "TREASURE EP.1: All to Zero",
+      "type": "ep",
+      "note": "デビューEP"
+    },
+    {
+      "year": "2019",
+      "title": "TREASURE EP.3: One to All",
+      "type": "ep",
+      "note": "「HALA HALA」「Illusion」収録"
+    },
+    {
+      "year": "2020",
+      "title": "TREASURE EP.FIN: All to Action",
+      "type": "ep"
+    },
+    {
+      "year": "2021",
+      "title": "ZERO: FEVER Part.1",
+      "type": "ep",
+      "note": "「Fireworks (I'll Be There)」収録"
+    },
+    {
+      "year": "2022",
+      "title": "THE WORLD EP.1: MOVEMENT",
+      "type": "ep",
+      "note": "「Fireworks」「Guerrilla」収録"
+    },
+    {
+      "year": "2022",
+      "title": "THE WORLD EP.2: OUTLAW",
+      "type": "ep",
+      "note": "「Crazy Form」収録、大ヒット作"
+    },
+    {
+      "year": "2023",
+      "title": "THE WORLD EP.FIN: WILL",
+      "type": "album",
+      "note": "初のフルアルバム、「Crazy Form」に続く集大成"
+    },
+    {
+      "year": "2024",
+      "title": "GOLDEN HOUR : Part.1",
+      "type": "album",
+      "note": "「WORK」収録、世界的に高い評価を獲得"
+    },
+    {
+      "year": "2024",
+      "title": "GOLDEN HOUR : Part.2",
+      "type": "album",
+      "note": "「Youth」収録"
+    },
+    {
+      "year": "2019",
+      "title": "TREASURE EP.2: Zero to One",
+      "type": "ep",
+      "note": "「Say My Name」「HALA HALA」収録"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/ATEEZofficial",
+    "instagram": "https://www.instagram.com/ateez_official_/",
+    "weverse": "https://weverse.io/ateez",
+    "youtube": "https://www.youtube.com/channel/UCCTVrRVmRBeF8HiWKCRKGaA",
+    "tiktok": "https://www.tiktok.com/@ateez_official_",
+    "japan_official": "https://ateez-japan.com"
+  },
+  "summary_ja": "ATEEZは2018年10月24日にKQエンターテインメントからデビューした8人組韓国男性アイドルグループ。ホンジュン、ソンファ、ユノ、ヨサン、サン、ミンギ、ウヨン、ジョンホの8名で構成される。圧倒的なパフォーマンス力と世界観の強いステージングで「4世代K-POPを代表するグループ」として高い評価を受けており、欧米市場でも絶大な人気を誇る。デビュー間もない時期からアメリカの大型フェス「Lollapalooza」や「Coachella」に出演し、K-POPアーティストとして異例の快挙を達成。ファンダム名「ATINY」とともに世界各地でアリーナ・スタジアム規模のツアーを展開している。",
+  "_last_updated": "2026-05-15T02:15:11.493948+09:00"
+}
