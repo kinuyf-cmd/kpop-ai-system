@@ -24,7 +24,15 @@ def test_registered_artists_pass_guard():
     # 新規登録 (5/15 追加)
     assert _is_registered_artist('Hyolyn') is True
     assert _is_registered_artist('Aiki') is True
+    # SeeYa primary name + See Ya alias 両対応
+    assert _is_registered_artist('SeeYa') is True
     assert _is_registered_artist('See Ya') is True
+
+
+def test_alias_matching():
+    """aliases 配列に登録された別表記もマッチ"""
+    from lib.thumbnail_source_resolver import _is_registered_artist
+    assert _is_registered_artist('See Ya') is True  # aliases に登録
 
 
 def test_unregistered_artists_blocked():

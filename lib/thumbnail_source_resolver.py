@@ -209,6 +209,10 @@ def _load_registered_artist_names() -> set:
                 v = a.get(k)
                 if v:
                     names.add(v.lower())
+            # aliases 配列もマージ (See Ya / SeeYa 等の表記揺れ対応)
+            for alias in a.get('aliases', []) or []:
+                if alias:
+                    names.add(alias.lower())
             for m in a.get('members', []):
                 for k in ('name', 'name_en', 'name_ko', 'name_ja'):
                     v = m.get(k)
