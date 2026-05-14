@@ -668,7 +668,14 @@ def main(dry_run=False):
 
     # 直近 3h の publish 履歴と同テーマの候補を pre-filter
     # (cluster duplicate 防止: V-Jimin 4重投稿 root cause 対策、2026-05-12)
+    # 2026-05-14: lib.cluster_dedup の共通 sliding-window buffer も併用し、
+    # 他 publisher (simple_publish/cluster_generator) との横断 dedup を実現
     recent_titles = _recent_breaking_titles(hours=3)
+    try:
+        from lib.cluster_dedup import _read_recent_buffer as _shared_buf
+        recent_titles = recent_titles + _shared_buf(hours=3)
+    except Exception:
+        pass
 
     published = 0
     just_published_titles = []  # この回 cron 内での publish ガード
@@ -689,6 +696,14 @@ def main(dry_run=False):
             print(f"  速報公開 ID={r.get('id')}")
             published += 1
             just_published_titles.append(r.get('title', cand_title))
+            # 共通 sliding-window buffer にも記録 (他 publisher との横断 dedup 用)
+            try:
+                from lib.cluster_dedup import record_publish
+                record_publish(r.get('title', cand_title),
+                               post_id=r.get('id'),
+                               source='breaking_news_detector')
+            except Exception:
+                pass
             # バースト防止: 記事間に30秒待機（X投稿がスケジューラーキューに入るため短縮可能）
             _time.sleep(30)
 

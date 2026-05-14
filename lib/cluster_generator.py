@@ -882,6 +882,14 @@ def main():
                 if args.dry_run:
                     print(f"  [dry-create] {gk}/{art['key']}: slug={art['slug']} len={len(html)}")
                     continue
+                # cluster duplicate gate (2026-05-14)
+                if args.status == "publish":
+                    from lib.cluster_dedup import cluster_dedup_check
+                    is_dup, matched = cluster_dedup_check(
+                        art["title"], hours=3, source="cluster_generator")
+                    if is_dup:
+                        print(f"  ⚠  {gk}/{art['key']}: cluster_dup → status=draft (matched: {matched[:50]})")
+                        payload["status"] = "draft"
                 try:
                     r = curl_post("/wp-json/wp/v2/posts", payload)
                     pid = r.get("id")
@@ -892,6 +900,14 @@ def main():
                            "html_len": len(html), "action": "create"}
                     fp.write(json.dumps(rec, ensure_ascii=False) + "\n")
                     results.append(rec)
+                    # WP indexing lag 吸収用 sliding-window buffer
+                    if payload.get("status") == "publish" and pid:
+                        try:
+                            from lib.cluster_dedup import record_publish
+                            record_publish(art["title"], post_id=pid,
+                                           source=f"cluster_generator/{gk}")
+                        except Exception:
+                            pass
                 except Exception as e:
                     print(f"  ❌ {gk}/{art['key']}: {e}")
 

@@ -7,8 +7,15 @@ sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
 
 def _make_test_image(w, h, path):
+    """ノイズ入り画像 (2026-05-14: near-monochrome guard を通過するため)"""
     from PIL import Image
-    img = Image.new('RGB', (w, h), color='red')
+    import random
+    random.seed(0)
+    img = Image.new('RGB', (w, h))
+    px = img.load()
+    for x in range(0, w, 2):
+        for y in range(0, h, 2):
+            px[x, y] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     img.save(path, 'JPEG', quality=85)
 
 

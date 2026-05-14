@@ -406,7 +406,8 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
 
         if artist:
             print(f"  アーティスト検出: {artist} → 本人写真を優先取得")
-            _tsr = _tsr_resolve(artist_name=artist, article_type='concrete')
+            _tsr = _tsr_resolve(artist_name=artist, article_type='concrete',
+                                post_id=str(post_id) if post_id else '')
             if _tsr and _tsr.get('image_path') and os.path.exists(_tsr['image_path']):
                 print(f"  artist photo OK: {_tsr.get('source')} ({artist})")
                 return {

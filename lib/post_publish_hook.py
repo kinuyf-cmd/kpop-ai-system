@@ -234,6 +234,24 @@ def run_post_publish(post_id, post_type='post'):
     except Exception as e:
         print(f"  [hook] gate recheck err: {e}")
 
+    # 3b. cluster duplicate gate (2026-05-14 sliding-window buffer 経由)
+    # 23000/23006/23234/23237 等の短時間内クラスタ重複を post-publish 直後に再判定。
+    # pre_publish_gate の WP search indexing lag では拾えない 30秒以内の連続 publish
+    # を共通 buffer (lib/cluster_dedup) で吸収する。
+    if result.get('status') != 'draft':
+        try:
+            from lib.cluster_dedup import cluster_dedup_check
+            _is_dup, _matched = cluster_dedup_check(
+                title, hours=3, exclude_post_id=post_id,
+                source='post_publish_hook')
+            if _is_dup:
+                _draft_post(post_id, f"cluster_dup_post_publish: {_matched[:60]}")
+                result['status'] = 'draft'
+                result['issues'].append(f'cluster_dup: {_matched[:50]}')
+                print(f"  [hook] cluster_dup → draft (matched: {_matched[:50]})")
+        except Exception as e:
+            print(f"  [hook] cluster_dedup err: {e}")
+
     # 4. fact_check (浅いチェック)
     try:
         from lib.fact_checker import check_article

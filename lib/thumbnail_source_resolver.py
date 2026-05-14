@@ -670,6 +670,11 @@ def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
         try: os.unlink(dest)
         except Exception: pass
         return None
+    # 2026-05-14: 22606/22663 事故への根治 (匿名シルエット / placeholder reject)
+    if _check_low_quality_og(dest):
+        try: os.unlink(dest)
+        except Exception: pass
+        return None
     return {
         'image_path': dest,
         'source': 'source_og_image',
@@ -852,6 +857,37 @@ def _check_portrait(image_path: str) -> bool:
         if im.height > im.width * 1.3:
             sys.stderr.write(f"[resolver] REJECT portrait: {im.width}x{im.height} {image_path}\n")
             return True
+    except Exception:
+        pass
+    return False
+
+
+def _check_low_quality_og(image_path: str, min_bytes: int = 5120) -> bool:
+    """og:image の品質ガード (2026-05-14 追加)。
+    True を返したら reject (採用しない)。
+    - file size < 5KB → low-quality placeholder (アイコン/匿名シルエット等)
+    - 画像中央 80% のグレースケール分散が非常に低い → near-monochrome
+      (topstarnews の「?」匿名シルエット 22606 事故への対策)
+    """
+    if not image_path or not os.path.exists(image_path):
+        return True
+    try:
+        size = os.path.getsize(image_path)
+        if size < min_bytes:
+            sys.stderr.write(f"[resolver] REJECT og:image too small {size}B: {image_path}\n")
+            return True
+    except Exception:
+        return True
+    try:
+        from PIL import Image, ImageStat
+        with Image.open(image_path) as im:
+            w, h = im.size
+            crop = im.crop((w // 10, h // 10, w - w // 10, h - h // 10)).convert('L')
+            stddev = ImageStat.Stat(crop).stddev[0]
+            if stddev < 15.0:
+                sys.stderr.write(
+                    f"[resolver] REJECT og:image near-monochrome stddev={stddev:.1f}\n")
+                return True
     except Exception:
         pass
     return False

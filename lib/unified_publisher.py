@@ -492,6 +492,20 @@ def unified_publish(
     # 7. cat_id (カテゴリ初期化は 6.3.3 で実施済み)
     cat_id = cat_ids[0] if cat_ids else None
 
+    # 7.5 cluster duplicate gate (2026-05-14 共通 lib 経由)
+    # auto_event_article / auto_comeback_article 等が unified_publish 経由で
+    # 短時間内に同テーマを重複 publish するのを直前で阻止する
+    if not auto_draft_reasons:
+        try:
+            from lib.cluster_dedup import cluster_dedup_check
+            _is_dup, _matched = cluster_dedup_check(
+                title_final, hours=3, source=f'unified_publish/{kind}')
+            if _is_dup:
+                auto_draft_reasons.append(f'cluster_dup:{_matched[:40]}')
+                log.append(f"cluster_dup → status=draft (matched: {_matched[:50]})")
+        except Exception as _ce:
+            log.append(f"cluster_dedup skip: {_ce}")
+
     # 8. WP投稿
     _post_status = 'draft' if auto_draft_reasons else 'publish'
     if auto_draft_reasons:
@@ -580,6 +594,15 @@ def unified_publish(
     post_id = result.get('id')
     post_url = result.get('link', '')
     log.append(f"post_id={post_id}")
+
+    # publish 成功時のみ sliding-window buffer に追記 (cluster dedup 横断用)
+    if _post_status == 'publish' and post_id:
+        try:
+            from lib.cluster_dedup import record_publish
+            record_publish(title_final, post_id=post_id,
+                           source=f'unified_publish/{kind}')
+        except Exception:
+            pass
 
     # 9. GSC Indexing（失敗時リトライ）
     _gsc_ok = False
