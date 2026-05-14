@@ -273,9 +273,8 @@ def proofread_post(post):
 {source_section}
 ## 判定基準
 - critical: 人名/グループ名の間違い、数値の矛盾、存在しない人物、**ソース記事にない事実の追加（捏造）**、**バラエティ番組を新曲と誤記**、**タイトルがソースと全く異なる内容**
-- high: 不自然な日本語、タイトルと本文の不整合、ソースに名前があるのに記事で省略、
-  **AI翻訳調の不自然表現** (下記パターン参照)
-- medium: 表現の改善余地、軽微な表記揺れ
+- high: タイトルと本文の不整合、ソースに名前があるのに記事で省略、**AI翻訳調の不自然表現** (下記パターン参照)
+- medium: 表現の改善余地、軽微な表記揺れ、文体提案 (冗長/より自然/単語の選び方等)
 
 ## AI翻訳調 検出パターン (high 候補)
 日本語ネイティブが書かないAI翻訳テンプレが混入していたら high で報告:
@@ -298,6 +297,12 @@ def proofread_post(post):
 - **異なる指標の数値を「矛盾」と報告しないこと**：「首都圏13.5％・全国13.3％」「初週CD12万枚・配信再生5,000万回」「分間最高15.4％・平均13.5％」などは比較対象が違うため矛盾ではない。同一指標で異なる数字が併記されている場合のみ報告
 - **タイトルと本文の整合性は、固有名詞（人名・グループ名・作品名）の登場有無のみで判定すること**：「タイトルが具体的でない」「より良いタイトルが考えられる」などスタイル批評は high として報告しない
 - **3行まとめは要約なので、本文全項目を網羅していない場合でも問題と報告しないこと**
+- **以下の「文体提案」は high として報告してはならない (medium 以下に分類すること)**:
+  - 「冗長」「より簡潔に」「より自然な表現」「改善余地」等の単純な文体提案
+  - 単語1個・フレーズ1個レベルの言い換え提案 (例: 「魅力披露」より「魅力を披露」)
+  - 「若干あいまい」「あいまいさがある」等の主観的曖昧さ指摘
+  - 記事中の文をそのまま引用しているだけで、何が問題か明示していない指摘
+  - 「〜とする方が自然」「〜と簡潔にしても良い」等の改善提案文末
 
 ## スコア基準
 - 95-100: 問題なし
@@ -410,6 +415,29 @@ JSON出力のみ:
                     # スコア再計算 (CRIT 無くなれば最低 80 まで戻す)
                     if not filtered_crit:
                         result['score'] = max(result.get('score', 100), 80)
+
+            # --- 2026-05-14: 文体提案 high の自動 downgrade ---
+            # LLM が prompt 指示に従わず「不自然」「冗長」「より自然」等の style 提案を
+            # high として返してくるケースの post-process 防壁。memory:
+            # feedback_llm_proofreader_false_positive
+            style_kw = (
+                '冗長', 'より自然', 'より簡潔', '改善余地', '改善できる', '改善が望ましい',
+                'あいまい', '若干', 'すこし', '少し堅苦', '不自然な表現', '不自然な日本語',
+                'とする方が自然', 'と簡潔にしても', '言い換え', 'スタイル批評',
+            )
+            kept_high, demoted = [], []
+            for item in result.get('high', []):
+                s = str(item)
+                if any(k in s for k in style_kw):
+                    demoted.append(item)
+                else:
+                    kept_high.append(item)
+            if demoted:
+                result['high'] = kept_high
+                result.setdefault('medium', []).extend(demoted)
+                # high が空になればスコアを 80+ に戻す
+                if not kept_high and not result.get('critical'):
+                    result['score'] = max(result.get('score', 100), 85)
             return result
         except urllib.error.HTTPError as e:
             last_err = e

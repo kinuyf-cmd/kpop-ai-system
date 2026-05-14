@@ -22,6 +22,40 @@ def _load_block_history() -> dict:
     return {}
 
 
+AUDIT_STEPS_LOG = Path('/home/aiuser/kpop-ai-system/logs/audit_steps.jsonl')
+
+
+def _latest_audit_thumbnail_fail(pid: int) -> tuple[bool, str]:
+    """直近の thumbnail step が fail かどうかを判定。
+    2026-05-14: pre_publish_gate は vision check を含まないので、過去の
+    auto-auditor が VISION_MISMATCH (サムネが記事と無関係) で fail した
+    記事を draft_auto_publisher が再 publish してしまう事故への根治。
+
+    Returns: (is_fail, detail_short)
+    """
+    if not AUDIT_STEPS_LOG.exists():
+        return False, ''
+    pid_marker = f'"post_id": {pid},'
+    latest_status = ''
+    latest_detail = ''
+    try:
+        with open(AUDIT_STEPS_LOG, encoding='utf-8') as f:
+            for line in f:
+                if pid_marker not in line:
+                    continue
+                try:
+                    d = json.loads(line)
+                except Exception:
+                    continue
+                if d.get('post_id') != pid or d.get('step') != 'thumbnail':
+                    continue
+                latest_status = d.get('status', '')
+                latest_detail = d.get('detail', '')[:120]
+    except OSError:
+        return False, ''
+    return latest_status == 'fail', latest_detail
+
+
 def _save_block_history(history: dict):
     BLOCK_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
     BLOCK_HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding='utf-8')
@@ -122,6 +156,15 @@ def main():
         # ファクトチェックブロックリストに含まれる記事は絶対にpublishしない
         if pid in _blocked:
             print(f"  [{pid}] SKIP: 捏造/架空でブロック済み")
+            continue
+
+        # 2026-05-14: 直近 audit_steps の thumbnail=fail を skip (VISION_MISMATCH 等)
+        # pre_publish_gate は vision check を含まないため、手動 draft 化された
+        # サムネ事故記事 (23132 ALL DAY RELIEF 等) を draft_auto_publisher が
+        # 再 publish してしまう事故を防ぐ
+        _thumb_fail, _thumb_detail = _latest_audit_thumbnail_fail(pid)
+        if _thumb_fail:
+            print(f"  [{pid}] SKIP: audit_steps.thumbnail=fail ({_thumb_detail})")
             continue
 
         try:
