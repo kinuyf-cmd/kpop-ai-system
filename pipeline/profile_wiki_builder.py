@@ -1052,7 +1052,7 @@ def _build_member_schema_org(group_artist: str, group_slug: str, member: dict) -
     if member.get('nationality'):
         schema["nationality"] = member['nationality']
     ig = member.get('instagram_personal')
-    if ig:
+    if ig and member.get('instagram_verified'):
         schema["sameAs"] = [ig]
     return f'<script type="application/ld+json">{json.dumps(schema, ensure_ascii=False)}</script>'
 
@@ -1189,7 +1189,10 @@ def render_member_html(group_artist: str, group_slug: str, member: dict, profile
 
     # ── 公式SNS ──
     sns_chips = []
-    if ig:
+    # 2026-05-15: instagram_verified=True が明示された handle のみ render。
+    # LLM hallucination 由来の fake handle (_groupname suffix 等) 混入対策。
+    ig_verified = bool(member.get('instagram_verified'))
+    if ig and ig_verified:
         sns_chips.append(
             f'<a href="{ig}" target="_blank" rel="noopener" class="ap-sns-chip">'
             f'<span class="ap-sns-icon" style="background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);">📷</span>'

@@ -20,7 +20,9 @@
       "blood_type": "B",
       "education": "ソウル公演芸術高等学校 卒業",
       "solo_works": "Love & Hate (2013), Walkin' (2015), Sailor (2016), Dally (2018), SAY MY NAME (2019), Layin' Low (2020)",
-      "instagram_personal": "https://www.instagram.com/xhyolynx/"
+      "instagram_personal": "https://www.instagram.com/xhyolynx/",
+      "instagram_verified": true,
+      "_instagram_verified_at": "2026-05-15 WebSearch/Wikipedia/known-handle"
     }
   ],
   "_note": "stub 登録 (2026-05-15 audit_session 由来)。profile_wiki_builder.py で Claude web search 経由の完全データに更新推奨。"
