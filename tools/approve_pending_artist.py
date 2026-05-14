@@ -21,6 +21,7 @@ import base64
 import json
 import os
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -47,12 +48,34 @@ def _wp_auth_header() -> str:
 
 
 def create_wp_category(name: str, slug: str, parent: int = 26) -> int:
-    """parent=26 (idol) の子カテゴリを作成。既存 slug なら id を返す。"""
-    # 既存チェック
-    cats = get_idol_child_categories()
-    if slug in cats:
-        return int(cats[slug]['id'])
+    """parent=26 (idol) の子カテゴリを作成または re-parent。
+    parent=0 で同 slug が既にあれば parent=26 に move する (WP の slug 重複 -idol 自動 suffix 回避)。"""
+    # 既存チェック (任意 parent)
+    qs = urllib.parse.urlencode({'slug': slug, 'hide_empty': 'false'})
+    url = f'{WP_BASE}/categories?{qs}'
+    try:
+        with urllib.request.urlopen(url, timeout=15) as r:
+            existing = json.loads(r.read())
+    except Exception:
+        existing = []
+    if existing:
+        cat = existing[0]
+        cid = int(cat['id'])
+        if cat.get('parent') == parent:
+            return cid
+        # re-parent
+        body = json.dumps({'parent': parent}).encode()
+        req = urllib.request.Request(
+            f'{WP_BASE}/categories/{cid}',
+            data=body,
+            headers={'Authorization': _wp_auth_header(), 'Content-Type': 'application/json'},
+            method='POST',
+        )
+        with urllib.request.urlopen(req, timeout=20) as r:
+            json.loads(r.read())
+        return cid
 
+    # 新規作成
     body = json.dumps({'name': name, 'slug': slug, 'parent': parent}).encode()
     req = urllib.request.Request(
         f'{WP_BASE}/categories',
