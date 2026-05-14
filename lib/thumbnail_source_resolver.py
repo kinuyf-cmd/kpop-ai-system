@@ -638,10 +638,95 @@ def resolve_ai_prompt(topic_context: str = "", genre: str = "") -> dict:
 
 # ── Main resolver ──
 
+# 2026-05-15: og:image が意図的に低品質 (300px portrait 等) な domain。
+# これらは body img 直行が早い + 品質が高い
+_LOW_QUALITY_OG_DOMAINS = (
+    'osen.co.kr', 'topstarnews.net', 'sportsseoul.com', 'sportskhan.news',
+)
+
+
+def _is_low_quality_og_domain(url: str) -> bool:
+    if not url:
+        return False
+    return any(d in url for d in _LOW_QUALITY_OG_DOMAINS)
+
+
+def _extract_high_res_body_img(html: str, base_url: str = '') -> str | None:
+    """記事本文中の高解像 img を抽出 (og:image が低品質 / 不在の場合の fallback)。
+    width/height 属性 ≥600 を優先、無ければ画像ダウンロードして実寸測定。
+    """
+    import urllib.parse
+    if not html:
+        return None
+    # まず article/main の中に絞る (nav/header/footer の小アイコン除外)
+    body_re = re.search(
+        r'<(?:article|main|div[^>]*(?:article|content|entry|post)[^>]*)[^>]*>(.*?)</(?:article|main|div)>',
+        html, re.S | re.I)
+    body = body_re.group(1) if body_re else html
+    candidates = []
+    # img tag 抽出 + width/height/src
+    for m in re.finditer(r'<img\b[^>]+>', body, re.I):
+        tag = m.group(0)
+        src_m = re.search(r'\bsrc=["\']([^"\']+)["\']', tag, re.I)
+        if not src_m:
+            continue
+        src = src_m.group(1)
+        if src.startswith('//'):
+            src = 'https:' + src
+        elif src.startswith('/') and base_url:
+            from urllib.parse import urljoin
+            src = urljoin(base_url, src)
+        if not src.startswith('http'):
+            continue
+        # icon/logo/ad など明らかな除外
+        if re.search(r'(icon|logo|ad-|banner|sprite|avatar|profile)', src, re.I):
+            continue
+        w_m = re.search(r'\bwidth=["\']?(\d+)', tag)
+        h_m = re.search(r'\bheight=["\']?(\d+)', tag)
+        w = int(w_m.group(1)) if w_m else 0
+        h = int(h_m.group(1)) if h_m else 0
+        # 属性から判定可能なら w≥600 を優先
+        if w >= 600 and h > 0 and h < w * 1.3:
+            candidates.append((w, src, 'attr'))
+        elif w == 0 and h == 0:
+            # 属性無し → 後で実寸チェック対象
+            candidates.append((0, src, 'unknown'))
+    if not candidates:
+        return None
+    # attr 判定で確定したものがあれば最大幅を返す
+    sized = [c for c in candidates if c[0] >= 600]
+    if sized:
+        sized.sort(reverse=True)
+        return sized[0][1]
+    # 属性無しの上位3件まで実ダウンロードでチェック
+    for w, src, _ in candidates[:3]:
+        tmp = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False).name
+        if not _download(src, tmp):
+            try: os.unlink(tmp)
+            except Exception: pass
+            continue
+        try:
+            from PIL import Image
+            with Image.open(tmp) as im:
+                iw, ih = im.size
+            if iw >= 600 and ih < iw * 1.3:
+                try: os.unlink(tmp)
+                except Exception: pass
+                return src
+        except Exception:
+            pass
+        try: os.unlink(tmp)
+        except Exception: pass
+    return None
+
+
 def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
-    """ソース記事から og:image を抽出し、portrait/極小をrejectして source_og_image dictを返す。
+    """ソース記事から og:image / body 高解像 img を抽出し、portrait/極小を
+    reject して source_og_image dict を返す。
 
     2026-05-11 規定: artist photo より先に毎回試行 (memory: feedback_artist_photo_absolute_rule)。
+    2026-05-15: osen 系の低品質 og 対策で、og 失敗時 + low-quality-og domain は
+    本文 <img> から高解像を抽出する fallback path を追加。
     """
     if not source_url or not source_url.startswith('http'):
         return None
@@ -653,35 +738,62 @@ def resolve_source_og_image(source_url: str, post_id: str = "") -> dict | None:
         html = raw.decode('utf-8', errors='ignore') if isinstance(raw, (bytes, bytearray)) else str(raw)
     except Exception:
         return None
+
+    # og:image 抽出
+    og_url = None
     m = re.search(r'<meta\s+(?:property|name)=["\']og:image(?::secure_url)?["\']\s+content=["\']([^"\']+)["\']', html)
     if not m:
         m = re.search(r'<meta\s+content=["\']([^"\']+)["\']\s+(?:property|name)=["\']og:image["\']', html)
-    if not m:
-        return None
-    og_url = m.group(1)
-    if not og_url.startswith('http'):
-        return None
-    dest = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False).name
-    if not _download(og_url, dest):
-        try: os.unlink(dest)
-        except Exception: pass
-        return None
-    if _check_portrait(dest):
-        try: os.unlink(dest)
-        except Exception: pass
-        return None
-    # 2026-05-14: 22606/22663 事故への根治 (匿名シルエット / placeholder reject)
-    if _check_low_quality_og(dest):
-        try: os.unlink(dest)
-        except Exception: pass
-        return None
-    return {
-        'image_path': dest,
-        'source': 'source_og_image',
-        'source_url': og_url,
-        'license': 'source_attribution',
-        'attribution': source_url,
-    }
+    if m:
+        og_url = m.group(1)
+        if not og_url.startswith('http'):
+            og_url = None
+
+    def _try_image(img_url: str, src_label: str) -> dict | None:
+        dest = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False).name
+        if not _download(img_url, dest):
+            try: os.unlink(dest)
+            except Exception: pass
+            return None
+        if _check_portrait(dest):
+            try: os.unlink(dest)
+            except Exception: pass
+            return None
+        if _check_low_quality_og(dest):
+            try: os.unlink(dest)
+            except Exception: pass
+            return None
+        return {
+            'image_path': dest,
+            'source': src_label,
+            'source_url': img_url,
+            'license': 'source_attribution',
+            'attribution': source_url,
+        }
+
+    # low-quality-og domain なら body img を先に試す
+    if _is_low_quality_og_domain(source_url):
+        bimg = _extract_high_res_body_img(html, source_url)
+        if bimg:
+            r = _try_image(bimg, 'source_body_img')
+            if r:
+                return r
+
+    # og:image 試行
+    if og_url:
+        r = _try_image(og_url, 'source_og_image')
+        if r:
+            return r
+
+    # og 失敗 → body img fallback (low-quality-og domain でも初回 body img が落ちた時の最終手段)
+    if not _is_low_quality_og_domain(source_url):
+        bimg = _extract_high_res_body_img(html, source_url)
+        if bimg:
+            r = _try_image(bimg, 'source_body_img')
+            if r:
+                return r
+
+    return None
 
 
 def resolve(artist_name: str, genre: str = "", post_id: str = "",
