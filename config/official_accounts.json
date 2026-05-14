@@ -204,5 +204,25 @@
     "youtube_channel_id": "UCpglvCYfpAwa45A_nnuDDdg",
     "instagram": "treasuremembers",
     "_note": "2026-05-10 added — Wikimedia fallback alone matched \"treasure\" 英単語=dragon art"
+  },
+  "hyolyn": {
+    "channel_name": "Hyolyn (효린 HYOLYN)",
+    "youtube_channel_id": null,
+    "_pending": "channel_id 要 web 確認 — 既知の official channel @hyolyn の ID を取得後設定",
+    "instagram": "xhyolynx",
+    "channel_id": null
+  },
+  "aiki": {
+    "channel_name": "Aiki / 아이키",
+    "youtube_channel_id": null,
+    "_pending": "channel_id 要 web 確認",
+    "instagram": "aiki___ki",
+    "channel_id": null
+  },
+  "see-ya": {
+    "channel_name": "See Ya / 씨야",
+    "youtube_channel_id": null,
+    "_pending": "2006 デビュー、2011 活動休止、2026 再結成。official channel 要 web 確認",
+    "channel_id": null
   }
 }

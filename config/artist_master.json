@@ -408,6 +408,54 @@
         {"name": "TAEYANG", "name_ko": "동영배", "birthday": "1988-05-18", "role": "メインボーカル・メインダンサー"},
         {"name": "DAESUNG", "name_ko": "강대성", "birthday": "1989-04-26", "role": "リードボーカル"}
       ]
+    },
+    {
+      "id": "hyolyn",
+      "name_en": "Hyolyn",
+      "name_ko": "효린",
+      "name_ja": "ヒョリン",
+      "slug": "hyolyn-profile",
+      "type": "solo",
+      "agency": "BRIDɢE (브릿지)",
+      "debut_date": "2010-06-03",
+      "members": [
+        {"name": "Hyolyn", "name_ko": "효린", "birthday": "1990-12-11", "role": "ボーカル"}
+      ],
+      "note": "元 SISTAR のメインボーカル。2019 年に自身のレーベル BRIDɢE 設立、ソロ活動中。"
+    },
+    {
+      "id": "aiki",
+      "name_en": "Aiki",
+      "name_ko": "아이키",
+      "name_ja": "アイキー",
+      "slug": "aiki-profile",
+      "type": "solo",
+      "agency": "Hook (HOOK Entertainment)",
+      "debut_date": "2021-08-24",
+      "members": [
+        {"name": "Aiki", "name_ko": "아이키", "birthday": "1991-02-22", "role": "コレオグラファー、ダンサー"}
+      ],
+      "note": "Hook ダンスクルー所属。Street Woman Fighter S1 (Mnet 2021) で全国的に知られる。2026 年 See Ya 客員メンバー「アヤ」として参加。"
+    },
+    {
+      "id": "see-ya",
+      "name_en": "See Ya",
+      "name_ko": "씨야",
+      "name_ja": "シーヤ",
+      "slug": "see-ya-profile",
+      "type": "group",
+      "agency": "MBK Entertainment (旧 Mnet Media)",
+      "debut_date": "2006-04-21",
+      "members": [
+        {"name": "Kim Yeon-ji", "name_ko": "김연지", "birthday": "1988-04-09", "role": "メインボーカル"},
+        {"name": "Lee Bo-ram", "name_ko": "이보람", "birthday": "1989-02-10", "role": "ボーカル"},
+        {"name": "Aiki", "name_ko": "아이키", "role": "客員メンバー (アヤ、2026 加入)"}
+      ],
+      "former_members": [
+        {"name": "Nam Gyu-ri", "name_ko": "남규리", "birthday": "1985-11-26", "role": "リーダー (2006-2008)"},
+        {"name": "Lee Soo-mi", "name_ko": "이수미", "role": "ボーカル (2008-2011)"}
+      ],
+      "note": "2006 年デビュー、2011 年活動休止。2026 年再結成、Aiki を客員メンバー「アヤ」として迎え活動再開。"
     }
   ]
 }

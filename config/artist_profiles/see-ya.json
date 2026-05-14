@@ -1,0 +1,58 @@
+{
+  "agency": "MBK Entertainment (旧 Mnet Media)",
+  "debut_date": "2006-04-21",
+  "member_pages_enabled": false,
+  "fandom_name": "Mongkles",
+  "members": [
+    {
+      "name_en": "Kim Yeon-ji",
+      "name_kr": "김연지",
+      "name_ja": "キム・ヨンジ",
+      "real_name_en": "Kim Yeon-ji",
+      "real_name_kr": "김연지",
+      "position": "メインボーカル",
+      "birth": "1988-04-09",
+      "nationality": "韓国",
+      "note": "See Ya デビューメンバー。圧倒的なボーカル力で第二世代K-POP女性ボーカルの代表格。"
+    },
+    {
+      "name_en": "Lee Bo-ram",
+      "name_kr": "이보람",
+      "name_ja": "イ・ボラム",
+      "real_name_kr": "이보람",
+      "position": "ボーカル",
+      "birth": "1989-02-10",
+      "nationality": "韓国",
+      "note": "See Ya デビューメンバー。SeeYa 解散後はソロ活動・バラエティ等で活躍。"
+    },
+    {
+      "name_en": "Aiki",
+      "name_kr": "아이키",
+      "name_ja": "アヤ (Aya)",
+      "real_name_kr": "김아영",
+      "position": "客員メンバー (アヤ、2026 加入)",
+      "birth": "1991-02-22",
+      "nationality": "韓国",
+      "note": "Hook ダンスクルー所属の人気コレオグラファー。2026 年 See Ya 再結成にあたり客員メンバー「アヤ」として加入。"
+    }
+  ],
+  "former_members": [
+    {
+      "name_en": "Nam Gyu-ri",
+      "name_kr": "남규리",
+      "name_ja": "ナム・ギュリ",
+      "real_name_kr": "남규리",
+      "position": "リーダー (2006-2008)",
+      "birth": "1985-11-26",
+      "note": "See Ya 初代リーダー。2008 年に女優転向のため脱退。"
+    },
+    {
+      "name_en": "Lee Soo-mi",
+      "name_kr": "이수미",
+      "name_ja": "イ・スミ",
+      "position": "ボーカル (2008-2011)",
+      "note": "Nam Gyu-ri 脱退後に加入。2011 年の活動休止まで在籍。"
+    }
+  ],
+  "_note": "stub 登録 (2026-05-15 audit_session 由来)。2006 デビュー、2011 活動休止、2026 再結成。profile_wiki_builder.py で詳細データ更新推奨。"
+}

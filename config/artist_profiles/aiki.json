@@ -1,0 +1,20 @@
+{
+  "agency": "Hook (HOOK Entertainment)",
+  "debut_date": "2021-08-24",
+  "member_pages_enabled": false,
+  "members": [
+    {
+      "name_en": "Aiki",
+      "name_kr": "아이키",
+      "name_ja": "アイキー",
+      "real_name_en": "Kim A-young",
+      "real_name_kr": "김아영",
+      "position": "コレオグラファー、ダンサー",
+      "birth": "1991-02-22",
+      "nationality": "韓国",
+      "note": "Hook ダンスクルー所属。Mnet『Street Woman Fighter』S1 (2021) で全国的に知名度上昇。多数の K-POP MV/Performance の振付を担当。2026 年、再結成された See Ya の客員メンバー「アヤ (Aya)」として歌手活動も開始。",
+      "instagram_personal": "https://www.instagram.com/aiki___ki/"
+    }
+  ],
+  "_note": "stub 登録 (2026-05-15 audit_session 由来)。profile_wiki_builder.py で Claude web search 経由の完全データに更新推奨。"
+}

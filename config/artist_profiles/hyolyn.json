@@ -1,0 +1,27 @@
+{
+  "agency": "BRIDɢE (브릿지)",
+  "debut_date": "2010-06-03",
+  "solo_debut_date": "2013-11-23",
+  "member_pages_enabled": false,
+  "fandom_name": "Stalkers",
+  "fandom_meaning": "Hyolyn のソロファンダム名 (SISTAR 時代の「STAR1」を継承する形)。",
+  "members": [
+    {
+      "name_en": "Hyolyn",
+      "name_kr": "효린",
+      "name_ja": "ヒョリン",
+      "real_name_en": "Kim Hyo-jung",
+      "real_name_kr": "김효정",
+      "position": "ソロアーティスト、ボーカル",
+      "birth": "1990-12-11",
+      "nationality": "韓国",
+      "note": "元 SISTAR のメインボーカル。SISTAR 解散 (2017) 後ソロ活動継続。2019 年に自身のレーベル BRIDɢE 設立。代表曲は『Dally』『SAY MY NAME』『To Find a True Love』等。Live ボーカルの強さで K-POP 業界内屈指。",
+      "height_cm": "168",
+      "blood_type": "B",
+      "education": "ソウル公演芸術高等学校 卒業",
+      "solo_works": "Love & Hate (2013), Walkin' (2015), Sailor (2016), Dally (2018), SAY MY NAME (2019), Layin' Low (2020)",
+      "instagram_personal": "https://www.instagram.com/xhyolynx/"
+    }
+  ],
+  "_note": "stub 登録 (2026-05-15 audit_session 由来)。profile_wiki_builder.py で Claude web search 経由の完全データに更新推奨。"
+}
