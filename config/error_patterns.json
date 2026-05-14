@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12T15:02:34+09:00",
+  "updated_at": "2026-05-15T01:48:56+09:00",
   "patterns": {
     "butterfree_empty_output": {
       "count": 8,
@@ -1572,66 +1572,88 @@
     "publish_stall_tavily_quota": {
       "count": 4,
       "last_seen": "2026-05-12",
-      "example": "12:00 daily_editor cycle で auto_event_article subprocess が 10分タイムアウト連発、breaking_news_detector cron 停止中のため 11:34-12:30 publish 完全停止。Tavily API quota 超過 → DDG fallback の遅延が原因",
-      "fix": "daily_editor.py の subprocess timeout を 600s→120s に短縮 + breaking_news_detector / auto_event_article / auto_comeback_article cron を再開 (publish経路冗長化)",
+      "example": "12:00 daily_editor cycle で auto_event_article subprocess が 10分タイムアウト連発",
+      "fix": "daily_editor.py timeout 600s→120s + 3つ cron 再開",
       "agent": "daily_editor",
       "resolved_at": "2026-05-12"
     },
     "enforcer_drafted_due_to_body_read_missing": {
       "count": 18,
       "last_seen": "2026-05-12",
-      "example": "本日 publish した 17件 (22000/22024/22027/21989/21972/21804/21775等) が body_read step 未記録のため enforcer cron に自動 draft 化",
-      "fix": "lib/unified_publisher.py の publish 成功 return 直前で record_step(post_id, body_read, ok) を自動記録。test_unified_publisher_auto_record_body_read.py 4件追加。既存17件は手動で record_step 救済",
+      "example": "本日 publish 17件が body_read 未記録で enforcer 自動 draft 化",
+      "fix": "lib/unified_publisher.py に record_step(body_read) 自動呼び出し追加",
       "agent": "unified_publisher",
       "resolved_at": "2026-05-12"
     },
     "trending_widget_falsely_shows_newest_as_popular": {
       "count": 1,
       "last_seen": "2026-05-12",
-      "example": "sidebar の「今日読まれている記事」が orderby=comment_count で、コメントほぼ無いサイトのため新着順と同じ結果に。12:41 publish 直後のNMIXX記事が即2位表示される虚偽状態",
-      "fix": "wordpress/kpopjournal-theme/sidebar.php と functions.php を改修。kpj_api_trending() 経由 + metrics_yesterday.json の正しいネスト構造 ($metrics[\"ga4\"][\"top_landing_pages\"]) アクセス。kpj-headless-api.php にも GA4 fallback 追加",
+      "example": "sidebar の「今日読まれている記事」が orderby=comment_count で新着順と区別つかない虚偽表示",
+      "fix": "kpj_api_trending() 経由 + metrics_yesterday.json のネスト構造正しく読む",
       "agent": "wordpress_theme",
       "resolved_at": "2026-05-12"
     },
     "auto_comeback_garbage_in_no_source_reader": {
       "count": 30,
       "last_seen": "2026-05-12",
-      "example": "2026-05-12 朝に auto_comeback_article が headline 3本だけで GPT 呼んでガベージインの捏造記事を量産 (SHINee 記事に Jo Kwon + 볼ボール選手 signal が混入する等の cluster 偽陽性、本文 hangul 残存 30件)",
-      "fix": "pipeline/auto_comeback_article.py を breaking_news_detector パターンに整合化。source_reader.read_sources(sigs) + _enrich_with_web_search を統合、200字未満 source_text なら BLOCK、artist 名が source/title に含まれない cluster 偽陽性も BLOCK。test_auto_comeback_no_garbage_in.py 5件追加 + memory feedback_pipeline_must_use_source_reader.md",
+      "example": "headline だけで GPT 呼んでクラスタ偽陽性 + 捏造30件",
+      "fix": "source_reader + web_search 統合、cluster relevance check 追加",
       "agent": "auto_comeback_article",
       "resolved_at": "2026-05-12"
     },
     "enforcer_drafts_publish_articles_for_x_skip": {
       "count": 4,
       "last_seen": "2026-05-12",
-      "example": "本日 publish 4件 (21989/21972/22024/22027) が enforcer に structure/factcheck missing で draft 化、その結果 x_scheduled が \"WP not-publish — skip & remove from queue\" で X 投稿スキップ (14:00 CORTIS 事案)",
-      "fix": "lib/unified_publisher.py の publish 成功 hook で body_read だけでなく structure / factcheck も自動 ok 記録 (pre_publish_gate + factcheck v2 通過済として)。test_unified_publisher_auto_record_body_read.py を拡張",
+      "example": "本日 publish 4件が enforcer に draft 化、X 投稿 skip 連鎖",
+      "fix": "unified_publisher で structure / factcheck も自動 ok 記録",
       "agent": "unified_publisher",
       "resolved_at": "2026-05-12"
     },
     "popup_publisher_missing_audit_steps_record": {
       "count": 1,
       "last_seen": "2026-05-12",
-      "example": "popup_publisher は post_to_wp_popup 独自実装で unified_publish 経由しないため、audit_steps record_step が呼ばれず、enforcer 30分後 draft 化 → X 投稿 skip 連鎖の同じ穴を抱えていた",
-      "fix": "pipeline/popup_publisher.py の publish 成功 hook で 3項目 record_step (structure/factcheck/body_read) を独自呼び出し。test_popup_publisher_also_records_3_steps 追加",
+      "example": "popup_publisher が record_step を呼ばず enforcer draft 化 → X skip 穴",
+      "fix": "popup_publisher に 3項目 record_step 追加",
       "agent": "popup_publisher",
       "resolved_at": "2026-05-12"
     },
     "x_post_ai_smell_abstract_templates": {
       "count": 1,
       "last_seen": "2026-05-12",
-      "example": "X 投稿が全件「速報…X が動いた / 注目が集まっている / 詳細はこちら / 記事に続きをまとめている」テンプレ骨格で AI 量産アカウントと判別される状態",
-      "fix": "lib/x_post_templates.py の HOOKS/EMOTION_LINES/COMMENT_TRIGGERS/fragment_patterns 全面刷新。「動いた/動向/あらまし/ポイント/まとめている/事態」等の抽象 AI 臭テンプレを撲滅、title_frag (具体キーワード)/event/number 駆動の事実型に変更。extract_number/extract_event の空 fallback、select_hook の placeholder skip ロジック追加。test_x_post_templates_no_ai_smell.py 6件、memory feedback_x_post_no_ai_smell.md",
+      "example": "X 投稿の AI 臭抽象テンプレ撲滅",
+      "fix": "HOOKS/EMOTION_LINES/COMMENT_TRIGGERS 全面刷新",
       "agent": "x_post_templates",
       "resolved_at": "2026-05-12"
     },
     "x_post_no_metric_no_specific_words": {
       "count": 1,
       "last_seen": "2026-05-12",
-      "example": "X投稿 hook が「BTS、7位」「LE SSERAFIM、位」「aespa、都市で開催」と数値・単位の文脈なしで AI 量産臭・誤情報",
-      "fix": "lib/x_post_templates.py に extract_metric() 追加 (7週連続TOP10 / 25都市40公演 / 13年ぶり 等の数値+単位を最優先抽出)。extract_number は metric があれば空 return で誤テンプレ回避。alias HOOKS にも plain fallback 追加。build_hashtags の bot タグ (#KPOP好きと繋がりたい / #推し活) 撲滅、アーティスト名タグ最優先。",
+      "example": "X投稿 hook の数値テンプレで誤情報・空 placeholder",
+      "fix": "extract_metric 追加 + alias fallback + hashtag 整理",
       "agent": "x_post_templates",
       "resolved_at": "2026-05-12"
+    },
+    "fallback_cache_non_latin_slug_pick": {
+      "count": 1,
+      "last_seen": "2026-05-15",
+      "example": "post 23224 (アイキー、See Ya 客員メンバー記事) のサムネ regenerate で fallback_cache が IVE のメンバー4人写真を採用。_slug('アイキー')='' で resolve_fallback_photo の glob '**.*' が cache 全件 match → random.shuffle で別アーティスト写真を pick していた。CACHE_INDEX にも '' key entry (writer 側 slugify('아이유')='' バグ) が混入していた。",
+      "fix": "(1) lib/thumbnail_source_resolver.resolve_fallback_photo: len(slug)<2 で早期 return None (2) lib/wikimedia.fetch_safe_image: 同様の writer 側 guard (3) CACHE_INDEX 空 key entry 1 件削除 (4) 回帰テスト 3 件追加 (tests/test_thumbnail_defenses.py)",
+      "agent": "lib.thumbnail_source_resolver",
+      "resolved_at": "2026-05-15",
+      "root_cause": "_slug / slugify が [^a-zA-Z0-9_] を strip するため Hangul/Katakana 名は完全に空文字になる。空 slug でも resolver は処理を続行し、glob と CACHE_INDEX lookup 両方で誤マッチを起こす。",
+      "severity": "high",
+      "related_pattern": "openai_dalle3_deprecated"
+    },
+    "openai_dalle3_deprecated": {
+      "count": 1,
+      "last_seen": "2026-05-15",
+      "example": "tools/regenerate_thumbnail_wp.py 経由で DALL-E fallback を叩くと HTTP 400 'The model dall-e-3 does not exist'。OpenAI 側で dall-e-3 が利用不可になり、利用可能な image models は gpt-image-1 系 (gpt-image-1 / -mini / 1.5 / 2) と chatgpt-image-latest のみ。",
+      "fix": "lib/dalle_thumbnail_gen.py: MODEL を 'gpt-image-1' に変更 (env OPENAI_IMAGE_MODEL で上書き可)。size '1792x1024'→'1536x1024', quality 'standard'→'medium' の自動 map。response_format=url 削除、b64_json を base64 decode で書き出し。回帰テスト 1 件追加。",
+      "agent": "lib.dalle_thumbnail_gen",
+      "resolved_at": "2026-05-15",
+      "root_cause": "OpenAI が dall-e-3 を新規 API では受け付けなくなった。training data 時点で valid だった model 名が現行 API で死ぬ。",
+      "severity": "high",
+      "related_pattern": "fallback_cache_non_latin_slug_pick"
     }
   },
   "recurring_errors": [
@@ -2501,28 +2523,28 @@
     "prevention": "text_meta_phrase: パターン分析して共通lib化で再発防止"
   },
   "few_internal_links": {
-    "count": 14,
+    "count": 22,
     "first_seen": "2026-04-30T17:50:08.710307+09:00",
-    "last_seen": "2026-05-11T17:25:26.467143+09:00",
+    "last_seen": "2026-05-13T21:18:00.855696+09:00",
     "example_post_ids": [
-      6174,
-      6172,
-      6170,
-      20982,
-      21004
+      21729,
+      21527,
+      22242,
+      22187,
+      22773
     ],
     "prevention": "post_publish_enricher で内部リンク2本以上を保証"
   },
   "unclosed_p": {
-    "count": 42,
+    "count": 44,
     "first_seen": "2026-04-30T17:50:10.379386+09:00",
-    "last_seen": "2026-05-07T16:04:08.245097+09:00",
+    "last_seen": "2026-05-11T21:39:41.590329+09:00",
     "example_post_ids": [
-      6230,
-      6217,
       18012,
       18006,
-      17839
+      17839,
+      21006,
+      21004
     ],
     "prevention": "unclosed_p: パターン分析して共通lib化で再発防止"
   },
@@ -2540,24 +2562,26 @@
     "prevention": "slug_short: パターン分析して共通lib化で再発防止"
   },
   "title_long": {
-    "count": 4,
+    "count": 7,
     "first_seen": "2026-05-01T10:00:44.645093+09:00",
-    "last_seen": "2026-05-01T16:15:05.366191+09:00",
+    "last_seen": "2026-05-12T21:16:28.497693+09:00",
     "example_post_ids": [
-      6185
+      6185,
+      21729,
+      22242
     ],
     "prevention": "title_long: パターン分析して共通lib化で再発防止"
   },
   "content_short": {
-    "count": 34,
+    "count": 57,
     "first_seen": "2026-05-01T10:00:59.184987+09:00",
-    "last_seen": "2026-05-11T17:26:14.159491+09:00",
+    "last_seen": "2026-05-14T21:10:46.401673+09:00",
     "example_post_ids": [
-      20982,
-      20985,
-      21006,
-      20996,
-      20972
+      22752,
+      22563,
+      22464,
+      23353,
+      23348
     ],
     "prevention": "LLM生成時の最低文字数指定を2000字以上に"
   },
@@ -2609,15 +2633,15 @@
     "prevention": "post_thumbnail_generator で自動生成。生成失敗時は DALL-E フォールバック"
   },
   "no_artist_category": {
-    "count": 14,
+    "count": 15,
     "first_seen": "2026-05-01T16:07:13.778151+09:00",
-    "last_seen": "2026-05-01T16:12:41.519636+09:00",
+    "last_seen": "2026-05-12T21:16:28.501966+09:00",
     "example_post_ids": [
-      6281,
       6280,
       6279,
       6278,
-      6277
+      6277,
+      22242
     ],
     "prevention": "no_artist_category: パターン分析して共通lib化で再発防止"
   },
@@ -2657,24 +2681,25 @@
     "prevention": "text_sanitizer のAIメンション除去パターン強化"
   },
   "llm_high": {
-    "count": 9,
+    "count": 38,
     "first_seen": "2026-05-01T16:10:43.285501+09:00",
-    "last_seen": "2026-05-07T16:05:15.524917+09:00",
+    "last_seen": "2026-05-13T21:17:36.661332+09:00",
     "example_post_ids": [
-      17839,
-      17715,
-      17677,
-      17672,
-      17650
+      22278,
+      22275,
+      22264,
+      22869,
+      22844
     ],
     "prevention": "LLM校閲のhigh検出時にaudit_fixer_universalキューに追加"
   },
   "text_casual_address": {
-    "count": 1,
+    "count": 2,
     "first_seen": "2026-05-01T16:13:20.576212+09:00",
-    "last_seen": "2026-05-01T16:13:20.576263+09:00",
+    "last_seen": "2026-05-14T21:10:46.406115+09:00",
     "example_post_ids": [
-      6242
+      6242,
+      23348
     ],
     "prevention": "text_casual_address: パターン分析して共通lib化で再発防止"
   },
@@ -2690,75 +2715,120 @@
     "prevention": "x_missing_url: パターン分析して共通lib化で再発防止"
   },
   "llm_critical": {
-    "count": 6,
+    "count": 9,
     "first_seen": "2026-05-07T16:02:58.850122+09:00",
-    "last_seen": "2026-05-07T16:05:40.041981+09:00",
+    "last_seen": "2026-05-13T21:17:36.428961+09:00",
     "example_post_ids": [
-      17786,
-      17743,
       17677,
       17655,
-      17560
+      17560,
+      21729,
+      22869
     ],
     "prevention": "LLMプロンプトにfact-check指示を追加。事実誤認検出時はDraft化"
   },
   "summary_not_3lines": {
-    "count": 11,
+    "count": 19,
     "first_seen": "2026-05-07T16:03:18.713660+09:00",
-    "last_seen": "2026-05-11T17:21:36.142427+09:00",
+    "last_seen": "2026-05-14T21:11:03.154372+09:00",
     "example_post_ids": [
-      17655,
-      17650,
-      17583,
-      17560,
-      21554
+      22195,
+      22123,
+      22663,
+      22526,
+      23224
     ],
     "prevention": "summary_not_3lines: パターン分析して共通lib化で再発防止"
   },
   "source_content_mismatch": {
-    "count": 10,
+    "count": 32,
     "first_seen": "2026-05-07T16:04:08.248538+09:00",
-    "last_seen": "2026-05-11T17:25:49.415283+09:00",
+    "last_seen": "2026-05-14T21:11:03.184888+09:00",
     "example_post_ids": [
-      17650,
-      21527,
-      21246,
-      21004,
-      20996
+      23173,
+      23132,
+      23053,
+      23019,
+      23000
     ],
     "prevention": "source_content_mismatch: パターン分析して共通lib化で再発防止"
   },
   "summary_title_mismatch": {
-    "count": 3,
+    "count": 4,
     "first_seen": "2026-05-07T16:04:08.471811+09:00",
-    "last_seen": "2026-05-07T16:05:15.288701+09:00",
+    "last_seen": "2026-05-11T21:37:25.196252+09:00",
     "example_post_ids": [
       17786,
       17743,
-      17672
+      17672,
+      21771
     ],
     "prevention": "summary_title_mismatch: パターン分析して共通lib化で再発防止"
   },
   "meta_desc_short": {
-    "count": 3,
+    "count": 11,
     "first_seen": "2026-05-07T16:05:14.808542+09:00",
-    "last_seen": "2026-05-11T17:21:36.127961+09:00",
+    "last_seen": "2026-05-14T21:11:03.145922+09:00",
     "example_post_ids": [
-      17743,
-      17560,
-      21594
+      22684,
+      22623,
+      23382,
+      23348,
+      23276
     ],
     "prevention": "excerpt生成プロンプトの最低文字数を80字に"
   },
   "fabricated_name": {
-    "count": 3,
+    "count": 8,
     "first_seen": "2026-05-11T17:22:01.763731+09:00",
-    "last_seen": "2026-05-11T17:22:02.232618+09:00",
+    "last_seen": "2026-05-13T21:18:35.762063+09:00",
     "example_post_ids": [
       21381,
       21376,
-      21368
+      21368,
+      22298,
+      22655
     ],
     "prevention": "LLM生成コンテンツの架空名称検出。即Draft化+ソース付きで再生成必須"
+  },
+  "aioseo_desc_missing": {
+    "count": 9,
+    "first_seen": "2026-05-12T21:17:09.497793+09:00",
+    "last_seen": "2026-05-14T21:11:03.192344+09:00",
+    "example_post_ids": [
+      22734,
+      22640,
+      22637,
+      23117,
+      23114
+    ],
+    "prevention": "aioseo_desc_missing: パターン分析して共通lib化で再発防止"
+  },
+  "text_salesy_cta": {
+    "count": 1,
+    "first_seen": "2026-05-13T21:19:49.713337+09:00",
+    "last_seen": "2026-05-13T21:19:49.713365+09:00",
+    "example_post_ids": [
+      22734
+    ],
+    "prevention": "text_salesy_cta: パターン分析して共通lib化で再発防止"
+  },
+  "text_casual_greeting": {
+    "count": 1,
+    "first_seen": "2026-05-14T21:11:03.150454+09:00",
+    "last_seen": "2026-05-14T21:11:03.150475+09:00",
+    "example_post_ids": [
+      23276
+    ],
+    "prevention": "text_sanitizer のカジュアル表現除去パターン拡充"
+  },
+  "idol_article_dalle_thumbnail": {
+    "count": 1,
+    "first_seen": "2026-05-14T21:11:03.177292+09:00",
+    "last_seen": "2026-05-14T21:11:03.177306+09:00",
+    "example_post_ids": [
+      23044
+    ],
+    "prevention": "idol_article_dalle_thumbnail: パターン分析して共通lib化で再発防止"
   }
 }
