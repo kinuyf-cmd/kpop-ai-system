@@ -261,6 +261,9 @@
 # 誕生日 widget (TOP sidebar) — profile_wiki の members[].birth を日次集計
 1 0 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/birthday_widget_builder.py >> logs/birthday_widget_builder.log 2>&1
 
+# 未知 artist 検出 — publish 済記事から WP category/profile 不在の artist を queue 化 (人間承認待ち)
+30 0 * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/missing_artist_scanner.py 24 >> logs/missing_artist_scanner.log 2>&1
+
 # 4項目監査未達の自動draft化 (2026-05-10新設, memory feedback_audit_script_is_not_audit)
 */15 * * * * cd /home/aiuser/kpop-ai-system && python3 pipeline/audit_steps_enforcer.py >> logs/audit_steps_enforcer.log 2>&1
 
