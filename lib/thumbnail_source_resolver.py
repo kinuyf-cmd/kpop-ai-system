@@ -933,7 +933,12 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         return r
 
     def _resolve_artist_sources(artist: str) -> dict | None:
-        """アーティスト本人画像を解決 (YouTube → Wikimedia → グループフォールバック → cache)"""
+        """アーティスト本人画像を解決
+        2026-05-15: chain 順序を YouTube → artist_cache → Wikimedia に変更。
+        Wikimedia は textual match 由来の誤マッチが多いため、検証済 cache を
+        先に試行する (See Ya / Aiki 事故の構造的回避)。
+        """
+        # 1. YouTube (official_accounts 登録済 channel のみ、attribution check 込み)
         r = resolve_youtube(artist, prefer=yt_order, prefer_keywords=song_keywords or None)
         if r:
             attr = (r.get("attribution", "") or "").lower()
@@ -945,16 +950,17 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
             else:
                 return r
 
-        r = resolve_wikimedia(artist)
-        if r:
-            return r
-
-        # アーティスト本人のキャッシュ画像 (solo cache を group fallback より先に試行)
+        # 2. artist_cache (人手検証済の solo/group cache を Wikimedia より優先)
         r = resolve_fallback_photo(artist)
         if r:
             return r
 
-        # メンバー→グループフォールバック
+        # 3. Wikimedia (allowlist guard 経由、なお誤マッチ risk あるため最後)
+        r = resolve_wikimedia(artist)
+        if r:
+            return r
+
+        # 4. メンバー→グループフォールバック
         member_map = _load_member_to_group()
         group_name = member_map.get(artist, "")
         if group_name and group_name != artist:
@@ -964,10 +970,10 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
             r = resolve_youtube(group_name, prefer=yt_order, prefer_keywords=song_keywords or None)
             if r:
                 return r
-            r = resolve_wikimedia(group_name)
+            r = resolve_fallback_photo(group_name)
             if r:
                 return r
-            r = resolve_fallback_photo(group_name)
+            r = resolve_wikimedia(group_name)
             if r:
                 return r
 

@@ -1589,6 +1589,61 @@ def build_member_pages(group_artist: str, group_slug: str) -> int:
     return success
 
 
+def _fetch_wikipedia_facts(artist: str) -> dict:
+    """Wikipedia infobox から birth_date / real_name (English) を抽出。
+    LLM hallucination 検出のための ground truth として使用。"""
+    import urllib.parse as _up
+    try:
+        url = f'https://en.wikipedia.org/wiki/{_up.quote(artist.replace(" ", "_"))}'
+        req = urllib.request.Request(url, headers={'User-Agent': 'KPJ-Verify/1.0'})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            html = r.read().decode('utf-8', errors='ignore')
+    except Exception:
+        return {}
+    facts = {}
+    # birth date: <span class="bday">YYYY-MM-DD</span> (hCard microformat)
+    m = re.search(r'<span class="bday">(\d{4}-\d{2}-\d{2})</span>', html)
+    if m:
+        facts['birth_date'] = m.group(1)
+    # real name: infobox th "Born" の隣の td
+    m = re.search(r'<th[^>]*>Born</th>\s*<td[^>]*>(.*?)</td>', html, re.S)
+    if m:
+        born_html = m.group(1)
+        # 最初の <a href="/wiki/...">Name</a> もしくは plain text 名前
+        n = re.search(r'<a [^>]*>([A-Z][a-z]+(?: [A-Z][a-z]+)+)</a>', born_html)
+        if not n:
+            n = re.search(r'>([A-Z][a-z]+(?: [A-Z][a-z]+)+)<', born_html)
+        if n:
+            facts['real_name_en_wikipedia'] = n.group(1)
+    return facts
+
+
+def _check_hallucination(profile: dict, wiki_facts: dict) -> list[str]:
+    """profile (LLM 出力) と Wikipedia 確定値の主要 field 不一致を検出。
+    Returns: list of discrepancy descriptions (空なら no hallucination)。"""
+    if not wiki_facts:
+        return []  # Wikipedia 取れない → 検証 skip
+    issues = []
+    members = profile.get('members') or []
+    if not members:
+        return issues
+    # 1st member の birth/real_name と比較 (solo artist 想定、group も主役)
+    m = members[0]
+    wiki_birth = wiki_facts.get('birth_date')
+    llm_birth = m.get('birth') or ''
+    if wiki_birth and llm_birth and wiki_birth != llm_birth:
+        issues.append(f"birth_date: LLM={llm_birth!r} vs Wikipedia={wiki_birth!r}")
+    wiki_realname = wiki_facts.get('real_name_en_wikipedia', '').strip()
+    llm_realname = (m.get('real_name_en') or '').strip()
+    if wiki_realname and llm_realname:
+        # 表記揺れ吸収のため lowercase + space 削除で比較
+        norm = lambda s: re.sub(r'[-\s]+', '', s.lower())
+        if norm(wiki_realname) != norm(llm_realname):
+            issues.append(
+                f"real_name_en: LLM={llm_realname!r} vs Wikipedia={wiki_realname!r}")
+    return issues
+
+
 def build_one(client, artist: str, slug: str) -> bool:
     print(f"[{artist}] fetching profile...", flush=True)
     profile = fetch_profile(client, artist)
@@ -1606,10 +1661,29 @@ def build_one(client, artist: str, slug: str) -> bool:
     n_with_detail = sum(1 for m in profile.get('members', []) if m.get('mbti') or m.get('height_cm') or m.get('blood_type'))
     print(f"  ✓ detail filled: {n_with_detail}/{n_members}", flush=True)
 
+    # 2026-05-15: Wikipedia diff hallucination guard
+    # niche artist (Hyolyn / Aiki / SeeYa 等) で LLM web search が
+    # 本名/生年月日を捏造する事故への防壁
+    wiki_facts = _fetch_wikipedia_facts(artist)
+    discrepancies = _check_hallucination(profile, wiki_facts)
+    if discrepancies:
+        print(f"  ⚠ HALLUCINATION ALERT: {discrepancies}", flush=True)
+        # quarantine: 既存 JSON を上書きせず *.hallucination_quarantine.json に保存
+        PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+        quarantine_path = PROFILE_DIR / f'{slug}.hallucination_quarantine.json'
+        profile['_hallucination_alert'] = discrepancies
+        profile['_wikipedia_ground_truth'] = wiki_facts
+        with open(quarantine_path, 'w', encoding='utf-8') as f:
+            json.dump(profile, f, ensure_ascii=False, indent=2)
+        print(f"  quarantined → {quarantine_path} (既存 JSON は上書き skip)", flush=True)
+        return False  # quarantine 時は page render も skip
+
     # Save JSON
     PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     out_path = PROFILE_DIR / f'{slug}.json'
     profile['_last_updated'] = datetime.now(JST).isoformat()
+    if wiki_facts:
+        profile['_wikipedia_verified'] = True
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(profile, f, ensure_ascii=False, indent=2)
     print(f"  saved {out_path}", flush=True)
