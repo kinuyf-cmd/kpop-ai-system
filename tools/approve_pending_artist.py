@@ -36,6 +36,56 @@ from pipeline.missing_artist_scanner import (
 )
 
 WP_BASE = 'https://www.kpopjournal.tokyo/wp-json/wp/v2'
+MASTER_PATH = Path('/home/aiuser/kpop-ai-system/config/artist_master.json')
+
+
+def _load_master() -> dict:
+    if not MASTER_PATH.exists():
+        return {'artists': []}
+    return json.loads(MASTER_PATH.read_text(encoding='utf-8'))
+
+
+def is_in_master(artist_name: str) -> bool:
+    """artist_master.json に登録済かを name_en / name_ja で照合 (case-insensitive)。"""
+    master = _load_master()
+    name_norm = artist_name.strip().lower()
+    for a in master.get('artists', []):
+        for field in ('name_en', 'name_ja', 'id'):
+            v = (a.get(field) or '').strip().lower()
+            if v and v == name_norm:
+                return True
+    return False
+
+
+def add_master_stub(artist_name: str, slug: str, wp_category_id: int) -> None:
+    """profile JSON を読み込んで artist_master に minimal entry を append (--add-to-master 用)。"""
+    master = _load_master()
+    if any((a.get('id') or '').lower() == slug.lower() for a in master.get('artists', [])):
+        return  # 既存
+    prof_path = Path(f'/home/aiuser/kpop-ai-system/config/artist_profiles/{slug}.json')
+    prof = json.loads(prof_path.read_text(encoding='utf-8')) if prof_path.exists() else {}
+    entry = {
+        'id': slug,
+        'name_en': artist_name,
+        'name_ko': '',
+        'name_ja': artist_name,
+        'slug': f'{slug}-profile',
+        'type': 'group',
+        'agency': prof.get('agency', ''),
+        'debut_date': prof.get('debut_date', ''),
+        'wp_category_id': int(wp_category_id),
+        'wp_tag_ids': [],
+        'members': [
+            {'name': m.get('name_en', ''), 'name_ko': m.get('name_kr', ''),
+             'birthday': m.get('birth', ''), 'role': m.get('position', '')}
+            for m in prof.get('members', [])
+        ],
+    }
+    master.setdefault('artists', []).append(entry)
+    MASTER_PATH.write_text(
+        json.dumps(master, ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
 
 
 def _wp_auth_header() -> str:
@@ -100,15 +150,27 @@ def build_idol_wiki(artist: str, slug: str) -> bool:
     return ok
 
 
-def approve_one(artist: str, dry_run: bool = False) -> bool:
+def approve_one(artist: str, dry_run: bool = False,
+                add_to_master: bool = False) -> bool:
     slug = name_to_slug(artist)
     if not slug:
         print(f'  ✗ slug generation failed for {artist!r}')
         return False
 
     print(f'\n→ {artist} (slug={slug})')
+
+    # artist_master gate (memory feedback: auto-create は登録済のみ)
+    if not is_in_master(artist) and not add_to_master:
+        print(
+            f'  ✗ {artist!r} not in artist_master.json. '
+            f'手動で追加するか --add-to-master を付けて再実行。'
+        )
+        return False
+
     if dry_run:
         print('  [dry-run] would create WP category + idol wiki')
+        if add_to_master:
+            print('  [dry-run] would append stub to artist_master.json')
         return True
 
     # 1. WP category
@@ -130,7 +192,15 @@ def approve_one(artist: str, dry_run: bool = False) -> bool:
         print(f'  ✗ idol wiki error: {e}')
         wiki_ok = False
 
-    # 3. queue resolve
+    # 3. artist_master stub (--add-to-master 時のみ)
+    if add_to_master and not is_in_master(artist):
+        try:
+            add_master_stub(artist, slug, cat_id)
+            print(f'  ✓ artist_master stub appended')
+        except Exception as e:
+            print(f'  ✗ artist_master stub failed: {e}')
+
+    # 4. queue resolve
     mark_resolved(
         artist,
         f'auto-create: category_id={cat_id} wiki_ok={wiki_ok}',
@@ -145,6 +215,8 @@ def main():
     ap.add_argument('--list', action='store_true', help='show pending queue')
     ap.add_argument('--all', action='store_true', help='approve all pending')
     ap.add_argument('--dry-run', action='store_true', help='no side effects')
+    ap.add_argument('--add-to-master', action='store_true',
+                    help='artist_master.json に未登録なら stub を append して進める')
     args = ap.parse_args()
 
     pending = list_pending()
@@ -167,7 +239,7 @@ def main():
             return
         ok = ng = 0
         for e in pending:
-            if approve_one(e['artist'], dry_run=args.dry_run):
+            if approve_one(e['artist'], dry_run=args.dry_run, add_to_master=args.add_to_master):
                 ok += 1
             else:
                 ng += 1
@@ -176,7 +248,7 @@ def main():
 
     if not args.artist:
         ap.error('Provide <artist>, --list, or --all')
-    approve_one(args.artist, dry_run=args.dry_run)
+    approve_one(args.artist, dry_run=args.dry_run, add_to_master=args.add_to_master)
 
 
 if __name__ == '__main__':

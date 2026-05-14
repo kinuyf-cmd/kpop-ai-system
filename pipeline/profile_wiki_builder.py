@@ -83,6 +83,11 @@ PRIORITY_ARTISTS = [
     {'name': 'IZNA', 'slug': 'izna'},
     {'name': '(G)I-DLE', 'slug': 'gidle'},
     {'name': 'ALLDAY PROJECT', 'slug': 'allday-project'},
+    # 2026-05-15 追加 (auto-provision 経由): Red Velvet / MONSTA X / MAMAMOO / ATEEZ
+    {'name': 'Red Velvet', 'slug': 'red-velvet'},
+    {'name': 'MONSTA X', 'slug': 'monsta-x'},
+    {'name': 'MAMAMOO', 'slug': 'mamamoo'},
+    {'name': 'ATEEZ', 'slug': 'ateez'},
 ]
 
 PROFILE_SCHEMA = {
