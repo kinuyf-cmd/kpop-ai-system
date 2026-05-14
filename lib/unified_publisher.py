@@ -495,11 +495,14 @@ def unified_publish(
     # 7.5 cluster duplicate gate (2026-05-14 共通 lib 経由)
     # auto_event_article / auto_comeback_article 等が unified_publish 経由で
     # 短時間内に同テーマを重複 publish するのを直前で阻止する
+    # + source_url / Korean fragment 一致 (23416/23421 型) も検出
     if not auto_draft_reasons:
         try:
             from lib.cluster_dedup import cluster_dedup_check
             _is_dup, _matched = cluster_dedup_check(
-                title_final, hours=3, source=f'unified_publish/{kind}')
+                title_final, hours=3, source=f'unified_publish/{kind}',
+                candidate_source_url=source_url or '',
+                candidate_body=_body_text or '')
             if _is_dup:
                 auto_draft_reasons.append(f'cluster_dup:{_matched[:40]}')
                 log.append(f"cluster_dup → status=draft (matched: {_matched[:50]})")
@@ -600,7 +603,9 @@ def unified_publish(
         try:
             from lib.cluster_dedup import record_publish
             record_publish(title_final, post_id=post_id,
-                           source=f'unified_publish/{kind}')
+                           source=f'unified_publish/{kind}',
+                           source_url=source_url or '',
+                           body=_body_text or '')
         except Exception:
             pass
 

@@ -226,10 +226,12 @@ def simple_publish_from_source(source_url: str, slug: str = '',
 
     # cluster duplicate gate (2026-05-14)
     # 23000/23006/23144 (KATSEYE) 等 短時間内の同テーマ重複 publish を直前で阻止
+    # + source_url / Korean fragment 一致 (23416/23421 型) も検出
     if status == 'publish':
         from lib.cluster_dedup import cluster_dedup_check
         is_dup, matched = cluster_dedup_check(
-            title_ja, hours=3, source='simple_publish_pipeline')
+            title_ja, hours=3, source='simple_publish_pipeline',
+            candidate_source_url=source_url, candidate_body=body_ja)
         if is_dup:
             print(f'  cluster_dup → status=draft (matched: {matched[:50]})')
             status = 'draft'
@@ -242,7 +244,8 @@ def simple_publish_from_source(source_url: str, slug: str = '',
         try:
             from lib.cluster_dedup import record_publish
             record_publish(title_ja, post_id=int(res['id']),
-                           source='simple_publish_pipeline')
+                           source='simple_publish_pipeline',
+                           source_url=source_url, body=body_ja)
         except Exception:
             pass
     record = {

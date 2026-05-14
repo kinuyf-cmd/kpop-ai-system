@@ -139,6 +139,23 @@ def is_duplicate_title(candidate: str, recent_titles: Iterable[str]) -> tuple[bo
     return False, ''
 
 
+# 2026-05-14: title 単独だと proper_overlap=1 で擦り抜けるケース
+# (23416/23421 "TAEYANG" だけ overlap、本文は同じ Epik High 動画) への対策
+def _extract_korean_fragments(text: str) -> set:
+    """日本語訳済み記事に残る韓国語フレーズを抽出 (ソース引用の強いシグナル)
+    - 「」『』 内の hangul (動画名/曲名引用)
+    - 3字以上の bare hangul sequence (translator 擦り抜け)
+    """
+    if not text:
+        return set()
+    frags = set()
+    for m in re.finditer(r'[「『]([가-힣][가-힣 ]{2,})[」』]', text):
+        frags.add(m.group(1).strip())
+    for m in re.finditer(r'[가-힣]{3,}', text):
+        frags.add(m.group(0))
+    return frags
+
+
 def fetch_recent_wp_titles(hours: int = 3, per_page: int = 50,
                            exclude_post_id: int | None = None) -> list[str]:
     """WP REST API で直近 hours 内に publish 済みの記事タイトル一覧を取得
@@ -172,11 +189,18 @@ def fetch_recent_wp_titles(hours: int = 3, per_page: int = 50,
 
 
 def _read_recent_buffer(hours: int) -> list[str]:
-    """直近 publish された title sliding-window を読む (WP indexing lag 吸収)"""
+    """直近 publish された title sliding-window を読む (WP indexing lag 吸収)。
+    後方互換のため title 文字列だけ返す。entry 全体が必要なら _read_recent_buffer_full。"""
+    return [e.get('title', '') for e in _read_recent_buffer_full(hours)
+            if e.get('title')]
+
+
+def _read_recent_buffer_full(hours: int) -> list[dict]:
+    """直近 publish の sliding-window entries 全体を返す (source_url/body_snippet 含む)"""
     if not os.path.exists(RECENT_PUBLISH_BUFFER):
         return []
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
-    titles = []
+    out = []
     try:
         with open(RECENT_PUBLISH_BUFFER, encoding='utf-8') as f:
             for line in f:
@@ -193,28 +217,38 @@ def _read_recent_buffer(hours: int) -> list[str]:
                     continue
                 if ts < cutoff:
                     continue
-                t = d.get('title', '')
-                if t:
-                    titles.append(t)
+                out.append(d)
     except Exception:
         pass
-    return titles
+    return out
 
 
 def record_publish(title: str, post_id: int | None = None,
-                   source: str = '') -> None:
-    """publish 成功直後に call。次の publisher の WP indexing lag 吸収用。"""
+                   source: str = '',
+                   source_url: str = '',
+                   body: str = '') -> None:
+    """publish 成功直後に call。次の publisher の WP indexing lag 吸収用。
+
+    2026-05-14: source_url + body_snippet も保存し、title 単独では
+    catch できない cluster dup (23416/23421 等) を後段の cluster_dedup_check で検出。
+    """
     if not title:
         return
     try:
         os.makedirs(os.path.dirname(RECENT_PUBLISH_BUFFER), exist_ok=True)
+        entry = {
+            'ts': datetime.now(timezone.utc).isoformat(),
+            'title': title,
+            'post_id': post_id,
+            'source': source,
+        }
+        if source_url:
+            entry['source_url'] = source_url
+        if body:
+            # Korean fragment 抽出のため body を 2000 字まで保存 (容量制御)
+            entry['body_snippet'] = body[:2000] if isinstance(body, str) else ''
         with open(RECENT_PUBLISH_BUFFER, 'a', encoding='utf-8') as f:
-            f.write(json.dumps({
-                'ts': datetime.now(timezone.utc).isoformat(),
-                'title': title,
-                'post_id': post_id,
-                'source': source,
-            }, ensure_ascii=False) + '\n')
+            f.write(json.dumps(entry, ensure_ascii=False) + '\n')
     except Exception:
         pass
 
@@ -223,7 +257,9 @@ def cluster_dedup_check(candidate_title: str, *,
                        hours: int = 3,
                        extra_titles: Iterable[str] = (),
                        exclude_post_id: int | None = None,
-                       source: str = '') -> tuple[bool, str]:
+                       source: str = '',
+                       candidate_source_url: str = '',
+                       candidate_body: str = '') -> tuple[bool, str]:
     """publish 直前の cluster duplicate gate
 
     Args:
@@ -232,25 +268,56 @@ def cluster_dedup_check(candidate_title: str, *,
         extra_titles: WP search に出てこない just_published 候補等を追加
         exclude_post_id: 自身の post_id (再 publish hook 内での self-match 除外用)
         source: caller 識別 (log 用)
+        candidate_source_url: 候補記事のソース URL (同じ URL = dup の最強シグナル)
+        candidate_body: 候補記事の本文 (Korean 引用フレーズ overlap で dup 検出)
 
     Returns:
         (is_duplicate, matched_title)
     """
-    recent = fetch_recent_wp_titles(hours=hours, exclude_post_id=exclude_post_id)
-    buffer = _read_recent_buffer(hours=hours)
-    all_titles = list(recent) + list(buffer) + list(extra_titles)
-    is_dup, matched = is_duplicate_title(candidate_title, all_titles)
-    if is_dup:
+    def _log(matched_title: str, reason: str):
         try:
             with open(HOOK_LOG, 'a', encoding='utf-8') as f:
                 f.write(json.dumps({
                     'ts': datetime.now(timezone.utc).isoformat(),
                     'source': source,
                     'candidate': candidate_title,
-                    'matched': matched,
+                    'matched': matched_title,
+                    'reason': reason,
                     'exclude_post_id': exclude_post_id,
                     'hours': hours,
                 }, ensure_ascii=False) + '\n')
         except Exception:
             pass
+
+    buffer_full = _read_recent_buffer_full(hours=hours)
+
+    # 1. source_url 完全一致 (最強シグナル)
+    if candidate_source_url:
+        for e in buffer_full:
+            if e.get('source_url') and e['source_url'] == candidate_source_url:
+                matched = e.get('title', '') or candidate_source_url
+                _log(matched, 'source_url_match')
+                return True, matched
+
+    # 2. Korean 引用フレーズ overlap (23416/23421 「양을 놀리는 방법」型を catch)
+    if candidate_body:
+        cand_frags = _extract_korean_fragments(candidate_body)
+        if cand_frags:
+            for e in buffer_full:
+                snip = e.get('body_snippet', '')
+                if not snip:
+                    continue
+                shared = cand_frags & _extract_korean_fragments(snip)
+                if shared:
+                    matched = e.get('title', '')
+                    _log(matched, f'korean_fragment_overlap:{list(shared)[:2]}')
+                    return True, matched
+
+    # 3. 既存の title-based check
+    recent = fetch_recent_wp_titles(hours=hours, exclude_post_id=exclude_post_id)
+    buffer_titles = [e.get('title', '') for e in buffer_full if e.get('title')]
+    all_titles = list(recent) + buffer_titles + list(extra_titles)
+    is_dup, matched = is_duplicate_title(candidate_title, all_titles)
+    if is_dup:
+        _log(matched, 'title_overlap')
     return is_dup, matched

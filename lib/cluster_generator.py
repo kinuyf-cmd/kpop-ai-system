@@ -883,10 +883,12 @@ def main():
                     print(f"  [dry-create] {gk}/{art['key']}: slug={art['slug']} len={len(html)}")
                     continue
                 # cluster duplicate gate (2026-05-14)
+                # title + body の Korean フレーズで横断検出
                 if args.status == "publish":
                     from lib.cluster_dedup import cluster_dedup_check
                     is_dup, matched = cluster_dedup_check(
-                        art["title"], hours=3, source="cluster_generator")
+                        art["title"], hours=3, source="cluster_generator",
+                        candidate_body=html or '')
                     if is_dup:
                         print(f"  ⚠  {gk}/{art['key']}: cluster_dup → status=draft (matched: {matched[:50]})")
                         payload["status"] = "draft"
@@ -905,7 +907,8 @@ def main():
                         try:
                             from lib.cluster_dedup import record_publish
                             record_publish(art["title"], post_id=pid,
-                                           source=f"cluster_generator/{gk}")
+                                           source=f"cluster_generator/{gk}",
+                                           body=html or '')
                         except Exception:
                             pass
                 except Exception as e:

@@ -697,11 +697,17 @@ def main(dry_run=False):
             published += 1
             just_published_titles.append(r.get('title', cand_title))
             # 共通 sliding-window buffer にも記録 (他 publisher との横断 dedup 用)
+            # 2026-05-14: source_url + body も渡し、後段の Korean fragment/URL match を可能に
             try:
                 from lib.cluster_dedup import record_publish
+                _src_url = ''
+                if sigs and isinstance(sigs, list):
+                    _src_url = sigs[0].get('url', '') if isinstance(sigs[0], dict) else ''
                 record_publish(r.get('title', cand_title),
                                post_id=r.get('id'),
-                               source='breaking_news_detector')
+                               source='breaking_news_detector',
+                               source_url=_src_url,
+                               body=r.get('body_plain') or '')
             except Exception:
                 pass
             # バースト防止: 記事間に30秒待機（X投稿がスケジューラーキューに入るため短縮可能）
