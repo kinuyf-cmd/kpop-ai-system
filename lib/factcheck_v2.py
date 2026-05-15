@@ -124,9 +124,13 @@ _FACTCHECK_SCHEMA = {
 
 def _cache_key(title: str, plain: str) -> str:
     h = hashlib.sha256()
-    h.update(title.encode('utf-8', errors='ignore'))
+    # 2026-05-15: 強正規化 (lower + 非英数字除去) で enricher 後の link/CTA 追加や
+    # punctuation/whitespace の揺れを吸収。日本語/韓国語は \w で保持される。
+    norm_title = re.sub(r'\W+', '', (title or '').lower(), flags=re.UNICODE)
+    norm_plain = re.sub(r'\W+', '', (plain or '').lower(), flags=re.UNICODE)
+    h.update(norm_title.encode('utf-8', errors='ignore'))
     h.update(b'\x1f')
-    h.update(plain[:3000].encode('utf-8', errors='ignore'))
+    h.update(norm_plain[:3000].encode('utf-8', errors='ignore'))
     return h.hexdigest()[:24]
 
 

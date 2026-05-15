@@ -618,6 +618,13 @@ def pre_publish_gate(
             from lib.source_domains import is_trusted_source
             fake_post = {'title': {'rendered': title or ''},
                          'content': {'rendered': body_html or ''}}
+            # 2026-05-15: pre_publish では WP pid が無いため Layer 1 (pid_cache) が
+            # 完全 skip され factcheck cost が膨らんでいた。source_url を pseudo-id
+            # として渡し、同じ source を 24h 内に再 gate するケースを dedup する。
+            # factcheck は「source の事実が正しいか」判定なので、translation 文体差を
+            # 超えて同一 source = 同一判定で妥当。
+            if source_url:
+                fake_post['id'] = f'src:{source_url}'
             _trusted = bool(source_url) and is_trusted_source(source_url)
             pr = proofread_post_v2(fake_post, use_web_search=not _trusted)
         except Exception as _e_v2:
