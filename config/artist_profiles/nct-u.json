@@ -1,0 +1,280 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2016-04-09",
+  "fandom_name": "NCTzen",
+  "fandom_meaning": "「NCT」と市民を意味する「Citizen」を組み合わせた造語で、NCTの世界観を共に広げる仲間・市民という意味を持つ。",
+  "members": [
+    {
+      "name_en": "Taeil",
+      "name_kr": "이태일",
+      "name_ja": "テイル",
+      "real_name_en": "Lee Taeil",
+      "position": "メインボーカル",
+      "birth": "1994-06-14",
+      "nationality": "韓国",
+      "note": "NCT 127 兼任。2023年に活動休止（性犯罪関連報道により）"
+    },
+    {
+      "name_en": "Taeyong",
+      "name_kr": "이태용",
+      "name_ja": "テヨン",
+      "real_name_en": "Lee Taeyong",
+      "position": "リーダー（NCT全体）、メインラッパー、センター",
+      "birth": "1995-07-01",
+      "nationality": "韓国",
+      "note": "NCT 127 兼任。NCT全体のリーダー"
+    },
+    {
+      "name_en": "Doyoung",
+      "name_kr": "김동영",
+      "name_ja": "ドヨン",
+      "real_name_en": "Kim Dongyoung",
+      "position": "メインボーカル",
+      "birth": "1996-02-01",
+      "nationality": "韓国",
+      "note": "NCT 127 兼任"
+    },
+    {
+      "name_en": "Jaehyun",
+      "name_kr": "정재현",
+      "name_ja": "ジェヒョン",
+      "real_name_en": "Jung Jaehyun",
+      "position": "メインボーカル、センター",
+      "birth": "1997-02-14",
+      "nationality": "韓国",
+      "note": "NCT 127 兼任"
+    },
+    {
+      "name_en": "Mark",
+      "name_kr": "이민형",
+      "name_ja": "マーク",
+      "real_name_en": "Mark Lee",
+      "position": "リードラッパー、リードボーカル",
+      "birth": "1999-08-02",
+      "nationality": "カナダ",
+      "note": "NCT 127・NCT Dream 兼任。カナダ系韓国人"
+    },
+    {
+      "name_en": "Xiaojun",
+      "name_kr": "소준환",
+      "name_ja": "シャオジュン",
+      "real_name_en": "Xiao Dejun",
+      "position": "メインボーカル",
+      "birth": "1999-08-08",
+      "nationality": "中国",
+      "note": "WayV 兼任"
+    },
+    {
+      "name_en": "Hendery",
+      "name_kr": "황관형",
+      "name_ja": "ヘンドリー",
+      "real_name_en": "Wong Kunhang",
+      "position": "ラッパー、ダンサー",
+      "birth": "1999-09-28",
+      "nationality": "中国（マカオ）",
+      "note": "WayV 兼任"
+    },
+    {
+      "name_en": "Jungwoo",
+      "name_kr": "김정우",
+      "name_ja": "ジョンウ",
+      "real_name_en": "Kim Jungwoo",
+      "position": "リードボーカル",
+      "birth": "1998-02-19",
+      "nationality": "韓国",
+      "note": "NCT 127 兼任"
+    },
+    {
+      "name_en": "Lucas",
+      "name_kr": "황지웅",
+      "name_ja": "ルーカス",
+      "real_name_en": "Wong Yukhei",
+      "position": "ラッパー、ダンサー",
+      "birth": "1999-01-25",
+      "nationality": "中国（香港）",
+      "note": "WayV 兼任。2021年より活動休止中"
+    },
+    {
+      "name_en": "Ten",
+      "name_kr": "최영훈",
+      "name_ja": "テン",
+      "real_name_en": "Chittaphon Leechaiyapornkul",
+      "position": "メインダンサー、リードボーカル",
+      "birth": "1996-02-27",
+      "nationality": "タイ",
+      "note": "WayV 兼任。タイ出身"
+    },
+    {
+      "name_en": "Kun",
+      "name_kr": "김영권",
+      "name_ja": "クン",
+      "real_name_en": "Qian Kun",
+      "position": "メインボーカル、リーダー（WayV）",
+      "birth": "1996-01-01",
+      "nationality": "中国",
+      "note": "WayV 兼任"
+    },
+    {
+      "name_en": "Winwin",
+      "name_kr": "동영희",
+      "name_ja": "ウィンウィン",
+      "real_name_en": "Dong Sicheng",
+      "position": "ボーカル、ダンサー",
+      "birth": "1997-10-28",
+      "nationality": "中国",
+      "note": "WayV 兼任"
+    },
+    {
+      "name_en": "Yuta",
+      "name_kr": "나카모토 유타",
+      "name_ja": "ユウタ",
+      "real_name_en": "Nakamoto Yuta",
+      "position": "リードボーカル、ラッパー",
+      "birth": "1995-10-26",
+      "nationality": "日本",
+      "note": "NCT 127 兼任。日本・大阪出身"
+    },
+    {
+      "name_en": "Sungchan",
+      "name_kr": "정성찬",
+      "name_ja": "ソンチャン",
+      "real_name_en": "Jung Sungchan",
+      "position": "リードラッパー、ボーカル",
+      "birth": "2001-09-13",
+      "nationality": "韓国",
+      "note": "RIIZE へ移籍（2023年）"
+    },
+    {
+      "name_en": "Shotaro",
+      "name_kr": "오사키 쇼타로",
+      "name_ja": "ショウタロウ",
+      "real_name_en": "Osaki Shotaro",
+      "position": "メインダンサー、ボーカル",
+      "birth": "2000-11-25",
+      "nationality": "日本",
+      "note": "RIIZE へ移籍（2023年）"
+    },
+    {
+      "name_en": "Haechan",
+      "name_kr": "이동혁",
+      "name_ja": "ヘチャン",
+      "real_name_en": "Lee Donghyuck",
+      "position": "メインボーカル",
+      "birth": "2000-06-06",
+      "nationality": "韓国",
+      "note": "NCT 127・NCT Dream 兼任"
+    },
+    {
+      "name_en": "Jaemin",
+      "name_kr": "나재민",
+      "name_ja": "ジェミン",
+      "real_name_en": "Na Jaemin",
+      "position": "リードボーカル、ビジュアル",
+      "birth": "2000-08-13",
+      "nationality": "韓国",
+      "note": "NCT Dream 兼任"
+    },
+    {
+      "name_en": "Chenle",
+      "name_kr": "정러러",
+      "name_ja": "チョンロ",
+      "real_name_en": "Zhong Chenle",
+      "position": "メインボーカル",
+      "birth": "2001-11-22",
+      "nationality": "中国",
+      "note": "NCT Dream 兼任"
+    },
+    {
+      "name_en": "Jisung",
+      "name_kr": "박지성",
+      "name_ja": "ジソン",
+      "real_name_en": "Park Jisung",
+      "position": "リードダンサー、リードラッパー、ボーカル",
+      "birth": "2002-02-05",
+      "nationality": "韓国",
+      "note": "NCT Dream 兼任。NCT最年少メンバー"
+    },
+    {
+      "name_en": "Renjun",
+      "name_kr": "황런쥔",
+      "name_ja": "レンジュン",
+      "real_name_en": "Huang Renjun",
+      "position": "リードボーカル",
+      "birth": "2000-03-23",
+      "nationality": "中国",
+      "note": "NCT Dream 兼任"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2016",
+      "title": "The 7th Sense",
+      "type": "single",
+      "note": "NCT U デビューシングル。テヨン、タエイル、ドヨン、ジェヒョン、マーク、テン参加"
+    },
+    {
+      "year": "2016",
+      "title": "Without You",
+      "type": "single",
+      "note": "デビュー同期リリース。テヨン、テン、ドヨン、マーク参加"
+    },
+    {
+      "year": "2018",
+      "title": "Boss",
+      "type": "single",
+      "note": "テヨン、マーク、ウィンウィン、ルーカス、ジェヒョン参加"
+    },
+    {
+      "year": "2018",
+      "title": "Baby Don't Stop",
+      "type": "single",
+      "note": "テンとテヨンのデュオユニット楽曲"
+    },
+    {
+      "year": "2019",
+      "title": "Boost",
+      "type": "single",
+      "note": "テヨン、マーク、ジェノ参加"
+    },
+    {
+      "year": "2020",
+      "title": "Make A Wish (Birthday Song)",
+      "type": "single",
+      "note": "NCT U 6人編成で発表された人気曲"
+    },
+    {
+      "year": "2020",
+      "title": "From Home",
+      "type": "single",
+      "note": "テイル、クン、テン、ウィンウィン、ドヨン、ジェヒョン参加の感動的なバラード"
+    },
+    {
+      "year": "2021",
+      "title": "Universe (Let's Play Ball)",
+      "type": "single",
+      "note": "NCT 2021 コンセプト楽曲として発表"
+    },
+    {
+      "year": "2022",
+      "title": "Baggy Jeans",
+      "type": "single",
+      "note": "ドヨン、テヨン、マーク参加のトレンディなトラック"
+    },
+    {
+      "year": "2023",
+      "title": "Sticker (NCT 127) / Best Friend Ever",
+      "type": "single",
+      "note": "NCT Uとして「Best Friend Ever」をリリース。ヘチャン、ジェミン、シャオジュン、ソンチャン参加"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/NCTsmtown",
+    "instagram": "https://www.instagram.com/nct_official_smtown/",
+    "weverse": "https://weverse.io/nct",
+    "youtube": "https://www.youtube.com/channel/UCyP27bZomEcl2jNdDaElMZw",
+    "tiktok": "https://www.tiktok.com/@nct_smtown",
+    "japan_official": "https://www.nct-jp.net/"
+  },
+  "summary_ja": "NCT U（エヌシーティー ユー）は、2016年4月にSMエンタテインメントから誕生したNCTの先駆けユニット。「Neo Culture Technology」のコンセプトのもと、楽曲ごとに異なるメンバーが選抜される「無限拡張型」の革新的なシステムを採用しており、固定メンバーを持たない点が最大の特徴。デビュー曲「The 7th Sense」はその洗練されたビジュアルと実験的なサウンドで世界中のK-POPファンを驚かせた。ボーカル、ラップ、ダンスの各分野で圧倒的な実力を持つメンバーが楽曲テーマに合わせて集結し、毎回異なる世界観と化学反応を生み出す。NCT全体のファンダムはNCTzenと呼ばれ、その多様性と創造性を愛し続けている。",
+  "_last_updated": "2026-05-15T03:43:24.644163+09:00"
+}

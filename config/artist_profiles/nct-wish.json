@@ -1,0 +1,118 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2024-02-28",
+  "fandom_name": "WISH",
+  "fandom_meaning": "ファンダム名「WISH」は、グループ名「NCT WISH」の「WISH（願い）」に由来し、メンバーとファンが共に夢や希望を叶え合う存在であることを表している。",
+  "members": [
+    {
+      "name_en": "Sion",
+      "name_kr": "시온",
+      "name_ja": "シオン",
+      "real_name_en": "Sion",
+      "position": "リーダー、ボーカル",
+      "birth": "2003-07-11",
+      "nationality": "日本",
+      "note": "日本出身メンバー。グループのリーダーを務める。",
+      "height_cm": "179",
+      "blood_type": "O",
+      "mbti": "INTJ",
+      "hobbies": "良い曲を探す, 読書, アニメ・ドラマ鑑賞"
+    },
+    {
+      "name_en": "Riku",
+      "name_kr": "리쿠",
+      "name_ja": "リク",
+      "real_name_en": "Riku",
+      "position": "ボーカル",
+      "birth": "2004-02-14",
+      "nationality": "日本",
+      "note": "日本出身メンバー。",
+      "education": "福井県立鯖江高校 (卒業)"
+    },
+    {
+      "name_en": "Yusei",
+      "name_kr": "유세이",
+      "name_ja": "ユウセイ",
+      "real_name_en": "Yusei",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-09-30",
+      "nationality": "日本",
+      "note": "日本出身メンバー。",
+      "height_cm": "175",
+      "blood_type": "A",
+      "mbti": "ESFJ",
+      "hobbies": "映画鑑賞, ダンス練習"
+    },
+    {
+      "name_en": "Jaehee",
+      "name_kr": "재희",
+      "name_ja": "ジェヒ",
+      "real_name_en": "Jaehee",
+      "position": "ボーカル",
+      "birth": "2005-01-15",
+      "nationality": "韓国",
+      "note": "韓国出身メンバー。"
+    },
+    {
+      "name_en": "Kangdae",
+      "name_kr": "강대",
+      "name_ja": "カンデ",
+      "real_name_en": "Kangdae",
+      "position": "ボーカル",
+      "birth": "2005-04-02",
+      "nationality": "韓国",
+      "note": "韓国出身メンバー。"
+    },
+    {
+      "name_en": "Woonggi",
+      "name_kr": "웅기",
+      "name_ja": "ウンギ",
+      "real_name_en": "Woonggi",
+      "position": "ボーカル、ラッパー",
+      "birth": "2005-08-25",
+      "nationality": "韓国",
+      "note": "韓国出身メンバー。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2024",
+      "title": "WISH",
+      "type": "ep",
+      "note": "デビューEP。タイトル曲「WISH」収録。"
+    },
+    {
+      "year": "2024",
+      "title": "Songbird",
+      "type": "single",
+      "note": "2ndシングル。"
+    },
+    {
+      "year": "2024",
+      "title": "STEADY",
+      "type": "ep",
+      "note": "2nd EP。"
+    },
+    {
+      "year": "2024",
+      "title": "IRREPLACEABLE",
+      "type": "single",
+      "note": "日本デビューシングル。"
+    },
+    {
+      "year": "2025",
+      "title": "WISHFUL",
+      "type": "album",
+      "note": "1stフルアルバム。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/NCT_WISH",
+    "instagram": "https://www.instagram.com/nct_wish/",
+    "weverse": "https://weverse.io/nctwish",
+    "youtube": "https://www.youtube.com/@NCT_WISH",
+    "tiktok": "https://www.tiktok.com/@nct_wish"
+  },
+  "summary_ja": "NCT WISHは、韓国の大手芸能事務所SMエンターテインメントが2024年2月28日にデビューさせた6人組ボーイズグループ。NCTの新ユニットとして結成され、日本人メンバー3名（シオン・リク・ユウセイ）と韓国人メンバー3名（ジェヒ・カンデ・ウンギ）で構成される。グループ名に込められた「願い」というコンセプトのもと、初々しくも力強いパフォーマンスと清純なボーカルを武器にK-POPシーンに新風を吹き込んでいる。デビュー直後から日韓両国でファンを獲得し、日本向けの活動も積極的に展開。NCTブランドを受け継ぎながらも独自のカラーを確立しつつある次世代グループとして注目を集めている。",
+  "_last_updated": "2026-05-15T03:15:33.509782+09:00"
+}

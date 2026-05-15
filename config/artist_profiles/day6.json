@@ -1,0 +1,119 @@
+{
+  "agency": "JYP Entertainment",
+  "debut_date": "2015-09-07",
+  "fandom_name": "My Day",
+  "fandom_meaning": "「DAY6とファンがお互いの一日を満たし合える」という意味を持ち、「マイデイ」とも略称される。",
+  "members": [
+    {
+      "name_en": "Sungjin",
+      "name_kr": "박성진",
+      "name_ja": "ソンジン",
+      "real_name_en": "Park Sungjin",
+      "position": "リーダー、メインボーカル、ギター",
+      "birth": "1993-01-16",
+      "nationality": "韓国",
+      "note": "バンドのリーダーを務め、パワフルなボーカルで知られる"
+    },
+    {
+      "name_en": "Young K",
+      "name_kr": "강영현",
+      "name_ja": "ヤングK",
+      "real_name_en": "Kang Younghyun",
+      "position": "メインボーカル、ラップ、ベース、ギター",
+      "birth": "1993-09-23",
+      "nationality": "韓国",
+      "note": "カナダ育ち。英語でのソロ活動も展開。元のステージネームはBrian"
+    },
+    {
+      "name_en": "Wonpil",
+      "name_kr": "김원필",
+      "name_ja": "ウォンピル",
+      "real_name_en": "Kim Wonpil",
+      "position": "メインボーカル、キーボード",
+      "birth": "1994-04-28",
+      "nationality": "韓国",
+      "note": "甘い声と繊細なキーボードプレイが特徴"
+    },
+    {
+      "name_en": "Dowoon",
+      "name_kr": "윤도운",
+      "name_ja": "ドゥウン",
+      "real_name_en": "Yoon Dowoon",
+      "position": "ドラムス",
+      "birth": "1995-08-25",
+      "nationality": "韓国",
+      "note": "バンドの最年少メンバー。ドラムスを担当"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2015",
+      "title": "The Day",
+      "type": "ep",
+      "note": "デビューEP。リードシングル「Congratulations」収録"
+    },
+    {
+      "year": "2016",
+      "title": "Daydream",
+      "type": "ep",
+      "note": "2ndEP。リードシングル「Letting Go」収録"
+    },
+    {
+      "year": "2017",
+      "title": "Sunrise",
+      "type": "album",
+      "note": "1stスタジオアルバム。ファンダム名「My Day」発表と同日リリース"
+    },
+    {
+      "year": "2017",
+      "title": "Moonrise",
+      "type": "album",
+      "note": "2ndスタジオアルバム。Every Day6プロジェクトの集大成"
+    },
+    {
+      "year": "2019",
+      "title": "The Book of Us: Gravity",
+      "type": "album",
+      "note": "3rdスタジオアルバム"
+    },
+    {
+      "year": "2019",
+      "title": "The Book of Us: Entropy",
+      "type": "album",
+      "note": "4thスタジオアルバム"
+    },
+    {
+      "year": "2020",
+      "title": "The Book of Us: The Demon",
+      "type": "album",
+      "note": "5thスタジオアルバム。その後活動休止期間へ"
+    },
+    {
+      "year": "2022",
+      "title": "The Book of Us: Negentropy – Chaos swallowed up in love",
+      "type": "album",
+      "note": "完全体での再集結アルバム"
+    },
+    {
+      "year": "2023",
+      "title": "5 (Five)",
+      "type": "album",
+      "note": "7thスタジオアルバム。バンド再始動を印象づける作品"
+    },
+    {
+      "year": "2024",
+      "title": "Fourever",
+      "type": "ep",
+      "note": "現4人体制での最新EP"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/day6official",
+    "instagram": "https://www.instagram.com/day6official/",
+    "weverse": "https://weverse.io/day6",
+    "youtube": "https://www.youtube.com/@DAY6",
+    "tiktok": "https://www.tiktok.com/@day6official"
+  },
+  "summary_ja": "DAY6（デイシックス）は、JYPエンターテインメント所属の韓国発4人組バンドである。2015年9月7日にデビューし、ボーカル・ギター担当のソンジン（リーダー）、ベース・ボーカルのヤングK、キーボード・ボーカルのウォンピル、ドラムスのドゥウンで構成される。全メンバーが楽曲の作詞・作曲・プロデュースに深く関わるセルフプロデュース型バンドとして知られ、ロック・ポップ・R&Bなど幅広いジャンルを融合した独自のサウンドが特徴。2017年には毎月新曲を2曲リリースするという「Every Day6」プロジェクトを敢行し話題を集めた。ファンダム名は「My Day（マイデイ）」で、「DAY6とファンがお互いの一日を満たし合う」という意味を持つ。K-POPシーンにおいて本格的なバンドサウンドを武器に独自の地位を確立しており、国内外に多くの熱狂的なファンを持つ。",
+  "_last_updated": "2026-05-15T06:37:04.287870+09:00"
+}

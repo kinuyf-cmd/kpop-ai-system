@@ -1,0 +1,86 @@
+{
+  "agency": "Fanling Culture / JYP Entertainment",
+  "debut_date": "2025-08-22",
+  "fandom_name": "CLOSER",
+  "fandom_meaning": "「CLOSER」はグループ名CIIUの正式意味である「Closer To(II) YoU」に由来し、メンバーとファンが互いにどこまでも近づいていく存在であることを表している。",
+  "members": [
+    {
+      "name_en": "Luo Yan",
+      "name_kr": "뤄옌",
+      "name_ja": "ルオヤン",
+      "real_name_en": "Luo Yan",
+      "position": "リーダー、ボーカル",
+      "birth": "2003-01-01",
+      "nationality": "中国",
+      "note": "Project C出身の公開トレーニー"
+    },
+    {
+      "name_en": "Huang Wenjin",
+      "name_kr": "황원진",
+      "name_ja": "ホアン・ウェンジン",
+      "real_name_en": "Huang Wenjin",
+      "position": "ボーカル",
+      "birth": "2003-01-01",
+      "nationality": "中国",
+      "note": "Project C出身の公開トレーニー"
+    },
+    {
+      "name_en": "Bai Yuanhao",
+      "name_kr": "배원호",
+      "name_ja": "バイ・ユエンハオ",
+      "real_name_en": "Bai Yuanhao",
+      "position": "ボーカル、ダンサー",
+      "birth": "2004-01-01",
+      "nationality": "中国",
+      "note": "Project C出身の公開トレーニー。Allen Baiとも呼ばれる"
+    },
+    {
+      "name_en": "Wang Tianyi",
+      "name_kr": "왕톈이",
+      "name_ja": "ワン・ティエンイ",
+      "real_name_en": "Wang Tianyi",
+      "position": "ボーカル",
+      "birth": "2004-01-01",
+      "nationality": "中国",
+      "note": "非公開トレーニーとして加入しデビュー。VictorとしてもKnown"
+    },
+    {
+      "name_en": "Liu Zeheng",
+      "name_kr": "류저헝",
+      "name_ja": "リウ・ゼーヘン",
+      "real_name_en": "Liu Zeheng",
+      "position": "ボーカル、ダンサー",
+      "birth": "2005-01-01",
+      "nationality": "中国",
+      "note": "非公開トレーニーとして加入しデビュー"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2025",
+      "title": "Our Start",
+      "type": "ep",
+      "note": "デビューミニアルバム (2025年8月22日)"
+    },
+    {
+      "year": "2025",
+      "title": "CLOSER TO YOU",
+      "type": "single",
+      "note": "デビュー曲・リード曲"
+    },
+    {
+      "year": "2026",
+      "title": "未発表/最新作",
+      "type": "single",
+      "note": "2026年活動継続中"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/CIIU_official",
+    "instagram": "https://www.instagram.com/ciiu_official",
+    "youtube": "https://www.youtube.com/@CIIU_official",
+    "tiktok": "https://www.tiktok.com/@ciiu_official"
+  },
+  "summary_ja": "CIIU（奔赴少年）は、中国の芸能事務所Fanling CultureとK-POPの名門JYP Entertainmentが共同プロデュースした5人組中国人ボーイグループ。グループ名は「Closer To(II) YoU」の略で、ファンへの限りない近さを誓う意味が込められている。前身となったオーディションプロジェクト「Project C」を経て厳選されたメンバーが2025年8月22日にデビューミニアルバム『Our Start』でデビュー。JYPのノウハウと中国市場を融合させた次世代グローバルグループとして注目を集め、デビュー直後からアジア全域で熱狂的な支持を獲得している。",
+  "_last_updated": "2026-05-15T07:07:39.214075+09:00"
+}

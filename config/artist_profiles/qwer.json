@@ -1,0 +1,95 @@
+{
+  "agency": "MAUM ENTER (마음엔터)",
+  "debut_date": "2023-06-07",
+  "fandom_name": "CLover",
+  "fandom_meaning": "「C」はQWERのファンへの愛（Care）と絆を象徴し、「Lover」と組み合わせることで「QWERを愛するファン」を意味する造語。",
+  "members": [
+    {
+      "name_en": "Chodan",
+      "name_kr": "초단",
+      "name_ja": "チョダン",
+      "real_name_en": "Choi Hye-won",
+      "position": "リーダー、ギター、ボーカル",
+      "birth": "2003-07-07",
+      "nationality": "韓国",
+      "note": "元ゲームストリーマー・YouTuber出身。グループのリーダーとして活動。"
+    },
+    {
+      "name_en": "Hina",
+      "name_kr": "히나",
+      "name_ja": "ヒナ",
+      "real_name_en": "Yamada Hina",
+      "position": "ベース、ボーカル",
+      "birth": "2003-06-20",
+      "nationality": "日本",
+      "note": "日本出身のメンバー。流暢な韓国語を話す。"
+    },
+    {
+      "name_en": "Gyuvin",
+      "name_kr": "규빈",
+      "name_ja": "ギュビン",
+      "real_name_en": "Kim Gyuvin",
+      "position": "ドラム、ボーカル",
+      "birth": "2004-02-03",
+      "nationality": "韓国",
+      "note": "後にZERO BASEONEとしても活動したマルチアーティスト。"
+    },
+    {
+      "name_en": "Magenta",
+      "name_kr": "마젠타",
+      "name_ja": "マジェンタ",
+      "real_name_en": "Son Suyeon",
+      "position": "キーボード、ボーカル",
+      "birth": "2004-03-14",
+      "nationality": "韓国",
+      "note": "鮮やかなマゼンタカラーがトレードマーク。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2023",
+      "title": "QWER",
+      "type": "ep",
+      "note": "デビューEP。代表曲「고민중독 (Manito)」収録。"
+    },
+    {
+      "year": "2023",
+      "title": "고민중독 (Manito)",
+      "type": "single",
+      "note": "デビュー曲。SNSで爆発的にバイラルし、K-POPバンドシーンで話題を呼んだ。"
+    },
+    {
+      "year": "2024",
+      "title": "HELLO, STRANGE PLACE",
+      "type": "ep",
+      "note": "2ndミニアルバム。"
+    },
+    {
+      "year": "2024",
+      "title": "Violet",
+      "type": "single",
+      "note": "カラーシリーズの一環としてリリースされたシングル。"
+    },
+    {
+      "year": "2024",
+      "title": "QWER SPECIAL ALBUM",
+      "type": "album",
+      "note": "スペシャルアルバム。既存曲の新バージョンや新曲を収録。"
+    },
+    {
+      "year": "2025",
+      "title": "HELLO, STRANGE WORLD",
+      "type": "ep",
+      "note": "3rdミニアルバム。グループの世界観をさらに拡張した作品。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/QWER_official",
+    "instagram": "https://www.instagram.com/qwer_official_/",
+    "weverse": "https://weverse.io/qwer",
+    "youtube": "https://www.youtube.com/@QWER_official",
+    "tiktok": "https://www.tiktok.com/@qwer_official"
+  },
+  "summary_ja": "QWERは2023年6月にデビューした韓国の4人組걸밴드（ガールバンド）で、ギター・ベース・ドラム・キーボードを自ら演奏するライブパフォーマンスが特徴。メンバー全員がSNSやゲーム配信などデジタルネイティブな文化圏出身で、デビュー曲「고민중독 (Manito)」がTikTokやYouTubeで爆発的にバイラルし、一躍K-POPシーンの注目株に。バンドサウンドとポップセンスを融合させた楽曲スタイル、そして個性豊かなメンバーのキャラクターが国内外の若いファン層を中心に支持を集めている。日本出身のヒナが在籍し、日本でも注目度が高い。",
+  "_last_updated": "2026-05-15T06:10:24.637881+09:00"
+}

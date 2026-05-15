@@ -1,0 +1,111 @@
+{
+  "agency": "YG Entertainment",
+  "debut_date": "2009-05-17",
+  "fandom_name": "Blackjacks",
+  "fandom_meaning": "カードゲーム「ブラックジャック」で最強の数字「21」を意味し、2NE1（トゥエニーワン）のグループ名にも掛けられている。21という無敗・最強の数字が、ファンとグループの絆を象徴している。",
+  "members": [
+    {
+      "name_en": "CL",
+      "name_kr": "이채린",
+      "name_ja": "CL（シーエル）",
+      "real_name_en": "Lee Chaerin",
+      "position": "リーダー、メインラッパー、リードダンサー、リードボーカル",
+      "birth": "1991-02-26",
+      "nationality": "韓国",
+      "note": "幼少期を日本・フランスで過ごす。2016年よりソロ活動開始。2021年ソロアルバム『Alpha』リリース。"
+    },
+    {
+      "name_en": "Bom",
+      "name_kr": "박봄",
+      "name_ja": "ボム",
+      "real_name_en": "Park Bom",
+      "position": "メインボーカル",
+      "birth": "1984-03-24",
+      "nationality": "韓国",
+      "note": "姉はチェリスト・朴高恩（パク・ゴウン）。2016年にYGを離れる。"
+    },
+    {
+      "name_en": "Dara",
+      "name_kr": "박산다라",
+      "name_ja": "ダラ",
+      "real_name_en": "Sandara Park",
+      "position": "リードボーカル、ビジュアル",
+      "birth": "1984-11-12",
+      "nationality": "韓国",
+      "note": "フィリピンでアイドル活動後、2NE1に加入。バイリンガル（韓国語・フィリピン語）。"
+    },
+    {
+      "name_en": "Minzy",
+      "name_kr": "공민지",
+      "name_ja": "ミンジ",
+      "real_name_en": "Gong Minji",
+      "position": "メインダンサー、リードボーカル、リードラッパー、マンネ",
+      "birth": "1994-01-18",
+      "nationality": "韓国",
+      "note": "2016年4月にYGを退社。2017年にソロEP『Minzy Work 01: Uno』をリリース。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2009",
+      "title": "2NE1 (1st EP)",
+      "type": "ep",
+      "note": "デビューEP。「I Don't Care」収録。2009年MAMAで年間大賞受賞。"
+    },
+    {
+      "year": "2009",
+      "title": "Fire",
+      "type": "single",
+      "note": "デビューシングル。SBSミュージックトレンドでデビューステージ披露。"
+    },
+    {
+      "year": "2010",
+      "title": "To Anyone",
+      "type": "album",
+      "note": "1stフルアルバム。「Can't Nobody」「Go Away」「Clap Your Hands」収録。"
+    },
+    {
+      "year": "2011",
+      "title": "2NE1 (2nd EP)",
+      "type": "ep",
+      "note": "「I Am the Best」「Lonely」「Ugly」収録。Gaon・Oriconでともに1位。"
+    },
+    {
+      "year": "2011",
+      "title": "Nolza",
+      "type": "japanese",
+      "note": "日本デビューアルバム。韓国グループ初・デビュー作でOricon1位を獲得。"
+    },
+    {
+      "year": "2012",
+      "title": "I Am the Best (일등이야)",
+      "type": "single",
+      "note": "日本版シングル。YGEX（日本）からリリース。"
+    },
+    {
+      "year": "2014",
+      "title": "Crush",
+      "type": "album",
+      "note": "2ndフルアルバム。「Come Back Home」「Gotta Be You」収録。"
+    },
+    {
+      "year": "2015",
+      "title": "Falling in Love / Happy",
+      "type": "single",
+      "note": "日本リリース。「Falling in Love」はOricon週間シングルチャート上位にランクイン。"
+    },
+    {
+      "year": "2017",
+      "title": "Goodbye",
+      "type": "single",
+      "note": "解散前最後のシングル。CL・Bom・Daraの3名で録音・リリース。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/GlobalBlackjack",
+    "instagram": "https://www.instagram.com/2ne1xxi/",
+    "youtube": "https://www.youtube.com/user/2NE1"
+  },
+  "summary_ja": "2NE1（トゥエニーワン）は、YGエンターテインメントが2009年に結成した韓国の4人組ガールズグループ。CL・Bom・Dara・Minzyで構成され、デビューシングル「Fire」から強烈なインパクトを与え、同年のMAMAで新人グループとして史上初の大賞（Daesang）を受賞した。他グループとの差別化を図った個性的なファッションと、エレクトロ・ヒップホップ・ロックを融合した楽曲スタイルが国内外で高く評価され、韓流ブームを牽引する存在となった。2016年11月に解散が発表されたが、2022年のコーチェラ・フェスティバルで電撃再集結し話題をさらった。さらに2024年7月にはYGが15周年を記念した公式再結成を発表。「Welcome Back Tour」と題したアジアツアーを2024年10月から2025年4月にかけて開催し、オリジナルメンバー4名が揃ってファンの前に帰還した。",
+  "_last_updated": "2026-05-15T05:17:40.497198+09:00"
+}

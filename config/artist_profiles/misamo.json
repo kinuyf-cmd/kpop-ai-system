@@ -1,0 +1,79 @@
+{
+  "agency": "JYP Entertainment",
+  "debut_date": "2023-07-26",
+  "fandom_name": "ONCE",
+  "fandom_meaning": "TWICEのサブユニットとして、ファンダム名はTWICEと同じ「ONCE」を使用。「一度（ONCE）愛してくれれば、TWICEで返す」という意味が込められている。",
+  "members": [
+    {
+      "name_en": "Mina",
+      "name_kr": "미나",
+      "name_ja": "ミナ",
+      "real_name_en": "Myoui Mina",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1997-03-24",
+      "nationality": "日本",
+      "note": "大阪府出身。バレエ経験を持つ。MISAMOのM（Mina）担当。"
+    },
+    {
+      "name_en": "Sana",
+      "name_kr": "사나",
+      "name_ja": "サナ",
+      "real_name_en": "Minatozaki Sana",
+      "position": "ボーカル",
+      "birth": "1996-12-29",
+      "nationality": "日本",
+      "note": "大阪府出身。愛嬌担当として人気。MISAMOのSA（Sana）担当。"
+    },
+    {
+      "name_en": "Momo",
+      "name_kr": "모모",
+      "name_ja": "モモ",
+      "real_name_en": "Hirai Momo",
+      "position": "メインダンサー、ボーカル",
+      "birth": "1996-11-09",
+      "nationality": "日本",
+      "note": "京都府出身。TWICE屈指のダンサー。MISAMOのMO（Momo）担当。"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2023",
+      "title": "Masterpiece",
+      "type": "ep",
+      "note": "日本デビューミニアルバム。2023年7月26日リリース。"
+    },
+    {
+      "year": "2023",
+      "title": "Do not touch",
+      "type": "single",
+      "note": "「Masterpiece」収録のリードトラック。"
+    },
+    {
+      "year": "2024",
+      "title": "MISAMO WORLD TOUR 〈MASTERPIECE〉 in JAPAN",
+      "type": "album",
+      "note": "ワールドツアー日本公演を記念したライブ映像作品。"
+    },
+    {
+      "year": "2024",
+      "title": "虎視眈々",
+      "type": "japanese",
+      "note": "2024年リリースの日本語シングル。"
+    },
+    {
+      "year": "2025",
+      "title": "MISAMO 2nd Mini Album",
+      "type": "ep",
+      "note": "2ndミニアルバム（詳細は公式発表を要確認）。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/MISAMOofficial",
+    "instagram": "https://www.instagram.com/misamo_official/",
+    "weverse": "https://weverse.io/misamo",
+    "youtube": "https://www.youtube.com/@MISAMOofficial",
+    "japan_official": "https://misamo.jypeartists.jp/"
+  },
+  "summary_ja": "MISAMOは、韓国の大手芸能事務所JYP Entertainmentが擁するガールズグループTWICEの日本人メンバー3人——ミナ・サナ・モモ——によって結成されたサブユニット。グループ名はそれぞれの名前の頭文字（MI＝Mina、SA＝Sana、MO＝Momo）を組み合わせたもの。2023年7月26日に日本デビューミニアルバム『Masterpiece』をリリースし、オリコンチャートで首位を獲得するなど大きな話題を呼んだ。3人ともバレエやダンスに秀でており、洗練されたパフォーマンスと流暢な日本語での活動がファンを魅了。TWICEのファンダム「ONCE」と共に、日本国内外で絶大な支持を集めている。",
+  "_last_updated": "2026-05-15T07:41:36.707374+09:00"
+}

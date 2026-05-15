@@ -1,0 +1,128 @@
+{
+  "agency": "Studio J (JYP Entertainment)",
+  "debut_date": "2021-12-06",
+  "fandom_name": "Zines",
+  "fandom_meaning": "「Zines」はアンダーグラウンドカルチャーで使われる自主制作誌「fanzine（ファンジン）」に由来し、Xdinary Heroesと共に自分たちだけの世界を作り上げていくファンたちを表す名前です。",
+  "members": [
+    {
+      "name_en": "Jungsu",
+      "name_kr": "정수",
+      "name_ja": "ジョンス",
+      "real_name_en": "Han Jungsu",
+      "position": "リーダー、ドラムス",
+      "birth": "1997-09-22",
+      "nationality": "韓国",
+      "note": "バンドのリーダー兼ドラム担当"
+    },
+    {
+      "name_en": "Gaon",
+      "name_kr": "가온",
+      "name_ja": "ガオン",
+      "real_name_en": "Ko Gaon",
+      "position": "キーボード、ボーカル",
+      "birth": "2000-01-31",
+      "nationality": "韓国",
+      "note": "キーボード兼ボーカル"
+    },
+    {
+      "name_en": "O.de",
+      "name_kr": "오드",
+      "name_ja": "オデ",
+      "real_name_en": "Kim Hyeongu",
+      "position": "ギター、ボーカル",
+      "birth": "2000-02-09",
+      "nationality": "韓国",
+      "note": "ギタリスト兼ボーカル"
+    },
+    {
+      "name_en": "Gunil",
+      "name_kr": "군일",
+      "name_ja": "グニル",
+      "real_name_en": "Lee Gunil",
+      "position": "ギター",
+      "birth": "2000-04-20",
+      "nationality": "韓国",
+      "note": "リードギタリスト"
+    },
+    {
+      "name_en": "Jooyeon",
+      "name_kr": "주연",
+      "name_ja": "ジュヨン",
+      "real_name_en": "Park Jooyeon",
+      "position": "ベース、ボーカル",
+      "birth": "2001-07-09",
+      "nationality": "韓国",
+      "note": "ベース兼ボーカル"
+    },
+    {
+      "name_en": "Hyeongjun",
+      "name_kr": "형준",
+      "name_ja": "ヒョンジュン",
+      "real_name_en": "Choi Hyeongjun",
+      "position": "ボーカル",
+      "birth": "2003-03-16",
+      "nationality": "韓国",
+      "note": "メインボーカル"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2021",
+      "title": "Hello, World!",
+      "type": "ep",
+      "note": "デビューEP"
+    },
+    {
+      "year": "2022",
+      "title": "Overload",
+      "type": "ep",
+      "note": "2ndミニアルバム"
+    },
+    {
+      "year": "2022",
+      "title": "Happy Death Day",
+      "type": "single",
+      "note": "代表曲シングル"
+    },
+    {
+      "year": "2023",
+      "title": "Deadlock",
+      "type": "ep",
+      "note": "3rdミニアルバム"
+    },
+    {
+      "year": "2023",
+      "title": "Test Me",
+      "type": "ep",
+      "note": "4thミニアルバム"
+    },
+    {
+      "year": "2024",
+      "title": "Troublmaker",
+      "type": "ep",
+      "note": "5thミニアルバム"
+    },
+    {
+      "year": "2024",
+      "title": "Door",
+      "type": "album",
+      "note": "1stフルアルバム"
+    },
+    {
+      "year": "2025",
+      "title": "Live Fast",
+      "type": "ep",
+      "note": "6thミニアルバム"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/XdinaryHeroes",
+    "instagram": "https://www.instagram.com/xdinary_heroes/",
+    "weverse": "https://weverse.io/xdinaryheroes",
+    "youtube": "https://www.youtube.com/@XdinaryHeroes",
+    "tiktok": "https://www.tiktok.com/@xdinary_heroes",
+    "japan_official": "https://xdinaryheroes.jp"
+  },
+  "summary_ja": "Xdinary Heroes（エクストラオーディナリー・ヒーローズ）は、JYP Entertainmentの子会社であるStudio Jが2021年12月6日にデビューさせた6人組K-POPバンドです。ドラム・ギター・ベース・キーボードで構成される本格的なバンドサウンドと、K-POPのアイドル性を融合させた独自スタイルが特徴で、「日常を非日常に変えるヒーロー」というコンセプトを掲げています。デビュー曲「Happy Death Day」をはじめ、エモーショナルなロックナンバーからポップな楽曲まで幅広いレパートリーを持ち、国内外のファン「Zines」から熱い支持を受けています。2024年には初のフルアルバム「Door」をリリースし、アーティストとしての確かな成長を示しました。",
+  "_last_updated": "2026-05-15T07:17:59.692317+09:00"
+}
