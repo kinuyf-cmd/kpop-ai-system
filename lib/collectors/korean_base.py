@@ -106,10 +106,23 @@ def log(msg):
     print(f"[{datetime.now().isoformat()}] {msg}")
 
 
+# 2026-05-15: Mozilla/5.0 (Linux) KPOPJournal/1.0 を bot 識別する韓国 media が
+# 増え、starnews / mnet で 403 を観測。10+ collector が共通利用するため、
+# 実 Chrome UA に統一して 403 を回収する (Accept-Language は維持)。
+# 識別は From ヘッダで透明性を確保。
+_BROWSER_UA = (
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+    'AppleWebKit/537.36 (KHTML, like Gecko) '
+    'Chrome/124.0.0.0 Safari/537.36'
+)
+
+
 def fetch_html(url, timeout=20):
     req = urllib.request.Request(url, headers={
-        'User-Agent': 'Mozilla/5.0 (Linux) KPOPJournal/1.0',
+        'User-Agent': _BROWSER_UA,
         'Accept-Language': 'ko,ja;q=0.9,en;q=0.8',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'From': 'crawler@kpopjournal.tokyo',
     })
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode('utf-8', errors='replace')
