@@ -88,6 +88,35 @@ PRIORITY_ARTISTS = [
     {'name': 'MONSTA X', 'slug': 'monsta-x'},
     {'name': 'MAMAMOO', 'slug': 'mamamoo'},
     {'name': 'ATEEZ', 'slug': 'ateez'},
+    # 2026-05-15 追加 (ユーザー一括指示 28件)
+    {'name': 'Billlie', 'slug': 'billlie'},
+    {'name': '&TEAM', 'slug': 'andteam'},
+    {'name': 'KiiiKiii', 'slug': 'kiiikiii'},
+    {'name': 'NCT WISH', 'slug': 'nct-wish'},
+    {'name': 'NCT 127', 'slug': 'nct-127'},
+    {'name': 'NCT U', 'slug': 'nct-u'},
+    {'name': 'NCT DREAM', 'slug': 'nct-dream'},
+    {'name': 'WayV', 'slug': 'wayv'},
+    {'name': 'TVXQ', 'slug': 'tvxq'},
+    {'name': 'SUPER JUNIOR', 'slug': 'super-junior'},
+    {'name': 'SHINee', 'slug': 'shinee'},
+    {'name': "Girls' Generation", 'slug': 'girls-generation'},
+    {'name': 'KARA', 'slug': 'kara'},
+    {'name': 'PSY', 'slug': 'psy'},
+    {'name': '2NE1', 'slug': '2ne1'},
+    {'name': 'AKMU', 'slug': 'akmu'},
+    {'name': 'Aoen', 'slug': 'aoen'},
+    {'name': 'CRAVITY', 'slug': 'cravity'},
+    {'name': 'IDID', 'slug': 'idid'},
+    {'name': 'QWER', 'slug': 'qwer'},
+    {'name': '2PM', 'slug': '2pm'},
+    {'name': 'Day6', 'slug': 'day6'},
+    {'name': 'KickFlip', 'slug': 'kickflip'},
+    {'name': 'GIRLSET', 'slug': 'girlset'},
+    {'name': 'CIIU', 'slug': 'ciiu'},
+    {'name': 'Xdinary Heroes', 'slug': 'xdinary-heroes'},
+    {'name': 'ALL(H)OURS', 'slug': 'allhours'},
+    {'name': 'MISAMO', 'slug': 'misamo'},
 ]
 
 PROFILE_SCHEMA = {
@@ -1652,11 +1681,42 @@ def _check_hallucination(profile: dict, wiki_facts: dict) -> list[str]:
     return issues
 
 
+def _is_stub_profile(profile: dict) -> bool:
+    # LLM が情報取得失敗 fallback で返した stub を検出。
+    # 2026-05-15 ALL(H)OURS / Aoen / GIRLSET / IDID 事故根治。
+    agency = (profile.get('agency') or '').strip().lower()
+    debut = (profile.get('debut_date') or '').strip().lower()
+    if agency in ('unknown', '?', '') and debut in ('unknown', '?', ''):
+        return True
+    members = profile.get('members') or []
+    if members and all(
+        (m.get('name_en') or '').strip().lower() in ('unknown', '?', '')
+        for m in members if isinstance(m, dict)
+    ):
+        return True
+    summary = profile.get('summary_ja') or ''
+    failure_phrases = (
+        '確認できません', '確認することができません',
+        '見つかりませんでした', '取得できません',
+        '一時的に利用できない', '利用上限に達した',
+    )
+    if any(p in summary for p in failure_phrases):
+        return True
+    return False
+
+
 def build_one(client, artist: str, slug: str) -> bool:
     print(f"[{artist}] fetching profile...", flush=True)
     profile = fetch_profile(client, artist)
     if not profile or not profile.get('members'):
         print(f"  ✗ skipped (no data)", flush=True)
+        return False
+
+    if _is_stub_profile(profile):
+        print(
+            f"  ✗ skipped (stub profile: LLM returned 'Unknown' / failure fallback)",
+            flush=True,
+        )
         return False
 
     n_members = len(profile.get('members', []))
