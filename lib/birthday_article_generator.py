@@ -225,12 +225,36 @@ def post_birthday_article(member: dict, content_file: Path, target_date: date, s
     except Exception as e:
         print(f"  [pre-publish] gate error (continuing): {e}")
 
+    # 2026-05-15: cluster dedup gate (project_cluster_dedup_gaps_2026_05_14 残置)
+    # 同じ誕生日記事を 24h 内に複数回 publish させない (retry の二重投稿対策)
+    if data.get('status') == 'publish':
+        try:
+            from lib.cluster_dedup import cluster_dedup_check
+            is_dup, matched = cluster_dedup_check(
+                title, hours=24, source='birthday_article_generator',
+                candidate_body=body,
+            )
+            if is_dup:
+                print(f"  [cluster_dedup] dup of '{matched[:60]}' → status=draft")
+                data['status'] = 'draft'
+        except Exception as e:
+            print(f"  [cluster_dedup] err (continuing): {e}")
+
     for attempt in range(3):
         try:
             res = requests.post(f"{WP_API}/posts", headers=headers, json=data, timeout=30)
             if res.status_code == 201:
                 result = res.json()
                 post_id = result.get("id")
+                # cluster dedup buffer 追記 (publish 経路のみ)
+                if data.get('status') == 'publish':
+                    try:
+                        from lib.cluster_dedup import record_publish
+                        record_publish(title, post_id=post_id,
+                                       source='birthday_article_generator',
+                                       body=body)
+                    except Exception:
+                        pass
                 # Post-publish hook
                 try:
                     from lib.post_publish_hook import run_post_publish

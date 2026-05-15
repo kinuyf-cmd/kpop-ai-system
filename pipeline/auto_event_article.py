@@ -107,8 +107,24 @@ def generate_article_content_v2(sigs, translated_body, confidence='high'):
 <p><em>※ 最新情報・詳細は各公式発表をご確認ください。</em></p>"""
 
 
-def post_to_wp(title_ja, content_html, category_id=None):
-    data = {'title': title_ja, 'content': content_html, 'status': 'publish'}
+def post_to_wp(title_ja, content_html, category_id=None, source_url=''):
+    # 2026-05-15: cluster dedup gate (project_cluster_dedup_gaps_2026_05_14 残置)
+    try:
+        from lib.cluster_dedup import cluster_dedup_check
+        is_dup, matched = cluster_dedup_check(
+            title_ja, hours=3, source='auto_event_article',
+            candidate_source_url=source_url,
+            candidate_body=content_html,
+        )
+    except Exception as _e:
+        print(f"  cluster_dedup err: {_e}")
+        is_dup, matched = False, ''
+
+    status = 'draft' if is_dup else 'publish'
+    if is_dup:
+        print(f"  [cluster_dedup] dup of '{matched[:60]}' → status=draft")
+
+    data = {'title': title_ja, 'content': content_html, 'status': status}
     if category_id:
         data['categories'] = [category_id]
     body = json.dumps(data).encode()
@@ -120,7 +136,15 @@ def post_to_wp(title_ja, content_html, category_id=None):
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
-            return json.loads(r.read())
+            result = json.loads(r.read())
+        if status == 'publish' and result and result.get('id'):
+            try:
+                from lib.cluster_dedup import record_publish
+                record_publish(title_ja, post_id=result['id'], source='auto_event_article',
+                               source_url=source_url, body=content_html)
+            except Exception:
+                pass
+        return result
     except Exception as e:
         print(f"WP post error: {e}")
         return None
@@ -166,7 +190,23 @@ def post_to_wp_with_thumb(title, content, cat_id, source_url=None, post_id=0):
             content = (f'<p style="font-size:11px;color:#888;text-align:right;margin-top:8px;">'
                        f'画像: <a href="{src}" target="_blank" rel="noopener">元記事より</a></p>\n') + content
 
-    data = {'title': title, 'content': content, 'status': 'publish'}
+    # 2026-05-15: cluster dedup gate (project_cluster_dedup_gaps_2026_05_14 残置)
+    try:
+        from lib.cluster_dedup import cluster_dedup_check
+        is_dup, matched = cluster_dedup_check(
+            title, hours=3, source='auto_event_article_thumb',
+            candidate_source_url=source_url or '',
+            candidate_body=content,
+        )
+    except Exception as _e:
+        print(f"  cluster_dedup err: {_e}")
+        is_dup, matched = False, ''
+
+    status = 'draft' if is_dup else 'publish'
+    if is_dup:
+        print(f"  [cluster_dedup] dup of '{matched[:60]}' → status=draft")
+
+    data = {'title': title, 'content': content, 'status': status}
     if cat_id:
         data['categories'] = [cat_id]
     if media_id:
@@ -181,7 +221,15 @@ def post_to_wp_with_thumb(title, content, cat_id, source_url=None, post_id=0):
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
-            return json.loads(r.read())
+            result = json.loads(r.read())
+        if status == 'publish' and result and result.get('id'):
+            try:
+                from lib.cluster_dedup import record_publish
+                record_publish(title, post_id=result['id'], source='auto_event_article_thumb',
+                               source_url=source_url or '', body=content)
+            except Exception:
+                pass
+        return result
     except Exception as e:
         print(f"WP post error: {e}")
         return None
