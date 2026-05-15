@@ -118,6 +118,24 @@ def collect():
         print("  pytrends not installed → RSSのみで継続")
         return _save_with_dedup(rss_signals)
 
+    # pytrends 4.9.2 は urllib3<2 の method_whitelist を呼ぶため、
+    # urllib3 v2 環境では Retry.__init__ で TypeError になる。
+    # pytrends.request が module top で from ... import Retry しているので、
+    # 同モジュールの Retry シンボル自体を alias 受容版に差し替える。
+    try:
+        import pytrends.request as _pr
+        _OrigRetry = _pr.Retry
+        if not getattr(_OrigRetry, '_kpj_compat_patched', False):
+            class _CompatRetry(_OrigRetry):
+                def __init__(self, *args, **kwargs):
+                    if 'method_whitelist' in kwargs:
+                        kwargs['allowed_methods'] = kwargs.pop('method_whitelist')
+                    super().__init__(*args, **kwargs)
+            _CompatRetry._kpj_compat_patched = True
+            _pr.Retry = _CompatRetry
+    except Exception as e:
+        print(f"  pytrends Retry patch skip: {e}")
+
     try:
         pytrends = TrendReq(
             hl='ja-JP', tz=540, timeout=(10, 25),
