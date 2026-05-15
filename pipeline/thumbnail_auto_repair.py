@@ -142,8 +142,8 @@ def repair_one(item: dict, dry_run: bool = False) -> dict:
         return result
     result['artist'] = artist
 
-    # Resolve artist photo
-    r = resolve(artist_name=artist, article_type='concrete')
+    # Resolve artist photo (2026-05-15: post_id 引数 trace 用に貫通)
+    r = resolve(artist_name=artist, article_type='concrete', post_id=str(pid))
     if not r or not r.get('image_path'):
         result['reason'] = 'no_artist_photo'
         return result

@@ -1116,6 +1116,20 @@ def _validate_and_log(post_id: str, result: dict) -> dict | None:
     if img_path and _check_portrait(img_path):
         return None  # 縦長→次のソースへフォールスルー
     _log_source(post_id, result)
+    # 2026-05-15: 低 confidence source (ai_prompt / unsplash / fallback_cache) は
+    # audit_steps.thumbnail=warn を打って enforcer cron / 人手 review に回す
+    # (memory: project_todo_2026_05_13 section 5、22663/22606 級事故の予防)。
+    LOW_CONF_SOURCES = {'ai_prompt', 'unsplash', 'fallback_cache'}
+    if post_id and result.get('source') in LOW_CONF_SOURCES:
+        try:
+            from lib.audit_steps_log import record_step
+            record_step(
+                str(post_id), 'thumbnail', 'warn',
+                detail=f'low_confidence_source={result.get("source")}; review推奨',
+                source='thumbnail_source_resolver_warn',
+            )
+        except Exception:
+            pass
     return result
 
 

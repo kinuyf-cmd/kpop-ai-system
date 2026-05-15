@@ -194,7 +194,8 @@ def make_thumbnail_v6(
         classification = classify(title, body)
         if classification["subjects"]:
             artist_name = classification["subjects"][0]
-        result = resolve(artist_name, article_type=classification["type"])
+        result = resolve(artist_name, article_type=classification["type"],
+                         post_id=str(post_id) if post_id else "")
         meta = compose(
             artist=artist_name,
             copy_text=title,
