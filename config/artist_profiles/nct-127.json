@@ -1,0 +1,176 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2016-07-07",
+  "fandom_name": "NCTzen",
+  "fandom_meaning": "「NCT」と市民を意味する「-zen（citizen）」を組み合わせた造語で、NCTの世界観に共に参加する市民＝ファンという意味を持つ。",
+  "members": [
+    {
+      "name_en": "Johnny",
+      "name_kr": "서영호",
+      "name_ja": "ジャニー",
+      "real_name_en": "Seo Young-ho",
+      "position": "ボーカル",
+      "birth": "1995-02-09",
+      "nationality": "米国（シカゴ出身）"
+    },
+    {
+      "name_en": "Taeyong",
+      "name_kr": "이태용",
+      "name_ja": "テヨン",
+      "real_name_en": "Lee Tae-yong",
+      "position": "リーダー、メインラッパー、ボーカル、メインダンサー",
+      "birth": "1995-07-01",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Yuta",
+      "name_kr": "나카모토 유타",
+      "name_ja": "ユウタ",
+      "real_name_en": "Nakamoto Yuta",
+      "position": "ボーカル、ラッパー",
+      "birth": "1995-10-26",
+      "nationality": "日本"
+    },
+    {
+      "name_en": "Doyoung",
+      "name_kr": "김동영",
+      "name_ja": "ドヨン",
+      "real_name_en": "Kim Dong-young",
+      "position": "メインボーカル",
+      "birth": "1996-02-01",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Jaehyun",
+      "name_kr": "정재현",
+      "name_ja": "ジェヒョン",
+      "real_name_en": "Jung Jae-hyun",
+      "position": "メインボーカル",
+      "birth": "1997-02-14",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Winwin",
+      "name_kr": "동사성",
+      "name_ja": "ウィンウィン",
+      "real_name_en": "Dong Sicheng",
+      "position": "ボーカル、ダンサー",
+      "birth": "1997-10-28",
+      "nationality": "中国",
+      "note": "NCT 127とWayVの兼任メンバー。近年は127の活動より WayV中心"
+    },
+    {
+      "name_en": "Jungwoo",
+      "name_kr": "김정우",
+      "name_ja": "ジョンウ",
+      "real_name_en": "Kim Jung-woo",
+      "position": "ボーカル",
+      "birth": "1998-02-19",
+      "nationality": "韓国"
+    },
+    {
+      "name_en": "Mark",
+      "name_kr": "이민형",
+      "name_ja": "マーク",
+      "real_name_en": "Lee Min-hyung",
+      "position": "メインラッパー、ボーカル",
+      "birth": "1999-08-02",
+      "nationality": "カナダ（韓国系）",
+      "note": "NCT 127とNCT DREAMの兼任メンバー"
+    },
+    {
+      "name_en": "Haechan",
+      "name_kr": "이동혁",
+      "name_ja": "ヘチャン",
+      "real_name_en": "Lee Dong-hyuk",
+      "position": "メインボーカル",
+      "birth": "2000-06-06",
+      "nationality": "韓国",
+      "note": "NCT 127とNCT DREAMの兼任メンバー"
+    }
+  ],
+  "former_members": [
+    {
+      "name_en": "Taeil",
+      "name_kr": "이태일",
+      "name_ja": "テイル",
+      "real_name_en": "Lee Taeil",
+      "position": "メインボーカル",
+      "birth": "1994-06-14",
+      "nationality": "韓国",
+      "note": "2023年9月に不適切行為を巡る疑惑により活動休止・グループ脱退"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2016",
+      "title": "NCT #127",
+      "type": "ep",
+      "note": "デビューEP"
+    },
+    {
+      "year": "2018",
+      "title": "Regular-Irregular",
+      "type": "album",
+      "note": "正規1集、タイトル曲「Regular」"
+    },
+    {
+      "year": "2019",
+      "title": "NCT #127 Neo Zone",
+      "type": "album",
+      "note": "正規2集、タイトル曲「Kick It（英雄）」収録"
+    },
+    {
+      "year": "2020",
+      "title": "NCT #127 Neo Zone: The Final Round",
+      "type": "ep",
+      "note": "Neo Zoneのリパッケージ"
+    },
+    {
+      "year": "2021",
+      "title": "Sticker",
+      "type": "album",
+      "note": "正規3集、ビルボード200最高位12位"
+    },
+    {
+      "year": "2022",
+      "title": "2 Baddies",
+      "type": "album",
+      "note": "正規4集"
+    },
+    {
+      "year": "2023",
+      "title": "Fact Check",
+      "type": "album",
+      "note": "正規5集、タイトル曲「Fact Check（不周山）」"
+    },
+    {
+      "year": "2024",
+      "title": "Walk",
+      "type": "album",
+      "note": "正規6集、タイトル曲「Walk」"
+    },
+    {
+      "year": "2019",
+      "title": "Awaken",
+      "type": "japanese",
+      "note": "日本デビューアルバム"
+    },
+    {
+      "year": "2022",
+      "title": "Favorite (Vampire)",
+      "type": "single",
+      "note": "日本シングル"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/NCTsmtown_127",
+    "instagram": "https://www.instagram.com/nct127/",
+    "weverse": "https://weverse.io/nct127",
+    "youtube": "https://www.youtube.com/c/SMTOWN",
+    "tiktok": "https://www.tiktok.com/@nct127_official",
+    "japan_official": "https://nct127.jp"
+  },
+  "summary_ja": "NCT 127（エヌシーティー ワンツーセブン）は、2016年7月7日にSMエンタテインメントからデビューした韓国の多国籍ボーイズグループ。グループ名の「127」はソウルの経度（東経127度）を意味し、ソウルを拠点とするNCTのサブユニットとして位置づけられている。韓国・日本・中国・カナダ・アメリカ出身の多彩なメンバーで構成され、힙합・R&B・EDMを融合した実験的かつダイナミックなサウンドが特徴。「英雄 (Kick It)」「Sticker」「Fact Check」など数々のヒット曲を誇り、ビルボード200チャートにも複数回ランクイン。ワールドツアー「NEO CITY」を各国で成功させ、グローバルな人気を確立したグループだ。",
+  "_last_updated": "2026-05-15T03:33:01.602432+09:00"
+}

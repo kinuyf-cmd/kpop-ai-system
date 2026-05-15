@@ -1,0 +1,111 @@
+{
+  "agency": "SM Entertainment",
+  "debut_date": "2003-12-26",
+  "fandom_name": "Cassiopeia",
+  "fandom_meaning": "カシオペアは夜空に輝くW字型の星座の名前で、「変わらぬ愛で永遠にTVXQを見守る存在」という意味が込められている。",
+  "members": [
+    {
+      "name_en": "U-Know Yunho",
+      "name_kr": "정윤호",
+      "name_ja": "ユノ・ユンホ",
+      "real_name_en": "Jung Yunho",
+      "position": "リーダー、ボーカル、ダンス",
+      "birth": "1986-02-06",
+      "nationality": "韓国",
+      "note": "リーダーとして知られ、強力なダンスパフォーマンスと力強いボーカルで人気を誇る。2013年に陸軍入隊、2015年に除隊。",
+      "height_cm": "184",
+      "blood_type": "A",
+      "mbti": "ENFJ",
+      "education": "光州Gwangil高校卒業 → 慶熙大学 ポストモダン音楽学科",
+      "hobbies": "音楽, スポーツ, 読書",
+      "solo_works": "True Colors (2019年), U Know Y (2015年)"
+    },
+    {
+      "name_en": "Choikang Changmin",
+      "name_kr": "최강창민",
+      "name_ja": "チェゴ・チャンミン",
+      "real_name_en": "Shim Changmin",
+      "position": "メインボーカル",
+      "birth": "1988-02-18",
+      "nationality": "韓国",
+      "note": "グループ最高音域を誇るメインボーカル担当。2015年に海兵隊入隊、2017年に除隊。",
+      "height_cm": "186",
+      "blood_type": "B",
+      "mbti": "ISFJ",
+      "education": "徳水高校卒業 → 慶熙大学 ポストモダン音楽学科",
+      "hobbies": "音楽, 歌, 食べること"
+    }
+  ],
+  "discography_highlights": [
+    {
+      "year": "2004",
+      "title": "Hug",
+      "type": "single",
+      "note": "韓国デビューシングル。爽やかなラブソングでデビューを飾った。"
+    },
+    {
+      "year": "2005",
+      "title": "Rising Sun (순수)",
+      "type": "album",
+      "note": "2ndアルバム。表題曲「Rising Sun」はパワフルなパフォーマンスで話題を呼んだ。"
+    },
+    {
+      "year": "2006",
+      "title": "O (正反合)",
+      "type": "album",
+      "note": "3rdアルバム。「O」はTVXQの代表作として今も愛される名曲。"
+    },
+    {
+      "year": "2008",
+      "title": "MIROTIC (주문)",
+      "type": "album",
+      "note": "4thアルバム。「呪文-MIROTIC-」は韓国音楽史上最大のヒット曲の一つ。"
+    },
+    {
+      "year": "2010",
+      "title": "STILL (Japanese Album)",
+      "type": "japanese",
+      "note": "日本活動を象徴するアルバムで、オリコンチャート上位入り。"
+    },
+    {
+      "year": "2014",
+      "title": "TENSE",
+      "type": "album",
+      "note": "2人体制になってからの初の韓国正規アルバム。"
+    },
+    {
+      "year": "2017",
+      "title": "New Chapter #1: The Chance of Love",
+      "type": "ep",
+      "note": "除隊後の復帰作。ファンから熱烈な歓迎を受けた。"
+    },
+    {
+      "year": "2019",
+      "title": "New Chapter #2: The Truth of Love",
+      "type": "ep",
+      "note": "シリーズ第2弾EP。円熟したボーカルと洗練されたパフォーマンスが話題に。"
+    },
+    {
+      "year": "2022",
+      "title": "TENSEN",
+      "type": "album",
+      "note": "8thアルバム。グループの進化と成熟を感じさせる意欲作。"
+    },
+    {
+      "year": "2024",
+      "title": "ZONE",
+      "type": "ep",
+      "note": "最新EPとしてリリースされ、ベテランならではの安定感と新鮮さを兼ね備えた作品。"
+    }
+  ],
+  "official_links": {
+    "twitter": "https://twitter.com/TVXQ_SMTOWN",
+    "instagram": "https://www.instagram.com/tvxq.smtown/",
+    "weverse": "https://weverse.io/tvxq",
+    "youtube": "https://www.youtube.com/user/tvxqsmtown",
+    "tiktok": "https://www.tiktok.com/@tvxq_smtown",
+    "japan_official": "https://avex.jp/tohoshinki/"
+  },
+  "summary_ja": "東方神起（TVXQ）は、2003年12月26日にSMエンターテインメントからデビューした韓国の2人組男性アイドルグループ。ユノ・ユンホとチェゴ・チャンミンの2名で構成され、韓国のみならず日本・アジア全域で絶大な人気を誇る。デビュー当初は5人組として活動し、「呪文-MIROTIC-」「O」「Rising Sun」などの名曲でK-POPの礎を築いた。2009年にメンバー変動があり2人体制となった後も変わらぬ実力でファンを魅了し続けている。圧倒的な歌唱力・ダンス力・パフォーマンスで「アジアの歌姫」とも称され、世界最大のファンダム「カシオペア（Cassiopeia）」を持つことでも知られる。",
+  "_last_updated": "2026-05-15T04:11:29.836891+09:00"
+}
