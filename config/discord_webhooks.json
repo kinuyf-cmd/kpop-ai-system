@@ -1,9 +1,11 @@
 {
-  "daily_ceo_report": "${DISCORD_WEBHOOK_REDACTED}",
-  "weekly_board_report": "${DISCORD_WEBHOOK_REDACTED}",
-  "monthly_board_report": "${DISCORD_WEBHOOK_REDACTED}",
-  "urgent_errors": "${DISCORD_WEBHOOK_REDACTED}",
-  "seo_insights": "${DISCORD_WEBHOOK_REDACTED}",
-  "publishing_log": "${DISCORD_WEBHOOK_REDACTED}",
-  "sales_monetization": "${DISCORD_WEBHOOK_REDACTED}"
+  "_comment": "M11.5.B: webhook URL は .env の DISCORD_WEBHOOK_* に移行。値はプレースホルダーで、読込時に環境変数を展開する(discord_notifier.py / webhook_dispatcher.py / discord_channels.sh)。実URLをこのファイルに書かないこと。",
+  "daily_ceo_report": "${DISCORD_WEBHOOK_DAILY_CEO}",
+  "weekly_board_report": "${DISCORD_WEBHOOK_WEEKLY_BOARD}",
+  "monthly_board_report": "${DISCORD_WEBHOOK_MONTHLY_BOARD}",
+  "urgent_errors": "${DISCORD_WEBHOOK_URGENT_ERRORS}",
+  "seo_insights": "${DISCORD_WEBHOOK_SEO_INSIGHTS}",
+  "publishing_log": "${DISCORD_WEBHOOK_PUBLISHING_LOG}",
+  "sales_monetization": "${DISCORD_WEBHOOK_SALES_MONETIZATION}",
+  "alert_summary": "${DISCORD_WEBHOOK_ALERT_SUMMARY}"
 }

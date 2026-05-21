@@ -17,4 +17,16 @@ thumbnail.jpg
 thumbnail.webp
 logs/
 .venv/
+venv_kpi/
 .env.save
+# M11.5.B: 機密・秘匿の二重防御(既存 .env / .venv / .env.save に加え網羅化)
+.env.*
+!.env.template
+*.pem
+*.key
+secrets/
+credentials/
+backups/
+diffs/
+# 注: config/discord_webhooks.json はプレースホルダー化済(実URLは .env)。
+#     tracked 維持(チャンネル名一覧として有用、機密を含まない)。

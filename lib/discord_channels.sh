@@ -8,15 +8,31 @@
 # ============================================================
 
 DISCORD_CONFIG="${DISCORD_CONFIG:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config/discord_webhooks.json}"
+DISCORD_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 get_discord_webhook() {
   local channel="$1"
   if [ -f "$DISCORD_CONFIG" ]; then
-    python3 -c "
-import json, sys
+    # M11.5.B: config 値が "${DISCORD_WEBHOOK_*}" プレースホルダーなら
+    # .env / 環境変数から展開する。未解決なら空を返し誤送信を防ぐ。
+    DISCORD_ROOT="$DISCORD_ROOT" python3 -c "
+import json, sys, os
+root = os.environ.get('DISCORD_ROOT', '.')
+env_path = os.path.join(root, '.env')
+if os.path.exists(env_path):
+    for line in open(env_path):
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        k, _, v = line.partition('=')
+        k = k.strip()
+        if k and k not in os.environ:
+            os.environ[k] = v.strip().strip('\"').strip(\"'\")
 with open('$DISCORD_CONFIG') as f:
     d = json.load(f)
-print(d.get(sys.argv[1], ''))
+val = (d.get(sys.argv[1], '') or '').strip()
+exp = os.path.expandvars(val)
+print('' if exp.startswith('\${') else exp)
 " "$channel" 2>/dev/null
   fi
 }
