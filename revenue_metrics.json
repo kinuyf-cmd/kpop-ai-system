@@ -1,0 +1,385 @@
+{
+  "generated_at": "2026-04-14T07:28:28.106045+00:00",
+  "summary": {
+    "total_articles": 68,
+    "avg_revenue_score": 0.837,
+    "cta_rate": 0.735,
+    "thumbnail_rate": 0.971,
+    "avg_char_count": 4500,
+    "contaminated_title_count": 2,
+    "contaminated_titles": [
+      {
+        "post_id": "",
+        "title": "ウェブフェッチはできませんが、記事の内部矛盾と論理的問題を詳しく分析します。"
+      },
+      {
+        "post_id": "2555",
+        "title": "K-POP ウェブフェッチはできませんが、記事の内部矛盾と論理的問題を詳しく分析します。"
+      }
+    ]
+  },
+  "kpi_targets": {
+    "daily_articles": 5,
+    "daily_revenue_jpy": 200,
+    "daily_sessions": 500,
+    "pipeline_uptime": 95,
+    "ultimate_monthly_revenue": 30000,
+    "ultimate_articles": 500
+  },
+  "pipeline_analysis": {
+    "strategy": {
+      "count": 19,
+      "avg_revenue_score": 0.902,
+      "cta_rate": 1.0
+    },
+    "speed": {
+      "count": 47,
+      "avg_revenue_score": 0.821,
+      "cta_rate": 0.617
+    },
+    "strategy (manual repost)": {
+      "count": 1,
+      "avg_revenue_score": 0.878,
+      "cta_rate": 1.0
+    },
+    "": {
+      "count": 1,
+      "avg_revenue_score": 0.335,
+      "cta_rate": 1.0
+    }
+  },
+  "winning_patterns": {
+    "avg_chars": 5043,
+    "avg_h2": 6.8,
+    "cta_rate": 1.0,
+    "thumb_rate": 1.0,
+    "avg_ctr_score": 0.774
+  },
+  "losing_patterns": {
+    "avg_chars": 4043,
+    "avg_h2": 6.7,
+    "cta_rate": 0.59,
+    "thumb_rate": 0.88,
+    "avg_ctr_score": 0.703
+  },
+  "top_articles": [
+    {
+      "post_id": "2286",
+      "title": "aespa 京セラDAY2 全20曲（日本限定3曲含む）｜4世代ガールズGG最高到達点",
+      "url": "https://www.kpopjournal.tokyo/aespa-day2-20-4-gg-20260412/",
+      "pipeline": "strategy",
+      "date": "2026-04-12",
+      "revenue_score": 0.947,
+      "ctr_score": 0.85,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4149,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2315",
+      "title": "「ティニピン」OP歌唱・Hearts2Heartsとは？SM新人賞9冠・8人の素顔と日本戦略",
+      "url": "https://www.kpopjournal.tokyo/op-hearts2hearts-sm-9-8-20260412/",
+      "pipeline": "strategy",
+      "date": "2026-04-12",
+      "revenue_score": 0.947,
+      "ctr_score": 0.85,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4266,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2544",
+      "title": "BTS「ARIRANG」初週641,000枚——3週連続1位の異常な数字、全部説明する",
+      "url": "https://www.kpopjournal.tokyo/bts-641-000-3-1-20260413/",
+      "pipeline": "strategy",
+      "date": "2026-04-13",
+      "revenue_score": 0.947,
+      "ctr_score": 0.85,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4182,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2568",
+      "title": "6年半の空白、3日間で全部返してきた。BTSが異常すぎる",
+      "url": "https://www.kpopjournal.tokyo/6-3-bts-20260413/",
+      "pipeline": "strategy",
+      "date": "2026-04-13",
+      "revenue_score": 0.947,
+      "ctr_score": 0.85,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4647,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2574",
+      "title": "13年間、T.O.Pは何を溜めていたのか——ついに解放された音楽の正体",
+      "url": "https://www.kpopjournal.tokyo/13-20260413/",
+      "pipeline": "strategy",
+      "date": "2026-04-13",
+      "revenue_score": 0.947,
+      "ctr_score": 0.85,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4181,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2536",
+      "title": "aespa、強すぎる。第4世代で初めてドームを埋めた夜に何が起きたか",
+      "url": "https://www.kpopjournal.tokyo/aespa-4-20260413/",
+      "pipeline": "strategy",
+      "date": "2026-04-13",
+      "revenue_score": 0.946,
+      "ctr_score": 0.85,
+      "cvr_score": 0.99,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 3897,
+      "h2_count": 7,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2256",
+      "title": "2NE1・SISTAR・f(x)——K-POP解散と再結成の歴史を2026年4月完全解説",
+      "url": "https://www.kpopjournal.tokyo/2-ne1-sistar-kpop-april-guide-2026/",
+      "pipeline": "speed",
+      "date": "2026-04-11",
+      "revenue_score": 0.945,
+      "ctr_score": 0.85,
+      "cvr_score": 0.984,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 3843,
+      "h2_count": 10,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2391",
+      "title": "なぜBTSだけ止まらないのか？ARIRANG 3週連続1位の異常な数字",
+      "url": "https://www.kpopjournal.tokyo/bts-arirang-3-1-20260413/",
+      "pipeline": "strategy",
+      "date": "2026-04-13",
+      "revenue_score": 0.944,
+      "ctr_score": 0.85,
+      "cvr_score": 0.976,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 3761,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2161",
+      "title": "ENHYPEN＆TXT 2026年春ワールドツアー同時開催：東京ドームも含む全日程を解説",
+      "url": "https://www.kpopjournal.tokyo/enhypen-txt-2026-20260410/",
+      "pipeline": "speed",
+      "date": "2026-04-10",
+      "revenue_score": 0.913,
+      "ctr_score": 0.85,
+      "cvr_score": 0.909,
+      "seo_score": 0.93,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 3089,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2304",
+      "title": "BLACKPINKの次のカムバックはいつ？『DEADLINE』の成績・ソロ・契約構造を総まとめ",
+      "url": "https://www.kpopjournal.tokyo/blackpink-20260412/",
+      "pipeline": "strategy",
+      "date": "2026-04-12",
+      "revenue_score": 0.895,
+      "ctr_score": 0.7,
+      "cvr_score": 1.0,
+      "seo_score": 1.0,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 4472,
+      "h2_count": 8,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    }
+  ],
+  "bottom_articles": [
+    {
+      "post_id": "2079",
+      "title": "Super Junior公演で安全柵崩落──観客3名負傷、K-POP安全問題が再燃",
+      "url": "https://www.kpopjournal.tokyo/super-junior3k-pop/",
+      "pipeline": "speed",
+      "date": "2026-04-08",
+      "revenue_score": 0.758,
+      "ctr_score": 0.85,
+      "cvr_score": 0.751,
+      "seo_score": 0.659,
+      "navigation_score": 0.751,
+      "freshness_score": 0.5,
+      "char_count": 1508,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "1983",
+      "title": "【速報】BIGBANG、6年越しの&#8221;約束&#8221;へ――コーチェラ2026にK-POP勢が集結",
+      "url": "https://www.kpopjournal.tokyo/bigbang-coachella-2026-kpop-festival/",
+      "pipeline": "speed",
+      "date": "2026-04-06",
+      "revenue_score": 0.736,
+      "ctr_score": 0.65,
+      "cvr_score": 0.373,
+      "seo_score": 0.84,
+      "navigation_score": 1.0,
+      "freshness_score": 0.5,
+      "char_count": 3735,
+      "h2_count": 3,
+      "has_cta": false,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2133",
+      "title": "AKMU「FLOWERING」7年ぶりフルアルバム、YG独立後初作品がMelonリアルタイム1位を獲得",
+      "url": "https://www.kpopjournal.tokyo/akmu-7-yg-melon-1-20260409/",
+      "pipeline": "speed",
+      "date": "2026-04-09",
+      "revenue_score": 0.671,
+      "ctr_score": 0.65,
+      "cvr_score": 0.734,
+      "seo_score": 0.63,
+      "navigation_score": 0.724,
+      "freshness_score": 0.5,
+      "char_count": 1341,
+      "h2_count": 6,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2136",
+      "title": "Stray Cat Strut: 流浪のオルタナ・ポップ・デュオ「NOMAD CATS」、2026年春のカムバックで魅せる猫的自由と音楽的冒険",
+      "url": "https://www.kpopjournal.tokyo/stray-cat-strut-2026-20260409/",
+      "pipeline": "speed",
+      "date": "2026-04-09",
+      "revenue_score": 0.615,
+      "ctr_score": 0.65,
+      "cvr_score": 0.701,
+      "seo_score": 0.494,
+      "navigation_score": 0.669,
+      "freshness_score": 0.5,
+      "char_count": 1013,
+      "h2_count": 4,
+      "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": "2232",
+      "title": "【完全まとめ】K-POPアイドル美容法｜スキンケア・コスメ・美肌ルーティン総集編",
+      "url": "https://www.kpopjournal.tokyo/kpop-idol-beauty-skincare-complete-hub/",
+      "pipeline": "",
+      "date": "2026-04-10",
+      "revenue_score": 0.335,
+      "ctr_score": 0.7,
+      "cvr_score": 0.6,
+      "seo_score": 0.0,
+      "navigation_score": 0.0,
+      "freshness_score": 0.5,
+      "char_count": 0,
+      "h2_count": 0,
+      "has_cta": true,
+      "has_thumbnail": false,
+      "is_contaminated": false
+    }
+  ],
+  "management_insights": {
+    "priority_theme": "記事品質向上とCTA設置率改善（現状72%→100%目標）",
+    "best_roi_pipeline": "strategy",
+    "worst_pipeline": "不明",
+    "grow_articles": [
+      {
+        "post_id": "2286",
+        "title": "aespa 京セラDAY2 全20曲（日本限定3曲含む）｜4世代ガールズGG最高到達点",
+        "score": 0.947
+      },
+      {
+        "post_id": "2315",
+        "title": "「ティニピン」OP歌唱・Hearts2Heartsとは？SM新人賞9冠・8人の素顔と日本戦略",
+        "score": 0.947
+      },
+      {
+        "post_id": "2544",
+        "title": "BTS「ARIRANG」初週641,000枚——3週連続1位の異常な数字、全部説明する",
+        "score": 0.947
+      },
+      {
+        "post_id": "2568",
+        "title": "6年半の空白、3日間で全部返してきた。BTSが異常すぎる",
+        "score": 0.947
+      },
+      {
+        "post_id": "2574",
+        "title": "13年間、T.O.Pは何を溜めていたのか——ついに解放された音楽の正体",
+        "score": 0.947
+      }
+    ],
+    "stop_articles": [],
+    "winning_title_patterns": [
+      "aespa 京セラDAY2 全20曲（日本限定3曲含む）｜4世代ガールズGG最高到達点",
+      "「ティニピン」OP歌唱・Hearts2Heartsとは？SM新人賞9冠・8人の素顔と日本戦略",
+      "BTS「ARIRANG」初週641,000枚——3週連続1位の異常な数字、全部説明する",
+      "6年半の空白、3日間で全部返してきた。BTSが異常すぎる",
+      "13年間、T.O.Pは何を溜めていたのか——ついに解放された音楽の正体"
+    ],
+    "urgent_actions": [
+      "CTA未設置記事（約27%）にCTAを追加する",
+      "サムネイル未設置記事（約3%）を修正する",
+      "タイトル崩壊記事を下書き化またはリライトする",
+      "サーナイトのフォーマットERROR（高頻度）を解消する"
+    ]
+  }
+}

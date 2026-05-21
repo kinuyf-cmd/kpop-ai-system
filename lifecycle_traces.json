@@ -1,0 +1,109 @@
+[
+  {
+    "duplicate_key": "X投稿B|prompt_fix|成功率に有意な変化なし。directive の適用範囲または具体性を見直し、出力フォーマット指定をより明確にする微調整を検討してください。",
+    "agent": "X投稿B",
+    "reached_lanes": [
+      "apply_gate",
+      "apply_ready",
+      "unlock_candidate",
+      "unlock_judge",
+      "unlock_execute",
+      "apply_execute",
+      "apply_result_exec",
+      "post_apply_judge"
+    ],
+    "lane_count": 8,
+    "latest_lane": "post_apply_judge",
+    "latest_status": "re_adjust_minor",
+    "lane_summary": "unlock_judge → unlock_execute → apply_execute → apply_result_exec → post_apply_judge"
+  },
+  {
+    "duplicate_key": "X投稿B|minor_adjust|[fail_rate=100.0% / hard_fail=0.0%] 成功率に有意な変化なし。directive の適用範囲または具体性を見直し、出力フォーマ",
+    "agent": "X投稿B",
+    "reached_lanes": [
+      "patch_plan",
+      "apply_queue",
+      "apply_result",
+      "reinject_priority",
+      "reinject_dispatch",
+      "reinject_gate",
+      "patch_ready",
+      "reserve",
+      "commit"
+    ],
+    "lane_count": 9,
+    "latest_lane": "commit",
+    "latest_status": "pending",
+    "lane_summary": "reinject_dispatch → reinject_gate → patch_ready → reserve → commit"
+  },
+  {
+    "duplicate_key": "バタフリー|keep|[fail_rate=10.0% / hard_fail=0.0%] 成功率が改善されました。現在の directive を維持し、次サイクルも同様の方針で継続",
+    "agent": "バタフリー",
+    "reached_lanes": [
+      "reinject_priority"
+    ],
+    "lane_count": 1,
+    "latest_lane": "reinject_priority",
+    "latest_status": "present",
+    "lane_summary": "reinject_priority"
+  },
+  {
+    "duplicate_key": "バタフリー|prompt_fix|バタフリーの失敗パターンをpipeline.jsonlで特定し、config/agent_directives.jsonのプロンプトまたはAPI設定を修正する",
+    "agent": "バタフリー",
+    "reached_lanes": [
+      "ready",
+      "simulation",
+      "ranked",
+      "packet",
+      "dispatch",
+      "stub",
+      "dry_run",
+      "candidate",
+      "limited",
+      "gate",
+      "patch_plan",
+      "apply_queue",
+      "apply_result"
+    ],
+    "lane_count": 13,
+    "latest_lane": "apply_result",
+    "latest_status": "applied",
+    "lane_summary": "limited → gate → patch_plan → apply_queue → apply_result"
+  },
+  {
+    "duplicate_key": "X投稿B|prompt_fix|X投稿BのHARD_FAILパターンを解析し、プロンプトの品質ゲート条件を緩和または修正する",
+    "agent": "X投稿B",
+    "reached_lanes": [
+      "ready",
+      "simulation",
+      "ranked",
+      "packet",
+      "dispatch",
+      "stub",
+      "dry_run",
+      "candidate",
+      "limited",
+      "gate",
+      "patch_plan",
+      "apply_queue",
+      "apply_result"
+    ],
+    "lane_count": 13,
+    "latest_lane": "apply_result",
+    "latest_status": "applied",
+    "lane_summary": "limited → gate → patch_plan → apply_queue → apply_result"
+  },
+  {
+    "duplicate_key": "|monitor_continue|全指標正常範囲内。次回サイクルまで監視継続でよい",
+    "agent": "",
+    "reached_lanes": [
+      "ready",
+      "simulation",
+      "ranked"
+    ],
+    "lane_count": 3,
+    "latest_lane": "ranked",
+    "latest_status": "present",
+    "lane_summary": "ready → simulation → ranked"
+  }
+]

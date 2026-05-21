@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-04-14T07:28:28.107558+00:00",
+  "total_actions": 14,
+  "high_count": 8,
+  "medium_count": 5,
+  "low_count": 1,
+  "actions": [
+    {
+      "agent_id": "wordpress_post",
+      "agent_name": "WP投稿",
+      "severity": "high",
+      "reason": "空出力 3回（サボり判定）",
+      "action_type": "fallback_output_rule",
+      "suggested_fix": "出力最小文字数（300字）とフォールバック出力テンプレートをプロンプトに明記する",
+      "expected_effect": "空出力によるpipeline停止の削減"
+    },
+    {
+      "agent_id": "x_post_b",
+      "agent_name": "X投稿B",
+      "severity": "high",
+      "reason": "成功率 0% < 60%（2回中0回成功）",
+      "action_type": "prompt_hardening",
+      "suggested_fix": "出力フォーマットの先頭行に必須キーを明記し、説明・謝罪・メタコメントを絶対禁止とする制約を追加する",
+      "expected_effect": "pipeline停止率の低下・品質スコア向上"
+    },
+    {
+      "agent_id": "butterfree",
+      "agent_name": "バタフリー",
+      "severity": "high",
+      "reason": "空出力 6回（サボり判定）",
+      "action_type": "fallback_output_rule",
+      "suggested_fix": "出力最小文字数（300字）とフォールバック出力テンプレートをプロンプトに明記する",
+      "expected_effect": "空出力によるpipeline停止の削減"
+    },
+    {
+      "agent_id": "gardevoir_hook_critic",
+      "agent_name": "サーナイト",
+      "severity": "high",
+      "reason": "成功率 22% < 60%（74回中16回成功）",
+      "action_type": "prompt_hardening",
+      "suggested_fix": "出力フォーマットの先頭行に必須キーを明記し、説明・謝罪・メタコメントを絶対禁止とする制約を追加する",
+      "expected_effect": "pipeline停止率の低下・品質スコア向上"
+    },
+    {
+      "agent_id": "gardevoir_hook_critic",
+      "agent_name": "サーナイト",
+      "severity": "high",
+      "reason": "空出力 3回（サボり判定）",
+      "action_type": "fallback_output_rule",
+      "suggested_fix": "出力最小文字数（300字）とフォールバック出力テンプレートをプロンプトに明記する",
+      "expected_effect": "空出力によるpipeline停止の削減"
+    },
+    {
+      "agent_id": "gardevoir_hook_critic",
+      "agent_name": "サーナイト",
+      "severity": "high",
+      "reason": "HARD_FAIL 35件（刺さり品質不足が多発）",
+      "action_type": "quality_gate_upstream",
+      "suggested_fix": "上流エージェント（デオキシス・メタモン）のタイトル生成品質を強化し、感情訴求・数字・アーティスト名を必須とする",
+      "expected_effect": "HARD_FAIL率低下・pipeline完走率向上"
+    },
+    {
+      "agent_id": "gardevoir_hook_critic",
+      "agent_name": "サーナイト",
+      "severity": "high",
+      "reason": "フォーマット不正によるERROR 22件（SCOREパース失敗）",
+      "action_type": "output_format_lock",
+      "suggested_fix": "SCORE:行を必ず「SCORE: [整数]」（1行・整数のみ）で出力させる。改行・分数・内訳は禁止。auto_directives.jsonへの注入で対応中。",
+      "expected_effect": "ERROR率の大幅減少・採点精度向上"
+    },
+    {
+      "agent_id": "pipeline",
+      "agent_name": "パイプライン",
+      "severity": "high",
+      "reason": "Watchdogが直近 20回のpipelineエラーを検知",
+      "action_type": "pipeline_stability",
+      "suggested_fix": "サーナイトHARD_FAILと上流タイトル崩壊の連鎖を断ち切る。前段ガードを強化する。",
+      "expected_effect": "pipeline完走率の向上"
+    },
+    {
+      "agent_id": "beautywriter",
+      "agent_name": "コスメライター",
+      "severity": "medium",
+      "reason": "最終実行から 9999時間経過（CORE担当なのに未実行）",
+      "action_type": "cron_check",
+      "suggested_fix": "cronスケジュール・pipeline定義を確認し、このエージェントが呼ばれているか検証する",
+      "expected_effect": "担当ステップの定常実行再開"
+    },
+    {
+      "agent_id": "mewtwo_popup",
+      "agent_name": "ミュウツー（POP）",
+      "severity": "medium",
+      "reason": "最終実行から 9999時間経過（CORE担当なのに未実行）",
+      "action_type": "cron_check",
+      "suggested_fix": "cronスケジュール・pipeline定義を確認し、このエージェントが呼ばれているか検証する",
+      "expected_effect": "担当ステップの定常実行再開"
+    },
+    {
+      "agent_id": "kairyu",
+      "agent_name": "カイリュー",
+      "severity": "medium",
+      "reason": "CTA未設置記事 18件（CTA設置率74%）",
+      "action_type": "cta_injection",
+      "suggested_fix": "カイリューのCTA挿入ロジックを確認し、全記事にCTAが必ず設置されるよう強化する",
+      "expected_effect": "CVR向上・収益増加"
+    },
+    {
+      "agent_id": "pipeline",
+      "agent_name": "パイプライン",
+      "severity": "medium",
+      "reason": "繰り返しエラー: メタ説明が本文冒頭の流用（独立したメタ説明を設定推奨）（4回）",
+      "action_type": "recurring_error_fix",
+      "suggested_fix": "メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）",
+      "expected_effect": "再発防止"
+    },
+    {
+      "agent_id": "persian",
+      "agent_name": "ペルシアン",
+      "severity": "medium",
+      "reason": "繰り返しエラー: X投稿スキップ(score=66.0)（8回）",
+      "action_type": "recurring_error_fix",
+      "suggested_fix": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
+      "expected_effect": "再発防止"
+    },
+    {
+      "agent_id": "post_audit",
+      "agent_name": "投稿監査",
+      "severity": "low",
+      "reason": "サムネ未設置記事 2件",
+      "action_type": "thumbnail_enforce",
+      "suggested_fix": "post_audit.shのサムネ自動生成を確認する",
+      "expected_effect": "CTR向上"
+    }
+  ],
+  "meta": {
+    "note": "改善提案のみ。既存pipeline・記事・WordPressへの変更は行いません。",
+    "apply_to": "HIGH優先度を config/auto_directives.json 経由でimprovement_engine.shに反映してください。"
+  }
+}

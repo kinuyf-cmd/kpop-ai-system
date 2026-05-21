@@ -1,0 +1,450 @@
+{
+  "blackpink": {
+    "name": "BLACKPINK",
+    "files": [
+      "blackpink_ea84f28d.jpg"
+    ],
+    "sources": [
+      {
+        "file": "blackpink_ea84f28d.jpg",
+        "wikimedia_title": "File:20190518 Blackpink Amsterdam concert 10.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3a/20190518_Blackpink_Amsterdam_concert_10.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "twice": {
+    "name": "TWICE",
+    "files": [
+      "twice_29a1060b.jpg"
+    ],
+    "sources": [
+      {
+        "file": "twice_29a1060b.jpg",
+        "wikimedia_title": "File:Twice - Dickies Arena, 2022.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Twice_-_Dickies_Arena%2C_2022.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "bts": {
+    "name": "BTS",
+    "files": [
+      "bts_22ee0b2a.jpg"
+    ],
+    "sources": [
+      {
+        "file": "bts_22ee0b2a.jpg",
+        "wikimedia_title": "File:BTS in concert at Wembley Stadium, 2 June 2019 01.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/BTS_in_concert_at_Wembley_Stadium%2C_2_June_2019_01.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "enhypen": {
+    "name": "ENHYPEN",
+    "files": [
+      "enhypen_166ae403.jpg"
+    ],
+    "sources": [
+      {
+        "file": "enhypen_166ae403.png",
+        "wikimedia_title": "File:Enhypen at Golden disc awards.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Enhypen_at_Golden_disc_awards.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "bigbang": {
+    "name": "BIGBANG",
+    "files": [
+      "bigbang_b0db079a.jpg"
+    ],
+    "sources": [
+      {
+        "file": "bigbang_b0db079a.jpg",
+        "wikimedia_title": "File:BIGBANG - MADE THE MOVIE Premiere.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/43/BIGBANG_-_MADE_THE_MOVIE_Premiere.jpg",
+        "license": "CC BY 4.0"
+      }
+    ]
+  },
+  "aespa": {
+    "name": "AESPA",
+    "files": [
+      "aespa_39b6d7da.jpg"
+    ],
+    "sources": [
+      {
+        "file": "aespa_39b6d7da.jpg",
+        "wikimedia_title": "File:Aespa 01.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/85/Aespa_01.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "txt": {
+    "name": "TXT",
+    "files": [
+      "txt_d3bac976.jpg"
+    ],
+    "sources": [
+      {
+        "file": "txt_d3bac976.png",
+        "wikimedia_title": "File:TXT at Soribada Awards on August 23, 2019.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/TXT_at_Soribada_Awards_on_August_23%2C_2019.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "ive": {
+    "name": "IVE",
+    "files": [
+      "ive_90cd1824.jpg"
+    ],
+    "sources": [
+      {
+        "file": "ive_90cd1824.jpg",
+        "wikimedia_title": "File:20240613 IVE Amsterdam concert 31.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/20240613_IVE_Amsterdam_concert_31.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "stray": {
+    "name": "STRAY",
+    "files": [
+      "stray_aeee324e.jpg"
+    ],
+    "sources": [
+      {
+        "file": "stray_aeee324e.jpg",
+        "wikimedia_title": "File:190424 Stray Kids The Fact Music Awards (derived).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/21/190424_Stray_Kids_The_Fact_Music_Awards_%28derived%29.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "akmu": {
+    "name": "AKMU",
+    "files": [
+      "akmu_f2f67475.jpg"
+    ],
+    "sources": [
+      {
+        "file": "akmu_f2f67475.png",
+        "wikimedia_title": "File:160505 AKMU 01.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/160505_AKMU_01.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "illit": {
+    "name": "ILLIT",
+    "files": [
+      "illit_365d9926.jpg"
+    ],
+    "sources": [
+      {
+        "file": "illit_365d9926.jpg",
+        "wikimedia_title": "File:241120 ILLIT.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/241120_ILLIT.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "newjeans": {
+    "name": "NEWJEANS",
+    "files": [
+      "newjeans_7918c733.jpg"
+    ],
+    "sources": [
+      {
+        "file": "newjeans_7918c733.jpg",
+        "wikimedia_title": "File:NewJeans for LG.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e7/NewJeans_for_LG.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "sistar": {
+    "name": "SISTAR",
+    "files": [
+      "sistar_35d4d431.jpg"
+    ],
+    "sources": [
+      {
+        "file": "sistar_35d4d431.jpg",
+        "wikimedia_title": "File:Sistar in Insadong.JPG",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Sistar_in_Insadong.JPG",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "stray_kids": {
+    "name": "STRAY KIDS",
+    "files": [
+      "stray_kids_aeee324e.jpg"
+    ],
+    "sources": [
+      {
+        "file": "stray_kids_aeee324e.jpg",
+        "wikimedia_title": "File:190424 Stray Kids The Fact Music Awards (derived).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/21/190424_Stray_Kids_The_Fact_Music_Awards_%28derived%29.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "shinee": {
+    "name": "SHINEE",
+    "files": [
+      "shinee_aab292b1.jpg"
+    ],
+    "sources": [
+      {
+        "file": "shinee_aab292b1.jpg",
+        "wikimedia_title": "File:Shinee at the SHINee World Concert III in Taiwan.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Shinee_at_the_SHINee_World_Concert_III_in_Taiwan.jpg",
+        "license": "CC BY 4.0"
+      }
+    ]
+  },
+  "coachella": {
+    "name": "COACHELLA",
+    "files": [
+      "coachella_b25e7c09.jpg"
+    ],
+    "sources": [
+      {
+        "file": "coachella_b25e7c09.jpg",
+        "wikimedia_title": "File:Date Palm Grove, Coachella Valley, Southern California (7684020378).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/46/Date_Palm_Grove%2C_Coachella_Valley%2C_Southern_California_%287684020378%29.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "riize": {
+    "name": "RIIZE",
+    "files": [
+      "riize_e56e66f4.png"
+    ],
+    "sources": [
+      {
+        "file": "riize_e56e66f4.png",
+        "wikimedia_title": "File:Riize at the 2024 Melon Music Awards.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Riize_at_the_2024_Melon_Music_Awards.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "hearts2hearts": {
+    "name": "HEARTS2HEARTS",
+    "files": [
+      "hearts2hearts_11d5a5be.jpg"
+    ],
+    "sources": [
+      {
+        "file": "hearts2hearts_11d5a5be.jpg",
+        "wikimedia_title": "File:260221 HEARTS2HEARTS @ 2026 Fanmeeting HEARTS2HOUSE.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/1d/260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "suga": {
+    "name": "SUGA",
+    "files": [
+      "suga_6557f657.jpg"
+    ],
+    "sources": [
+      {
+        "file": "suga_6557f657.jpg",
+        "wikimedia_title": "File:SUGA of BTS - Agust D Tour 2023 - UBS Belmont Arena April 27, 2023 Photo 5.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/aa/SUGA_of_BTS_-_Agust_D_Tour_2023_-_UBS_Belmont_Arena_April_27%2C_2023_Photo_5.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "help": {
+    "name": "HELP",
+    "files": [
+      "help_b95c76ea.jpg"
+    ],
+    "sources": [
+      {
+        "file": "help_b95c76ea.jpg",
+        "wikimedia_title": "File:Help Desk.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Help_Desk.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "mama": {
+    "name": "MAMA",
+    "files": [
+      "mama_3229ac46.jpg"
+    ],
+    "sources": [
+      {
+        "file": "mama_3229ac46.jpg",
+        "wikimedia_title": "File:MAMA YUCATAN JUNIO 2007.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/MAMA_YUCATAN_JUNIO_2007.jpg",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
+  },
+  "show": {
+    "name": "SHOW",
+    "files": [
+      "show_7b4dd975.jpg"
+    ],
+    "sources": [
+      {
+        "file": "show_7b4dd975.jpg",
+        "wikimedia_title": "File:Blue Angels NAS Jacksonville Air Show 2452.JPG",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Blue_Angels_NAS_Jacksonville_Air_Show_2452.JPG",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "kcon": {
+    "name": "KCON",
+    "files": [
+      "kcon_de2eaad9.jpg"
+    ],
+    "sources": [
+      {
+        "file": "kcon_de2eaad9.jpg",
+        "wikimedia_title": "File:KCON 2012.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/KCON_2012.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "n2026": {
+    "name": "N2026",
+    "files": [
+      "n2026_98a96310.jpg"
+    ],
+    "sources": [
+      {
+        "file": "n2026_98a96310.jpg",
+        "wikimedia_title": "File:Atara2033 n2026.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Atara2033_n2026.jpg",
+        "license": "CC0"
+      }
+    ]
+  },
+  "weverse": {
+    "name": "WEVERSE",
+    "files": [
+      "weverse_dea4b191.jpg"
+    ],
+    "sources": [
+      {
+        "file": "weverse_dea4b191.jpg",
+        "wikimedia_title": "File:Weverse 1-302660120.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Weverse_1-302660120.jpg",
+        "license": "CC0"
+      }
+    ]
+  },
+  "hybe": {
+    "name": "HYBE",
+    "files": [
+      "hybe_d7580fac.jpg"
+    ],
+    "sources": [
+      {
+        "file": "hybe_d7580fac.jpg",
+        "wikimedia_title": "File:Hybe - zemianska kúria na námestí.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Hybe_-_zemianska_k%C3%BAria_na_n%C3%A1mest%C3%AD.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "abema": {
+    "name": "ABEMA",
+    "files": [
+      "abema_c18de8c2.jpg"
+    ],
+    "sources": [
+      {
+        "file": "abema_c18de8c2.jpg",
+        "wikimedia_title": "File:Abema Towers 4.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Abema_Towers_4.jpg",
+        "license": "CC0"
+      }
+    ]
+  },
+  "seventeen": {
+    "name": "SEVENTEEN",
+    "files": [
+      "seventeen_64053f7f.jpg"
+    ],
+    "sources": [
+      {
+        "file": "seventeen_64053f7f.jpg",
+        "wikimedia_title": "File:Seventeen (세븐틴) at 2015 Summer K-POP Festival.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Seventeen_%28%EC%84%B8%EB%B8%90%ED%8B%B4%29_at_2015_Summer_K-POP_Festival.jpg",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
+  },
+  "nct": {
+    "name": "NCT",
+    "files": [
+      "nct_9ffeda65.png"
+    ],
+    "sources": [
+      {
+        "file": "nct_9ffeda65.png",
+        "wikimedia_title": "File:NCT U - Work It 보는 라디오 201124 03 (cropped).png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/NCT_U_-_Work_It_%EB%B3%B4%EB%8A%94_%EB%9D%BC%EB%94%94%EC%98%A4_201124_03_%28cropped%29.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "babymonster": {
+    "name": "BABYMONSTER",
+    "files": [
+      "babymonster_a8328e9b.jpg"
+    ],
+    "sources": [
+      {
+        "file": "babymonster_a8328e9b.jpg",
+        "wikimedia_title": "File:BABYMONSTER in Seattle.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/f/f5/BABYMONSTER_in_Seattle.jpg",
+        "license": "CC BY 4.0"
+      }
+    ]
+  },
+  "post": {
+    "name": "POST",
+    "files": [
+      "post_64a51148.jpg"
+    ],
+    "sources": [
+      {
+        "file": "post_64a51148.jpg",
+        "wikimedia_title": "File:Post office 2.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Post_office_2.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "test": {
+    "name": "TEST",
+    "files": [
+      "test_56447d76.jpg"
+    ],
+    "sources": [
+      {
+        "file": "test_56447d76.jpg",
+        "wikimedia_title": "File:Dragon 2 hover test (24159153709).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Dragon_2_hover_test_%2824159153709%29.jpg",
+        "license": "CC0"
+      }
+    ]
+  }
+}
