@@ -1,0 +1,84 @@
+{
+  "updated_at": "2026-05-21T22:16:46.335201",
+  "focus_themes": [],
+  "agent_directives": {
+    "gardevoir_hook_critic": {
+      "problem": "ERRORが全体の33%（23件）。SCOREパースに失敗してERROR扱いになるフォーマット不正が根本原因",
+      "action": "出力の1行目を必ず『SCORE: [整数]』の形式にすること。SCORE:の後に改行・内訳・箇条書きを一切入れるな。全スコア行は『キー名: 整数』の同一行フォーマットのみ。会話・説明・謝罪文は出力禁止。",
+      "error_count": 23,
+      "set_at": "2026-04-13",
+      "source": "agent_monitor_HIGH",
+      "promoted_at": "2026-04-13T18:45:00.000000"
+    },
+    "gardevoir_hook_critic_format_ban": {
+      "problem": "フォーマット違反によるERROR多発",
+      "action": "以下を絶対に出力するな: (1)SCORE:の後の改行+内訳 (2)箇条書きの個別スコア列挙 (3)SCORE: 76/100 形式（分数禁止） (4)説明文・謝罪文・質問。出力はフォーマットのみ。",
+      "error_count": 23,
+      "set_at": "2026-04-13",
+      "source": "agent_monitor_HIGH",
+      "promoted_at": "2026-04-13T18:45:00.000000"
+    },
+    "learn_missing_alt_text": {
+      "action": "アイキャッチアップロード時にALTテキストを必ず設定すること",
+      "source": "auto_learn",
+      "error_count": 2,
+      "promoted_at": "2026-04-09T18:30:36.541078"
+    },
+    "inject_missing_alt_text": {
+      "action": "アイキャッチアップロード時にALTテキストを必ず設定すること",
+      "source": "error_pattern_inject",
+      "error_count": 2,
+      "promoted_at": "2026-04-09T18:30:36.616439"
+    },
+    "persian": {
+      "problem": "X投稿スキップ(score=66.0)",
+      "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
+      "error_count": 8,
+      "set_at": "2026-04-13",
+      "source": "audit_feedback"
+    },
+    "inject_meta_desc_copied": {
+      "action": "メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）",
+      "source": "error_pattern_inject",
+      "error_count": 4,
+      "promoted_at": "2026-04-11T16:52:39.516034"
+    },
+    "inject_x_post_failed": {
+      "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
+      "source": "error_pattern_inject",
+      "error_count": 5,
+      "promoted_at": "2026-04-11T16:52:39.516034"
+    },
+    "learn_meta_desc_copied": {
+      "action": "メタ説明はSEO最適化された独立した文章で設定すること（本文コピー禁止）",
+      "source": "auto_learn",
+      "error_count": 4,
+      "promoted_at": "2026-04-11T16:52:39.577281"
+    },
+    "learn_x_post_failed": {
+      "action": "X投稿テンプレートを更新し強ワード・疑問形を優先使用すること",
+      "source": "auto_learn",
+      "error_count": 5,
+      "promoted_at": "2026-04-11T16:52:39.577281"
+    },
+    "deoxys": {
+      "problem": "[CRITICAL] 本文テキスト文字数不足: 2776文字（3000字必須） [HIGH] 情報元リンクが見当たらない（hrefなし） [HIGH] タイトル",
+      "action": "記事本文は最低1500文字以上を確保すること",
+      "error_count": 29,
+      "set_at": "2026-05-21",
+      "source": "audit_feedback"
+    }
+  },
+  "stop_doing": [
+    "最類似勝ちタイトル: 「K-P",
+    "メタ説明が本文冒頭の流用（独立",
+    "X投稿スキップ(score=7",
+    "X投稿スキップ(score=6",
+    "文字数超過(292文字) -5"
+  ],
+  "keep_doing": [],
+  "winning_words": [
+    "完全",
+    "決定"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "_comment": "役員会議決定目標値 v1.0 (2026-04-09策定)",
+  "_philosophy": "現状ベース×成長率。月次目標はQ2終了(6月末)の最終目標から逆算した中間マイルストーン。",
+  "daily": {
+    "sessions": {
+      "target": 500,
+      "unit": "セッション/日",
+      "note": "現状203→2.5倍。記事蓄積で自然検索が伸びる水準"
+    },
+    "pageviews": {
+      "target": 700,
+      "unit": "PV/日",
+      "note": "PV/session=1.4想定"
+    },
+    "revenue_jpy": {
+      "target": 200,
+      "unit": "円/日",
+      "note": "現状42円→5倍。RPM維持＋PV増で達成可能"
+    },
+    "articles_posted": {
+      "target": 5,
+      "unit": "本/日",
+      "note": "現行スケジュール通り4-6本/日"
+    },
+    "x_posts": {
+      "target": 4,
+      "unit": "件/日",
+      "note": "記事投稿数と同数が理想"
+    },
+    "pipeline_uptime": {
+      "target": 95,
+      "unit": "%",
+      "note": "SRE KPI。5%以内の失敗は許容"
+    },
+    "gsc_clicks": {
+      "target": 50,
+      "unit": "クリック/日",
+      "note": "現状推定18件/日→3倍。検索表示回数増で達成"
+    },
+    "avg_ctr": {
+      "target": 3.0,
+      "unit": "%",
+      "note": "現状GSC全体CTR約5%（少数サンプル）→3%維持目標"
+    },
+    "rpm": {
+      "target": 400,
+      "unit": "円",
+      "note": "現状327円→記事品質向上で400円を狙う"
+    }
+  },
+  "monthly": {
+    "sessions": {
+      "target": 15000,
+      "unit": "セッション/月",
+      "note": "500/日×30日"
+    },
+    "pageviews": {
+      "target": 21000,
+      "unit": "PV/月",
+      "note": "700/日×30日"
+    },
+    "revenue_jpy": {
+      "target": 6000,
+      "unit": "円/月",
+      "note": "200/日×30日"
+    },
+    "articles_total": {
+      "target": 150,
+      "unit": "本（累計）",
+      "note": "現在28本+5本/日×24日≒148本"
+    },
+    "x_posts": {
+      "target": 120,
+      "unit": "件/月",
+      "note": "4件/日×30日"
+    },
+    "gsc_clicks": {
+      "target": 1500,
+      "unit": "クリック/月",
+      "note": "50/日×30日"
+    },
+    "pipeline_uptime": {
+      "target": 95,
+      "unit": "%",
+      "note": "SRE KPI（月間稼働率）"
+    },
+    "avg_position": {
+      "target": 15,
+      "unit": "位",
+      "note": "GSC平均掲載順位。現状～20位→15位以内を目指す"
+    }
+  },
+  "ultimate": {
+    "_note": "Q2末(2026年6月末)の最終目標",
+    "sessions": {
+      "target": 3000,
+      "unit": "セッション/日",
+      "note": "月9万PV相当。収益化が本格化する水準"
+    },
+    "revenue_jpy": {
+      "target": 30000,
+      "unit": "円/月",
+      "note": "月3万円。AdSense+アフィリエイト合算"
+    },
+    "articles_total": {
+      "target": 500,
+      "unit": "本（累計）",
+      "note": "SEOの厚みを作る最低限の本数"
+    },
+    "rpm": {
+      "target": 500,
+      "unit": "円",
+      "note": "記事品質・ジャンル最適化で実現"
+    },
+    "avg_position": {
+      "target": 10,
+      "unit": "位",
+      "note": "TOP10入りで安定クリック獲得"
+    },
+    "domain_authority": {
+      "target": 20,
+      "unit": "DA",
+      "note": "外部リンク獲得・記事品質で達成"
+    }
+  },
+  "pipeline_kpis": {
+    "arceus_score_pass_rate": {
+      "target": 90,
+      "unit": "%",
+      "note": "記事品質スコア45/50以上の比率"
+    },
+    "x_post_success_rate": {
+      "target": 90,
+      "unit": "%",
+      "note": "X投稿成功率"
+    },
+    "thumbnail_genre_match": {
+      "target": 100,
+      "unit": "%",
+      "note": "サムネジャンルと記事ジャンルの一致率"
+    },
+    "failsafe_false_positive": {
+      "target": 0,
+      "unit": "件/月",
+      "note": "フェイルセーフ誤発動回数"
+    }
+  },
+  "daily_errors": 0
+}

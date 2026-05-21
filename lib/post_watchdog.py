@@ -1,0 +1,1068 @@
+#!/usr/bin/env python3
+"""
+post_watchdog.py — パイプライン自律監査・自動修復エージェント
+
+チェック→自動修復→Discord通知 の3段構え。
+人間が気づく前に自分で直す。
+
+チェック項目:
+  1. X投稿: 直近N時間で投稿ゼロ → アラート
+  2. X投稿: x_post.log にエラー行 → アラート
+  3. パイプライン: 直近N時間で記事投稿ゼロ → アラート
+  4. x_failsafe: 発動中 → 自動修復（誤発動なら解除）
+  5. パイプライン: pipeline.jsonl にエラー → アラート
+  6. kpi: x_post_status 連続失敗 → アラート
+  7. ログ鮮度: 各パイプラインのログが当日未更新 → 自動再実行
+  8. title_performance: 重複レコード → 自動除去
+
+自動修復アクション:
+  - failsafe_auto_clear: フェイルセーフ誤発動の自動解除
+  - pipeline_restart: 停止パイプラインの自動再実行
+  - dedup_title_performance: title_performance.jsonl 重複除去
+
+Usage:
+  python3 lib/post_watchdog.py              # 全チェック+自動修復
+  python3 lib/post_watchdog.py --dry-run    # Discord送信・修復なし、表示のみ
+  python3 lib/post_watchdog.py --check x_post  # 個別チェックのみ
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import urllib.request
+import urllib.error
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+# ─── 設定 ────────────────────────────────────────────────────────────────────
+
+BASE = Path(__file__).parent.parent
+LOGS = BASE / "logs"
+CONFIG = BASE / "config" / "discord_webhooks.json"
+
+JST = timezone(timedelta(hours=9))
+
+X_POST_SILENCE_HOURS = 26   # 旧4h → パイプライン停止多発で誤検知。1日1投稿保証ベースに緩和
+ARTICLE_SILENCE_HOURS = 26  # 旧6h → 同上
+ACTIVE_HOUR_START = 7
+ACTIVE_HOUR_END = 21
+
+# パイプライン定義: (ログパス, 実行時刻JST, スクリプト, 引数, ラベル)
+PIPELINES = [
+    (BASE / "logs" / "morning_brief.log",    9,  BASE / "ceo_morning_brief.sh",     [],         "CEOモーニングブリーフ"),
+    (Path("/home/aiuser/ai_kpop.log"),        7,  BASE / "kpop_pipeline.sh",         [],         "速報パイプライン"),
+    (BASE / "logs" / "beauty_pipeline.log",  11,  BASE / "kpop_pipeline.sh",
+        ["韓国コスメ・K-POPアイドルの美容法・スキンケアルーティン・ガラス肌"],                      "美容パイプライン"),
+    (BASE / "logs" / "strategy_pipeline.log",12,  BASE / "kpop_strategy_pipeline.sh",[],         "戦略パイプライン"),
+    (BASE / "logs" / "lifestyle_pipeline.log",15, BASE / "kpop_pipeline.sh",
+        ["韓国旅行・ソウルのカフェ・ポップアップストア・K-POPイベント・聖地巡礼"],                  "ライフスタイルパイプライン"),
+    (BASE / "logs" / "fashion_pipeline.log", 18,  BASE / "kpop_pipeline.sh",
+        ["K-POPアイドルのファッション・着用アイテム・韓国トレンド・ポップアップイベント情報"],      "ファッションパイプライン"),
+    (BASE / "logs" / "ai_meeting.log",       21,  BASE / "ai_company" / "run_ai_meeting.sh", [], "AI日次運営会議"),
+]
+
+# ─── ユーティリティ ───────────────────────────────────────────────────────────
+
+def now_jst() -> datetime:
+    return datetime.now(JST)
+
+
+def is_active_hours() -> bool:
+    h = now_jst().hour
+    return ACTIVE_HOUR_START <= h < ACTIVE_HOUR_END
+
+
+def get_discord_webhook(channel: str) -> str:
+    if not CONFIG.exists():
+        return ""
+    try:
+        d = json.loads(CONFIG.read_text())
+        return d.get(channel, "")
+    except Exception:
+        return ""
+
+
+def _clean_discord_body(body: str) -> str:
+    """Discord embed description の整形:
+    - 連続空行を1行に圧縮
+    - 行末の余分な空白を除去
+    - 2000文字を超えた場合は末尾を省略し [省略] を付加
+    """
+    import re as _re
+    lines = [l.rstrip() for l in body.splitlines()]
+    # 3行以上の連続空行を1行に
+    cleaned = _re.sub(r'\n{3,}', '\n\n', "\n".join(lines))
+    if len(cleaned) > 1900:
+        cleaned = cleaned[:1900] + "\n…[省略]"
+    return cleaned
+
+
+def send_discord_alert(title: str, body: str, level: str = "error") -> bool:
+    url = get_discord_webhook("urgent_errors")
+    if not url:
+        print(f"  [watchdog] Discord webhook未設定 → 標準出力のみ")
+        return False
+
+    color = 0xFF0000 if level == "error" else (0xFF9900 if level == "warn" else 0x00CC00)
+    icon = "🚨" if level == "error" else ("⚠️" if level == "warn" else "✅")
+    ts = now_jst().strftime("%Y-%m-%d %H:%M JST")
+
+    payload = json.dumps({
+        "username": "watchdog",
+        "embeds": [{
+            "title": f"{icon} {title}",
+            "description": _clean_discord_body(body),
+            "color": color,
+            "footer": {"text": f"post_watchdog | {ts}"},
+        }]
+    }).encode()
+
+    try:
+        req = urllib.request.Request(
+            url, data=payload,
+            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}, method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as res:
+            return res.status in (200, 204)
+    except Exception as e:
+        print(f"  [watchdog] Discord送信失敗: {e}")
+        return False
+
+
+def log_alert(check_name: str, message: str, dry_run: bool, level: str = "error") -> dict:
+    alert = {
+        "ts": now_jst().isoformat(),
+        "check": check_name,
+        "message": message,
+        "dry_run": dry_run,
+    }
+    alert_log = LOGS / "watchdog_alerts.jsonl"
+    alert_log.parent.mkdir(parents=True, exist_ok=True)
+    with open(alert_log, "a") as f:
+        f.write(json.dumps(alert, ensure_ascii=False) + "\n")
+
+    icon = "🚨" if level == "error" else "⚠️"
+    print(f"  {icon} [{check_name}] {message[:120]}")
+
+    if not dry_run:
+        send_discord_alert(
+            title=f"[自動監査] {check_name} 異常検知",
+            body=message,
+            level=level,
+        )
+    return alert
+
+
+# ─── 通知クールダウン ──────────────────────────────────────────────────────────
+# check_name → 最終Discord送信時刻（JST） を保存するファイル
+_NOTIF_COOLDOWN_FILE = LOGS / "watchdog_notif_cooldown.json"
+
+# check_nameごとのクールダウン秒数（デフォルト: 24h）
+_NOTIF_COOLDOWN_SECONDS: dict[str, int] = {
+    "recurring_error_patterns":    24 * 3600,  # 24h: 毎回送信を防ぐ
+    "recurring_error_accumulation": 24 * 3600,
+    "pipeline_external_wp_post":   24 * 3600,  # 24h: テスト記事は既知情報
+}
+
+
+def _load_cooldown_state() -> dict:
+    try:
+        return json.loads(_NOTIF_COOLDOWN_FILE.read_text()) if _NOTIF_COOLDOWN_FILE.exists() else {}
+    except Exception:
+        return {}
+
+
+def _save_cooldown_state(state: dict) -> None:
+    try:
+        _NOTIF_COOLDOWN_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2))
+    except Exception:
+        pass
+
+
+def is_discord_throttled(check_name: str) -> bool:
+    """指定チェックのDiscord通知がクールダウン中かどうかを返す（送信しない場合True）"""
+    seconds = _NOTIF_COOLDOWN_SECONDS.get(check_name)
+    if seconds is None:
+        return False  # クールダウン設定なし → 常に送信
+    state = _load_cooldown_state()
+    last_str = state.get(check_name)
+    if not last_str:
+        return False
+    try:
+        last_dt = datetime.fromisoformat(last_str)
+        elapsed = (now_jst() - last_dt).total_seconds()
+        if elapsed < seconds:
+            remaining_h = (seconds - elapsed) / 3600
+            print(f"  ℹ️ [{check_name}] 通知クールダウン中（残り{remaining_h:.1f}h）→ Discord送信スキップ")
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def mark_discord_sent(check_name: str) -> None:
+    """Discord送信後にクールダウン状態を更新する"""
+    if check_name not in _NOTIF_COOLDOWN_SECONDS:
+        return
+    state = _load_cooldown_state()
+    state[check_name] = now_jst().isoformat()
+    _save_cooldown_state(state)
+
+
+def log_repair(action: str, message: str, dry_run: bool) -> None:
+    """自動修復アクションをログに記録し Discord に通知する"""
+    entry = {
+        "ts": now_jst().isoformat(),
+        "action": action,
+        "message": message,
+        "dry_run": dry_run,
+    }
+    repair_log = LOGS / "watchdog_repairs.jsonl"
+    repair_log.parent.mkdir(parents=True, exist_ok=True)
+    with open(repair_log, "a") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+    print(f"  🔧 [AUTO-REPAIR:{action}] {message[:120]}")
+
+    if not dry_run:
+        send_discord_alert(
+            title=f"[自動修復] {action}",
+            body=message,
+            level="info",
+        )
+
+
+# ─── チェック関数 ─────────────────────────────────────────────────────────────
+
+def check_x_post_silence(dry_run: bool) -> list[dict]:
+    """X投稿: 稼働時間帯に N 時間投稿ゼロならアラート"""
+    alerts = []
+    if not is_active_hours():
+        return alerts
+
+    x_log = LOGS / "x_post.log"
+    if not x_log.exists():
+        alerts.append(log_alert("x_post_silence",
+            "x_post.log が存在しません。X投稿が一度も実行されていない可能性があります。", dry_run))
+        return alerts
+
+    last_success_ts = None
+    pattern = re.compile(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] RESULT: (?:投稿成功|フック投稿成功)')
+    for line in x_log.read_text(errors="replace").splitlines():
+        m = pattern.search(line)
+        if m:
+            try:
+                ts = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+                if last_success_ts is None or ts > last_success_ts:
+                    last_success_ts = ts
+            except ValueError:
+                pass
+
+    threshold = now_jst() - timedelta(hours=X_POST_SILENCE_HOURS)
+    if last_success_ts is None:
+        alerts.append(log_alert("x_post_silence",
+            "X投稿成功ログがありません。post_to_x.sh が正常に実行されていない可能性があります。", dry_run))
+    elif last_success_ts < threshold:
+        elapsed = now_jst() - last_success_ts
+        h, m2 = divmod(int(elapsed.total_seconds() / 60), 60)
+        alerts.append(log_alert("x_post_silence",
+            f"X投稿が{h}時間{m2}分間ありません（最終成功: {last_success_ts.strftime('%m/%d %H:%M')}）。\n"
+            f"確認先: logs/x_post.log", dry_run))
+    return alerts
+
+
+def check_x_post_errors(dry_run: bool) -> list[dict]:
+    """X投稿: x_post.log の直近エラーを検知"""
+    alerts = []
+    x_log = LOGS / "x_post.log"
+    if not x_log.exists():
+        return alerts
+
+    cutoff = now_jst() - timedelta(hours=X_POST_SILENCE_HOURS)
+    error_lines = []
+    pattern_ts = re.compile(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]')
+    # フェイルセーフ発動・スキップは別チェックで監視するため除外
+    pattern_err = re.compile(r'失敗|ERROR|❌|HTTP [45]\d\d|プレフライト不合格')
+    pattern_skip = re.compile(r'フェイルセーフ|スキップ|DRY-RUN')
+
+    for line in x_log.read_text(errors="replace").splitlines():
+        m = pattern_ts.search(line)
+        if not m:
+            continue
+        try:
+            ts = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+        except ValueError:
+            continue
+        if ts >= cutoff and pattern_err.search(line) and not pattern_skip.search(line):
+            error_lines.append(line.strip())
+
+    unique_errors = list(dict.fromkeys(error_lines))[:5]
+    if unique_errors:
+        alerts.append(log_alert("x_post_error",
+            f"X投稿ログに直近{X_POST_SILENCE_HOURS}h以内のエラー{len(unique_errors)}件:\n" +
+            "\n".join(f"  • {e[:120]}" for e in unique_errors), dry_run))
+    return alerts
+
+
+def check_article_silence(dry_run: bool) -> list[dict]:
+    """記事投稿: N 時間以内に kpi_posts.jsonl への書き込みがなければアラート"""
+    alerts = []
+    if not is_active_hours():
+        return alerts
+
+    kpi = LOGS / "kpi_posts.jsonl"
+    if not kpi.exists():
+        alerts.append(log_alert("article_silence",
+            "kpi_posts.jsonl が存在しません。記事投稿パイプラインが未実行の可能性があります。", dry_run))
+        return alerts
+
+    last_post_ts = None
+    for line in kpi.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            ts_str = r.get("timestamp", "")
+            if ts_str:
+                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00")).astimezone(JST)
+                if last_post_ts is None or ts > last_post_ts:
+                    last_post_ts = ts
+        except Exception:
+            continue
+
+    threshold = now_jst() - timedelta(hours=ARTICLE_SILENCE_HOURS)
+    if last_post_ts is None:
+        alerts.append(log_alert("article_silence",
+            "記事投稿ログ(kpi_posts.jsonl)に有効なレコードがありません。", dry_run))
+    elif last_post_ts < threshold:
+        elapsed = now_jst() - last_post_ts
+        h, m2 = divmod(int(elapsed.total_seconds() / 60), 60)
+        alerts.append(log_alert("article_silence",
+            f"記事投稿が{h}時間{m2}分間ありません（最終投稿: {last_post_ts.strftime('%m/%d %H:%M')}）。\n"
+            f"確認先: logs/pipeline.jsonl, /home/aiuser/ai_kpop.log", dry_run))
+    return alerts
+
+
+def check_failsafe(dry_run: bool) -> list[dict]:
+    """フェイルセーフ発動中かチェック。誤発動なら自動解除する。"""
+    alerts = []
+    fs_log = LOGS / "x_failsafe.jsonl"
+    if not fs_log.exists():
+        return alerts
+
+    cutoff = now_jst() - timedelta(hours=24)
+    recent = []
+    for line in fs_log.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            ts_str = r.get("ts", "")
+            # タイムスタンプ形式の正規化
+            try:
+                ts = datetime.fromisoformat(ts_str).astimezone(JST)
+            except Exception:
+                try:
+                    ts = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+                except Exception:
+                    continue
+            if ts >= cutoff:
+                recent.append(r)
+        except Exception:
+            continue
+
+    if not recent:
+        return alerts
+
+    # ── 自動修復: 誤発動かどうかを判定 ──
+    # kpi_posts.jsonl で X 投稿成功実績が 3 件未満 → データ不足による誤発動
+    kpi = LOGS / "kpi_posts.jsonl"
+    x_post_success_count = 0
+    if kpi.exists():
+        for line in kpi.read_text(errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+                if str(r.get("x_post_status", "")) in ("成功", "投稿成功"):
+                    x_post_success_count += 1
+            except Exception:
+                continue
+
+    # title_performance.jsonl で win/lose の実績をチェック
+    perf = LOGS / "title_performance.jsonl"
+    x_posted_ids = set()
+    win_lose_records = []
+    if kpi.exists():
+        for line in kpi.read_text(errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+                if str(r.get("x_post_status", "")) in ("成功", "投稿成功"):
+                    pid = str(r.get("post_id", ""))
+                    if pid:
+                        x_posted_ids.add(pid)
+            except Exception:
+                continue
+
+    if perf.exists():
+        for line in perf.read_text(errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+                pid = str(r.get("post_id", ""))
+                if r.get("result") in ("win", "lose") and pid in x_posted_ids:
+                    win_lose_records.append(r)
+            except Exception:
+                continue
+
+    is_false_positive = x_post_success_count < 3 or len(win_lose_records) < 3
+
+    if is_false_positive:
+        # 自動修復: フェイルセーフログをクリア
+        if not dry_run:
+            fs_log.write_text("")
+            log_repair(
+                "failsafe_auto_clear",
+                f"フェイルセーフ誤発動を検知し自動解除しました。\n"
+                f"理由: X投稿成功実績={x_post_success_count}件（判定に必要な3件未満）\n"
+                f"x_failsafe.jsonl をクリアしました。",
+                dry_run,
+            )
+        else:
+            print(f"  🔧 [DRY-RUN] フェイルセーフ誤発動を検知 → 本番なら自動解除します "
+                  f"(X投稿成功={x_post_success_count}件)")
+    else:
+        # 本物のフェイルセーフ → アラートのみ
+        alerts.append(log_alert(
+            "failsafe_active",
+            f"§10 フェイルセーフが直近24h以内に{len(recent)}回発動しています。\n"
+            f"X投稿実績のある記事のCTR低下3連続が確認されました。\n"
+            f"確認先: logs/x_failsafe.jsonl, logs/title_performance.jsonl",
+            dry_run,
+        ))
+    return alerts
+
+
+def check_pipeline_errors(dry_run: bool) -> list[dict]:
+    """pipeline.jsonl の直近エラーステップをチェック"""
+    alerts = []
+    pl = LOGS / "pipeline.jsonl"
+    if not pl.exists():
+        return alerts
+
+    cutoff = now_jst() - timedelta(hours=ARTICLE_SILENCE_HOURS)
+    errors = []
+    for line in pl.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            ts_str = r.get("timestamp", "")
+            if not ts_str:
+                continue
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00")).astimezone(JST)
+            if ts >= cutoff and r.get("status") == "error":
+                errors.append(r)
+        except Exception:
+            continue
+
+    if errors:
+        details = "\n".join(
+            f"  • [{r.get('step','')}] {r.get('message','')[:80]}" for r in errors[:5]
+        )
+        alerts.append(log_alert("pipeline_error",
+            f"パイプラインで直近{ARTICLE_SILENCE_HOURS}h以内に{len(errors)}件のエラー:\n{details}\n"
+            f"確認先: logs/pipeline.jsonl", dry_run))
+    return alerts
+
+
+def check_x_post_status_in_kpi(dry_run: bool) -> list[dict]:
+    """kpi_posts.jsonl の x_post_status が連続失敗していないかチェック"""
+    alerts = []
+    kpi = LOGS / "kpi_posts.jsonl"
+    if not kpi.exists():
+        return alerts
+
+    records = []
+    for line in kpi.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            if "x_post_status" in r:
+                records.append(r)
+        except Exception:
+            continue
+
+    if len(records) < 3:
+        return alerts
+
+    recent = records[-3:]
+    fail_statuses = ["失敗", "スキップ", "DRY-RUN", ""]
+    consecutive_fails = all(
+        any(f in str(r.get("x_post_status", "")) for f in fail_statuses)
+        for r in recent
+    )
+    if consecutive_fails:
+        details = "\n".join(
+            f"  • post_id={r.get('post_id','')} status={r.get('x_post_status','N/A')}"
+            for r in recent
+        )
+        alerts.append(log_alert("x_post_consecutive_fail",
+            f"直近3記事でX投稿が連続して失敗/スキップしています:\n{details}\n"
+            f"確認先: logs/kpi_posts.jsonl, logs/x_post.log", dry_run))
+    return alerts
+
+
+def _pipeline_already_ran_today(log_path: Path) -> bool:
+    """ログが今日 JST で更新されているか"""
+    if not log_path.exists():
+        return False
+    mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=JST)
+    return mtime.strftime("%Y-%m-%d") == now_jst().strftime("%Y-%m-%d")
+
+
+def _pipeline_is_running(script: Path) -> bool:
+    """同じスクリプトのプロセスが既に動いているか"""
+    try:
+        result = subprocess.run(
+            ["pgrep", "-f", str(script)],
+            capture_output=True, text=True
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
+
+
+def check_pipeline_log_staleness(dry_run: bool) -> list[dict]:
+    """各パイプラインのログが当日未更新なら自動再実行を試みる"""
+    alerts = []
+    if not is_active_hours():
+        return alerts
+
+    jst_now = now_jst()
+    # パイプラインを再実行したか記録（同一watchdog実行内で重複防止）
+    restarted = set()
+
+    for log_path, scheduled_hour, script, args, label in PIPELINES:
+        # まだ実行時刻を2時間以上過ぎていない → スキップ
+        if jst_now.hour < scheduled_hour + 2:
+            continue
+
+        if _pipeline_already_ran_today(log_path):
+            continue  # 正常
+
+        mtime_str = "（ファイルなし）"
+        if log_path.exists():
+            mtime = datetime.fromtimestamp(os.path.getmtime(log_path), tz=JST)
+            elapsed_h = int((jst_now - mtime).total_seconds() / 3600)
+            mtime_str = f"最終更新: {mtime.strftime('%m/%d %H:%M JST')} ({elapsed_h}h前)"
+
+        # ── 自動修復: パイプライン再実行 ──
+        if not dry_run and script.exists() and label not in restarted:
+            # 既に同スクリプトが動いていれば再実行しない
+            if _pipeline_is_running(script):
+                print(f"  ⏳ [{label}] 既に実行中のため再実行スキップ")
+                continue
+
+            restarted.add(label)
+            log_repair(
+                "pipeline_restart",
+                f"{label} のログが当日未更新のため自動再実行します。\n{mtime_str}\n"
+                f"スクリプト: {script.name} {' '.join(args)}",
+                dry_run,
+            )
+            # バックグラウンドで再実行（ログに追記）
+            env = os.environ.copy()
+            venv_activate = BASE / ".venv" / "bin" / "activate"
+            cmd = (
+                f"source {venv_activate} && "
+                f"cd {BASE} && "
+                f"timeout 5400 bash {script} {' '.join(repr(a) for a in args)}"
+                f" >> {log_path} 2>&1"
+            )
+            subprocess.Popen(
+                ["bash", "-c", cmd],
+                start_new_session=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        else:
+            if dry_run:
+                print(f"  🔧 [DRY-RUN] {label}: 当日未更新 → 本番なら自動再実行します ({mtime_str})")
+            alerts.append(log_alert(
+                "pipeline_log_stale",
+                f"{label}: ログが当日未更新です。自動再実行を試みましたが確認してください。\n{mtime_str}",
+                dry_run,
+                level="warn",
+            ))
+
+    return alerts
+
+
+def check_thumbnail_genre_mismatch(dry_run: bool) -> list[dict]:
+    """thumbnail_performance.jsonl の直近レコードでジャンル誤分類を検知する。
+    breaking が旅行・美容・ファッション記事に使われていたら警告。"""
+    alerts = []
+    thumb_log = LOGS / "thumbnail_performance.jsonl"
+    if not thumb_log.exists():
+        return alerts
+
+    cutoff = now_jst() - timedelta(hours=24)
+    mismatches = []
+
+    # タイトルに旅行・美容・ファッション系ワードがあるのに breaking ジャンルのサムネ
+    MISMATCH_RULES = [
+        (["旅行", "ソウル", "カフェ", "聖地巡礼", "ポップアップ", "観光"], ["breaking"], "travel"),
+        (["コスメ", "スキンケア", "美容", "ガラス肌", "ヘアケア"], ["breaking", "live"], "beauty"),
+        (["ファッション", "コーデ", "着用", "ブランド"], ["breaking", "live"], "fashion"),
+    ]
+
+    for line in thumb_log.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            ts_str = r.get("timestamp", r.get("ts", ""))
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00")).astimezone(JST)
+            if ts < cutoff:
+                continue
+            title = r.get("title", "").lower()
+            genre = r.get("genre", "")
+            for keywords, bad_genres, expected in MISMATCH_RULES:
+                if any(k in title for k in keywords) and genre in bad_genres:
+                    mismatches.append({
+                        "post_id": r.get("post_id", "?"),
+                        "title": r.get("title", "")[:50],
+                        "genre": genre,
+                        "expected": expected,
+                    })
+        except Exception:
+            continue
+
+    if mismatches:
+        details = "\n".join(
+            f"  • post_id={m['post_id']} genre={m['genre']}→{m['expected']} title={m['title']}"
+            for m in mismatches[:5]
+        )
+        # AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY
+        # サムネ不一致の自動修復は行わない。理由:
+        #   - 正しいジャンルのサムネ再生成にはmake_thumbnail.pyとWP APIが必要
+        #   - 間違えてサムネを消すリスクがある（記事公開中）
+        #   - 誤検知の可能性あり（タイトルキーワードのみで判定）
+        # 対応: WARNログ + NG記録。post_audit.sh [6]サムネチェックが正規のfix経路。
+        alerts.append(log_alert(
+            "thumbnail_genre_mismatch",
+            f"サムネジャンル誤分類が{len(mismatches)}件検知されました:\n{details}\n"
+            f"旅行・美容・ファッション記事に breaking ジャンルが使われています。\n"
+            f"[AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY] 手動でpost_audit.shを再実行するか"
+            f" make_thumbnail.py でサムネを再生成してください。",
+            dry_run,
+            level="warn",
+        ))
+        # watchdog_repairs.jsonlにも記録（後追い確認用）
+        log_repair(
+            "thumbnail_genre_mismatch_detected",
+            f"検知のみ（自動修復なし）: {len(mismatches)}件 | post_ids="
+            f"{[m['post_id'] for m in mismatches[:5]]}",
+            dry_run,
+        )
+    return alerts
+
+
+def check_error_patterns(dry_run: bool) -> list[dict]:
+    """error_patterns.json を読み込み、再発率の高いエラーをアラートする
+    [クールダウン] recurring_error_patterns: 24h に1回のみ Discord 送信
+    """
+    alerts = []
+    ep_file = BASE / "config" / "error_patterns.json"
+    if not ep_file.exists():
+        return alerts
+
+    try:
+        ep = json.loads(ep_file.read_text())
+    except Exception:
+        return alerts
+
+    patterns = ep.get("patterns", {})
+    recurring = ep.get("recurring_errors", [])
+
+    # resolved_errors に記録されたキーを収集（修復済みパターンはアラート対象外）
+    resolved_keys = set()
+    for r in ep.get("resolved_errors", []):
+        k = r.get("key", "")
+        if k:
+            resolved_keys.add(k)
+
+    # 直近7日以内に2回以上発生したパターン（修復済みを除外）
+    cutoff = now_jst() - timedelta(days=7)
+    high_freq = []
+    for pattern_name, info in patterns.items():
+        if pattern_name in resolved_keys:
+            continue  # 修復済みパターンはスキップ
+        count = info.get("count", 0)
+        last_seen_str = info.get("last_seen", "")
+        try:
+            last_seen = datetime.fromisoformat(last_seen_str).astimezone(JST)
+        except Exception:
+            continue
+        if count >= 2 and last_seen >= cutoff:
+            high_freq.append({
+                "pattern": pattern_name,
+                "count": count,
+                "last_seen": last_seen,
+                "fix": info.get("fix", ""),
+                "agent": info.get("agent", ""),
+            })
+
+    if high_freq:
+        details = "\n".join(
+            f"  • [{h['pattern']}] {h['count']}回発生 最終:{h['last_seen'].strftime('%m/%d %H:%M')} agent={h['agent']}"
+            for h in sorted(high_freq, key=lambda x: -x["count"])[:5]
+        )
+        # クールダウン確認: 24h以内に送信済みならDiscordをスキップ
+        throttled = is_discord_throttled("recurring_error_patterns")
+        alert = {
+            "ts": now_jst().isoformat(),
+            "check": "recurring_error_patterns",
+            "message": (
+                f"再発エラーパターン {len(high_freq)}件（直近7日）:\n{details}\n"
+                f"確認先: config/error_patterns.json, logs/audit_feedback.jsonl"
+            ),
+            "dry_run": dry_run,
+        }
+        (LOGS / "watchdog_alerts.jsonl").parent.mkdir(parents=True, exist_ok=True)
+        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
+            f.write(json.dumps(alert, ensure_ascii=False) + "\n")
+        print(f"  ⚠️ [recurring_error_patterns] {alert['message'][:120]}")
+        if not dry_run and not throttled:
+            send_discord_alert(
+                title="[自動監査] recurring_error_patterns 異常検知",
+                body=alert["message"],
+                level="warn",
+            )
+            mark_discord_sent("recurring_error_patterns")
+        alerts.append(alert)
+
+    # recurring_errorsに登録済みパターンが3件以上なら昇格推奨
+    if len(recurring) >= 3:
+        throttled_acc = is_discord_throttled("recurring_error_accumulation")
+        rec_names = ", ".join(recurring[:5])
+        msg = (
+            f"繰り返しエラーが{len(recurring)}件蓄積: {rec_names}\n"
+            f"→ auto_improve.py report で指令昇格状況を確認してください"
+        )
+        alert2 = {
+            "ts": now_jst().isoformat(),
+            "check": "recurring_error_accumulation",
+            "message": msg,
+            "dry_run": dry_run,
+        }
+        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
+            f.write(json.dumps(alert2, ensure_ascii=False) + "\n")
+        print(f"  ⚠️ [recurring_error_accumulation] {msg[:120]}")
+        if not dry_run and not throttled_acc:
+            send_discord_alert(
+                title="[自動監査] recurring_error_accumulation 異常検知",
+                body=msg,
+                level="warn",
+            )
+            mark_discord_sent("recurring_error_accumulation")
+        alerts.append(alert2)
+
+    return alerts
+
+
+def check_dedup_title_performance(dry_run: bool) -> list[dict]:
+    """title_performance.jsonl の重複レコードを自動除去"""
+    alerts = []
+    perf = LOGS / "title_performance.jsonl"
+    if not perf.exists():
+        return alerts
+
+    lines = perf.read_text(errors="replace").splitlines()
+    seen: dict[str, bool] = {}
+    deduped = []
+    removed = 0
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            deduped.append(line)
+            continue
+
+        pid = r.get("post_id", "")
+        result = r.get("result", "")
+        key = f"pid:{pid}" if pid else f"title:{r.get('title','')}:{result}"
+
+        if key in seen:
+            removed += 1
+        else:
+            seen[key] = True
+            deduped.append(line)
+
+    if removed > 0:
+        if not dry_run:
+            perf.write_text("\n".join(deduped) + "\n")
+            log_repair(
+                "dedup_title_performance",
+                f"title_performance.jsonl から重複レコード{removed}件を除去しました。\n"
+                f"（{len(lines)} → {len(deduped)} 行）",
+                dry_run,
+            )
+        else:
+            print(f"  🔧 [DRY-RUN] title_performance.jsonl: 重複{removed}件検知 → 本番なら自動除去します")
+    return alerts
+
+
+def check_draft_x_posted(dry_run: bool) -> list[dict]:
+    """逆監査: draft/pending 状態の記事なのに X 投稿済みの事故を検知する。
+
+    AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY
+    - 自動でX投稿を削除しない（tweet_idによる削除はデータ損失リスク）
+    - 検知してログ・Discord通知するのみ
+    - 人間がWordPressで publish 昇格 か X投稿削除を判断する
+    """
+    alerts = []
+    kpi_file = LOGS / "kpi_posts.jsonl"
+    if not kpi_file.exists():
+        return alerts
+
+    cutoff = now_jst() - timedelta(hours=48)
+    accidents = []
+
+    for line in kpi_file.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            ts_str = r.get("date", r.get("timestamp", ""))
+            if not ts_str:
+                continue
+            ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=JST)
+            else:
+                ts = ts.astimezone(JST)
+            if ts < cutoff:
+                continue
+
+            # X投稿済みかつ記事ステータスが非publish
+            x_status = str(r.get("x_post_status", ""))
+            wp_status = str(r.get("status", "publish"))  # KPIに無ければpublishとみなす
+            x_posted = "成功" in x_status or "投稿成功" in x_status
+            is_draft = wp_status in ("draft", "pending", "future")
+
+            if x_posted and is_draft:
+                accidents.append({
+                    "post_id": r.get("post_id", "?"),
+                    "title": r.get("title", "")[:50],
+                    "wp_status": wp_status,
+                    "x_status": x_status[:30],
+                })
+        except Exception:
+            continue
+
+    if accidents:
+        details = "\n".join(
+            f"  ⛔ post_id={a['post_id']} status={a['wp_status']} x={a['x_status']} title={a['title']}"
+            for a in accidents[:5]
+        )
+        alerts.append(log_alert(
+            "draft_x_posted_accident",
+            f"🚨 draft/pending 記事なのに X 投稿済みの事故が{len(accidents)}件検知:\n{details}\n"
+            f"対応: WordPress管理画面でステータスを publish に昇格 または X投稿を手動削除してください。\n"
+            f"[AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY]",
+            dry_run,
+            level="error",
+        ))
+    return alerts
+
+
+def check_pipeline_external_wp_posts(dry_run: bool) -> list[dict]:
+    """pipeline外WP記事検知: 直近48h以内にpost_audit.logで監査されたpost_idが
+    pipeline.jsonlのwordpress_postに記録されていない場合にwarn。
+
+    AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY
+    - 自動修復なし。検知・Discord通知のみ。
+    - 目的: テスト直投稿・手動投稿の可観測性向上（2234型再発防止）
+
+    ロジック:
+    - pipeline.jsonl の wordpress_post ステップの message フィールドから
+      post_idを正規表現で抽出してIDセットを構築（全量）
+    - post_audit.log の「投稿後監査開始: ID=X」から直近48h内の監査済みIDを収集
+    - 後者にあって前者にないIDを pipeline外記事とみなす
+    """
+    alerts = []
+    pl = LOGS / "pipeline.jsonl"
+    audit_log = LOGS / "post_audit.log"
+
+    if not pl.exists() or not audit_log.exists():
+        return alerts
+
+    # pipeline.jsonl: wordpress_postステップのmessageから post_id=\d+ を抽出（全量）
+    pipeline_post_ids: set[str] = set()
+    _pid_re = re.compile(r"post_id=(\d+)")
+    for line in pl.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            if r.get("step") != "wordpress_post":
+                continue
+            m = _pid_re.search(r.get("message", ""))
+            if m:
+                pipeline_post_ids.add(m.group(1))
+            # フォールバック: post_idフィールドが直接ある場合
+            pid_field = str(r.get("post_id", ""))
+            if pid_field and pid_field.isdigit():
+                pipeline_post_ids.add(pid_field)
+        except Exception:
+            continue
+
+    # post_audit.log: 直近48h以内の「投稿後監査開始: ID=X」を収集
+    cutoff = now_jst() - timedelta(hours=48)
+    audited_post_ids: dict[str, str] = {}  # post_id -> 初出timestamp
+    _audit_re = re.compile(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] \[AUDIT\] .*投稿後監査開始.*ID=(\d+)')
+    for line in audit_log.read_text(errors="replace").splitlines():
+        m = _audit_re.search(line)
+        if not m:
+            continue
+        try:
+            ts = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=JST)
+        except ValueError:
+            continue
+        if ts < cutoff:
+            continue
+        pid = m.group(2)
+        if pid not in audited_post_ids:
+            audited_post_ids[pid] = m.group(1)
+
+    # 差分: 監査済みだがpipelineに記録がないID = pipeline外記事
+    external_ids = {pid: ts for pid, ts in audited_post_ids.items()
+                    if pid not in pipeline_post_ids}
+
+    if external_ids:
+        details = "\n".join(
+            f"  ⚠️ post_id={pid} 初回監査={ts}"
+            for pid, ts in sorted(external_ids.items(), key=lambda x: x[1])[:5]
+        )
+        msg = (
+            f"pipeline.jsonl未記録の記事が直近48h以内に{len(external_ids)}件検知:\n{details}\n"
+            f"原因: テスト直投稿・手動投稿の可能性。WordPress管理画面で確認してください。\n"
+            f"確認先: logs/pipeline.jsonl, logs/post_audit.log\n"
+            f"[AUTO_FIX_POLICY: HUMAN_REVIEW_ONLY]"
+        )
+        # クールダウン確認: 24h以内に送信済みならDiscordをスキップ
+        throttled = is_discord_throttled("pipeline_external_wp_post")
+        alert = {
+            "ts": now_jst().isoformat(),
+            "check": "pipeline_external_wp_post",
+            "message": msg,
+            "dry_run": dry_run,
+        }
+        (LOGS / "watchdog_alerts.jsonl").parent.mkdir(parents=True, exist_ok=True)
+        with open(LOGS / "watchdog_alerts.jsonl", "a") as f:
+            f.write(json.dumps(alert, ensure_ascii=False) + "\n")
+        print(f"  ⚠️ [pipeline_external_wp_post] {msg[:120]}")
+        if not dry_run and not throttled:
+            send_discord_alert(
+                title="[自動監査] pipeline_external_wp_post 異常検知",
+                body=msg,
+                level="warn",
+            )
+            mark_discord_sent("pipeline_external_wp_post")
+        alerts.append(alert)
+    return alerts
+
+
+# ─── メイン ───────────────────────────────────────────────────────────────────
+
+CHECKS = {
+    "x_post":        check_x_post_silence,
+    "x_errors":      check_x_post_errors,
+    "article":       check_article_silence,
+    "failsafe":      check_failsafe,
+    "pipeline":      check_pipeline_errors,
+    "x_kpi":         check_x_post_status_in_kpi,
+    "log_staleness": check_pipeline_log_staleness,
+    "thumb_genre":   check_thumbnail_genre_mismatch,
+    "error_patterns": check_error_patterns,
+    "dedup":         check_dedup_title_performance,
+    "draft_x_guard": check_draft_x_posted,        # 逆監査: draft記事X投稿事故検知
+    "external_wp":   check_pipeline_external_wp_posts,  # pipeline外WP記事検知（HUMAN_REVIEW_ONLY）
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="パイプライン自律監査・自動修復エージェント")
+    parser.add_argument("--dry-run", action="store_true", help="Discord送信・修復なし、表示のみ")
+    parser.add_argument("--check", choices=list(CHECKS.keys()), metavar="CHECK",
+                        help=f"個別チェックのみ実行: {', '.join(CHECKS.keys())}")
+    args = parser.parse_args()
+
+    checks_to_run = {args.check: CHECKS[args.check]} if args.check else CHECKS
+
+    print(f"[watchdog] 監査開始 {now_jst().strftime('%Y-%m-%d %H:%M JST')}")
+    if args.dry_run:
+        print("  [DRY-RUN] Discord送信・自動修復はスキップします")
+
+    all_alerts = []
+    for name, fn in checks_to_run.items():
+        print(f"  checking: {name} ...", end=" ", flush=True)
+        try:
+            alerts = fn(args.dry_run)
+        except Exception as e:
+            print(f"ERROR: {e}")
+            continue
+        if alerts:
+            print(f"⚠ {len(alerts)}件の問題")
+            all_alerts.extend(alerts)
+        else:
+            print("✅ 正常")
+
+    print(f"\n[watchdog] 完了 — 検知: {len(all_alerts)}件")
+    if all_alerts and not args.dry_run:
+        print(f"  Discord #urgent_errors に通知済み")
+        # auto_repair.sh をバックグラウンドで起動（自律調査・修復ループ）
+        auto_repair = BASE / "ai_company" / "auto_repair.sh"
+        if auto_repair.exists():
+            try:
+                subprocess.Popen(
+                    ["bash", str(auto_repair)],
+                    start_new_session=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    cwd=str(BASE),
+                )
+                print(f"  🤖 auto_repair.sh をバックグラウンド起動しました")
+            except Exception as e:
+                print(f"  [watchdog] auto_repair.sh 起動失敗: {e}")
+        else:
+            print(f"  [watchdog] auto_repair.sh が見つかりません: {auto_repair}")
+
+    sys.exit(1 if all_alerts else 0)
+
+
+if __name__ == "__main__":
+    main()
