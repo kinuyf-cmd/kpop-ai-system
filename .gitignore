@@ -30,3 +30,5 @@ backups/
 diffs/
 # 注: config/discord_webhooks.json はプレースホルダー化済(実URLは .env)。
 #     tracked 維持(チャンネル名一覧として有用、機密を含まない)。
+data/trend_signals.jsonl
+data/signals/
