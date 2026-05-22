@@ -60,22 +60,36 @@ def _norm(s):
 
 
 def extract(slug):
-    """本番静的HTML から記事データを抽出。"""
+    """本番静的HTML から記事データを抽出。
+
+    article 内には本文以外に静的サイト装飾(h1/meta div/hero img/末尾の関連記事
+    カード)が含まれるため、それらを除去して本文(h2以降〜関連カード手前)だけを取る。
+    """
     fp = os.path.join(PROD_ROOT, slug, "index.html")
     if not os.path.exists(fp):
         return None
     h = open(fp, encoding="utf-8", errors="replace").read()
     title = re.search(r"<title>([^<]+)</title>", h, re.I)
     title = html.unescape(title.group(1)) if title else slug
-    # サイト名サフィックス除去
     title = re.split(r"\s*[|｜]\s*KPOP", title)[0].strip()
     metad = re.search(r'<meta name="description" content="([^"]*)"', h)
     metad = html.unescape(metad.group(1)) if metad else ""
+
     art = re.search(r"<article[^>]*>(.*?)</article>", h, re.DOTALL)
-    body = art.group(1).strip() if art else ""
-    # h1(タイトル重複)を本文先頭から除く
-    body = re.sub(r"^\s*<h1[^>]*>.*?</h1>", "", body, flags=re.DOTALL).strip()
-    return {"title": title, "meta": metad, "body": body,
+    body = art.group(1) if art else ""
+    # 公開日: <div class="meta">YYYY-MM-DD ・ …</div> から取得
+    dm = re.search(r'<div class="meta">\s*(\d{4}-\d{2}-\d{2})', body)
+    pub_date = dm.group(1) if dm else ""
+    # 装飾の除去: 先頭の h1 / meta div / hero img
+    body = re.sub(r"<h1[^>]*>.*?</h1>", "", body, flags=re.DOTALL)
+    body = re.sub(r'<div class="meta">.*?</div>', "", body, flags=re.DOTALL)
+    body = re.sub(r'<img class="hero"[^>]*>', "", body)
+    # 末尾の関連記事ブロック(関連カード <a class="card">…)以降を切る
+    body = re.split(r'<(?:div|section|aside)[^>]*class="[^"]*(?:related|cards|related-posts)[^"]*"', body)[0]
+    body = re.split(r'<a class="card"', body)[0]
+    # 出典/シェア等の末尾ナビが残れば <hr> 以降の関連は保持(出典は本文の一部)
+    body = body.strip()
+    return {"title": title, "meta": metad, "body": body, "pub_date": pub_date,
             "text_len": len(re.sub(r"<[^>]+>", "", body)), "h2": body.count("<h2")}
 
 
@@ -98,26 +112,39 @@ def import_one(slug, data, cat_meta, apply):
     wp_cat = CAT_MAP.get(csv_cat, "news")
     posted = cat_meta.get(_norm(data["title"]), {}).get("posted_at", "")
 
+    # 公開日: HTML の meta div 由来を優先、無ければ CSV posted_at(YYYY年MM月DD日)
+    pub_date = data.get("pub_date", "")
+    if not pub_date and posted:
+        m = re.match(r"(\d{4})年(\d{2})月(\d{2})日", posted)
+        if m:
+            pub_date = f"{m[1]}-{m[2]}-{m[3]}"
+
     if not apply:
         print(f"[DRY] {norm_slug}")
         print(f"      title: {data['title'][:50]}")
-        print(f"      cat={wp_cat} / 本文{data['text_len']}字 / H2={data['h2']} / meta{len(data['meta'])}字 / posted={posted}")
+        print(f"      cat={wp_cat} / 本文{data['text_len']}字 / H2={data['h2']} / meta{len(data['meta'])}字 / pub_date={pub_date or '(なし)'}")
         return "dry"
 
-    # wp-cli で DRAFT 作成。本文は wp-cli の stdin(`-`)で渡す。
-    # 注: tempファイルをパス渡しすると sudo -u www-data が /tmp を読めず失敗する。
-    # `post create -` で stdin から本文を読ませるのが確実(権限非依存)。
+    # wp-cli で DRAFT 作成。本文は stdin(`-`)で渡す(www-data 権限非依存)。
     cmd = ["sudo", "-u", "www-data", "wp", "--path=" + WP_PATH, "post", "create", "-",
            f"--post_title={data['title']}", "--post_status=draft",
            f"--post_name={norm_slug}", "--post_type=post",
+           f"--post_category={wp_cat}",
            f"--post_excerpt={data['meta']}", "--porcelain"]
+    if pub_date:
+        cmd.append(f"--post_date={pub_date} 12:00:00")
     r = subprocess.run(cmd, input=data["body"], capture_output=True, text=True, timeout=60)
     pid = r.stdout.strip().splitlines()[-1] if r.stdout.strip() else ""
-    if pid.isdigit():
-        print(f"OK  {norm_slug} -> DRAFT post ID={pid} ({data['title'][:40]})")
-        return pid
-    print(f"ERR {norm_slug}: rc={r.returncode} stdout={r.stdout.strip()[:80]} stderr={r.stderr.strip()[:160]}")
-    return None
+    if not pid.isdigit():
+        print(f"ERR {norm_slug}: rc={r.returncode} stdout={r.stdout.strip()[:80]} stderr={r.stderr.strip()[:160]}")
+        return None
+    # AIOSEO メタ description を設定
+    subprocess.run(
+        ["sudo", "-u", "www-data", "wp", "--path=" + WP_PATH, "post", "meta", "update",
+         pid, "_aioseo_description", data["meta"]],
+        capture_output=True, text=True, timeout=30)
+    print(f"OK  {norm_slug} -> DRAFT post ID={pid} cat={wp_cat} date={pub_date or '-'} ({data['title'][:35]})")
+    return pid
 
 
 def main():
