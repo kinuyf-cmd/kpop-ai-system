@@ -87,7 +87,10 @@ def extract(slug):
     # 末尾の関連記事ブロック(関連カード <a class="card">…)以降を切る
     body = re.split(r'<(?:div|section|aside)[^>]*class="[^"]*(?:related|cards|related-posts)[^"]*"', body)[0]
     body = re.split(r'<a class="card"', body)[0]
-    # 出典/シェア等の末尾ナビが残れば <hr> 以降の関連は保持(出典は本文の一部)
+    # 事故救出時に紛れ込んだエージェント実行ログJSON塊を除去
+    # (本文末尾に {"type":"result",...} / [{"type"... が混入する救出記事が2件存在)
+    body = re.split(r'[\[{]"type":\s*"result"', body)[0]
+    body = re.split(r'\{"type":"result"', body)[0]
     body = body.strip()
     return {"title": title, "meta": metad, "body": body, "pub_date": pub_date,
             "text_len": len(re.sub(r"<[^>]+>", "", body)), "h2": body.count("<h2")}
