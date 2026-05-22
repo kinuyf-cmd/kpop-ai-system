@@ -1,0 +1,47 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-06",
+    "description": "3層ハイブリッドCTAテンプレート (新規投稿専用)",
+    "target": "5/4以降の新規投稿のみ",
+    "existing_631_articles": "変更禁止"
+  },
+  "shared_css": "<style>.kpj-hybrid-cta{margin:1.5em 0;padding:0;text-align:center;position:relative}.kpj-hybrid-cta .kpj-ad-label{display:block;font-size:12px;color:#999;margin-bottom:4px;text-align:left}.kpj-hybrid-cta .kpj-micro-copy{font-size:14px;font-weight:700;color:#333;margin-bottom:8px;line-height:1.4}.kpj-hybrid-cta .kpj-banner-wrap{display:inline-block;margin:0 auto 8px}.kpj-hybrid-cta .kpj-cta-btn{display:inline-block;padding:12px 32px;background:linear-gradient(135deg,#ff6b9d,#c44dff);color:#fff;font-size:15px;font-weight:700;border-radius:30px;text-decoration:none;transition:transform .2s,box-shadow .2s}.kpj-hybrid-cta .kpj-cta-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(196,77,255,.4)}.kpj-hybrid-cta .kpj-text-link{display:block;font-size:13px;margin-top:8px;color:#666}.kpj-hybrid-cta .kpj-text-link a{color:#c44dff;text-decoration:underline}.kpj-hybrid-cta.pulse .kpj-cta-btn{animation:kpj-pulse 2s infinite}@keyframes kpj-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}@media(max-width:768px){.kpj-hybrid-cta .kpj-banner-wrap img{max-width:100%;height:auto}.kpj-hybrid-cta .kpj-bottom-grid{flex-direction:column;gap:16px!important}}</style>",
+  "positions": {
+    "position_top": {
+      "description": "第1 H2直前 / 728x90(PC) + 320x50(SP) + テキストリンク",
+      "condition": "content_length >= 2500",
+      "pulse_animation": false,
+      "template": "<div class=\"kpj-hybrid-cta\" data-cta-position=\"top\" data-a8mat=\"{{a8mat_pc}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-ad-label\">PR</span>\n<p class=\"kpj-micro-copy\">{{micro_copy}}</p>\n<div class=\"kpj-banner-wrap kpj-pc-only\">{{banner_html_728x90}}{{tracking_pixel_728x90}}</div>\n<div class=\"kpj-banner-wrap kpj-sp-only\">{{banner_html_320x50}}{{tracking_pixel_320x50}}</div>\n<span class=\"kpj-text-link\">{{text_link_html}}</span>\n</div>",
+      "fallback_no_728": "<div class=\"kpj-hybrid-cta\" data-cta-position=\"top\" data-a8mat=\"{{a8mat_sp}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-ad-label\">PR</span>\n<p class=\"kpj-micro-copy\">{{micro_copy}}</p>\n<div class=\"kpj-banner-wrap\">{{banner_html_320x50}}{{tracking_pixel_320x50}}</div>\n<span class=\"kpj-text-link\">{{text_link_html}}</span>\n</div>",
+      "responsive_css": ".kpj-pc-only{display:block}@media(max-width:768px){.kpj-pc-only{display:none}.kpj-sp-only{display:block}}.kpj-sp-only{display:none}@media(max-width:768px){.kpj-sp-only{display:block}}"
+    },
+    "position_middle": {
+      "description": "第3-4 H2直前 / 300x250 + マイクロコピー + ボタン + テキストリンク",
+      "condition": "content_length >= 2500",
+      "pulse_animation": true,
+      "template": "<div class=\"kpj-hybrid-cta pulse\" data-cta-position=\"middle\" data-a8mat=\"{{a8mat}}\" data-cta-id=\"{{program_key}}\">\n<span class=\"kpj-ad-label\">広告</span>\n<p class=\"kpj-micro-copy\">{{micro_copy}}</p>\n<div class=\"kpj-banner-wrap\">{{banner_html_300x250}}{{tracking_pixel_300x250}}</div>\n<a href=\"{{click_url}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-cta-btn\" data-cta-tier=\"{{tier}}\">{{button_text}}</a>\n<span class=\"kpj-text-link\">{{text_link_html}}</span>\n</div>"
+    },
+    "position_bottom": {
+      "description": "記事末尾 / 300x250×2並列 + 3層フルセット",
+      "condition": "always",
+      "pulse_animation": true,
+      "template": "<div class=\"kpj-hybrid-cta pulse\" data-cta-position=\"bottom\" data-a8mat=\"{{a8mat_main}}\" data-cta-id=\"{{program_key_main}}\">\n<span class=\"kpj-ad-label\">PR</span>\n<p class=\"kpj-micro-copy\">{{micro_copy_main}}</p>\n<div class=\"kpj-bottom-grid\" style=\"display:flex;gap:16px;justify-content:center;flex-wrap:wrap\">\n<div class=\"kpj-banner-wrap\">{{banner_html_main_300x250}}{{tracking_pixel_main}}</div>\n<div class=\"kpj-banner-wrap\">{{banner_html_sub_300x250}}{{tracking_pixel_sub}}</div>\n</div>\n<a href=\"{{click_url_main}}\" rel=\"nofollow sponsored\" target=\"_blank\" class=\"kpj-cta-btn\" data-cta-tier=\"{{tier_main}}\">{{button_text_main}}</a>\n<span class=\"kpj-text-link\">{{text_link_main}} | {{text_link_sub}}</span>\n</div>"
+    }
+  },
+  "ga4_tracking": {
+    "event_name": "cta_click",
+    "parameters": {
+      "position": "top|middle|bottom",
+      "banner_size": "728x90|320x50|300x250",
+      "a8mat_id": "from data-a8mat",
+      "article_category": "from WP category",
+      "program_key": "from data-cta-id"
+    },
+    "view_tracking": {
+      "event_name": "cta_view",
+      "method": "IntersectionObserver",
+      "threshold": 0.5
+    }
+  }
+}

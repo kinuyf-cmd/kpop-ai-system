@@ -1,0 +1,286 @@
+{
+  "_metadata": {
+    "version": "v1",
+    "created_at": "2026-05-06",
+    "source": "Notion 358bd75e-9d39-817c-8f02-c7ce13392997",
+    "total_programs": 13,
+    "total_banners": 29,
+    "note": "A8素材HTML改変禁止 (規約)"
+  },
+  "programs": {
+    "global_wifi": {
+      "name": "グローバルWiFi",
+      "program_id": "12-0221",
+      "category": "communication_wifi",
+      "tier": "S",
+      "micro_copy": "海外渡航必需 / 韓国WiFi最安級",
+      "button_text": "公式サイトで料金を確認",
+      "size_limitation": null,
+      "sizes": {
+        "320x50": {
+          "a8mat": "457NRV+2WSC0Q+2JMM+6F1WH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2WSC0Q+2JMM+6F1WH\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www22.a8.net/svt/bgt?aid=250620187176&wid=002&eno=01&mid=s00000011875001078000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+2WSC0Q+2JMM+6F1WH\" alt=\"\">"
+        },
+        "300x250": {
+          "a8mat": "457NRV+2WSC0Q+2JMM+6GJWX",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2WSC0Q+2JMM+6GJWX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187176&wid=002&eno=01&mid=s00000011875001085000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+2WSC0Q+2JMM+6GJWX\" alt=\"\">"
+        },
+        "728x90": {
+          "a8mat": "457NRV+2WSC0Q+2JMM+6IHCX",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2WSC0Q+2JMM+6IHCX\" rel=\"nofollow\"><img border=\"0\" width=\"728\" height=\"90\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187176&wid=002&eno=01&mid=s00000011875001094000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+2WSC0Q+2JMM+6IHCX\" alt=\"\">"
+        }
+      }
+    },
+    "voyageesim": {
+      "name": "VOYAGEESIM",
+      "program_id": null,
+      "category": "communication_esim",
+      "tier": "S",
+      "micro_copy": "eSIM最安級 / 韓国到着前に設定完了",
+      "button_text": "プランを比較する",
+      "size_limitation": "no_728x90",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+30CXNE+5FXM+5YZ75",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30CXNE+5FXM+5YZ75\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187182&wid=002&eno=01&mid=s00000025393001003000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+30CXNE+5FXM+5YZ75\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+30CXNE+5FXM+5ZU29",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30CXNE+5FXM+5ZU29\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=250620187182&wid=002&eno=01&mid=s00000025393001007000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www19.a8.net/0.gif?a8mat=457NRV+30CXNE+5FXM+5ZU29\" alt=\"\">"
+        }
+      }
+    },
+    "korea_data_wifi": {
+      "name": "韓国データWiFi",
+      "program_id": "14-0527",
+      "category": "communication_wifi",
+      "tier": "S",
+      "micro_copy": "韓国専用 / 空港受取・返却OK",
+      "button_text": "予約状況を確認",
+      "size_limitation": null,
+      "sizes": {
+        "728x90": {
+          "a8mat": "457NRV+30YD96+2ZBM+I05C1",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30YD96+2ZBM+I05C1\" rel=\"nofollow\"><img border=\"0\" width=\"728\" height=\"90\" alt=\"\" src=\"https://www28.a8.net/svt/bgt?aid=250620187183&wid=002&eno=01&mid=s00000013909003024000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+30YD96+2ZBM+I05C1\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+30YD96+2ZBM+HWPVL",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30YD96+2ZBM+HWPVL\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187183&wid=002&eno=01&mid=s00000013909003008000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+30YD96+2ZBM+HWPVL\" alt=\"\">"
+        },
+        "300x250": {
+          "a8mat": "457NRV+30YD96+2ZBM+HWI5T",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+30YD96+2ZBM+HWI5T\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=250620187183&wid=002&eno=01&mid=s00000013909003007000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+30YD96+2ZBM+HWI5T\" alt=\"\">"
+        }
+      }
+    },
+    "dholic": {
+      "name": "DHOLIC",
+      "program_id": null,
+      "category": "fashion",
+      "tier": "S",
+      "micro_copy": "韓国系ファッション / 推しと同じコーデ",
+      "button_text": "新作をチェック",
+      "size_limitation": "no_728x90",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+3PYKNU+3GIS+BZ8OX",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+BZ8OX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www24.a8.net/svt/bgt?aid=250620187225&wid=002&eno=01&mid=s00000016138002012000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+3PYKNU+3GIS+BZ8OX\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+3PYKNU+3GIS+C7DWH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+C7DWH\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www20.a8.net/svt/bgt?aid=250620187225&wid=002&eno=01&mid=s00000016138002050000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+3PYKNU+3GIS+C7DWH\" alt=\"\">"
+        }
+      }
+    },
+    "olens_poplens": {
+      "name": "OLENS/POPLENS",
+      "program_id": null,
+      "category": "cosmetic",
+      "tier": "A",
+      "micro_copy": "韓国カラコン / アイドル着用ブランド",
+      "button_text": "カラーを見る",
+      "size_limitation": "no_728x90",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+3O69UI+4XSA+6QMKH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+6QMKH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187222&wid=002&eno=01&mid=s00000023041001132000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3O69UI+4XSA+6QMKH\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+3O69UI+4XSA+68MF5",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+68MF5\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187222&wid=002&eno=01&mid=s00000023041001048000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3O69UI+4XSA+68MF5\" alt=\"\">"
+        }
+      }
+    },
+    "kkday": {
+      "name": "KKday",
+      "program_id": null,
+      "category": "travel_tour",
+      "tier": "A",
+      "micro_copy": "ソウル現地ツアー / 日本語OK",
+      "button_text": "ツアーを探す",
+      "size_limitation": null,
+      "sizes": {
+        "728x90": {
+          "a8mat": "457NRV+42GOD6+52F8+61JSH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+42GOD6+52F8+61JSH\" rel=\"nofollow\"><img border=\"0\" width=\"728\" height=\"90\" alt=\"\" src=\"https://www22.a8.net/svt/bgt?aid=250620187246&wid=002&eno=01&mid=s00000023642001015000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www14.a8.net/0.gif?a8mat=457NRV+42GOD6+52F8+61JSH\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+42GOD6+52F8+5ZEMP",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+42GOD6+52F8+5ZEMP\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www20.a8.net/svt/bgt?aid=250620187246&wid=002&eno=01&mid=s00000023642001005000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+42GOD6+52F8+5ZEMP\" alt=\"\">"
+        },
+        "300x250": {
+          "a8mat": "457NRV+42GOD6+52F8+5ZMCH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+42GOD6+52F8+5ZMCH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187246&wid=002&eno=01&mid=s00000023642001006000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www19.a8.net/0.gif?a8mat=457NRV+42GOD6+52F8+5ZMCH\" alt=\"\">"
+        }
+      }
+    },
+    "ikyu": {
+      "name": "一休.com",
+      "program_id": null,
+      "category": "travel_hotel",
+      "tier": "A",
+      "micro_copy": "高級ホテル予約 / 直前割でお得",
+      "button_text": "空室を確認",
+      "size_limitation": null,
+      "sizes": {
+        "728x90": {
+          "a8mat": "457NRV+4Y0NFE+1OK+77RUP",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+4Y0NFE+1OK+77RUP\" rel=\"nofollow\"><img border=\"0\" width=\"728\" height=\"90\" alt=\"\" src=\"https://www25.a8.net/svt/bgt?aid=250620187299&wid=002&eno=01&mid=s00000000218001212000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+4Y0NFE+1OK+77RUP\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+4Y0NFE+1OK+6NETT",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+4Y0NFE+1OK+6NETT\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www29.a8.net/svt/bgt?aid=250620187299&wid=002&eno=01&mid=s00000000218001117000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+4Y0NFE+1OK+6NETT\" alt=\"\">"
+        },
+        "300x250": {
+          "a8mat": "457NRV+4Y0NFE+1OK+7AZLD",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+4Y0NFE+1OK+7AZLD\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www25.a8.net/svt/bgt?aid=250620187299&wid=002&eno=01&mid=s00000000218001227000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+4Y0NFE+1OK+7AZLD\" alt=\"\">"
+        }
+      }
+    },
+    "newt": {
+      "name": "NEWT",
+      "program_id": null,
+      "category": "travel_app",
+      "tier": "B",
+      "micro_copy": "海外旅行アプリ / 航空券+ホテル一括",
+      "button_text": "アプリで予約",
+      "size_limitation": "only_300x250",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+41V8RE+5GQS+614CX",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+41V8RE+5GQS+614CX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187245&wid=002&eno=01&mid=s00000025498001013000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+41V8RE+5GQS+614CX\" alt=\"\">"
+        }
+      }
+    },
+    "matilda": {
+      "name": "MATILDA",
+      "program_id": null,
+      "category": "cosmetic_korean",
+      "tier": "B",
+      "micro_copy": "韓国コスメ専門 / 日本未入荷ブランド",
+      "button_text": "ブランドを見る",
+      "size_limitation": "only_300x250",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+3I7XSQ+5PQ4+5ZU29",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3I7XSQ+5PQ4+5ZU29\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www29.a8.net/svt/bgt?aid=250620187212&wid=002&eno=01&mid=s00000026662001007000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+3I7XSQ+5PQ4+5ZU29\" alt=\"\">"
+        }
+      }
+    },
+    "codibook": {
+      "name": "Codibook",
+      "program_id": null,
+      "category": "fashion_korean",
+      "tier": "B",
+      "micro_copy": "韓国ファッション / トレンド最前線",
+      "button_text": "コーデを探す",
+      "size_limitation": "no_728x90",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+33XJA2+47JU+5ZMCH",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+33XJA2+47JU+5ZMCH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www28.a8.net/svt/bgt?aid=250620187188&wid=002&eno=01&mid=s00000019641001006000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+33XJA2+47JU+5ZMCH\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+33XJA2+47JU+5ZEMP",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+33XJA2+47JU+5ZEMP\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www28.a8.net/svt/bgt?aid=250620187188&wid=002&eno=01&mid=s00000019641001005000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www18.a8.net/0.gif?a8mat=457NRV+33XJA2+47JU+5ZEMP\" alt=\"\">"
+        }
+      }
+    },
+    "italki": {
+      "name": "italki",
+      "program_id": null,
+      "category": "language",
+      "tier": "C",
+      "micro_copy": "オンライン韓国語 / ネイティブ講師",
+      "button_text": "講師を探す",
+      "size_limitation": "only_300x250",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+3C9LQY+5NSE+5YZ75",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3C9LQY+5NSE+5YZ75\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=250620187202&wid=002&eno=01&mid=s00000026411001003000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+3C9LQY+5NSE+5YZ75\" alt=\"\">"
+        }
+      }
+    },
+    "dekiru_korean": {
+      "name": "できる韓国語オンライン",
+      "program_id": "23-0329",
+      "category": "language",
+      "tier": "C",
+      "micro_copy": "韓国語学習 / 動画+オンラインレッスン",
+      "button_text": "無料体験を見る",
+      "size_limitation": "no_728x90",
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+33C3OA+573K+609HT",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+33C3OA+573K+609HT\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www22.a8.net/svt/bgt?aid=250620187187&wid=002&eno=01&mid=s00000024248001009000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+33C3OA+573K+609HT\" alt=\"\">"
+        },
+        "320x50": {
+          "a8mat": "457NRV+33C3OA+573K+601S1",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+33C3OA+573K+601S1\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187187&wid=002&eno=01&mid=s00000024248001008000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+33C3OA+573K+601S1\" alt=\"\">"
+        }
+      }
+    },
+    "sazo_purchase_agent": {
+      "name": "SAZO",
+      "program_id": "25-1105",
+      "category": "shopping_proxy",
+      "tier": "B",
+      "micro_copy": "韓国商品代行 / URL入力で簡単購入",
+      "button_text": "代行を依頼",
+      "size_limitation": "only_300x250",
+      "update_note": "a8mat ID変更 (旧コードあれば置換)",
+      "sizes": {
+        "300x250": {
+          "a8mat": "4B1THU+6NXQCA+5TN8+60WN5",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=4B1THU+6NXQCA+5TN8+60WN5\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www25.a8.net/svt/bgt?aid=260425362403&wid=002&eno=01&mid=s00000027170001012000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=4B1THU+6NXQCA+5TN8+60WN5\" alt=\"\">"
+        }
+      }
+    }
+  }
+}

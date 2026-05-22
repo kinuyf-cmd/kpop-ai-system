@@ -1,0 +1,42 @@
+{
+  "cta_taiwan_night": {
+    "id": 10284,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-taiwan-night-hero.jpg",
+    "alt": "台湾の夜景"
+  },
+  "cta_night_market": {
+    "id": 10285,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-taiwan-night-market.jpg",
+    "alt": "台湾夜市"
+  },
+  "cta_seoul_night": {
+    "id": 10286,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-seoul-night-hero.jpg",
+    "alt": "ソウル夜景"
+  },
+  "cta_taipei101": {
+    "id": 10287,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-taipei-cityscape.jpg",
+    "alt": "台北の街並み"
+  },
+  "cta_concert_venue": {
+    "id": 10288,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-concert-stage.jpg",
+    "alt": "コンサート会場"
+  },
+  "cta_gangnam": {
+    "id": 10512,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-korea-gangnam.jpg",
+    "alt": "韓国の街"
+  },
+  "cta_kpop_concert": {
+    "id": 10513,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-kpop-concert-crowd.jpg",
+    "alt": "K-POPコンサート"
+  },
+  "cta_korea_shopping": {
+    "id": 10514,
+    "url": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/cta-korea-shopping.jpg",
+    "alt": "韓国ショッピング"
+  }
+}

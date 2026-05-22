@@ -1,0 +1,60 @@
+{
+  "_metadata": {
+    "purpose": "J収益化(AdSense/A8/GA4/CTA)の本番化時に切替える値を一元管理する設定ファイル。本番固定URL・client id・measurement id はここ(または同名の環境変数)から読み込み、コードにハードコードしない。",
+    "version": "1.0",
+    "created": "2026-05-22",
+    "milestone": "M2-J",
+    "activation_phase": "C-7 (本番化)",
+    "note": "未設定(空文字/null)でも import エラーにならず、配信は無効化される設計。オーナーは本番化時に下記の owner_must_set 値を埋める。"
+  },
+
+  "delivery_enabled": false,
+
+  "site": {
+    "_comment": "投稿先は stg。配信開始前は stg を指す。本番化時に本番URLへ切替。環境変数 SITE_URL があればそちらを優先。",
+    "stg_url": "https://stg.kpopjournal.tokyo",
+    "production_url": "https://www.kpopjournal.tokyo",
+    "active_target": "stg"
+  },
+
+  "adsense": {
+    "_comment": "J-1: AdSenseタグ。client_id(ca-pub-xxxx)未設定の間はタグを出力しない。環境変数 ADSENSE_CLIENT_ID を優先。",
+    "enabled": false,
+    "client_id": "",
+    "auto_ads": true,
+    "manual_slots": {
+      "in_article": "",
+      "sidebar": ""
+    },
+    "owner_must_set": ["client_id (ca-pub-XXXXXXXXXXXXXXXX)"]
+  },
+
+  "ga4": {
+    "_comment": "J-3: GA4イベント送信。measurement_id(G-XXXX)未設定なら gtag.js を明示ロードしない(既存テーマの gtag を使う)。property_id は集計用で .env GA4_PROPERTY_ID に既存。",
+    "measurement_id": "",
+    "property_id_env": "GA4_PROPERTY_ID",
+    "events": {
+      "cta_click": ["cta_click_top", "cta_click_middle", "cta_click_bottom", "cta_click_fixed_bar"],
+      "cta_view": "cta_view",
+      "fixed_bar": ["fixed_cta_impression", "fixed_cta_close"]
+    },
+    "owner_must_set": ["measurement_id (G-XXXXXXXXXX) ※AdSense独自ロードが必要な場合のみ。既存テーマにgtagがあれば不要"]
+  },
+
+  "a8": {
+    "_comment": "J-2: A8.net。a8mat/aid/mid は公開トラッキングコード(クライアント側に露出する前提=secretではない)。データは config/affiliate/a8_master.json と cta/a8_banners.json。",
+    "master_file": "config/affiliate/a8_master.json",
+    "banners_file": "cta/a8_banners.json",
+    "genre_map_file": "config/affiliate/cta_genre_map.json",
+    "click_base_url": "https://px.a8.net/svt/ejp"
+  },
+
+  "cta": {
+    "_comment": "J-4: CTA注入。新規投稿のみ対象。stgで動作確認→本番化。",
+    "target_posts": "new_only",
+    "cutoff_date": "2026-05-04T00:00:00",
+    "max_cta_per_article": 3,
+    "min_article_length": 2500,
+    "pr_disclosure_required": true
+  }
+}

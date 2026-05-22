@@ -1,0 +1,359 @@
+{
+  "_metadata": {
+    "version": "v2",
+    "max_cta_per_article": 3,
+    "min_article_length_for_cta": 400,
+    "phase30_hybrid_added": "2026-05-06",
+    "hybrid_target": "new_posts_only_after_20260504"
+  },
+  "hybrid_banner_matrix": {
+    "_note": "Phase30: 9カテゴリ×3ポジション×メイン/サブ (新規投稿専用)",
+    "korea_travel": {
+      "title_regex": "韓国旅行|ソウル|釜山|仁川|聖地巡礼|韓国観光|明洞|弘大|江南",
+      "wp_categories": [23, 45],
+      "wp_tags": ["韓国旅行", "ソウル", "釜山"],
+      "position_top": {"main": "global_wifi", "fallback": "korea_data_wifi"},
+      "position_middle": {"main": "kkday", "fallback": "newt"},
+      "position_bottom": {"main": "kkday", "sub": "global_wifi"}
+    },
+    "luxury_hotel": {
+      "title_regex": "高級ホテル|ラグジュアリー|五つ星|スイート|一休|リゾート",
+      "wp_categories": [23, 45],
+      "wp_tags": ["ホテル", "高級", "釜山", "ソウル"],
+      "position_top": {"main": "ikyu", "fallback": "ikyu"},
+      "position_middle": {"main": "ikyu", "fallback": "kkday"},
+      "position_bottom": {"main": "ikyu", "sub": "airtori_intl"}
+    },
+    "live_concert": {
+      "title_regex": "ライブ|コンサート|ツアー|ファンミ|公演|kcon|来日|幕張|kアリーナ",
+      "wp_categories": [12, 34],
+      "wp_tags": ["コンサート", "ライブ", "ツアー"],
+      "position_top": {"main": "global_wifi", "fallback": "voyageesim"},
+      "position_middle": {"main": "newt", "fallback": "kkday"},
+      "position_bottom": {"main": "kkday", "sub": "global_wifi"}
+    },
+    "fashion_oshikatsu": {
+      "title_regex": "ファッション|コーデ|私服|空港ファッション|推し活|衣装|スタイル",
+      "wp_categories": [56],
+      "wp_tags": ["ファッション", "コーデ", "推し活"],
+      "position_top": {"main": "dholic", "fallback": "codibook"},
+      "position_middle": {"main": "codibook", "fallback": "matilda"},
+      "position_bottom": {"main": "dholic", "sub": "codibook"}
+    },
+    "cosme_makeup": {
+      "title_regex": "コスメ|メイク|化粧|リップ|アイシャドウ|スキンケア|美容|カラコン",
+      "wp_categories": [67],
+      "wp_tags": ["コスメ", "メイク", "美容"],
+      "position_top": {"main": "olens_poplens", "fallback": "olens_poplens"},
+      "position_middle": {"main": "matilda", "fallback": "olens_poplens"},
+      "position_bottom": {"main": "olens_poplens", "sub": "matilda"}
+    },
+    "video_streaming": {
+      "title_regex": "動画|配信|Netflix|YouTube|番組|バラエティ|V LIVE",
+      "wp_categories": [78],
+      "wp_tags": ["動画", "配信", "YouTube"],
+      "position_top": {"main": null, "fallback": null},
+      "position_middle": {"main": null, "fallback": null},
+      "position_bottom": {"main": "global_wifi", "sub": "voyageesim"}
+    },
+    "lyrics_translation": {
+      "title_regex": "歌詞|翻訳|韓国語|ハングル|フレーズ|意味|和訳",
+      "wp_categories": [89],
+      "wp_tags": ["歌詞", "韓国語", "翻訳"],
+      "position_top": {"main": "dekiru_korean", "fallback": "dekiru_korean"},
+      "position_middle": {"main": "italki", "fallback": "dekiru_korean"},
+      "position_bottom": {"main": "italki", "sub": "dekiru_korean"}
+    },
+    "breaking_news": {
+      "title_regex": "速報|緊急|発表|公式|解散|脱退",
+      "wp_categories": [11],
+      "wp_tags": ["ニュース"],
+      "position_top": {"main": null, "fallback": null},
+      "position_middle": {"main": null, "fallback": null},
+      "position_bottom": {"main": "global_wifi", "sub": "voyageesim"}
+    },
+    "esim_wifi": {
+      "title_regex": "eSIM|WiFi|モバイル|通信|データ|SIM",
+      "wp_categories": [23],
+      "wp_tags": ["eSIM", "WiFi", "通信"],
+      "position_top": {"main": "voyageesim", "fallback": "korea_data_wifi"},
+      "position_middle": {"main": "voyageesim", "fallback": "global_wifi"},
+      "position_bottom": {"main": "global_wifi", "sub": "korea_data_wifi"}
+    }
+  },
+  "hybrid_defaults": {
+    "_note": "マトリクスに該当しない場合のデフォルト案件 (a8_banners.json内のキーのみ使用)",
+    "position_top": {"main": "global_wifi", "fallback": "voyageesim"},
+    "position_middle": {"main": "matilda", "fallback": "codibook"},
+    "position_bottom": {"main": "global_wifi", "sub": "voyageesim"}
+  },
+  "genre_rules": {
+    "comeback": {
+      "keywords": [
+        "カムバック",
+        "comeback",
+        "新曲",
+        "新アルバム",
+        "MV公開",
+        "ティーザー",
+        "新譜"
+      ],
+      "cta_programs": [
+        "amazon_prime_video",
+        "rakuten_affiliate",
+        "matilda_dept"
+      ],
+      "cta_max": 3
+    },
+    "artist_deep": {
+      "keywords": [
+        "プロフィール",
+        "メンバー紹介",
+        "経歴",
+        "デビュー",
+        "解散",
+        "ヒストリー"
+      ],
+      "cta_programs": [
+        "amazon_prime_video",
+        "rakuten_affiliate",
+        "matilda_dept",
+        "qoo10_official"
+      ],
+      "cta_max": 3
+    },
+    "event_concert": {
+      "keywords": [
+        "コンサート",
+        "ライブ",
+        "ファンミーティング",
+        "ファンミ",
+        "ツアー",
+        "公演",
+        "ワールドツアー"
+      ],
+      "cta_programs": [
+        "airtori_domestic",
+        "airtori_hotel",
+        "airtori_plus",
+        "ikkyu_hotel"
+      ],
+      "cta_max": 3
+    },
+    "popup": {
+      "keywords": [
+        "ポップアップ",
+        "POP-UP",
+        "コラボカフェ",
+        "期間限定ストア",
+        "展示会"
+      ],
+      "cta_programs": [
+        "kkday_korea",
+        "saily_esim",
+        "korea_data_wifi",
+        "buyma_travel"
+      ],
+      "cta_max": 3
+    },
+    "makeup": {
+      "keywords": [
+        "メイク",
+        "コスメ",
+        "化粧",
+        "アイメイク",
+        "リップ",
+        "アイシャドウ",
+        "推しメイク",
+        "アイドル風"
+      ],
+      "cta_programs": [
+        "olens_poplens",
+        "kvillage_skincare",
+        "karapara007",
+        "qoo10_official"
+      ],
+      "cta_max": 3
+    },
+    "fashion": {
+      "keywords": [
+        "ファッション",
+        "コーデ",
+        "コーディネート",
+        "私服",
+        "空港ファッション",
+        "スタイル"
+      ],
+      "cta_programs": [
+        "dholic_fashion",
+        "codibook_fashion",
+        "nugu_fashion",
+        "xexymix_yoga"
+      ],
+      "cta_max": 3
+    },
+    "beauty_device": {
+      "keywords": [
+        "美顔器",
+        "スキンケア",
+        "美容機器",
+        "肌ケア"
+      ],
+      "cta_programs": [
+        "kvillage_facial_drtengle",
+        "kvillage_facial_pro",
+        "kvillage_skincare"
+      ],
+      "cta_max": 2
+    },
+    "korean_language": {
+      "description": "韓国語/歌詞解説記事",
+      "match_keywords": [
+        "韓国語",
+        "歌詞",
+        "ハングル",
+        "翻訳",
+        "フレーズ",
+        "単語"
+      ],
+      "cta_programs": [
+        "kvillage_korean_school",
+        "korean_college",
+        "italki_languages"
+      ]
+    },
+    "travel_korea": {
+      "keywords": [
+        "韓国旅行",
+        "ソウル",
+        "釜山",
+        "聖地巡礼",
+        "韓国観光"
+      ],
+      "cta_programs": [
+        "airtori_intl",
+        "kkday_korea",
+        "saily_esim",
+        "korea_data_wifi",
+        "buyma_travel"
+      ],
+      "cta_max": 3
+    },
+    "shopping": {
+      "keywords": [
+        "購入",
+        "通販",
+        "ショッピング",
+        "公式",
+        "グッズ"
+      ],
+      "cta_programs": [
+        "qoo10_official",
+        "sazo_purchase_agent",
+        "rakuten_affiliate"
+      ],
+      "cta_max": 3
+    },
+    "general_news": {
+      "keywords": [],
+      "cta_programs": [
+        "amazon_prime_video",
+        "matilda_dept",
+        "qoo10_official"
+      ],
+      "cta_max": 2
+    },
+    "korea_travel": {
+      "description": "韓国旅行記事 (ソウル/釜山/仁川/聖地巡礼)",
+      "match_keywords": [
+        "韓国",
+        "ソウル",
+        "釜山",
+        "仁川",
+        "聖地巡礼",
+        "韓国旅行"
+      ],
+      "cta_programs": [
+        "airtori_hotel",
+        "airtori_plus",
+        "voyageesim",
+        "korea_data_wifi",
+        "kkday_korea",
+        "newt_travel"
+      ]
+    },
+    "kpop_live_japan": {
+      "description": "K-POP国内ライブ記事",
+      "match_keywords": [
+        "コンサート",
+        "ライブ",
+        "来日",
+        "ツアー",
+        "kcon",
+        "公演",
+        "kアリーナ",
+        "幕張"
+      ],
+      "cta_programs": [
+        "airtori_hotel",
+        "airtori_plus",
+        "rakuten_affiliate",
+        "qoo10_official"
+      ]
+    },
+    "fashion_style": {
+      "description": "K-POPファッション/コーデ記事",
+      "match_keywords": [
+        "ファッション",
+        "コーデ",
+        "衣装",
+        "私服",
+        "着こなし",
+        "スタイル"
+      ],
+      "cta_programs": [
+        "dholic_fashion",
+        "codibook_fashion",
+        "styleonme",
+        "nugu_fashion",
+        "xexymix_yoga"
+      ]
+    },
+    "beauty_cosme": {
+      "description": "K-POPコスメ/メイク記事",
+      "match_keywords": [
+        "コスメ",
+        "メイク",
+        "化粧",
+        "スキンケア",
+        "リップ",
+        "美容",
+        "ファンデ"
+      ],
+      "cta_programs": [
+        "qoo10_official",
+        "olens_poplens",
+        "karapara007",
+        "matilda_dept",
+        "kvillage_skincare"
+      ]
+    }
+  },
+  "exclusion_rules": {
+    "if_artist_under_18_in_article": {
+      "exclude_programs": [
+        "whippy_dating"
+      ]
+    },
+    "if_genre_is_serious_news": {
+      "keywords": [
+        "事故",
+        "訃報",
+        "病気",
+        "解散",
+        "脱退理由"
+      ],
+      "cta_max": 0
+    }
+  }
+}
