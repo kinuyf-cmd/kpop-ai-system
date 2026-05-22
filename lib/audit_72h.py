@@ -284,14 +284,32 @@ def audit_gsc(hours=72):
 
         is_indexed = (verdict == "PASS" or r.get("status") == "indexed")
 
+        # noindex を尊重: ページが noindex タグで意図的に除外されている場合は
+        # 「未インデックス異常」ではないので P1/resubmit を上げない（本番公開前の
+        # サイト全体 noindex 状態での誤検知を防ぐ）。
+        coverage = str(r.get("coverageState", "")).lower()
+        indexing_state = str(r.get("indexingState", "")).upper()
+        is_noindex = ("noindex" in coverage) or (indexing_state == "BLOCKED_BY_META_TAG")
+
+        if is_noindex:
+            idx_status = "noindex"
+        elif is_indexed:
+            idx_status = "indexed"
+        elif verdict == "ERROR":
+            idx_status = "error"
+        else:
+            idx_status = "not_indexed"
+
+        # 再送信/P1は「indexed でなく noindex でもない」場合のみ点灯
+        needs_attention = (not is_indexed) and (not is_noindex)
         entry = {
             "post_id": pid,
             "url": url,
             "sent_at": sent_at_str or published_str or "",
-            "index_status": "indexed" if is_indexed else ("error" if verdict == "ERROR" else "not_indexed"),
+            "index_status": idx_status,
             "elapsed_hours": round(elapsed_h, 1) if elapsed_h is not None else None,
-            "resubmit_flag": bool(elapsed_h and elapsed_h >= 48 and not is_indexed),
-            "p1_alert": bool(elapsed_h and elapsed_h >= 72 and not is_indexed),
+            "resubmit_flag": bool(elapsed_h and elapsed_h >= 48 and needs_attention),
+            "p1_alert": bool(elapsed_h and elapsed_h >= 72 and needs_attention),
         }
         tracking_entries.append(entry)
 

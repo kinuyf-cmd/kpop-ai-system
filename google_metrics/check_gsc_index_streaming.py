@@ -152,10 +152,12 @@ def main():
     print(f"未登録(unknown): {unknown}/{len(results)}")
 
     if args.save:
-        with open(LOG_FILE, "a") as f:
+        # 最新スナップショットで上書き（append だと古い NEUTRAL が永久に残り、
+        # audit_72h.py の先頭優先 dedup で最古レコードが採用される不具合の元になる）
+        with open(LOG_FILE, "w") as f:
             for r in results:
                 f.write(json.dumps(r, ensure_ascii=False) + "\n")
-        print(f"\n✅ ログ保存: {LOG_FILE}")
+        print(f"\n✅ ログ保存(上書き): {LOG_FILE}")
 
 
 if __name__ == "__main__":
