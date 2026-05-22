@@ -174,3 +174,32 @@ class TestIncident_SqlInjectionPrevention:
         # \' に対するエスケープが文字列リテラル外に漏れない
         result = esc_sql("\\'")
         assert "\\\\" in result
+
+
+class TestIncident8_BreakingDedupEnJaMismatch:
+    """インシデント8: 速報selector dedup が EN signal title ⇄ JA 公開title で
+    照合不能 → 既出ネタを再選出(2026-05-23 本番公開後監査で検出)。
+    主キーを soompi記事ID(URLの /article/<id>)に変更して回避。"""
+
+    def _mod(self):
+        from lib import breaking_news_selector as m
+        return m
+
+    def test_soompi_id_extracted_from_url(self):
+        m = self._mod()
+        assert m._soompi_id("https://www.soompi.com/article/1842246wpp/onf-x") == "1842246"
+        assert m._soompi_id("https://example.com/no-article") == ""
+
+    def test_duplicate_matched_by_soompi_id_not_title(self):
+        # EN signal title だが、既出 soompi記事ID と一致 → 重複判定されること
+        m = self._mod()
+        sig = {"url": "https://www.soompi.com/article/1842246wpp/onf-announces",
+               "title": "ONF Announces Comeback"}  # JA公開titleとは別言語
+        dup, reason = m.is_duplicate(sig, set(), {"1842246"}, set())
+        assert dup is True and "ID" in reason
+
+    def test_new_soompi_id_not_excluded(self):
+        m = self._mod()
+        sig = {"url": "https://www.soompi.com/article/9999999wpp/new", "title": "X"}
+        dup, _ = m.is_duplicate(sig, set(), {"1842246"}, set())
+        assert dup is False

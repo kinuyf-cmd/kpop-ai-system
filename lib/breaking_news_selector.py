@@ -29,6 +29,7 @@ from datetime import datetime
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SIGNALS = os.path.join(BASE, "data", "trend_signals.jsonl")
 ARTICLE_INDEX = os.path.join(BASE, "logs", "article_index.json")
+BREAKING_DRAFTS = os.path.join(BASE, "reports", "breaking_drafts")
 LOG = os.path.join(BASE, "logs", "breaking_selector.log")
 
 URGENCY_WEIGHT = {"high": 3.0, "normal": 0.0}
@@ -60,9 +61,22 @@ def load_signals(path=SIGNALS):
     return sigs
 
 
+def _soompi_id(url):
+    """soompi記事URLから安定IDを抽出。/article/<digits>wpp/... → '<digits>'。
+    EN signal title ⇄ JA 公開title の照合不能を回避する確実な dedup キー。"""
+    m = re.search(r"/article/(\d+)", url or "")
+    return m.group(1) if m else ""
+
+
 def load_published():
-    """既出記事の正規化タイトル集合と URL 集合を返す。"""
-    titles, urls = set(), set()
+    """既出記事の (正規化タイトル集合, 既出 soompi記事ID集合) を返す。
+
+    タイトルは EN signal ⇄ JA 公開title で一致しないため、主キーは
+    速報draft meta(reports/breaking_drafts/*.meta.json)の source_url から
+    取り出した soompi記事IDとする。article_index のタイトルは補助。
+    """
+    titles, src_ids = set(), set()
+    # 補助: article_index の JA タイトル(JA signal が来た場合のみ効く)
     if os.path.exists(ARTICLE_INDEX):
         try:
             data = json.load(open(ARTICLE_INDEX, encoding="utf-8"))
@@ -70,12 +84,21 @@ def load_published():
                 t = _norm(a.get("title", ""))
                 if t:
                     titles.add(t)
-                u = a.get("url", "").rstrip("/")
-                if u:
-                    urls.add(u)
         except (json.JSONDecodeError, OSError):
             pass
-    return titles, urls
+    # 主キー: 速報draft meta の source_url → soompi記事ID(既に記事化済み)
+    if os.path.isdir(BREAKING_DRAFTS):
+        for fn in os.listdir(BREAKING_DRAFTS):
+            if not fn.endswith(".meta.json"):
+                continue
+            try:
+                meta = json.load(open(os.path.join(BREAKING_DRAFTS, fn), encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            sid = _soompi_id(meta.get("source_url", ""))
+            if sid:
+                src_ids.add(sid)
+    return titles, src_ids
 
 
 def _norm(s):
@@ -85,14 +108,16 @@ def _norm(s):
     return s.lower()
 
 
-def is_duplicate(sig, pub_titles, pub_urls, seen_urls):
+def is_duplicate(sig, pub_titles, pub_src_ids, seen_ids):
     url = (sig.get("url") or "").rstrip("/")
-    if url and url in seen_urls:
-        return True, "同一バッチ内URL重複"
-    if url and url in pub_urls:
-        return True, "既出URL"
+    sid = _soompi_id(url)
+    # 主キー: soompi記事ID(EN/JA タイトル不一致を回避)
+    if sid and sid in seen_ids:
+        return True, "同一バッチ内ID重複"
+    if sid and sid in pub_src_ids:
+        return True, "既出(soompi記事ID一致)"
     title_norm = _norm(sig.get("title", ""))
-    # 既出タイトルとの完全一致(部分一致は誤検知が多いので完全一致のみ)
+    # 補助: 既出タイトル完全一致(JA signal のときのみ効く。部分一致は誤検知多く不使用)
     if title_norm and title_norm in pub_titles:
         return True, "既出タイトル一致"
     return False, ""
@@ -140,20 +165,20 @@ def select(top=5, high_only=False):
         sigs = [s for s in sigs if str(s.get("urgency")) == "high"]
         _log(f"high-only フィルタ: {before} → {len(sigs)}件 "
              f"(engagement_score が urgency と完全相関のため、速報は質重視で high のみ採用)")
-    pub_titles, pub_urls = load_published()
-    _log(f"既出照合元: title {len(pub_titles)} / url {len(pub_urls)}")
+    pub_titles, pub_src_ids = load_published()
+    _log(f"既出照合元: title {len(pub_titles)} / soompi記事ID {len(pub_src_ids)}")
 
-    # 既出除外
-    seen_urls = set()
+    # 既出除外(主キー=soompi記事ID)
+    seen_ids = set()
     candidates, excluded = [], []
     for s in sigs:
-        dup, reason = is_duplicate(s, pub_titles, pub_urls, seen_urls)
+        dup, reason = is_duplicate(s, pub_titles, pub_src_ids, seen_ids)
         if dup:
             excluded.append((s.get("title", "")[:50], reason))
             continue
-        url = (s.get("url") or "").rstrip("/")
-        if url:
-            seen_urls.add(url)
+        sid = _soompi_id((s.get("url") or "").rstrip("/"))
+        if sid:
+            seen_ids.add(sid)
         candidates.append(s)
     _log(f"既出/重複除外: {len(excluded)}件 → 候補 {len(candidates)}件")
     for t, r in excluded:
