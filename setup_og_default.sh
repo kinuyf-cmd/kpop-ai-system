@@ -30,20 +30,22 @@ OG_URL=""
 [ -z "$OG_URL" ] && OG_URL="https://www.kpopjournal.tokyo/wp-content/uploads/OG-DEFAULT(import後に確定)"
 echo "  既定 og:image URL: $OG_URL"
 
-# option を --format=json で取得(diagで実証: 二重エンコードJSON文字列が返る、9537B)
-RAW=$($WP option get aioseo_options --format=json 2>/dev/null || true)
-echo "  option 取得バイト長: $(printf '%s' "$RAW" | wc -c)"
+# option を --format=json で一時ファイルに直接保存(シェル変数/パイプを経由しない)
+# ※ python3 - <<'PY' は heredoc が stdin を占有するため、データは pipe でなくファイルで渡す
+RAW_FILE=$(mktemp /tmp/aioseo_raw.XXXXXX.json)
+$WP option get aioseo_options --format=json > "$RAW_FILE" 2>/dev/null || true
+echo "  option 取得バイト長: $(wc -c < "$RAW_FILE")"
 
 # バックアップ(適用時のみ)
 if [ "$APPLY" = 1 ]; then
   ts=$(date +%Y%m%d_%H%M%S)
-  printf '%s' "$RAW" > "$BK/aioseo_options.backup_$ts.json"
+  cp "$RAW_FILE" "$BK/aioseo_options.backup_$ts.json"
   echo "  バックアップ: $BK/aioseo_options.backup_$ts.json"
 fi
 
-printf '%s' "$RAW" | OG_URL="$OG_URL" APPLY="$APPLY" python3 - > /tmp/aioseo_payload.txt <<'PY'
+RAW_FILE="$RAW_FILE" OG_URL="$OG_URL" APPLY="$APPLY" python3 - > /tmp/aioseo_payload.txt <<'PY'
 import sys,os,json
-raw=sys.stdin.read()
+raw=open(os.environ["RAW_FILE"]).read()
 og=os.environ["OG_URL"]; apply=os.environ["APPLY"]=="1"
 
 # 二重デコード: option値が「JSON文字列」なら2回、生dictなら1回
@@ -94,5 +96,5 @@ if [ "$APPLY" = 1 ]; then
 else
   echo "  (DRY-RUN: 上記[後]の値で更新予定。元形式=二重エンコードを厳密再現)"
 fi
-rm -f /tmp/aioseo_payload.txt
+rm -f /tmp/aioseo_payload.txt "$RAW_FILE"
 echo "確認: curl -s https://www.kpopjournal.tokyo/stayc-2026-fan-concert-tour-stay-closer/ | grep -i og:image"
