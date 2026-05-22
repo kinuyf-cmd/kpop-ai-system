@@ -51,7 +51,13 @@ echo "  既定 og:image URL 予定: $OG_URL"
 
 python3 - "$CUR" "$OG_URL" "$APPLY" <<'PY' > /tmp/aioseo_new.json
 import sys,json
-cur=json.loads(sys.argv[1]) if sys.argv[1].strip() else {}
+try:
+    cur=json.loads(sys.argv[1]) if sys.argv[1].strip() else {}
+except Exception:
+    cur={}
+if not isinstance(cur,dict):
+    sys.stderr.write("  ✗ aioseo_options が dict として取得できない(空/失敗)。diag_aioseo_structure.sh で構造確認を先に。\n")
+    cur={}
 og_url=sys.argv[2]; apply=sys.argv[3]=="1"
 soc=cur.setdefault("social",{})
 fb=soc.setdefault("facebook",{})
