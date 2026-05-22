@@ -104,25 +104,20 @@ def import_one(slug, data, cat_meta, apply):
         print(f"      cat={wp_cat} / 本文{data['text_len']}字 / H2={data['h2']} / meta{len(data['meta'])}字 / posted={posted}")
         return "dry"
 
-    # wp-cli で DRAFT 作成(本文は stdin 経由でファイル渡し)
-    import tempfile
-    with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8") as f:
-        f.write(data["body"])
-        body_path = f.name
-    try:
-        cmd = ["sudo", "-u", "www-data", "wp", "--path=" + WP_PATH, "post", "create",
-               body_path, f"--post_title={data['title']}", "--post_status=draft",
-               f"--post_name={norm_slug}", "--post_type=post",
-               f"--post_excerpt={data['meta']}", "--porcelain"]
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        pid = r.stdout.strip()
-        if pid.isdigit():
-            print(f"OK  {norm_slug} -> DRAFT post ID={pid} ({data['title'][:40]})")
-            return pid
-        print(f"ERR {norm_slug}: {r.stderr[:120]}")
-        return None
-    finally:
-        os.unlink(body_path)
+    # wp-cli で DRAFT 作成。本文は wp-cli の stdin(`-`)で渡す。
+    # 注: tempファイルをパス渡しすると sudo -u www-data が /tmp を読めず失敗する。
+    # `post create -` で stdin から本文を読ませるのが確実(権限非依存)。
+    cmd = ["sudo", "-u", "www-data", "wp", "--path=" + WP_PATH, "post", "create", "-",
+           f"--post_title={data['title']}", "--post_status=draft",
+           f"--post_name={norm_slug}", "--post_type=post",
+           f"--post_excerpt={data['meta']}", "--porcelain"]
+    r = subprocess.run(cmd, input=data["body"], capture_output=True, text=True, timeout=60)
+    pid = r.stdout.strip().splitlines()[-1] if r.stdout.strip() else ""
+    if pid.isdigit():
+        print(f"OK  {norm_slug} -> DRAFT post ID={pid} ({data['title'][:40]})")
+        return pid
+    print(f"ERR {norm_slug}: rc={r.returncode} stdout={r.stdout.strip()[:80]} stderr={r.stderr.strip()[:160]}")
+    return None
 
 
 def main():
