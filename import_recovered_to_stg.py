@@ -35,9 +35,12 @@ SLUG_OVERRIDE = {
     "bts-641-000-3-1-20260413": "bts-arirang-641k-3weeks-no1-2026",
 }
 
-# カテゴリ(本番側 news/chart/guide/comeback/beauty/live)→ stg カテゴリ slug
+# カテゴリ(本番側 news/chart/guide/comeback/beauty/live)→ stg 実在カテゴリ slug
+# 注: stg に 'guide' カテゴリは無い(news/chart/beauty/live/travel/comeback/
+# fashion/popup/kdrama/oshikatsu/idol-wiki)。guide は推し活ガイド系が多いため
+# oshikatsu にマッピング(誤差は DRAFT で目視調整可)。
 CAT_MAP = {
-    "news": "news", "chart": "chart", "guide": "guide",
+    "news": "news", "chart": "chart", "guide": "oshikatsu",
     "comeback": "comeback", "beauty": "beauty", "live": "live",
 }
 
