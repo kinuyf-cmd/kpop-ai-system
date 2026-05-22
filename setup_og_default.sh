@@ -30,8 +30,9 @@ OG_URL=""
 [ -z "$OG_URL" ] && OG_URL="https://www.kpopjournal.tokyo/wp-content/uploads/OG-DEFAULT(import後に確定)"
 echo "  既定 og:image URL: $OG_URL"
 
-# option を生取得(--format=json は付けない。AIOSEOは値自体がJSON文字列)
-RAW=$($WP option get aioseo_options 2>/dev/null || true)
+# option を --format=json で取得(diagで実証: 二重エンコードJSON文字列が返る、9537B)
+RAW=$($WP option get aioseo_options --format=json 2>/dev/null || true)
+echo "  option 取得バイト長: $(printf '%s' "$RAW" | wc -c)"
 
 # バックアップ(適用時のみ)
 if [ "$APPLY" = 1 ]; then
@@ -74,7 +75,7 @@ hp["image"]=og; hp.setdefault("imageType","custom")
 tw=soc.setdefault("twitter",{}); twg=tw.setdefault("general",{}); twg["useOgData"]=True
 sys.stderr.write(f"  [後] defaultImageSourcePosts='featured' defaultImagePosts='{og}' homePage.image='{og}' twitter.useOgData=True\n")
 
-# 元の保存形式で再エンコード(depth=2 なら JSON文字列を更にJSON文字列化)
+# 再エンコード: depth=2 なら inner(JSON文字列)を1段ラップ → wp --format=json が1段デコードしてDB格納
 inner=json.dumps(d,ensure_ascii=False,separators=(',',':'))
 out=json.dumps(inner) if depth==2 else inner
 print(out)
@@ -86,8 +87,8 @@ if [ "$PAYLOAD" = "ABORT" ] || [ -z "$PAYLOAD" ]; then
 fi
 
 if [ "$APPLY" = 1 ]; then
-  # 二重エンコード文字列を option にそのまま書く(--format は付けない)
-  printf '%s' "$PAYLOAD" | $WP option update aioseo_options 2>/dev/null \
+  # --format=json で書く: wp が1段デコード → DBにはJSON文字列(元の保存形式)が入る
+  printf '%s' "$PAYLOAD" | $WP option update aioseo_options --format=json 2>/dev/null \
     && echo "  → aioseo_options 更新成功" || echo "  ✗ 更新失敗"
   $WP cache flush >/dev/null 2>&1 || true
 else
