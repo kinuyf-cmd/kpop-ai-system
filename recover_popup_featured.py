@@ -77,6 +77,17 @@ def main():
         # 既存 A+F 関数で複製+featured(sig は title のみ必要)
         att = P.download_and_attach_thumbnail(int(pid), ogimg, {"title": title})
         if att:
+            # _wp_attachment_metadata 生成(実寸/srcset)。
+            # 既存関数は metadata を作らず <img> が width="1" になるため、
+            # wp media regenerate で正規生成する(WP公式の安全な方法)。
+            rc = subprocess.run(
+                ["wp", f"--path={WP_PATH}", "media", "regenerate", str(att), "--yes", "--skip-delete"],
+                capture_output=True, text=True, timeout=120
+            )
+            if rc.returncode == 0:
+                print(f"    metadata regenerated (att={att})")
+            else:
+                print(f"    WARN: regenerate失敗(featuredは設定済): {rc.stderr.strip()[:100]}")
             done += 1
             print(f"    ✅ featured set: attachment={att}")
         if LIMIT and done >= LIMIT:
