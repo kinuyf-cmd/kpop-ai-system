@@ -20,8 +20,16 @@ import lib.popup_event_to_post as P   # DB creds は import 時に自己ロー�
 LIMIT = int(os.environ.get("LIMIT", "1"))   # 既定はサンプル1件
 WP_PATH = "/var/www/wp_stg"
 
+HEADERS = {"meta_value", "ID", "post_title", "post_status"}
+
 def mysql(sql):
-    return P.run_mysql(sql)
+    """run_mysql は `mysql -e` 形式で、出力がある時は必ず1行目に列名ヘッダが付く。
+    そのヘッダ行を除去して値だけ返す(空結果は空文字)。"""
+    out = P.run_mysql(sql)
+    lines = out.splitlines()
+    if lines and lines[0].strip() in HEADERS:
+        lines = lines[1:]
+    return "\n".join(lines).strip()
 
 def og_image_of(url):
     """出典ページの og:image を取得。"""
