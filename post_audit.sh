@@ -44,8 +44,23 @@ fi
 alog "===== 投稿後監査開始: ID=$POST_ID URL=$POST_URL ====="
 
 # ─── WordPress から記事情報を取得 ──────────────────────────────────────────
-POST_JSON=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}?context=edit" \
-  -u "$WP_USER:$WP_PASS" 2>/dev/null)
+# TEST MODE: 本番 WP API を叩かず、ファイルからモック投稿JSONを読む（ユニットテスト用）
+if [[ "${KPOP_AUDIT_TEST_MODE:-0}" == "1" ]]; then
+  alog "🧪 TEST MODE: モック投稿JSONを使用（WP API はスキップ）"
+  if [[ "${KPOP_AUDIT_TEST_HTTP_STATUS:-200}" != "200" ]]; then
+    alog "❌ TEST MODE: HTTP_STATUS=${KPOP_AUDIT_TEST_HTTP_STATUS} のため取得失敗を模擬"
+    exit 1
+  fi
+  if [[ -n "${KPOP_AUDIT_TEST_POST_JSON_FILE:-}" && -f "${KPOP_AUDIT_TEST_POST_JSON_FILE}" ]]; then
+    POST_JSON=$(cat "${KPOP_AUDIT_TEST_POST_JSON_FILE}")
+  else
+    alog "❌ TEST MODE: KPOP_AUDIT_TEST_POST_JSON_FILE が未指定または不在"
+    exit 1
+  fi
+else
+  POST_JSON=$(curl -s "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}?context=edit" \
+    -u "${WP_USER:-}:${WP_PASS:-}" 2>/dev/null)
+fi
 
 if [[ -z "$POST_JSON" ]] || echo "$POST_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); exit(0 if d.get('id') else 1)" 2>/dev/null; then
   : # OK
@@ -71,6 +86,18 @@ meta = d.get('meta', {})
 desc = meta.get('_aioseo_description', '')
 print(len(desc))                         # 7: META_DESC_LEN
 print(d['status'])                       # 8: STATUS
+# 9: CITE_LAYER 判定（categories_slug から記事レイヤを決定）
+#   Layer1=主要メディア引用 / Layer2=リリース引用 / Layer3=独自記事
+#   news,media,citation 系 → L1 / release,prtimes → L2 / それ以外(travel等) → L3
+slugs = [s.lower() for s in d.get('categories_slug', [])]
+L1 = {'news', 'media', 'citation', 'kpop-news'}
+L2 = {'release', 'prtimes', 'comeback'}
+if any(s in L1 for s in slugs):
+    print(1)
+elif any(s in L2 for s in slugs):
+    print(2)
+else:
+    print(3)
 " 2>/dev/null > "$_TMP_INFO"
 
 CONTENT_LEN=$(sed -n '1p' "$_TMP_INFO")
@@ -81,15 +108,27 @@ CAT_IDS=$(sed -n '5p' "$_TMP_INFO")
 TAG_IDS=$(sed -n '6p' "$_TMP_INFO")
 META_DESC_LEN=$(sed -n '7p' "$_TMP_INFO")
 STATUS=$(sed -n '8p' "$_TMP_INFO")
+CITE_LAYER=$(sed -n '9p' "$_TMP_INFO")
 rm -f "$_TMP_INFO"
 
 alog "本文文字数=$CONTENT_LEN / h2=$H2_COUNT / カテゴリ=$CAT_IDS / タグ=$TAG_IDS / メタ説明=${META_DESC_LEN}文字"
 
+# ─── 重大度の凡例 ───────────────────────────────────────────────────────────
+#   CRITICAL = 公開不可（HARD_FAIL / draft化）
+#   HIGH     = 要修正（自動修正 or 手動）
+#   MEDIUM   = 改善推奨
+#   LOW      = 参考情報
+# ISSUES へは "[CRITICAL] ..." の形で重大度を前置する。
+
 # ─── [1] 本文チェック ──────────────────────────────────────────────────────
 alog "--- [1] 本文チェック ---"
-if [[ "${CONTENT_LEN:-0}" -lt 800 ]]; then
-  ISSUES+=("本文が800文字未満: ${CONTENT_LEN}文字")
-  alog "⚠️ 本文が短すぎます: ${CONTENT_LEN}文字"
+if [[ "${CONTENT_LEN:-0}" -lt 3000 ]]; then
+  # CONTENT_LEN が必須下限 3000 字未満 → CRITICAL
+  ISSUES+=("[CRITICAL] 本文テキスト文字数不足: ${CONTENT_LEN}文字（3000字必須）")
+  alog "🚨 [CRITICAL] 本文文字数不足: ${CONTENT_LEN}文字（3000字必須）"
+elif [[ "${CONTENT_LEN:-0}" -lt 800 ]]; then
+  ISSUES+=("[HIGH] 本文が800文字未満: ${CONTENT_LEN}文字")
+  alog "⚠️ [HIGH] 本文が短すぎます: ${CONTENT_LEN}文字"
 else
   alog "✅ 本文文字数OK: ${CONTENT_LEN}文字"
 fi
@@ -457,6 +496,59 @@ if [[ -n "$RUN_ID" ]] && [[ -f "$ARCHIVE_DIR/3_arceus.md" ]]; then
   fi
 else
   alog "ℹ️ アーカイブなし or RUN_ID未指定 → スキップ"
+fi
+
+# ─── [14b] 3ペルソナ・ゲート（C-4 必須化 / kpop-original-article §4・§9-1）──────
+#   Layer3 独自記事のみ対象。①初心者/ライト ②コアファン ③検索流入一般読者 の
+#   3視点すべてに価値があるかを検査。欠落があれば CRITICAL(HARD_FAIL) で exit 2。
+#   引用記事（Layer1/Layer2）はゲート対象外。
+alog "--- [14b] 3ペルソナ・ゲート（C-4）---"
+if [[ "${CITE_LAYER:-1}" == "3" ]]; then
+  PERSONA_RESULT=$(echo "$POST_JSON" | python3 -c "
+import sys, json, re
+d = json.load(sys.stdin)
+content = d.get('content', {}).get('raw', '')
+text = re.sub(r'<[^>]+>', '', content)
+
+# ① 初心者/ライト層: 入門・基礎・初心者・とは 等
+beginner_kw = ['初心者', '入門', '基礎', 'とは', '初めて', 'はじめて', 'わかりやすく']
+# ② コアファン/オタク: 固有グループ名 + ファン文脈語
+group_names = ['BTS', 'NewJeans', 'BLACKPINK', 'aespa', 'SEVENTEEN', 'TWICE',
+               'IVE', 'LE SSERAFIM', 'Stray Kids', 'ENHYPEN', 'TXT', 'ITZY',
+               'NCT', 'ATEEZ', 'RIIZE', 'ILLIT', '推し', 'メンバー', 'ファンダム']
+fan_context = ['ファン目線', 'ファン', '推し', '聖地', 'グッズ', '深掘り', 'オタク']
+# ③ 検索流入一般読者: 比較・ランキング・行き方・料金・おすすめ 等の結論
+search_kw = ['比較', 'ランキング', '行き方', 'アクセス', '料金', 'おすすめ', 'まとめ', '徹底']
+
+has_beginner = any(k in text for k in beginner_kw)
+has_group = any(g in text for g in group_names)
+has_fancontext = any(c in text for c in fan_context)
+has_fan = has_group and has_fancontext
+has_search = any(k in text for k in search_kw)
+
+missing = []
+if not has_beginner: missing.append('①初心者/ライト層')
+if not has_fan:      missing.append('②ファン向け深掘り')
+if not has_search:   missing.append('③検索意図への結論')
+
+print('|'.join(missing))
+" 2>/dev/null || echo "PARSE_ERROR")
+
+  if [[ "$PERSONA_RESULT" == "PARSE_ERROR" ]]; then
+    alog "⚠️ 3ペルソナ・ゲート: 本文解析に失敗（判定スキップ）"
+  elif [[ -z "$PERSONA_RESULT" ]]; then
+    alog "✅ 3ペルソナ・ゲート PASS（①②③すべて充足）"
+  else
+    MISSING_PERSONA=$(echo "$PERSONA_RESULT" | tr '|' '、')
+    ISSUES+=("[CRITICAL] 3ペルソナ・ゲート不成立: 欠落ペルソナ=${MISSING_PERSONA}（HARD_FAIL: kpop-original-article §4/§9-1、C-4 必須化）")
+    alog "🚨 [CRITICAL] 3ペルソナ・ゲート不成立: 欠落ペルソナ=${MISSING_PERSONA}"
+    alog "🚫 HARD_FAIL → exit 2（公開不可）"
+    echo ""
+    echo "**🚨 3ペルソナ・ゲート不成立: 欠落=${MISSING_PERSONA}**"
+    exit 2
+  fi
+else
+  alog "ℹ️ 3ペルソナ・ゲートは対象外（Layer${CITE_LAYER:-1} 引用記事）"
 fi
 
 # ─── 監査結果サマリー ─────────────────────────────────────────────────────
