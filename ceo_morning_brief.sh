@@ -81,16 +81,30 @@ try:
     with open('$METRICS_FILE') as f:
         d = json.load(f)
     lines = []
-    ga4 = d.get('ga4', {}).get('summary', {})
+    # 鮮度チェック(2026-05-23): GA4計測が約6週間止まり古い値を報告し続けた事故の再発防止。
+    # date(対象日) が今日から3日以上前なら警告を先頭に出す。
+    from datetime import date as _date
+    _dt = d.get('date', '')
+    try:
+        _y, _m, _dd = (int(x) for x in _dt.split('-'))
+        _age = (_date.today() - _date(_y, _m, _dd)).days
+        if _age >= 3:
+            lines.append(f'  ⚠️ 計測データが古い(対象日 {_dt}・{_age}日前)。fetch_yesterday cron を確認')
+    except Exception:
+        lines.append('  ⚠️ 計測データの対象日が不明(metrics 未取得?)')
+    _errs = d.get('errors', {}) or {}
+    if _errs:
+        lines.append(f\"  ⚠️ 取得失敗: {', '.join(_errs.keys())}\")
+    ga4 = (d.get('ga4') or {}).get('summary', {}) or {}
     if ga4:
         lines.append(f\"  PV: {ga4.get('pageviews', '?')} / セッション: {ga4.get('sessions', '?')} / ユーザー: {ga4.get('users', '?')}\")
-    gsc = d.get('gsc', {})
-    queries = gsc.get('top_queries', [])
+    gsc = d.get('gsc') or {}
+    queries = gsc.get('top_queries', []) or []
     if queries:
         top = ', '.join(q['query'] for q in queries[:3])
         lines.append(f'  Top検索: {top}')
-    adsense = d.get('adsense', {})
-    earnings = adsense.get('ESTIMATED_EARNINGS')
+    adsense = d.get('adsense') or {}
+    earnings = adsense.get('ESTIMATED_EARNINGS') if isinstance(adsense, dict) else None
     if earnings:
         lines.append(f'  AdSense: ¥{earnings}')
     if lines:

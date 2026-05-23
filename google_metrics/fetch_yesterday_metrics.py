@@ -242,19 +242,46 @@ def get_adsense_data():
 
     return mapped
 
+def _safe(label, fn):
+    """1ブロックの失敗が全体(=書込)を止めないよう分離。失敗は error を残し継続。
+
+    背景(2026-05-23): AdSense OAuth が invalid_grant で失効していたため、
+    get_adsense_data() の例外が main() の dict 生成ごと巻き込み、GA4/GSC の値も
+    metrics_yesterday.json に書かれず、トラフィック計測が約6週間止まっていた。
+    GA4 / GSC / AdSense を独立ブロックにし、1つ失敗しても他は書く。"""
+    try:
+        return fn(), None
+    except Exception as e:  # 認証失効・API エラー等。値は出さずクラス名+短文のみ
+        msg = f"{type(e).__name__}: {str(e)[:160]}"
+        print(f"  WARN: {label} 取得失敗 → スキップ継続 ({msg})")
+        return None, msg
+
+
 def main():
+    ga4, ga4_err = _safe("GA4", get_ga4_data)
+    gsc, gsc_err = _safe("GSC", get_gsc_data)
+    adsense, ads_err = _safe("AdSense", get_adsense_data)
+
     result = {
         "date": start_date,
-        "ga4": get_ga4_data(),
-        "gsc": get_gsc_data(),
-        "adsense": get_adsense_data(),
+        "fetched_at": date.today().isoformat(),  # 鮮度判定用(brief 側で古さを検知)
+        "ga4": ga4,
+        "gsc": gsc,
+        "adsense": adsense,
+        "errors": {k: v for k, v in
+                   {"ga4": ga4_err, "gsc": gsc_err, "adsense": ads_err}.items() if v},
     }
 
     out_path = os.path.join(BASE_DIR, "metrics_yesterday.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(out_path)
+    # 1つでも取れていれば 0、全滅なら 1(cron ログで気づける)
+    ok = any(x is not None for x in (ga4, gsc, adsense))
+    print(out_path, "(GA4=%s GSC=%s AdSense=%s)" % (
+        "OK" if ga4 else "NG", "OK" if gsc else "NG", "OK" if adsense else "NG"))
+    return 0 if ok else 1
 
 if __name__ == "__main__":
-    main()
+    import sys
+    sys.exit(main())
