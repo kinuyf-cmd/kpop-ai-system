@@ -238,8 +238,14 @@ def trigger_breaking_if_urgent(new_signals):
         return
     try:
         import subprocess
+        # detector は anthropic/Pillow/numpy 等(P1-P6 移植)を要求するため venv_kpi の
+        # python で起動する。bare 'python3'(system)は anthropic 不在で
+        # ModuleNotFoundError で即死する(2026-05-23 移植配線)。venv が無ければ
+        # フォールバックで python3。
+        _venv_py = '/home/aiuser/kpop-ai-system/venv_kpi/bin/python'
+        _py = _venv_py if os.path.exists(_venv_py) else 'python3'
         subprocess.Popen(
-            ['python3', detector],
+            [_py, detector],
             stdout=open('/home/aiuser/kpop-ai-system/logs/breaking_trigger.log', 'a'),
             stderr=subprocess.STDOUT,
             start_new_session=True,
