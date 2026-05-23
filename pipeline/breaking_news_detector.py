@@ -18,7 +18,10 @@ from pipeline.auto_event_article import is_processed, mark_processed
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
-DAILY_BREAKING_LIMIT = 100  # 上限実質なし (品質はpre_publish_gate+post_publish_hookで担保)
+# 日次生産上限(2026-05-23 量産設計・オーナー決定 全自動publish + 1日10本上限)。
+# 暴走防止の歯止め。品質は pre_publish_gate(HARD_FAIL)で担保。新ドメイン初期は質優先。
+# env DAILY_BREAKING_LIMIT で上書き可(段階調整用)。
+DAILY_BREAKING_LIMIT = int(os.environ.get('DAILY_BREAKING_LIMIT', '10'))
 
 
 # 速報ソースとして不適切なソースタイプ（トレンド検知には使うが記事化しない）
