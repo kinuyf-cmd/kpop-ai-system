@@ -25,11 +25,28 @@ WP_URL = os.environ.get("WP_URL", "https://www.kpopjournal.tokyo")
 
 
 def _wp_auth_header() -> str:
-    """~/.wp_auth (curl config形式) から Authorization ヘッダ値を読む。
-    フォールバック: WP_USER / WP_PASS 環境変数から生成。
-    戻り値: 'Authorization: Basic xxxx' の文字列。
+    """WP REST 認証ヘッダを返す。
+    2026-05-23: 認証順序を「env 優先 → ~/.wp_auth フォールバック」に変更。
+    旧実装は ~/.wp_auth(curl config形式)を先に読んでいたが、移植後の本番では
+    このファイルが旧サーバの stale 認証(4/10)で 401 を返し、内部リンク enrich が
+    全失敗していた。env(WP_USER/WP_PASS)は publisher bot の有効な app password で
+    REST 通過実績があるため env を優先する(unified_publisher 1eac288 と同方針)。
+    戻り値: 'Authorization: Basic xxxx'。
     """
     import re as _re
+    import base64
+    try:
+        from dotenv import load_dotenv
+        load_dotenv("/home/aiuser/kpop-ai-system/.env")
+    except Exception:
+        pass
+    # 1) env を優先(有効な app password)
+    user = os.environ.get("WP_USER", "")
+    passwd = os.environ.get("WP_APP_PASS") or os.environ.get("WP_PASS", "")
+    if user and passwd:
+        token = base64.b64encode(f"{user}:{passwd}".encode()).decode()
+        return f"Authorization: Basic {token}"
+    # 2) フォールバック: ~/.wp_auth(env 未設定時のみ)
     wp_auth_path = os.path.expanduser("~/.wp_auth")
     if os.path.exists(wp_auth_path):
         with open(wp_auth_path) as f:
@@ -37,12 +54,7 @@ def _wp_auth_header() -> str:
                 m = _re.match(r'header\s*=\s*"(Authorization:\s*Basic\s+[^"\\n]+)"?', line.strip())
                 if m:
                     return m.group(1)
-    # フォールバック: 環境変数
-    import base64
-    user = os.environ.get("WP_USER", "")
-    passwd = os.environ.get("WP_PASS", "")
-    token = base64.b64encode(f"{user}:{passwd}".encode()).decode()
-    return f"Authorization: Basic {token}"
+    return "Authorization: Basic "
 
 CACHE_FILE = "/home/aiuser/kpop-ai-system/logs/article_index.json"
 CACHE_TTL_SECONDS = 3600  # 1時間キャッシュ
