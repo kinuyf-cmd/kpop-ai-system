@@ -475,11 +475,17 @@ def pre_publish_gate(
             _src_normalized, _ = apply_proper_noun_dict(source_title)
         except Exception:
             _src_normalized = source_title
-        _src_text = _src_normalized.lower()
+        # 2026-05-23: 照合対象を source_title だけでなく記事本文(=翻訳済みソース本文)にも
+        # 拡張。ソース本文に根拠のある固有名詞(例: WOODZ の曲名 "Drowning")をタイトルに
+        # 使っても「ソースにない語句」と誤判定して過剰BLOCKしていた事故への根治。
+        # 本文(title 候補の出所)に存在する語句は通し、本文にもタイトルにも無い語句のみ
+        # BLOCK する(捏造防止は維持)。
+        _body_plain = re.sub(r'<[^>]+>', ' ', body_html or '')
+        _src_text = (_src_normalized + ' ' + _body_plain).lower()
         # 記事タイトルの英字固有名詞を抽出
         _title_proper = set(re.findall(r'[A-Z][A-Za-z]{2,}', title))
         _title_proper -= {'速報', 'KPOP'}
-        # ソースにない固有名詞を検出
+        # ソース(タイトル+本文)のどこにも無い固有名詞を検出
         _added = {p for p in _title_proper if p.lower() not in _src_text}
         # 一般的な翻訳追加語を除外
         _added -= {'COUNTDOWN', 'JOURNAL'}
