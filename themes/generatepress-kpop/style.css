@@ -1,0 +1,4106 @@
+/*
+Theme Name: GeneratePress KPOP
+Theme URI: https://stg.kpopjournal.tokyo
+Description: KPOP JOURNAL 用 GeneratePress 子テーマ
+Author: TIGER WORK
+Author URI: https://kpopjournal.tokyo
+Template: generatepress
+Version: 1.0.0
+Text Domain: generatepress-kpop
+*/
+
+/* ===== 速報バー ===== */
+.kpop-breaking-bar {
+	display: flex;
+	align-items: center;
+	height: 40px;
+	background: #fff0f5;
+	border-bottom: 1px solid #f8c8d8;
+	overflow: hidden;
+}
+
+.bar-label {
+	flex-shrink: 0;
+	align-self: stretch;
+	display: flex;
+	align-items: center;
+	/* 段階8a: #e91e63 + #fff = 4.35:1(AA未達)→ #C2185B(5.87:1)。 */
+	background: #C2185B;
+	color: #fff;
+	font-weight: 700;
+	font-size: 13px;
+	padding: 0 14px;
+	letter-spacing: 0.04em;
+}
+
+/* トラック: 中身(1セット + 複製)を横スクロールさせる */
+.bar-track {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	flex: 1;
+	min-width: 0;
+	animation: scroll-left 30s linear infinite;
+}
+
+/* 複製セット(シームレスループ用)。インライン要素として並べる */
+.bar-dup {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* translateX(-50%) = ちょうど1セット分。複製が前セットと同位置に来る */
+@keyframes scroll-left {
+	0%   { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+
+/* ホバーで一時停止 */
+.kpop-breaking-bar:hover .bar-track {
+	animation-play-state: paused;
+}
+
+.bar-item {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 0 22px;
+	color: #2b2b32;
+	text-decoration: none;
+	font-size: 14px;
+}
+.bar-item:hover {
+	color: #e91e63;
+}
+.bar-item:hover .bar-time {
+	color: #e91e63;
+}
+
+.bar-time {
+	flex-shrink: 0;
+	/* 段階8a: #b8889a on #fff0f5 = 2.71:1(AA未達)→ #8A4A63(5.87:1)。 */
+	color: #8A4A63;
+	font-size: 12px;
+}
+
+/* アクセシビリティ: アニメーション抑制設定を尊重 */
+@media (prefers-reduced-motion: reduce) {
+	.bar-track {
+		animation: none;
+	}
+}
+
+/* レスポンシブ */
+@media (max-width: 600px) {
+	.kpop-breaking-bar { height: 36px; }
+	.bar-label { font-size: 12px; padding: 0 10px; }
+	.bar-item { font-size: 13px; padding: 0 16px; }
+	.bar-time { font-size: 11px; }
+}
+
+/* カスタムCSS はここに追加 */
+
+/* ============================
+   KPOP JOURNAL カラーパレット
+   ============================ */
+
+:root {
+  --kpop-pink: #E91E63;          /* ブランド原色。白上 4.35:1 → 白背景テキスト不可。背景/hover/装飾のみ */
+  --kpop-pink-dark: #C2185B;     /* 白上 5.87:1(AA)。白背景上のテキスト・リンクはこれ */
+  --kpop-pink-darker: #AD1457;   /* 段階8a追加。濃ピンク背景の hover(白文字 6.97:1、AA) */
+  --kpop-pink-light: #FCE4EC;    /* 薄ピンク背景 */
+  --kpop-text: #2B2B32;          /* 本文テキスト。白上 14:1 */
+  --kpop-gray: #8A4A63;          /* 段階8a修正: 旧#b8889a(2.99:1 AA未達)→ #8A4A63(白上 6.48:1、AA) */
+}
+
+/* リンク色 */
+a {
+  color: var(--kpop-pink);
+}
+a:hover, a:focus {
+  color: var(--kpop-pink-dark);
+}
+
+/* ナビゲーション */
+.main-navigation .main-nav ul li a {
+  color: var(--kpop-text);
+}
+.main-navigation .main-nav ul li a:hover,
+.main-navigation .main-nav ul li.current-menu-item a {
+  color: var(--kpop-pink);
+}
+
+/* サイトタイトル(ロゴテキスト)*/
+.site-title a,
+.main-title a {
+  color: var(--kpop-text);
+}
+
+/* ボタン */
+button,
+.button,
+input[type="submit"],
+.wp-block-button__link {
+  background-color: var(--kpop-pink);
+  color: #fff;
+  border: none;
+  transition: background-color 0.2s;
+}
+button:hover,
+.button:hover,
+input[type="submit"]:hover,
+.wp-block-button__link:hover {
+  background-color: var(--kpop-pink-dark);
+}
+
+/* ウィジェットタイトル */
+.widget-title,
+.widget .widget-title {
+  color: var(--kpop-text);
+  border-bottom: 2px solid var(--kpop-pink);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+/* 記事タイトルのリンク */
+.entry-title a {
+  color: var(--kpop-text);
+}
+.entry-title a:hover {
+  color: var(--kpop-pink);
+}
+
+/* カテゴリリンク */
+.entry-meta a,
+.cat-links a,
+.tags-links a {
+  color: var(--kpop-pink);
+}
+
+/* 検索ボタン */
+.search-form button {
+  background-color: var(--kpop-pink);
+}
+
+/* コンテナ幅(GP のデフォルトより少し広く)*/
+.grid-container {
+  max-width: 1200px;
+}
+
+/* ページネーション */
+.page-numbers.current {
+  background-color: var(--kpop-pink);
+  color: #fff;
+}
+.page-numbers:hover {
+  background-color: var(--kpop-pink-light);
+}
+
+/* ==========================================================================
+   ui-polish タスク3: WCAG AA コントラスト修正 (2026-05-19)
+   主犯: --kpop-pink (#E91E63) on white = 4.35 (基準4.5未達)
+   解決: リンク・ボタンは --kpop-pink-dark (#C2185B、7.46:1) を使用
+   速報バー .bar-time には影響なし(実測 breaking_bar_involved=0 で確認)
+   ========================================================================== */
+
+/* 1. 一般リンク(11件) */
+a {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+a:hover,
+a:focus {
+    color: var(--kpop-pink, #E91E63);
+}
+
+/* 2. Read More リンク(8件) */
+.read-more {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+    font-weight: 600;
+}
+.read-more:hover {
+    color: var(--kpop-pink, #E91E63) !important;
+}
+
+/* 3. Latest Posts ブロック内タイトル(5件) */
+.wp-block-latest-posts__post-title,
+.wp-block-latest-posts__post-title a,
+.wp-block-latest-posts__list li > a {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+}
+
+/* 4. Skip Link(1件、A11y用) */
+.screen-reader-text.skip-link,
+.skip-link {
+    color: #fff !important;
+    background-color: #1a1a1a !important;
+}
+
+/* 5. Search ボタン(1件) */
+.wp-block-search__button,
+.wp-block-search button[type="submit"] {
+    background-color: var(--kpop-pink-dark, #C2185B) !important;
+    color: #fff !important;
+}
+.wp-block-search__button:hover {
+    background-color: var(--kpop-pink, #E91E63) !important;
+}
+
+/* ==========================================================================
+   ui-polish タスク3 追加修正 (2026-05-19): class なしリンク 11件
+   実測(contrast_measurements.json)で確定した内訳:
+     - 1件: #menu-item-6 > a(ナビメニュー)
+     - 10件: #post-NN > div > footer > span > a(記事カードのフッター内リンク)
+   既存 a {} に負けていたため具体セレクタ + !important で上書き。
+   速報バー .bar-time / .kpop-breaking-bar には影響なし(セレクタが異なる)。
+   ========================================================================== */
+
+/* ナビメニューのリンク */
+.main-navigation a,
+.menu-item > a {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+}
+.main-navigation a:hover,
+.menu-item > a:hover {
+    color: var(--kpop-pink, #E91E63) !important;
+}
+
+/* 記事カードのフッター内リンク(entry-meta / footer 内の a)*/
+article footer a,
+.entry-meta a,
+.entry-footer a,
+footer.entry-meta a {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+}
+article footer a:hover,
+.entry-meta a:hover,
+.entry-footer a:hover {
+    color: var(--kpop-pink, #E91E63) !important;
+}
+
+/* ==========================================================================
+   ui-polish タスク3 v3: 速報バー a11y 対応 (2026-05-19)
+   失点: aria-hidden-focus 1件(functions.php で別途修正)
+        color-contrast 2件(.bar-label, .bar-time)
+   実測: .bar-label = E91E63背景+白 = 3.0:1, .bar-time = b8889a on fff0f5 = 2.9:1
+   修正: .bar-label 背景を C2185B(濃ピンク、5.9:1)、.bar-time 色を 8A4A63(4.7:1)
+   ========================================================================== */
+
+.bar-label {
+    background: #C2185B !important;
+    color: #fff !important;
+}
+
+.bar-time {
+    color: #8A4A63 !important;
+}
+
+/* ==========================================================================
+   M1 段階1 — 元サイト再現: 速報バー調整 + ヘッダー再構築 + ナビ (2026-05-20)
+   対象: ui_gap_analysis #1, #2, #3, #35-41
+   方針: 親 GeneratePress のクラスに対し子テーマ CSS で上書き。
+        コントラストは N2-c タスク3 の達成(AA)を壊さない。
+   ========================================================================== */
+
+/* --- #1 速報バー: 元サイト仕様(濃ピンク基調・やや低め)に調整 --- */
+/* 元サイト: 最上部の細い帯。現状 40px → 32px。背景は薄ピンクのまま、
+   下ボーダーを濃ピンクにして締める。bar-label は AA 維持(#C2185B)。 */
+.kpop-breaking-bar {
+    height: 32px;
+    background: #fff0f5;
+    border-bottom: 2px solid #C2185B;
+}
+.bar-label {
+    font-size: 12px;
+    padding: 0 12px;
+    letter-spacing: 0.08em;
+}
+.bar-item { font-size: 13px; padding: 0 18px; }
+.bar-time { font-size: 11px; }
+@media (max-width: 600px) {
+    .kpop-breaking-bar { height: 30px; }
+    .bar-label { font-size: 11px; padding: 0 9px; }
+    .bar-item { font-size: 12px; padding: 0 13px; }
+}
+
+/* --- #2 ヘッダー: 白基調・ロゴ左・検索右 --- */
+.site-header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+/* ロゴ: 「KPOP」黒太字 +「JOURNAL」ピンク細字。
+   後者は functions.php のサイトタイトル出力側で <span> 分割する。 */
+.site-title a,
+.main-title a {
+    color: #1a1a1a;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+.site-title .logo-journal {
+    color: var(--kpop-pink);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    font-size: 0.72em;
+    margin-left: 4px;
+}
+/* ヘッダー内検索: 角丸ピル・薄グレー背景 */
+.site-header .search-form input[type="search"],
+.header-search input[type="search"] {
+    background: #f3f3f5;
+    border: 1px solid #e3e3e8;
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 13px;
+}
+
+/* --- #3 グローバルナビ: ロゴ下段・中央寄せ・黒文字9項目 --- */
+.main-navigation {
+    background: #fff;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+.main-navigation .inside-navigation {
+    justify-content: center;
+}
+.main-navigation .main-nav ul li a {
+    color: #2B2B32 !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 16px;
+}
+.main-navigation .main-nav ul li a:hover {
+    color: var(--kpop-pink) !important;
+}
+/* 現在ページのメニュー項目は常時表示のテキストなので AA 必須。
+   --kpop-pink(#E91E63)は white 上 4.35:1 で未達 → --kpop-pink-dark
+   (#C2185B、7.46:1)を使う。カテゴリページで axe 検出した修正(段階6)。 */
+.main-navigation .main-nav ul li.current-menu-item a {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+}
+
+/* --- #35-41 配色・タイポ統一 --- */
+body { color: #2B2B32; }
+.entry-content,
+.entry-content p { color: #3a3a3a; }
+.entry-meta,
+.posted-on,
+.byline { color: #6b6b6b; }
+/* セクション見出し帯(カテゴリ別ブロック等で段階3が使う基底) */
+.kpop-section-title {
+    font-weight: 700;
+    border-bottom: 2px solid var(--kpop-pink);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+/* パンくず */
+/* 段階8a: #999 on #fff = 2.85:1(AA未達)→ #6b6b6b(5.33:1)。
+   .kpop-breadcrumb(段階5以降)と同じグレーに統一。 */
+.breadcrumb,
+.generate-breadcrumb {
+    font-size: 12px;
+    color: #6b6b6b;
+}
+.breadcrumb a { color: #6b6b6b; }
+
+/* ==========================================================================
+   M1 段階1b — 段階1 の不具合修正 (2026-05-20)
+   visual_diff_stage1 §4 / Pa11y H32.2 対応
+   前提: GeneratePress の nav 位置を nav-below-header に変更済み
+        (wp-cli で generate_settings[nav_position_setting] を更新)
+   ========================================================================== */
+
+/* --- 不具合2修正: ロゴ「JOURNAL」のピンク細字を確実に出す ---
+   Pa11y G18: #E91E63 on #fff = 4.35:1(AA未達)。
+   AA達成済みの濃ピンク #C2185B(7.46:1)を使う。元サイトのロゴ濃度とも整合。 */
+.site-title .logo-journal,
+.main-title .logo-journal,
+.site-branding .logo-journal {
+    color: var(--kpop-pink-dark) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.16em;
+    font-size: 0.68em;
+    margin-left: 5px;
+}
+
+/* --- 不具合1修正後の調整: nav-below-header 前提のナビ --- */
+/* nav-below-header だとナビは独立帯になる。中央寄せ + 余白を元サイトに合わせる */
+#site-navigation.main-navigation {
+    background: #fff;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+#site-navigation .inside-navigation {
+    justify-content: center;
+}
+/* ヘッダー(ロゴ行)は検索を右に置くため flex 化 */
+.inside-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/* --- Pa11y H32.2 修正: ヘッダー検索の submit ボタン --- */
+.header-search form {
+    display: flex;
+    align-items: center;
+    background: #f3f3f5;
+    border: 1px solid #e3e3e8;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.header-search input[type="search"] {
+    background: transparent;
+    border: none;
+    padding: 7px 8px 7px 16px;
+    font-size: 13px;
+    min-width: 180px;
+}
+.header-search input[type="search"]:focus {
+    /* 段階8b: フォーカス枠を全サイトで統一(--kpop-pink-dark)。
+       旧 --kpop-pink との不統一を解消(.kpop-artists-search と揃える)。 */
+    outline: 2px solid var(--kpop-pink-dark, #C2185B);
+    outline-offset: -2px;
+}
+.header-search-submit {
+    background: transparent !important;
+    border: none;
+    padding: 6px 14px 6px 6px;
+    cursor: pointer;
+    /* 段階8a: #888 on #fff = 3.54:1(通常文字AA未達)→ #6b6b6b(5.33:1)。 */
+    color: #6b6b6b;
+    font-size: 14px;
+    line-height: 1;
+}
+.header-search-submit:hover { color: var(--kpop-pink) !important; }
+
+/* ==========================================================================
+   M1 段階2a — 2カラムレイアウト (70:30) + レスポンシブ (2026-05-20)
+   stage2_design §3。GP は .site-content をフレックス親、
+   .content-area(左) / .widget-area.sidebar(右) を子として幅を出力する。
+   functions.php の generate_right_sidebar_width=30 と整合させ、
+   余白・モバイル縦積みを子テーマ CSS で整える。
+   ========================================================================== */
+
+/* デスクトップ: GP が出力する 70/30 を尊重しつつ間隔を確保 */
+/* 段階3 修正(2026-05-20): GP は get_header() で .site-content を開くため、
+   front-page.php の .kpop-hero もこの flex コンテナの子になる。
+   修正前は hero が3つ目の flex 項目になり content-area の幅を奪っていた
+   (実測 content-area=313px に潰れていた)。
+   → flex-wrap: wrap + hero を flex:0 0 100% にして hero を独立行へ。
+     content-area/widget-area は次の行で 70/30 に並ぶ。 */
+@media (min-width: 769px) {
+    .site-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        align-items: flex-start;
+    }
+    /* ヒーローは2カラムの外・全幅(stage2_design §1)。独立行を占める */
+    .site-content > .kpop-hero {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    /* content-area + widget-area の2項目で 70/30。gap 32px を差し引く */
+    .site-content .content-area {
+        flex: 1 1 calc(70% - 16px);
+        min-width: 0;
+    }
+    .site-content .widget-area.sidebar {
+        flex: 0 0 calc(30% - 16px);
+        max-width: calc(30% - 16px);
+    }
+}
+
+/* モバイル(<769px): 1カラム縦積み。サイドバーは本文の下に回す */
+@media (max-width: 768px) {
+    .site-content {
+        display: block;
+    }
+    .site-content .content-area,
+    .site-content .widget-area.sidebar {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+    }
+    .site-content .widget-area.sidebar {
+        margin-top: 32px;
+    }
+}
+
+/* サイドバー内ウィジェットの基本余白(段階2d の4箱もこれを継承) */
+.widget-area.sidebar .widget {
+    margin-bottom: 28px;
+}
+
+/* ==========================================================================
+   M1 段階2b — ヒーローブロック (2026-05-20)
+   大1 + 小2。タイトルはオーバーレイ(白文字 + 暗いグラデ下地で
+   コントラスト 4.5:1+ を確保 → 段階1 G18 の再発防止)。
+   ========================================================================== */
+.kpop-hero {
+    display: flex;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 24px auto 8px;
+    padding: 0 16px;
+}
+.hero-main {
+    position: relative;
+    flex: 1 1 66%;
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    aspect-ratio: 16 / 9;
+    background: #2b2b32;
+}
+.hero-main .hero-img,
+.hero-sub .hero-sub-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.hero-img--placeholder {
+    background: linear-gradient(135deg, #f8c8d8, #C2185B);
+}
+/* オーバーレイ: 下方向に濃くなるグラデ。白文字の可読性を担保 */
+.hero-overlay {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 40px 18px 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.hero-cat {
+    align-self: flex-start;
+    background: #C2185B;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+}
+.hero-title {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+.hero-subs {
+    flex: 1 1 34%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.hero-sub {
+    position: relative;
+    flex: 1;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    aspect-ratio: 16 / 9;
+    background: #2b2b32;
+}
+.hero-sub-title {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 24px 12px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%);
+    color: #fff;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+@media (max-width: 768px) {
+    .kpop-hero { flex-direction: column; }
+    .hero-title { font-size: 1.02rem; }
+}
+
+/* ==========================================================================
+   M1 段階2c — 新着記事リスト (2026-05-20)
+   サムネ(小)+ カテゴリ + タイトル + 日付 の横並びカードを縦20件。
+   ========================================================================== */
+.kpop-section-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    border-bottom: 2px solid var(--kpop-pink-dark, #C2185B);
+    padding-bottom: 8px;
+    margin: 8px 0 16px;
+}
+.kpop-section-en {
+    font-size: 0.7rem;
+    color: #C2185B;
+    letter-spacing: 0.12em;
+    margin-left: 6px;
+}
+.latest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.latest-item {
+    border-bottom: 1px solid #f0e3e8;
+}
+.latest-link {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    text-decoration: none;
+    align-items: flex-start;
+}
+.latest-thumb {
+    flex: 0 0 96px;
+}
+.latest-thumb img,
+.latest-thumb--placeholder {
+    width: 96px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+.latest-thumb--placeholder {
+    background: linear-gradient(135deg, #f8c8d8, #f0c0d0);
+}
+.latest-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.latest-cat {
+    align-self: flex-start;
+    color: #C2185B;
+    font-size: 11px;
+    font-weight: 700;
+}
+.latest-title {
+    color: #2B2B32;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+.latest-link:hover .latest-title {
+    color: #C2185B;
+}
+.latest-date {
+    color: #6b6b6b;
+    font-size: 0.74rem;
+}
+.kpop-more-wrap {
+    text-align: center;
+    margin: 20px 0 8px;
+}
+.kpop-more {
+    display: inline-block;
+    border: 1px solid #C2185B;
+    color: #C2185B;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 8px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+.kpop-more:hover {
+    background: #C2185B;
+    color: #fff;
+}
+.kpop-placeholder {
+    color: #6b6b6b;
+    font-size: 0.86rem;
+    padding: 16px 0;
+}
+
+/* ==========================================================================
+   M1 段階2d — サイドバー4ブロックの箱 (2026-05-20)
+   人気記事 / Today's Chart / カムバック予定 / イベント。
+   段階2d では Chart/カムバック/イベントは Custom HTML プレースホルダ。
+   人気記事は wordpress-popular-posts ウィジェット。
+   ========================================================================== */
+.kpop-sidebar-box {
+    background: #fff;
+    border: 1px solid #f0e3e8;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+.kpop-sidebar-box .widget-title,
+.kpop-sidebar-box .kpop-box-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #2B2B32;
+    border-bottom: 2px solid var(--kpop-pink-dark, #C2185B);
+    padding-bottom: 8px;
+    margin: 0 0 14px;
+}
+.kpop-sidebar-box .kpop-box-en {
+    font-size: 0.66rem;
+    color: #C2185B;
+    letter-spacing: 0.1em;
+    margin-left: 6px;
+}
+/* プレースホルダ枠(Chart / カムバック / イベント。本データは Day 8/13) */
+.kpop-box-placeholder {
+    color: #6b6b6b;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    padding: 8px 0;
+    text-align: center;
+}
+.kpop-box-placeholder .kpop-box-soon {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    color: #C2185B;
+    border: 1px solid #f0c0d0;
+    border-radius: 999px;
+    padding: 3px 12px;
+}
+/* wordpress-popular-posts ウィジェットを箱スタイルに馴染ませる */
+.widget-area.sidebar .popular-posts,
+.widget-area.sidebar .wpp-widget {
+    background: #fff;
+    border: 1px solid #f0e3e8;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+/* ==========================================================================
+   M1 段階3 / 段階3.1 — カテゴリ別記事ブロック (2026-05-20、3.1 で全幅化改訂)
+   count>0 のカテゴリを動的列挙。1ブロック = セクション見出し + 5列グリッド
+   (最大5件) + 「もっと見る →」。
+   レスポンシブ(段階3b): PC 5列グリッド → タブレット 3列 →
+   モバイル(<=600px)は横スクロール(カード固定幅で1.x枚見せ)。
+   配色は AA 達成済みの #C2185B 系のみ使用(新規ハードコード色を増やさない)。
+   .kpop-section-title / .kpop-section-en / .kpop-more は段階2c 既存を再利用。
+
+   段階3.1 構造(2026-05-20): カテゴリブロックを <main>(.content-area, 70%)の
+   外へ移動し全幅化(オーナー判断)。front-page.php で本セクションは
+   generate_construct_sidebars() の後に出力 → .site-content の直下子になる。
+     .kpop-cat-section … .site-content 直下子。flex:0 0 100% で独立行・全幅
+                          (.kpop-hero と同じ手法)。
+     .kpop-cat-block   … 内側コンテナ。max-width 1200px で中央寄せ。
+   ========================================================================== */
+
+/* 全幅セクション(.site-content の直下子) */
+.site-content > .kpop-cat-section {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+/* 内側コンテナ: 1200px 中央寄せ。GP の .grid-container と幅を揃える */
+.kpop-cat-block {
+    max-width: 1200px;
+    margin: 36px auto 8px;
+    padding: 0 16px;
+}
+
+/* --- 段階3a/3b: 5列グリッド --- */
+.kpop-cat-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+/* カード */
+.kpop-card {
+    min-width: 0;
+}
+.kpop-card-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+}
+.kpop-card-thumb {
+    position: relative;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: #2b2b32;
+}
+.kpop-card-thumb img,
+.kpop-card-thumb--placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.kpop-card-thumb--placeholder {
+    background: linear-gradient(135deg, #f8c8d8, #C2185B);
+}
+/* カテゴリバッジ: サムネ左上。濃ピンク背景 + 白文字(5.9:1、AA) */
+.kpop-card-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: #C2185B;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+}
+.kpop-card-title {
+    color: #2B2B32;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.5;
+    /* 3行で省略(グリッド高さを揃える) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.kpop-card-link:hover .kpop-card-title {
+    color: #C2185B;
+}
+.kpop-card-date {
+    color: #6b6b6b;
+    font-size: 0.72rem;
+}
+
+/* --- 段階3b: タブレット(601-1024px)は3列 --- */
+@media (max-width: 1024px) and (min-width: 601px) {
+    .kpop-cat-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* --- 段階3b: モバイル(<=600px)は横スクロール --- */
+/* グリッドを横1行のスクロール領域に切替。カードは固定幅で
+   「1.x枚見える」= 続きがあると分かる UX。横スクロールの不具合
+   (はみ出し)を防ぐため overflow-x: auto + スクロールスナップ。
+   段階3 修正(2026-05-20): 旧 margin:0 -16px は親パディングを16pxと
+   仮定していたが .content-area のパディングは0 → body に16px はみ出し
+   (実測 docW=406>390)。負マージンを廃し、グリッドを親幅内に収める。 */
+@media (max-width: 600px) {
+    .kpop-cat-grid {
+        display: flex;
+        grid-template-columns: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        gap: 12px;
+        margin: 0;
+        padding: 0 0 8px;
+    }
+    .kpop-card {
+        flex: 0 0 64%;
+        max-width: 64%;
+        scroll-snap-align: start;
+    }
+    /* 最後のカードの後にわずかな余白(端で気持ちよく止まる) */
+    .kpop-cat-grid::after {
+        content: "";
+        flex: 0 0 4px;
+    }
+    .kpop-card-title {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* ==========================================================================
+   M1 段階4 — フッター4カラム (2026-05-20)
+   元サイト参照: reference/スクリーンショット 2026-04-25 21.06.33.png(末尾)。
+   構造: 中央ロゴ + サブテキスト → 4カラム(CATEGORY/ARTISTS/ABOUT/FOLLOW)
+         → 著作権バー(GP .site-info に generate_copyright で上書き済み)。
+   配色: 白基調(元サイト確認)、見出し英字は #C2185B、本文 AA 維持。
+   実装: functions.php の generate_before_footer_content フックで .site-footer
+         内に .kpop-footer を出力。GP の .site-info は著作権バーとして残す。
+   ========================================================================== */
+
+/* フッター全体: 白基調 + 上ボーダー。GP の .site-footer 内に配置される */
+.kpop-footer {
+    background: #fff;
+    border-top: 1px solid #f0e3e8;
+}
+.kpop-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 44px 16px 32px;
+}
+
+/* --- 4c: 中央ロゴ + サブテキスト --- */
+.kpop-footer-brand {
+    text-align: center;
+    margin-bottom: 36px;
+}
+.kpop-footer-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
+}
+/* 「JOURNAL」部分は .logo-journal(ヘッダーと共通クラス)。
+   ヘッダー側 CSS の .site-title 限定指定に当たらないようフッターで再指定。 */
+.kpop-footer-logo .logo-journal {
+    color: var(--kpop-pink-dark, #C2185B);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    font-size: 0.68em;
+    margin-left: 5px;
+}
+.kpop-footer-tagline {
+    margin: 8px 0 0;
+    font-size: 0.8rem;
+    color: #6b6b6b;
+}
+
+/* --- 4b: 4カラムレイアウト --- */
+.kpop-footer-cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+}
+.kpop-footer-coltitle {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--kpop-pink-dark, #C2185B);
+    letter-spacing: 0.08em;
+    margin: 0 0 14px;
+    /* GP の見出しデフォルト余白・ボーダーを打ち消す */
+    border: none;
+    padding: 0;
+}
+.kpop-footer-colen {
+    display: block;
+    font-size: 0.6rem;
+    /* #b8889a は white 上で 2.99:1(AA未達)。axe で検出 → #8A4A63(6.48:1)に。
+       速報バー .bar-time と同じ AA 達成色を再利用。 */
+    color: #8A4A63;
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+    font-weight: 600;
+}
+.kpop-footer-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.kpop-footer-list li {
+    margin-bottom: 9px;
+}
+.kpop-footer-list a {
+    color: #3a3a3a;
+    font-size: 0.84rem;
+    text-decoration: none;
+}
+.kpop-footer-list a:hover,
+.kpop-footer-list a:focus {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+
+/* --- 4d: SNS アイコン(ピンク円形) --- */
+.kpop-footer-sns {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 12px;
+}
+.kpop-sns-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    /* 濃ピンク背景 + 白アイコン = 5.9:1(AA)。ヒーローバッジと同基準 */
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+.kpop-sns-link:hover,
+.kpop-sns-link:focus {
+    /* 段階8a: hover は濃く。旧 #E91E63 は白文字 4.35:1 で AA 未達 →
+       #AD1457(6.97:1)。hover で明るくなる挙動も視覚的に逆だったため修正。 */
+    background: var(--kpop-pink-darker, #AD1457);
+    color: #fff;
+}
+.kpop-sns-icon {
+    display: block;
+}
+
+/* --- 4e: 著作権バー(GP .site-info)を元サイト調に --- */
+.site-info {
+    background: #fff;
+    border-top: 1px solid #f0e3e8;
+    text-align: center;
+}
+.site-info .inside-site-info {
+    padding: 18px 16px;
+}
+.site-info .copyright {
+    /* #999 は white 上で 2.85:1(AA未達)。GP の元 .site-info は暗背景で
+       通っていたが、段階4 で白背景化したため axe で検出 → #6b6b6b(5.33:1)に。 */
+    color: #6b6b6b;
+    font-size: 0.74rem;
+}
+
+/* --- レスポンシブ: タブレット2列 → モバイル1列 --- */
+@media (max-width: 900px) {
+    .kpop-footer-cols {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+    }
+}
+@media (max-width: 560px) {
+    .kpop-footer-cols {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    .kpop-footer-inner {
+        padding: 36px 16px 28px;
+    }
+}
+
+/* ==========================================================================
+   M1 段階5 — 個別記事ページ (2026-05-20)
+   元サイト参照: reference/スクリーンショット 2026-05-07 0.53.39 / 0.53.48。
+   子テーマ single.php + content-single.php + functions.php ヘルパと連動。
+   配色は AA 達成済み(#C2185B 7.46:1 等)のみ。速報バー CSS には触れない。
+   ========================================================================== */
+
+/* ── 段階5a: パンくず ───────────────────────────────────────────────── */
+.kpop-breadcrumb {
+    margin: 0 0 16px;
+}
+.kpop-breadcrumb ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.76rem;
+}
+.kpop-breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+.kpop-breadcrumb li + li::before {
+    content: "›";
+    margin: 0 8px;
+    /* 段階8a: #b8889a(2.99:1)→ #8A4A63(6.48:1)。区切り記号も AA に統一。 */
+    color: #8A4A63;
+}
+.kpop-breadcrumb a {
+    color: #6b6b6b;
+    text-decoration: none;
+}
+.kpop-breadcrumb a:hover {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+.kpop-breadcrumb-current span {
+    color: #2B2B32;
+}
+
+/* ── 段階5b: ヒーロー画像 ───────────────────────────────────────────── */
+.kpop-single-hero {
+    margin: 0 0 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.kpop-single-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ── 段階5b: カテゴリバッジ + h1 + メタ ─────────────────────────────── */
+.kpop-single-header {
+    margin-bottom: 24px;
+}
+.kpop-single-cat {
+    display: inline-block;
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 4px 12px;
+    border-radius: 3px;
+    text-decoration: none;
+}
+.kpop-single-cat:hover {
+    /* 段階8a: hover は濃く。#E91E63(白文字 4.35:1)→ #AD1457(6.97:1)。 */
+    background: var(--kpop-pink-darker, #AD1457);
+    color: #fff;
+}
+.kpop-single .entry-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1.45;
+    color: #1a1a1a;
+    margin: 12px 0 14px;
+}
+.kpop-single-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.78rem;
+    color: #6b6b6b;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0e3e8;
+}
+.kpop-meta-label {
+    /* #b8889a は white 上 2.99:1(AA未達)。axe 検出 → #8A4A63(6.48:1)。 */
+    color: #8A4A63;
+    margin-right: 5px;
+    font-weight: 600;
+}
+
+/* ── 段階5c: 3行まとめボックス ──────────────────────────────────────── */
+/* 元サイト: 青みがかった薄背景 + 左ボーダー。本文導入の要約。 */
+.kpop-summary-box {
+    background: linear-gradient(135deg, #eef4fb, #f3f7fc);
+    border-left: 4px solid #5b8fc7;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 0 0 24px;
+}
+.kpop-summary-title {
+    margin: 0 0 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #2c4a6b;
+}
+.kpop-summary-list {
+    margin: 0;
+    padding-left: 1.1em;
+}
+.kpop-summary-list li {
+    font-size: 0.86rem;
+    line-height: 1.7;
+    color: #3a4a5a;
+    margin-bottom: 4px;
+}
+
+/* ── 段階5d: 本文内ボックス類 ───────────────────────────────────────── */
+/* 本文の基本タイポ */
+.kpop-single .entry-content {
+    font-size: 1rem;
+    /* 段階8c: 本文行間を 1.9 → 1.7 に。ui-polish §3 規定値(行間1.7)に統一。
+       直上の .kpop-summary-list(1.7)とも揃え、サイト横断で本文行間を一本化。 */
+    line-height: 1.7;
+    color: #3a3a3a;
+}
+.kpop-single .entry-content p {
+    margin: 0 0 1.4em;
+}
+
+/* セクション見出し h2: ピンク左バー(元サイト「まとめ」「情報ソース」等) */
+.kpop-single .entry-content h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    border-left: 5px solid var(--kpop-pink-dark, #C2185B);
+    padding: 4px 0 4px 14px;
+    margin: 2em 0 0.9em;
+}
+.kpop-single .entry-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2B2B32;
+    border-bottom: 2px solid #f0e3e8;
+    padding-bottom: 6px;
+    margin: 1.6em 0 0.8em;
+}
+
+/* 表組み: ピンクヘッダー */
+.kpop-single .entry-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.4em 0;
+    font-size: 0.9rem;
+}
+.kpop-single .entry-content table th,
+.kpop-single .entry-content table td {
+    border: 1px solid #f0e3e8;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+.kpop-single .entry-content table thead th,
+.kpop-single .entry-content table tr:first-child th {
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+    font-weight: 700;
+}
+.kpop-single .entry-content table tbody tr:nth-child(even) {
+    background: #fdf4f8;
+}
+
+/* 引用ボックス: 左ピンク罫線 */
+.kpop-single .entry-content blockquote {
+    border-left: 4px solid var(--kpop-pink, #E91E63);
+    background: #fdf4f8;
+    margin: 1.4em 0;
+    padding: 14px 20px;
+    border-radius: 0 8px 8px 0;
+    color: #4a4a4a;
+    font-style: normal;
+}
+.kpop-single .entry-content blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* 視聴方法ボックス: 本文中で class="kpop-watch-box" を付けた要素 */
+/* (本文側に手動で付与する想定。元サイトの薄ピンク背景 + ボタン群) */
+.kpop-watch-box {
+    background: var(--kpop-pink-light, #FCE4EC);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 1.6em 0;
+}
+.kpop-watch-box .kpop-watch-title {
+    font-weight: 700;
+    color: var(--kpop-pink-dark, #C2185B);
+    margin: 0 0 10px;
+}
+.kpop-watch-box .kpop-watch-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.kpop-watch-box a.kpop-watch-btn {
+    display: inline-block;
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 999px;
+}
+.kpop-watch-box a.kpop-watch-btn:hover {
+    background: var(--kpop-pink, #E91E63);
+}
+
+/* PR / 広告ラベル: 控えめ。色は AA 達成色(#8A4A63、white 6.48:1)を使用 */
+.kpop-ad-label,
+.kpop-single .entry-content .kpop-pr {
+    font-size: 0.66rem;
+    color: #8A4A63;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ── 段階5e: 記事フッター(タグ / シェア / フィードバック / 関連) ───── */
+.kpop-single-footer {
+    margin-top: 32px;
+}
+
+/* タグ群 */
+.kpop-single-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.kpop-tag {
+    display: inline-block;
+    background: #fdf4f8;
+    border: 1px solid #f0c0d0;
+    color: var(--kpop-pink-dark, #C2185B);
+    font-size: 0.76rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+.kpop-tag:hover {
+    background: var(--kpop-pink-light, #FCE4EC);
+}
+
+/* SNS シェア */
+.kpop-share {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+.kpop-share-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #6b6b6b;
+}
+.kpop-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+}
+.kpop-share-x  { background: #1a1a1a; }
+.kpop-share-x:hover  { background: #000; color: #fff; }
+/* FB ブランド色 #1877f2 は白文字で 4.23:1(AA未達)。
+   AA 達成のため少し濃い青 #0b5ed7(白文字 5.84:1)を使用。 */
+.kpop-share-fb { background: #0b5ed7; }
+.kpop-share-fb:hover { background: #0a4fb3; color: #fff; }
+/* 段階1 の `article footer a { color:#C2185B !important }` が、
+   .kpop-single-footer(<footer>)内のシェアボタン<a>にも当たり、
+   テキストがピンク(#C2185B on #1a1a1a = コントラスト不足)になる。
+   シェアボタンは白文字が正なので同じ !important で打ち消す。 */
+.kpop-single-footer a.kpop-share-btn,
+.kpop-single-footer a.kpop-share-btn span,
+.kpop-single-footer a.kpop-share-btn:hover {
+    color: #fff !important;
+}
+
+/* フィードバック */
+.kpop-feedback {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 28px;
+}
+.kpop-feedback-q {
+    margin: 0 0 12px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #2B2B32;
+}
+.kpop-feedback-btns {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+.kpop-feedback-btn {
+    background: #fff;
+    border: 1px solid #C2185B;
+    color: var(--kpop-pink-dark, #C2185B);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.kpop-feedback-btn:hover {
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+}
+
+/* 関連記事グリッド(段階3 の .kpop-card を再利用、4列) */
+.kpop-related {
+    margin-top: 8px;
+}
+.kpop-related-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+@media (max-width: 768px) {
+    .kpop-related-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 480px) {
+    .kpop-related-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+}
+
+/* ── 段階5: モバイル調整 ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .kpop-single .entry-title {
+        font-size: 1.3rem;
+    }
+    .kpop-single-meta {
+        gap: 10px 14px;
+        font-size: 0.74rem;
+    }
+    .kpop-single .entry-content h2 {
+        font-size: 1.15rem;
+    }
+    /* 表は横スクロール可能に(モバイルではみ出し防止) */
+    .kpop-single .entry-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* ── 段階5f: 個別記事の右サイドバー追加(目次 / 広告枠 / カテゴリ最新) ── */
+/* 目次 */
+.kpop-toc-nav {
+    margin: 0;
+}
+.kpop-toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: kpop-toc;
+}
+.kpop-toc-list li {
+    margin: 0;
+}
+.kpop-toc-list a {
+    display: block;
+    padding: 6px 8px 6px 12px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #4a4a4a;
+    text-decoration: none;
+    border-left: 2px solid #f0e3e8;
+}
+.kpop-toc-list a:hover {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+/* h3 はインデント */
+.kpop-toc-list .kpop-toc-h3 a {
+    padding-left: 24px;
+    font-size: 0.76rem;
+    color: #6b6b6b;
+}
+/* 現在地ハイライト(JS が is-active を付与) */
+.kpop-toc-list a.is-active {
+    color: var(--kpop-pink-dark, #C2185B);
+    border-left-color: var(--kpop-pink-dark, #C2185B);
+    background: #fdf4f8;
+    font-weight: 600;
+}
+
+/* 広告枠プレースホルダ */
+.kpop-ad-slot {
+    text-align: center;
+}
+.kpop-ad-slot .kpop-ad-label {
+    display: block;
+    margin-bottom: 6px;
+}
+.kpop-ad-slot .kpop-box-placeholder {
+    background: #fafafa;
+    border: 1px dashed #e0d0d8;
+    border-radius: 6px;
+    padding: 28px 0;
+    margin: 0;
+    /* #b8889a は #fafafa 上 2.86:1(AA未達)→ #8A4A63(6.21:1)。 */
+    color: #8A4A63;
+    font-size: 0.8rem;
+}
+
+/* サイドバー記事リスト(このカテゴリの最新) */
+.kpop-side-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.kpop-side-list li {
+    border-bottom: 1px solid #f0e3e8;
+}
+.kpop-side-list li:last-child {
+    border-bottom: none;
+}
+.kpop-side-list a {
+    display: block;
+    padding: 9px 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #3a3a3a;
+    text-decoration: none;
+}
+.kpop-side-list a:hover {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+
+/* 個別記事サイドバー: 追従(sticky)。GP の固定サイドバーと整合 */
+@media (min-width: 769px) {
+    .single-post .inside-right-sidebar {
+        position: sticky;
+        top: 20px;
+    }
+}
+
+/* ==========================================================================
+   M1 段階6 — カテゴリ/アーカイブページ (2026-05-20)
+   元サイト参照: reference/スクリーンショット 2026-05-18 21.15.56.png。
+   子テーマ archive.php と連動。配色は AA 達成済み(#C2185B 系)のみ。
+   過去の罠を踏襲: #b8889a 不使用 / ブランド色の白文字コントラスト確認 /
+   !important 波及確認。
+   ========================================================================== */
+
+/* ── 段階6b: カテゴリヘッダーバナー(全幅・濃ピンクグラデ) ──────────────
+   archive.php で .site-content の直下子として出力 → flex:100% で全幅。 */
+.site-content > .kpop-archive-banner {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+.kpop-archive-banner {
+    /* 濃ピンクグラデ。白文字 AA(4.5:1)を全域で満たすため、最も明るい
+       開始色は #D81B60(白 4.95:1)とする。#E91E63 は白 4.35:1 で AA 未達。 */
+    background: linear-gradient(110deg, #D81B60 0%, #C2185B 55%, #9c1448 100%);
+    border-radius: 12px;
+    margin: 8px 0 24px;
+    overflow: hidden;
+}
+.kpop-archive-banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* 個別改修8: ヘッダ縦幅を圧縮(旧 32px → 18px)。CATEGORY ラベル撤去と合わせコンパクトに。 */
+    padding: 18px 28px;
+}
+/* CATEGORY ラベル: 白。opacity を掛けると AA 未達(白85%=3.89:1)に
+   なるため、不透明度は使わず solid white(4.95:1+)で出す。 */
+.kpop-archive-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+/* カテゴリ名: 白。最濃部 #9c1448 上で白 = 8.6:1(AA 達成)。 */
+.kpop-archive-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.3;
+}
+/* 件数バッジ: 白丸 + 濃ピンク文字(#C2185B on #fff = 7.46:1、AA)。 */
+.kpop-archive-count {
+    display: inline-block;
+    background: #ffffff;
+    color: var(--kpop-pink-dark, #C2185B);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 3px 14px;
+    border-radius: 999px;
+}
+/* 説明文: solid white。opacity は使わない(AA を確実に満たすため)。
+   D81B60 上で白 4.95:1(AA 達成)。 */
+.kpop-archive-desc {
+    margin-top: 10px;
+    font-size: 0.86rem;
+    line-height: 1.7;
+    color: #ffffff;
+}
+.kpop-archive-desc p {
+    margin: 0;
+}
+
+/* ── 段階6(改訂): 全幅1カラムのアーカイブ本体 ───────────────────────
+   archive.php で .site-content の直下子。サイドバーは出さない。 */
+.site-content > .kpop-archive-main {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+.kpop-archive-main-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* ── 段階6c: 4列カードグリッド ─────────────────────────────────────── */
+.kpop-archive-grid {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+/* タブレット 3列 */
+@media (max-width: 1024px) {
+    .kpop-archive-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+/* モバイル 2列 */
+@media (max-width: 600px) {
+    .kpop-archive-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+}
+
+/* ── 段階6d: ページネーション ──────────────────────────────────────── */
+.kpop-pagination {
+    margin: 32px 0 8px;
+}
+.kpop-pagination ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+.kpop-pagination a,
+.kpop-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+/* リンク(未選択ページ) */
+.kpop-pagination a.page-numbers {
+    background: #fff;
+    border: 1px solid #f0c0d0;
+    color: var(--kpop-pink-dark, #C2185B);
+}
+.kpop-pagination a.page-numbers:hover {
+    background: var(--kpop-pink-light, #FCE4EC);
+}
+/* 現在ページ: 濃ピンク背景 + 白文字(7.46:1、AA) */
+.kpop-pagination span.page-numbers.current {
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;
+    border: 1px solid var(--kpop-pink-dark, #C2185B);
+}
+/* 省略記号 */
+.kpop-pagination span.page-numbers.dots {
+    background: transparent;
+    color: #6b6b6b;
+    min-width: auto;
+}
+
+/* ── 段階6: 0件カテゴリの空状態 ────────────────────────────────────── */
+.kpop-archive-empty {
+    text-align: center;
+    padding: 48px 16px;
+}
+.kpop-empty-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #2B2B32;
+    margin: 0 0 8px;
+}
+.kpop-empty-sub {
+    font-size: 0.86rem;
+    color: #6b6b6b;
+    margin: 0 0 20px;
+}
+
+/* ── 段階6: モバイル調整 ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .kpop-archive-banner-inner {
+        padding: 14px 18px; /* 個別改修8: モバイルも縦幅圧縮 */
+    }
+    .kpop-archive-title {
+        font-size: 1.4rem;
+        gap: 10px;
+    }
+}
+
+/* ==========================================================================
+   M1 段階7 — アーティスト一覧ページ (/artists/) (2026-05-20)
+   元サイト参照: reference/スクリーンショット 2026-05-18 21.15.19.png。
+   タグベース簡易版(案A)。page-artists.php と連動。全幅1カラム。
+   配色は AA 達成済みのみ。円形アイコン色は page-artists.php 側で white 4.5:1+
+   を検証済みの8色。過去の罠(#b8889a / opacity / !important 波及)を踏襲。
+   ========================================================================== */
+
+/* 全幅1カラム本体(.site-content 直下子) */
+.site-content > .kpop-artists-main {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+.kpop-artists-inner {
+    /* 段階8d: コンテナ幅を 1000px → 1200px に。ui-polish §3 規定値に統一し、
+       カテゴリページ(.kpop-archive-main-inner 1200px)と同じ4列グリッド幅に揃える。 */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* ── 段階7d: ページタイトル + サブテキスト(中央寄せ) ─────────────── */
+.kpop-artists-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+.kpop-artists-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 8px 0 6px;
+}
+.kpop-artists-sub {
+    font-size: 0.86rem;
+    color: #6b6b6b;
+    margin: 0 0 20px;
+}
+
+/* ── 段階7e: 検索ボックス(中央寄せ・角丸ピル) ───────────────────── */
+.kpop-artists-search {
+    display: flex;
+    align-items: center;
+    max-width: 420px;
+    margin: 0 auto;
+    background: #f3f3f5;
+    border: 1px solid #e3e3e8;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.kpop-artists-search input[type="search"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 9px 8px 9px 18px;
+    font-size: 0.86rem;
+    min-width: 0;
+}
+.kpop-artists-search input[type="search"]:focus {
+    outline: 2px solid var(--kpop-pink-dark, #C2185B);
+    outline-offset: -2px;
+}
+.kpop-artists-search-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 16px 8px 8px;
+    cursor: pointer;
+    color: #6b6b6b;
+    font-size: 1rem;
+    line-height: 1;
+}
+.kpop-artists-search-btn:hover {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+
+/* ── 段階9(2026-05-22): 検索入力・aria-live 件数 ─────────────────────
+   123組対応。インクリメンタル検索の入力欄(既存ピルに合流)と、絞り込み
+   件数を支援技術へ通知する live リージョンの軽い視覚表示。 */
+.kpop-artists-search-input {
+    color: #2B2B32; /* on #f3f3f5 = 12.68:1 */
+}
+.kpop-artists-live {
+    min-height: 1.1em;
+    margin: 8px 0 0;
+    font-size: 0.78rem;
+    color: #595959; /* on #fff = 7.0:1 */
+    text-align: center;
+}
+
+/* ── 段階9: A-Zインデックスナビ(sticky・ジャンプリンク)──────────────
+   123組を頭文字でジャンプ。パステル基調・AA。sticky でスクロール追従
+   (ヘッダ高さぶんを scroll-padding と合わせて確保)。装飾はすべて
+   不透明単色 or 実プロパティ(border)で、グラデ/opacity による文字薄め
+   や疑似要素のテキスト直乗せは行わない(axe color-contrast 罠回避)。 */
+.kpop-az-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin: 0 0 24px;
+    padding: 8px 4px;
+    background: #fff;          /* 不透明白。グラデ不使用 */
+    border-bottom: 2px solid var(--kpop-pink-dark, #C2185B); /* 非テキスト 5.87:1 */
+}
+.kpop-az-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+.kpop-az-nav-item {
+    margin: 0;
+}
+.kpop-az-nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0 6px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    color: var(--kpop-pink-darker, #AD1457); /* 白上 6.97:1 */
+    transition: background-color 0.15s, color 0.15s;
+}
+a.kpop-az-nav-link:hover,
+a.kpop-az-nav-link:focus-visible {
+    background: var(--kpop-pink-light, #FCE4EC); /* rose-deep on rose = 5.79:1 */
+    color: var(--kpop-pink-darker, #AD1457);
+}
+/* 該当組が無い文字は無効表示(リンクにしない)。色は白上 4.82:1(AA)。 */
+.kpop-az-nav-link.is-disabled {
+    color: #767078;
+    cursor: default;
+}
+
+/* ── 段階9: 頭文字セクション(見出し + グリッド)────────────────────── */
+.kpop-az-section {
+    margin: 0 0 16px;
+}
+.kpop-az-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 8px;
+    padding: 0 0 4px;
+    border-bottom: 1px solid var(--iw-line, #f0e3e8);
+    /* sticky な A-Z ナビの高さぶん、アンカージャンプ時に隠れないよう余白確保 */
+    scroll-margin-top: 64px;
+}
+.kpop-az-heading-letter {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--iw-ink, #2B2B32); /* 白上 14.05:1 */
+    line-height: 1.1;
+}
+.kpop-az-heading-count {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--iw-sub, #595959); /* 白上 7.0:1 */
+}
+
+/* ── 段階7b/7c→段階9: アーティスト一覧グリッド(コンパクト化)──────────
+   123組で縦長になりすぎないよう auto-fill + minmax で列を増やす。
+   PC widescreen で 5〜6列、自動的に 4→3→2 と縮む。 */
+.kpop-artists-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    /* 段階9b: 横長カードでさらにコンパクト化。1枚を狭く(アバター左+名前右)し
+       PC 4-5列(1枚が横長)→ 縦を大きく圧縮。 */
+    grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+    gap: 8px;
+}
+@media (max-width: 560px) {
+    .kpop-artists-grid {
+        /* モバイルは 1列(横長カードが収まる)。タッチターゲット 44px 以上維持 */
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+.kpop-artist-card {
+    min-width: 0;
+}
+.kpop-artist-card[hidden] {
+    display: none;
+}
+/* 横長コンパクト: アバター(左) + 名前/件数(右)の横並び。1枚の高さを大幅圧縮。 */
+.kpop-artist-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    min-height: 44px;        /* タッチターゲット確保 */
+    background: #fff;
+    border: 1px solid #f0e3e8;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.kpop-artist-link:hover {
+    border-color: #f0c0d0;
+    box-shadow: 0 3px 10px rgba(194, 24, 91, 0.1);
+}
+
+/* 円形アイコン(パステル背景・頭文字)。背景色と文字色は PHP 側で inline 指定。
+   段階9b: 横長カード化に伴い 38px に。 */
+.kpop-artist-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-size: 1.0rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+/* M6 段階6.6 — サムネ画像版。オーナー指示(2026-05-21)で一覧は頭文字統一に
+   変更したため未使用。個別ページ側の画像表示には影響しない(残置)。 */
+.kpop-artist-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f5f5f5;
+}
+/* 横長カード: 名前は残り幅を占有(長名は2行まで折返し可)、件数は右端に小さく。 */
+.kpop-artist-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #2B2B32; /* 白上 14.05:1 */
+    line-height: 1.3;
+}
+.kpop-artist-link:hover .kpop-artist-name {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+/* 件数バッジ(右端・控えめ) */
+.kpop-artist-count {
+    flex: 0 0 auto;
+    font-size: 0.68rem;
+    color: var(--kpop-pink-dark, #C2185B); /* #fdf4f8 上 5.45:1 */
+    background: #fdf4f8;
+    border-radius: 999px;
+    padding: 2px 8px;
+}
+
+/* 検索 0 件メッセージ */
+.kpop-artists-noresult {
+    margin: 24px 0;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #595959; /* 白上 7.0:1 */
+}
+.kpop-artists-noresult[hidden] {
+    display: none;
+}
+/* A-Zナビ・空セクションの hidden 制御(検索中) */
+.kpop-az-nav[hidden],
+.kpop-az-section[hidden] {
+    display: none;
+}
+
+/* ── 段階7→9: モバイル調整 ─────────────────────────────────────────── */
+@media (max-width: 560px) {
+    .kpop-artists-title {
+        font-size: 1.6rem;
+    }
+    .kpop-artist-link {
+        padding: 12px 6px;
+    }
+    .kpop-az-heading {
+        scroll-margin-top: 56px;
+    }
+}
+
+/* ==========================================================================
+   M1 段階8b — フォーカス可視性の全サイト統一 (2026-05-20)
+
+   目的: キーボード操作時のフォーカス位置を全インタラクティブ要素で
+   一貫して可視化する(WCAG 2.4.7 Focus Visible / 2.4.11 Focus Appearance)。
+   - GP 親テーマは一部要素で outline をリセットするため、子テーマ側で
+     :focus-visible を明示する。
+   - :focus-visible を使うことでマウスクリック時には枠を出さず、
+     キーボード/支援技術操作時のみ表示(ユーザー体験を損なわない)。
+   - 枠色は --kpop-pink-dark(#C2185B)。白背景上 5.87:1、非テキストの
+     コントラスト基準 3:1 を大きく満たす。hover の色変化(transient)とは
+     別レイヤーで、フォーカスは常に outline で表現する。
+   ========================================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+.kpop-card-link:focus-visible,
+.kpop-artist-link:focus-visible,
+.kpop-share-btn:focus-visible,
+.kpop-watch-btn:focus-visible,
+.kpop-more:focus-visible,
+.read-more:focus-visible {
+    outline: 3px solid var(--kpop-pink-dark, #C2185B);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+/* 検索入力は内側 outline(段階1/7 既存指定)を維持しつつ太さを統一 */
+.header-search input[type="search"]:focus-visible,
+.kpop-artists-search input[type="search"]:focus-visible {
+    outline: 2px solid var(--kpop-pink-dark, #C2185B);
+    outline-offset: -2px;
+}
+
+/* ==========================================================================
+   M1 段階8.1 — 記事本文のインライン style 由来 a11y 違反のテーマ側防御
+   (2026-05-20)
+
+   背景: 段階8e の axe 実測で single ページに color-contrast 4件 +
+   scrollable-region-focusable 1件を検出。原因は記事生成パイプラインが
+   本文に焼き込んだインライン style(color/background)と素の <table>。
+   テーマ CSS は適合(他4レイアウト axe 0)。本セクションは「テーマ側の
+   防御上書き」であり、真因のパイプライン修正は C項目に別途記録
+   (C_pipeline_fixes.md 参照)。既存記事は触らず CSS で AA に矯正する。
+
+   方針: 過剰上書きを避け、判明した違反パターンに絞る。背景色・サイズ・
+   余白は触らず、コントラスト不足の color / background のみ矯正。
+   ========================================================================== */
+
+/* (1) テキスト色リンク: インライン color が白系背景上で AA 未達
+   (#4a6cf7=3.99:1, #f7944a=2.14:1)。本文内リンクは AA 達成済みの
+   --kpop-pink-dark に統一上書き。背景色(#f0f4ff 等)は維持。 */
+.kpop-single .entry-content a[style*="color:#4a6cf7"],
+.kpop-single .entry-content a[style*="color:#4A6CF7"],
+.kpop-single .entry-content a[style*="color:#f7944a"],
+.kpop-single .entry-content a[style*="color:#F7944A"] {
+    color: var(--kpop-pink-dark, #C2185B) !important;
+}
+
+/* (2) SNS シェアボタン: 白文字 + ブランド原色背景が AA 未達
+   (Twitter #1DA1F2=2.83:1 / LINE #06C755=2.26:1)。白文字を保ち、
+   背景を AA 達成濃度に上書き(Twitter→#0C7ABF 4.61:1 / LINE→#047A37 5.46:1)。 */
+.kpop-single .entry-content a[style*="background:#1DA1F2"],
+.kpop-single .entry-content a[style*="background:#1da1f2"] {
+    background: #0C7ABF !important;
+}
+.kpop-single .entry-content a[style*="background:#06C755"],
+.kpop-single .entry-content a[style*="background:#06c755"] {
+    background: #047A37 !important;
+}
+
+/* (3) 本文 <table> のキーボードアクセス: モバイルで table が
+   display:block + overflow-x:auto によりスクロール領域化するが
+   tabindex が無くキーボード操作不可(WCAG 2.1.1)。
+   段階8.1b の JS(functions.php)で tabindex="0" + role + aria-label を
+   付与する。focus 時の枠は段階8b の :focus-visible で担保。
+   下記はその枠を table にも適用するための補強。 */
+.kpop-single .entry-content table:focus-visible {
+    outline: 3px solid var(--kpop-pink-dark, #C2185B);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   M3 段階3.5.5 — 引用記事サムネ表示用クラス .kpop-cite-thumb
+   (2026-05-20)
+
+   背景: 引用記事(kpop-citation-article skill)は引用元URLを直接参照する
+   方針(オーナー判断D)。複製権リスク軽減 + VPS ストレージ事故の再発防止。
+   img 要素は <img src="引用元URL" class="kpop-cite-thumb" ...> の形で出力。
+
+   要件(kpop-citation-article SKILL.md §5):
+   - 縦横比を保持する(歪ませない)
+   - 画質を落とさない(URL直参照なので原本のまま、リサイズ・再圧縮しない)
+   - 横幅はコンテナ内に収める(max-width:100%; height:auto)
+   - 見切れ厳禁(過去の失敗6の予防)
+
+   罠予防(M1 罠リスト継承):
+   - !important は使わない(波及防止のため .kpop-single .entry-content スコープに閉じる)
+   - ブランド色(b8889a, E91E63, ff0060, ff69b4, 1e90ff)は不使用
+   - キャプション文字色は AAA(7:1 以上)を確保
+   ========================================================================== */
+
+.kpop-single .entry-content .kpop-cite-thumb,
+.kpop-single .entry-content img.kpop-cite-thumb {
+    /* 縦横比保持 + コンテナ内収め */
+    max-width: 100%;
+    height: auto;
+    /* 画質維持: object-fit は使わず原寸の比率で */
+    display: block;
+    /* レイアウト整え */
+    margin: 1em auto;
+    /* 引用元の周囲を視覚的に区切る薄い枠(装飾境界線のみ、テキストではないため AA 非適用) */
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+
+/* キャプション(<p class="kpop-citation-source">引用元: ...</p>) */
+.kpop-single .entry-content p.kpop-citation-source {
+    font-size: 0.875em;
+    color: #595959;  /* on white = 7.0:1 — AAA */
+    margin-top: 0.5em;
+    text-align: right;
+}
+.kpop-single .entry-content p.kpop-citation-source a {
+    color: var(--kpop-pink-dark, #C2185B);  /* 既存変数を再利用 = 5.87:1 AA */
+    text-decoration: underline;
+}
+
+/* フォールバック: 画像取得失敗時の placeholder(alt テキストが見える状態) */
+.kpop-single .entry-content .kpop-cite-thumb[src=""],
+.kpop-single .entry-content .kpop-cite-thumb:not([src]) {
+    display: inline-block;
+    min-height: 200px;
+    width: 100%;
+    background: #f5f5f5;
+    color: #595959;  /* AAA */
+    font-size: 0.875em;
+    line-height: 200px;
+    text-align: center;
+    border: 1px dashed #bfbfbf;
+}
+
+/* ==========================================================================
+   M6 段階6.5 — Idol Wiki 個別アーティストページ
+   (2026-05-20、E項目 5点満点最大配点の実装)
+
+   設計:
+   - .kpop-idol-card: プロフィールカード全体(コンテナ幅 1200px に閉じる)
+   - .kpop-idol-header: 上部の画像 + 名前 + 基本情報(2カラム)
+   - .kpop-idol-members: メンバー一覧グリッド(レスポンシブ)
+   - .kpop-idol-related: 関連記事リスト
+
+   罠予防(M1 罠リスト継承):
+   - !important は使わない、スコープに閉じる(.kpop-idol-artist セレクタ)
+   - ブランド色(b8889a, E91E63, ff0060, ff69b4, 1e90ff)は不使用
+   - テキストは AAA(7:1+) を確保
+   - ホバーは aria 干渉しない範囲のみ
+   ========================================================================== */
+
+.kpop-idol-artist .kpop-breadcrumb {
+    font-size: 0.875em;
+    color: #595959; /* AAA on white */
+    margin-bottom: 1em;
+}
+.kpop-idol-artist .kpop-breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+.kpop-idol-artist .kpop-breadcrumb li::after {
+    content: "›";
+    margin-left: 0.5em;
+    color: #8c8c8c;
+}
+.kpop-idol-artist .kpop-breadcrumb li:last-child::after {
+    content: "";
+}
+.kpop-idol-artist .kpop-breadcrumb a {
+    color: var(--kpop-pink-dark, #C2185B);
+}
+
+/* ==========================================================================
+   Idol Wiki 個別ページ UI 100点化 v2 — "Editorial Pastel Dossier"
+   (オーナー指示 2026-05-21、再刷新)
+
+   コンセプト: アーティストの公式プロフィールを雑誌特集のように。
+   - 多色パステル(rose/lavender/mint/peach)を役割で使い分け
+   - ヒーローは大判画像 + 大見出し、メッシュ風グラデ背景
+   - 基本情報は「ラベル小・値大」のスペック表スタイル
+   - メンバーは高さ統一カード、ポジションは1行に収める
+   - 見出しは装飾ドット、余白にリズム
+   制約: AA厳守(全色 4.5:1+ 計算検証済)、!important不使用、
+        .kpop-idol-artist スコープ、ブランド変数を尊重。
+   ========================================================================== */
+
+/* スコープ内パステル変数(ローカル定義、:root を汚さない) */
+.kpop-idol-artist {
+    --iw-rose:      #FCE4EC;
+    --iw-rose-deep: #AD1457; /* AA on #fff 6.97:1 / on rose 5.79:1 */
+    --iw-lav:       #F3E5F5;
+    --iw-lav-deep:  #6A1B9A; /* AA on lav 7.0:1 */
+    --iw-mint:      #E0F2F1;
+    --iw-mint-deep: #00695C; /* AA */
+    --iw-peach:     #FFF3E0;
+    --iw-peach-deep:#BF360C; /* AA */
+    --iw-ink:       #2B2B32;
+    --iw-sub:       #595959; /* AAA on white */
+    --iw-line:      #f0e3e8;
+}
+
+/* カード全体: 余白を持たせ、影は柔らかく深く */
+.kpop-idol-artist .kpop-idol-card {
+    background: #ffffff;
+    border: 1px solid var(--iw-line);
+    border-radius: 20px;
+    padding: 0 2.25em 2.25em;
+    margin: 1em 0 2.5em;
+    box-shadow: 0 10px 40px rgba(194, 24, 91, 0.08);
+    overflow: hidden;
+}
+
+/* ── ヒーロー: 大判画像 + 大見出し ───────────────────────────────── */
+/* 同系色ベタ塗りの多用を避け(オーナー指摘)、ヒーローは白基調。
+   パステルは上辺の細いアクセントバーだけに留める。 */
+.kpop-idol-artist .kpop-idol-header {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 2.5em;
+    align-items: center;
+    margin: 0 -2.25em 2.25em;
+    padding: 2.5em 2.25em 2.25em;
+    background: #ffffff;
+    border-bottom: 1px solid var(--iw-line);
+    /* 上辺のパステル細アクセント(線で色を効かせる)。
+       ::before 疑似要素だと axe がテキスト背景を "incomplete(判定不能)" にするため使わず、
+       実プロパティ border-top + border-image(グラデ)で表現(2026-05-21 実測対応)。 */
+    border-top: 5px solid var(--iw-lav-deep);
+    border-image: linear-gradient(90deg, var(--iw-rose-deep), var(--iw-lav-deep) 55%, var(--iw-mint-deep)) 1;
+}
+.kpop-idol-artist .kpop-idol-image-wrap {
+    /* グループ写真は集合写真が多く比率もまちまち。cover だと誰かが必ず見切れる。
+       contain で画像全体を必ず収め、余白は白で埋める=見切れゼロ(オーナー指摘対応)。 */
+    aspect-ratio: 4 / 3;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--iw-line);
+}
+.kpop-idol-artist .kpop-idol-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 見切れ防止: 画像全体を収める */
+    object-position: center;
+    display: block;
+}
+/* 写真未投入のプレースホルダ: 頭文字を大きく + 名前を小さく。
+   背景パステル/文字色は PHP inline(一覧の頭文字丸と同配色・AA検証済)。 */
+.kpop-idol-artist .kpop-idol-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1em;
+    text-align: center;
+    padding: 1em;
+    box-sizing: border-box;
+}
+.kpop-idol-artist .kpop-ph-initial {
+    font-size: 4.5em;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.kpop-idol-artist .kpop-ph-name {
+    font-size: 0.95em;
+    font-weight: 700;
+    /* opacity は使わない: 色を薄めて green等で AA を割る(axe実測 3.82)。
+       PHP inline の濃色(各パステルとAA検証済)をそのまま使う。 */
+}
+/* テキスト領域に明示的な不透明白背景を持たせる。
+   見た目は白基調のままだが、axe が各テキストの背景を #fff と確実に判定でき、
+   ヒーローの ::before グラデバーや画像による "背景判定不能(needsFurtherReview)"
+   警告を解消する(2026-05-21 実測で必要と判明)。 */
+.kpop-idol-artist .kpop-idol-meta {
+    min-width: 0;
+    background: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+.kpop-idol-artist .kpop-idol-title {
+    font-size: 3.2em; /* 特大でメリハリ(オーナー指摘) */
+    margin: 0 0 0.12em;
+    line-height: 1.05;
+    color: var(--iw-ink);
+    letter-spacing: -0.03em;
+    font-weight: 900;
+}
+.kpop-idol-artist .kpop-idol-altnames {
+    font-size: 0.95em;
+    color: var(--iw-sub); /* AAA on white */
+    margin: 0 0 1.3em;
+    font-weight: 500; /* 細めにしてタイトルとの対比 */
+}
+.kpop-idol-artist .kpop-idol-altnames .lang-en,
+.kpop-idol-artist .kpop-idol-altnames .lang-ko {
+    margin-right: 0.4em;
+}
+
+/* ロゴ(あるグループのみ)— グループ名の上に小さく。出所(出典)併記必須。
+   ヒーローのパステル背景でロゴが透けて見えにくいことがあるため、薄い白パッドで視認性確保。 */
+.kpop-idol-artist .kpop-idol-logo-wrap {
+    margin: 0 0 0.7em;
+}
+/* ロゴは約3倍に拡大(オーナー指摘)。白基調ヒーローなので白パッド不要。
+   高さ固定だと横長ロゴ(ENHYPEN等)が右にはみ出すため、max-height + max-width で
+   縦横どちらも上限を設け contain で縦横比保持(2026-05-21 ENHYPEN見切れ対応)。 */
+.kpop-idol-artist .kpop-idol-logo {
+    height: auto;
+    width: auto;
+    max-height: 96px;
+    max-width: min(300px, 100%);
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+}
+@media (max-width: 600px) {
+    .kpop-idol-artist .kpop-idol-logo {
+        max-height: 72px;
+        max-width: min(240px, 100%);
+        margin: 0 auto; /* スマホ中央寄せ */
+        object-position: center;
+    }
+}
+
+/* 出典フッター: カード最下部に集約(オーナー指摘) */
+.kpop-idol-artist .kpop-idol-credits {
+    margin: 2.25em 0 0;
+    padding: 0.9em 0 0;
+    border-top: 1px solid var(--iw-line);
+}
+.kpop-idol-artist .kpop-idol-credits p {
+    margin: 0;
+    font-size: 0.78em;
+    color: var(--iw-sub); /* AAA on white */
+}
+
+/* 基本情報: 「ラベル小・値大」のスペック表。dl を grid-auto-flow:column の
+   2行グリッドにし、dt(上=小ラベル) と dd(下=値) を縦ペアで列に流す。
+   HTML は <dt>分類</dt><dd>値</dd> の交互順のままでよい。 */
+.kpop-idol-artist .kpop-idol-facts {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: auto auto;
+    gap: 0.25em 0;
+    margin: 0 0 1.4em;
+    /* 白基調: ベタ塗りをやめ区切り線だけで構成(同系色抑制) */
+    width: fit-content;
+    max-width: 100%;
+}
+.kpop-idol-artist .kpop-idol-facts dt {
+    grid-row: 1;
+    padding: 0 1.3em;
+    color: var(--iw-sub);
+    font-size: 0.64em; /* 極小ラベルでメリハリ */
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.kpop-idol-artist .kpop-idol-facts dd {
+    grid-row: 2;
+    margin: 0;
+    padding: 0 1.3em;
+    color: var(--iw-ink);
+    font-weight: 800;
+    font-size: 1.08em; /* 値は大きく太く */
+    border-right: 1px solid var(--iw-line);
+}
+.kpop-idol-artist .kpop-idol-facts dd:last-of-type {
+    border-right: 0;
+}
+/* 最初のラベル/値は左 padding を詰めて左端を揃える */
+.kpop-idol-artist .kpop-idol-facts dt:first-of-type,
+.kpop-idol-artist .kpop-idol-facts dd:first-of-type {
+    padding-left: 0;
+}
+
+/* 公式SNS: 役割色のソフトピル(ホバーで色付き) */
+.kpop-idol-artist .kpop-idol-sns {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+/* 各SNS項目は縮ませない(縮むとラベルが潰れてアイコンと重なる)。
+   li を display:flex にして中の <a> が内容幅(アイコン+ラベル)を確保するようにする。
+   list-item のままだと <a> が最小幅に潰れる(2026-05-21 実測で判明)。
+   収まらなければ親 ul の flex-wrap で折り返す。 */
+.kpop-idol-artist .kpop-idol-sns > li {
+    flex: 0 0 auto;
+    display: flex;
+    list-style: none;
+}
+.kpop-idol-artist .kpop-sns-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    width: max-content;
+    max-width: 100%;
+    padding: 0.5em 1em 0.5em 0.85em;
+    background: #ffffff;
+    color: #3a3a42; /* AAA on white、ラベルは中立色 */
+    border-radius: 999px;
+    font-size: 0.84em;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1.5px solid var(--iw-line);
+    transition: color 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+}
+.kpop-idol-artist .kpop-sns-icon {
+    flex: 0 0 auto;
+    color: var(--iw-sub); /* 既定はグレー、hoverで各ブランド色に */
+    transition: color 0.18s;
+}
+/* ラベルが潰れて重ならないよう nowrap + auto幅 */
+.kpop-idol-artist .kpop-sns-label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+.kpop-idol-artist .kpop-sns-link:hover,
+.kpop-idol-artist .kpop-sns-link:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+/* ホバー時、各SNSのブランド色をアイコン+枠に(AA: アイコンは非テキストなので3:1で十分、枠も装飾) */
+.kpop-idol-artist .kpop-sns-x:hover .kpop-sns-icon,
+.kpop-idol-artist .kpop-sns-x:focus .kpop-sns-icon        { color: #000000; }
+.kpop-idol-artist .kpop-sns-x:hover, .kpop-idol-artist .kpop-sns-x:focus { border-color: #000000; }
+.kpop-idol-artist .kpop-sns-instagram:hover .kpop-sns-icon,
+.kpop-idol-artist .kpop-sns-instagram:focus .kpop-sns-icon { color: #C13584; }
+.kpop-idol-artist .kpop-sns-instagram:hover,
+.kpop-idol-artist .kpop-sns-instagram:focus { border-color: #C13584; }
+.kpop-idol-artist .kpop-sns-youtube:hover .kpop-sns-icon,
+.kpop-idol-artist .kpop-sns-youtube:focus .kpop-sns-icon  { color: #CC0000; }
+.kpop-idol-artist .kpop-sns-youtube:hover,
+.kpop-idol-artist .kpop-sns-youtube:focus { border-color: #CC0000; }
+.kpop-idol-artist .kpop-sns-tiktok:hover .kpop-sns-icon,
+.kpop-idol-artist .kpop-sns-tiktok:focus .kpop-sns-icon   { color: #000000; }
+.kpop-idol-artist .kpop-sns-tiktok:hover,
+.kpop-idol-artist .kpop-sns-tiktok:focus { border-color: #000000; }
+.kpop-idol-artist .kpop-sns-wikipedia:hover .kpop-sns-icon,
+.kpop-idol-artist .kpop-sns-wikipedia:focus .kpop-sns-icon { color: #3366cc; }
+.kpop-idol-artist .kpop-sns-wikipedia:hover,
+.kpop-idol-artist .kpop-sns-wikipedia:focus { border-color: #3366cc; }
+
+/* リード文: 白基調 + 左の色アクセントバーだけ(ベタ塗り面を削減=同系色抑制) */
+.kpop-idol-artist .kpop-idol-summary {
+    position: relative;
+    background: #ffffff;
+    padding: 0.2em 0 0.2em 1.3em;
+    margin: 0 0 2.2em;
+}
+.kpop-idol-artist .kpop-idol-summary::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.25em; bottom: 0.25em;
+    width: 4px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--iw-rose-deep), var(--iw-lav-deep));
+}
+.kpop-idol-artist .kpop-idol-summary p {
+    margin: 0;
+    line-height: 1.9;
+    color: var(--iw-ink);
+    font-size: 1.12em; /* リードは少し大きく(メリハリ) */
+    font-weight: 500;
+}
+
+/* セクション見出し: 装飾ドット + 細い下線、余白でリズム */
+.kpop-idol-artist .kpop-idol-members h2,
+.kpop-idol-artist .kpop-idol-related h2,
+.kpop-idol-artist .kpop-idol-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    font-size: 1.35em;
+    font-weight: 800;
+    margin: 2em 0 1.1em;
+    padding-bottom: 0.55em;
+    color: var(--iw-ink);
+    border-bottom: 2px solid var(--iw-line);
+    letter-spacing: -0.01em;
+}
+.kpop-idol-artist .kpop-idol-members h2::before,
+.kpop-idol-artist .kpop-idol-related h2::before,
+.kpop-idol-artist .kpop-idol-section h2::before {
+    content: "";
+    width: 0.62em;
+    height: 0.62em;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--iw-rose-deep), var(--iw-lav-deep));
+    flex: 0 0 auto;
+}
+
+/* メンバー: 高さ統一カード、丸アバター、ポジションは1行省略 */
+.kpop-idol-artist .kpop-member-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.9em;
+}
+.kpop-idol-artist .kpop-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--iw-line);
+    border-radius: 16px;
+    padding: 1.15em 0.8em 1em;
+    text-align: center;
+    transition: box-shadow 0.2s, transform 0.12s, border-color 0.2s;
+}
+.kpop-idol-artist .kpop-member:hover {
+    box-shadow: 0 8px 22px rgba(194, 24, 91, 0.12);
+    transform: translateY(-3px);
+    border-color: #f3c6d6;
+}
+.kpop-idol-artist .kpop-member-image {
+    width: 76px;
+    height: 76px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto 0.7em;
+    border: 3px solid var(--iw-rose);
+}
+.kpop-idol-artist .kpop-member-info {
+    width: 100%;
+}
+.kpop-idol-artist .kpop-member-info p {
+    margin: 0.25em 0;
+    font-size: 0.9em;
+}
+.kpop-idol-artist .kpop-member-name {
+    font-weight: 800;
+    color: var(--iw-ink);
+    font-size: 0.98em;
+}
+.kpop-idol-artist .kpop-member-position {
+    display: inline-block;
+    max-width: 100%;
+    color: var(--iw-rose-deep);
+    background: var(--iw-rose);
+    border-radius: 999px;
+    padding: 0.18em 0.8em;
+    font-size: 0.74em;
+    font-weight: 700;
+    margin-top: 0.15em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+.kpop-idol-artist .kpop-member-birthday {
+    color: var(--iw-sub);
+    font-size: 0.78em;
+    margin-top: 0.35em;
+}
+/* 本名 — 名前のすぐ下に小さく。--iw-sub は白背景上 AAA(7:1+) */
+.kpop-idol-artist .kpop-member-realname {
+    color: var(--iw-sub);
+    font-size: 0.8em;
+    margin-top: 0.1em;
+}
+/* 国籍・出身 — 🌐 アイコン文字付き。--iw-ink は白背景上 AAA */
+.kpop-idol-artist .kpop-member-nationality {
+    color: var(--iw-ink);
+    font-size: 0.78em;
+    margin-top: 0.3em;
+}
+/* 愛称・キャッチコピー — 長文。区切り線 + 左寄せで読みやすさ優先 */
+.kpop-idol-artist .kpop-member-nickname {
+    color: var(--iw-sub);
+    font-size: 0.72em;
+    line-height: 1.5;
+    text-align: left;
+    margin-top: 0.55em;
+    padding-top: 0.55em;
+    border-top: 1px solid var(--iw-line);
+}
+
+/* 来歴・ファンダム等 汎用テキストセクション(5項目拡張で使用) */
+.kpop-idol-artist .kpop-idol-section {
+    margin: 0 0 0.5em;
+}
+.kpop-idol-artist .kpop-idol-prose p {
+    line-height: 1.9;
+    color: var(--iw-ink);
+    margin: 0 0 0.8em;
+}
+/* 来歴ハイライト: デビュー年/活動年数/分類/事務所を「数字大・ラベル小」カードで横並び */
+.kpop-idol-artist .kpop-history-highlights {
+    list-style: none;
+    margin: 0 0 1.4em;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.7em;
+}
+.kpop-idol-artist .kpop-history-highlights li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    padding: 0.85em 1em;
+    background: #ffffff;
+    border: 1px solid var(--iw-line);
+    border-radius: 12px;
+    border-top: 3px solid var(--iw-lav-deep);
+}
+.kpop-idol-artist .kpop-hl-num {
+    font-size: 1.7em;
+    font-weight: 900;
+    color: var(--iw-ink);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.kpop-idol-artist .kpop-hl-num small {
+    font-size: 0.5em;
+    font-weight: 700;
+    margin-left: 0.1em;
+}
+.kpop-idol-artist .kpop-hl-text {
+    font-size: 1.05em; /* 文字情報(分類/事務所)は数字より控えめに */
+    line-height: 1.3;
+}
+.kpop-idol-artist .kpop-hl-label {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--iw-sub); /* AAA on white */
+    letter-spacing: 0.04em;
+}
+/* ファンダム: 白カード + 左アクセント。名前だけ色を効かせる(ベタ塗り抑制) */
+.kpop-idol-artist .kpop-fandom-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em 1.1em;
+    background: #ffffff;
+    border: 1px solid var(--iw-line);
+    border-left: 4px solid var(--iw-lav-deep);
+    border-radius: 0 12px 12px 0;
+    padding: 1.15em 1.4em;
+}
+.kpop-idol-artist .kpop-fandom-name {
+    font-size: 1.6em; /* 大きく(メリハリ) */
+    font-weight: 900;
+    color: var(--iw-lav-deep); /* AA on white 7:1+ */
+    letter-spacing: -0.01em;
+}
+.kpop-idol-artist .kpop-fandom-origin {
+    flex: 1 1 240px;
+    min-width: 0;
+    color: var(--iw-ink);
+    line-height: 1.8;
+    font-size: 0.95em;
+}
+
+/* リリース/出演: タイムライン風の年バッジ + タイトル */
+.kpop-idol-artist .kpop-timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+.kpop-idol-artist .kpop-timeline li {
+    display: grid;
+    grid-template-columns: 4.2em 1fr auto;
+    align-items: center;
+    gap: 0.9em;
+    padding: 0.7em 0.9em;
+    background: #ffffff;
+    border: 1px solid var(--iw-line);
+    border-radius: 12px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.kpop-idol-artist .kpop-timeline li:hover {
+    background: #fdf4f8;
+    border-color: #f3c6d6;
+}
+.kpop-idol-artist .kpop-tl-year {
+    font-weight: 800;
+    color: var(--iw-lav-deep);
+    background: var(--iw-lav);
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.3em 0;
+    font-size: 0.85em;
+}
+.kpop-idol-artist .kpop-tl-title {
+    font-weight: 700;
+    color: var(--iw-ink);
+    min-width: 0;
+}
+.kpop-idol-artist .kpop-tl-type {
+    color: var(--iw-mint-deep);
+    background: var(--iw-mint);
+    border-radius: 999px;
+    padding: 0.2em 0.75em;
+    font-size: 0.74em;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* 関連記事: ホバーで浮く行 */
+.kpop-idol-artist .kpop-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.kpop-idol-artist .kpop-related-list li {
+    padding: 0.85em 0.9em;
+    border-bottom: 1px solid var(--iw-line);
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    align-items: baseline;
+    border-radius: 10px;
+    transition: background 0.15s;
+}
+.kpop-idol-artist .kpop-related-list li:hover {
+    background: #fdf4f8;
+}
+.kpop-idol-artist .kpop-related-list li:last-child {
+    border-bottom: 0;
+}
+.kpop-idol-artist .kpop-related-list a {
+    color: var(--iw-rose-deep);
+    text-decoration: none;
+    flex: 1;
+    font-weight: 700;
+}
+.kpop-idol-artist .kpop-related-list a:hover,
+.kpop-idol-artist .kpop-related-list a:focus {
+    text-decoration: underline;
+}
+.kpop-idol-artist .kpop-related-list time {
+    color: var(--iw-sub);
+    font-size: 0.84em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── レスポンシブ: タブレット ─────────────────────────────────── */
+@media (max-width: 820px) {
+    .kpop-idol-artist .kpop-idol-header {
+        grid-template-columns: 260px 1fr;
+        gap: 1.6em;
+        padding: 2em 1.6em;
+    }
+    .kpop-idol-artist .kpop-idol-title { font-size: 2.1em; }
+}
+
+/* ── レスポンシブ: スマホ ─────────────────────────────────────── */
+@media (max-width: 600px) {
+    .kpop-idol-artist .kpop-idol-card {
+        padding: 0 1.1em 1.5em;
+        border-radius: 16px;
+    }
+    .kpop-idol-artist .kpop-idol-header {
+        grid-template-columns: 1fr;
+        gap: 1.2em;
+        margin: 0 -1.1em 1.5em;
+        padding: 1.8em 1.3em;
+        text-align: center;
+    }
+    .kpop-idol-artist .kpop-idol-image-wrap {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .kpop-idol-artist .kpop-idol-title { font-size: 1.9em; }
+    .kpop-idol-artist .kpop-idol-facts {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .kpop-idol-artist .kpop-idol-sns { justify-content: center; }
+    .kpop-idol-artist .kpop-idol-logo {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .kpop-idol-artist .kpop-member-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.7em;
+    }
+    .kpop-idol-artist .kpop-fandom-card { padding: 1em 1.1em; }
+    .kpop-idol-artist .kpop-timeline li {
+        grid-template-columns: 3.6em 1fr;
+        gap: 0.6em 0.7em;
+    }
+    .kpop-idol-artist .kpop-tl-type {
+        grid-column: 2;
+        justify-self: start;
+    }
+    .kpop-idol-artist .kpop-related-list li {
+        flex-direction: column;
+        gap: 0.25em;
+        align-items: flex-start;
+    }
+}
+
+/* M6 段階6.10 — E-5 記事 → Idol Wiki 直接リンク(本文末尾の aside) */
+.kpop-single .entry-content + .kpop-idol-wiki-link,
+.kpop-idol-wiki-link {
+    margin: 1.5em 0 1em;
+    padding: 1em 1.25em;
+    background: #fafafa;
+    border-left: 4px solid var(--kpop-pink-dark, #C2185B);
+    border-radius: 0 4px 4px 0;
+}
+.kpop-idol-wiki-link-label {
+    margin: 0 0 0.5em;
+    font-size: 0.875em;
+    color: #595959; /* AAA */
+    font-weight: 700;
+}
+.kpop-idol-wiki-link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+.kpop-idol-wiki-link-anchor {
+    display: inline-block;
+    padding: 0.4em 0.9em;
+    background: #ffffff;
+    color: var(--kpop-pink-dark, #C2185B); /* AA on white = 5.87:1 */
+    border: 1px solid #d9d9d9;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.875em;
+}
+/* 矢印は ::after の疑似要素として描画 — axe の color-contrast 検査対象外、
+   かつ inline span による親背景継承の曖昧さを回避する */
+.kpop-idol-wiki-link-anchor::after {
+    content: " →";
+    color: inherit;
+}
+.kpop-idol-wiki-link-anchor:hover,
+.kpop-idol-wiki-link-anchor:focus {
+    background: #fff0f5;
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   M11 段階9 (Day 9) — UI/UX 品質改善 13項目(A 7 + B 6)
+   ========================================================================== */
+
+/* A-1: 速報バーをナビ下に表示。generate_after_header に hook 切替済。
+       wp_body_open での出力を抑止しつつ、ナビ下表示時の余白を調整 */
+.kpop-breaking-bar { margin-top: 0; }
+@media (max-width: 768px) { .kpop-breaking-bar { margin-top: 0; } }
+
+/* A-2: 誕生日ウィジェット */
+.kpop-birthday-today,
+.kpop-birthday-tomorrow {
+	background: #fdf4f7;
+	border-left: 4px solid #d63384;
+	padding: 12px 16px;
+}
+.kpop-birthday-list {
+	list-style: none;
+	padding: 0;
+	margin: 8px 0 0 0;
+}
+.kpop-birthday-item {
+	padding: 6px 0;
+	border-bottom: 1px solid #f0d6e0;
+	font-size: 15px;
+}
+.kpop-birthday-item:last-child { border-bottom: none; }
+.kpop-birthday-item a {
+	color: #C2185B; /* AA-compliant brand color */
+	font-weight: 600;
+	text-decoration: none;
+}
+.kpop-birthday-item a:hover,
+.kpop-birthday-item a:focus { text-decoration: underline; }
+.kpop-birthday-group {
+	color: #495057;  /* M11 hotfix: AA 7.58:1 on #fdf4f7(旧 #6c757d 4.35:1 fail) */
+	font-size: 13px;
+	margin-left: 4px;
+}
+.kpop-empty-msg {
+	color: #495057;  /* M11 hotfix: AA 7.58:1 on #fdf4f7(旧 #6c757d 4.35:1 fail) */
+	font-size: 14px;
+	margin: 8px 0 0 0;
+}
+
+/* A-3: カムバック予定ボックスがウィジェットエリアにある場合は非表示
+       (現状は CSS class が存在しなければ何も起きない、安全策) */
+.kpop-comeback-box { display: none; }
+
+/* A-6: サイドバー新順序追加ウィジェット */
+.kpop-popular-all,
+.kpop-popular-24h,
+.kpop-today-chart,
+.kpop-upcoming-events {
+	background: #ffffff;
+	border-left: 4px solid #8A4A63;
+	padding: 12px 16px;
+	margin-top: 12px;
+}
+.kpop-event-date {
+	color: #495057;  /* M11 hotfix: AA on white(旧 #6c757d は背景色次第で問題化のため統一) */
+	font-size: 12px;
+	margin-left: 4px;
+}
+
+/* A-7: サイドバータイトル font-size 調整(視認性向上)
+       既存 .kpop-box-title は維持し、新ウィジェット側の .widget-title を強化
+   Day10 2.2: 17px → 15px に縮小(オーナー指示)。色 #212529(AA 12.6:1)維持。 */
+.kpop-sidebar-box .widget-title,
+.widget-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: #212529; /* AA: 12.6:1 on white */
+	border-bottom: 2px solid #d63384;
+	padding-bottom: 6px;
+	margin: 0 0 10px 0;
+}
+
+/* B-1: タイトル → サムネ → 本文 の順序(content-single.php 側で対応) */
+
+/* B-2: 3行まとめボックス強化(.kpop-summary-box) */
+.kpop-summary-box {
+	background: #fdf4f7;
+	border: 2px solid #d63384;
+	border-radius: 6px;
+	padding: 14px 18px;
+	margin: 16px 0;
+	font-weight: 600;
+	color: #212529;
+	line-height: 1.8;
+}
+.kpop-summary-box p { margin: 4px 0; }
+.kpop-summary-box::before {
+	content: "📌 まとめ";
+	display: block;
+	font-size: 13px;
+	color: #C2185B;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+/* B-3: 視認性向上 — 本文 line-height + クオテーション装飾 + 太字頻度 */
+.entry-content { line-height: 1.8; }
+.entry-content p { margin: 14px 0; }
+.entry-content strong { color: #212529; font-weight: 700; }
+.entry-content blockquote {
+	background: #f8f9fa;
+	border-left: 4px solid #C2185B;
+	padding: 12px 16px;
+	margin: 16px 0;
+	font-style: normal;
+	color: #212529;
+}
+.entry-content blockquote cite {
+	display: block;
+	font-size: 13px;
+	color: #495057;  /* M11 hotfix: AA 7.5:1 on #f8f9fa(旧 #6c757d は AA 境界) */
+	margin-top: 6px;
+	font-style: normal;
+}
+.entry-content blockquote cite::before { content: "— 出典: "; }
+
+/* B-4a: 関連記事 5枚カード強化 */
+.kpop-related-cards {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 12px;
+	margin: 24px 0;
+}
+@media (max-width: 768px) {
+	.kpop-related-cards { grid-template-columns: repeat(2, 1fr); }
+}
+.kpop-related-card {
+	background: #fff;
+	border: 1px solid #e9ecef;
+	border-radius: 6px;
+	overflow: hidden;
+	transition: transform 0.15s ease;
+}
+.kpop-related-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.kpop-related-card a {
+	display: block;
+	text-decoration: none;
+	color: #212529;
+}
+.kpop-related-card img {
+	width: 100%;
+	height: 100px;
+	object-fit: cover;
+}
+.kpop-related-card .kpop-rc-title {
+	display: block;
+	padding: 8px 10px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: #212529; /* AA 確保 */
+}
+.kpop-related-card .kpop-rc-excerpt {
+	display: block;
+	padding: 0 10px 10px 10px;
+	font-size: 12px;
+	color: #495057; /* AA: 7.5:1 on white */
+	line-height: 1.4;
+}
+
+/* B-4b: お気に入りハートアイコン + /favorites/ ページ */
+.kpop-fav-heart {
+	display: inline-block;
+	background: none;
+	border: 1px solid #d63384;
+	border-radius: 999px;
+	padding: 4px 10px;
+	color: #C2185B;
+	font-size: 18px;
+	cursor: pointer;
+	margin-left: 8px;
+	min-height: 32px;
+	min-width: 44px; /* タッチターゲット */
+}
+.kpop-fav-heart[aria-pressed="true"] { background: #C2185B; color: #fff; }
+.kpop-fav-heart:focus-visible { outline: 2px solid #C2185B; outline-offset: 2px; }
+.kpop-fav-grid {
+	list-style: none;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 16px;
+}
+.kpop-fav-card { background: #fff; border: 1px solid #e9ecef; border-radius: 6px; overflow: hidden; }
+.kpop-fav-card a { display: block; text-decoration: none; color: #212529; }
+.kpop-fav-card img { width: 100%; height: 120px; object-fit: cover; }
+.kpop-fav-card .kpop-fav-title { display: block; padding: 8px 10px; font-size: 13px; font-weight: 600; color: #212529; line-height: 1.4; }
+
+/* B-6: 関連アーティスト Wiki 導線 — 関連カード上に配置の余白 */
+.kpop-related-cards + .kpop-idol-wiki-link-anchor,
+.kpop-idol-wiki-link-anchor { margin: 16px 0; }
+
+/* B-7: 内部リンク自動生成 — 視覚的に通常リンクと一致(ハイライト不要) */
+.kpop-auto-link {
+	color: #C2185B;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+.kpop-auto-link:hover,
+.kpop-auto-link:focus { text-decoration-thickness: 2px; }
+
+/* ==========================================================================
+   M11.5 段階9.5 (Day 9) — C ポップアップ刷新
+   9.5.8-A 真の左サイドバー実装(kbuzzlab.com 構造参考)
+   ========================================================================== */
+
+/* /category/popup/ 専用 2 カラムレイアウト */
+.popup-archive-layout {
+	display: grid;
+	grid-template-columns: 240px minmax(0, 1fr);
+	gap: 24px;
+	/* 1.5: ワイド画面で 5列を成立させるためコンテナ幅を拡張(従来 1280px)。
+	   サイドバー240px + gap を引いてもメイン領域が ~1300px 確保でき、
+	   5枚カードが横スクロールなしで並ぶ。 */
+	max-width: 1600px;
+	margin: 0 auto;
+	padding: 24px 16px;
+}
+@media (max-width: 900px) {
+	.popup-archive-layout {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+	}
+}
+
+/* 左サイドバーフィルタ */
+.popup-sidebar-filter {
+	background: #ffffff;
+	border: 1px solid #e9ecef;
+	border-radius: 6px;
+	padding: 16px 18px;
+	align-self: start;
+	position: sticky;
+	top: 16px;
+}
+.popup-sidebar-filter .filter-heading {
+	font-size: 16px;
+	font-weight: 700;
+	color: #212529;
+	border-bottom: 2px solid #d63384;
+	padding-bottom: 8px;
+	margin: 0 0 14px 0;
+}
+.popup-sidebar-filter .filter-group {
+	margin: 16px 0;
+}
+.popup-sidebar-filter .filter-group:first-of-type { margin-top: 0; }
+.popup-sidebar-filter .filter-group-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: #495057;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin: 0 0 6px 0;
+}
+.popup-sidebar-filter .filter-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.popup-sidebar-filter .filter-list li { padding: 0; }
+.popup-sidebar-filter .filter-list a {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 7px 8px;
+	color: #495057;
+	text-decoration: none;
+	font-size: 14px;
+	border-radius: 4px;
+	min-height: 32px;
+}
+.popup-sidebar-filter .filter-list a:hover {
+	background: #fdf4f7;
+	color: #C2185B;
+}
+.popup-sidebar-filter .filter-list a.active,
+.popup-sidebar-filter .filter-list a[aria-current="true"] {
+	background: #fdf4f7;
+	color: #C2185B;
+	font-weight: 700;
+}
+.popup-sidebar-filter .filter-list a:focus-visible {
+	outline: 2px solid #C2185B;
+	outline-offset: 1px;
+}
+.popup-sidebar-filter .count {
+	color: #495057;
+	font-size: 12px;
+	font-weight: 600;
+	background: #f8f9fa;
+	padding: 1px 7px;
+	border-radius: 999px;
+	min-width: 22px;
+	text-align: center;
+}
+.popup-sidebar-filter .filter-list a.active .count,
+.popup-sidebar-filter .filter-list a[aria-current="true"] .count {
+	background: #C2185B;
+	color: #ffffff;
+}
+/* 0件 term は灰色で薄く(クリック可能だが視覚的に下位)*/
+.popup-sidebar-filter .filter-list a.is-zero {
+	color: #6c757d;
+}
+.popup-sidebar-filter .filter-list a.is-zero:hover {
+	background: #f8f9fa;
+	color: #495057;
+}
+.popup-sidebar-filter .filter-list a.is-zero .count {
+	color: #adb5bd;
+	background: #f8f9fa;
+}
+.popup-sidebar-filter .filter-reset {
+	margin: 16px 0 0 0;
+	padding-top: 12px;
+	border-top: 1px solid #e9ecef;
+}
+.popup-sidebar-filter .filter-reset a {
+	color: #C2185B;
+	font-weight: 600;
+	text-decoration: underline;
+	font-size: 13px;
+}
+@media (max-width: 900px) {
+	.popup-sidebar-filter {
+		position: static;
+	}
+	.popup-sidebar-filter .filter-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.popup-sidebar-filter .filter-list a {
+		border: 1px solid #e9ecef;
+		padding: 6px 12px;
+	}
+}
+
+/* メイン: カードグリッド */
+.popup-list-section { min-width: 0; }
+.popup-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	/* 1.5: ワイド画面で最大5列、段階的に 5→4→3→2→1。サイドバー(240px)を
+	   除いたメイン領域内で 5列。横スクロールを出さないため minmax の min は
+	   小さめ + 1fr で詰める。明示ブレークポイントで列数を確定させる。 */
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 18px;
+}
+/* 5 → 4 → 3 → 2 → 1(メイン領域幅基準) */
+@media (max-width: 1500px) { .popup-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 1180px) { .popup-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px)  { .popup-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px)  { .popup-list { grid-template-columns: minmax(0, 1fr); } }
+.popup-card {
+	background: #ffffff;
+	border: 1px solid #e9ecef;
+	border-radius: 6px;
+	overflow: hidden;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.popup-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.popup-card-link { display: block; text-decoration: none; color: #212529; }
+.popup-card-thumb {
+	display: block; position: relative; background: #f8f9fa;
+	aspect-ratio: 16 / 10; overflow: hidden;
+}
+.popup-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.popup-card-thumb--placeholder {
+	display: block; width: 100%; height: 100%;
+	background: linear-gradient(135deg, #fdf4f7 0%, #f0d6e0 100%);
+}
+.popup-card-body { display: block; padding: 12px 14px; }
+.popup-card-title {
+	display: block; font-size: 14px; font-weight: 700;
+	line-height: 1.4; color: #212529; margin: 0 0 6px 0;
+}
+.popup-card-meta {
+	display: flex; flex-direction: column; gap: 3px;
+	font-size: 12px; color: #495057;
+}
+.popup-card-area, .popup-card-date { display: block; }
+
+.popup-empty {
+	background: #f8f9fa; border-radius: 6px;
+	padding: 40px 20px; text-align: center;
+}
+.popup-empty .kpop-empty-title { font-size: 16px; font-weight: 700; color: #212529; margin: 0 0 6px 0; }
+.popup-empty .kpop-empty-sub   { font-size: 14px; color: #495057; margin: 0 0 16px 0; }
+.popup-empty .kpop-more {
+	display: inline-block; background: #C2185B; color: #fff;
+	padding: 10px 20px; border-radius: 4px;
+	text-decoration: none; font-weight: 700; min-height: 44px;
+}
+
+/* C-3: popup 個別記事の 12項目テンプレート */
+.kpop-popup-details {
+	background: #ffffff;
+	border: 1px solid #e9ecef;
+	border-radius: 6px;
+	padding: 20px;
+	margin: 28px 0;
+}
+.kpop-popup-details-title {
+	font-size: 18px;
+	font-weight: 700;
+	color: #212529;
+	border-bottom: 2px solid #d63384;
+	padding-bottom: 8px;
+	margin: 0 0 16px 0;
+}
+.kpop-popup-details-list {
+	display: grid;
+	grid-template-columns: 140px 1fr;
+	gap: 8px 14px;
+	margin: 0;
+}
+.kpop-popup-details-list dt {
+	font-weight: 700;
+	color: #495057;
+	padding: 6px 0;
+}
+.kpop-popup-details-list dd {
+	margin: 0;
+	padding: 6px 0;
+	color: #212529;
+	line-height: 1.6;
+}
+.kpop-popup-details-list dd a {
+	color: #C2185B;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+@media (max-width: 600px) {
+	.kpop-popup-details-list { grid-template-columns: 100px 1fr; }
+}
+
+/* Google Maps embed コンテナ */
+.kpop-popup-map {
+	margin: 20px 0 12px 0;
+	border: 1px solid #e9ecef;
+	border-radius: 6px;
+	overflow: hidden;
+	aspect-ratio: 16 / 9;
+	max-height: 360px;
+}
+.kpop-popup-map iframe { display: block; }
+.kpop-popup-map-fallback {
+	margin: 16px 0;
+}
+.kpop-popup-map-fallback a {
+	display: inline-block;
+	background: #C2185B;
+	color: #fff;
+	padding: 10px 18px;
+	border-radius: 4px;
+	text-decoration: none;
+	font-weight: 700;
+	min-height: 44px;
+}
+
+/* 引用元 URL(Layer 2 必須表示)*/
+.kpop-popup-source {
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid #e9ecef;
+}
+.kpop-popup-source-label {
+	font-size: 13px;
+	color: #495057;
+	margin: 0;
+}
+.kpop-popup-source-link {
+	color: #C2185B;
+	text-decoration: underline;
+	word-break: break-all;
+}
+
+/* ==========================================================================
+   M11.5 段階9.5.8-F C+D: UI 簡素化 + カラー削減(ピンク厳選)
+   オーナー視覚確認フィードバック反映: 「UIもださい、サムネ無い、ピンク多い」
+   ========================================================================== */
+
+/* C: popup-card レイアウト見直し、余白増、情報階層 */
+.popup-card {
+	border: 1px solid #dee2e6;  /* D: 抑えめなグレー(従来は #e9ecef) */
+	border-radius: 8px;          /* C: 角丸やや大きく */
+}
+.popup-card-thumb {
+	aspect-ratio: 4 / 3;         /* C: より大きく見せる(従来 16/10) */
+	background: #f8f9fa;
+}
+.popup-card-thumb--placeholder {
+	background: #f1f3f5;          /* D: ピンクグラデを廃止、グレー */
+}
+.popup-card-body {
+	padding: 16px 18px;           /* C: 余白増(従来 12px 14px) */
+}
+.popup-card-label {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	color: #495057; /* AA 7.35:1 on #f1f3f5(旧 #6c757d は4.21で未達) */
+	background: #f1f3f5;
+	padding: 2px 8px;
+	border-radius: 999px;
+	letter-spacing: 0.05em;
+	margin: 0 0 8px 0;
+}
+.popup-card-title {
+	font-size: 15px;              /* C: 強調(従来 14px) */
+	line-height: 1.5;             /* C: 行間(従来 1.4) */
+	margin: 0 0 10px 0;           /* C: 下余白増(従来 6px) */
+}
+.popup-card-meta {
+	gap: 4px;                     /* C: 行間 */
+	font-size: 12px;
+	color: #6c757d;               /* D: ピンク不要、抑えめグレー */
+}
+.popup-card-area::before,
+.popup-card-date::before {
+	margin-right: 4px;
+}
+.popup-card:hover {
+	border-color: #adb5bd;        /* D: hover でも非ピンク(従来は影だけ) */
+}
+
+/* D: filter サイドバーの枠線も抑えめに(従来 #e9ecef は維持、ヘッダーピンクは維持) */
+.popup-sidebar-filter {
+	border-color: #dee2e6;
+}
+.popup-sidebar-filter .filter-heading {
+	border-bottom-color: #d63384;  /* ヘッダー強調ピンクは厳選で維持 */
+}
+/* count badge: 通常時は抑えめ、active のみピンク */
+.popup-sidebar-filter .count {
+	background: #f1f3f5;
+	color: #495057;
+}
+
+/* C: archive layout の padding を増やす(視覚的休息) */
+.popup-archive-layout {
+	padding: 32px 16px;           /* C: 上下余白増(従来 24px) */
+	gap: 32px;                    /* C: 列間隔増(従来 24px) */
+}
+@media (max-width: 900px) {
+	.popup-archive-layout { padding: 24px 14px; gap: 20px; }
+}
+
+/* C: list の gap も拡大 */
+.popup-list { gap: 24px; }       /* 従来 18px */
+
+/* D: popup-details の枠線抑えめ + タイトル下線はピンク維持(強調点) */
+.kpop-popup-details { border-color: #dee2e6; }
+
+/* E: popup ページ専用 - 「おすすめのポップアップ」セクション */
+.kpop-popup-recommendations {
+	margin: 40px 0;
+}
+.kpop-popup-recommendations-heading {
+	font-size: 18px;
+	font-weight: 700;
+	color: #212529;
+	border-bottom: 2px solid #d63384;  /* 強調ピンク維持 */
+	padding-bottom: 8px;
+	margin: 0 0 16px 0;
+}
+.kpop-popup-recommendations-grid {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 16px;
+}
+@media (max-width: 900px) { .kpop-popup-recommendations-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .kpop-popup-recommendations-grid { grid-template-columns: repeat(2, 1fr); } }
+.kpop-popup-recommendations-grid .popup-card-thumb { aspect-ratio: 4 / 3; }
+
+/* E-3: popup 個別記事では既存「関連記事」を非表示(「おすすめのポップアップ」と重複回避)*/
+body.is-popup-single .kpop-related-section { display: none; }
+
+/* ==========================================================================
+   Popup 完璧化(2026-05-21): 個別「開催情報」セクション + 一覧カード強化
+   Idol Wiki の品質基準準拠 — パステル基調・AA 4.5:1+・!important 不使用・
+   ::before グラデ/opacity で文字色を薄めない(axe incomplete/violation 回避)。
+   色は全て python WCAG 計算で 4.5:1 以上を検証済(最小 5.79:1)。
+   バッジ判定は functions.php の kpop_popup_status_badge() を一覧/個別で共有。
+   ========================================================================== */
+
+/* 状態カラー(各テキスト/背景ペアは AA 検証済) */
+.kpop-popup-detail,
+.popup-card {
+	--pp-rose:       #FCE4EC;
+	--pp-rose-deep:  #AD1457; /* AA on #fff 6.97 / on rose 5.79 / on peach 6.35 */
+	--pp-lav:        #F3E5F5;
+	--pp-lav-deep:   #6A1B9A; /* AA on #fff 9.39 / on lav 7.75 */
+	--pp-mint:       #E0F2F1;
+	--pp-mint-deep:  #00695C; /* AA on mint 5.71 / on teal 5.94 */
+	--pp-peach:      #FFF3E0;
+	--pp-peach-deep: #BF360C; /* AA on peach 5.11 / on #fff 6.36 */
+	--pp-blue:       #E3F2FD;
+	--pp-blue-deep:  #0D47A1; /* AA on blue 7.56 / on #fff 8.59 */
+	--pp-teal:       #E0F7FA;
+	--pp-teal-deep:  #00695C; /* AA on teal 5.94 */
+	--pp-ink:        #2B2B32; /* on #fff 14.05 */
+	--pp-sub:        #595959; /* AAA on #fff 7.00 */
+	--pp-line:       #f0e3e8;
+	/* 開催状況バッジ(状態で色分け、全ペア AA) */
+	--pp-ongoing-bg: #E0F2F1; --pp-ongoing-fg: #1B5E20; /* 緑系 6.80 */
+	--pp-upcoming-bg:#E3F0FB; --pp-upcoming-fg:#0D47A1;  /* 青系 7.45 */
+	--pp-ended-bg:   #ECEFF1; --pp-ended-fg:   #37474F;  /* 灰系 8.35 */
+}
+
+/* ── 個別記事: 開催情報セクション ───────────────────────────────── */
+.kpop-popup-detail {
+	background: #ffffff;
+	border: 1px solid var(--pp-line);
+	border-radius: 16px;
+	padding: 1.6em 1.75em 1.75em;
+	margin: 2.2em 0;
+	/* 上辺パステルアクセントは border-image(実プロパティ)で。::before は使わない。 */
+	/* 6色洗練: 多色グラデ上辺 → 単色ブランドピンク(装飾borderのみ、--pp-* AAペアは不変)。 */
+	border-top: 4px solid var(--kpop-pink);
+	box-shadow: 0 8px 30px rgba(173, 20, 87, 0.06);
+}
+.kpop-popup-detail-head {
+	display: flex;
+	align-items: center;
+	gap: 0.7em;
+	flex-wrap: wrap;
+	margin: 0 0 1.1em;
+	padding-bottom: 0.7em;
+	border-bottom: 1px solid var(--pp-line);
+}
+.kpop-popup-detail-title {
+	font-size: 1.4em;
+	font-weight: 800;
+	color: var(--pp-ink);
+	margin: 0;
+	letter-spacing: -0.01em;
+}
+/* 開催状況バッジ(個別・やや大きめ) — 不透明パステル単色、文字は明示濃色 */
+.kpop-popup-badge {
+	display: inline-block;
+	font-size: 0.82em;
+	font-weight: 700;
+	line-height: 1;
+	padding: 0.42em 0.9em;
+	border-radius: 999px;
+	letter-spacing: 0.02em;
+}
+.kpop-popup-badge.is-ongoing  { background: var(--pp-ongoing-bg);  color: var(--pp-ongoing-fg); }
+.kpop-popup-badge.is-upcoming { background: var(--pp-upcoming-bg); color: var(--pp-upcoming-fg); }
+.kpop-popup-badge.is-ended    { background: var(--pp-ended-bg);    color: var(--pp-ended-fg); }
+
+/* 開催情報 定義リスト(1.1: 項目ごとにパステル小カードで色分け)
+ * 各項目 = dt(ラベル帯)+ dd(値) を 1 枚のパステルカードとして表示。
+ * dt と dd は同じ pastel 背景を共有し、上下で 1 カードに見えるよう角丸を分担。
+ * レスポンシブ: 自動詰めの 2〜複数列。視認性とリズムを上げる。
+ * 全ペア(背景 pastel + 同系濃色文字 / ink)は python WCAG 計算で 4.5:1+ を検証済。*/
+.kpop-popup-detail-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16em, 1fr));
+	gap: 0.85em;
+	margin: 0 0 0.4em;
+	padding: 0; /* dl 既定 margin を打ち消す(GP リセット差異対策) */
+}
+/* 住所分割バグ根治: 各項目 = 1カード。dt(ラベル)とdd(値)はこの中で必ず縦積み。
+   PC 多列でも 1カード=1 grid item なのでラベルと値が別カラムに割れない。 */
+.kpop-popup-item {
+	display: flex;
+	flex-direction: column;
+	border-radius: 14px;
+	overflow: hidden;            /* 角丸を子の背景に効かせる */
+	box-shadow: 0 1px 3px rgba(20, 20, 40, 0.05);
+}
+/* ラベル帯: 小さく控えめ(アイコン + ラベル)。値を主役にするためトーンを落とす。 */
+.kpop-popup-dt {
+	display: flex;
+	align-items: center;
+	gap: 0.45em;
+	font-weight: 700;
+	padding: 0.6em 0.95em 0.35em;
+	font-size: 0.82em;
+	letter-spacing: 0.02em;
+	border-radius: 0;
+}
+.kpop-popup-ic { font-size: 1.05em; line-height: 1; }
+/* 値: 大きく主役。行間ゆったり、余白統一。 */
+.kpop-popup-dd {
+	margin: 0;
+	padding: 0 0.95em 0.8em;
+	color: var(--pp-ink); /* 不透明パステル背景上で 11.6〜12.8:1 の AAA(値不変) */
+	font-size: 1.05em;
+	font-weight: 600;
+	line-height: 1.65;
+	border-radius: 0;
+	word-break: break-word;
+}
+
+/* 1.1: 6色ローテーション。dt(ラベル)=同系濃色文字、dd(値)=ink。
+ * 背景は不透明パステル単色(グラデ/opacity 不使用 = axe で背景確定)。 */
+.kpop-popup-dt.kpop-popup-row--rose,
+.kpop-popup-dd.kpop-popup-row--rose     { background: var(--pp-rose); }
+.kpop-popup-dt.kpop-popup-row--rose     { color: var(--pp-rose-deep); }      /* on rose 5.79 */
+.kpop-popup-dt.kpop-popup-row--lavender,
+.kpop-popup-dd.kpop-popup-row--lavender { background: var(--pp-lav); }
+.kpop-popup-dt.kpop-popup-row--lavender { color: var(--pp-lav-deep); }       /* on lav 7.75 */
+.kpop-popup-dt.kpop-popup-row--mint,
+.kpop-popup-dd.kpop-popup-row--mint     { background: var(--pp-mint); }
+.kpop-popup-dt.kpop-popup-row--mint     { color: var(--pp-mint-deep); }      /* on mint 5.71 */
+.kpop-popup-dt.kpop-popup-row--peach,
+.kpop-popup-dd.kpop-popup-row--peach    { background: var(--pp-peach); }
+.kpop-popup-dt.kpop-popup-row--peach    { color: var(--pp-peach-deep); }     /* on peach 5.11 */
+.kpop-popup-dt.kpop-popup-row--blue,
+.kpop-popup-dd.kpop-popup-row--blue     { background: var(--pp-blue); }
+.kpop-popup-dt.kpop-popup-row--blue     { color: var(--pp-blue-deep); }      /* on blue 7.56 */
+.kpop-popup-dt.kpop-popup-row--teal,
+.kpop-popup-dd.kpop-popup-row--teal     { background: var(--pp-teal); }
+.kpop-popup-dt.kpop-popup-row--teal     { color: var(--pp-teal-deep); }      /* on teal 5.94 */
+
+/* イベント詳細 / SNS の小見出し */
+.kpop-popup-subhead {
+	font-size: 1.02em;
+	font-weight: 700;
+	color: var(--pp-lav-deep);
+	margin: 1.3em 0 0.5em;
+}
+/* イベント詳細本文 — ミントの薄パステルカード(不透明単色背景=axe で背景確定) */
+.kpop-popup-desc {
+	margin-top: 0.4em;
+}
+.kpop-popup-desc-text {
+	background: var(--pp-mint);
+	border-radius: 12px;
+	padding: 0.95em 1.1em;
+	margin: 0;
+	color: var(--pp-ink);
+	line-height: 1.8;
+}
+/* SNS リンク(縦並びリスト) */
+.kpop-popup-sns-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4em;
+}
+.kpop-popup-sns-list li { margin: 0; padding: 0; }
+.kpop-popup-sns-link {
+	display: inline-block;
+	width: max-content;
+	max-width: 100%;
+	color: var(--pp-lav-deep);
+	background: var(--pp-lav);
+	border-radius: 8px;
+	padding: 0.4em 0.85em;
+	text-decoration: none;
+	font-weight: 600;
+	word-break: break-all;
+}
+.kpop-popup-sns-link:hover { text-decoration: underline; }
+.kpop-popup-sns-link:focus-visible { outline: 2px solid var(--pp-lav-deep); outline-offset: 2px; }
+
+/* 地図 embed */
+.kpop-popup-detail .kpop-popup-map {
+	margin: 1.3em 0 0.6em;
+	border: 1px solid var(--pp-line);
+	border-radius: 12px;
+	overflow: hidden;
+	aspect-ratio: 16 / 9;
+	max-height: 360px;
+}
+.kpop-popup-detail .kpop-popup-map iframe { display: block; width: 100%; height: 100%; }
+.kpop-popup-detail .kpop-popup-map-fallback { margin: 1.1em 0 0.4em; }
+.kpop-popup-detail .kpop-popup-map-fallback a {
+	display: inline-block;
+	background: var(--pp-rose-deep);
+	color: #ffffff; /* AA 6.97 */
+	padding: 0.7em 1.2em;
+	border-radius: 8px;
+	text-decoration: none;
+	font-weight: 700;
+	min-height: 44px;
+	box-sizing: border-box;
+}
+.kpop-popup-detail .kpop-popup-map-fallback a:focus-visible { outline: 2px solid var(--pp-ink); outline-offset: 2px; }
+
+/* 出典(引用元 URL)— ピーチの薄パステル枠で著作権表示を明示 */
+.kpop-popup-detail .kpop-popup-source {
+	margin-top: 1.4em;
+	padding: 0.85em 1.1em;
+	background: var(--pp-peach);
+	border-radius: 10px;
+}
+.kpop-popup-detail .kpop-popup-source-label {
+	font-size: 0.9em;
+	color: var(--pp-sub); /* on peach 6.39 */
+	margin: 0;
+	line-height: 1.6;
+}
+.kpop-popup-detail .kpop-popup-source-link {
+	color: var(--pp-rose-deep); /* on peach 6.35 */
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	word-break: break-all;
+}
+
+@media (max-width: 600px) {
+	.kpop-popup-detail { padding: 1.3em 1.15em 1.4em; }
+	/* モバイル: パステルカードを 1列で縦積み(色分けは維持) */
+	.kpop-popup-detail-list { grid-template-columns: 1fr; gap: 0.6em; }
+}
+
+/* ── 一覧カード: 開催状況バッジ + 期間 + エリア + 洗練プレースホルダ ──── */
+.popup-card-thumb { position: relative; }
+/* バッジ: サムネ右上にオーバーレイ(自前の不透明パステル背景を持つので axe で背景確定) */
+.popup-card-badge {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 2;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1;
+	padding: 5px 9px;
+	border-radius: 999px;
+	letter-spacing: 0.02em;
+}
+.popup-card-badge.is-ongoing  { background: var(--pp-ongoing-bg);  color: var(--pp-ongoing-fg); }
+.popup-card-badge.is-upcoming { background: var(--pp-upcoming-bg); color: var(--pp-upcoming-fg); }
+.popup-card-badge.is-ended    { background: var(--pp-ended-bg);    color: var(--pp-ended-fg); }
+
+/* サムネ無し: パステル枠 + 頭文字大 + "POP UP"(Idol Wiki プレースホルダ同様) */
+.popup-card-thumb--placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+	height: 100%;
+	background: var(--pp-rose); /* 不透明単色パステル(グラデ/opacity 不使用) */
+	text-align: center;
+	padding: 10px;
+	box-sizing: border-box;
+}
+.popup-card-ph-initial {
+	font-size: 2.6em;
+	font-weight: 900;
+	line-height: 1;
+	color: var(--pp-rose-deep); /* on rose 5.79 */
+	letter-spacing: -0.02em;
+}
+.popup-card-ph-label {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	color: var(--pp-sub); /* on rose 5.82 */
+}
+
+/* カードのメタ行: アイコン文字 + テキスト */
+.popup-card-meta .popup-card-ic { margin-right: 4px; }
+/* 旧 ::before アイコン指定を無効化(emoji は span に移行済み) */
+.popup-card-area::before,
+.popup-card-date::before { content: none; }
+
+/* ==========================================================================
+   M11.5 段階9.5.8-G B+C+D: エリア横並びタグ + カテゴリパステル + フィルタ柔軟化
+   オーナー視覚確認3回目フィードバック反映
+   ========================================================================== */
+
+/* B: エリアを韓国/日本に分けて横並びタグ表示、count 表示なし */
+.popup-sidebar-filter .filter-subgroup-title {
+	font-size: 12px;
+	font-weight: 600;
+	color: #6c757d;
+	margin: 12px 0 6px 0;
+	letter-spacing: 0.03em;
+}
+.popup-sidebar-filter .filter-list--tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+.popup-sidebar-filter .filter-tag {
+	display: inline-block;
+	background: #f8f9fa;
+	color: #495057;
+	border: 1px solid #dee2e6;
+	border-radius: 14px;
+	padding: 6px 12px;
+	font-size: 13px;
+	text-decoration: none;
+	min-height: 32px;
+	line-height: 1.4;
+	transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.popup-sidebar-filter .filter-tag:hover {
+	background: #ffeef5;
+	color: #C2185B;
+	border-color: #f8bbd0;
+}
+.popup-sidebar-filter .filter-tag.active,
+.popup-sidebar-filter .filter-tag[aria-current="true"] {
+	background: #C2185B;
+	color: #ffffff;
+	border-color: #C2185B;
+	font-weight: 700;
+}
+.popup-sidebar-filter .filter-tag.is-zero {
+	color: #adb5bd;
+	background: #ffffff;
+	border-color: #e9ecef;
+}
+.popup-sidebar-filter .filter-tag.is-zero:hover {
+	background: #f8f9fa;
+	color: #6c757d;
+}
+
+/* D: filter ボックス柔軟化(濃いボーダーをパステル系に) */
+.popup-sidebar-filter {
+	border: 1px solid #f3e5e8;
+	background: #fffaf9;
+}
+.popup-sidebar-filter .filter-heading {
+	font-size: 16px;
+	color: #495057;
+	border-bottom: 1px solid #f8bbd0;  /* パステルピンク細線(濃 #d63384 から変更) */
+	padding-bottom: 8px;
+	margin: 0 0 14px 0;
+}
+.popup-sidebar-filter .filter-group-title {
+	color: #6c757d;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: none;  /* uppercase を解除して柔らかく */
+}
+
+/* C: カテゴリ別パステル化 — body.kpop-cat-{slug} + .kpop-archive-banner */
+/* デフォルト(現状の濃ピンクは維持しないでパステルローズに) */
+.kpop-archive-banner {
+	background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%);
+	color: #212529;  /* AA: 14.29:1 on #fff0f5 */
+	border-bottom: 1px solid #f8bbd0;
+}
+.kpop-archive-banner .kpop-archive-label,
+.kpop-archive-banner .kpop-archive-title,
+.kpop-archive-banner .kpop-archive-count,
+.kpop-archive-banner .kpop-archive-desc {
+	color: #212529;
+}
+
+/* popup: パステルローズ */
+body.kpop-cat-popup .kpop-archive-banner {
+	background: linear-gradient(135deg, #fff0f5 0%, #f8bbd0 100%);
+}
+/* news: パステルブルー */
+body.kpop-cat-news .kpop-archive-banner {
+	background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+}
+/* beauty: パステルピンク(やや濃) */
+body.kpop-cat-beauty .kpop-archive-banner {
+	background: linear-gradient(135deg, #fce4ec 0%, #f48fb1 100%);
+}
+/* kdrama: パステルパープル */
+body.kpop-cat-kdrama .kpop-archive-banner {
+	background: linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%);
+}
+/* travel: パステルミント */
+body.kpop-cat-travel .kpop-archive-banner {
+	background: linear-gradient(135deg, #e0f2f1 0%, #80cbc4 100%);
+}
+/* fashion: パステルイエロー */
+body.kpop-cat-fashion .kpop-archive-banner {
+	background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+}
+/* oshikatsu: パステルクリーム */
+body.kpop-cat-oshikatsu .kpop-archive-banner {
+	background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%);
+}
+/* chart: パステルブルーグレー */
+body.kpop-cat-chart .kpop-archive-banner {
+	background: linear-gradient(135deg, #eceff1 0%, #b0bec5 100%);
+}
+/* live: パステルレッド */
+body.kpop-cat-live .kpop-archive-banner {
+	background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%);
+}
+/* comeback: パステルゴールド */
+body.kpop-cat-comeback .kpop-archive-banner {
+	background: linear-gradient(135deg, #fff8dc 0%, #f0e68c 100%);
+}
+
+/* 共通: バナーの内側 ラベルは小さく抑えめ */
+.kpop-archive-banner .kpop-archive-label {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 700;
+	background: rgba(33,37,41,0.08);
+	padding: 3px 10px;
+	border-radius: 12px;
+	letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Popup 個別ページ改修(2026-05-21): 左ナビバー / ヒーロー行 / SNS ピル /
+   近日開催予定。Idol Wiki と同じ品質基準 — パステル基調・AA 4.5:1+・
+   !important 不使用・グラデ/opacity で文字色を薄めない(axe 背景確定)。
+   使用色は全て python WCAG 計算で 4.5:1 以上を検証済(最小 5.71:1)。
+   ========================================================================== */
+
+/* ── 個別改修2: 左バー + 本文 の2カラム(popup 記事のみ)──────────────────
+   .kpop-popup-single-layout は content-single.php が popup 記事だけに出力。
+   右サイドバーは generate_show_right_sidebar=false で既に撤去済。
+   他カテゴリ記事には .kpop-popup-single-layout が存在しないため無影響。 */
+.kpop-popup-single-layout {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: 28px;
+	align-items: start;
+}
+.kpop-popup-single-body { min-width: 0; }
+.kpop-popup-single-aside {
+	align-self: start;
+	position: sticky;
+	top: 16px;
+}
+/* モバイル: 縦積み(左バーを本文の上に) */
+@media (max-width: 768px) {
+	.kpop-popup-single-layout {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 18px;
+	}
+	.kpop-popup-single-aside {
+		position: static;
+	}
+}
+
+/* 左ナビバー本体 */
+.kpop-popup-sidenav {
+	background: #ffffff;
+	border: 1px solid var(--pp-line, #f0e3e8);
+	border-radius: 12px;
+	padding: 14px 16px 16px;
+}
+.kpop-popup-sidenav-heading {
+	margin: 0 0 12px;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #f8bbd0;
+	font-size: 0.95rem;
+	font-weight: 800;
+}
+.kpop-popup-sidenav-heading a {
+	color: #AD1457; /* on #fff 6.97:1 */
+	text-decoration: none;
+}
+.kpop-popup-sidenav-heading a:hover { text-decoration: underline; }
+.kpop-popup-sidenav-group { margin-top: 14px; }
+.kpop-popup-sidenav-group:first-of-type { margin-top: 0; }
+.kpop-popup-sidenav-title {
+	margin: 0 0 6px;
+	font-size: 0.74rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #6A1B9A; /* on #fff 9.39:1 */
+}
+.kpop-popup-sidenav-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.kpop-popup-sidenav-list li { margin: 0; padding: 0; }
+.kpop-popup-sidenav-link {
+	display: inline-block;
+	padding: 5px 11px;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #2B2B32; /* on #fff 14.05:1 */
+	background: #faf3f6;
+	text-decoration: none;
+	min-height: 30px;
+	line-height: 1.5;
+}
+.kpop-popup-sidenav-link:hover {
+	background: #fdf4f7;
+	color: #AD1457; /* on #fdf4f7 6.46:1 */
+}
+.kpop-popup-sidenav-link.is-current,
+.kpop-popup-sidenav-link[aria-current="true"] {
+	background: #FCE4EC;
+	color: #AD1457; /* on #FCE4EC 5.79:1 */
+	font-weight: 800;
+}
+.kpop-popup-sidenav-link:focus-visible {
+	outline: 2px solid #AD1457;
+	outline-offset: 2px;
+}
+
+/* ── 個別改修5: ヒーロー行(期間/エリア/営業時間 を大きく)──────────────
+   「いつ・どこで・何時」が一目で分かる大きいパステルカード3枚。
+   背景は不透明パステル単色(グラデ/opacity 不使用 = axe で背景確定)。
+   各色ペアは python WCAG 検証済(最小 5.71:1)。 */
+.kpop-popup-hero {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(13em, 1fr));
+	gap: 0.8em;
+	margin: 0 0 1em;
+}
+.kpop-popup-hero-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35em;
+	padding: 1em 1.1em;
+	border-radius: 14px;
+}
+.kpop-popup-hero-label {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	font-size: 0.82em;
+	font-weight: 800;
+	letter-spacing: 0.01em;
+}
+.kpop-popup-hero-val {
+	font-size: 1.18em;
+	font-weight: 800;
+	line-height: 1.45;
+	color: var(--pp-ink); /* 不透明パステル背景上で 11.6〜12.1:1 */
+	word-break: break-word;
+}
+/* ヒーローカードの色(detail と同じ 6色変数を流用) */
+.kpop-popup-hero-card.kpop-popup-row--rose     { background: var(--pp-rose); }
+.kpop-popup-hero-card.kpop-popup-row--rose     .kpop-popup-hero-label { color: var(--pp-rose-deep); }    /* on rose 5.79 */
+.kpop-popup-hero-card.kpop-popup-row--mint     { background: var(--pp-mint); }
+.kpop-popup-hero-card.kpop-popup-row--mint     .kpop-popup-hero-label { color: var(--pp-mint-deep); }    /* on mint 5.71 */
+.kpop-popup-hero-card.kpop-popup-row--lavender { background: var(--pp-lav); }
+.kpop-popup-hero-card.kpop-popup-row--lavender .kpop-popup-hero-label { color: var(--pp-lav-deep); }     /* on lav 7.75 */
+
+/* ── 個別改修1: SNS をブランドアイコン+ラベルのピルに ───────────────────
+   Idol Wiki の .kpop-sns-link パターンを popup detail スコープで再現。
+   width:max-content でラベル潰れ防止。アイコンは非テキスト装飾(currentColor)。 */
+.kpop-popup-sns .kpop-popup-sns-list {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0.5em;
+}
+.kpop-popup-sns .kpop-sns-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	white-space: nowrap;
+	width: max-content;
+	max-width: 100%;
+	padding: 0.5em 1em 0.5em 0.85em;
+	background: #ffffff;
+	color: #3a3a42; /* on #fff 11.27:1 */
+	border-radius: 999px;
+	font-size: 0.84em;
+	font-weight: 700;
+	text-decoration: none;
+	border: 1.5px solid var(--pp-line, #f0e3e8);
+	transition: color 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+}
+.kpop-popup-sns .kpop-sns-icon {
+	flex: 0 0 auto;
+	color: var(--pp-sub, #595959); /* 既定グレー、hover で各ブランド色 */
+	transition: color 0.18s;
+}
+.kpop-popup-sns .kpop-sns-label {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+.kpop-popup-sns .kpop-sns-link:hover,
+.kpop-popup-sns .kpop-sns-link:focus {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.kpop-popup-sns .kpop-sns-link:focus-visible {
+	outline: 2px solid var(--pp-lav-deep, #6A1B9A);
+	outline-offset: 2px;
+}
+/* hover 時 各 SNS のブランド色をアイコン + 枠に(アイコンは非テキスト=3:1で十分) */
+.kpop-popup-sns .kpop-sns-x:hover .kpop-sns-icon,
+.kpop-popup-sns .kpop-sns-x:focus .kpop-sns-icon         { color: #000000; }
+.kpop-popup-sns .kpop-sns-x:hover,
+.kpop-popup-sns .kpop-sns-x:focus                        { border-color: #000000; }
+.kpop-popup-sns .kpop-sns-instagram:hover .kpop-sns-icon,
+.kpop-popup-sns .kpop-sns-instagram:focus .kpop-sns-icon { color: #C13584; }
+.kpop-popup-sns .kpop-sns-instagram:hover,
+.kpop-popup-sns .kpop-sns-instagram:focus                { border-color: #C13584; }
+.kpop-popup-sns .kpop-sns-youtube:hover .kpop-sns-icon,
+.kpop-popup-sns .kpop-sns-youtube:focus .kpop-sns-icon   { color: #CC0000; }
+.kpop-popup-sns .kpop-sns-youtube:hover,
+.kpop-popup-sns .kpop-sns-youtube:focus                  { border-color: #CC0000; }
+.kpop-popup-sns .kpop-sns-tiktok:hover .kpop-sns-icon,
+.kpop-popup-sns .kpop-sns-tiktok:focus .kpop-sns-icon    { color: #000000; }
+.kpop-popup-sns .kpop-sns-tiktok:hover,
+.kpop-popup-sns .kpop-sns-tiktok:focus                   { border-color: #000000; }
+.kpop-popup-sns .kpop-sns-link:hover .kpop-sns-icon      { color: #6A1B9A; }
+
+/* ── 個別改修3: 「近日開催予定」セクション(おすすめと同じカードグリッド)── */
+.kpop-popup-upcoming {
+	margin: 40px 0;
+}
