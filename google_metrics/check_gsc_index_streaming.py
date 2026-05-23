@@ -8,7 +8,7 @@ Usage:
 確認項目: verdict / coverageState / lastCrawlTime / robotsTxtState / indexingState
 """
 
-import json, urllib.request, urllib.parse, time, base64, os, argparse
+import json, urllib.request, urllib.parse, time, base64, os, argparse, sys
 from datetime import date
 from pathlib import Path
 from cryptography.hazmat.primitives import hashes, serialization
@@ -20,7 +20,53 @@ LOG_FILE = BASE / "logs" / "gsc_index_check.jsonl"
 
 SITE_URL = "https://www.kpopjournal.tokyo/"
 
-# 確認対象URL一覧（11記事）
+
+def get_targets_from_db(limit: int = 20, category_slug: str = ""):
+    """現存する publish 記事の実 URL を DB から取得して対象にする(2026-05-23)。
+
+    旧 TARGETS は post_id 2333-2401 のハードコード11件だったが、rebuild で
+    全て消滅(現存しない URL)。GSC が「URL is unknown to Google」を返すのは
+    当然で、インデックス状況の指標として無意味だった。現存 publish 記事の
+    パーマリンクを動的取得して、実態を測れるようにする。
+
+    URL は wp_posts.guid ではなく post_name(slug)からパーマリンク組み立て
+    (このサイトは /<slug>/ 形式)。新しい順に limit 件。
+    """
+    try:
+        sys.path.insert(0, str(BASE))
+        import lib.popup_event_to_post as P
+    except Exception as e:
+        print(f"  WARN: DB モジュール読込失敗 → 対象0件 ({type(e).__name__})")
+        return []
+    cat = ""
+    if category_slug:
+        cat = (
+            "JOIN wp_term_relationships tr ON tr.object_id=p.ID "
+            "JOIN wp_term_taxonomy tt ON tt.term_taxonomy_id=tr.term_taxonomy_id "
+            "JOIN wp_terms t ON t.term_id=tt.term_id "
+            f"AND tt.taxonomy='category' AND t.slug='{P.esc_sql(category_slug)}' "
+        )
+    sql = (
+        "SELECT p.ID, p.post_title, p.post_name FROM wp_posts p "
+        + cat +
+        "WHERE p.post_type='post' AND p.post_status='publish' AND p.post_name<>'' "
+        f"ORDER BY p.post_date DESC LIMIT {int(limit)};"
+    )
+    out = P.run_mysql(sql)
+    targets = []
+    for line in out.splitlines():
+        parts = line.split("\t")
+        if len(parts) >= 3 and parts[0].strip().isdigit():
+            pid, title, slug = parts[0].strip(), parts[1].strip(), parts[2].strip()
+            targets.append({
+                "post_id": int(pid),
+                "title": title,
+                "url": SITE_URL + urllib.parse.quote(slug) + "/",
+            })
+    return targets
+
+
+# 後方互換: 旧ハードコード(全て rebuild で消滅・現存しない)。既定では使わない。
 TARGETS = [
     {"post_id": 2401, "title": "K-POPを日本から見る方法まとめ【ハブ】",
      "url": "https://www.kpopjournal.tokyo/kpop-streaming-guide-japan-2026-hub/"},
@@ -100,15 +146,20 @@ def inspect_url(url: str, access_token: str) -> dict:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--save", action="store_true", help="ログをJSONLに保存")
+    parser.add_argument("--limit", type=int, default=20, help="チェックする現存記事数(新しい順)")
+    parser.add_argument("--category", default="", help="カテゴリslugで絞る(例: popup)")
+    parser.add_argument("--legacy", action="store_true", help="旧ハードコードTARGETSを使う(非推奨)")
     args = parser.parse_args()
 
+    targets = TARGETS if args.legacy else get_targets_from_db(args.limit, args.category)
+
     print(f"[check_gsc_index_streaming] 実行日: {date.today()}")
-    print(f"対象: {len(TARGETS)}記事\n")
+    print(f"対象: {len(targets)}記事 ({'legacy固定' if args.legacy else 'DB動的取得'})\n")
 
     token = get_access_token()
     results = []
 
-    for t in TARGETS:
+    for t in targets:
         result = inspect_url(t["url"], token)
         if "error" in result:
             verdict = "ERROR"
