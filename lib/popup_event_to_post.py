@@ -205,6 +205,41 @@ def run_mysql(sql: str) -> str:
         sys.exit(f"mysql error: {r.stderr}")
     return r.stdout.strip()
 
+def find_popup_by_source_url(source_url: str) -> tuple[int, str]:
+    """popup_source_url(完全一致)で既存 popup を検索。重複 import 再発防止ガード。
+
+    今回の3重 import 根本原因対策: main() が source_url の重複確認なしで毎回
+    insert していたため、同一出典 popup が複数 post 化していた(生 INSERT で
+    WP の slug 一意化もバイパス)。本関数で insert 前に既存を検出して skip する。
+
+    判定: wp_postmeta.meta_key='popup_source_url' AND meta_value=完全一致。
+    状態スコープ: 全状態(publish/draft/pending/private/future + trash)を対象。
+      → trash 済みの重複が再 import で復活しないよう、trash も「既存」とみなす
+        (オーナー決定 2026-05-23。誤 trash は untrash で復元可)。
+    戻り値: (post_id, post_status)。既存なしは (0, "")。
+
+    citation-rules §8 で popup は source_url 必須。空 source_url は呼び出し側で
+    既に HARD_FAIL skip 済みのため、ここでは念のため空なら (0, "") を返す。
+    """
+    su = (source_url or "").strip()
+    if not su:
+        return 0, ""
+    su_esc = esc_sql(su)
+    # 最古(=正版になりうる最初の1件)を残す方針で ORDER BY p.ID ASC。
+    res = run_mysql(
+        "SELECT p.ID, p.post_status FROM wp_posts p "
+        "JOIN wp_postmeta pm ON pm.post_id = p.ID "
+        f"WHERE pm.meta_key = 'popup_source_url' AND pm.meta_value = '{su_esc}' "
+        "AND p.post_type = 'post' "
+        "ORDER BY p.ID ASC LIMIT 1;"
+    )
+    for line in res.splitlines():
+        parts = line.split("\t")
+        if parts and parts[0].strip().isdigit():
+            return int(parts[0].strip()), (parts[1].strip() if len(parts) > 1 else "")
+    return 0, ""
+
+
 def insert_post(title: str, body: str, slug: str, post_type: str, category_slug: str | None = None) -> int:
     """wp_posts に1件 INSERT してID返す。tribe_events の場合 category は使わない。"""
     now = now_iso()
@@ -753,6 +788,15 @@ def main(signals_path: str) -> int:
             continue
 
         if sig["type"] == "popup":
+            # 重複再発防止ガード(2026-05-23): popup_source_url 完全一致の既存があれば
+            # insert せず skip。trash 含む全状態を対象(既存の重複整理を尊重)。
+            # insert 前に判定するため、重複 popup を二度と生成しない(冪等)。
+            existing_id, existing_status = find_popup_by_source_url(sig["source_url"])
+            if existing_id:
+                print(f"  SKIP(dedup): source_url は既存 ID {existing_id}(status={existing_status})、insert しない")
+                posted.append({"type": "popup", "post_id": existing_id, "title": sig.get("title", ""),
+                               "url": f"https://stg.kpopjournal.tokyo/?p={existing_id}", "skipped_dedup": True})
+                continue
             title, body, slug = build_popup_article(sig)
             pid = insert_post(title, body, slug, post_type="post")
             if pid and not DRY_RUN:
