@@ -1,0 +1,1266 @@
+{
+  "version": "4.0",
+  "schema": "notion_official_5dept_5exec",
+  "updated_at": "2026-04-27T23:30:00+09:00",
+  "executives": {
+    "CEO": {
+      "staff_id": "KPJ-EXE-001",
+      "code_name": "ミュウツー",
+      "english": "mewtwo",
+      "role": "全社戦略・最終可否",
+      "managed_depts": [
+        "all"
+      ]
+    },
+    "COO": {
+      "staff_id": "KPJ-EXE-002",
+      "code_name": "イーブイ",
+      "english": "eevee",
+      "role": "業務執行統括",
+      "managed_depts": [
+        "コンテンツ部",
+        "品質部",
+        "SEO部"
+      ]
+    },
+    "CTO": {
+      "staff_id": "KPJ-EXE-003",
+      "code_name": "アルセウス",
+      "english": "arceus",
+      "role": "技術統括",
+      "managed_depts": [
+        "運用部",
+        "品質部"
+      ]
+    },
+    "CFO": {
+      "staff_id": "KPJ-EXE-004",
+      "code_name": "カビゴン",
+      "english": "snorlax",
+      "role": "財務統括",
+      "managed_depts": [
+        "収益部"
+      ]
+    },
+    "CMO": {
+      "staff_id": "KPJ-EXE-005",
+      "code_name": "ラティアス",
+      "english": "latias",
+      "role": "マーケティング統括",
+      "managed_depts": [
+        "SEO部",
+        "収益部"
+      ]
+    }
+  },
+  "departments": {
+    "コンテンツ部": {
+      "channel": "📝-コンテンツ部",
+      "head": {
+        "staff_id": "KPJ-DEP-101",
+        "code_name": "デオキシス",
+        "english": "deoxys",
+        "role_name": "コンテンツ部長",
+        "job_description": "記事執筆統括"
+      },
+      "members": [
+        {
+          "staff_id": "KPJ-DEP-102",
+          "code_name": "メタモン",
+          "english": "metamon",
+          "role_name": "リライト担当",
+          "job_description": "記事リライト・構造改善"
+        },
+        {
+          "staff_id": "KPJ-DEP-103",
+          "code_name": "バタフリー",
+          "english": "butterfree",
+          "role_name": "速報担当",
+          "job_description": "速報・トレンド記事"
+        },
+        {
+          "staff_id": "KPJ-DEP-104",
+          "code_name": "ジラーチ",
+          "english": "jirachi",
+          "role_name": "ファクトチェック",
+          "job_description": "事実確認・検証"
+        }
+      ]
+    },
+    "品質部": {
+      "channel": "🔍-品質部",
+      "head": {
+        "staff_id": "KPJ-DEP-201",
+        "code_name": "サーナイト",
+        "english": "gardevoir",
+        "role_name": "品質部長",
+        "job_description": "フック評価・品質ゲート"
+      },
+      "members": [
+        {
+          "staff_id": "KPJ-DEP-202",
+          "code_name": "ゲンガー",
+          "english": "gengar",
+          "role_name": "SEO監査担当",
+          "job_description": "SEO観点チェック"
+        },
+        {
+          "staff_id": "KPJ-DEP-203",
+          "code_name": "イーブイJr",
+          "english": "eevee_jr",
+          "role_name": "構造監査担当",
+          "job_description": "記事構造検証"
+        }
+      ]
+    },
+    "SEO部": {
+      "channel": "🔎-seo部",
+      "head": {
+        "staff_id": "KPJ-DEP-301",
+        "code_name": "フーディン",
+        "english": "alakazam",
+        "role_name": "SEO部長",
+        "job_description": "SEO分析・戦略"
+      },
+      "members": [
+        {
+          "staff_id": "KPJ-DEP-302",
+          "code_name": "ラプラス",
+          "english": "lapras",
+          "role_name": "キーワード担当",
+          "job_description": "キーワードリサーチ"
+        },
+        {
+          "staff_id": "KPJ-DEP-303",
+          "code_name": "ミミッキュ",
+          "english": "mimikyu",
+          "role_name": "構造化データ担当",
+          "job_description": "JSON-LD・schema"
+        },
+        {
+          "staff_id": "KPJ-DEP-304",
+          "code_name": "イルミーゼ",
+          "english": "illumise",
+          "role_name": "UI最適化",
+          "job_description": "CSS・UI改善"
+        }
+      ]
+    },
+    "収益部": {
+      "channel": "💰-収益部",
+      "head": {
+        "staff_id": "KPJ-DEP-401",
+        "code_name": "ペルシアン",
+        "english": "persian",
+        "role_name": "収益部長",
+        "job_description": "X投稿・収益管理"
+      },
+      "members": [
+        {
+          "staff_id": "KPJ-DEP-402",
+          "code_name": "ニャース",
+          "english": "meowth",
+          "role_name": "アフィリ管理",
+          "job_description": "A8/Amazon/Qoo10"
+        },
+        {
+          "staff_id": "KPJ-DEP-403",
+          "code_name": "ポリゴン",
+          "english": "porygon",
+          "role_name": "コスト追跡",
+          "job_description": "API/サーバーコスト"
+        }
+      ]
+    },
+    "運用部": {
+      "channel": "⚙️-運用部",
+      "head": {
+        "staff_id": "KPJ-DEP-501",
+        "code_name": "フシギバナ",
+        "english": "venusaur",
+        "role_name": "運用部長",
+        "job_description": "リソース最適化"
+      },
+      "members": [
+        {
+          "staff_id": "KPJ-DEP-502",
+          "code_name": "ポリゴンZ",
+          "english": "porygon_z",
+          "role_name": "データストレージ",
+          "job_description": "DB・ファイル管理"
+        },
+        {
+          "staff_id": "KPJ-DEP-503",
+          "code_name": "ライコウ",
+          "english": "raikou",
+          "role_name": "サムネ生成",
+          "job_description": "v6 thumbnail"
+        }
+      ]
+    }
+  },
+  "individual_staff": {
+    "KPJ-EXE-001": {
+      "staff_id": "KPJ-EXE-001",
+      "code_name": "ミュウツー",
+      "english": "mewtwo",
+      "role": "全社戦略・最終可否",
+      "managed_depts": [
+        "all"
+      ],
+      "department": "役員",
+      "role_name": "CEO",
+      "task_queue": [
+        {
+          "task_id": "b136cecd",
+          "name": "owner_directive_audit",
+          "meta": {
+            "owner_message": "Kpop 昨夜21時に監査できていますか？",
+            "channel": "一般"
+          },
+          "priority": "normal",
+          "assigned_at": "2026-05-01T01:16:30.382417",
+          "status": "queued"
+        }
+      ],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-EXE-002": {
+      "staff_id": "KPJ-EXE-002",
+      "code_name": "イーブイ",
+      "english": "eevee",
+      "role": "業務執行統括",
+      "managed_depts": [
+        "コンテンツ部",
+        "品質部",
+        "SEO部"
+      ],
+      "department": "役員",
+      "role_name": "COO",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-EXE-003": {
+      "staff_id": "KPJ-EXE-003",
+      "code_name": "アルセウス",
+      "english": "arceus",
+      "role": "技術統括",
+      "managed_depts": [
+        "運用部",
+        "品質部"
+      ],
+      "department": "役員",
+      "role_name": "CTO",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-EXE-004": {
+      "staff_id": "KPJ-EXE-004",
+      "code_name": "カビゴン",
+      "english": "snorlax",
+      "role": "財務統括",
+      "managed_depts": [
+        "収益部"
+      ],
+      "department": "役員",
+      "role_name": "CFO",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-EXE-005": {
+      "staff_id": "KPJ-EXE-005",
+      "code_name": "ラティアス",
+      "english": "latias",
+      "role": "マーケティング統括",
+      "managed_depts": [
+        "SEO部",
+        "収益部"
+      ],
+      "department": "役員",
+      "role_name": "CMO",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-101": {
+      "staff_id": "KPJ-DEP-101",
+      "code_name": "デオキシス",
+      "english": "deoxys",
+      "role_name": "コンテンツ部長",
+      "job_description": "記事執筆統括",
+      "department": "コンテンツ部",
+      "task_queue": [
+        {
+          "task_id": "bb22e653",
+          "name": "owner_directive_publish",
+          "meta": {
+            "owner_message": "今日の記事投稿スケジュールを教えて",
+            "channel": "📝-コンテンツ部"
+          },
+          "priority": "normal",
+          "assigned_at": "2026-04-27T14:50:29.645636",
+          "status": "queued"
+        },
+        {
+          "task_id": "a0cb1e62",
+          "name": "owner_directive_publish",
+          "meta": {
+            "owner_message": "投稿スケジュールについていつわかりますか？",
+            "channel": "📝-コンテンツ部"
+          },
+          "priority": "normal",
+          "assigned_at": "2026-04-27T14:51:20.053580",
+          "status": "queued"
+        }
+      ],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": true,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-102": {
+      "staff_id": "KPJ-DEP-102",
+      "code_name": "メタモン",
+      "english": "metamon",
+      "role_name": "リライト担当",
+      "job_description": "記事リライト・構造改善",
+      "department": "コンテンツ部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-103": {
+      "staff_id": "KPJ-DEP-103",
+      "code_name": "バタフリー",
+      "english": "butterfree",
+      "role_name": "速報担当",
+      "job_description": "速報・トレンド記事",
+      "department": "コンテンツ部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-104": {
+      "staff_id": "KPJ-DEP-104",
+      "code_name": "ジラーチ",
+      "english": "jirachi",
+      "role_name": "ファクトチェック",
+      "job_description": "事実確認・検証",
+      "department": "コンテンツ部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-201": {
+      "staff_id": "KPJ-DEP-201",
+      "code_name": "サーナイト",
+      "english": "gardevoir",
+      "role_name": "品質部長",
+      "job_description": "フック評価・品質ゲート",
+      "department": "品質部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": true,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-202": {
+      "staff_id": "KPJ-DEP-202",
+      "code_name": "ゲンガー",
+      "english": "gengar",
+      "role_name": "SEO監査担当",
+      "job_description": "SEO観点チェック",
+      "department": "品質部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-203": {
+      "staff_id": "KPJ-DEP-203",
+      "code_name": "イーブイJr",
+      "english": "eevee_jr",
+      "role_name": "構造監査担当",
+      "job_description": "記事構造検証",
+      "department": "品質部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-301": {
+      "staff_id": "KPJ-DEP-301",
+      "code_name": "フーディン",
+      "english": "alakazam",
+      "role_name": "SEO部長",
+      "job_description": "SEO分析・戦略",
+      "department": "SEO部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": true,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-302": {
+      "staff_id": "KPJ-DEP-302",
+      "code_name": "ラプラス",
+      "english": "lapras",
+      "role_name": "キーワード担当",
+      "job_description": "キーワードリサーチ",
+      "department": "SEO部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-303": {
+      "staff_id": "KPJ-DEP-303",
+      "code_name": "ミミッキュ",
+      "english": "mimikyu",
+      "role_name": "構造化データ担当",
+      "job_description": "JSON-LD・schema",
+      "department": "SEO部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-304": {
+      "staff_id": "KPJ-DEP-304",
+      "code_name": "イルミーゼ",
+      "english": "illumise",
+      "role_name": "UI最適化",
+      "job_description": "CSS・UI改善",
+      "department": "SEO部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-401": {
+      "staff_id": "KPJ-DEP-401",
+      "code_name": "ペルシアン",
+      "english": "persian",
+      "role_name": "収益部長",
+      "job_description": "X投稿・収益管理",
+      "department": "収益部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": true,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-402": {
+      "staff_id": "KPJ-DEP-402",
+      "code_name": "ニャース",
+      "english": "meowth",
+      "role_name": "アフィリ管理",
+      "job_description": "A8/Amazon/Qoo10",
+      "department": "収益部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-403": {
+      "staff_id": "KPJ-DEP-403",
+      "code_name": "ポリゴン",
+      "english": "porygon",
+      "role_name": "コスト追跡",
+      "job_description": "API/サーバーコスト",
+      "department": "収益部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-501": {
+      "staff_id": "KPJ-DEP-501",
+      "code_name": "フシギバナ",
+      "english": "venusaur",
+      "role_name": "運用部長",
+      "job_description": "リソース最適化",
+      "department": "運用部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": true,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-502": {
+      "staff_id": "KPJ-DEP-502",
+      "code_name": "ポリゴンZ",
+      "english": "porygon_z",
+      "role_name": "データストレージ",
+      "job_description": "DB・ファイル管理",
+      "department": "運用部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    },
+    "KPJ-DEP-503": {
+      "staff_id": "KPJ-DEP-503",
+      "code_name": "ライコウ",
+      "english": "raikou",
+      "role_name": "サムネ生成",
+      "job_description": "v6 thumbnail",
+      "department": "運用部",
+      "task_queue": [],
+      "completed_tasks": [],
+      "failed_tasks": [],
+      "current_task": null,
+      "is_head": false,
+      "performance_score": 80,
+      "evaluations": [
+        {
+          "date": "2026-04-28",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-29",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-04-30",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-01",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-02",
+          "score": 80,
+          "status": "standard"
+        },
+        {
+          "date": "2026-05-03",
+          "score": 80,
+          "status": "standard"
+        }
+      ]
+    }
+  },
+  "last_updated": "2026-05-03"
+}

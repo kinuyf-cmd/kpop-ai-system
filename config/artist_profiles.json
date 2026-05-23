@@ -1,0 +1,732 @@
+{
+  "_comment": "アーティスト別まとめページ用プロフィール情報。artist_master.json を補完する表示用データ。",
+  "profiles": {
+    "bts": {
+      "display_name": "BTS（防弾少年団）",
+      "name_en": "BTS",
+      "agency": "BIGHIT MUSIC / HYBE",
+      "debut_year": 2013,
+      "members": [
+        "RM",
+        "JIN",
+        "SUGA",
+        "J-HOPE",
+        "JIMIN",
+        "V",
+        "JUNGKOOK"
+      ],
+      "description": "2013年デビューの7人組ボーイズグループ。世界的な人気を誇り、Billboard Hot 100で1位を獲得するなど数々の記録を樹立。",
+      "wp_category_id": 18,
+      "category_slug": "bts"
+    },
+    "blackpink": {
+      "display_name": "BLACKPINK",
+      "name_en": "BLACKPINK",
+      "agency": "YG Entertainment",
+      "debut_year": 2016,
+      "members": [
+        "JISOO",
+        "JENNIE",
+        "ROSE",
+        "LISA"
+      ],
+      "description": "2016年デビューの4人組ガールズグループ。YouTube再生回数やSpotifyリスナー数で世界記録を更新し続ける。",
+      "wp_category_id": 23,
+      "category_slug": "blackpink"
+    },
+    "aespa": {
+      "display_name": "aespa",
+      "name_en": "aespa",
+      "agency": "SM Entertainment",
+      "debut_year": 2020,
+      "members": [
+        "KARINA",
+        "GISELLE",
+        "WINTER",
+        "NINGNING"
+      ],
+      "description": "2020年デビューの4人組ガールズグループ。メタバースの世界観とパワフルなパフォーマンスが特徴。",
+      "wp_category_id": 25,
+      "category_slug": "aespa"
+    },
+    "twice": {
+      "display_name": "TWICE",
+      "name_en": "TWICE",
+      "agency": "JYP Entertainment",
+      "debut_year": 2015,
+      "members": [
+        "NAYEON",
+        "JEONGYEON",
+        "MOMO",
+        "SANA",
+        "JIHYO",
+        "MINA",
+        "DAHYUN",
+        "CHAEYOUNG",
+        "TZUYU"
+      ],
+      "description": "2015年デビューの9人組ガールズグループ。日本でも圧倒的な人気を誇り、数々のヒット曲を持つ。",
+      "wp_category_id": 22,
+      "category_slug": "twice"
+    },
+    "ive": {
+      "display_name": "IVE",
+      "name_en": "IVE",
+      "agency": "Starship Entertainment",
+      "debut_year": 2021,
+      "members": [
+        "Yujin",
+        "Gaeul",
+        "Rei",
+        "Wonyoung",
+        "Liz",
+        "Leeseo"
+      ],
+      "description": "2021年デビューの6人組ガールズグループ。デビュー曲から連続ヒットを記録し、第4世代を代表するグループ。",
+      "wp_category_id": 68,
+      "category_slug": "ive"
+    },
+    "newjeans": {
+      "display_name": "NewJeans",
+      "name_en": "NewJeans",
+      "agency": "ADOR",
+      "debut_year": 2022,
+      "members": [
+        "Minji",
+        "Hanni",
+        "Danielle",
+        "Haerin",
+        "Hyein"
+      ],
+      "description": "2022年デビューの5人組ガールズグループ。Y2Kを取り入れた独自のスタイルで社会現象を巻き起こした。",
+      "wp_category_id": 32,
+      "category_slug": "newjeans"
+    },
+    "le_sserafim": {
+      "display_name": "LE SSERAFIM",
+      "name_en": "LE SSERAFIM",
+      "agency": "SOURCE MUSIC / HYBE",
+      "debut_year": 2022,
+      "members": [
+        "SAKURA",
+        "CHAEWON",
+        "YUNJIN",
+        "KAZUHA",
+        "EUNCHAE"
+      ],
+      "description": "2022年デビューの5人組ガールズグループ。HYBE傘下SOURCE MUSIC所属で、パワフルなパフォーマンスが魅力。",
+      "wp_category_id": 41,
+      "category_slug": "le-sserafim"
+    },
+    "stray_kids": {
+      "display_name": "Stray Kids",
+      "name_en": "Stray Kids",
+      "agency": "JYP Entertainment",
+      "debut_year": 2018,
+      "members": [
+        "Bang Chan",
+        "Lee Know",
+        "Changbin",
+        "Hyunjin",
+        "HAN",
+        "Felix",
+        "Seungmin",
+        "I.N"
+      ],
+      "description": "2018年デビューの8人組ボーイズグループ。自主制作アイドルとして知られ、Billboard 200で1位を獲得。",
+      "wp_category_id": 43,
+      "category_slug": "stray-kids"
+    },
+    "seventeen": {
+      "display_name": "SEVENTEEN",
+      "name_en": "SEVENTEEN",
+      "agency": "PLEDIS Entertainment / HYBE",
+      "debut_year": 2015,
+      "members": [
+        "S.COUPS",
+        "JEONGHAN",
+        "JOSHUA",
+        "JUN",
+        "HOSHI",
+        "WONWOO",
+        "WOOZI",
+        "THE8",
+        "MINGYU",
+        "DK",
+        "SEUNGKWAN",
+        "VERNON",
+        "DINO"
+      ],
+      "description": "2015年デビューの13人組ボーイズグループ。ヒップホップ・ボーカル・パフォーマンスの3ユニット制で活動。",
+      "wp_category_id": 24,
+      "category_slug": "seventeen"
+    },
+    "enhypen": {
+      "display_name": "ENHYPEN",
+      "name_en": "ENHYPEN",
+      "agency": "BELIFT LAB / HYBE",
+      "debut_year": 2020,
+      "members": [
+        "JUNGWON",
+        "HEESEUNG",
+        "JAY",
+        "JAKE",
+        "SUNGHOON",
+        "SUNOO",
+        "NI-KI"
+      ],
+      "description": "2020年デビューの7人組ボーイズグループ。オーディション番組I-LANDから誕生し、急速に人気を拡大。",
+      "wp_category_id": 14,
+      "category_slug": "enhypen"
+    },
+    "itzy": {
+      "display_name": "ITZY",
+      "name_en": "ITZY",
+      "agency": "JYP Entertainment",
+      "debut_year": 2019,
+      "members": [
+        "YEJI",
+        "LIA",
+        "RYUJIN",
+        "CHAERYEONG",
+        "YUNA"
+      ],
+      "description": "2019年デビューの5人組ガールズグループ。「自分らしさ」をテーマにした楽曲とパフォーマンスが特徴。",
+      "wp_category_id": 37,
+      "category_slug": "itzy"
+    },
+    "nmixx": {
+      "display_name": "NMIXX",
+      "name_en": "NMIXX",
+      "agency": "JYP Entertainment",
+      "debut_year": 2022,
+      "members": [
+        "LILY",
+        "HAEWON",
+        "SULLYOON",
+        "BAE",
+        "JIWOO",
+        "KYUJIN"
+      ],
+      "description": "2022年デビューの6人組ガールズグループ。ミクスポップという独自のジャンルで新境地を開拓。",
+      "wp_category_id": 162,
+      "category_slug": "nmixx"
+    },
+    "babymonster": {
+      "display_name": "BABYMONSTER",
+      "name_en": "BABYMONSTER",
+      "agency": "YG Entertainment",
+      "debut_year": 2024,
+      "members": [
+        "RUKA",
+        "PHARITA",
+        "ASA",
+        "AHYEON",
+        "RAMI",
+        "CHIQUITA",
+        "HARAM"
+      ],
+      "description": "2024年デビューの7人組ガールズグループ。YG Entertainment期待の新世代グループ。",
+      "wp_category_id": 38,
+      "category_slug": "babymonster"
+    },
+    "exo": {
+      "display_name": "EXO",
+      "name_en": "EXO",
+      "agency": "SM Entertainment",
+      "debut_year": 2012,
+      "members": [
+        "XIUMIN",
+        "SUHO",
+        "BAEKHYUN",
+        "CHEN",
+        "CHANYEOL",
+        "D.O.",
+        "KAI",
+        "SEHUN"
+      ],
+      "description": "2012年デビューの8人組ボーイズグループ。第2世代を代表するグループで、ソロ活動でも大きな成功を収める。",
+      "wp_category_id": 60,
+      "category_slug": "exo"
+    },
+    "nct": {
+      "display_name": "NCT",
+      "name_en": "NCT",
+      "agency": "SM Entertainment",
+      "debut_year": 2016,
+      "members": [
+        "TAEYONG",
+        "MARK",
+        "JAEHYUN",
+        "DOYOUNG",
+        "HAECHAN"
+      ],
+      "description": "2016年活動開始のボーイズグループ。NCT 127、NCT DREAM、WayVなど複数ユニットで構成される革新的なコンセプト。",
+      "wp_category_id": 40,
+      "category_slug": "nct"
+    },
+    "bigbang": {
+      "display_name": "BIGBANG",
+      "name_en": "BIGBANG",
+      "agency": "YG Entertainment",
+      "debut_year": 2006,
+      "members": [
+        "G-DRAGON",
+        "T.O.P",
+        "TAEYANG",
+        "DAESUNG"
+      ],
+      "description": "2006年デビューの4人組ボーイズグループ。K-POPの世界進出の礎を築いたレジェンドグループ。",
+      "wp_category_id": 19,
+      "category_slug": "bigbang"
+    },
+    "katseye": {
+      "display_name": "KATSEYE",
+      "name_en": "KATSEYE",
+      "agency": "HYBE / Geffen Records",
+      "debut_year": 2024,
+      "members": [
+        "Daniela",
+        "Sophia",
+        "Lara",
+        "Yoonchae",
+        "Megan",
+        "Manon"
+      ],
+      "description": "2024年デビューの6人組ガールズグループ。Netflix「Pop Star Academy」発。2026年グラミー賞最優秀新人賞ノミネート。",
+      "wp_category_id": 2,
+      "category_slug": "katseye"
+    },
+    "illit": {
+      "display_name": "ILLIT",
+      "name_en": "ILLIT",
+      "agency": "Belift Lab / HYBE",
+      "debut_year": 2024,
+      "members": [
+        "YUNAH",
+        "MINJU",
+        "MOKA",
+        "WONHEE",
+        "IROHA"
+      ],
+      "description": "2024年3月デビューの5人組ガールズグループ。サバイバル番組「R U Next?」出身。デビュー曲「Magnetic」が大ヒット。",
+      "wp_category_id": 2,
+      "category_slug": "illit"
+    },
+    "xikers": {
+      "display_name": "xikers",
+      "name_en": "xikers",
+      "agency": "KQ Entertainment",
+      "debut_year": 2023,
+      "members": [
+        "Minjae",
+        "Junmin",
+        "Sumin",
+        "Jinsik",
+        "Hyunwoo",
+        "Junghoon",
+        "Seeun",
+        "Yujun",
+        "Hunter",
+        "Yechan"
+      ],
+      "description": "2023年デビューの10人組ボーイズグループ。ATEEZ後輩。初動売上で歴代ボーイグループ1位を記録。",
+      "wp_category_id": 2,
+      "category_slug": "xikers"
+    },
+    "boynextdoor": {
+      "display_name": "BOYNEXTDOOR",
+      "name_en": "BOYNEXTDOOR",
+      "agency": "KOZ Entertainment / HYBE",
+      "debut_year": 2023,
+      "members": [
+        "Sungho",
+        "Riwoo",
+        "Jaehyun",
+        "Taesan",
+        "Leehan",
+        "Woonhak"
+      ],
+      "description": "2023年デビューの6人組ボーイズグループ。第67回日本レコード大賞新人賞受賞。",
+      "wp_category_id": 2,
+      "category_slug": "boynextdoor"
+    },
+    "txt": {
+      "display_name": "TOMORROW X TOGETHER（TXT）",
+      "name_en": "TXT",
+      "agency": "BIGHIT MUSIC / HYBE",
+      "debut_year": 2019,
+      "members": [
+        "SOOBIN",
+        "YEONJUN",
+        "BEOMGYU",
+        "TAEHYUN",
+        "HUENINGKAI"
+      ],
+      "description": "2019年デビューの5人組ボーイズグループ。BTS弟分としてデビューし、独自の世界観で第4世代を牽引。",
+      "wp_category_id": 164,
+      "category_slug": "txt"
+    },
+    "red_velvet": {
+      "display_name": "Red Velvet",
+      "name_en": "Red Velvet",
+      "agency": "SM Entertainment",
+      "debut_year": 2014,
+      "members": [
+        "IRENE",
+        "SEULGI",
+        "WENDY",
+        "JOY",
+        "YERI"
+      ],
+      "description": "2014年デビューの5人組ガールズグループ。Red（ポップ）とVelvet（R&B）の二面性を持つコンセプトが特徴。",
+      "wp_category_id": 165,
+      "category_slug": "red-velvet"
+    },
+    "shinee": {
+      "display_name": "SHINee",
+      "name_en": "SHINee",
+      "agency": "SM Entertainment",
+      "debut_year": 2008,
+      "members": [
+        "ONEW",
+        "KEY",
+        "MINHO",
+        "TAEMIN"
+      ],
+      "description": "2008年デビューの4人組ボーイズグループ。K-POP第2世代の代表格で、パフォーマンスの完成度に定評がある。",
+      "wp_category_id": 166,
+      "category_slug": "shinee"
+    },
+    "got7": {
+      "display_name": "GOT7",
+      "name_en": "GOT7",
+      "agency": "各自個人事務所",
+      "debut_year": 2014,
+      "members": [
+        "JAY B",
+        "MARK",
+        "JACKSON",
+        "JINYOUNG",
+        "YOUNGJAE",
+        "BAMBAM",
+        "YUGYEOM"
+      ],
+      "description": "2014年デビューの7人組ボーイズグループ。JYP退所後も7人でグループ活動を継続。",
+      "wp_category_id": 167,
+      "category_slug": "got7"
+    },
+    "ateez": {
+      "display_name": "ATEEZ",
+      "name_en": "ATEEZ",
+      "agency": "KQ Entertainment",
+      "debut_year": 2018,
+      "members": [
+        "HONGJOONG",
+        "SEONGHWA",
+        "YUNHO",
+        "YEOSANG",
+        "SAN",
+        "MINGI",
+        "WOOYOUNG",
+        "JONGHO"
+      ],
+      "description": "2018年デビューの8人組ボーイズグループ。圧倒的なステージパフォーマンスで世界的人気を獲得。",
+      "wp_category_id": 168,
+      "category_slug": "ateez"
+    },
+    "g_idle": {
+      "display_name": "(G)I-DLE",
+      "name_en": "(G)I-DLE",
+      "agency": "CUBE Entertainment",
+      "debut_year": 2018,
+      "members": [
+        "MIYEON",
+        "MINNIE",
+        "SOYEON",
+        "YUQI",
+        "SHUHUA"
+      ],
+      "description": "2018年デビューの5人組ガールズグループ。リーダーSOYEONが作詞作曲を手掛けるセルフプロデュースグループ。",
+      "wp_category_id": 169,
+      "category_slug": "g-idle"
+    },
+    "treasure": {
+      "display_name": "TREASURE",
+      "name_en": "TREASURE",
+      "agency": "YG Entertainment",
+      "debut_year": 2020,
+      "members": [
+        "CHOI HYUNSUK",
+        "JIHOON",
+        "YOSHI",
+        "JUNKYU",
+        "MASHIHO",
+        "JAEHYUK",
+        "ASAHI",
+        "DOYOUNG",
+        "HARUTO",
+        "JUNGHWAN"
+      ],
+      "description": "2020年デビューの10人組ボーイズグループ。日本人メンバー3人を含む多国籍グループ。",
+      "wp_category_id": 67,
+      "category_slug": "treasure"
+    },
+    "day6": {
+      "display_name": "DAY6",
+      "name_en": "DAY6",
+      "agency": "JYP Entertainment",
+      "debut_year": 2015,
+      "members": [
+        "Sungjin",
+        "Jae",
+        "Young K",
+        "Wonpil",
+        "Dowoon"
+      ],
+      "description": "2015年デビューの5人組バンドグループ。K-POPでは珍しいバンド形態で、自作曲中心の活動。",
+      "wp_category_id": 170,
+      "category_slug": "day6"
+    },
+    "riize": {
+      "display_name": "RIIZE",
+      "name_en": "RIIZE",
+      "agency": "SM Entertainment",
+      "debut_year": 2023,
+      "members": [
+        "SHOTARO",
+        "EUNSEOK",
+        "SUNGCHAN",
+        "WONBIN",
+        "SOHEE",
+        "ANTON"
+      ],
+      "description": "2023年デビューの6人組ボーイズグループ。SM Entertainmentの新世代グループとして注目。",
+      "wp_category_id": 39,
+      "category_slug": "riize"
+    },
+    "zerobaseone": {
+      "display_name": "ZEROBASEONE（ZB1）",
+      "name_en": "ZEROBASEONE",
+      "agency": "WAKEONE / HYBE",
+      "debut_year": 2023,
+      "members": [
+        "SUNG HANBIN",
+        "KIM JIWOONG",
+        "ZHANG HAO",
+        "SEOK MATTHEW",
+        "KIM TAERAE",
+        "RICKY",
+        "KIM GYUVIN",
+        "PARK GUNWOOK",
+        "HAN YUJIN"
+      ],
+      "description": "2023年デビューの9人組ボーイズグループ。BOYS PLANET出身。初動100万枚超えを記録。",
+      "wp_category_id": 42,
+      "category_slug": "zerobaseone"
+    },
+    "kiss_of_life": {
+      "display_name": "KISS OF LIFE",
+      "name_en": "KISS OF LIFE",
+      "agency": "S2 Entertainment",
+      "debut_year": 2023,
+      "members": [
+        "JULIE",
+        "NATTY",
+        "BELLE",
+        "HANEUL"
+      ],
+      "description": "2023年デビューの4人組ガールズグループ。R&B・ソウル系の楽曲とハイレベルな歌唱力が特徴。",
+      "wp_category_id": 171,
+      "category_slug": "kiss-of-life"
+    },
+    "xg": {
+      "display_name": "XG",
+      "name_en": "XG",
+      "agency": "XGALX",
+      "debut_year": 2022,
+      "members": [
+        "JURIN",
+        "CHISA",
+        "HARVEY",
+        "HINATA",
+        "JURIA",
+        "COCONA",
+        "MAYA"
+      ],
+      "description": "2022年デビューの日本人7人組ガールズグループ。全編英語楽曲でグローバル展開し、世界的に人気急上昇。",
+      "wp_category_id": 33,
+      "category_slug": "xg"
+    },
+    "2pm": {
+      "display_name": "2PM",
+      "name_en": "2PM",
+      "agency": "JYP Entertainment",
+      "debut_year": 2008,
+      "members": [
+        "JUN.K",
+        "NICHKHUN",
+        "TAECYEON",
+        "WOOYOUNG",
+        "JUNHO",
+        "CHANSUNG"
+      ],
+      "description": "2008年デビューの6人組ボーイズグループ。「野獣アイドル」の異名を持ち、日本でも絶大な人気。",
+      "wp_category_id": 172,
+      "category_slug": "2pm"
+    },
+    "monsta_x": {
+      "display_name": "MONSTA X",
+      "name_en": "MONSTA X",
+      "agency": "Starship Entertainment",
+      "debut_year": 2015,
+      "members": [
+        "SHOWNU",
+        "MINHYUK",
+        "KIHYUN",
+        "HYUNGWON",
+        "JOOHONEY",
+        "I.M"
+      ],
+      "description": "2015年デビューの6人組ボーイズグループ。パワフルなパフォーマンスとEDM系楽曲で北米市場でも成功。",
+      "wp_category_id": 173,
+      "category_slug": "monsta-x"
+    },
+    "stayc": {
+      "display_name": "STAYC",
+      "name_en": "STAYC",
+      "agency": "High Up Entertainment",
+      "debut_year": 2020,
+      "members": [
+        "SUMIN",
+        "SIEUN",
+        "ISA",
+        "SEEUN",
+        "YOON",
+        "J"
+      ],
+      "description": "2020年デビューの6人組ガールズグループ。ティーンフレッシュなコンセプトとキャッチーな楽曲が魅力。",
+      "wp_category_id": 48,
+      "category_slug": "stayc"
+    },
+    "boa": {
+      "display_name": "BoA",
+      "name_en": "BoA",
+      "agency": "SM Entertainment",
+      "debut_year": 2000,
+      "members": [
+        "BoA"
+      ],
+      "description": "2000年デビューのソロアーティスト。「アジアの星」と呼ばれ、日韓両国でトップスターとして君臨するK-POPのパイオニア。",
+      "wp_category_id": 45,
+      "category_slug": "boa"
+    },
+    "fromis_9": {
+      "display_name": "fromis_9",
+      "name_en": "fromis_9",
+      "agency": "PLEDIS Entertainment / HYBE",
+      "debut_year": 2018,
+      "members": [
+        "SAEROM",
+        "HAYOUNG",
+        "GYURI",
+        "JIWON",
+        "JIHEON",
+        "SEOYEON",
+        "CHAEYOUNG",
+        "NAGYUNG",
+        "JISUN"
+      ],
+      "description": "2018年デビューの9人組ガールズグループ。アイドル学校出身で、清純派コンセプトからの進化が注目。",
+      "wp_category_id": 158,
+      "category_slug": "fromis-9"
+    },
+    "izna": {
+      "display_name": "izna",
+      "name_en": "izna",
+      "agency": "IZNA / WAKEONE",
+      "debut_year": 2025,
+      "members": [
+        "KOKO",
+        "JUNGEUN",
+        "JEEMIN",
+        "SARANG",
+        "MAI",
+        "SAEBI",
+        "YUJU"
+      ],
+      "description": "2025年デビューの7人組ガールズグループ。I-LAND2出身。日本人メンバーMAI、KOKOを含む多国籍グループ。",
+      "wp_category_id": 174,
+      "category_slug": "izna"
+    },
+    "meovv": {
+      "display_name": "MEOVV",
+      "name_en": "MEOVV",
+      "agency": "THE BLACK LABEL",
+      "debut_year": 2024,
+      "members": [
+        "GAWON",
+        "NARIN",
+        "ELLA",
+        "ANNA",
+        "SOOIN"
+      ],
+      "description": "2024年デビューの5人組ガールズグループ。YG傘下THE BLACK LABEL初のガールズグループ。",
+      "wp_category_id": 59,
+      "category_slug": "meovv"
+    },
+    "plave": {
+      "display_name": "PLAVE",
+      "name_en": "PLAVE",
+      "agency": "VLAST",
+      "debut_year": 2023,
+      "members": [
+        "YEJUN",
+        "NOAH",
+        "BAMBY",
+        "EUNHO",
+        "HAMIN"
+      ],
+      "description": "2023年デビューの5人組バーチャルボーイズグループ。3Dアバターで活動する革新的なグループで、実力派の歌唱力が話題。",
+      "wp_category_id": 175,
+      "category_slug": "plave"
+    },
+    "nct_wish": {
+      "display_name": "NCT WISH",
+      "name_en": "NCT WISH",
+      "agency": "SM Entertainment",
+      "debut_year": 2024,
+      "members": [
+        "シオン",
+        "リク",
+        "ユウシ",
+        "ジェヒ",
+        "リョウ",
+        "サクヤ"
+      ],
+      "description": "NCT の Tokyo team。2024年2月にデビューした6人組サブユニット。日本人/韓国人混合",
+      "aliases": [
+        "NCT WISH",
+        "NCTウィッシュ"
+      ],
+      "category_slug": "nct-wish",
+      "wp_category_id": null
+    }
+  },
+  "KATSEYE": {
+    "name": "KATSEYE",
+    "name_kr": "캣츠아이",
+    "name_jp": "キャッツアイ",
+    "members": 6,
+    "debut_year": 2024,
+    "agency": "HYBE/Geffen Records",
+    "member_names": [
+      "Daniela",
+      "Lara",
+      "Manon",
+      "Megan",
+      "Sophia",
+      "Yoonchae"
+    ]
+  }
+}
