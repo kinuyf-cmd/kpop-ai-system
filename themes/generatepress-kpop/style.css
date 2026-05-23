@@ -4104,3 +4104,40 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .kpop-popup-upcoming {
 	margin: 40px 0;
 }
+
+/* === popup 開催情報 再設計 2026-05-23 === */
+/* 上段3カード: 値(大) + 補助(小)。flex 均等・予約有無で2〜3枚でも崩れない。 */
+.kpop-popup-hero--3 { display: flex; flex-wrap: wrap; gap: 0.7em; margin: 0 0 0.9em; }
+.kpop-popup-hero--3 .kpop-popup-hero-card {
+	flex: 1 1 9em; min-width: 9em; display: flex; flex-direction: column;
+	gap: 0.18em; padding: 0.85em 0.9em; border-radius: 14px;
+}
+.kpop-popup-hero-sub { font-size: 0.78em; font-weight: 700; opacity: 0.92; }
+/* 特典 強調バー: ピンク主役。--kpop-pink-dark(白上5.87)背景 + 白文字 → AA。 */
+.kpop-popup-benefit-bar {
+	display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap;
+	background: var(--kpop-pink-dark, #C2185B); color: #fff;
+	border-radius: 12px; padding: 0.7em 0.95em; margin: 0 0 0.9em;
+	font-size: 0.98em; line-height: 1.5;
+}
+.kpop-popup-benefit-ic { font-size: 1.15em; }
+.kpop-popup-benefit-label { font-weight: 800; letter-spacing: 0.03em; flex: 0 0 auto; }
+.kpop-popup-benefit-text { font-weight: 600; flex: 1 1 12em; }
+/* 住所+地図 統合カード: 住所(日本語+ハングル小)+ iframe を1枠に。peach 系。 */
+.kpop-popup-addrmap {
+	border-radius: 14px; overflow: hidden; margin: 0 0 0.9em;
+	box-shadow: 0 1px 3px rgba(20,20,40,0.06); background: var(--pp-peach, #FFE8D6);
+}
+.kpop-popup-addrmap-head { display: flex; gap: 0.5em; align-items: flex-start; padding: 0.85em 0.95em; }
+.kpop-popup-addrmap-head .kpop-popup-ic { font-size: 1.2em; line-height: 1.3; }
+.kpop-popup-addrmap-text { display: flex; flex-direction: column; gap: 0.15em; }
+.kpop-popup-addr-ja { color: var(--pp-peach-deep, #8a4b1f); font-weight: 700; }
+.kpop-popup-addr-ko { color: var(--pp-peach-deep, #8a4b1f); font-size: 0.85em; opacity: 0.85; }
+/* 地図 iframe は住所の下に枠線で区切って同梱。 */
+.kpop-popup-addrmap-frame { border-top: 1px solid rgba(20,20,40,0.10); background: #fff; }
+.kpop-popup-addrmap-frame iframe { display: block; width: 100%; height: 300px; border: 0; }
+@media (max-width: 600px) {
+	.kpop-popup-hero--3 .kpop-popup-hero-card { flex: 1 1 100%; }
+	.kpop-popup-addrmap-frame iframe { height: 240px; }
+}
+
