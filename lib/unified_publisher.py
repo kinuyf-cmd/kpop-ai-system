@@ -17,7 +17,24 @@ try:
 except Exception:
     _x_post_tweet = None
 
-AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
+# WP REST 認証(2026-05-23 移植: 旧サーバの application password ハードコードを撤去し
+# env 化。CLAUDE.md「パスワード・APIキーをコード/ドキュメントにハードコードしない」準拠)。
+# .env から WP_USER + WP_APP_PASS(無ければ WP_PASS)を読み Basic auth を組む。
+def _load_wp_auth() -> str:
+    try:
+        from dotenv import load_dotenv
+        load_dotenv('/home/aiuser/kpop-ai-system/.env')
+    except Exception:
+        pass
+    user = os.environ.get('WP_USER', '')
+    pw = os.environ.get('WP_APP_PASS') or os.environ.get('WP_PASS', '')
+    if not user or not pw:
+        # 認証未設定なら空。REST 呼び出しは 401 になるが import/構造は壊さない。
+        print('WARN: WP_USER / WP_APP_PASS(or WP_PASS) 未設定 → REST 認証なし', file=sys.stderr)
+        return ''
+    return base64.b64encode(f"{user}:{pw}".encode()).decode()
+
+AUTH = _load_wp_auth()
 PUBLISH_LOG = '/home/aiuser/kpop-ai-system/logs/unified_publish.jsonl'
 
 CONFIDENCE_NOTES = {
