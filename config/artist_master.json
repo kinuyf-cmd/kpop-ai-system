@@ -1,0 +1,1366 @@
+{
+  "_comment": "K-POP TOP20アーティスト マスターデータ — アーティスト専用ページ・誕生日記事・チャート記事で共通利用",
+  "artists": [
+    {
+      "id": "bts",
+      "name_en": "BTS",
+      "name_ko": "방탄소년단",
+      "name_ja": "BTS（防弾少年団）",
+      "slug": "bts-profile",
+      "type": "group",
+      "agency": "BIGHIT MUSIC / HYBE",
+      "debut_date": "2013-06-13",
+      "wp_category_id": 3,
+      "wp_tag_ids": [
+        10
+      ],
+      "members": [
+        {
+          "name": "RM",
+          "name_ko": "김남준",
+          "birthday": "1994-09-12",
+          "role": "リーダー・メインラッパー"
+        },
+        {
+          "name": "JIN",
+          "name_ko": "김석진",
+          "birthday": "1992-12-04",
+          "role": "サブボーカル・ビジュアル"
+        },
+        {
+          "name": "SUGA",
+          "name_ko": "민윤기",
+          "birthday": "1993-03-09",
+          "role": "リードラッパー"
+        },
+        {
+          "name": "J-HOPE",
+          "name_ko": "정호석",
+          "birthday": "1994-02-18",
+          "role": "メインダンサー・サブラッパー"
+        },
+        {
+          "name": "JIMIN",
+          "name_ko": "박지민",
+          "birthday": "1995-10-13",
+          "role": "メインダンサー・リードボーカル"
+        },
+        {
+          "name": "V",
+          "name_ko": "김태형",
+          "birthday": "1995-12-30",
+          "role": "サブボーカル・ビジュアル"
+        },
+        {
+          "name": "JUNGKOOK",
+          "name_ko": "전정국",
+          "birthday": "1997-09-01",
+          "role": "メインボーカル・リードダンサー・サブラッパー・センター・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "blackpink",
+      "name_en": "BLACKPINK",
+      "name_ko": "블랙핑크",
+      "name_ja": "BLACKPINK",
+      "slug": "blackpink-profile",
+      "type": "group",
+      "agency": "YG Entertainment",
+      "debut_date": "2016-08-08",
+      "wp_category_id": 4,
+      "wp_tag_ids": [
+        11
+      ],
+      "members": [
+        {
+          "name": "JISOO",
+          "name_ko": "김지수",
+          "birthday": "1995-01-03",
+          "role": "リードボーカル・ビジュアル"
+        },
+        {
+          "name": "JENNIE",
+          "name_ko": "김제니",
+          "birthday": "1996-01-16",
+          "role": "メインラッパー・リードボーカル"
+        },
+        {
+          "name": "ROSE",
+          "name_ko": "박채영",
+          "birthday": "1997-02-11",
+          "role": "メインボーカル・リードダンサー"
+        },
+        {
+          "name": "LISA",
+          "name_ko": "ลลิษา มโนบาล",
+          "birthday": "1997-03-27",
+          "role": "メインダンサー・リードラッパー・サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "seventeen",
+      "name_en": "SEVENTEEN",
+      "name_ko": "세븐틴",
+      "name_ja": "SEVENTEEN",
+      "slug": "seventeen-profile",
+      "type": "group",
+      "agency": "PLEDIS Entertainment / HYBE",
+      "debut_date": "2015-05-26",
+      "wp_category_id": 5,
+      "wp_tag_ids": [
+        12
+      ],
+      "members": [
+        {
+          "name": "S.COUPS",
+          "name_ko": "최승철",
+          "birthday": "1995-08-08",
+          "role": "リーダー・ラッパー"
+        },
+        {
+          "name": "JEONGHAN",
+          "name_ko": "윤정한",
+          "birthday": "1995-10-04",
+          "role": "ボーカル"
+        },
+        {
+          "name": "JOSHUA",
+          "name_ko": "홍지수",
+          "birthday": "1995-12-30",
+          "role": "ボーカル"
+        },
+        {
+          "name": "JUN",
+          "name_ko": "문준휘",
+          "birthday": "1996-06-10",
+          "role": "パフォーマンス"
+        },
+        {
+          "name": "HOSHI",
+          "name_ko": "권순영",
+          "birthday": "1996-06-15",
+          "role": "パフォーマンスリーダー"
+        },
+        {
+          "name": "WONWOO",
+          "name_ko": "전원우",
+          "birthday": "1996-07-17",
+          "role": "ヒップホップ"
+        },
+        {
+          "name": "WOOZI",
+          "name_ko": "이지훈",
+          "birthday": "1996-11-22",
+          "role": "ボーカルリーダー・プロデューサー"
+        },
+        {
+          "name": "THE8",
+          "name_ko": "서명호",
+          "birthday": "1997-11-07",
+          "role": "パフォーマンス"
+        },
+        {
+          "name": "MINGYU",
+          "name_ko": "김민규",
+          "birthday": "1997-04-06",
+          "role": "ヒップホップ"
+        },
+        {
+          "name": "DK",
+          "name_ko": "이석민",
+          "birthday": "1997-02-18",
+          "role": "ボーカル"
+        },
+        {
+          "name": "SEUNGKWAN",
+          "name_ko": "부승관",
+          "birthday": "1998-01-16",
+          "role": "ボーカル"
+        },
+        {
+          "name": "VERNON",
+          "name_ko": "최한솔",
+          "birthday": "1998-02-18",
+          "role": "ヒップホップ"
+        },
+        {
+          "name": "DINO",
+          "name_ko": "이찬",
+          "birthday": "1999-02-11",
+          "role": "パフォーマンス・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "aespa",
+      "name_en": "aespa",
+      "name_ko": "에스파",
+      "name_ja": "aespa",
+      "slug": "aespa-profile",
+      "type": "group",
+      "agency": "SM Entertainment",
+      "debut_date": "2020-11-17",
+      "wp_category_id": 6,
+      "wp_tag_ids": [
+        13
+      ],
+      "members": [
+        {
+          "name": "KARINA",
+          "name_ko": "유지민",
+          "birthday": "2000-04-11",
+          "role": "リーダー・メインダンサー・サブボーカル"
+        },
+        {
+          "name": "GISELLE",
+          "name_ko": "우치나가 에리",
+          "birthday": "2000-10-30",
+          "role": "メインラッパー・サブボーカル"
+        },
+        {
+          "name": "WINTER",
+          "name_ko": "김민정",
+          "birthday": "2001-01-01",
+          "role": "リードボーカル・リードダンサー"
+        },
+        {
+          "name": "NINGNING",
+          "name_ko": "닝닝",
+          "birthday": "2002-10-23",
+          "role": "メインボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "stray_kids",
+      "name_en": "Stray Kids",
+      "name_ko": "스트레이 키즈",
+      "name_ja": "Stray Kids",
+      "slug": "stray-kids-profile",
+      "type": "group",
+      "agency": "JYP Entertainment",
+      "debut_date": "2018-03-25",
+      "wp_category_id": 7,
+      "wp_tag_ids": [
+        14
+      ],
+      "members": [
+        {
+          "name": "Bang Chan",
+          "name_ko": "방찬",
+          "birthday": "1997-10-03",
+          "role": "リーダー・プロデューサー・ボーカル・ラッパー"
+        },
+        {
+          "name": "Lee Know",
+          "name_ko": "이민호",
+          "birthday": "1998-10-25",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "Changbin",
+          "name_ko": "서창빈",
+          "birthday": "1999-08-11",
+          "role": "メインラッパー・サブボーカル"
+        },
+        {
+          "name": "Hyunjin",
+          "name_ko": "황현진",
+          "birthday": "2000-03-20",
+          "role": "メインダンサー・サブラッパー・ビジュアル"
+        },
+        {
+          "name": "HAN",
+          "name_ko": "한지성",
+          "birthday": "2000-09-14",
+          "role": "メインラッパー・ボーカル"
+        },
+        {
+          "name": "Felix",
+          "name_ko": "이용복",
+          "birthday": "2000-09-15",
+          "role": "リードダンサー・サブラッパー・サブボーカル"
+        },
+        {
+          "name": "Seungmin",
+          "name_ko": "김승민",
+          "birthday": "2000-09-22",
+          "role": "リードボーカル"
+        },
+        {
+          "name": "I.N",
+          "name_ko": "양정인",
+          "birthday": "2001-02-08",
+          "role": "サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "twice",
+      "name_en": "TWICE",
+      "name_ko": "트와이스",
+      "name_ja": "TWICE",
+      "slug": "twice-profile",
+      "type": "group",
+      "agency": "JYP Entertainment",
+      "debut_date": "2015-10-20",
+      "wp_category_id": 8,
+      "wp_tag_ids": [
+        15
+      ],
+      "members": [
+        {
+          "name": "NAYEON",
+          "name_ko": "임나연",
+          "birthday": "1995-09-22",
+          "role": "センター・リードボーカル・リードダンサー"
+        },
+        {
+          "name": "JEONGYEON",
+          "name_ko": "유정연",
+          "birthday": "1996-11-01",
+          "role": "リードボーカル"
+        },
+        {
+          "name": "MOMO",
+          "name_ko": "히라이 모모",
+          "birthday": "1996-11-09",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "SANA",
+          "name_ko": "미나토자키 사나",
+          "birthday": "1996-12-29",
+          "role": "サブボーカル"
+        },
+        {
+          "name": "JIHYO",
+          "name_ko": "박지효",
+          "birthday": "1997-02-01",
+          "role": "リーダー・メインボーカル"
+        },
+        {
+          "name": "MINA",
+          "name_ko": "묘이 미나",
+          "birthday": "1997-03-24",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "DAHYUN",
+          "name_ko": "김다현",
+          "birthday": "1998-05-28",
+          "role": "リードラッパー・サブボーカル"
+        },
+        {
+          "name": "CHAEYOUNG",
+          "name_ko": "손채영",
+          "birthday": "1999-04-23",
+          "role": "メインラッパー・サブボーカル"
+        },
+        {
+          "name": "TZUYU",
+          "name_ko": "쯔위",
+          "birthday": "1999-06-14",
+          "role": "リードダンサー・サブボーカル・ビジュアル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "newjeans",
+      "name_en": "NewJeans",
+      "name_ko": "뉴진스",
+      "name_ja": "NewJeans",
+      "slug": "newjeans-profile",
+      "type": "group",
+      "agency": "ADOR",
+      "debut_date": "2022-08-01",
+      "wp_category_id": 9,
+      "wp_tag_ids": [
+        16
+      ],
+      "members": [
+        {
+          "name": "Minji",
+          "name_ko": "민지",
+          "birthday": "2004-05-07",
+          "role": "リーダー・リードダンサー・サブボーカル"
+        },
+        {
+          "name": "Hanni",
+          "name_ko": "하니",
+          "birthday": "2004-10-06",
+          "role": "サブボーカル"
+        },
+        {
+          "name": "Danielle",
+          "name_ko": "다니엘",
+          "birthday": "2005-04-11",
+          "role": "サブボーカル・サブラッパー"
+        },
+        {
+          "name": "Haerin",
+          "name_ko": "해린",
+          "birthday": "2006-05-15",
+          "role": "サブボーカル"
+        },
+        {
+          "name": "Hyein",
+          "name_ko": "혜인",
+          "birthday": "2008-04-21",
+          "role": "サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "ive",
+      "name_en": "IVE",
+      "name_ko": "아이브",
+      "name_ja": "IVE",
+      "slug": "ive-profile",
+      "type": "group",
+      "agency": "Starship Entertainment",
+      "debut_date": "2021-12-01",
+      "wp_category_id": 10,
+      "wp_tag_ids": [
+        17
+      ],
+      "members": [
+        {
+          "name": "Yujin",
+          "name_ko": "안유진",
+          "birthday": "2003-09-01",
+          "role": "リーダー・サブボーカル"
+        },
+        {
+          "name": "Gaeul",
+          "name_ko": "김가을",
+          "birthday": "2002-09-24",
+          "role": "リードダンサー・サブラッパー"
+        },
+        {
+          "name": "Rei",
+          "name_ko": "나오이 레이",
+          "birthday": "2004-02-03",
+          "role": "サブボーカル"
+        },
+        {
+          "name": "Wonyoung",
+          "name_ko": "장원영",
+          "birthday": "2004-08-31",
+          "role": "センター・サブボーカル・ビジュアル"
+        },
+        {
+          "name": "Liz",
+          "name_ko": "김지원",
+          "birthday": "2004-11-21",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "Leeseo",
+          "name_ko": "이현서",
+          "birthday": "2007-02-21",
+          "role": "メインダンサー・サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "le_sserafim",
+      "name_en": "LE SSERAFIM",
+      "name_ko": "르세라핌",
+      "name_ja": "LE SSERAFIM",
+      "slug": "le-sserafim-profile",
+      "type": "group",
+      "agency": "SOURCE MUSIC / HYBE",
+      "debut_date": "2022-05-02",
+      "wp_category_id": 11,
+      "wp_tag_ids": [
+        18
+      ],
+      "members": [
+        {
+          "name": "SAKURA",
+          "name_ko": "사쿠라",
+          "birthday": "1998-03-19",
+          "role": "リードダンサー・サブボーカル・サブラッパー"
+        },
+        {
+          "name": "CHAEWON",
+          "name_ko": "김채원",
+          "birthday": "2000-08-01",
+          "role": "リーダー・メインボーカル・リードダンサー"
+        },
+        {
+          "name": "YUNJIN",
+          "name_ko": "허윤진",
+          "birthday": "2001-10-08",
+          "role": "リードボーカル"
+        },
+        {
+          "name": "KAZUHA",
+          "name_ko": "카즈하",
+          "birthday": "2003-08-09",
+          "role": "リードダンサー・サブボーカル"
+        },
+        {
+          "name": "EUNCHAE",
+          "name_ko": "홍은채",
+          "birthday": "2006-11-10",
+          "role": "サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "nct",
+      "name_en": "NCT",
+      "name_ko": "엔시티",
+      "name_ja": "NCT",
+      "slug": "nct-profile",
+      "type": "group",
+      "agency": "SM Entertainment",
+      "debut_date": "2016-04-09",
+      "wp_category_id": 12,
+      "wp_tag_ids": [
+        19
+      ],
+      "members": [
+        {
+          "name": "TAEYONG",
+          "name_ko": "이태용",
+          "birthday": "1995-07-01",
+          "role": "リーダー(NCT 127)・メインラッパー・メインダンサー"
+        },
+        {
+          "name": "MARK",
+          "name_ko": "마크",
+          "birthday": "1999-08-02",
+          "role": "メインラッパー(NCT 127/NCT DREAM)"
+        },
+        {
+          "name": "JAEHYUN",
+          "name_ko": "정재현",
+          "birthday": "1997-02-14",
+          "role": "リードボーカル(NCT 127)"
+        },
+        {
+          "name": "DOYOUNG",
+          "name_ko": "김동영",
+          "birthday": "1996-02-01",
+          "role": "メインボーカル(NCT 127)"
+        },
+        {
+          "name": "HAECHAN",
+          "name_ko": "이동혁",
+          "birthday": "2000-06-06",
+          "role": "メインボーカル(NCT 127/NCT DREAM)"
+        }
+      ]
+    },
+    {
+      "id": "txt",
+      "name_en": "TXT",
+      "name_ko": "투모로우바이투게더",
+      "name_ja": "TOMORROW X TOGETHER (TXT)",
+      "slug": "txt-profile",
+      "type": "group",
+      "agency": "BIGHIT MUSIC / HYBE",
+      "debut_date": "2019-03-04",
+      "wp_category_id": 13,
+      "wp_tag_ids": [
+        20
+      ],
+      "members": [
+        {
+          "name": "SOOBIN",
+          "name_ko": "최수빈",
+          "birthday": "2000-12-05",
+          "role": "リーダー・サブボーカル"
+        },
+        {
+          "name": "YEONJUN",
+          "name_ko": "최연준",
+          "birthday": "1999-09-13",
+          "role": "メインダンサー・リードラッパー"
+        },
+        {
+          "name": "BEOMGYU",
+          "name_ko": "최범규",
+          "birthday": "2001-03-13",
+          "role": "リードダンサー・サブボーカル"
+        },
+        {
+          "name": "TAEHYUN",
+          "name_ko": "강태현",
+          "birthday": "2002-02-05",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "HUENING KAI",
+          "name_ko": "휴닝카이",
+          "birthday": "2002-08-14",
+          "role": "サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "enhypen",
+      "name_en": "ENHYPEN",
+      "name_ko": "엔하이픈",
+      "name_ja": "ENHYPEN",
+      "slug": "enhypen-profile",
+      "type": "group",
+      "agency": "BELIFT LAB / HYBE",
+      "debut_date": "2020-11-30",
+      "wp_category_id": 14,
+      "wp_tag_ids": [
+        21
+      ],
+      "members": [
+        {
+          "name": "JUNGWON",
+          "name_ko": "양정원",
+          "birthday": "2004-02-09",
+          "role": "リーダー・リードダンサー・リードボーカル"
+        },
+        {
+          "name": "HEESEUNG",
+          "name_ko": "이희승",
+          "birthday": "2001-10-15",
+          "role": "メインボーカル・リードダンサー"
+        },
+        {
+          "name": "JAY",
+          "name_ko": "박종성",
+          "birthday": "2002-04-20",
+          "role": "サブボーカル・サブラッパー"
+        },
+        {
+          "name": "JAKE",
+          "name_ko": "심재윤",
+          "birthday": "2002-11-15",
+          "role": "サブボーカル・サブラッパー"
+        },
+        {
+          "name": "SUNGHOON",
+          "name_ko": "박성훈",
+          "birthday": "2002-12-08",
+          "role": "リードダンサー・サブボーカル"
+        },
+        {
+          "name": "SUNOO",
+          "name_ko": "김선우",
+          "birthday": "2003-06-24",
+          "role": "リードボーカル"
+        },
+        {
+          "name": "NI-KI",
+          "name_ko": "니시무라 리키",
+          "birthday": "2005-12-09",
+          "role": "メインダンサー・サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "illit",
+      "name_en": "ILLIT",
+      "name_ko": "아일릿",
+      "name_ja": "ILLIT",
+      "slug": "illit-profile",
+      "type": "group",
+      "agency": "BELIFT LAB / HYBE",
+      "debut_date": "2024-03-25",
+      "wp_category_id": 15,
+      "wp_tag_ids": [
+        22
+      ],
+      "members": [
+        {
+          "name": "YUNAH",
+          "name_ko": "윤아",
+          "birthday": "2005-03-19",
+          "role": "リーダー・メインダンサー"
+        },
+        {
+          "name": "MINJU",
+          "name_ko": "민주",
+          "birthday": "2005-10-25",
+          "role": "リードボーカル"
+        },
+        {
+          "name": "MOKA",
+          "name_ko": "모카",
+          "birthday": "2006-10-27",
+          "role": "リードダンサー・サブボーカル"
+        },
+        {
+          "name": "WONHEE",
+          "name_ko": "원희",
+          "birthday": "2007-06-26",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "IROHA",
+          "name_ko": "이로하",
+          "birthday": "2008-02-04",
+          "role": "サブボーカル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "itzy",
+      "name_en": "ITZY",
+      "name_ko": "있지",
+      "name_ja": "ITZY",
+      "slug": "itzy-profile",
+      "type": "group",
+      "agency": "JYP Entertainment",
+      "debut_date": "2019-02-12",
+      "wp_category_id": 16,
+      "wp_tag_ids": [
+        23
+      ],
+      "members": [
+        {
+          "name": "YEJI",
+          "name_ko": "황예지",
+          "birthday": "2000-05-26",
+          "role": "リーダー・メインダンサー・リードボーカル"
+        },
+        {
+          "name": "LIA",
+          "name_ko": "최지수",
+          "birthday": "2000-07-21",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "RYUJIN",
+          "name_ko": "신류진",
+          "birthday": "2001-04-17",
+          "role": "メインラッパー・リードダンサー"
+        },
+        {
+          "name": "CHAERYEONG",
+          "name_ko": "이채령",
+          "birthday": "2001-06-05",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "YUNA",
+          "name_ko": "신유나",
+          "birthday": "2003-12-09",
+          "role": "リードダンサー・サブボーカル・ビジュアル・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "riize",
+      "name_en": "RIIZE",
+      "name_ko": "라이즈",
+      "name_ja": "RIIZE",
+      "slug": "riize-profile",
+      "type": "group",
+      "agency": "SM Entertainment",
+      "debut_date": "2023-09-04",
+      "wp_category_id": 17,
+      "wp_tag_ids": [
+        24
+      ],
+      "members": [
+        {
+          "name": "SHOTARO",
+          "name_ko": "쇼타로",
+          "birthday": "2000-11-25",
+          "role": "リーダー・メインダンサー"
+        },
+        {
+          "name": "EUNSEOK",
+          "name_ko": "은석",
+          "birthday": "2001-11-19",
+          "role": "リードラッパー・サブボーカル・ビジュアル"
+        },
+        {
+          "name": "SUNGCHAN",
+          "name_ko": "성찬",
+          "birthday": "2001-09-13",
+          "role": "メインラッパー・サブボーカル"
+        },
+        {
+          "name": "WONBIN",
+          "name_ko": "원빈",
+          "birthday": "2003-09-16",
+          "role": "サブボーカル・ビジュアル"
+        },
+        {
+          "name": "SOHEE",
+          "name_ko": "소희",
+          "birthday": "2003-11-14",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "ANTON",
+          "name_ko": "안톤",
+          "birthday": "2004-03-21",
+          "role": "サブボーカル・サブラッパー・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "exo",
+      "name_en": "EXO",
+      "name_ko": "엑소",
+      "name_ja": "EXO",
+      "slug": "exo-profile",
+      "type": "group",
+      "agency": "SM Entertainment",
+      "debut_date": "2012-04-08",
+      "wp_category_id": 18,
+      "wp_tag_ids": [
+        25
+      ],
+      "members": [
+        {
+          "name": "XIUMIN",
+          "name_ko": "김민석",
+          "birthday": "1990-03-26",
+          "role": "リードボーカル・リードダンサー"
+        },
+        {
+          "name": "SUHO",
+          "name_ko": "김준면",
+          "birthday": "1991-05-22",
+          "role": "リーダー・リードボーカル"
+        },
+        {
+          "name": "BAEKHYUN",
+          "name_ko": "변백현",
+          "birthday": "1992-05-06",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "CHEN",
+          "name_ko": "김종대",
+          "birthday": "1992-09-21",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "CHANYEOL",
+          "name_ko": "박찬열",
+          "birthday": "1992-11-27",
+          "role": "メインラッパー・サブボーカル"
+        },
+        {
+          "name": "D.O.",
+          "name_ko": "도경수",
+          "birthday": "1993-01-12",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "KAI",
+          "name_ko": "김종인",
+          "birthday": "1994-01-14",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "SEHUN",
+          "name_ko": "오세훈",
+          "birthday": "1994-04-12",
+          "role": "リードダンサー・サブラッパー・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "nmixx",
+      "name_en": "NMIXX",
+      "name_ko": "엔믹스",
+      "name_ja": "NMIXX",
+      "slug": "nmixx-profile",
+      "type": "group",
+      "agency": "JYP Entertainment",
+      "debut_date": "2022-02-22",
+      "wp_category_id": 19,
+      "wp_tag_ids": [
+        26
+      ],
+      "members": [
+        {
+          "name": "LILY",
+          "name_ko": "릴리",
+          "birthday": "2002-10-17",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "HAEWON",
+          "name_ko": "해원",
+          "birthday": "2003-04-28",
+          "role": "リーダー・メインボーカル"
+        },
+        {
+          "name": "SULLYOON",
+          "name_ko": "설윤",
+          "birthday": "2004-01-26",
+          "role": "リードダンサー・サブボーカル・ビジュアル"
+        },
+        {
+          "name": "BAE",
+          "name_ko": "배",
+          "birthday": "2004-06-20",
+          "role": "リードラッパー・サブボーカル"
+        },
+        {
+          "name": "JIWOO",
+          "name_ko": "지우",
+          "birthday": "2005-02-13",
+          "role": "メインダンサー・サブボーカル"
+        },
+        {
+          "name": "KYUJIN",
+          "name_ko": "규진",
+          "birthday": "2006-04-26",
+          "role": "メインダンサー・リードラッパー・マンネ"
+        }
+      ]
+    },
+    {
+      "id": "babymonster",
+      "name_en": "BABYMONSTER",
+      "name_ko": "베이비몬스터",
+      "name_ja": "BABYMONSTER",
+      "slug": "babymonster-profile",
+      "type": "group",
+      "agency": "YG Entertainment",
+      "debut_date": "2024-04-01",
+      "wp_category_id": 20,
+      "wp_tag_ids": [
+        27
+      ],
+      "members": [
+        {
+          "name": "RUKA",
+          "name_ko": "루카",
+          "birthday": "2002-03-20",
+          "role": "メインダンサー・ラッパー"
+        },
+        {
+          "name": "PHARITA",
+          "name_ko": "파리타",
+          "birthday": "2005-08-22",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "ASA",
+          "name_ko": "아사",
+          "birthday": "2006-05-10",
+          "role": "リードダンサー・ラッパー"
+        },
+        {
+          "name": "AHYEON",
+          "name_ko": "아현",
+          "birthday": "2007-04-11",
+          "role": "メインボーカル・メインダンサー・センター"
+        },
+        {
+          "name": "RAMI",
+          "name_ko": "라미",
+          "birthday": "2007-11-07",
+          "role": "サブボーカル"
+        },
+        {
+          "name": "CHIQUITA",
+          "name_ko": "치키타",
+          "birthday": "2009-08-02",
+          "role": "リードダンサー・サブボーカル・マンネ"
+        },
+        {
+          "name": "HARAM",
+          "name_ko": "하람",
+          "birthday": "2008-05-28",
+          "role": "リードボーカル"
+        }
+      ]
+    },
+    {
+      "id": "zerobaseone",
+      "name_en": "ZEROBASEONE",
+      "name_ko": "제로베이스원",
+      "name_ja": "ZEROBASEONE",
+      "slug": "zerobaseone-profile",
+      "type": "group",
+      "agency": "WAKEONE",
+      "debut_date": "2023-07-10",
+      "wp_category_id": 21,
+      "wp_tag_ids": [
+        28
+      ],
+      "members": [
+        {
+          "name": "SUNG HANBIN",
+          "name_ko": "성한빈",
+          "birthday": "2001-12-18",
+          "role": "リーダー・メインダンサー・リードラッパー・センター"
+        },
+        {
+          "name": "KIM JIWOONG",
+          "name_ko": "김지웅",
+          "birthday": "1998-12-14",
+          "role": "リードボーカル・ビジュアル"
+        },
+        {
+          "name": "ZHANG HAO",
+          "name_ko": "장하오",
+          "birthday": "2000-12-25",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "SEOK MATTHEW",
+          "name_ko": "석매튜",
+          "birthday": "2002-05-28",
+          "role": "リードラッパー・サブボーカル"
+        },
+        {
+          "name": "KIM TAERAE",
+          "name_ko": "김태래",
+          "birthday": "2003-02-02",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "RICKY",
+          "name_ko": "리키",
+          "birthday": "2003-05-20",
+          "role": "サブボーカル・ビジュアル"
+        },
+        {
+          "name": "PARK GUNWOOK",
+          "name_ko": "박건욱",
+          "birthday": "2003-11-10",
+          "role": "リードダンサー・サブボーカル"
+        },
+        {
+          "name": "HAN YUJIN",
+          "name_ko": "한유진",
+          "birthday": "2004-07-14",
+          "role": "サブボーカル・マンネ"
+        },
+        {
+          "name": "GYUVIN",
+          "name_ko": "김규빈",
+          "birthday": "2004-08-30",
+          "role": "リードダンサー・サブラッパー"
+        }
+      ]
+    },
+    {
+      "id": "bigbang",
+      "name_en": "BIGBANG",
+      "name_ko": "빅뱅",
+      "name_ja": "BIGBANG",
+      "slug": "bigbang-profile",
+      "type": "group",
+      "agency": "YG Entertainment",
+      "debut_date": "2006-08-19",
+      "wp_category_id": 22,
+      "wp_tag_ids": [
+        29
+      ],
+      "members": [
+        {
+          "name": "G-DRAGON",
+          "name_ko": "권지용",
+          "birthday": "1988-08-18",
+          "role": "リーダー・メインラッパー・プロデューサー"
+        },
+        {
+          "name": "T.O.P",
+          "name_ko": "최승현",
+          "birthday": "1987-11-04",
+          "role": "リードラッパー"
+        },
+        {
+          "name": "TAEYANG",
+          "name_ko": "동영배",
+          "birthday": "1988-05-18",
+          "role": "メインボーカル・メインダンサー"
+        },
+        {
+          "name": "DAESUNG",
+          "name_ko": "강대성",
+          "birthday": "1989-04-26",
+          "role": "リードボーカル"
+        }
+      ]
+    },
+    {
+      "id": "hyolyn",
+      "name_en": "Hyolyn",
+      "name_ko": "효린",
+      "name_ja": "ヒョリン",
+      "slug": "hyolyn-profile",
+      "type": "solo",
+      "agency": "BRIDɢE (브릿지)",
+      "debut_date": "2010-06-03",
+      "members": [
+        {
+          "name": "Hyolyn",
+          "name_ko": "효린",
+          "birthday": "1990-12-11",
+          "role": "ボーカル"
+        }
+      ],
+      "note": "元 SISTAR のメインボーカル。2019 年に自身のレーベル BRIDɢE 設立、ソロ活動中。"
+    },
+    {
+      "id": "aiki",
+      "name_en": "Aiki",
+      "name_ko": "아이키",
+      "name_ja": "アイキー",
+      "slug": "aiki-profile",
+      "type": "solo",
+      "agency": "Hook (HOOK Entertainment)",
+      "debut_date": "2021-08-24",
+      "members": [
+        {
+          "name": "Aiki",
+          "name_ko": "아이키",
+          "birthday": "1991-02-22",
+          "role": "コレオグラファー、ダンサー"
+        }
+      ],
+      "note": "Hook ダンスクルー所属。Street Woman Fighter S1 (Mnet 2021) で全国的に知られる。2026 年 See Ya 客員メンバー「アヤ」として参加。"
+    },
+    {
+      "id": "see-ya",
+      "name_en": "SeeYa",
+      "name_ko": "씨야",
+      "name_ja": "シーヤ",
+      "aliases": [
+        "See Ya"
+      ],
+      "slug": "see-ya-profile",
+      "type": "group",
+      "agency": "SeeYa Corporation (2026 再結成時に設立、self-managed) / former: Core Contents Media (旧 GM Contents → Mnet Media)",
+      "debut_date": "2006-02-24",
+      "members": [
+        {
+          "name": "Kim Yeon-ji",
+          "name_ko": "김연지",
+          "birthday": "1988-04-09",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "Lee Bo-ram",
+          "name_ko": "이보람",
+          "birthday": "1989-02-10",
+          "role": "ボーカル"
+        },
+        {
+          "name": "Nam Gyu-ri",
+          "name_ko": "남규리",
+          "birthday": "1985-11-26",
+          "role": "ボーカル"
+        }
+      ],
+      "former_members": [
+        {
+          "name": "Lee Soo-mi",
+          "name_ko": "이수미",
+          "role": "テンポラリーメンバー (2009-2010)"
+        }
+      ],
+      "note": "2006 年デビュー、2011 年活動休止、2026 年 20 周年でオリジナル 3 メンバーが完全再結成、自社『SeeYa Corporation』設立。pre-release『Nevertheless, We』(3/30)、シングル『Still Here, Still Us』(MV: 1theK channel)、フルアルバム『First, Again』(5/14) リリース。"
+    },
+    {
+      "id": "red-velvet",
+      "name_en": "Red Velvet",
+      "name_ko": "",
+      "name_ja": "Red Velvet",
+      "slug": "red-velvet-profile",
+      "type": "group",
+      "agency": "SM Entertainment",
+      "debut_date": "2014-08-01",
+      "wp_category_id": 165,
+      "wp_tag_ids": [],
+      "members": [
+        {
+          "name": "Irene",
+          "name_ko": "배주현",
+          "birthday": "1991-03-29",
+          "role": "リーダー、リードボーカル、センター"
+        },
+        {
+          "name": "Seulgi",
+          "name_ko": "강슬기",
+          "birthday": "1994-02-10",
+          "role": "メインダンサー、リードボーカル"
+        },
+        {
+          "name": "Wendy",
+          "name_ko": "손승완",
+          "birthday": "1994-02-21",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "Joy",
+          "name_ko": "박수영",
+          "birthday": "1996-09-03",
+          "role": "リードボーカル、メインダンサー"
+        },
+        {
+          "name": "Yeri",
+          "name_ko": "김예림",
+          "birthday": "1999-03-05",
+          "role": "ボーカル、マンネ"
+        }
+      ]
+    },
+    {
+      "id": "monsta-x",
+      "name_en": "MONSTA X",
+      "name_ko": "",
+      "name_ja": "MONSTA X",
+      "slug": "monsta-x-profile",
+      "type": "group",
+      "agency": "Starship Entertainment",
+      "debut_date": "2015-05-14",
+      "wp_category_id": 173,
+      "wp_tag_ids": [],
+      "members": [
+        {
+          "name": "Shownu",
+          "name_ko": "손형준",
+          "birthday": "1992-06-18",
+          "role": "リーダー、メインダンサー、ボーカル"
+        },
+        {
+          "name": "Minhyuk",
+          "name_ko": "이민혁",
+          "birthday": "1993-11-03",
+          "role": "ボーカル、サブラッパー"
+        },
+        {
+          "name": "Kihyun",
+          "name_ko": "유기현",
+          "birthday": "1993-11-22",
+          "role": "メインボーカル"
+        },
+        {
+          "name": "Hyungwon",
+          "name_ko": "최형원",
+          "birthday": "1994-01-15",
+          "role": "ボーカル、メインダンサー"
+        },
+        {
+          "name": "Joohoney",
+          "name_ko": "이주헌",
+          "birthday": "1994-10-06",
+          "role": "メインラッパー、ボーカル"
+        },
+        {
+          "name": "I.M",
+          "name_ko": "임창균",
+          "birthday": "1996-01-26",
+          "role": "メインラッパー、ボーカル"
+        }
+      ]
+    },
+    {
+      "id": "mamamoo",
+      "name_en": "MAMAMOO",
+      "name_ko": "",
+      "name_ja": "MAMAMOO",
+      "slug": "mamamoo-profile",
+      "type": "group",
+      "agency": "RBW Entertainment",
+      "debut_date": "2014-06-18",
+      "wp_category_id": 261,
+      "wp_tag_ids": [],
+      "members": [
+        {
+          "name": "Solar",
+          "name_ko": "김용선",
+          "birthday": "1991-02-21",
+          "role": "リーダー、メインボーカル"
+        },
+        {
+          "name": "Moonbyul",
+          "name_ko": "문별이",
+          "birthday": "1992-12-22",
+          "role": "メインラッパー、リードダンサー"
+        },
+        {
+          "name": "Wheein",
+          "name_ko": "정휘인",
+          "birthday": "1995-04-17",
+          "role": "メインダンサー、リードボーカル、ビジュアル"
+        },
+        {
+          "name": "Hwasa",
+          "name_ko": "안혜진",
+          "birthday": "1995-07-23",
+          "role": "リードラッパー、サブボーカル、セクシーコンセプト担当"
+        }
+      ]
+    },
+    {
+      "id": "ateez",
+      "name_en": "ATEEZ",
+      "name_ko": "",
+      "name_ja": "ATEEZ",
+      "slug": "ateez-profile",
+      "type": "group",
+      "agency": "KQ Entertainment",
+      "debut_date": "2018-10-24",
+      "wp_category_id": 168,
+      "wp_tag_ids": [],
+      "members": [
+        {
+          "name": "Hongjoong",
+          "name_ko": "김홍중",
+          "birthday": "1998-11-07",
+          "role": "リーダー、メインラッパー"
+        },
+        {
+          "name": "Seonghwa",
+          "name_ko": "박성화",
+          "birthday": "1998-04-03",
+          "role": "ビジュアル、ボーカル"
+        },
+        {
+          "name": "Yunho",
+          "name_ko": "정윤호",
+          "birthday": "1999-03-23",
+          "role": "メインダンサー、ボーカル"
+        },
+        {
+          "name": "Yeosang",
+          "name_ko": "강여상",
+          "birthday": "1999-06-15",
+          "role": "ボーカル、ダンサー"
+        },
+        {
+          "name": "San",
+          "name_ko": "최산",
+          "birthday": "1999-07-10",
+          "role": "メインダンサー、ボーカル"
+        },
+        {
+          "name": "Mingi",
+          "name_ko": "송민기",
+          "birthday": "1999-08-09",
+          "role": "メインラッパー"
+        },
+        {
+          "name": "Wooyoung",
+          "name_ko": "정우영",
+          "birthday": "1999-11-26",
+          "role": "メインダンサー、ボーカル"
+        },
+        {
+          "name": "Jongho",
+          "name_ko": "최종호",
+          "birthday": "2000-10-12",
+          "role": "メインボーカル"
+        }
+      ]
+    }
+  ]
+}
