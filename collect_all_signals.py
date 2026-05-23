@@ -13,8 +13,9 @@ data/trend_signals.jsonl に append(dedup は各 collector + 下流 cluster_dedu
   python3 collect_all_signals.py
 """
 import sys
+import time
+import argparse
 import importlib
-import traceback
 
 sys.path.insert(0, "/home/aiuser/kpop-ai-system")
 
@@ -27,10 +28,14 @@ COLLECTORS = [
 ]
 
 
-def main() -> int:
+def main(stagger: float = 0.0) -> int:
+    """全 collector を順に実行。stagger 秒だけ各 collector の間隔を空ける
+    (同一時刻に全 RSS feed を叩かないための時間ずらし。既定0=連続)。"""
     total = 0
     ok = 0
-    for name in COLLECTORS:
+    for i, name in enumerate(COLLECTORS):
+        if stagger > 0 and i > 0:
+            time.sleep(stagger)
         mod_name = f"lib.collectors.{name}_collector"
         try:
             mod = importlib.import_module(mod_name)
@@ -53,4 +58,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument("--stagger", type=float, default=0.0,
+                     help="各 collector の実行間隔(秒)。同一時刻に全feedを叩かないよう分散")
+    _args = _ap.parse_args()
+    raise SystemExit(main(stagger=_args.stagger))
