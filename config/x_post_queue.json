@@ -1,0 +1,24 @@
+{
+  "updated": "2026-05-23 22:45",
+  "count": 2,
+  "queue": [
+    {
+      "title": "WOODZ「Drowning」Melonチャート70週連続10位",
+      "url": "https://www.kpopjournal.tokyo/woodz-drowning-melon-chart-70-weeks-top10/",
+      "post_id": 646,
+      "genre": "news",
+      "artist": "WOODZ",
+      "priority": "high",
+      "queued_at": "2026-05-23T21:23:57.247081"
+    },
+    {
+      "title": "BTSが2026年アメリカン・ミュージック・アワード出演",
+      "url": "https://www.kpopjournal.tokyo/?p=657",
+      "post_id": 657,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-05-23T22:45:04.569327"
+    }
+  ]
+}

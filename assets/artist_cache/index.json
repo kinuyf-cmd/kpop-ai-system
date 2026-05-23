@@ -446,5 +446,19 @@
         "license": "CC0"
       }
     ]
+  },
+  "ateez": {
+    "name": "ATEEZ",
+    "files": [
+      "ateez_b0e07d9e.jpg"
+    ],
+    "sources": [
+      {
+        "file": "ateez_b0e07d9e.jpg",
+        "wikimedia_title": "File:ATEEZ in November 2018.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/ATEEZ_in_November_2018.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

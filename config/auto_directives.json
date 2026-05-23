@@ -1,6 +1,43 @@
 {
   "updated_at": "2026-05-21T22:16:46.335201",
-  "focus_themes": [],
+  "focus_themes": [
+    {
+      "topic": "WOODZ速報の深掘り: WOODZ、Melonチャート71週連続トップ10入り",
+      "hint": "速報「WOODZ、Melonチャート71週連続トップ10入り」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: WOODZ Sets Record On Melon Chart For Longest Run In Top 10。関連: WOODZ。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-23",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-26"
+    },
+    {
+      "topic": "NMIXX速報の深掘り: NMIXX「Heavy Serenade」でM Countd",
+      "hint": "速報「NMIXX「Heavy Serenade」でM Countdown初勝利」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: Watch: NMIXX Takes 1st Win For &#8220;Heavy Serenade&#8221; On &#8220;M Countdow。関連: NMIXX。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-23",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-26"
+    },
+    {
+      "topic": "BTS速報の深掘り: BTSが2026年アメリカン・ミュージック・アワード出演",
+      "hint": "速報「BTSが2026年アメリカン・ミュージック・アワード出演」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: BTS To Make Special Live Appearance At 2026 American Music Awards。関連: BTS。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-23",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-26"
+    },
+    {
+      "topic": "AKMU速報の深掘り: AKMUがCircleチャートでトリプルクラウン獲得",
+      "hint": "速報「AKMUがCircleチャートでトリプルクラウン獲得」の背景分析・ファン反応・今後の影響を深掘りする記事。元ニュース: AKMU Earns Circle Triple Crown + CORTIS, BTS, And ILLIT Top Weekly Charts。関連: AKMU。バズ予測スコア: 12.0。シグナル: breaking_followup",
+      "category_suggest": "深掘り",
+      "added_at": "2026-05-23",
+      "source": "breaking_followup",
+      "buzz_score": 12.0,
+      "expires_at": "2026-05-26"
+    }
+  ],
   "agent_directives": {
     "gardevoir_hook_critic": {
       "problem": "ERRORが全体の33%（23件）。SCOREパースに失敗してERROR扱いになるフォーマット不正が根本原因",
