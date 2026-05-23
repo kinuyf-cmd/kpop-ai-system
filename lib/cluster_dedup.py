@@ -290,6 +290,12 @@ def cluster_dedup_check(candidate_title: str, *,
             pass
 
     buffer_full = _read_recent_buffer_full(hours=hours)
+    # 2026-05-23: post_publish_hook の再 cluster_dedup_check で、publish 直後に自分自身の
+    # title が recent_published_titles バッファに append 済みのため self-match で誤 draft化
+    # していた。fetch_recent_wp_titles は exclude_post_id で除外するが buffer 側は未除外だった。
+    # buffer からも自身の post_id を除外して self-match を防ぐ。
+    if exclude_post_id is not None:
+        buffer_full = [e for e in buffer_full if e.get('post_id') != exclude_post_id]
 
     # 1. source_url 完全一致 (最強シグナル)
     if candidate_source_url:
