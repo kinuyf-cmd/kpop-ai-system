@@ -1,6 +1,6 @@
 {
-  "updated": "2026-05-23 22:45",
-  "count": 2,
+  "updated": "2026-05-24 13:36",
+  "count": 7,
   "queue": [
     {
       "title": "WOODZ「Drowning」Melonチャート70週連続10位",
@@ -19,6 +19,51 @@
       "artist": "BTS",
       "priority": "high",
       "queued_at": "2026-05-23T22:45:04.569327"
+    },
+    {
+      "title": "ITZY、モロッコのマワジーン音楽祭ヘッドライナー決定",
+      "url": "https://www.kpopjournal.tokyo/itzy-morocco-mawazine-headliner/",
+      "post_id": 1073,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-05-23T23:23:36.966112"
+    },
+    {
+      "title": "Stray Kidsのスンミン、2026年Governors Ball欠席",
+      "url": "https://www.kpopjournal.tokyo/stray-kids-seungmin-governors-ball-absence/",
+      "post_id": 1080,
+      "genre": "breaking",
+      "artist": "Stray Kids",
+      "priority": "high",
+      "queued_at": "2026-05-23T23:23:50.670389"
+    },
+    {
+      "title": "aespaのWinter「未編集」ビジュアルが話題",
+      "url": "https://www.kpopjournal.tokyo/aespa-winter-unedited-visuals/",
+      "post_id": 1098,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-05-23T23:24:28.576161"
+    },
+    {
+      "title": "ILLITのWONHEE、飲酒姿が批判される",
+      "url": "https://www.kpopjournal.tokyo/illits-wonhee-drinking-criticism/",
+      "post_id": 1118,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-05-23T23:25:05.897647"
+    },
+    {
+      "title": "SEVENTEENのディノ、別人格Picheolinデビュー",
+      "url": "https://www.kpopjournal.tokyo/seventeen-dino-picheolin-debut/",
+      "post_id": 1144,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-05-24T13:36:49.682154"
     }
   ]
 }
