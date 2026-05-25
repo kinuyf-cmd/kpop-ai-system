@@ -98,5 +98,16 @@ else
 fi
 
 echo ""
+echo "================ ④ トップ(sidebar-1)にミュージックチャートwidget追加 ================"
+# トップにも Soompi チャートを出す。記事はprependのdo_shortcodeで出る(widget不要)。
+if $WP widget list sidebar-1 --format=json 2>/dev/null | grep -q "kpop_chart_ranking"; then
+  echo "  チャートwidget 既存(skip)"
+else
+  # 人気記事(custom_html-4)の次あたり=position 3 に挿入(誕生日→人気→チャート→…)
+  $WP widget add custom_html sidebar-1 3 --title="" --content="[kpop_chart_ranking]" >/dev/null 2>&1 \
+    && echo "  ✅ ミュージックチャートwidget追加(pos3)" || echo "  [warn] widget追加失敗"
+fi
+
+echo ""
 echo "================ 完了 ================"
 echo "  記事/トップ両方で再読込し、見出し統一・重複イベント解消・ミュージックチャート表示を確認。"

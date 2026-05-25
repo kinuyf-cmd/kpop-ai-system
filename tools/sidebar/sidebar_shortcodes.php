@@ -156,7 +156,9 @@ endif;
 // 引用ポリシー: 出典(Soompi)を明記しリンク。順位/曲/アーティストの事実のみ表示(捏造なし)。
 if ( ! function_exists( 'kpop_sc_chart_ranking' ) ) :
 function kpop_sc_chart_ranking( $atts ) {
-    if ( kpop_sc_suppressed_on_single() ) { return ''; }
+    // 注: ミュージックチャートは functions.php に重複描画が無く、記事=prependのdo_shortcode、
+    //     トップ=widget の双方で「この shortcode のみ」が描画源。よって suppression guard は付けない
+    //     (付けると記事ページで prepend のチャートが空になる=2026-05-25の不具合)。
     $a = shortcode_atts( array( 'limit' => 10 ), $atts );
     $limit = max( 1, min( 10, (int) $a['limit'] ) );
     $data = get_option( 'kpop_soompi_chart' );
