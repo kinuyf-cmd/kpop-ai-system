@@ -7,11 +7,14 @@ set -uo pipefail
 
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 PROPOSED="$REPO/tools/perf/kpopjournal.conf.proposed"
+MAPSRC="$REPO/tools/perf/webp_map.conf"
+MAPDST="/etc/nginx/conf.d/webp_map.conf"
 # sites-enabled は sites-available へのシンボリックリンクが通例。実体を解決。
 LIVE="/etc/nginx/sites-available/kpopjournal.conf"
 [ -f "$LIVE" ] || LIVE="/etc/nginx/sites-enabled/kpopjournal.conf"
 
 [ -f "$PROPOSED" ] || { echo "[FATAL] proposed conf が無い: $PROPOSED"; exit 1; }
+[ -f "$MAPSRC" ]   || { echo "[FATAL] map conf が無い: $MAPSRC"; exit 1; }
 [ -f "$LIVE" ]     || { echo "[FATAL] 既存 conf が無い: $LIVE"; exit 1; }
 
 BAK="${LIVE}.bak.$(date +%s)"
@@ -19,6 +22,10 @@ echo "================ nginx WebP conf 適用 ================"
 echo "  対象: $LIVE"
 cp "$LIVE" "$BAK" || { echo "[FATAL] バックアップ失敗"; exit 1; }
 echo "  バックアップ: $BAK"
+
+# map($webp_ext)を http スコープの conf.d に配置(server側が依存)
+MAP_PLACED=0
+if [ ! -f "$MAPDST" ]; then cp "$MAPSRC" "$MAPDST" && MAP_PLACED=1 && echo "  map配置: $MAPDST"; else echo "  map既存: $MAPDST"; fi
 
 cp "$PROPOSED" "$LIVE" || { echo "[FATAL] 差し替え失敗"; cp "$BAK" "$LIVE"; exit 1; }
 echo "  差し替え完了 → 構文テスト"
@@ -28,6 +35,7 @@ if nginx -t; then
 else
     echo "  ⚠️ nginx -t 失敗 → 自動ロールバック"
     cp "$BAK" "$LIVE"
+    [ "$MAP_PLACED" = "1" ] && rm -f "$MAPDST" && echo "  map撤去(今回配置分)"
     nginx -t && echo "  復旧確認OK(元のconfに戻しました)。proposedを見直してください。"
     exit 1
 fi
