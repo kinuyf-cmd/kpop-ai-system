@@ -52,7 +52,8 @@ sys.stdout.write(c2)
   if [ "$new" = "$content" ]; then echo "  [no-match] post $pid ($slug) 対象リンクなし"; skipped=$((skipped+1)); continue; fi
   if [ "$APPLY" = "--apply" ]; then
     printf '%s' "$content" > "$BAKDIR/${pid}_${slug}.html"   # バックアップ
-    printf '%s' "$new" | $WP post update "$pid" --post_content=- >/dev/null && echo "  [fixed] post $pid ($slug)" && fixed=$((fixed+1))
+    # 直接渡し(stdin piping --post_content=- は環境依存で literal '-' 化し本文破壊するため使わない)
+    $WP post update "$pid" --post_content="$new" >/dev/null && echo "  [fixed] post $pid ($slug)" && fixed=$((fixed+1))
   else
     echo "  [would-fix] post $pid ($slug)  (注入リンク1件除去予定)"
     fixed=$((fixed+1))
