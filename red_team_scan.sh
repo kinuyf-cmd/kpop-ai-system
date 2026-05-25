@@ -34,6 +34,7 @@ DRY_RUN=${DRY_RUN:-0}
 mkdir -p "$RT_DIR"
 
 STG_HOST="stg.kpopjournal.tokyo"
+PROD_HOST="www.kpopjournal.tokyo"   # セキュリティヘッダ等は公開面(本番)を測る
 # Basic auth(stg のみ。本番は別途認証なしを想定)
 STG_AUTH_USER="kpopadmin"
 STG_AUTH_PASS=""
@@ -80,10 +81,13 @@ done
 
 # ─── [2] HTTP セキュリティヘッダ ─────────────────────
 log "--- [2] HTTP セキュリティヘッダ ---"
-HEADERS=$(curl -s -I -u "${STG_AUTH_USER}:${STG_AUTH_PASS}" --max-time 10 "https://${STG_HOST}/" 2>/dev/null || echo "")
+# 公開面(本番 www)を測る。stg は Basic 認証(401)でヘッダを読めず偽陽性に
+# なるため対象外(2026-05-25: stg 401 を「ヘッダ欠落」と毎週誤検出し queue を
+# 偽陽性で埋めていた事案。本番は4ヘッダとも設定済み)。
+HEADERS=$(curl -s -I --max-time 10 "https://${PROD_HOST}/" 2>/dev/null || echo "")
 for hdr in "Strict-Transport-Security" "X-Content-Type-Options" "X-Frame-Options" "Referrer-Policy"; do
   if ! echo "$HEADERS" | grep -qi "^${hdr}:"; then
-    add_finding "MEDIUM" "security" "${hdr} ヘッダが欠落" "stg.kpopjournal.tokyo /"
+    add_finding "MEDIUM" "security" "${hdr} ヘッダが欠落" "${PROD_HOST} /"
   fi
 done
 

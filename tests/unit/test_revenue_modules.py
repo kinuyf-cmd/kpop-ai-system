@@ -20,8 +20,14 @@ ROOT = Path(__file__).resolve().parents[2]
 REVENUE = ROOT / "lib" / "revenue"
 
 
-def _reload_with_env(env_overrides):
-    """env を差し替えて revenue モジュール群を reload し、(settings, adsense, ga4) を返す。"""
+def _reload_with_env(env_overrides, clear_config=False):
+    """env を差し替えて revenue モジュール群を reload し、(settings, adsense, ga4) を返す。
+
+    clear_config=True のとき、reload 後に settings._CFG を空 dict に上書きして
+    config/revenue/revenue_settings.json の値を無効化する。本番化済み(config に
+    実 client_id/measurement_id 投入済み)の現状でも「本番化前=env も config も
+    未設定」を純粋に再現するため(2026-05-25: config 実IDで誤失敗していた事案)。
+    """
     saved = {}
     for k, v in env_overrides.items():
         saved[k] = os.environ.get(k)
@@ -32,6 +38,8 @@ def _reload_with_env(env_overrides):
     try:
         from lib.revenue import settings as s
         importlib.reload(s)
+        if clear_config:
+            s._CFG = {}
         from lib.revenue import adsense_tags as at, ga4_events as ga
         importlib.reload(at)
         importlib.reload(ga)
@@ -57,12 +65,12 @@ class TestDeliveryDisabledByDefault:
         _, at, _ = _reload_with_env({
             "ADSENSE_CLIENT_ID": None, "ADSENSE_ENABLED": None,
             "REVENUE_DELIVERY_ENABLED": None,
-        })
+        }, clear_config=True)
         assert at.adsense_loader_tag() == ""
         assert at.adsense_in_article_unit() == ""
 
     def test_ga4_empty_when_no_measurement_id(self):
-        _, _, ga = _reload_with_env({"GA4_MEASUREMENT_ID": None})
+        _, _, ga = _reload_with_env({"GA4_MEASUREMENT_ID": None}, clear_config=True)
         assert ga.gtag_loader_tag() == ""
 
 
