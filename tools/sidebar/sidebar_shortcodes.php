@@ -131,6 +131,51 @@ function kpop_sc_popular( $atts ) {
 add_shortcode( 'kpop_popular', 'kpop_sc_popular' );
 endif;
 
+// [kpop_chart_ranking] — Soompi K-Pop Music Chart の Top10 ランキング(曲+アーティスト)
+// データ: wp_option 'kpop_soompi_chart'(Node collector が取得→owner scriptで取り込み)。
+// 引用ポリシー: 出典(Soompi)を明記しリンク。順位/曲/アーティストの事実のみ表示(捏造なし)。
+if ( ! function_exists( 'kpop_sc_chart_ranking' ) ) :
+function kpop_sc_chart_ranking( $atts ) {
+    $a = shortcode_atts( array( 'limit' => 10 ), $atts );
+    $limit = max( 1, min( 10, (int) $a['limit'] ) );
+    $data = get_option( 'kpop_soompi_chart' );
+    if ( is_string( $data ) ) { $data = json_decode( $data, true ); }
+    $items = ( is_array( $data ) && ! empty( $data['items'] ) ) ? $data['items'] : array();
+
+    ob_start();
+    echo '<div class="kpop-sidebar-box kpop-music-chart" role="region" aria-label="ミュージックチャート">';
+    echo '<h2 class="kpop-box-title">ミュージックチャート <span class="kpop-box-en">MUSIC CHART</span></h2>';
+    if ( $items ) {
+        echo '<ol class="kpop-mchart-list">';
+        $n = 0;
+        foreach ( $items as $it ) {
+            if ( $n++ >= $limit ) break;
+            $rank   = isset( $it['rank'] ) ? (int) $it['rank'] : ( $n );
+            $song   = isset( $it['song'] ) ? $it['song'] : '';
+            $artist = isset( $it['artist'] ) ? $it['artist'] : '';
+            printf(
+                '<li class="kpop-mchart-item"><span class="kpop-mchart-rank">%d</span>'
+                . '<span class="kpop-mchart-body"><span class="kpop-mchart-song">%s</span>'
+                . '<span class="kpop-mchart-artist">%s</span></span></li>',
+                $rank, esc_html( $song ), esc_html( $artist )
+            );
+        }
+        echo '</ol>';
+        // 出典明記(citation-rules 準拠)
+        $src = ( is_array( $data ) && ! empty( $data['url'] ) ) ? $data['url'] : 'https://www.soompi.com/';
+        printf(
+            '<p class="kpop-mchart-source">出典: <a href="%s" rel="nofollow noopener">Soompi K-Pop Music Chart</a></p>',
+            esc_url( $src )
+        );
+    } else {
+        echo '<p class="kpop-empty-msg">チャートを取得中です</p>';
+    }
+    echo '</div>';
+    return ob_get_clean();
+}
+add_shortcode( 'kpop_chart_ranking', 'kpop_sc_chart_ranking' );
+endif;
+
 // Custom HTML / Text widget 内でショートコードを実行可能にする(既定は非実行)
 add_filter( 'widget_text', 'do_shortcode' );
 add_filter( 'widget_custom_html_content', 'do_shortcode' );

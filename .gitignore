@@ -41,3 +41,7 @@ tools/audit/thumb_fix/
 
 # 歪み修正サムネ再生成画像(第三者報道写真・再取得可)
 tools/audit/thumb_regen/
+data/soompi_chart_top10.json
+node_modules/
+package-lock.json
+package.json

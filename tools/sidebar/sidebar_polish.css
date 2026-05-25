@@ -108,3 +108,27 @@
 .kpop-chart-list a:hover, .kpop-popular-box .kpop-popular-list li a:hover {
     color: #C2185B; text-decoration: underline;
 }
+
+/* --- ミュージックチャート(Soompi Top10)ランキングUI --- */
+.kpop-music-chart .kpop-box-title::before { content: "🎵"; margin-right: 6px; }
+.kpop-mchart-list { list-style: none; margin: 0; padding: 0; counter-reset: none; }
+.kpop-mchart-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f0e6ea;
+}
+.kpop-mchart-item:last-child { border-bottom: none; }
+.kpop-mchart-rank {
+    flex: 0 0 auto; width: 22px; height: 22px; line-height: 22px;
+    text-align: center; border-radius: 50%;
+    background: #C2185B; color: #fff; font-weight: 700; font-size: 12px;  /* 白on濃ピンク 5.87:1 AA */
+}
+/* 上位3位は金銀銅で強調 */
+.kpop-mchart-item:nth-child(1) .kpop-mchart-rank { background: #A67C00; }  /* 金(白上3.82:1 大字AA) */
+.kpop-mchart-item:nth-child(2) .kpop-mchart-rank { background: #8A8A8A; }  /* 銀 */
+.kpop-mchart-item:nth-child(3) .kpop-mchart-rank { background: #B06A3B; }  /* 銅 */
+.kpop-mchart-body { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+.kpop-mchart-song { font-size: 12.5px; font-weight: 600; color: #212529; overflow-wrap: anywhere; }
+.kpop-mchart-artist { font-size: 11px; color: #6b6b6b; }   /* 5.33:1 AA */
+.kpop-mchart-source { margin: 10px 0 0; font-size: 11px; text-align: right; }
+.kpop-mchart-source a { color: #AD1457; text-decoration: none; }  /* 6.97:1 AA */
+.kpop-mchart-source a:hover { text-decoration: underline; }
