@@ -345,9 +345,43 @@ def _inject_followup_theme(artist, ja_title, en_title):
         print(f"  followup inject err: {e}")
 
 
+def _wp_basic_auth() -> str:
+    """WP REST 用 Basic 認証を .env (WP_USER + WP_APP_PASS|WP_PASS) から組む。
+    unified_publisher と同じ有効な kpop-publisher 資格情報を使う。
+    旧実装は存在しない kpop-bot の平文 app password をハードコードしており
+    必ず 401 になっていた (kpop-bot はこの WP install に不在)。"""
+    user = os.environ.get('WP_USER', '')
+    pw = os.environ.get('WP_APP_PASS') or os.environ.get('WP_PASS', '')
+    if not (user and pw):
+        # cron で .env 未ロードのケースに備え明示的に読む
+        try:
+            _env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+            with open(_env_path, encoding='utf-8') as _f:
+                for _line in _f:
+                    _line = _line.strip()
+                    if not _line or _line.startswith('#') or '=' not in _line:
+                        continue
+                    _k, _, _v = _line.partition('=')
+                    _k = _k.strip(); _v = _v.strip()
+                    if _k == 'WP_USER' and not user:
+                        user = _v
+                    elif _k == 'WP_APP_PASS' and not pw:
+                        pw = _v
+                    elif _k == 'WP_PASS' and not pw:
+                        pw = _v
+        except Exception:
+            pass
+    if not (user and pw):
+        return ''
+    return base64.b64encode(f"{user}:{pw}".encode()).decode()
+
+
 def _mark_breaking_stage(post_id, stage):
     """WP custom field _breaking_stage を記録 (1=速報、2=加筆済、3=完全版)"""
-    _AUTH = base64.b64encode(b"kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh").decode()
+    _AUTH = _wp_basic_auth()
+    if not _AUTH:
+        print(f"  stage記録skip {post_id}: WP認証(.env WP_USER/WP_PASS)未設定")
+        return
     try:
         url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}"
         body = json.dumps({'meta': {'_breaking_stage': str(stage)}}).encode()
