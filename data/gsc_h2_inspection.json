@@ -1,19 +1,9 @@
 {
  "site": "https://www.kpopjournal.tokyo/",
- "checked_at": "2026-05-25T13:44:38+0900",
+ "checked_at": "2026-05-25T17:22:53+0900",
  "results": [
   {
-   "url": "https://www.kpopjournal.tokyo/",
-   "verdict": "PASS",
-   "coverageState": "Submitted and indexed",
-   "robotsTxtState": "ALLOWED",
-   "indexingState": "INDEXING_ALLOWED",
-   "pageFetchState": "SUCCESSFUL",
-   "warnings": [],
-   "pending_crawl": false
-  },
-  {
-   "url": "https://www.kpopjournal.tokyo/le-sserafim-new-album-pureflow/",
+   "url": "https://www.kpopjournal.tokyo/ads.txt",
    "verdict": "NEUTRAL",
    "coverageState": "URL is unknown to Google",
    "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
@@ -21,39 +11,9 @@
    "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
    "warnings": [],
    "pending_crawl": true
-  },
-  {
-   "url": "https://www.kpopjournal.tokyo/bts-ariran-las-vegas-thanks/",
-   "verdict": "NEUTRAL",
-   "coverageState": "URL is unknown to Google",
-   "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-   "indexingState": "INDEXING_STATE_UNSPECIFIED",
-   "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-   "warnings": [],
-   "pending_crawl": true
-  },
-  {
-   "url": "https://www.kpopjournal.tokyo/monsta-x-keyhun-lazy-day-debut/",
-   "verdict": "NEUTRAL",
-   "coverageState": "URL is unknown to Google",
-   "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-   "indexingState": "INDEXING_STATE_UNSPECIFIED",
-   "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-   "warnings": [],
-   "pending_crawl": true
-  },
-  {
-   "url": "https://www.kpopjournal.tokyo/artists/",
-   "verdict": "PASS",
-   "coverageState": "Submitted and indexed",
-   "robotsTxtState": "ALLOWED",
-   "indexingState": "INDEXING_ALLOWED",
-   "pageFetchState": "SUCCESSFUL",
-   "warnings": [],
-   "pending_crawl": false
   }
  ],
  "warnings_total": 0,
- "indexed_pass": 2,
- "pending_crawl": 3
+ "indexed_pass": 0,
+ "pending_crawl": 1
 }

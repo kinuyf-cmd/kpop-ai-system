@@ -1,6 +1,6 @@
 {
-  "updated": "2026-05-24 13:36",
-  "count": 7,
+  "updated": "2026-05-25 22:36",
+  "count": 28,
   "queue": [
     {
       "title": "WOODZ「Drowning」Melonチャート70週連続10位",
@@ -64,6 +64,195 @@
       "artist": "SEVENTEEN",
       "priority": "high",
       "queued_at": "2026-05-24T13:36:49.682154"
+    },
+    {
+      "title": "TXTのヨンジュンのガールグループカバー賛否両論",
+      "url": "https://www.kpopjournal.tokyo/txt-youngjoon-girlgroup-cover-debate/",
+      "post_id": 1157,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-05-25T12:59:49.299014"
+    },
+    {
+      "title": "SEVENTEEN、日本で18万人と出会う生中継",
+      "url": "https://www.kpopjournal.tokyo/seventeen-japan-live-broadcast-180000/",
+      "post_id": 1219,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:05:19.950123"
+    },
+    {
+      "title": "TREASURE、ミニ4集タイトル曲「IF I」発表",
+      "url": "https://www.kpopjournal.tokyo/treasure-if-i-mini4th-album/",
+      "post_id": 1226,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:05:50.125307"
+    },
+    {
+      "title": "aespa、正規2集「LEMONADE」ハイライトメドレー公開",
+      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-highlights/",
+      "post_id": 1232,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:06:49.201617"
+    },
+    {
+      "title": "ボア、SM離脱後の驚きのビジュアル公開",
+      "url": "https://www.kpopjournal.tokyo/?p=1238",
+      "post_id": 1238,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:07:20.485949"
+    },
+    {
+      "title": "ボア、SM離脱後の変貌と新たな挑戦",
+      "url": "https://www.kpopjournal.tokyo/?p=1241",
+      "post_id": 1241,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:07:39.608606"
+    },
+    {
+      "title": "SEVENTEEN、京セラドーム大阪でファンミ成功",
+      "url": "https://www.kpopjournal.tokyo/seventeen-fanmeeting-kyocera-dome/",
+      "post_id": 1245,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:08:15.638326"
+    },
+    {
+      "title": "LE SSERAFIM新アルバム「퓨어플로우」リリース",
+      "url": "https://www.kpopjournal.tokyo/le-sserafim-new-album-pureflow/",
+      "post_id": 1263,
+      "genre": "breaking",
+      "artist": "르세라핌",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:10:17.036554"
+    },
+    {
+      "title": "真美松監督『SILENT VOICES』カンヌ映画祭2等賞受賞",
+      "url": "https://www.kpopjournal.tokyo/mami-matsu-silent-voices-cannes-award/",
+      "post_id": 1296,
+      "genre": "breaking",
+      "artist": "워너원",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:18:09.999262"
+    },
+    {
+      "title": "BTS、ラスベガスで「アリラン」披露し感謝",
+      "url": "https://www.kpopjournal.tokyo/bts-ariran-las-vegas-thanks/",
+      "post_id": 1299,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:19:15.275962"
+    },
+    {
+      "title": "MONSTA Xキヒョン、「Lazy Day」を初披露",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-keyhun-lazy-day-debut/",
+      "post_id": 1302,
+      "genre": "breaking",
+      "artist": "몬스타엑스",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:20:21.085812"
+    },
+    {
+      "title": "BTS「ARIRANG」ビルボード200で9週連続10位",
+      "url": "https://www.kpopjournal.tokyo/?p=1308",
+      "post_id": 1308,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:35:33.717042"
+    },
+    {
+      "title": "リン、6ヶ月ぶりカムバック新曲「아이 좋아」発表",
+      "url": "https://www.kpopjournal.tokyo/rin-6-months-comeback-new-song-ai-joa/",
+      "post_id": 1411,
+      "genre": "breaking",
+      "artist": "화사",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:31:01.090096"
+    },
+    {
+      "title": "BTSファン、コンサート中に暴力や脅迫受ける",
+      "url": "https://www.kpopjournal.tokyo/bts-fan-concert-violence-threats/",
+      "post_id": 1420,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:32:08.443420"
+    },
+    {
+      "title": "MONSTA Xユニット、Shownu X Hyungwonが「LOVE ME」プロ",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-shownu-hyungwon-love-me/",
+      "post_id": 1430,
+      "genre": "breaking",
+      "artist": "monsta x",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:33:32.102889"
+    },
+    {
+      "title": "BLACKPINKの友情、不和の噂を覆す",
+      "url": "https://www.kpopjournal.tokyo/blackpink-friendship-rumors/",
+      "post_id": 1436,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:34:20.556890"
+    },
+    {
+      "title": "aespaのニンニンとジゼル、お揃いへそピアス",
+      "url": "https://www.kpopjournal.tokyo/aespa-ninnyun-giselle-matching-navel-piercings/",
+      "post_id": 1445,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:35:17.033971"
+    },
+    {
+      "title": "キム・ユジョン、SNSに手書き手紙公開",
+      "url": "https://www.kpopjournal.tokyo/kim-yujeong-handwritten-letter-sns/",
+      "post_id": 1456,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:36:29.593074"
+    },
+    {
+      "title": "BOYNEXTDOORとRIIZE出演「Kstyle PARTY」盛況",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-riize-kstyle-party/",
+      "post_id": 1464,
+      "genre": "breaking",
+      "artist": "라이즈",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:37:11.766023"
+    },
+    {
+      "title": "ジン・ミソン監督「特権層の話をしたい",
+      "url": "https://www.kpopjournal.tokyo/jin-mison-tokken-sou-hanashi/",
+      "post_id": 1475,
+      "genre": "breaking",
+      "artist": "워너원",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:39:24.636631"
+    },
+    {
+      "title": "BOYNEXTDOOR、1stアルバム「HOME」コンセプト公開",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-home-concept/",
+      "post_id": 1509,
+      "genre": "breaking",
+      "artist": "BOYNEXTDOOR",
+      "priority": "high",
+      "queued_at": "2026-05-25T22:36:27.079757"
     }
   ]
 }
