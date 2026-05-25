@@ -954,6 +954,93 @@ def parse_popsin(max_items: int = 20) -> list[dict]:
     return signals
 
 
+# ─── popap.biz(日本国内の韓国カルチャー popup)────────────
+# 2026-05-25: 日本国内 popup ソース。pops-in/kbuzzlab は韓国popupのみで日本popupゼロ
+# だった問題への本命対応。popap は日本(東京中心)の popup メディアで、numbuzin(韓国コスメ)/
+# ROLAROLA(韓国ファッション)等の日本開催・韓国カルチャー popup を配信。
+# サイト全体は非韓国popupも多いので title で韓国シグナルを必須フィルタ(K-POP限定でなく
+# K-beauty/K-fashion/韓流 全般を対象=オーナー方針)。Squarespace 製: 一覧 <a href="/popup-list/..">
+# に data-title、card内に summary-thumbnail-event-date。個別ページに開催期間/会場/住所。
+# robots: /config /search /account のみ禁止=popup-list 可。DOM契約: [[popsin-popup-dom-contract]]。
+POPAP_TOKYO = "https://www.popap.biz/popup-tokyo"
+# 日本国内の韓国カルチャー判定キーワード(韓国シグナル必須=無関係popup誤拾い防止)
+_POPAP_KO_KW = [
+    "韓国", "韓流", "K-POP", "KPOP", "K-pop", "K-beauty", "K-BEAUTY", "Kビューティ",
+    "韓国コスメ", "韓国スキンケア", "韓国ファッション", "オルチャン", "新大久保",
+    "numbuzin", "ROLAROLA", "rom&nd", "ロムアンド", "MEDIHEAL", "Anua", "TIRTIR",
+    # K-POPアーティスト(SUBSTRING_KEYWORDS_EN を流用したいが循環回避のため主要のみ)
+    "LE SSERAFIM", "BTS", "TWICE", "SEVENTEEN", "RIIZE", "aespa", "JO1", "NCT",
+    "ENHYPEN", "Stray Kids", "TXT", "ILLIT", "IVE", "NewJeans", "TREASURE",
+]
+
+def parse_popap(max_items: int = 12) -> list[dict]:
+    """popap.biz /popup-tokyo から日本開催の韓国カルチャー popup を抽出。
+    一覧で title(data-title)を韓国シグナルでフィルタ → 該当のみ個別ページfetchで
+    開催期間/会場/住所を取得(extract_prtimes_event_info 流用)。
+    """
+    log("=== parse_popap() 開始 ===")
+    signals: list[dict] = []
+    try:
+        body = fetch(POPAP_TOKYO, accept="text/html")
+    except Exception as e:
+        log(f"  popap fetch失敗: {e}")
+        return signals
+    if not body:
+        return signals
+    cards = re.findall(r'<a[^>]*href="(/popup-list/[a-z0-9-]+)"[^>]*data-title="([^"]*)"', body)
+    log(f"  popup-list カード: {len(cards)} 件")
+    seen: set[str] = set()
+    for href, title_raw in cards:
+        title = _html_unescape_min(title_raw).strip()
+        if not title or href in seen:
+            continue
+        # 韓国カルチャーシグナル必須(無関係な日本popupを拾わない)
+        kw = next((k for k in _POPAP_KO_KW if k.lower() in title.lower()), None)
+        if not kw:
+            continue
+        seen.add(href)
+        url = "https://www.popap.biz" + href
+        # 個別ページから開催情報を取得(レート配慮、popup判定済みのみ)
+        kbz_info: dict = {}
+        try:
+            detail = fetch(url, accept="text/html")
+            time.sleep(SLEEP)
+            if detail:
+                kbz_info = extract_prtimes_event_info(detail)
+                # 住所を補完抽出(会場が英名/romajiだと _guess_popup_area が日本判定できないため、
+                # 〒/都道府県を含む住所を拾って kbz_info['住所'] に格納→東京/渋谷等で tokyo 判定可能に)
+                if "住所" not in kbz_info:
+                    dt = _html_unescape_min(re.sub(r"<[^>]+>", " ", detail))
+                    dt = re.sub(r"\s+", " ", dt)
+                    am = re.search(r"(〒\s*\d{3}-?\d{4}\s*[^。\s]{2,40}|(?:東京都|大阪府|京都府|北海道|[^\s。]{2,3}県)[^。\s]{2,40})", dt)
+                    if am:
+                        kbz_info["住所"] = am.group(1).strip()
+        except Exception as e:
+            log(f"  detail fetch失敗 {href}: {e}")
+        # 韓国ジャンル分類(beauty/fashion/food/drama or korea)
+        ko = matches_korea(title, title) or matches_korea("", " ".join(_POPAP_KO_KW))
+        korea_genre = ko[0] if ko else "korea"
+        signals.append({
+            "type": "popup",
+            "source_media": "popap",
+            "source_url": url,
+            "title": title,
+            "description_snippet": title[:300],
+            "thumbnail_url": None,  # Squarespace CDN は data-src 後段解決(featured resolverに委譲)
+            "kpop_keyword": kw,
+            "artist_keyword": kw,
+            "korea_genre": korea_genre,
+            "kbz_info": kbz_info,
+            "lastmod": "",
+            "fetched_at": now_iso(),
+        })
+        log(f"  HIT [popup] {title[:50]}... (kw={kw}, 会場={kbz_info.get('会場','?')})")
+        if len(signals) >= max_items:
+            break
+    log(f"=== parse_popap() 完了: {len(signals)} 件 ===")
+    return signals
+
+
 # ─── メイン ────────────────────────────────────────────
 def main() -> int:
     log("=== popup_event_fetcher.py 開始 ===")
@@ -967,8 +1054,11 @@ def main() -> int:
     # M11.5 段階9.5: kbuzzlab 追加
     all_signals.extend(parse_kbuzzlab(max_items=int(os.environ.get("KBZ_MAX", "20"))))
     time.sleep(SLEEP)
-    # 2026-05-25: pops-in 追加(日本国内 K-POP popup ソース。kbuzzlab=韓国のみ問題への対応)
+    # 2026-05-25: pops-in 追加(韓国idol popup。日本popupは取れないがkbuzzlabより構造クリーン)
     all_signals.extend(parse_popsin(max_items=int(os.environ.get("POPSIN_MAX", "20"))))
+    time.sleep(SLEEP)
+    # 2026-05-25: popap 追加(★日本国内の韓国カルチャーpopup。日本popup源の本命)
+    all_signals.extend(parse_popap(max_items=int(os.environ.get("POPAP_MAX", "12"))))
 
     # type 別集計
     popup_n = sum(1 for s in all_signals if s["type"] == "popup")
