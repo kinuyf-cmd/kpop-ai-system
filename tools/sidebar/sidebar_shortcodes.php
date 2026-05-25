@@ -103,13 +103,16 @@ function kpop_sc_popular( $atts ) {
     // 記事が出ない。読者・SEO のため WPP集計テーブル(wp_popularpostsdata)を直接読み、
     // 閲覧数上位を server-render する。不足分は最新記事で top-up し常に limit 件埋める。
     $ids = array();
+    // テーブル名は $wpdb->prefix 由来(ユーザー入力でない)。SHOW TABLES は prepare を使わず
+    // 直接エスケープ済みリテラルで判定(prepare("SHOW TABLES LIKE %s") は環境により _doing_it_wrong
+    // を誘発し出力停止の恐れがあるため避ける)。クエリ全体を try 相当で安全化。
     $table = $wpdb->prefix . 'popularpostsdata';
-    // テーブル存在チェック(WPP無効でも落ちないように)
-    if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table ) ) === $table ) {
+    $exists = $wpdb->get_var( "SHOW TABLES LIKE '" . esc_sql( $table ) . "'" );
+    if ( $exists === $table ) {
         $rows = $wpdb->get_col( $wpdb->prepare(
-            "SELECT d.postid FROM {$table} d
+            "SELECT d.postid FROM `{$table}` d
              INNER JOIN {$wpdb->posts} p ON p.ID = d.postid
-             WHERE p.post_status='publish' AND p.post_type='post'
+             WHERE p.post_status = 'publish' AND p.post_type = 'post'
              ORDER BY d.pageviews DESC LIMIT %d", $limit ) );
         if ( $rows ) { $ids = array_map( 'intval', $rows ); }
     }
