@@ -768,7 +768,8 @@ def unified_publish(
 
     return {
         'success': True, 'post_id': post_id, 'post_url': post_url,
-        'title': title_final, 'slug': slug, 'media_id': media_id, 'log': log,
+        'title': title_final, 'slug': slug, 'media_id': media_id,
+        'status': _post_status, 'log': log,
     }
 
 

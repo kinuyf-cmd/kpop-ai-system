@@ -48,11 +48,22 @@ def load_recent(minutes=5):
 
 
 def today_breaking_count():
+    """本日の速報「公開」本数。draft は上限を消費しない(ゲートで止まった
+    記事が上限を食い潰し公開余力が失われるのを防ぐ)。status 欠落の旧ログ行は
+    後方互換で publish 扱い(カウント対象)。"""
     if not os.path.exists(BREAKING_LOG):
         return 0
     today = datetime.now().date().isoformat()
-    return sum(1 for l in open(BREAKING_LOG, encoding='utf-8')
-               if l.strip() and json.loads(l).get('date') == today)
+    n = 0
+    for l in open(BREAKING_LOG, encoding='utf-8'):
+        if not l.strip():
+            continue
+        d = json.loads(l)
+        if d.get('date') != today:
+            continue
+        if d.get('status', 'publish') == 'publish':
+            n += 1
+    return n
 
 
 def _recent_breaking_titles(hours: int = 3) -> list:
@@ -629,6 +640,7 @@ def publish_breaking(artist, sigs, typ):
                 'title': r.get('title'),
                 'artist': artist,
                 'type': typ,
+                'status': r.get('status', 'publish'),
             }) + '\n')
 
         # 速報→深掘り連鎖: auto_directivesにフォローアップテーマを注入
