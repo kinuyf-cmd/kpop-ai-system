@@ -17,6 +17,19 @@ _SUSPICIOUS_OG_PATH_PATTERNS = (
     'video-thumbnail', 'player-thumbnail',
 )
 
+# 2026-05-25 RED TEAM監査: Koreaboo の og:image が「HOP OFF HIS D*CK」卑語テキスト焼込
+# meme画像で、TXT記事サムネに不適切採用された。gossip/meme aggregator は og:image を
+# reaction/meme/汎用FEATURED画像にすることがあり、信頼できない。
+# 対策: gossip aggregator が source の場合、og:image が meme/reaction/汎用パターンなら拒否し
+# 記事内の本物の写真にフォールバックする。 [[red-team-audit-4articles-20260525]]
+_GOSSIP_AGGREGATOR_SOURCES = (
+    'koreaboo.com', 'allkpop.com', 'kpopstarz.com', 'koreaherald.com/kpop',
+)
+_MEME_OG_PATTERNS = (
+    'featured-image', 'meme', 'reaction', 'thumbnail-template', 'default-thumb',
+    'placeholder', 'og-default', 'social-share', 'twitter-card',
+)
+
 # 2026-05-11: 信頼できる image CDN ホストパターン (cross-domain check 免除)
 # 韓国/日本K-POPメディアは画像を専用 CDN に置くのが一般的:
 #   kstyle.com → cdn.livedoor.jp/kstyle/...
@@ -109,6 +122,12 @@ def _is_suspicious_og_image(og_url, source_url):
     for pat in _SUSPICIOUS_OG_PATH_PATTERNS:
         if pat in og_path:
             return True, f'path blacklist: {pat}'
+
+    # gossip/meme aggregator が source なら、og:image が meme/汎用FEATURED画像のとき拒否
+    # (Koreaboo の卑語焼込 FEATURED-IMAGE-*.jpg を TXT記事に採用した事故対策)
+    if any(g in src_host or g in (source_url or '').lower() for g in _GOSSIP_AGGREGATOR_SOURCES):
+        if any(p in og_path for p in _MEME_OG_PATTERNS):
+            return True, f'gossip-aggregator meme/generic og: {og_path[:40]}'
 
     # 2026-05-11: 信頼できる image CDN は cross-domain 検査をスキップ
     # (kstyle/naver/soompi 等は本記事画像を専用 CDN にホストしている)
