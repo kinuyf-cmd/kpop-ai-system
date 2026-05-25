@@ -19,10 +19,29 @@ lint(){ command -v php >/dev/null && php -l "$1" >/dev/null 2>&1; }
 echo "================ ① 更新版 shortcode/CSS 配置 ================"
 lint "$SRC/sidebar_shortcodes.php" || ! command -v php >/dev/null || fail "shortcode構文NG"
 cp "$SRC/sidebar_shortcodes.php" "$THEME/widgets/sidebar_shortcodes.php" && echo "  shortcode更新(chart_ranking含む)"
-if ! grep -q "見出し様式の統一" "$CSS"; then
-  cp "$CSS" "$CSS.bak.$TS"
-  { echo ""; cat "$SRC/sidebar_polish.css"; } >> "$CSS"; echo "  polish/統一CSS追記"
-else echo "  CSS既存(skip)"; fi
+# CSS は sentinel マーカーで囲み、再デプロイ時は旧ブロックを除去して最新を再追記(色修正等を反映)
+cp "$CSS" "$CSS.bak.$TS"
+python3 - "$CSS" "$SRC/sidebar_polish.css" <<'PYEOF'
+import sys
+css_path, src_path = sys.argv[1], sys.argv[2]
+BEGIN="/* >>> KPOP_SIDEBAR_POLISH_BEGIN <<< */"
+END="/* >>> KPOP_SIDEBAR_POLISH_END <<< */"
+css=open(css_path).read()
+import re
+# 既存 sentinel ブロックを除去
+css=re.sub(re.escape(BEGIN)+r".*?"+re.escape(END), "", css, flags=re.S)
+# 旧(sentinel無し)レガシーブロックも除去: 最初の polish 由来コメントから末尾まで切る
+# (polish CSS は常にファイル末尾に追記されてきたため、既知の先頭コメント以降を削除)
+for legacy in ["/* イベント枠(2026-05-25 新設)", "/* ============================================================\n   サイドバーUI磨き"]:
+    idx=css.find(legacy)
+    if idx!=-1:
+        css=css[:idx]
+        break
+css=css.rstrip()+"\n"
+block="\n"+BEGIN+"\n"+open(src_path).read().rstrip()+"\n"+END+"\n"
+open(css_path,"w").write(css+block)
+print("  polish/統一CSS 更新(sentinel置換=色修正反映)")
+PYEOF
 
 echo ""
 echo "================ ② functions.php: 重複イベント削除 + チャート追加 ================"
