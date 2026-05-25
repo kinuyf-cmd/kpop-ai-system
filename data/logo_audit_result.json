@@ -1,0 +1,842 @@
+{
+ "59": {
+  "title": "BTS",
+  "gtype": "boy",
+  "att": "153",
+  "file": "2026/05/59_logo_emblem.png",
+  "size": "1800x1800",
+  "issue": null
+ },
+ "60": {
+  "title": "BLACKPINK",
+  "gtype": "girl",
+  "att": "152",
+  "file": "2026/05/60_logo.png",
+  "size": "1605x360",
+  "issue": null
+ },
+ "61": {
+  "title": "TWICE",
+  "gtype": "girl",
+  "att": "758",
+  "file": "2026/05/61_logo.png",
+  "size": "600x664",
+  "issue": null
+ },
+ "62": {
+  "title": "NewJeans",
+  "gtype": "girl",
+  "att": "151",
+  "file": "2026/05/62_logo.png",
+  "size": "1122x360",
+  "issue": null
+ },
+ "63": {
+  "title": "IVE",
+  "gtype": "girl",
+  "att": "150",
+  "file": "2026/05/63_logo.png",
+  "size": "282x360",
+  "issue": null
+ },
+ "64": {
+  "title": "aespa",
+  "gtype": "girl",
+  "att": "759",
+  "file": "2026/05/64_logo.png",
+  "size": "600x337",
+  "issue": null
+ },
+ "65": {
+  "title": "LE SSERAFIM",
+  "gtype": "girl",
+  "att": "760",
+  "file": "2026/05/65_logo.png",
+  "size": "600x188",
+  "issue": null
+ },
+ "66": {
+  "title": "ILLIT",
+  "gtype": "girl",
+  "att": "682",
+  "file": "2026/05/66_logo.png",
+  "size": "1134x360",
+  "issue": null
+ },
+ "67": {
+  "title": "ITZY",
+  "gtype": "girl",
+  "att": "222",
+  "file": "2026/05/67_logo.png",
+  "size": "567x360",
+  "issue": null
+ },
+ "68": {
+  "title": "Red Velvet",
+  "gtype": "girl",
+  "att": "223",
+  "file": "2026/05/68_logo.png",
+  "size": "167x120",
+  "issue": null
+ },
+ "69": {
+  "title": "MAMAMOO",
+  "gtype": "girl",
+  "att": "374",
+  "file": "2026/05/69_logo.png",
+  "size": "640x120",
+  "issue": null
+ },
+ "70": {
+  "title": "Girls' Generation",
+  "gtype": "girl",
+  "att": "257",
+  "file": "2026/05/70_logo.png",
+  "size": "120x120",
+  "issue": "真っ黒(白背景でも黒く判読困難)"
+ },
+ "71": {
+  "title": "STAYC",
+  "gtype": "girl",
+  "att": "683",
+  "file": "2026/05/71_logo.png",
+  "size": "264x120",
+  "issue": "真っ黒(白背景でも黒く判読困難)"
+ },
+ "72": {
+  "title": "I-dle",
+  "gtype": "girl",
+  "att": "149",
+  "file": "2026/05/72_logo.png",
+  "size": "1056x360",
+  "issue": null
+ },
+ "74": {
+  "title": "BABYMONSTER",
+  "gtype": "girl",
+  "att": "761",
+  "file": "2026/05/74_logo.png",
+  "size": "600x57",
+  "issue": null
+ },
+ "75": {
+  "title": "NMIXX",
+  "gtype": "girl",
+  "att": "684",
+  "file": "2026/05/75_logo.png",
+  "size": "867x360",
+  "issue": null
+ },
+ "76": {
+  "title": "VIVIZ",
+  "gtype": "girl",
+  "att": "685",
+  "file": "2026/05/76_logo.png",
+  "size": "957x360",
+  "issue": null
+ },
+ "77": {
+  "title": "LOONA",
+  "gtype": "girl",
+  "att": "686",
+  "file": "2026/05/77_logo.png",
+  "size": "249x120",
+  "issue": null
+ },
+ "78": {
+  "title": "fromis_9",
+  "gtype": "girl",
+  "att": "762",
+  "file": "2026/05/78_logo.png",
+  "size": "600x746",
+  "issue": null
+ },
+ "80": {
+  "title": "NCT",
+  "gtype": "boy",
+  "att": "763",
+  "file": "2026/05/80_logo.png",
+  "size": "600x154",
+  "issue": null
+ },
+ "81": {
+  "title": "NCT DREAM",
+  "gtype": "boy",
+  "att": "258",
+  "file": "2026/05/81_logo.png",
+  "size": "200x120",
+  "issue": null
+ },
+ "82": {
+  "title": "NCT 127",
+  "gtype": "boy",
+  "att": "224",
+  "file": "2026/05/82_logo.png",
+  "size": "143x120",
+  "issue": null
+ },
+ "83": {
+  "title": "ENHYPEN",
+  "gtype": "boy",
+  "att": "220",
+  "file": "2026/05/83_logo.png",
+  "size": "1800x360",
+  "issue": null
+ },
+ "84": {
+  "title": "Stray Kids",
+  "gtype": "boy",
+  "att": "764",
+  "file": "2026/05/84_logo.png",
+  "size": "600x308",
+  "issue": null
+ },
+ "85": {
+  "title": "ATEEZ",
+  "gtype": "boy",
+  "att": "377",
+  "file": "2026/05/85_logo.png",
+  "size": "811x120",
+  "issue": null
+ },
+ "86": {
+  "title": "TXT",
+  "gtype": "boy",
+  "att": "221",
+  "file": "2026/05/86_logo.png",
+  "size": "371x120",
+  "issue": null
+ },
+ "87": {
+  "title": "THE BOYZ",
+  "gtype": "boy",
+  "att": "687",
+  "file": "2026/05/87_logo.png",
+  "size": "516x120",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "88": {
+  "title": "EXO",
+  "gtype": "boy",
+  "att": "256",
+  "file": "2026/05/88_logo.png",
+  "size": "135x120",
+  "issue": null
+ },
+ "90": {
+  "title": "BIGBANG",
+  "gtype": "boy",
+  "att": "1192",
+  "file": "2026/05/90_logo.png",
+  "size": "427x90",
+  "issue": null
+ },
+ "91": {
+  "title": "SHINee",
+  "gtype": "boy",
+  "att": "765",
+  "file": "2026/05/91_logo.png",
+  "size": "600x405",
+  "issue": null
+ },
+ "92": {
+  "title": "GOT7",
+  "gtype": "boy",
+  "att": "375",
+  "file": "2026/05/92_logo.png",
+  "size": "311x120",
+  "issue": null
+ },
+ "93": {
+  "title": "MONSTA X",
+  "gtype": "boy",
+  "att": "376",
+  "file": "2026/05/93_logo.png",
+  "size": "360x360",
+  "issue": null
+ },
+ "96": {
+  "title": "DAY6",
+  "gtype": "boy",
+  "att": "688",
+  "file": "2026/05/96_logo.png",
+  "size": "369x120",
+  "issue": null
+ },
+ "97": {
+  "title": "PENTAGON",
+  "gtype": "boy",
+  "att": "689",
+  "file": "2026/05/97_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "98": {
+  "title": "RIIZE",
+  "gtype": "boy",
+  "att": "690",
+  "file": "2026/05/98_logo.png",
+  "size": "450x360",
+  "issue": null
+ },
+ "99": {
+  "title": "ZEROBASEONE",
+  "gtype": "boy",
+  "att": "259",
+  "file": "2026/05/99_logo.png",
+  "size": "146x120",
+  "issue": null
+ },
+ "100": {
+  "title": "BOYNEXTDOOR",
+  "gtype": "boy",
+  "att": "735",
+  "file": "2026/05/100_logo.png",
+  "size": "600x79",
+  "issue": null
+ },
+ "101": {
+  "title": "TWS",
+  "gtype": "boy",
+  "att": "736",
+  "file": "2026/05/101_logo.png",
+  "size": "600x192",
+  "issue": null
+ },
+ "103": {
+  "title": "WayV",
+  "gtype": "boy",
+  "att": "662",
+  "file": "2026/05/103_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "106": {
+  "title": "2NE1",
+  "gtype": "girl",
+  "att": "663",
+  "file": "2026/05/106_logo.png",
+  "size": "398x120",
+  "issue": null
+ },
+ "107": {
+  "title": "Weeekly",
+  "gtype": "girl",
+  "att": "664",
+  "file": "2026/05/107_logo.png",
+  "size": "443x120",
+  "issue": null
+ },
+ "108": {
+  "title": "Kep1er",
+  "gtype": "girl",
+  "att": "737",
+  "file": "2026/05/108_logo.png",
+  "size": "600x275",
+  "issue": null
+ },
+ "109": {
+  "title": "IZ*ONE",
+  "gtype": "girl",
+  "att": "665",
+  "file": "2026/05/109_logo.png",
+  "size": "169x120",
+  "issue": null
+ },
+ "110": {
+  "title": "OH MY GIRL",
+  "gtype": "girl",
+  "att": "666",
+  "file": "2026/05/110_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "111": {
+  "title": "Apink",
+  "gtype": "girl",
+  "att": "667",
+  "file": "2026/05/111_logo.png",
+  "size": "420x360",
+  "issue": null
+ },
+ "112": {
+  "title": "GFRIEND",
+  "gtype": "girl",
+  "att": "668",
+  "file": "2026/05/112_logo.png",
+  "size": "230x120",
+  "issue": null
+ },
+ "113": {
+  "title": "Chungha",
+  "gtype": "solo",
+  "att": "1268",
+  "file": "2026/05/113_logo.png",
+  "size": "595x833",
+  "issue": null
+ },
+ "114": {
+  "title": "Taeyeon",
+  "gtype": "solo",
+  "att": "1269",
+  "file": "2026/05/114_logo.png",
+  "size": "600x900",
+  "issue": null
+ },
+ "115": {
+  "title": "IU",
+  "gtype": "solo",
+  "att": "1270",
+  "file": "2026/05/115_logo.png",
+  "size": "600x750",
+  "issue": null
+ },
+ "116": {
+  "title": "Jihyo",
+  "gtype": "solo",
+  "att": "1271",
+  "file": "2026/05/116_logo.png",
+  "size": "600x1066",
+  "issue": null
+ },
+ "117": {
+  "title": "Jennie",
+  "gtype": "solo",
+  "att": "1272",
+  "file": "2026/05/117_logo.png",
+  "size": "600x839",
+  "issue": null
+ },
+ "118": {
+  "title": "Rosé",
+  "gtype": "solo",
+  "att": "1273",
+  "file": "2026/05/118_logo.png",
+  "size": "600x838",
+  "issue": null
+ },
+ "119": {
+  "title": "LISA",
+  "gtype": "solo",
+  "att": "1274",
+  "file": "2026/05/119_logo.png",
+  "size": "600x744",
+  "issue": null
+ },
+ "120": {
+  "title": "Jisoo",
+  "gtype": "solo",
+  "att": "1275",
+  "file": "2026/05/120_logo.png",
+  "size": "600x935",
+  "issue": null
+ },
+ "121": {
+  "title": "Jungkook",
+  "gtype": "solo",
+  "att": "1276",
+  "file": "2026/05/121_logo.png",
+  "size": "600x862",
+  "issue": null
+ },
+ "122": {
+  "title": "Jimin",
+  "gtype": "solo",
+  "att": "1277",
+  "file": "2026/05/122_logo.png",
+  "size": "500x720",
+  "issue": null
+ },
+ "123": {
+  "title": "V",
+  "gtype": "solo",
+  "att": "1278",
+  "file": "2026/05/123_logo.png",
+  "size": "600x780",
+  "issue": null
+ },
+ "124": {
+  "title": "Agust D",
+  "gtype": "solo",
+  "att": "1279",
+  "file": "2026/05/124_logo.png",
+  "size": "600x750",
+  "issue": null
+ },
+ "125": {
+  "title": "WOODZ",
+  "gtype": "solo",
+  "att": "1280",
+  "file": "2026/05/125_logo.png",
+  "size": "600x875",
+  "issue": null
+ },
+ "126": {
+  "title": "Park Ji Hoon",
+  "gtype": "solo",
+  "att": "1281",
+  "file": "2026/05/126_logo.png",
+  "size": "600x837",
+  "issue": null
+ },
+ "127": {
+  "title": "Jang Won Young",
+  "gtype": "solo",
+  "att": "1282",
+  "file": "2026/05/127_logo.png",
+  "size": "600x706",
+  "issue": null
+ },
+ "263": {
+  "title": "ジェジュン (Jaejoong)",
+  "gtype": "solo",
+  "att": "1283",
+  "file": "2026/05/263_logo.png",
+  "size": "516x417",
+  "issue": null
+ },
+ "264": {
+  "title": "NCT WISH",
+  "gtype": "boy",
+  "att": "738",
+  "file": "2026/05/264_logo.png",
+  "size": "600x437",
+  "issue": null
+ },
+ "265": {
+  "title": "&TEAM",
+  "gtype": "boy",
+  "att": "1189",
+  "file": "2026/05/265_logo.png",
+  "size": "600x130",
+  "issue": null
+ },
+ "266": {
+  "title": "TREASURE",
+  "gtype": "boy",
+  "att": "1191",
+  "file": "2026/05/266_logo.png",
+  "size": "600x450",
+  "issue": null
+ },
+ "267": {
+  "title": "Hearts2Hearts",
+  "gtype": "girl",
+  "att": "739",
+  "file": "2026/05/267_logo.png",
+  "size": "600x70",
+  "issue": null
+ },
+ "268": {
+  "title": "CORTIS",
+  "gtype": "boy",
+  "att": "740",
+  "file": "2026/05/268_logo.png",
+  "size": "600x125",
+  "issue": null
+ },
+ "269": {
+  "title": "izna",
+  "gtype": "girl",
+  "att": "741",
+  "file": "2026/05/269_logo.png",
+  "size": "600x353",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "270": {
+  "title": "ALLDAY PROJECT",
+  "gtype": "mixed",
+  "att": "669",
+  "file": "2026/05/270_logo.png",
+  "size": "436x120",
+  "issue": null
+ },
+ "271": {
+  "title": "MEOVV",
+  "gtype": "girl",
+  "att": "742",
+  "file": "2026/05/271_logo.png",
+  "size": "246x55",
+  "issue": null
+ },
+ "273": {
+  "title": "NEXZ",
+  "gtype": "boy",
+  "att": "670",
+  "file": "2026/05/273_logo.png",
+  "size": "314x120",
+  "issue": null
+ },
+ "274": {
+  "title": "BADVILLAIN",
+  "gtype": "girl",
+  "att": "743",
+  "file": "2026/05/274_logo.png",
+  "size": "600x369",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "275": {
+  "title": "QWER",
+  "gtype": "girl",
+  "att": "744",
+  "file": "2026/05/275_logo.png",
+  "size": "600x366",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "276": {
+  "title": "tripleS",
+  "gtype": "girl",
+  "att": "671",
+  "file": "2026/05/276_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "277": {
+  "title": "ARTMS",
+  "gtype": "girl",
+  "att": "672",
+  "file": "2026/05/277_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "278": {
+  "title": "Billlie",
+  "gtype": "girl",
+  "att": "673",
+  "file": "2026/05/278_logo.png",
+  "size": "168x120",
+  "issue": null
+ },
+ "279": {
+  "title": "FIFTY FIFTY",
+  "gtype": "girl",
+  "att": "674",
+  "file": "2026/05/279_logo.png",
+  "size": "120x120",
+  "issue": null
+ },
+ "280": {
+  "title": "Loossemble",
+  "gtype": "girl",
+  "att": "675",
+  "file": "2026/05/280_logo.png",
+  "size": "298x120",
+  "issue": "真っ黒(白背景でも黒く判読困難)"
+ },
+ "281": {
+  "title": "UNIS",
+  "gtype": "girl",
+  "att": "676",
+  "file": "2026/05/281_logo.png",
+  "size": "963x360",
+  "issue": null
+ },
+ "282": {
+  "title": "Lapillus",
+  "gtype": "girl",
+  "att": "677",
+  "file": "2026/05/282_logo.png",
+  "size": "1257x360",
+  "issue": null
+ },
+ "283": {
+  "title": "P1Harmony",
+  "gtype": "boy",
+  "att": "678",
+  "file": "2026/05/283_logo.png",
+  "size": "382x120",
+  "issue": null
+ },
+ "284": {
+  "title": "Xdinary Heroes",
+  "gtype": "boy",
+  "att": "745",
+  "file": "2026/05/284_logo.png",
+  "size": "600x337",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "285": {
+  "title": "CRAVITY",
+  "gtype": "boy",
+  "att": "679",
+  "file": "2026/05/285_logo.png",
+  "size": "232x120",
+  "issue": null
+ },
+ "286": {
+  "title": "AB6IX",
+  "gtype": "boy",
+  "att": "746",
+  "file": "2026/05/286_logo.png",
+  "size": "600x304",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "287": {
+  "title": "Golden Child",
+  "gtype": "boy",
+  "att": "747",
+  "file": "2026/05/287_logo.png",
+  "size": "600x311",
+  "issue": "写真混入(ロゴでなく集合写真)"
+ },
+ "288": {
+  "title": "CIX",
+  "gtype": "boy",
+  "att": "680",
+  "file": "2026/05/288_logo.png",
+  "size": "90x120",
+  "issue": null
+ },
+ "289": {
+  "title": "ONF",
+  "gtype": "boy",
+  "att": "681",
+  "file": "2026/05/289_logo.png",
+  "size": "346x120",
+  "issue": null
+ },
+ "291": {
+  "title": "Wonder Girls",
+  "gtype": "girl",
+  "att": "748",
+  "file": "2026/05/291_logo.png",
+  "size": "600x101",
+  "issue": null
+ },
+ "293": {
+  "title": "SISTAR",
+  "gtype": "girl",
+  "att": "749",
+  "file": "2026/05/293_logo.png",
+  "size": "420x250",
+  "issue": null
+ },
+ "296": {
+  "title": "BTOB",
+  "gtype": "boy",
+  "att": "750",
+  "file": "2026/05/296_logo.png",
+  "size": "600x600",
+  "issue": null
+ },
+ "297": {
+  "title": "VIXX",
+  "gtype": "boy",
+  "att": "751",
+  "file": "2026/05/297_logo.png",
+  "size": "223x223",
+  "issue": null
+ },
+ "298": {
+  "title": "T-ara",
+  "gtype": "girl",
+  "att": "752",
+  "file": "2026/05/298_logo.png",
+  "size": "544x665",
+  "issue": null
+ },
+ "299": {
+  "title": "EXID",
+  "gtype": "girl",
+  "att": "753",
+  "file": "2026/05/299_logo.png",
+  "size": "350x177",
+  "issue": null
+ },
+ "300": {
+  "title": "AOA",
+  "gtype": "girl",
+  "att": "754",
+  "file": "2026/05/300_logo.png",
+  "size": "600x360",
+  "issue": null
+ },
+ "301": {
+  "title": "Brown Eyed Girls",
+  "gtype": "girl",
+  "att": "755",
+  "file": "2026/05/301_logo.png",
+  "size": "600x399",
+  "issue": "真っ黒(白背景でも黒く判読困難)"
+ },
+ "302": {
+  "title": "Girl's Day",
+  "gtype": "girl",
+  "att": "756",
+  "file": "2026/05/302_logo.png",
+  "size": "600x108",
+  "issue": null
+ },
+ "304": {
+  "title": "B1A4",
+  "gtype": "boy",
+  "att": "757",
+  "file": "2026/05/304_logo.png",
+  "size": "300x104",
+  "issue": null
+ },
+ "305": {
+  "title": "Taemin",
+  "gtype": "solo",
+  "att": "1284",
+  "file": "2026/05/305_logo.png",
+  "size": "600x731",
+  "issue": null
+ },
+ "306": {
+  "title": "BoA",
+  "gtype": "solo",
+  "att": "1285",
+  "file": "2026/05/306_logo.png",
+  "size": "600x792",
+  "issue": null
+ },
+ "307": {
+  "title": "Sunmi",
+  "gtype": "solo",
+  "att": "1287",
+  "file": "2026/05/307_logo.png",
+  "size": "388x673",
+  "issue": null
+ },
+ "308": {
+  "title": "HyunA",
+  "gtype": "solo",
+  "att": "1288",
+  "file": "2026/05/308_logo.png",
+  "size": "488x616",
+  "issue": null
+ },
+ "309": {
+  "title": "Zico",
+  "gtype": "solo",
+  "att": "1289",
+  "file": "2026/05/309_logo.png",
+  "size": "600x961",
+  "issue": null
+ },
+ "310": {
+  "title": "Crush",
+  "gtype": "solo",
+  "att": "1290",
+  "file": "2026/05/310_logo.png",
+  "size": "464x619",
+  "issue": null
+ },
+ "311": {
+  "title": "DEAN",
+  "gtype": "solo",
+  "att": "1291",
+  "file": "2026/05/311_logo.png",
+  "size": "301x401",
+  "issue": null
+ },
+ "312": {
+  "title": "BIBI",
+  "gtype": "solo",
+  "att": "1292",
+  "file": "2026/05/312_logo.png",
+  "size": "600x844",
+  "issue": null
+ }
+}
