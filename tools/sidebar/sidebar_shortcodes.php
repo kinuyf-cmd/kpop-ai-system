@@ -9,9 +9,22 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+/**
+ * 2026-05-25 重複防止: これらの shortcode は WP widget(sidebar-1)経由で全ページのサイドバーに出る。
+ * 一方、単一記事ページ(is_singular('post'))では functions.php の kpop_m11_sidebar_prepend/append
+ * フックが同じ枠を直接描画するため、widget由来の shortcode を記事ページで実行すると二重表示になる。
+ * → 記事ページでは shortcode を no-op にし、widget出力を抑止(記事=hooks / 非記事=widget の住み分け)。
+ */
+if ( ! function_exists( 'kpop_sc_suppressed_on_single' ) ) :
+function kpop_sc_suppressed_on_single() {
+    return function_exists( 'is_singular' ) && is_singular( 'post' );
+}
+endif;
+
 // 既存の render 関数を出力バッファで捕捉してショートコード戻り値にする
 if ( ! function_exists( 'kpop_sc_birthday' ) ) :
 function kpop_sc_birthday() {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     if ( ! function_exists( 'kpop_render_today_birthday' ) ) { return ''; }
     ob_start();
     kpop_render_today_birthday();
@@ -22,6 +35,7 @@ endif;
 
 if ( ! function_exists( 'kpop_sc_birthday_tomorrow' ) ) :
 function kpop_sc_birthday_tomorrow() {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     if ( ! function_exists( 'kpop_render_tomorrow_birthday' ) ) { return ''; }
     ob_start();
     kpop_render_tomorrow_birthday();
@@ -32,6 +46,7 @@ endif;
 
 if ( ! function_exists( 'kpop_sc_events' ) ) :
 function kpop_sc_events() {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     if ( ! function_exists( 'kpop_render_events_widget' ) ) { return ''; }
     ob_start();
     kpop_render_events_widget();
@@ -43,6 +58,7 @@ endif;
 // [kpop_chart] — Today's Chart: チャートカテゴリ(slug=chart)の最新記事を box 表示
 if ( ! function_exists( 'kpop_sc_chart' ) ) :
 function kpop_sc_chart( $atts ) {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     $a = shortcode_atts( array( 'limit' => 5 ), $atts );
     $q = new WP_Query( array(
         'post_type'           => 'post',
@@ -78,6 +94,7 @@ endif;
 // [kpop_popular] — 人気記事: WordPress Popular Posts を box でラップ。WPP無効時は最新記事にフォールバック
 if ( ! function_exists( 'kpop_sc_popular' ) ) :
 function kpop_sc_popular( $atts ) {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     global $wpdb;
     $a = shortcode_atts( array( 'limit' => 5 ), $atts );
     $limit = max( 1, (int) $a['limit'] );
@@ -136,6 +153,7 @@ endif;
 // 引用ポリシー: 出典(Soompi)を明記しリンク。順位/曲/アーティストの事実のみ表示(捏造なし)。
 if ( ! function_exists( 'kpop_sc_chart_ranking' ) ) :
 function kpop_sc_chart_ranking( $atts ) {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
     $a = shortcode_atts( array( 'limit' => 10 ), $atts );
     $limit = max( 1, min( 10, (int) $a['limit'] ) );
     $data = get_option( 'kpop_soompi_chart' );
