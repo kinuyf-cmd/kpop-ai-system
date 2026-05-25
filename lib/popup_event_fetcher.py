@@ -886,6 +886,74 @@ def _extract_kbz_info(html: str) -> dict:
     return info
 
 
+# ─── pops-in.com(日本+韓国 popup アグリゲーター)───────────
+# 2026-05-25: 日本国内 K-POP popup ソースが kbuzzlab(韓国専用)のみで日本popupゼロ
+# だった問題への対応。pops-in は日本+韓国の popup を /idol-events/ 一覧で配信、
+# event-card に title(img alt)/location/date を内包し個別fetch不要(kbuzzlabより軽量)。
+# robots 全許可・引用ポリシー順守。DOM契約: [[popsin-popup-dom-contract]]。
+POPSIN_IDOL = "https://pops-in.com/idol-events/"
+
+def parse_popsin(max_items: int = 20) -> list[dict]:
+    """pops-in.com /idol-events/ から K-POP popup を抽出(日本+韓国)。
+    event-card 1ブロック = 1 popup。title/location/date は一覧カード内に揃う。
+    location 先頭の国名(日本/韓国)で開催国を判別し signal に残す。
+    """
+    log("=== parse_popsin() 開始 ===")
+    signals: list[dict] = []
+    try:
+        body = fetch(POPSIN_IDOL, accept="text/html")
+    except Exception as e:
+        log(f"  pops-in fetch失敗: {e}")
+        return signals
+    if not body:
+        return signals
+    # event-card ブロックを個別に取り出す
+    cards = re.findall(r'<a class="event-card"[^>]*href="([^"]*?number=\d+)"[^>]*>(.*?)</a>', body, re.S)
+    log(f"  event-card: {len(cards)} 件")
+    for href, card in cards[:max_items]:
+        url = href if href.startswith("http") else "https://pops-in.com" + href
+        title_m = re.search(r'<img[^>]*alt="([^"]*)"', card)
+        title = _html_unescape_min(title_m.group(1)).strip() if title_m else ""
+        if not title:
+            continue
+        cats = re.findall(r'category-tag">\s*([^<]+?)\s*<', card)
+        loc_m = re.search(r'class="location"[^>]*>(.*?)</p>', card, re.S)
+        date_m = re.search(r'class="date"[^>]*>(.*?)</p>', card, re.S)
+        location = _html_unescape_min(re.sub(r"<[^>]+>","",loc_m.group(1))).strip() if loc_m else ""
+        period = _html_unescape_min(re.sub(r"<[^>]+>","",date_m.group(1))).strip() if date_m else ""
+        img_m = re.search(r'<img[^>]*src="([^"]*)"', card)
+        thumb = img_m.group(1) if img_m else None
+        # K-POP/韓国シグナル判定(title + categories)。#アイドル カテゴリは既にidol-events由来。
+        kw = _matches_korea(title) or _matches_korea(" ".join(cats)) or ("アイドル" if any("アイドル" in c for c in cats) else None)
+        if not kw:
+            continue
+        sig_type = classify(title) or "popup"
+        # kbz_info 互換: 会場(location)/開催期間(date)を日本語ラベルキーで格納
+        # → 後段 add_popup_acf_meta / _japan_area が読む(location先頭の国名で開催国判定)
+        kbz_info: dict = {}
+        if location:
+            kbz_info["会場"] = location
+        if period:
+            kbz_info["開催期間"] = period
+        signals.append({
+            "type": sig_type if sig_type == "popup" else "popup",  # idol-events は popup 主体
+            "source_media": "pops-in",
+            "source_url": url,
+            "title": title,
+            "description_snippet": (" / ".join(cats) + " " + location + " " + period).strip()[:300],
+            "thumbnail_url": thumb,
+            "kpop_keyword": kw,
+            "artist_keyword": kw,
+            "korea_genre": "korea",
+            "kbz_info": kbz_info,
+            "lastmod": "",
+            "fetched_at": now_iso(),
+        })
+        log(f"  HIT [popup] {title[:55]}... (loc={location})")
+    log(f"=== parse_popsin() 完了: {len(signals)} 件 ===")
+    return signals
+
+
 # ─── メイン ────────────────────────────────────────────
 def main() -> int:
     log("=== popup_event_fetcher.py 開始 ===")
@@ -898,6 +966,9 @@ def main() -> int:
     time.sleep(SLEEP)
     # M11.5 段階9.5: kbuzzlab 追加
     all_signals.extend(parse_kbuzzlab(max_items=int(os.environ.get("KBZ_MAX", "20"))))
+    time.sleep(SLEEP)
+    # 2026-05-25: pops-in 追加(日本国内 K-POP popup ソース。kbuzzlab=韓国のみ問題への対応)
+    all_signals.extend(parse_popsin(max_items=int(os.environ.get("POPSIN_MAX", "20"))))
 
     # type 別集計
     popup_n = sum(1 for s in all_signals if s["type"] == "popup")
