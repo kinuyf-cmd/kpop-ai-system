@@ -9,7 +9,9 @@
 set -uo pipefail
 THEME="/var/www/wp_stg/wp-content/themes/generatepress-kpop"
 SRC="$(cd "$(dirname "$0")" && pwd)"
-WP="wp --path=/var/www/wp_stg"
+# wp-cli は root直実行を拒否(YIKES root警告)。wpコマンドのみ www-data に降格する。
+# (本scriptは sudo bash=root で起動。ファイルコピーはroot権限、wp操作はwww-data。)
+WP="sudo -u www-data wp --path=/var/www/wp_stg"
 SB="sidebar-1"
 CSS="$THEME/style.css"
 TS="$(date +%s)"
