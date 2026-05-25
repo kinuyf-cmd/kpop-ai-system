@@ -252,8 +252,11 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
+    # WP REST の per_page 上限は 100。超えるとJSONでなくエラーを返し処理が落ちるためクランプ。
+    per_page = min(max(args.limit, 1), 100)
+
     posts = curl_get(
-        f"/wp-json/wp/v2/posts?per_page={args.limit}&orderby=date&order=desc"
+        f"/wp-json/wp/v2/posts?per_page={per_page}&orderby=date&order=desc"
         "&_fields=id,title,slug,link,categories,content"
     )
     ts = datetime.now(tz=JST).isoformat()
