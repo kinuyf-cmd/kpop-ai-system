@@ -132,3 +132,25 @@
 .kpop-mchart-source { margin: 10px 0 0; font-size: 11px; text-align: right; }
 .kpop-mchart-source a { color: #AD1457; text-decoration: none; }  /* 6.97:1 AA */
 .kpop-mchart-source a:hover { text-decoration: underline; }
+
+/* ============================================================
+   見出し様式の統一(2026-05-25)— 記事サイドバーの旧 .widget-title 系boxと
+   新 .kpop-box-title 系boxで見出しがバラついていた問題を解消。
+   .kpop-sidebar-box 内の .widget-title を .kpop-box-title と同一スタイルに揃える。
+   ============================================================ */
+.kpop-sidebar-box .widget-title,
+.kpop-sidebar-box > h2.widget-title {
+    font-size: 0.98rem !important;
+    font-weight: 700;
+    color: #2B2B32;
+    border-bottom: 2px solid var(--kpop-pink-dark, #C2185B);
+    padding-bottom: 8px;
+    margin: 0 0 14px !important;
+    letter-spacing: normal;
+}
+/* box間の余白を全box統一(バラつき防止) */
+.kpop-sidebar-box { margin-bottom: 18px; }
+.kpop-sidebar-box:last-child { margin-bottom: 0; }
+/* 各box内の本文先頭余白を統一 */
+.kpop-sidebar-box > ul:first-of-type,
+.kpop-sidebar-box > ol:first-of-type { margin-top: 0; }
