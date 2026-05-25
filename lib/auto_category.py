@@ -24,6 +24,11 @@ def _load_artist_categories():
     if os.path.exists(_CACHE_PATH):
         try:
             data = json.load(open(_CACHE_PATH))
+            # 2026-05-25: _disabled マーカーがあればアーティストカテゴリ自動付与を
+            # 無効化(アーティスト正本は Idol Wiki CPT に一本化、壊れた map の再取得も抑止)。
+            if isinstance(data, dict) and data.get('_disabled'):
+                _ARTIST_CAT_CACHE = {}
+                return {}
             if data:
                 _ARTIST_CAT_CACHE = data
                 return data

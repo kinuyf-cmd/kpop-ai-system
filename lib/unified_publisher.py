@@ -435,6 +435,11 @@ def unified_publish(
         if os.path.exists(_acm_path):
             with open(_acm_path, encoding='utf-8') as _acf:
                 _acm = json.load(_acf)
+            # 2026-05-25: アーティストの正本は Idol Wiki(idol_artist CPT)に一本化。
+            # 事故前 origin の term_id を復元した map が現体系と総ズレし BTS→popup 等の
+            # 誤カテゴリを撒いていたため無効化。_disabled マーカーで付与をスキップする。
+            if _acm.get('_disabled'):
+                _acm = {}
             _search_text = title_final + ' ' + (body_html[:500] if body_html else '')
             import re as _re_cat
             for _artist_name, _cat_id in _acm.items():
