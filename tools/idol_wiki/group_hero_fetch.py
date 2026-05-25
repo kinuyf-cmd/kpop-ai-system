@@ -19,8 +19,10 @@ from io import BytesIO
 from PIL import Image, ImageOps
 
 UA  = "KpopJournalBot/1.0 (kpopjournal.biz@gmail.com) Idol-Wiki research"
-SRC = "batch_group_hero/probe.tsv"
-OUT = "/home/aiuser/.kpop_recovery/batch_group_hero"
+# SRC/OUT は環境変数で上書き可(ソロ流用: HERO_SRC=batch_solo_hero/probe.tsv
+#   HERO_OUT=/home/aiuser/.kpop_recovery/batch_solo_hero)。既定はグループ。
+SRC = os.environ.get("HERO_SRC", "batch_group_hero/probe.tsv")
+OUT = os.environ.get("HERO_OUT", "/home/aiuser/.kpop_recovery/batch_group_hero")
 LONG_EDGE = 1280
 os.makedirs(OUT, exist_ok=True)
 
