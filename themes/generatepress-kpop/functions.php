@@ -1684,7 +1684,12 @@ function kpop_render_popup_upcoming( $current_post_id ) {
  * エリアは popup_area の /category/popup/?area=slug リンク、ジャンルは popup_genre。
  * content-single.php(popup 記事のみ)から呼ぶ。捏造はせず、term が無いグループは非表示。 */
 function kpop_render_popup_side_nav( $current_post_id ) {
-	$popup_link = get_category_link( get_cat_ID( 'popup' ) );
+	// get_cat_ID('popup') はカテゴリ「名」照合で、実カテゴリは name="ポップアップ"
+	// (slug=popup) のため 0 を返し、get_category_link(0) が空文字 → サイドバーの
+	// 「ポップアップ一覧」リンクとエリア/ジャンルリンクが href="" で機能しなかった。
+	// slug 照合で確実に term を引く。
+	$popup_term = get_term_by( 'slug', 'popup', 'category' );
+	$popup_link = ( $popup_term && ! is_wp_error( $popup_term ) ) ? get_category_link( $popup_term->term_id ) : home_url( '/category/popup/' );
 	// term をエリア(地理順)/ジャンルで取得
 	$areas  = get_terms( array( 'taxonomy' => 'popup_area',  'hide_empty' => true ) );
 	$genres = get_terms( array( 'taxonomy' => 'popup_genre', 'hide_empty' => true ) );
@@ -1729,6 +1734,11 @@ function kpop_render_popup_side_nav( $current_post_id ) {
 		echo '</ul>';
 		echo '</div>';
 	}
+
+	// 広告掲載をご希望の企業・団体さま向け導線(広告ページへ)
+	echo '<div class="kpop-popup-sidenav-group kpop-popup-sidenav-advertise">';
+	echo '<a class="kpop-popup-advertise-link" href="' . esc_url( home_url( '/advertise/' ) ) . '">ポップアップ・イベントの掲載をご希望の方へ</a>';
+	echo '</div>';
 
 	echo '</nav>';
 }

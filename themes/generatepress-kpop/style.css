@@ -4141,3 +4141,36 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	.kpop-popup-addrmap-frame iframe { height: 240px; }
 }
 
+
+/* === 広告掲載 CTA 導線(popup 詳細サイドバー + popup 一覧フィルタ 共通) ===
+   詳細: .kpop-popup-sidenav-advertise / 一覧: .kpop-popup-filter-advertise
+   ブランドピンク #C2185B + 白文字(AA 合格)。インラインstyle不使用(C-Y)。 */
+.kpop-popup-sidenav-advertise,
+.kpop-popup-filter-advertise {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #f0e3e8;
+}
+.kpop-popup-advertise-link {
+	display: block;
+	background: #C2185B;
+	color: #ffffff;
+	text-decoration: none;
+	font-weight: 700;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	text-align: center;
+	padding: 10px 14px;
+	border-radius: 6px;
+	transition: background 0.15s ease;
+}
+.kpop-popup-advertise-link:hover,
+.kpop-popup-advertise-link:focus {
+	background: #8A4A63;
+	color: #ffffff;
+	text-decoration: none;
+}
+.kpop-popup-advertise-link:focus {
+	outline: 2px solid #212529;
+	outline-offset: 2px;
+}
