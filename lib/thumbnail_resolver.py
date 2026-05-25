@@ -309,7 +309,12 @@ def fetch_source_image(source_url, output_path):
         for m in re.finditer(r'<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"', html, re.IGNORECASE):
             url = m.group(1)
             ul = url.lower()
-            if any(skip in ul for skip in ['avatar', 'logo', 'icon', 'emoji', 'ad-', 'banner']):
+            # UI素材・ボタン・投票/広告バナーを除外 (2026-05-25: topstarnews の
+            # new_poll_btn1.png「広告見て投票券」UIバナーを顔検出誤判定で BTS 速報
+            # サムネに採用した事故対応 [[breaking-stall-rootcause-multisource-cron]])。
+            # サイト共通素材ディレクトリ /image/ は記事写真の /news/photo/ と区別。
+            if any(skip in ul for skip in ['avatar', 'logo', 'icon', 'emoji', 'ad-',
+                                           'banner', 'btn', 'button', 'poll', 'vote', '/image/']):
                 continue
             if any(pat in ul for pat in _BYLINE_PATTERNS):
                 continue
