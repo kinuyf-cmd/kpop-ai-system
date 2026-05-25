@@ -158,10 +158,20 @@ def smart_crop(image_path, target_w=1200, target_h=675):
         h, w = img.shape[:2]
         target_ratio = target_w / target_h
 
-        # 小画像は拡大リサイズのみ (クロップすると情報量ロス)
+        # 小画像: アスペクト比を保持して 1200x675 枠にフィット + 余白パディング
+        # (2026-05-25 オーナー指摘: 旧コードは cv2.resize で 1200x675 に強制伸ばし=比率無視で
+        #  画像を歪ませ、かつ拡大で画質劣化していた。比率保持で歪みゼロにする。)
+        # 拡大はしない(小画像を引き伸ばすと画質劣化するため、原寸のまま枠内に収めてパディング)。
         if w < 600:
-            resized = cv2.resize(img, (target_w, target_h))
-            cv2.imwrite(image_path, resized, [cv2.IMWRITE_JPEG_QUALITY, 92])
+            scale = min(target_w / w, target_h / h, 1.0)  # 1.0上限=拡大しない
+            new_w, new_h = max(1, int(round(w * scale))), max(1, int(round(h * scale)))
+            interp = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_LINEAR
+            fitted = cv2.resize(img, (new_w, new_h), interpolation=interp)
+            # 中立色(ダークグレー #1e1e22 ≒ サイト背景)で 1200x675 キャンバスを作り中央配置
+            canvas = np.full((target_h, target_w, 3), (34, 30, 30), dtype=np.uint8)  # BGR
+            ox, oy = (target_w - new_w) // 2, (target_h - new_h) // 2
+            canvas[oy:oy + new_h, ox:ox + new_w] = fitted
+            cv2.imwrite(image_path, canvas, [cv2.IMWRITE_JPEG_QUALITY, 92])
             return True
 
         # 16:9±0.05近似ならリサイズのみ
