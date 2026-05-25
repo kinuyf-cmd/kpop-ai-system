@@ -40,9 +40,13 @@ for slug in "${SLUGS[@]}"; do
   new="$(printf '%s' "$content" | python3 -c '
 import sys,re
 c=sys.stdin.read()
-# 免責文の直後に癒着した無関係popupリンク(同段落内)を除去
-pat=re.compile(r"(変更される可能性があります。)\s*<a href=\"https://www\.kpopjournal\.tokyo/popup-[^\"]+\"[^>]*>[^<]*</a>")
-c2=pat.sub(r"\1", c)
+# 本文中に癒着した無関係なコスメ/popup内部リンクを除去(直前の文・空白は保持)。
+# パターン: 文末に空白+<a href=".../popup-...">…(ジェルネイル/コスメ/ガラス肌等)…</a>
+# 単一メディア速報・編集部翻訳など、どの免責文/段落末でも対応。出典(osen等)リンクは対象外。
+pat=re.compile(
+  r"\s*<a href=\"https://www\.kpopjournal\.tokyo/(?:popup-[^\"]+|[a-z0-9]*blackpink[^\"]*|twice[^\"]*)\"[^>]*>"
+  r"[^<]*(?:ファボリゲル|ジェルネイル|コスメ|ガラス肌|ネイル|Gel|聖水)[^<]*</a>")
+c2=pat.sub("", c)
 sys.stdout.write(c2)
 ')"
   if [ "$new" = "$content" ]; then echo "  [no-match] post $pid ($slug) 対象リンクなし"; skipped=$((skipped+1)); continue; fi

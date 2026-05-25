@@ -305,6 +305,13 @@ def fetch_source_image(source_url, output_path):
             '/author/', '/authors/', '/byline/', '/columnist/', '/profile/',
             '/staff/', '/editor/', '/writer/', '/contributor/',
         )
+        # 関連ニュース/サイドバーのサムネを除外する (2026-05-25 RED TEAM監査:
+        # OSEN等の記事ページは「関連記事」サムネ(別記事=別アーティスト)を多数含み、
+        # og:image顔なし時の顔fallbackがそこから別アーティストの顔を誤採用していた。
+        # TREASURE(男性Gr)記事に女性写真、LE SSERAFIM(女性Gr)に男性写真が付いた事故。
+        # 関連サムネはサイズsuffix(_230x230 / _120x100 / _300x 等)を持つのが特徴 → 除外。
+        # 本記事写真(suffixなし)のみを候補に残す。 [[red-team-audit-4articles-20260525]]
+        _SIZE_SUFFIX = re.compile(r'_\d{2,4}x\d{0,4}\.(?:jpg|jpeg|png|webp)', re.IGNORECASE)
         article_imgs = []
         for m in re.finditer(r'<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"', html, re.IGNORECASE):
             url = m.group(1)
@@ -314,9 +321,15 @@ def fetch_source_image(source_url, output_path):
             # サムネに採用した事故対応 [[breaking-stall-rootcause-multisource-cron]])。
             # サイト共通素材ディレクトリ /image/ は記事写真の /news/photo/ と区別。
             if any(skip in ul for skip in ['avatar', 'logo', 'icon', 'emoji', 'ad-',
-                                           'banner', 'btn', 'button', 'poll', 'vote', '/image/']):
+                                           'banner', 'btn', 'button', 'poll', 'vote', '/image/',
+                                           # 2026-05-25: sportschosun の bul_youXXXX.png(箇条書き装飾アイコン)
+                                           # が候補先頭に紛れた事故対応。/img/ 配下のサイト共通素材も除外。
+                                           'bul_', '/img/', 'sprite', 'blank.', 'spacer']):
                 continue
             if any(pat in ul for pat in _BYLINE_PATTERNS):
+                continue
+            # 関連記事サムネ(サイズsuffix付き=別記事の縮小画像)を除外
+            if _SIZE_SUFFIX.search(url):
                 continue
             article_imgs.append(url)
 
