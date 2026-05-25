@@ -84,5 +84,28 @@ log "Step 5: popup_smoke_test.sh 実行"
 DRY_RUN="${DRY_RUN:-0}" bash "${SCRIPT_DIR}/popup_smoke_test.sh" \
   "$SIG_FILE" "$RESULTS_FILE" "$LOG_FILE" 2>&1 | tee -a "$LOG_FILE" || true
 
+# ─── 6. チケット販売サイト経由のイベント収集→投稿(2026-05-25 追加)──────
+# VPS事故で消失し復元した ticket_collector(pia/tickebo/eplus)で公演を集め、
+# アダプタで event 形式に変換し tribe_events 投稿。event は冪等ガード済(同一
+# slug=同一公演は skip)なので毎週実行で重複しない。
+# venv_kpi + PYTHONPATH 必須(eplus/pia enricher の lib import 解決のため)。
+log "Step 6: ticket_collector(pia/tickebo/eplus)→ event 収集"
+VENV_PY="${SCRIPT_DIR}/venv_kpi/bin/python3"
+[[ -x "$VENV_PY" ]] || VENV_PY="python3"
+export PYTHONPATH="${SCRIPT_DIR}"
+if ! "$VENV_PY" "${SCRIPT_DIR}/lib/collectors/ticket_collector.py" 2>&1 | tee -a "$LOG_FILE"; then
+  log "ticket_collector 異常終了(継続)"
+fi
+log "Step 6b: ticket signal → event 入力JSON 変換"
+EVENT_INPUT="${SCRIPT_DIR}/data/event_input_from_tickets.json"
+if "$VENV_PY" "${SCRIPT_DIR}/lib/ticket_signals_to_event_input.py" --out "$EVENT_INPUT" 2>&1 | tee -a "$LOG_FILE"; then
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    log "Step 6c: DRY_RUN=1 のため event 投稿スキップ"
+  elif [[ -s "$EVENT_INPUT" ]]; then
+    log "Step 6c: event 投稿(冪等: 既存slugはskip)"
+    "$VENV_PY" "${SCRIPT_DIR}/lib/popup_event_to_post.py" "$EVENT_INPUT" 2>&1 | tee -a "$LOG_FILE" || log "event投稿 異常(継続)"
+  fi
+fi
+
 log "===== popup_event_weekly.sh 完了 ====="
 exit 0

@@ -212,6 +212,20 @@ def run_mysql(sql: str) -> str:
         sys.exit(f"mysql error: {r.stderr}")
     return r.stdout.strip()
 
+def find_post_by_slug(slug: str, post_type: str) -> tuple[int, str]:
+    """post_name(slug) + post_type で既存投稿を検索。event の冪等ガード用。
+    全状態(publish/draft/trash含む)を対象。戻り値 (post_id, post_status)、無ければ (0, "")。"""
+    res = run_mysql(
+        f"SELECT ID, post_status FROM wp_posts WHERE post_name='{esc_sql(slug)}' "
+        f"AND post_type='{esc_sql(post_type)}' ORDER BY ID DESC LIMIT 1;"
+    )
+    for line in res.splitlines():
+        parts = line.split("\t")
+        if parts and parts[0].strip().isdigit():
+            return int(parts[0].strip()), (parts[1].strip() if len(parts) > 1 else "")
+    return 0, ""
+
+
 def find_popup_by_source_url(source_url: str) -> tuple[int, str]:
     """popup_source_url(完全一致)で既存 popup を検索。重複 import 再発防止ガード。
 
@@ -827,6 +841,15 @@ def main(signals_path: str) -> int:
             posted.append({"type": "popup", "post_id": pid, "title": title, "url": f"https://stg.kpopjournal.tokyo/{slug}/"})
         elif sig["type"] == "event":
             title, body, slug, start_date = build_event_article(sig)
+            # 冪等ガード(2026-05-25): slug は start_date+source_url の md5 を含むため
+            # 同一公演は同一 slug になる。既存があれば insert せず skip し、週次 cron の
+            # 重複増殖を防ぐ(event は popup と違い source_url ガードが無かった)。
+            existing_eid, existing_estatus = find_post_by_slug(slug, "tribe_events")
+            if existing_eid:
+                print(f"  SKIP(dedup): event slug={slug} は既存 ID {existing_eid}(status={existing_estatus})")
+                posted.append({"type": "event", "post_id": existing_eid, "title": title,
+                               "url": f"https://stg.kpopjournal.tokyo/events/{slug}/", "skipped_dedup": True})
+                continue
             pid = insert_post(title, body, slug, post_type="tribe_events")
             if pid and not DRY_RUN:
                 add_event_date_meta(pid, start_date)
