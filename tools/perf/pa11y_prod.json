@@ -1,18 +1,27 @@
 {
-  "_comment": "本番 pa11y(axe)計測設定。既知の false-positive を除外し、本物の違反だけ検出する。",
-  "_why_ignore": [
-    "2026-05-25 調査: 本番homeのpa11y(axe) color-contrast 12件すべてが false-positive と確定。",
-    "実コントラストをWCAG式で計算した結果、全て AA 合格:",
-    "  - hero-title/hero-sub-title(3): 背景画像+暗グラデoverlay上の白文字。axeは背景画像を",
-    "    画素解析できず誤報(実際は高可読性)。",
-    "  - bar-label 速報(1): 白 on #C2185B = 5.87:1 → AA合格。",
-    "  - bar-time 日時(1): #8A4A63 on #fff0f5 = 5.87:1 → AA合格。",
-    "  - .kpop-more 装飾矢印(7): #C2185B/#AD1457 on white = 5.87〜6.97:1 → AA合格。",
-    "Lighthouse a11y=100(同axeベースだが実害判定が適切)が裏付け。adsense iframe除外と同方針。",
-    "本物の本文テキスト違反を見逃さないよう、確認済みの誤報要素のみ hideElements で除外する。"
-  ],
-  "chromeLaunchConfig": { "args": ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"] },
-  "runners": ["axe"],
-  "timeout": 60000,
-  "hideElements": ".hero-title, .hero-sub-title, .bar-label, .bar-time, .kpop-more span[aria-hidden=\"true\"], .read-more span[aria-hidden=\"true\"]"
+ "_comment": "本番 pa11y(axe)計測設定。既知の false-positive を除外し、本物の違反だけ検出する。",
+ "_why_ignore": [
+  "2026-05-25 調査: 本番homeのpa11y(axe) color-contrast 12件すべてが false-positive と確定。",
+  "実コントラストをWCAG式で計算した結果、全て AA 合格:",
+  "  - hero-title/hero-sub-title(3): 背景画像+暗グラデoverlay上の白文字。axeは背景画像を",
+  "    画素解析できず誤報(実際は高可読性)。",
+  "  - bar-label 速報(1): 白 on #C2185B = 5.87:1 → AA合格。",
+  "  - bar-time 日時(1): #8A4A63 on #fff0f5 = 5.87:1 → AA合格。",
+  "  - .kpop-more 装飾矢印(7): #C2185B/#AD1457 on white = 5.87〜6.97:1 → AA合格。",
+  "Lighthouse a11y=100(同axeベースだが実害判定が適切)が裏付け。adsense iframe除外と同方針。",
+  "本物の本文テキスト違反を見逃さないよう、確認済みの誤報要素のみ hideElements で除外する。",
+  "2026-05-25: イベント枠新設で .kpop-events-more の矢印も同種(#AD1457=6.97:1 AA だがaxe誤判定)→除外。"
+ ],
+ "chromeLaunchConfig": {
+  "args": [
+   "--no-sandbox",
+   "--disable-gpu",
+   "--disable-dev-shm-usage"
+  ]
+ },
+ "runners": [
+  "axe"
+ ],
+ "timeout": 60000,
+ "hideElements": ".hero-title, .hero-sub-title, .bar-label, .bar-time, .kpop-more span[aria-hidden=\"true\"], .read-more span[aria-hidden=\"true\"], .kpop-events-more span[aria-hidden=\"true\"]"
 }
