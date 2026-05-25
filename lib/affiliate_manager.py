@@ -52,8 +52,15 @@ def build_a8_link(program_key, link_text=None):
 
     if 'rel=' not in html.split('>')[0]:
         html = re.sub(r'(<a )', r'\1rel="nofollow sponsored" ', html, count=1)
-    elif 'sponsored' not in html.split('>')[0]:
-        html = re.sub(r'(rel=")([^"]+)(")', r'\1\2 nofollow sponsored\3', html, count=1)
+    else:
+        # 既存 rel に不足しているトークンだけを追加(nofollow/sponsored の重複防止)
+        def _merge_rel(m):
+            existing = m.group(2).split()
+            for tok in ('nofollow', 'sponsored'):
+                if tok not in existing:
+                    existing.append(tok)
+            return m.group(1) + ' '.join(existing) + m.group(3)
+        html = re.sub(r'(rel=")([^"]*)(")', _merge_rel, html, count=1)
 
     if 'target=' not in html.split('>')[0]:
         html = re.sub(r'(<a )', r'\1target="_blank" ', html, count=1)
