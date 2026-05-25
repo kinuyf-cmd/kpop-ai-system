@@ -38,3 +38,6 @@ tools/perf/webp_stage/
 
 # 監査サムネ差し替え用の取得画像(第三者報道写真・再取得可)
 tools/audit/thumb_fix/
+
+# 歪み修正サムネ再生成画像(第三者報道写真・再取得可)
+tools/audit/thumb_regen/
