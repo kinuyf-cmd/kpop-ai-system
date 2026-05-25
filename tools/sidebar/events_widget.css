@@ -1,0 +1,25 @@
+/* イベント枠(2026-05-25 新設)— 既存 .kpop-sidebar-box の体裁を踏襲 */
+.kpop-events .kpop-events-list { list-style: none; margin: 0; padding: 0; }
+.kpop-events .kpop-events-item {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0e6ea;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.kpop-events .kpop-events-item:last-child { border-bottom: none; }
+.kpop-events .kpop-events-date {
+    display: inline-block;
+    min-width: 2.6em;
+    color: #8A4A63;          /* 白上 6.48:1 AA(既存 .bar-time と同色) */
+    font-weight: 600;
+}
+.kpop-events .kpop-events-item a { color: #212529; text-decoration: none; }
+.kpop-events .kpop-events-item a:hover { color: #C2185B; text-decoration: underline; }
+.kpop-events .kpop-events-more { margin: 10px 0 0; font-size: 13px; }
+.kpop-events .kpop-events-more a,
+.kpop-events .kpop-events-more a span[aria-hidden="true"] {
+    color: #AD1457;          /* 白上 6.97:1 AA(矢印 contrast 既知のため明示) */
+    font-weight: 600;
+    text-decoration: none;
+}
+.kpop-events .kpop-events-more a:hover { text-decoration: underline; }
