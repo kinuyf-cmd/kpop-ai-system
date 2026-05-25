@@ -178,7 +178,14 @@ def build_event_article(sig: dict) -> tuple[str, str, str, str]:
     )
 
     body = lead + "\n" + date_block + "\n" + quote_box + "\n" + cta
-    slug = slugify(f"{artist}-event-{datetime.now().strftime('%Y%m%d')}")
+    # slug 一意化: artist+今日 だけだと同一アーティストの複数公演や artist 未抽出
+    # (K-POP固定値)で衝突し後勝ち消失する。start_date と source_url から
+    # 安定したサフィックスを付けて一意にする。
+    import hashlib
+    uniq_seed = f"{start_date}-{source_url}"
+    uniq = hashlib.md5(uniq_seed.encode("utf-8")).hexdigest()[:6]
+    date_part = (start_date or datetime.now().strftime('%Y%m%d')).replace("-", "")
+    slug = slugify(f"{artist}-event-{date_part}-{uniq}")
     return new_title, body, slug, start_date
 
 def esc_html(s: str) -> str:
