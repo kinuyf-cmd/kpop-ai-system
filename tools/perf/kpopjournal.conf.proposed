@@ -26,10 +26,12 @@ server {
     index index.php index.html;
     server_tokens off;
 
-    # [WEBP] Accept に image/webp があれば .webp を優先配信するための変数(server直下=if安全形)
-    set $webp_suffix "";
+    # [WEBP] Accept に image/webp があれば .webp を優先配信(server直下=if安全形)。
+    # try_files は ${uri}${suffix} の複合変数連結が不安定なため、location側で
+    # $uri ベースの完全パスを組み立てる(下の location 内 set 参照)。
+    set $webp_ok "";
     if ($http_accept ~* "image/webp") {
-        set $webp_suffix ".webp";
+        set $webp_ok "yes";
     }
 
     # ---- セキュリティヘッダ(RED検出 MEDIUM=4 解消)----
@@ -56,11 +58,15 @@ server {
     # ================================================================
 
     # [WEBP] uploads の png/jpg: .webp併設があれば優先(無ければ原本)。HTML/srcset変更不要。
-    location ~* ^/wp-content/uploads/.+\.(png|jpe?g)$ {
+    # 重要: 併設webpは拡張子「置換」名(live.png → live.webp)。$uri.webp(=live.png.webp)では
+    # 一致しないため、名前付きキャプチャ $base(拡張子抜きパス)で ${base}.webp を組み立てる。
+    location ~* ^(?<webp_base>/wp-content/uploads/.+)\.(png|jpe?g)$ {
         add_header Vary "Accept" always;
         expires 365d;
         add_header Cache-Control "public, immutable" always;
-        try_files ${uri}${webp_suffix} $uri =404;
+        set $img_try "$uri";
+        if ($webp_ok = "yes") { set $img_try "${webp_base}.webp"; }
+        try_files $img_try $uri =404;
     }
     # [WEBP] .webp直/画像/フォントの長期キャッシュ
     location ~* \.(webp|svg|ico|gif|woff2?|ttf|eot)$ {
