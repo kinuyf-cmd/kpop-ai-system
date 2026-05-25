@@ -362,10 +362,19 @@ def collect():
     tickebo_sigs = collect_tickebo()
     all_signals.extend(tickebo_sigs)
 
-    print('[ticket_collector] eplus (search)')
-    eplus_sigs = collect_eplus()
-    print(f'  eplus: {len(eplus_sigs)} signals')
-    all_signals.extend(eplus_sigs)
+    # e-plus は収集停止(2026-05-26)。eplus robots.txt が「Disallow: /sf/search」を
+    # 明示し、K-POP を効率取得できる検索経路が規約違反。robots 許可の
+    # sitemap_daily_kkn は K-POP をほぼ含まない汎用 sitemap(工藤静香/プロレス等)
+    # のため実用にならない。規約遵守を優先し pia + tickebo の2ソースで運用する。
+    # collect_eplus()/eplus_enricher は将来 eplus 公式許可が得られた場合用に温存。
+    EPLUS_ENABLED = False
+    if EPLUS_ENABLED:
+        print('[ticket_collector] eplus (sitemap)')
+        eplus_sigs = collect_eplus()
+        print(f'  eplus: {len(eplus_sigs)} signals')
+        all_signals.extend(eplus_sigs)
+    else:
+        print('[ticket_collector] eplus SKIP(robots準拠: /sf/search禁止・sitemapはK-POP希少)')
 
     print('[ticket_collector] ltike (curl-impersonate)')
     ltike_sigs = collect_ltike()
