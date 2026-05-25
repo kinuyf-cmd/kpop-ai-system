@@ -1,0 +1,24 @@
+/* a11y_contrast_patch.css — 「もっと見る →」リンクの矢印コントラスト堅牢化。
+ *
+ * 本番 pa11y(axe-core 4.11)で .kpop-more 内の <span aria-hidden="true">&rarr;</span> が
+ * color-contrast 違反 11件として報告された。静的CSS上は .kpop-more が #C2185B on white
+ * = 5.87:1 で AA を満たすはずだが、axe の計算では矢印 span が閾値未満と判定された
+ * (装飾spanの実効色/背景の取り違え、または継承の解決差)。
+ *
+ * 原因の完全特定にコストをかけるより、装飾矢印に AA 確実な色を明示する方が安全で確実。
+ * 子テーマ style.css の末尾に追記する(後勝ちで確実に適用)。視覚変化はごく僅か。
+ * 関連 memory: gp-white-footer-contrast-trap(AA済み色#C2185Bを使う方針)。
+ */
+
+/* 「もっと見る →」等のリンク内装飾矢印・アイコンを、リンク色と同じ AA 済み濃ピンクに固定 */
+.kpop-more,
+.kpop-more span[aria-hidden="true"],
+.read-more span[aria-hidden="true"] {
+    color: #AD1457; /* white 上 6.97:1(AA・AAA近似)。#C2185B より更に濃く確実 */
+}
+
+/* hover 時は反転(濃ピンク背景に白文字)を維持 */
+.kpop-more:hover,
+.kpop-more:hover span[aria-hidden="true"] {
+    color: #ffffff;
+}
