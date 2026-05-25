@@ -154,13 +154,11 @@ endif;
 // [kpop_chart_ranking] — Soompi K-Pop Music Chart の Top10 ランキング(曲+アーティスト)
 // データ: wp_option 'kpop_soompi_chart'(Node collector が取得→owner scriptで取り込み)。
 // 引用ポリシー: 出典(Soompi)を明記しリンク。順位/曲/アーティストの事実のみ表示(捏造なし)。
-if ( ! function_exists( 'kpop_sc_chart_ranking' ) ) :
-function kpop_sc_chart_ranking( $atts ) {
-    // 注: ミュージックチャートは functions.php に重複描画が無く、記事=prependのdo_shortcode、
-    //     トップ=widget の双方で「この shortcode のみ」が描画源。よって suppression guard は付けない
-    //     (付けると記事ページで prepend のチャートが空になる=2026-05-25の不具合)。
-    $a = shortcode_atts( array( 'limit' => 10 ), $atts );
-    $limit = max( 1, min( 10, (int) $a['limit'] ) );
+// 描画本体(関数)。prepend は is_singular でこれを直接呼び、widget shortcode は guard 付きで呼ぶ
+// → 記事=prepend経由で1回、トップ=widget経由で1回 = 各ページ1回のみ(二重防止)。
+if ( ! function_exists( 'kpop_render_chart_ranking' ) ) :
+function kpop_render_chart_ranking( $limit = 10 ) {
+    $limit = max( 1, min( 10, (int) $limit ) );
     $data = get_option( 'kpop_soompi_chart' );
     if ( is_string( $data ) ) { $data = json_decode( $data, true ); }
     $items = ( is_array( $data ) && ! empty( $data['items'] ) ) ? $data['items'] : array();
@@ -194,6 +192,16 @@ function kpop_sc_chart_ranking( $atts ) {
         echo '<p class="kpop-empty-msg">チャートを取得中です</p>';
     }
     echo '</div>';
+}
+endif;
+
+// shortcode版: widget(全ページ)用。記事ページでは prepend が render を直接呼ぶため suppress(二重防止)
+if ( ! function_exists( 'kpop_sc_chart_ranking' ) ) :
+function kpop_sc_chart_ranking( $atts ) {
+    if ( kpop_sc_suppressed_on_single() ) { return ''; }
+    $a = shortcode_atts( array( 'limit' => 10 ), $atts );
+    ob_start();
+    kpop_render_chart_ranking( (int) $a['limit'] );
     return ob_get_clean();
 }
 add_shortcode( 'kpop_chart_ranking', 'kpop_sc_chart_ranking' );

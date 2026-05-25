@@ -58,21 +58,24 @@ if marker!=-1:
 else:
     print("  [info] 1ヶ月以内のイベントblock 既に無し(skip)")
 
-# (b) prepend に kpop_render_chart_ranking 追加(kpop_render_events_widget(); の直後)
-if "kpop_render_chart_ranking" in s or "kpop_sc_chart_ranking" in s and "echo do_shortcode" in s:
-    pass
-if "[kpop_chart_ranking]" not in s and "kpop_render_chart_ranking" not in s:
-    # prepend関数内 kpop_render_events_widget(); の直後に shortcode描画を挿入
-    s2=re.sub(
+# (b) prepend のチャート描画: 直接 kpop_render_chart_ranking() を呼ぶ(guard付きshortcodeでなく)。
+#     既存の do_shortcode('[kpop_chart_ranking]') があれば直接呼びに置換(記事で空にならないよう)。
+if "echo do_shortcode( '[kpop_chart_ranking]' );" in s:
+    s = s.replace("echo do_shortcode( '[kpop_chart_ranking]' );",
+                  "if ( function_exists( 'kpop_render_chart_ranking' ) ) { kpop_render_chart_ranking(); }")
+    print("  [ok] prepend のチャートを直接render呼びに置換(記事の空白/二重を解消)")
+elif "kpop_render_chart_ranking()" in s:
+    print("  [info] prepend 直接render 既存(skip)")
+else:
+    # 未挿入なら kpop_render_events_widget(); の直後に直接render呼びを挿入
+    s2 = re.sub(
         r"(kpop_render_events_widget\(\);)",
-        r"\1\n        echo do_shortcode( '[kpop_chart_ranking]' );",
+        r"\1\n        if ( function_exists( 'kpop_render_chart_ranking' ) ) { kpop_render_chart_ranking(); }",
         s, count=1)
-    if s2!=s:
-        s=s2; print("  [ok] prepend にミュージックチャート(kpop_chart_ranking)追加")
+    if s2 != s:
+        s = s2; print("  [ok] prepend にミュージックチャート(直接render)追加")
     else:
         print("  [warn] kpop_render_events_widget() が見つからずチャート未追加")
-else:
-    print("  [info] チャート 既に追加済(skip)")
 
 if s!=orig:
     open(fn,"w").write(s)
