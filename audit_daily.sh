@@ -99,13 +99,15 @@ log "--- [3] Discord 通知(daily_ceo_report)---"
 if [[ "${AUDIT_DRY_RUN:-0}" == "1" ]]; then
   log "🧪 DRY RUN: Discord 通知をスキップ"
 else
-  WEBHOOK=$(python3 -c "
-import json
+  WEBHOOK=$(cd "$SCRIPT_DIR" && python3 -c "
+import json, sys
 from pathlib import Path
+sys.path.insert(0, '$SCRIPT_DIR')
+from lib.discord_notifier import _expand_webhook
 cfg = Path('$SCRIPT_DIR/config/discord_webhooks.json')
 if cfg.exists():
     d = json.loads(cfg.read_text())
-    print(d.get('daily_ceo_report', ''))
+    print(_expand_webhook(d.get('daily_ceo_report', '')))
 " 2>/dev/null)
   if [[ -n "$WEBHOOK" ]]; then
     # 通知本文を組み立て
@@ -140,8 +142,11 @@ fi
 # ─── [4] CRITICAL があれば urgent_errors にも通知 ─────────────────────────
 if [[ "$CHK_HTTP_FAIL" -gt 0 ]] && [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
   log "--- [4] CRITICAL 通知(HTTP失敗 ${CHK_HTTP_FAIL}件)---"
-  URGENT_WH=$(python3 -c "
-import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('urgent_errors',''))
+  URGENT_WH=$(cd "$SCRIPT_DIR" && python3 -c "
+import json, sys
+sys.path.insert(0, '$SCRIPT_DIR')
+from lib.discord_notifier import _expand_webhook
+print(_expand_webhook(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('urgent_errors','')))
 " 2>/dev/null)
   if [[ -n "$URGENT_WH" ]]; then
     URG_MSG="🚨 **日次監査 CRITICAL** — HTTP 失敗 ${CHK_HTTP_FAIL}件
