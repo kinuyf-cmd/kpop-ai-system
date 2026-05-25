@@ -50,3 +50,21 @@ LCP/転送量/実ユーザー体感が改善する。a11y 100 / SEO 100 は維�
 
 - 広告・計測 JS の defer/削除(収益タイミングに影響・要A/B)。
 - unused-css の機械削除(Lighthouse未巡回ページのスタイル破壊リスク)。minify のみに留める。
+
+## ② nginx WebP透過配信(完全版conf差し替え方式)
+
+`/etc/nginx` は owner のみ編集可。手編集ミスを避けるため、**検証済みの完全版**を用意済み:
+`tools/perf/kpopjournal.conf.proposed`(現行confと301/SSL/Basic/php/gzip全保持、[WEBP]ブロックのみ追加)。
+
+```
+# バックアップ → 差し替え → 構文テスト → reload(失敗時は即ロールバック)
+sudo cp /etc/nginx/sites-available/kpopjournal.conf /etc/nginx/sites-available/kpopjournal.conf.bak.$(date +%s)
+sudo cp tools/perf/kpopjournal.conf.proposed /etc/nginx/sites-available/kpopjournal.conf
+sudo nginx -t && sudo systemctl reload nginx || echo "NG: .bak から戻してください"
+```
+
+適用後の検証(aiuser でOK):
+```
+curl -s -H "Accept: image/webp" -o /dev/null -w "%{content_type} %{size_download}\n" https://www.kpopjournal.tokyo/wp-content/uploads/2026/05/live.png
+# → image/webp で小さいサイズが返れば透過配信成功(従来 image/png 177827 → webp 約9KB)
+```

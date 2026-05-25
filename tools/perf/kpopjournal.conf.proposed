@@ -1,0 +1,114 @@
+# 本番 nginx conf 提案 (Day15 Phase2) — /etc/nginx/sites-available/kpopjournal.conf へ配置
+# WP化(/var/www/wp_stg)+ 301マップ13件 + /wp-admin Basic保護 + xmlrpc deny + セキュリティヘッダ
+# noindex は WP 側 blog_public=0 のまま(この段階では検索非公開)
+#
+# === 2026-05-25 perf追加: WebP透過配信 + 長期キャッシュ(tools/perf/webp_nginx.conf 由来)===
+#   既存からの変更点は [WEBP] コメント付き行のみ。それ以外は提示された現行confと同一。
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name kpopjournal.tokyo www.kpopjournal.tokyo;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name kpopjournal.tokyo www.kpopjournal.tokyo;
+
+    ssl_certificate /etc/letsencrypt/live/kpopjournal.tokyo/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/kpopjournal.tokyo/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    root /var/www/wp_stg;
+    index index.php index.html;
+    server_tokens off;
+
+    # [WEBP] Accept に image/webp があれば .webp を優先配信するための変数(server直下=if安全形)
+    set $webp_suffix "";
+    if ($http_accept ~* "image/webp") {
+        set $webp_suffix ".webp";
+    }
+
+    # ---- セキュリティヘッダ(RED検出 MEDIUM=4 解消)----
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # ================= 301 マップ 13件(SEO資産保全)=================
+    location = /13-20260413/                                        { return 301 https://www.kpopjournal.tokyo/top-13years-arirang-release-2026/; }
+    location = /6-3-bts-20260413/                                   { return 301 https://www.kpopjournal.tokyo/bts-comeback-3days-2026/; }
+    location = /aespa-4-20260413/                                   { return 301 https://www.kpopjournal.tokyo/aespa-4th-gen-first-dome-2026/; }
+    location = /bts-641-000-3-1-20260413/                           { return 301 https://www.kpopjournal.tokyo/bts-arirang-641k-3weeks-no1-2026/; }
+    location = /swf3-abema-free-streaming-guide-april-2026/         { return 301 https://www.kpopjournal.tokyo/swf3-where-to-watch-abema-premium-full-episodes-2026/; }
+    location = /swf3-street-woman-fighter-3-abema-how-to-watch-2026/ { return 301 https://www.kpopjournal.tokyo/swf3-where-to-watch-abema-premium-full-episodes-2026/; }
+    location = /swf3-street-woman-fighter-3-free-streaming-guide-2026/ { return 301 https://www.kpopjournal.tokyo/swf3-where-to-watch-abema-premium-full-episodes-2026/; }
+    location = /twice-sana-7-skin-method-glass-skin-korean-idol-cosmetics-20-2/ { return 301 https://www.kpopjournal.tokyo/twice-sana-7-skin-method-glass-skin-korean-idol-cosmetics-20/; }
+    location = /pop-2026-5-20260410/   { return 301 https://www.kpopjournal.tokyo/twice-sana-7-skin-method-glass-skin-korean-idol-cosmetics-20/; }
+    location = /pop-2026-20260409/     { return 301 https://www.kpopjournal.tokyo/twice-sana-7-skin-method-glass-skin-korean-idol-cosmetics-20/; }
+    location = /pop-7-20260410/        { return 301 https://www.kpopjournal.tokyo/twice-sana-7-skin-method-glass-skin-korean-idol-cosmetics-20/; }
+    location = /pop-20260410/          { return 301 https://www.kpopjournal.tokyo/seoul-kpop-pilgrimage-guide-spring-2026-cafes-popups-spots/; }
+    location = /2026-pop-20260409/     { return 301 https://www.kpopjournal.tokyo/seoul-kpop-pilgrimage-guide-spring-2026-cafes-popups-spots/; }
+    location = /category/guide/ { return 301 https://www.kpopjournal.tokyo/category/news/; }
+    # ================================================================
+
+    # [WEBP] uploads の png/jpg: .webp併設があれば優先(無ければ原本)。HTML/srcset変更不要。
+    location ~* ^/wp-content/uploads/.+\.(png|jpe?g)$ {
+        add_header Vary "Accept" always;
+        expires 365d;
+        add_header Cache-Control "public, immutable" always;
+        try_files ${uri}${webp_suffix} $uri =404;
+    }
+    # [WEBP] .webp直/画像/フォントの長期キャッシュ
+    location ~* \.(webp|svg|ico|gif|woff2?|ttf|eot)$ {
+        expires 365d;
+        add_header Cache-Control "public, immutable" always;
+    }
+    # [WEBP] 自社テーマ/プラグインの css/js(?ver= filemtime でバスト)
+    location ~* ^/wp-content/(themes|plugins)/.+\.(css|js)$ {
+        expires 30d;
+        add_header Cache-Control "public" always;
+    }
+
+    # フロント(本番は Basic 認証なし=公開)
+    location / { try_files $uri $uri/ /index.php?$args; }
+
+    # /wp-admin・wp-login を Basic 認証で保護
+    location ~ ^/(wp-admin|wp-login\.php) {
+        auth_basic "Admin Only";
+        auth_basic_user_file /etc/nginx/.htpasswd_admin;
+        location ~ \.php$ {
+            auth_basic "Admin Only";
+            auth_basic_user_file /etc/nginx/.htpasswd_admin;
+            fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
+    # admin-ajax はフロント機能(検索/WPP/お気に入り)が使うため Basic 除外
+    location = /wp-admin/admin-ajax.php {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # PHP ハンドラ(php8.3-fpm、stg と同じ socket)
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location = /xmlrpc.php { deny all; }
+    location ~ /\.well-known/acme-challenge/ { allow all; }
+    location ~ /\. { deny all; }
+
+    gzip on;
+    gzip_types text/html text/css text/xml application/json application/xml application/javascript;
+    gzip_min_length 1024;
+}
