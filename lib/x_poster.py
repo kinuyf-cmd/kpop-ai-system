@@ -491,6 +491,97 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
     return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id}
 
 
+def post_thread(text: str, url: str, post_id: int = None,
+                genre: str = "", artist: str = "") -> dict:
+    """3段スレッド投稿(施策4): フック(text-only)→要点(text-only)→URL(OGPカード)。
+
+    スレッドは単発比 +40-60% imp(最新Xアルゴ)。本文URLは最終段のみ=非Premium
+    ペナルティ回避。post_hook_and_reply を土台に、間に「要点」ツイートを1枚挟む。
+    要点生成に失敗したら自動的に従来の2段(post_hook_and_reply)へフォールバック。
+    """
+    import time as _time
+
+    if _validate is None or _post is None:
+        return {'success': False, 'error': 'post_to_x module import失敗'}
+
+    # 要点テキストを記事本文から生成(LLM)。失敗・無効なら2段にフォールバック。
+    point_text = ""
+    try:
+        creds, cerr = _validate()
+        if not creds:
+            return {'success': False, 'error': f'認証NG: {cerr}'}
+        _genre = genre or 'default'
+        _source_text = ""
+        if post_id:
+            try:
+                import urllib.request as _ur, json as _json
+                _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=content'
+                with _ur.urlopen(_u, timeout=10) as _r:
+                    _wp = _json.loads(_r.read())
+                _raw = _wp.get('content', {}).get('rendered', '') or ''
+                _source_text = re.sub(r'<[^>]+>', '', _raw)[:1500]
+            except Exception:
+                _source_text = ''
+        if _source_text:
+            from lib.x_post_templates import generate_tweet_llm
+            # 要点: フックとは別角度の「数値/固有名詞を含む1文」をURLなしで
+            point_text = generate_tweet_llm(text, '', _source_text, _genre, include_url=False)
+    except Exception:
+        point_text = ""
+
+    # 要点が作れない/フックと酷似なら 2段にフォールバック(スレッドにする意味が無い)
+    if not point_text or point_text.strip()[:40] == text.strip()[:40]:
+        return post_hook_and_reply(text, url, post_id=post_id, genre=genre, artist=artist)
+
+    # hook → 要点(reply) → url(reply) の順で3段を直接組む。
+    _genre = genre or 'default'
+    try:
+        from lib.x_post_templates import generate_tweet, generate_tweet_llm, generate_url_reply
+        hook_text = generate_tweet(text, '', _genre, include_url=False)
+    except Exception:
+        hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+    if not hook_text:
+        hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+
+    try:
+        t1, _ = _post(hook_text, '', creds)
+    except Exception as e:
+        return {'success': False, 'error': f'hook投稿失敗: {str(e)[:120]}'}
+    _log({'ts': datetime.now().isoformat(), 'tweet_id': t1, 'text': hook_text[:120],
+          'url': url, 'status': 'ok', 'mode': 'hook', 'post_id': post_id})
+
+    from google_metrics.post_to_x import post_tweet as _raw_post
+    # Step 2: 要点(URLなし、t1への返信)
+    t2 = None
+    _time.sleep(3)
+    try:
+        t2, _ = _raw_post(point_text, t1, creds)
+        _log({'ts': datetime.now().isoformat(), 'tweet_id': t2, 'text': point_text[:120],
+              'status': 'ok', 'mode': 'thread_point', 'reply_to': t1, 'post_id': post_id})
+    except Exception as e:
+        _log({'ts': datetime.now().isoformat(), 'status': 'thread_point_error',
+              'error': str(e)[:100], 'reply_to': t1, 'post_id': post_id})
+
+    # Step 3: URL(t2 があれば t2、無ければ t1 への返信)
+    reply_to = t2 or t1
+    reply_id = None
+    if url:
+        _time.sleep(3)
+        try:
+            reply_text = generate_url_reply(url)
+        except Exception:
+            reply_text = f"📖 記事はこちら👇\n{url}"
+        try:
+            reply_id, _ = _raw_post(reply_text, reply_to, creds)
+            _log({'ts': datetime.now().isoformat(), 'tweet_id': reply_id, 'text': reply_text[:120],
+                  'url': url, 'status': 'ok', 'mode': 'url_reply', 'reply_to': reply_to, 'post_id': post_id})
+        except Exception as e:
+            _log({'ts': datetime.now().isoformat(), 'url': url, 'status': 'reply_error',
+                  'error': str(e)[:100], 'reply_to': reply_to, 'post_id': post_id})
+
+    return {'success': True, 'tweet_id': t1, 'point_id': t2, 'reply_id': reply_id, 'mode': 'thread'}
+
+
 if __name__ == '__main__':
     t = sys.argv[1] if len(sys.argv) > 1 else 'X連携テスト'
     u = sys.argv[2] if len(sys.argv) > 2 else None

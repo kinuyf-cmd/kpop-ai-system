@@ -370,8 +370,14 @@ def process_queue(dry_run: bool = False) -> dict:
             new_queue.remove(entry)
             continue
 
-        from lib.x_poster import post_hook_and_reply
-        result = post_hook_and_reply(title, url, post_id=post_id, genre=genre, artist=artist)
+        # 2026-05-26(施策4): high priority 記事はスレッド(フック→要点→URL、単発比+40-60%imp)、
+        # その他は従来の2段。post_thread は要点生成不可なら自動で2段にフォールバック。
+        if entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
+            from lib.x_poster import post_thread
+            result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist)
+        else:
+            from lib.x_poster import post_hook_and_reply
+            result = post_hook_and_reply(title, url, post_id=post_id, genre=genre, artist=artist)
         if result.get('success'):
             tid = result.get('tweet_id', '')
             rid = result.get('reply_id', '')
