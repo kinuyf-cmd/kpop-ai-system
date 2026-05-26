@@ -96,15 +96,27 @@ if ( $kpop_is_popup_single ) {
 		</header>
 
 		<?php
-		/* ── M11 B-1: タイトル直後に 3行要約 を配置(旧: サムネ後)
-		   ── M11 B-2: 3行要約強化(.kpop-summary-box 太字+ボーダー) */
-		if ( function_exists( 'kpop_render_summary_box' ) ) {
+		/* ── 本文を先にバッファリングして 3行まとめ(.kpj-summary)を確定抽出する。
+		   the_content filter(kpop_extract_summary, prio4)が本文から summary を
+		   除去して $GLOBALS['kpop_extracted_summary'] に退避する。DB は非破壊。
+		   こうすることで、まとめ→ヒーロー→本文 の順を表示時に組み立てられる。 */
+		$kpop_held_cta = '';
+		ob_start();
+		the_content();
+		$kpop_rendered = ob_get_clean();
+
+		/* ── タイトル直後に 3行まとめ を配置(最優先の冒頭 TL;DR) ──
+		   1) 本文埋め込みの kpj-summary を抽出できたらそれを冒頭に。
+		   2) 無ければ従来の ACF 由来 summary box(kopp_summary)にフォールバック。 */
+		if ( ! empty( $GLOBALS['kpop_extracted_summary'] ) ) {
+			kpop_render_extracted_summary();
+		} elseif ( function_exists( 'kpop_render_summary_box' ) ) {
 			kpop_render_summary_box( get_the_ID() );
 		}
 		?>
 
 		<?php
-		/* ── M11 B-1: ヒーロー画像 を 3行要約の後、本文の前に配置 */
+		/* ── ヒーロー画像 を 3行まとめの後、本文の前に配置 */
 		if ( has_post_thumbnail() ) :
 			?>
 			<figure class="kpop-single-hero">
@@ -117,12 +129,8 @@ if ( $kpop_is_popup_single ) {
 			/* ── popup 限定: CTA(citation-cta〜本文末)を本文から切り離し、
 			   開催情報box・SNS・地図の後ろへ移動する。位置だけ移動し HTML は改変しない。
 			   非popup・マーカー未検出は full content をそのまま出力(壊さない)。 */
-			$kpop_held_cta = '';
 			if ( $kpop_is_popup_single ) {
-				ob_start();
-				the_content();
-				$kpop_rendered = ob_get_clean();
-				$kpop_cta_pos  = strpos( $kpop_rendered, '<p class="kpop-citation-cta"' );
+				$kpop_cta_pos = strpos( $kpop_rendered, '<p class="kpop-citation-cta"' );
 				if ( false !== $kpop_cta_pos ) {
 					echo substr( $kpop_rendered, 0, $kpop_cta_pos ); // 本文〜出典まで
 					$kpop_held_cta = substr( $kpop_rendered, $kpop_cta_pos ); // CTA〜本文末を保持
@@ -130,7 +138,7 @@ if ( $kpop_is_popup_single ) {
 					echo $kpop_rendered; // マーカー未検出: 改変せず全出力
 				}
 			} else {
-				the_content();
+				echo $kpop_rendered; // バッファ済み本文(summary 抽出済み)を出力
 			}
 			wp_link_pages( array(
 				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'generatepress' ),

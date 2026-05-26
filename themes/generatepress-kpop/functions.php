@@ -1063,13 +1063,16 @@ function kpop_m11_sidebar_append() {
 			'no_found_rows'  => true,
 		) );
 		if ( $event_q->have_posts() ) {
+			// 2026-05-26 オーナー指示: この箱は定義上「1ヶ月以内」のイベントのみ →
+			// 各行は個別ページでなくカレンダー(/events/)へ誘導する。
+			$events_cal = home_url( '/events/' );
 			echo '<div class="kpop-sidebar-box kpop-upcoming-events" role="region" aria-label="1ヶ月以内のイベント">';
 			echo '<h2 class="widget-title">1ヶ月以内のイベント</h2>';
 			echo '<ul class="kpop-side-list">';
 			while ( $event_q->have_posts() ) {
 				$event_q->the_post();
 				$start = get_post_meta( get_the_ID(), '_EventStartDate', true );
-				echo '<li><a href="' . esc_url( get_permalink() ) . '">'
+				echo '<li><a href="' . esc_url( $events_cal ) . '" aria-label="' . esc_attr( get_the_title() . ' をカレンダーで見る' ) . '">'
 					. esc_html( get_the_title() ) . '</a>'
 					. ( $start ? ' <span class="kpop-event-date">' . esc_html( mysql2date( 'n/j', $start ) ) . '</span>' : '' )
 					. '</li>';
@@ -1117,6 +1120,9 @@ function kpop_home_events_section() {
 	if ( ! $event_q->have_posts() ) { wp_reset_postdata(); return; }
 
 	$events_url = function_exists( 'tribe_get_events_link' ) ? tribe_get_events_link() : home_url( '/events/' );
+	// 2026-05-26 オーナー指示: 1ヶ月以内のイベントはカレンダー(/events/)へ、それ以降は個別ページへ。
+	$events_cal  = home_url( '/events/' );
+	$month_limit = date( 'Y-m-d', strtotime( '+1 month', strtotime( $today ) ) );
 
 	echo '<section class="kpop-cat-section kpop-home-events" aria-label="近日開催イベント">';
 	echo '<h2 class="kpop-section-title">近日開催イベント <span class="kpop-section-en">EVENT</span></h2>';
@@ -1129,9 +1135,13 @@ function kpop_home_events_section() {
 		if ( function_exists( 'tribe_get_venue' ) ) {
 			$venue = tribe_get_venue( get_the_ID() );
 		}
+		// 開始日(YYYY-MM-DD部分)が +1ヶ月以内ならカレンダーへ、先のものは個別ページへ。
+		$soon       = ( $start && substr( $start, 0, 10 ) <= $month_limit );
+		$event_href = $soon ? $events_cal : get_permalink();
 		$date_label = $start ? esc_html( mysql2date( 'n月j日', $start ) ) : '';
 		echo '<li class="kpop-home-event-item">';
-		echo '<a class="kpop-home-event-link" href="' . esc_url( get_permalink() ) . '">';
+		echo '<a class="kpop-home-event-link" href="' . esc_url( $event_href ) . '"'
+			. ( $soon ? ' aria-label="' . esc_attr( get_the_title() . ' をカレンダーで見る' ) . '"' : '' ) . '>';
 		if ( $date_label ) {
 			echo '<span class="kpop-home-event-date">' . $date_label . '</span>';
 		}
@@ -1178,13 +1188,15 @@ function kpop_home_sidebar_events() {
 	) );
 	if ( ! $event_q->have_posts() ) { wp_reset_postdata(); return; }
 
+	// 2026-05-26 オーナー指示: 1ヶ月以内のイベントは個別ページでなくカレンダー(/events/)へ。
+	$events_cal = home_url( '/events/' );
 	echo '<div class="kpop-sidebar-box kpop-upcoming-events" role="region" aria-label="1ヶ月以内のイベント">';
 	echo '<h2 class="widget-title">1ヶ月以内のイベント</h2>';
 	echo '<ul class="kpop-side-list">';
 	while ( $event_q->have_posts() ) {
 		$event_q->the_post();
 		$start = get_post_meta( get_the_ID(), '_EventStartDate', true );
-		echo '<li><a href="' . esc_url( get_permalink() ) . '">'
+		echo '<li><a href="' . esc_url( $events_cal ) . '" aria-label="' . esc_attr( get_the_title() . ' をカレンダーで見る' ) . '">'
 			. esc_html( get_the_title() ) . '</a>'
 			. ( $start ? ' <span class="kpop-event-date">' . esc_html( mysql2date( 'n/j', $start ) ) . '</span>' : '' )
 			. '</li>';
@@ -1331,6 +1343,33 @@ function kpop_inject_internal_links( $content ) {
 	return implode( '', $segments );
 }
 add_filter( 'the_content', 'kpop_inject_internal_links', 30 );
+
+/* ── 3行まとめ(.kpj-summary)を本文から抜き出して冒頭(ヒーロー画像の前)へ ──
+ * パイプラインは本文HTML内に <div class="kpj-summary">...</div> を埋め込むが、
+ * 出典行の後ろなどに沈んで「冒頭の TL;DR」として機能していなかった。
+ * 表示時に本文から除去してグローバルに退避し、content-single.php が
+ * タイトル直後に描画する。DB本文は一切変更しない(非破壊)。
+ * prio 4 = 出典マーキング(5)・リンク注入(30)より前に実行。 */
+$GLOBALS['kpop_extracted_summary'] = '';
+function kpop_extract_summary( $content ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) { return $content; }
+	// kpj-summary は単純構造(ネスト div なし)。最初の1個だけを対象に抽出。
+	if ( preg_match( '/<div class="kpj-summary">.*?<\/div>/s', $content, $m ) ) {
+		$GLOBALS['kpop_extracted_summary'] = $m[0];
+		$content = str_replace( $m[0], '', $content );
+	}
+	return $content;
+}
+add_filter( 'the_content', 'kpop_extract_summary', 4 );
+
+/* テンプレートから呼ぶ: 退避した3行まとめを描画(無ければ何もしない)。
+ * 呼び出し前に本文(the_content)を一度バッファリングして抽出を確定させること。
+ * content-single.php がその順序制御を担う。 */
+function kpop_render_extracted_summary() {
+	if ( ! empty( $GLOBALS['kpop_extracted_summary'] ) ) {
+		echo '<div class="kpj-summary-lead">' . $GLOBALS['kpop_extracted_summary'] . '</div>';
+	}
+}
 
 /* 引用記事の先頭にある出典キャプション(<p>画像: ...元記事より</p>)に
  * クラス kpop-img-credit を付与する。これがないと CSS の

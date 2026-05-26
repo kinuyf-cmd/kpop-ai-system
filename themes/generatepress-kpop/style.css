@@ -3196,6 +3196,66 @@ textarea:focus-visible,
 	margin-bottom: 6px;
 }
 
+/* 冒頭TL;DR: 本文から抽出した .kpj-summary をタイトル直後に出す箱。
+   ブランドのピンクで「この記事の3行まとめ」を一目で読ませる。 */
+.kpop-single .kpj-summary-lead {
+	margin: 4px 0 22px;
+}
+.kpop-single .kpj-summary-lead .kpj-summary {
+	background: #fdf4f7;
+	border: 1px solid #f3c9da;
+	border-left: 5px solid var(--kpop-pink-dark, #C2185B);
+	border-radius: 8px;
+	padding: 16px 20px 16px 22px;
+}
+.kpop-single .kpj-summary-lead .kpj-summary h4 {
+	margin: 0 0 10px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--kpop-pink-dark, #C2185B);
+	letter-spacing: 0.02em;
+}
+.kpop-single .kpj-summary-lead .kpj-summary ul {
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+.kpop-single .kpj-summary-lead .kpj-summary li {
+	position: relative;
+	padding-left: 22px;
+	margin: 0 0 8px;
+	line-height: 1.7;
+	color: #2b2b32;
+	font-size: 0.95rem;
+}
+.kpop-single .kpj-summary-lead .kpj-summary li:last-child { margin-bottom: 0; }
+.kpop-single .kpj-summary-lead .kpj-summary li::before {
+	content: "";
+	position: absolute;
+	left: 4px;
+	top: 0.62em;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--kpop-pink, #E91E63);
+}
+
+/* ── 見出し階層のリズム(承認方向): h2/h3/h4 の余白と装飾を整える ──
+   h2 は既存のピンク左バー(L1221)を尊重しつつ、上余白を少し広げて
+   セクションの「呼吸」を作る。h3 は下罫線、h4 は控えめなピンク見出し。 */
+.kpop-single .entry-content h2 { margin-top: 2.4em; }
+.kpop-single .entry-content h2:first-child,
+.kpop-single .entry-content > h2:first-of-type { margin-top: 1em; }
+.kpop-single .entry-content h4 {
+	font-size: 1rem;
+	font-weight: 700;
+	color: #2B2B32;
+	margin: 1.5em 0 0.6em;
+}
+/* 段落間の余白を本文サイズに対して最適化(詰まりすぎ/空きすぎを回避) */
+.kpop-single .entry-content h2 + p,
+.kpop-single .entry-content h3 + p { margin-top: 0; }
+
 /* B-3: 視認性向上 — 本文 line-height + クオテーション装飾 + 太字頻度 */
 .entry-content { line-height: 1.8; }
 .entry-content p { margin: 14px 0; }
