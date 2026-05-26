@@ -2236,11 +2236,11 @@ textarea:focus-visible,
     height: auto;
     /* 画質維持: object-fit は使わず原寸の比率で */
     display: block;
-    /* レイアウト整え */
-    margin: 1em auto;
-    /* 引用元の周囲を視覚的に区切る薄い枠(装飾境界線のみ、テキストではないため AA 非適用) */
-    border: 1px solid #d9d9d9;
-    border-radius: 4px;
+    /* レイアウト整え: 上下にゆとりを持たせ「読み物」のリズムを作る */
+    margin: 1.6em auto;
+    /* ベタ枠を廃し、角丸+微細な影で上品に浮かせる(装飾のみ) */
+    border-radius: 10px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.10), 0 0 0 1px rgba(0,0,0,.04);
 }
 
 /* キャプション(<p class="kpop-citation-source">引用元: ...</p>) */
