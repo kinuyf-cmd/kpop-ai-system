@@ -16,9 +16,11 @@ from lib.signal_deduplicator import deduplicate
 
 SIGNALS = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 PROCESSED = '/home/aiuser/kpop-ai-system/data/auto_article_processed.jsonl'
-WP_USER = 'kpop-bot'
-WP_PASS = os.getenv('WP_APP_PASS', 'vl1H 1brV m4Pq Z1sm F8lZ 3nzh')
-AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
+# 認証: 存在しない kpop-bot の平文ハードコードだと必ず 401 になる
+# (このWP installに kpop-bot は不在)。.env の有効な kpop-publisher を使う。
+WP_USER = os.getenv('WP_USER', '')
+WP_PASS = os.getenv('WP_APP_PASS') or os.getenv('WP_PASS', '')
+AUTH = base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode() if (WP_USER and WP_PASS) else ''
 
 CONFIDENCE_HIGH = 'high'      # 2+ sources
 CONFIDENCE_MEDIUM = 'medium'  # 1 source + official keyword
@@ -268,10 +270,41 @@ def main(dry_run=False, max_articles=None):
     print(f"過去24h signals: {len(signals_raw)}, dedup後: {len(signals)} (-{_dup_n}), イベント関連: {len(event_sigs)}")
 
     from lib.collectors.korean_base import is_kpop_related
+
+    # 一般英単語と同綴の K-POP グループ名。日本の無関係な公演名に部分一致して
+    # 誤分類を生む(実害: "The Hidden Treasure"→TREASURE、"BABY SHARK LIVE"、
+    # "vanvanV4"→V/IVE 等で BABY SHARK 公演を IVE 情報として捏造した事故)。
+    # これらは「韓国/K-POP/アーティストの韓国語表記」等の文脈語が公演名に
+    # 共起する場合のみ採用する。
+    AMBIGUOUS_ARTIST = {
+        'TREASURE': ['트레저', 'TREASURE13', 'YG'],
+        'V': ['뷔', 'BTS', '방탄'],
+        'IVE': ['아이브', 'IVE '],          # 末尾スペース付きで "live" 内部一致を避ける
+        'NCT': ['엔시티', 'NCT 127', 'NCT DREAM', 'WAYV'],
+        'ACE': ['에이스'],
+        'IU': ['아이유', '이지은'],
+        'XG': ['엑스지'],
+        'TWS': ['투어스', '플러스 글로벌'],
+        'TXT': ['투모로우바이투게더', 'TOMORROW X TOGETHER'],
+    }
+
+    def _ambiguous_ok(artist, title):
+        """曖昧アーティストは文脈語が公演名にあるときだけ採用。それ以外は除外。"""
+        ctx = AMBIGUOUS_ARTIST.get(artist)
+        if not ctx:
+            return True  # 曖昧でない通常アーティストはそのまま採用
+        tl = title.lower()
+        return any(c.lower() in tl for c in ctx)
+
     groups = {}
     for sig in event_sigs:
         artists = is_kpop_related(sig['title'])
         if not artists:
+            continue
+        # 曖昧名のみが当たった場合、文脈語が無ければ偽陽性として除外
+        artists = [a for a in artists if _ambiguous_ok(a, sig['title'])]
+        if not artists:
+            print(f"  [auto_event] SKIP: 曖昧アーティスト誤マッチ疑い (title={sig['title'][:50]!r})")
             continue
         event_type = next((kw for kw in EVENT_KW_KO if kw in sig['title']), 'other')
         key = f"{artists[0]}-{event_type}"
