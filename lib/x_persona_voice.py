@@ -235,7 +235,8 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
             f"{sample}"
         )
 
-    age_s = f"{age}歳・" if age else ""
+    # 具体年齢でなく「◯代」表記。age は内部データとして数値のまま使う。
+    age_s = f"{(int(age) // 10) * 10}代・" if age else ""
     system = (
         f"あなたは「{name}」({age_s}{stance})という日本語の K-POP ファン/ライターです。"
         f"\nプロフィール: {bio}"

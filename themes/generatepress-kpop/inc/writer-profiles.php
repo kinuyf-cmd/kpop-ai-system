@@ -305,7 +305,11 @@ function kpop_render_writer_profile( $key, $w ) {
 			<div class="kpop-writer-headline">
 				<h1 class="kpop-writer-name"><?php echo esc_html( $name ); ?></h1>
 				<p class="kpop-writer-stance">
-					<?php echo $age ? esc_html( $age . '歳・' ) : ''; ?><?php echo esc_html( $stance ); ?>
+					<?php
+						// 具体年齢でなく「◯代」表記(20代/30代/40代…)。age は内部データとして数値のまま。
+						$age_label = $age ? ( intval( $age / 10 ) * 10 ) . '代・' : '';
+						echo esc_html( $age_label );
+					?><?php echo esc_html( $stance ); ?>
 				</p>
 			</div>
 		</div>
