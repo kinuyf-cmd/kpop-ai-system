@@ -31,6 +31,13 @@ Text Domain: generatepress-kpop
 	font-size: 13px;
 	padding: 0 14px;
 	letter-spacing: 0.04em;
+	/* 2026-05-26: マーキー(.bar-track)が translateX(-50%) で左へ流れる際、
+	   先頭の .bar-time(#8A4A63)が「速報」バッジ(#C2185B 背景)の上に重なり、
+	   axe / Lighthouse が 1.1:1 のコントラスト不足を検出していた(全ページ共通)。
+	   バッジを不透明のまま前面(z-index)に固定し、スクロール文字をバッジの
+	   背後に潜らせて重なり描画を防ぐ。アニメーション自体は変更しない。 */
+	position: relative;
+	z-index: 2;
 }
 
 /* トラック: 中身(1セット + 複製)を横スクロールさせる */
@@ -41,6 +48,9 @@ Text Domain: generatepress-kpop
 	flex: 1;
 	min-width: 0;
 	animation: scroll-left 30s linear infinite;
+	/* スクロール文字を「速報」バッジ(z-index:2)の背後に置く(上記コメント参照)。 */
+	position: relative;
+	z-index: 1;
 }
 
 /* 複製セット(シームレスループ用)。インライン要素として並べる */
@@ -1302,6 +1312,98 @@ body { color: #2B2B32; }
     color: #8A4A63;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+}
+
+/* ==========================================================================
+   本文 磨き込み v3(2026-05-26) — リード段落 / 内部リンク視認性 / 引用・出典
+   すべて CSS のみ・既存マークアップに無依存。色は AA 達成色のみ使用。
+   ========================================================================== */
+
+/* ── ① リード段落: 最初の段落を少し大きく・濃く。記事の「つかみ」を作る ── */
+/* 本文先頭の段落(まれに先頭が画像/見出しのケースは対象外にしたいので
+   :first-of-type を p に限定。色は本文 #3a3a3a よりわずかに濃い #2b2b32) */
+.kpop-single .entry-content > p:first-of-type {
+    font-size: 1.08rem;
+    line-height: 1.85;
+    color: #2b2b32;
+    margin-bottom: 1.6em;
+}
+/* リード段落内のリンク/強調も本文と馴染ませる(サイズ継承) */
+.kpop-single .entry-content > p:first-of-type strong {
+    color: #1a1a1a;
+}
+
+/* ── ② 内部リンク(アーティスト名 自動リンク)の視認性 ──
+   「押せる」と分かるよう、AA 色の下線 + ホバーで背景うっすら。
+   通常の引用元リンク(外部)とは区別したいので kpop-auto-link 限定。 */
+.kpop-single .entry-content a.kpop-auto-link {
+    color: var(--kpop-pink-dark, #C2185B);
+    text-decoration: none;
+    background-image: linear-gradient(transparent 60%, #fbd6e4 60%);
+    background-size: 100% 100%;
+    padding: 0 1px;
+    border-radius: 2px;
+    transition: background-color .15s ease, color .15s ease;
+}
+.kpop-single .entry-content a.kpop-auto-link:hover,
+.kpop-single .entry-content a.kpop-auto-link:focus-visible {
+    color: #fff;
+    background-image: none;
+    background-color: var(--kpop-pink-dark, #C2185B);
+    text-decoration: none;
+    outline: none;
+}
+/* 注: 当初 ::after の矢印グリフを検討したが、生成コンテンツは SR が
+   「Jimin ›」と読み上げる恐れがあるため不採用。下線グラデ+ホバーで
+   十分にリンクと分かる(色のみに依存しない=WCAG 1.4.1 準拠)。 */
+
+/* ── ③ 引用・出典ボックスの上品化 ──
+   既存 blockquote(左ピンク罫線+薄ピンク背景)に、引用符グリフと
+   出典行(— 出典: ...)の体裁を追加。出典は em-dash 始まりの行を想定。 */
+.kpop-single .entry-content blockquote {
+    position: relative;
+    padding-left: 44px;   /* 引用符グリフのぶん左を広げる */
+}
+.kpop-single .entry-content blockquote::before {
+    content: "\201C";              /* 大きな開き引用符 */
+    position: absolute;
+    left: 12px;
+    top: 2px;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--kpop-pink, #E91E63);
+    opacity: .35;
+    font-family: Georgia, "Times New Roman", serif;
+}
+/* 出典クレジット行: blockquote 内の cite、または手動 class="kpop-quote-source" */
+.kpop-single .entry-content blockquote cite,
+.kpop-single .entry-content blockquote .kpop-quote-source {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.82rem;
+    font-style: normal;
+    color: #6a5560;                /* 薄ピンク背景(#fdf4f8)上 4.6:1 で AA */
+    text-align: right;
+}
+.kpop-single .entry-content blockquote cite a,
+.kpop-single .entry-content blockquote .kpop-quote-source a {
+    color: var(--kpop-pink-dark, #C2185B);
+    text-decoration: underline;
+}
+
+/* 本文画像のキャプション(figcaption / wp-caption-text)を上品な出典体裁に */
+.kpop-single .entry-content figcaption,
+.kpop-single .entry-content .wp-caption-text {
+    font-size: 0.8rem;
+    color: #6a6a6a;                /* 白背景 5.7:1 AA */
+    text-align: center;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+/* モーション配慮: トランジションを無効化したいユーザー向け */
+@media (prefers-reduced-motion: reduce) {
+    .kpop-single .entry-content a.kpop-auto-link { transition: none; }
 }
 
 /* ── 段階5e: 記事フッター(タグ / シェア / フィードバック / 関連) ───── */
@@ -2944,6 +3046,108 @@ textarea:focus-visible,
 	margin-left: 4px;
 }
 
+/* イベント詳細「開催概要」ボックス(lib/popup_event_to_post.py build_event_article)
+   公演名 / 公演日 / 会場 を構造化表示。enrichment 由来データを必ず見せ、
+   「空欄カード」を防ぐ(2026-05-26 修正)。絵文字は文字化け実害があり使わない。 */
+.kpop-event-info {
+	background: var(--kpop-pink-light, #FCE4EC);
+	border-left: 4px solid var(--kpop-pink, #E91E63);
+	border-radius: 4px;
+	padding: 14px 18px;
+	margin: 18px 0;
+}
+.kpop-event-info-head {
+	margin: 0 0 8px;
+	font-weight: 700;
+	color: var(--kpop-pink-dark, #AD1457);
+	font-size: 0.95rem;
+	letter-spacing: 0.02em;
+}
+.kpop-event-info-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.kpop-event-info-list li {
+	display: flex;
+	gap: 12px;
+	padding: 5px 0;
+	border-top: 1px solid rgba(0,0,0,0.06);
+	line-height: 1.6;
+}
+.kpop-event-info-list li:first-child { border-top: 0; }
+.kpop-event-info-label {
+	flex: 0 0 4.5em;
+	font-weight: 600;
+	color: var(--kpop-pink-dark, #AD1457);
+	font-size: 0.9rem;
+}
+.kpop-event-info-value {
+	flex: 1 1 auto;
+	color: var(--kpop-text, #212529);
+	word-break: break-word;   /* 長い公演名/会場名がセル外へはみ出さない */
+	min-width: 0;
+}
+@media (max-width: 480px) {
+	.kpop-event-info-list li { flex-direction: column; gap: 2px; }
+	.kpop-event-info-label { flex-basis: auto; }
+}
+
+/* トップページ「近日開催イベント」EVENT セクション
+   (functions.php kpop_home_events_section / 2026-05-26 追加)。
+   既存 .kpop-cat-section の見出し書式を継承し、イベント一覧はカード行で表示。 */
+.kpop-home-event-list {
+	list-style: none;
+	margin: 0 0 12px;
+	padding: 0;
+}
+.kpop-home-event-item { margin: 0 0 8px; }
+.kpop-home-event-link {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	padding: 12px 16px;
+	background: #ffffff;
+	border: 1px solid #eee;
+	border-left: 4px solid var(--kpop-pink, #E91E63);
+	border-radius: 4px;
+	text-decoration: none;
+	transition: box-shadow .15s ease, border-color .15s ease;
+}
+.kpop-home-event-link:hover,
+.kpop-home-event-link:focus {
+	box-shadow: 0 2px 10px rgba(233,30,99,0.12);
+	border-left-color: var(--kpop-pink-dark, #AD1457);
+}
+.kpop-home-event-date {
+	flex: 0 0 auto;
+	font-weight: 700;
+	color: var(--kpop-pink-dark, #AD1457);
+	font-size: 0.95rem;
+	white-space: nowrap;
+}
+.kpop-home-event-title {
+	flex: 1 1 auto;
+	color: var(--kpop-text, #212529);
+	font-weight: 600;
+	min-width: 0;
+	word-break: break-word;   /* 長い公演名がはみ出さない */
+}
+.kpop-home-event-venue {
+	flex: 0 0 auto;
+	color: #495057;           /* AA on white */
+	font-size: 0.85rem;
+	white-space: nowrap;
+	max-width: 40%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+@media (max-width: 600px) {
+	.kpop-home-event-link { flex-wrap: wrap; gap: 4px 10px; }
+	.kpop-home-event-title { flex-basis: 100%; order: 3; }
+	.kpop-home-event-venue { max-width: 100%; order: 2; white-space: normal; }
+}
+
 /* A-7: サイドバータイトル font-size 調整(視認性向上)
        既存 .kpop-box-title は維持し、新ウィジェット側の .widget-title を強化
    Day10 2.2: 17px → 15px に縮小(オーナー指示)。色 #212529(AA 12.6:1)維持。 */
@@ -4174,3 +4378,380 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	outline: 2px solid #212529;
 	outline-offset: 2px;
 }
+
+/* ============================================================
+   The Events Calendar(イベントアーカイブ /events/)ブランド化
+   ------------------------------------------------------------
+   既定の TEC アクセント色は青(#334aff)で、選択日セル・購読ボタン・
+   検索ボタン・イベントリンク等すべてに使われ KPOP ブランド(ピンク)と
+   衝突していた。TEC が公開する CSS 変数 --tec-color-accent-primary*
+   を 1 か所で上書きしてカレンダー全体をブランドピンクに統一する
+   (個別セレクタを増やさない方針)。
+   コントラスト: ピンク fill(#E91E63 = 白上 4.35:1)は大/太字のみ AA。
+   通常テキスト・小さい文字は #C2185B(5.87:1)を使う。
+   ============================================================ */
+
+/* TEC アクセント変数の上書き(青→ブランドピンク)。
+   .tribe-events-page-template は TEC アーカイブの body class。 */
+.tribe-events-page-template,
+.post-type-archive-tribe_events,
+.single-tribe_events {
+	--tec-color-accent-primary: #E91E63;
+	--tec-color-accent-primary-hover: #C2185B;
+	--tec-color-accent-primary-active: #AD1457;
+	--tec-color-accent-primary-multiday: #F8BBD0;
+	--tec-color-accent-primary-multiday-hover: #F48FB1;
+	--tec-color-link-accent: #C2185B;            /* リンクは白背景上テキスト → AA色 */
+	--tec-color-link-accent-hover: #AD1457;
+	--tec-color-background-secondary: var(--kpop-pink-light);
+}
+
+/* 検索/購読など塗りボタンの白文字は #E91E63 上では大/太字想定で AA。
+   念のため font-weight を担保。 */
+.tribe-events .tribe-events-c-search__button,
+.tribe-events .tribe-common-c-btn,
+.tribe-events .tribe-common-c-btn:active {
+	background-color: #E91E63;
+	border-color: #E91E63;
+	font-weight: 700;
+}
+.tribe-events .tribe-events-c-search__button:hover,
+.tribe-events .tribe-common-c-btn:hover,
+.tribe-events .tribe-events-c-search__button:focus,
+.tribe-events .tribe-common-c-btn:focus {
+	background-color: #C2185B;
+	border-color: #C2185B;
+}
+
+/* 「自分のカレンダーと連携する」ボーダーボタン: 枠は変数で既にピンク化済みだが
+   テキストが TEC 既定の青(#334aff)で残るため、文字色をブランドピンクに上書き。
+   ボーダーボタンは白地+ピンク文字なので AA色 #C2185B(5.87:1)を使う。 */
+.tribe-events .tribe-common-c-btn-border,
+.tribe-events .tribe-events-c-subscribe-dropdown__button,
+.tribe-events .tribe-events-c-subscribe-dropdown__button-text {
+	color: #C2185B !important;
+	border-color: #E91E63 !important;
+}
+.tribe-events .tribe-events-c-subscribe-dropdown__button svg {
+	color: #C2185B !important;
+}
+
+/* 選択日 / 当日セル: 既定は青塗り+暗文字(コントラスト不足)。
+   薄ピンク地(#FCE4EC 上の暗文字 11.68:1)+ ピンク枠に置換。 */
+.tribe-events-calendar-month__day-cell--selected,
+.tribe-events-calendar-month__day-cell--selected:hover,
+.tribe-events-calendar-month__day-cell--selected:focus {
+	background-color: var(--kpop-pink-light);
+	color: var(--kpop-text);
+	box-shadow: inset 0 0 0 2px var(--kpop-pink-dark);
+}
+.tribe-events-calendar-month__day-cell--today .tribe-events-calendar-month__day-date {
+	color: var(--kpop-pink-dark);
+	font-weight: 700;
+}
+
+/* 月表示のイベントドット/イベントタイトルのアクセント
+   注: TEC の .tribe-common-b3 等が詳細度で勝つため !important で上書き(時刻文字)。 */
+.tribe-events .tribe-events-calendar-month__calendar-event-datetime,
+.tribe-events .tribe-events-calendar-month-mobile-events__mobile-event-datetime {
+	color: var(--kpop-pink-dark) !important;
+	font-weight: 600;
+}
+.tribe-events-calendar-month__calendar-event-title-link {
+	color: var(--kpop-text);
+}
+.tribe-events-calendar-month__calendar-event-title-link:hover,
+.tribe-events-calendar-month__calendar-event-title-link:focus {
+	color: var(--kpop-pink-dark);
+}
+/* モバイル: イベント有りの日付ドットをピンクに */
+.tribe-events-calendar-month__day-cell--mobile.tribe-events-calendar-month__day-cell--has-events
+	.tribe-events-calendar-month__mobile-events-icon--event {
+	background-color: var(--kpop-pink);
+}
+
+/* 曜日ヘッダ行を薄ピンク地+濃色で視認性を上げる */
+.tribe-events-calendar-month__header-row {
+	background-color: var(--kpop-pink-light);
+}
+.tribe-events-calendar-month__header-column .tribe-events-calendar-month__header-day-of-week {
+	color: var(--kpop-pink-dark);
+	font-weight: 700;
+}
+
+/* 「イベントがありません」空状態をブランド枠で柔らかく */
+.tribe-events .tribe-events-c-messages__message--notice {
+	border-left: 3px solid var(--kpop-pink);
+	background-color: var(--kpop-pink-light);
+	color: var(--kpop-text);
+}
+.tribe-events .tribe-common-c-svgicon--messages-not-found svg path {
+	fill: var(--kpop-pink-dark);
+}
+
+/* ビュー切替タブ(リスト/カレンダー/日付)の選択中下線をピンクに */
+.tribe-events .tribe-events-c-view-selector__list-item--active
+	.tribe-events-c-view-selector__list-item-link,
+.tribe-events .tribe-events-c-top-bar__nav-list-item--active {
+	border-color: var(--kpop-pink);
+	color: var(--kpop-pink-dark);
+}
+
+/* ============================================================
+   イベントアーカイブ ページ見出し + 説明文
+   既定では .tribe-events-header__title が非表示で、来訪者に
+   「何のページか」が伝わらない。テーマ側で見出し帯を出す
+   (kpop_events_archive_intro / functions.php)。
+   ============================================================ */
+.kpop-events-intro {
+	max-width: 1200px;
+	margin: 24px auto 4px;
+	padding: 0 20px;
+}
+/* イベントバー(検索/ビュー切替)上の余白を詰めて見出しと近接させる */
+.post-type-archive-tribe_events .tribe-events-header,
+.post-type-archive-tribe_events .tribe-events-view {
+	margin-top: 8px;
+}
+.kpop-events-intro h1 {
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var(--kpop-text);
+	margin: 0 0 6px;
+	border-left: 6px solid var(--kpop-pink);
+	padding-left: 12px;
+	line-height: 1.4;
+}
+.kpop-events-intro p {
+	color: #495057;          /* AA on white 7.0:1 */
+	font-size: 0.95rem;
+	line-height: 1.7;
+	margin: 0;
+	padding-left: 18px;
+}
+@media (max-width: 768px) {
+	.kpop-events-intro { margin-top: 16px; }
+	.kpop-events-intro h1 { font-size: 1.4rem; }
+}
+
+/* >>> KPOP_SIDEBAR_POLISH_BEGIN <<< */
+/* ============================================================
+   サイドバーUI磨き (2026-05-25) — 誕生日枠・イベント枠 + chart/popular
+   既存 .kpop-sidebar-box(白/角丸10px/#f0e3e8枠)の体裁を継承し、
+   リスト項目のタイポ・余白・視覚階層・hover を整える。色は全てAA準拠。
+   ============================================================ */
+
+/* --- 共通: サイドバーのリスト系を統一 --- */
+.kpop-sidebar-box ul { list-style: none; margin: 0; padding: 0; }
+
+/* --- ① 今日/明日の誕生日枠 磨き --- */
+.kpop-birthday-today .widget-title,
+.kpop-birthday-tomorrow .widget-title { position: relative; }
+/* 見出し左にケーキ絵文字でひと目で誕生日と分かる(装飾・aria非依存) */
+.kpop-birthday-today .widget-title::before { content: "🎂"; margin-right: 6px; }
+.kpop-birthday-tomorrow .widget-title::before { content: "🎉"; margin-right: 6px; }
+
+/* 統合カード(今日+明日を1枚に。2026-05-26)。カード見出し左にケーキ。
+   中の「今日」「明日」はサブ見出しで区切る。 */
+.kpop-birthday-card .widget-title::before { content: "🎂"; margin-right: 6px; }
+.kpop-birthday-section + .kpop-birthday-section { margin-top: 14px; }
+.kpop-birthday-subhead {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #AD1457;            /* 濃ピンク(白上 6.97:1 AA) */
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.kpop-birthday-section-today .kpop-birthday-subhead::before { content: "🎂"; }
+.kpop-birthday-section-tomorrow .kpop-birthday-subhead::before { content: "🎉"; }
+
+.kpop-birthday-list .kpop-birthday-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 7px 0;
+    border-bottom: 1px dashed #f3e7ec;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.kpop-birthday-list .kpop-birthday-item:last-child { border-bottom: none; }
+.kpop-birthday-list .kpop-birthday-item a {
+    color: #C2185B;          /* メンバー名を主役に(白上 5.87:1 AA) */
+    font-weight: 600;
+    text-decoration: none;
+}
+.kpop-birthday-list .kpop-birthday-item a:hover { text-decoration: underline; }
+.kpop-birthday-list .kpop-birthday-group {
+    color: #6b6b6b;          /* グループ名は控えめ(白上 5.33:1 AA) */
+    font-size: 11.5px;
+}
+.kpop-birthday-today .kpop-empty-msg,
+.kpop-birthday-tomorrow .kpop-empty-msg { color: #8a8a8a; font-size: 12.5px; margin: 4px 0 0; }
+
+/* --- ② イベント枠 磨き(日付バッジを目立たせる) --- */
+.kpop-events .kpop-box-title::before { content: "📅"; margin-right: 6px; }
+.kpop-events .kpop-events-list { }
+.kpop-events .kpop-events-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0e6ea;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.kpop-events .kpop-events-item:last-child { border-bottom: none; }
+.kpop-events .kpop-events-date {
+    flex: 0 0 auto;
+    min-width: 2.8em;
+    text-align: center;
+    background: #fdeef4;     /* 薄ピンク背景のバッジ */
+    color: #AD1457;          /* 濃ピンク文字(白系上 6.97:1 AA) */
+    font-weight: 700;
+    font-size: 11.5px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    line-height: 1.4;
+}
+.kpop-events .kpop-events-item a { color: #212529; text-decoration: none; }
+.kpop-events .kpop-events-item a:hover { color: #C2185B; text-decoration: underline; }
+.kpop-events .kpop-events-more {
+    margin: 12px 0 0;
+    text-align: right;
+    font-size: 12.5px;
+}
+.kpop-events .kpop-events-more a,
+.kpop-events .kpop-events-more a span[aria-hidden="true"] {
+    color: #AD1457;          /* AA 6.97:1 */
+    font-weight: 600;
+    text-decoration: none;
+}
+.kpop-events .kpop-events-more a:hover { text-decoration: underline; }
+
+/* --- Today's Chart / 人気記事(新shortcode)--- */
+.kpop-today-chart .kpop-box-title::before { content: "📊"; margin-right: 6px; }
+.kpop-popular-box .kpop-box-title::before { content: "🔥"; margin-right: 6px; }
+
+/* サムネ + タイトルのリスト(2026-05-26: タイトルのみ→サムネ付きに変更)。
+   Today's Chart / 人気記事 共通。番号バッジは廃し、サムネ自体を視覚アンカーにする。 */
+.kpop-thumb-list { list-style: none; margin: 0; padding: 0; }
+.kpop-thumb-item {
+    border-bottom: 1px solid #f0e6ea;
+}
+.kpop-thumb-item:last-child { border-bottom: none; }
+.kpop-thumb-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    text-decoration: none;
+}
+.kpop-thumb-wrap {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fdeef4;
+}
+.kpop-thumb-img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    display: block;
+}
+.kpop-thumb-placeholder {
+    background: linear-gradient(135deg, #fdeef4 0%, #f8d7e3 100%);
+}
+.kpop-thumb-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #212529;
+    font-weight: 600;
+    /* 長いタイトルは3行で省略しサムネ高さに収める(はみ出し防止) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+.kpop-thumb-link:hover .kpop-thumb-title { color: #C2185B; text-decoration: underline; }
+
+/* --- ミュージックチャート(Soompi Top10)ランキングUI --- */
+.kpop-music-chart .kpop-box-title::before { content: "🎵"; margin-right: 6px; }
+.kpop-mchart-list { list-style: none; margin: 0; padding: 0; counter-reset: none; }
+.kpop-mchart-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f0e6ea;
+}
+.kpop-mchart-item:last-child { border-bottom: none; }
+.kpop-mchart-rank {
+    flex: 0 0 auto; width: 22px; height: 22px; line-height: 22px;
+    text-align: center; border-radius: 50%;
+    background: #C2185B; color: #fff; font-weight: 700; font-size: 12px;  /* 白on濃ピンク 5.87:1 AA */
+}
+/* 上位3位は金銀銅で強調 */
+.kpop-mchart-item:nth-child(1) .kpop-mchart-rank { background: #8C6900; }  /* 金(白上5.08:1 AA) */
+.kpop-mchart-item:nth-child(2) .kpop-mchart-rank { background: #6E6E6E; }  /* 銀(白上5.10:1 AA) */
+.kpop-mchart-item:nth-child(3) .kpop-mchart-rank { background: #9A5A2E; }  /* 銅(白上5.42:1 AA) */
+.kpop-mchart-body { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+.kpop-mchart-song { font-size: 12.5px; font-weight: 600; color: #212529; overflow-wrap: anywhere; }
+.kpop-mchart-artist { font-size: 11px; color: #6b6b6b; }   /* 5.33:1 AA */
+.kpop-mchart-source { margin: 10px 0 0; font-size: 11px; text-align: right; }
+.kpop-mchart-source a { color: #AD1457; text-decoration: none; }  /* 6.97:1 AA */
+.kpop-mchart-source a:hover { text-decoration: underline; }
+
+/* ============================================================
+   見出し様式の統一(2026-05-25)— 記事サイドバーの旧 .widget-title 系boxと
+   新 .kpop-box-title 系boxで見出しがバラついていた問題を解消。
+   .kpop-sidebar-box 内の .widget-title を .kpop-box-title と同一スタイルに揃える。
+   ============================================================ */
+.kpop-sidebar-box .widget-title,
+.kpop-sidebar-box > h2.widget-title {
+    font-size: 0.98rem !important;
+    font-weight: 700;
+    color: #2B2B32;
+    border-bottom: 2px solid var(--kpop-pink-dark, #C2185B);
+    padding-bottom: 8px;
+    margin: 0 0 14px !important;
+    letter-spacing: normal;
+}
+/* box間の余白を全box統一(バラつき防止) */
+.kpop-sidebar-box { margin-bottom: 18px; }
+.kpop-sidebar-box:last-child { margin-bottom: 0; }
+
+/* トップのサイドバーを投稿ページUIに合わせる(2026-05-26)。
+   トップのカードは WP widget 枠 <aside class="widget inner-padding"> に包まれ、
+   inner-padding(40px)+ widget margin で「二重枠+過剰な余白」になっていた。
+   投稿ページは .kpop-sidebar-box 直描画(枠の余白なし)なので、widget 枠の
+   padding/margin/border/背景を打ち消し、中の .kpop-sidebar-box だけを見せる。
+   → 中の .kpop-sidebar-box が投稿ページと同一の体裁(白/角丸10px/枠/16px)になる。 */
+#right-sidebar .widget.inner-padding,
+#right-sidebar .widget_text.widget {
+    padding: 0;
+    margin: 0 0 18px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+#right-sidebar .widget.inner-padding:last-child { margin-bottom: 0; }
+/* widget 枠直下の .kpop-sidebar-box の下マージンは枠側に集約(二重マージン防止) */
+#right-sidebar .widget.inner-padding > .textwidget > .kpop-sidebar-box,
+#right-sidebar .widget.inner-padding > .kpop-sidebar-box { margin-bottom: 0; }
+/* 各box内の本文先頭余白を統一 */
+.kpop-sidebar-box > ul:first-of-type,
+.kpop-sidebar-box > ol:first-of-type { margin-top: 0; }
+
+/* 空のカスタムHTMLウィジェット枠を消す(2026-05-26)。
+   記事ページでは shortcode が suppress され空文字を返すが、widget の <aside> 枠
+   (inner-padding)だけが残り「空カード」として並んでしまう。中身が空の
+   custom_html widget を全ページで非表示にする(:has で空 textwidget を持つ枠を狙う)。
+   :has 未対応ブラウザ向けに、空 textwidget 自体の余白も殺してフォールバックする。 */
+.widget_custom_html:has(> .textwidget.custom-html-widget:empty) { display: none; }
+.textwidget.custom-html-widget:empty { display: none; margin: 0; padding: 0; }
+/* >>> KPOP_SIDEBAR_POLISH_END <<< */
