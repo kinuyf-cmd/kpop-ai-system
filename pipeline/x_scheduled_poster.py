@@ -54,6 +54,21 @@ DEFAULT_SLOT_SIZE = 1  # 上記以外の時間帯
 MIN_INTERVAL_MIN = 5   # 同一時間帯内の最低間隔(分)
 PRIORITY_GENRES = {'news', 'breaking', 'comeback', 'chart'}  # 優先ジャンル
 
+# 2026-05-26(施策2): 時間帯の役割分担。最新Xアルゴは「会話/返信」が最強(返信13.5,
+# 著者返信+75)で、ゴールデン帯(19-21時)は会話起点 text-only が伸びる。一方 通勤/昼/夕は
+# 記事誘導(リンククリック+11)で流入を稼ぐ。混在帯は記事を主にしつつ時々会話。
+#   'conversation' = 会話起点 text-only を投げる(x_conversation_starter)
+#   'article'      = queue から記事誘導(post_hook_and_reply / thread)
+#   'mix'          = 記事主。本回が mix なら記事、ただし会話cron(7/17/21)が別途会話を担う
+CONVERSATION_HOURS = {19, 20, 21}   # ゴールデン=会話主
+ARTICLE_HOURS = {7, 8, 12, 13}      # 通勤・昼=記事主
+def slot_role(hour: int) -> str:
+    if hour in CONVERSATION_HOURS:
+        return 'conversation'
+    if hour in ARTICLE_HOURS:
+        return 'article'
+    return 'mix'
+
 
 def load_queue() -> list:
     if not QUEUE_FILE.exists():
@@ -213,6 +228,47 @@ def _ts_to_int(ts: str) -> int:
         return 0
 
 
+def _post_conversation(dry_run: bool = False) -> dict:
+    """会話起点 text-only 投稿(施策2/1)。x_conversation_starter で生成し、
+    URLなしで投稿。成功したら engagement watch を登録(施策1 が +10/30/60分で返信収集)。"""
+    try:
+        from lib.x_conversation_starter import generate, validate, register_watch
+    except ImportError as e:
+        print(f"  [conversation] import失敗: {e}")
+        return {'success': False, 'error': str(e)}
+    post = generate(None, None)        # ランダムテンプレ×アーティスト(directives重み付けは生成側)
+    issues = validate(post)
+    if issues:
+        print(f"  [conversation] バリデーションNG: {issues}")
+        return {'success': False, 'error': str(issues)}
+    if dry_run:
+        print(f"  [conversation] DRY: {post['text'][:50]}...")
+        return {'success': True, 'dry_run': True}
+    from google_metrics.post_to_x import post_tweet, validate_credentials
+    creds, errors = validate_credentials()
+    if creds is None:
+        return {'success': False, 'error': '; '.join(errors)}
+    tid, err = post_tweet(post['text'], creds=creds)
+    if not tid:
+        print(f"  [conversation] 投稿失敗: {err}")
+        return {'success': False, 'error': err}
+    print(f"  [conversation] ✓ {tid}: {post['text'][:40]}")
+    # x_posts.jsonl に記録(レート制限カウント用、mode=hook 扱い)
+    try:
+        with POSTS_LOG.open('a', encoding='utf-8') as f:
+            f.write(json.dumps({'ts': datetime.now().isoformat(), 'mode': 'hook',
+                                'status': 'ok', 'text': post['text'],
+                                'kind': 'conversation'}, ensure_ascii=False) + '\n')
+    except OSError:
+        pass
+    # engagement watch 登録(施策1 が消化)。register_watch が無くても致命でない。
+    try:
+        register_watch(tid, post['text'])
+    except Exception as e:  # noqa: BLE001
+        print(f"  [conversation] watch登録skip: {e}")
+    return {'success': True, 'tweet_id': tid}
+
+
 def process_queue(dry_run: bool = False) -> dict:
     """キューからピーク時間帯に合わせて投稿（フック+URLリプライ方式）"""
 
@@ -248,6 +304,23 @@ def process_queue(dry_run: bool = False) -> dict:
         wait = MIN_INTERVAL_MIN - elapsed_min
         print(f"[scheduler] 前回投稿から{elapsed_min:.0f}分 — {wait:.0f}分待機")
         return {'processed': 0, 'remaining': len(queue)}
+
+    # 2026-05-26(施策2): 時間帯の役割で会話/記事を出し分け。
+    # conversation 帯はまず会話起点を1件(text-only)。残スロットがあれば記事も。
+    # mix 帯は記事主。article 帯は記事のみ。
+    role = slot_role(hour)
+    if role == 'conversation':
+        conv = _post_conversation(dry_run=dry_run)
+        if conv.get('success'):
+            # 会話を1枠消費。残スロットで記事も出す(ゴールデンは枠が広い)
+            remaining_slots = max(0, remaining_slots - 1)
+            if remaining_slots <= 0:
+                save_queue(queue)
+                print(f"[scheduler] 会話1件投稿(ゴールデン)/ 残キュー: {len(queue)}件")
+                return {'processed': 1, 'remaining': len(queue)}
+            # 会話投稿後は間隔を空けるため、本回は記事を出さず次回に回す
+            print(f"[scheduler] 会話1件投稿 / 記事は次回(間隔確保)/ 残キュー: {len(queue)}件")
+            return {'processed': 1, 'remaining': len(queue)}
 
     # 優先度ソート
     queue = _sort_queue(queue)
