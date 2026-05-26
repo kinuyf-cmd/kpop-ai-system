@@ -102,10 +102,12 @@ Text Domain: generatepress-kpop
 
 /* レスポンシブ */
 @media (max-width: 600px) {
-	.kpop-breaking-bar { height: 36px; }
-	.bar-label { font-size: 12px; padding: 0 10px; }
-	.bar-item { font-size: 13px; padding: 0 16px; }
-	.bar-time { font-size: 11px; }
+	.kpop-breaking-bar { height: 38px; }       /* 30→38: 上下の詰まりを緩和 */
+	.bar-label { font-size: 12px; padding: 0 12px; }
+	/* 先頭アイテムだけバッジ直後の潜り込みを避けるため左に余白を確保 */
+	.bar-track { padding-left: 12px; }
+	.bar-item { font-size: 12.5px; padding: 0 14px; }   /* 11→12.5: 可読性 */
+	.bar-time { font-size: 11.5px; }
 }
 
 /* カスタムCSS はここに追加 */
@@ -144,6 +146,41 @@ a:hover, a:focus {
 .site-title a,
 .main-title a {
   color: var(--kpop-text);
+}
+
+/* ── スマホのヘッダー/検索/メニュー最適化(2026-05-26) ──
+   実機監査: メニュートグル60px・各項目88pxは十分だが、区切り線/矢印が無く
+   「押せるリスト」に見えない。検索入力34pxはタップに小さい。 */
+@media (max-width: 768px) {
+  /* 開いたモバイルメニューの各項目に区切り線 + 右矢印で可触性を明示 */
+  .main-navigation #primary-menu > li,
+  .main-navigation .main-nav > ul > li {
+    border-bottom: 1px solid #f0e3e8;
+  }
+  .main-navigation #primary-menu > li > a,
+  .main-navigation .main-nav > ul > li > a {
+    position: relative;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  /* 右端に控えめな「›」を出してタップ可能と分かるように(装飾) */
+  .main-navigation #primary-menu > li > a::after,
+  .main-navigation .main-nav > ul > li > a::after {
+    content: "›";
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #c89bb0;
+    font-weight: 700;
+  }
+  /* 検索入力: 高さ44pxを確保しタップしやすく */
+  .search-field,
+  form[role="search"] input[type="search"],
+  .gp-icon + .search-field {
+    min-height: 44px;
+    font-size: 16px;   /* iOS で 16px 未満は自動ズームするため 16px に */
+  }
 }
 
 /* ボタン */
