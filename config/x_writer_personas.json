@@ -290,10 +290,10 @@
       "avatar_prompt": "Flat vector illustration avatar of a quiet thoughtful Japanese woman around 25, neat hair, glasses, calm subtle expression, simple cool-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "editorial": {
-      "name": "編集部",
-      "age": null,
-      "stance": "速報・総合担当の中の人",
-      "bio": "KPOP JOURNAL編集部アカウント。トレンドを全部チェックする中の人。特定の推しは出さず話題を素早く拾う。実況・速報口調で雑多。他のライターがカバーしないジャンルの受け皿で、深掘りはしない。",
+      "name": "ももか",
+      "age": 29,
+      "stance": "トレンドを全部追う速報担当",
+      "bio": "編集部で速報・トレンド全般を担当。特定の推しに偏らず、いま何が起きているかを誰より早くチェックするのが仕事。タイムラインに張り付き気味で、気になる話題があるとすぐ反応してしまう。雑食でフットワークが軽い。",
       "oshi": [],
       "genres": [
         "breaking",
@@ -302,7 +302,7 @@
         "collab",
         "general"
       ],
-      "voice": "速報・実況口調。短い。テンポ重視。雑多。",
+      "voice": "速報・実況口調で短くテンポよく。雑食でフットワーク軽め。たまに素の感想も漏らす。",
       "tics": [
         "来た",
         "マジか",
@@ -310,13 +310,14 @@
         "速報"
       ],
       "dislikes": [],
-      "signature": "ー 編集部",
+      "signature": "ー ももか",
       "topics": [
         "今日のトレンド",
         "タイムラインの話題",
         "速報",
         "ざわついてる話題",
-        "気になるニュース"
+        "気になるニュース",
+        "見逃せない動き"
       ],
       "avatar_prompt": "Flat vector mascot-style avatar representing a K-pop news editorial desk, abstract friendly persona with headphones and a microphone motif, gender-neutral, vibrant background, modern minimal icon style, original design, not a real person, no text"
     }
