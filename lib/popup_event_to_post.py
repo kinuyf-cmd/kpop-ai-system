@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import hashlib
 import sys
 import subprocess
 import shlex
@@ -103,6 +104,32 @@ def build_popup_article(sig: dict) -> tuple[str, str, str]:
         f"開催地・期間・営業時間などの詳細は下記の開催情報をご確認ください。</p>"
     )
 
+    # 開催概要ボックス(2026-05-26 追加)。event 側と同様に、構造化データ(kbz_info)を
+    # 本文に出して「本文がリード1文だけ=実質空」を防ぐ。ACF テーマ描画に依存せず、
+    # post_content 自体に最低限の事実(会場/期間/営業時間/エリア)を持たせる。
+    # 絵文字は mysql -e 経由で文字化けするためラベル文字 + CSS で表現(event と同方針)。
+    kbz = sig.get("kbz_info", {}) or {}
+    info_fields = [
+        ("会場",   kbz.get("会場", "")),
+        ("開催期間", kbz.get("開催期間", "")),
+        ("開催エリア", kbz.get("開催エリア", "")),
+        ("住所",   kbz.get("住所", "")),
+        ("営業時間", kbz.get("営業時間", "")),
+    ]
+    info_rows = "".join(
+        f'<li><span class="kpop-event-info-label">{esc_html(label)}</span>'
+        f'<span class="kpop-event-info-value">{esc_html(str(val).strip())}</span></li>'
+        for label, val in info_fields if str(val).strip()
+    )
+    info_box = ""
+    if info_rows:
+        info_box = (
+            '<div class="kpop-event-info">'
+            '<p class="kpop-event-info-head">開催概要</p>'
+            f'<ul class="kpop-event-info-list">{info_rows}</ul>'
+            '</div>'
+        )
+
     # 出典リンクのみ(改修4・7: 引用ボックス/「詳細リリース…プレスリリース」は撤去)
     source_block = (
         f'<p class="kpop-citation-cta">'
@@ -110,7 +137,7 @@ def build_popup_article(sig: dict) -> tuple[str, str, str]:
         f'rel="noopener nofollow" target="_blank">{esc_html(media)}</a></p>'
     )
 
-    body = lead + "\n" + source_block
+    body = lead + "\n" + (info_box + "\n" if info_box else "") + source_block
 
     # M11.5 9.5.8-B: kbuzzlab は source_url 末尾セグメントから slug 生成(衝突防止)
     if sig.get("source_media") == "kbuzzlab":
@@ -131,9 +158,15 @@ def build_popup_article(sig: dict) -> tuple[str, str, str]:
             slug = "popup-prtimes-" + str(abs(hash(sig.get("source_url", ""))))[:10]
     else:
         slug = slugify(f"{artist}-popup-{datetime.now().strftime('%Y%m%d')}")
-        # 念のため日本語が残った場合の保険(ASCII 化)
-        if not re.search(r"[a-z0-9]", slug):
-            slug = "popup-" + str(abs(hash(title_orig)))[:10]
+        # 2026-05-26: 旧保険は「ascii 文字が1つも無い場合」だけ発火したが、
+        # 末尾の "-popup-YYYYMMDD" に ascii があるため artist が日本語(例「アイドル」)
+        # でも発火せず「アイドル-popup-20260526」のような multibyte slug が量産され、
+        # 同一 artist 名で slug 衝突(WP が -2/-3 を付与)+ pretty permalink 404 を招いた。
+        # → slug に「非 ascii 文字が残っていれば」必ず ascii 安定 slug に置換する。
+        #    source_url の md5 を使い、同一ソースは同一 slug(冪等)・別ソースは別 slug にする。
+        if re.search(r"[^\x00-\x7f]", slug):
+            seed = hashlib.md5((source_url or title_orig).encode("utf-8")).hexdigest()[:10]
+            slug = f"popup-{datetime.now().strftime('%Y%m%d')}-{seed}"
     return new_title, body, slug
 
 def build_event_article(sig: dict) -> tuple[str, str, str, str]:
@@ -147,37 +180,75 @@ def build_event_article(sig: dict) -> tuple[str, str, str, str]:
     source_url = sig["source_url"]
     media = sig["source_media"]
     start_date = sig.get("start_date", "")
+    venue = (sig.get("venue") or "").strip()
 
-    new_title = f"{artist} ライブ・コンサート情報 — 出典: {media}"
+    # title がアーティスト名そのもの(enrichment で正式名を取れなかった)ケースは
+    # 引用ブロックに入れても情報量ゼロ。公演名として表示する値を決める:
+    #   ・title が artist と異なる(正式な公演名) → そのまま公演名に使う
+    #   ・title == artist(薄い)          → 「{artist} 公演」を見出しに使い
+    #                                        引用ブロックは出さない(空欄カード防止)
+    has_real_title = bool(title_orig) and title_orig.strip() != artist.strip()
+    event_name = title_orig.strip() if has_real_title else f"{artist} 公演"
+
+    # タイトルは簡潔に。「— 出典: {media}」は一覧/カレンダーのセル内で冗長になり
+    # (本文の lead / 引用ボックス / CTA で出典は明示済み)、popup 側で 2026-05-21 に
+    # 同じ接尾辞を撤去した方針に揃える。
+    new_title = f"{artist} ライブ・コンサート情報"
 
     lead = (
         f"<p>{esc_html(artist)} 関連のライブ・コンサート情報が "
-        f"{esc_html(media)} で確認されました。公演日程・会場・チケット販売状況の"
-        f"詳細は出典元をご確認ください。</p>"
+        f"{esc_html(media)} で確認されました。下記の開催概要をご確認のうえ、"
+        f"チケット販売状況の詳細は出典元をご確認ください。</p>"
     )
 
-    quote_box = (
-        f'<figure class="kpop-citation-quote">'
-        f'<blockquote cite="{esc_html(source_url)}">'
-        f'<p>{esc_html(title_orig)}</p>'
-        f'</blockquote>'
-        f'<figcaption>出典: <a class="kpop-citation-source" href="{esc_html(source_url)}" '
-        f'rel="noopener nofollow" target="_blank">{esc_html(media)}</a></figcaption>'
-        f'</figure>'
+    # 開催概要(公演名 / 公演日 / 会場)。enrichment 由来の構造化データを
+    # 必ず本文に出す。これが無いと詳細ページが「空欄カード」に見える(2026-05-26 修正)。
+    # 絵文字(📅🎫)は mysql -e 引数経由で4バイト文字が ? に化ける実害があったため
+    # 使わず、ラベル文字+CSS のピンク枠で表現する。
+    info_rows = []
+    info_rows.append(
+        f'<li><span class="kpop-event-info-label">公演名</span>'
+        f'<span class="kpop-event-info-value">{esc_html(event_name)}</span></li>'
     )
-
-    date_block = ""
     if start_date:
-        date_block = f'<p class="kpop-event-date">📅 公演日: {esc_html(start_date)}</p>'
+        info_rows.append(
+            f'<li><span class="kpop-event-info-label">公演日</span>'
+            f'<span class="kpop-event-info-value">{esc_html(start_date)}</span></li>'
+        )
+    if venue:
+        info_rows.append(
+            f'<li><span class="kpop-event-info-label">会場</span>'
+            f'<span class="kpop-event-info-value">{esc_html(venue)}</span></li>'
+        )
+    info_box = (
+        '<div class="kpop-event-info">'
+        '<p class="kpop-event-info-head">開催概要</p>'
+        f'<ul class="kpop-event-info-list">{"".join(info_rows)}</ul>'
+        '</div>'
+    )
+
+    # 引用ブロックは「正式な公演名」を取れたときだけ出す。薄い(=artist と同一)
+    # ときに引用すると中身がアーティスト名だけの空ブロックになり逆効果。
+    quote_box = ""
+    if has_real_title:
+        quote_box = (
+            f'<figure class="kpop-citation-quote">'
+            f'<blockquote cite="{esc_html(source_url)}">'
+            f'<p>{esc_html(title_orig)}</p>'
+            f'</blockquote>'
+            f'<figcaption>出典: <a class="kpop-citation-source" href="{esc_html(source_url)}" '
+            f'rel="noopener nofollow" target="_blank">{esc_html(media)}</a></figcaption>'
+            f'</figure>'
+        )
 
     cta = (
         f'<p class="kpop-citation-cta">'
-        f'<strong>🎫 チケット情報の詳細は出典元をご確認ください。</strong> '
+        f'<strong>チケット情報の詳細は出典元をご確認ください。</strong> '
         f'<a href="{esc_html(source_url)}" rel="noopener nofollow" target="_blank">'
         f'{esc_html(media)} の公演情報</a></p>'
     )
 
-    body = lead + "\n" + date_block + "\n" + quote_box + "\n" + cta
+    body = lead + "\n" + info_box + "\n" + quote_box + "\n" + cta
     # slug 一意化: artist+今日 だけだと同一アーティストの複数公演や artist 未抽出
     # (K-POP固定値)で衝突し後勝ち消失する。start_date と source_url から
     # 安定したサフィックスを付けて一意にする。
@@ -274,7 +345,10 @@ def insert_post(title: str, body: str, slug: str, post_type: str, category_slug:
         f"to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, "
         f"post_parent, menu_order, post_type, comment_count) "
         f"VALUES (1, '{now}', '{now}', '{body_esc}', '{title_esc}', "
-        f"'', 'publish', 'closed', 'closed', '', '{slug_esc}', "
+        # 2026-05-26: 即時 publish を廃止し draft で作成する。
+        # 空本文・サムネ無し・汎用タイトルの popup 記事が無検査で公開された事故の恒久対応。
+        # 公開は本文・サムネ・タイトルを人手 or 後段ゲートで確認してから昇格する。
+        f"'', 'draft', 'closed', 'closed', '', '{slug_esc}', "
         f"'', '', '{now}', '{now}', '', "
         f"0, 0, '{post_type}', 0);"
     )
@@ -806,6 +880,19 @@ def main(signals_path: str) -> int:
         # HARD_FAIL: source_url 必須
         if not sig.get("source_url"):
             print("  SKIP: source_url 欠落(HARD_FAIL)")
+            continue
+
+        # 2026-05-26 品質ガード: artist_keyword が汎用プレースホルダ(個別アーティスト名でない)
+        # かつ構造化データ(kbz_info)が空のシグナルは、本文・タイトルが「アイドル ポップアップ
+        # ストア開催決定」のような中身ゼロ記事になる。pops-in の idol-events 由来で量産された
+        # 空記事事故の恒久対応として、両方を満たすものは記事化しない(HARD_FAIL でなく品質 skip)。
+        _GENERIC_KW = {"アイドル", "韓国", "韓国アイドル", "K-POP", "ケーポップ", "韓流",
+                       "SEOUL", "ソウル", "ソンス", "ホンデ", "聖水", "弘大"}
+        _kbz = sig.get("kbz_info", {}) or {}
+        _has_struct = any(str(_kbz.get(k, "")).strip()
+                          for k in ("会場", "開催期間", "開催エリア", "住所", "営業時間"))
+        if sig.get("artist_keyword", "").strip() in _GENERIC_KW and not _has_struct:
+            print(f"  SKIP(品質): 汎用 artist='{sig.get('artist_keyword')}' かつ開催情報なし → 記事化しない")
             continue
 
         if sig["type"] == "popup":
