@@ -24,6 +24,28 @@ BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
 DAILY_BREAKING_LIMIT = int(os.environ.get('DAILY_BREAKING_LIMIT', '20'))
 
 
+def _log_breaking_skip(reason, *, artist=None, typ=None, title=None, url=None):
+    """速報がskipされた事実を恒久記録する。
+    成功時(BREAKING_LOG)と同ファイルに status="skipped" で追記し、
+    cron log のローテーションで skip 履歴が消えるのを防ぐ(skip率の可観測化)。
+    """
+    try:
+        os.makedirs(os.path.dirname(BREAKING_LOG), exist_ok=True)
+        with open(BREAKING_LOG, 'a', encoding='utf-8') as f:
+            f.write(json.dumps({
+                'date': datetime.now().date().isoformat(),
+                'ts': datetime.now().isoformat(),
+                'status': 'skipped',
+                'skip_reason': reason,
+                'artist': artist,
+                'type': typ,
+                'title': title,
+                'source_url': url,
+            }, ensure_ascii=False) + '\n')
+    except Exception as e:
+        print(f"  [breaking] skip記録失敗(非致命): {e}")
+
+
 # 速報ソースとして不適切なソースタイプ（トレンド検知には使うが記事化しない）
 _EXCLUDE_SOURCES = {'youtube', 'tiktok', 'gtrends'}
 
@@ -622,6 +644,8 @@ def publish_breaking(artist, sigs, typ):
         # 2026-05-12: body fail 時に元韓国タイトルでfallbackすると hangul が本文に残るため skip
         if not body_r.get('success'):
             print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            _log_breaking_skip(f"body_translate_fail: {body_r.get('reason','')[:120]}",
+                               artist=artist, typ=typ, title=best.get('title'), url=best.get('url'))
             return None
         body_html = _wrap_body(body_r['translated'], best['title'], True)
     elif best.get('language') == 'ja':
@@ -629,6 +653,8 @@ def publish_breaking(artist, sigs, typ):
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の要約。ソースにない情報は絶対に追加しない')
         if not body_r.get('success'):
             print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            _log_breaking_skip(f"body_translate_fail: {body_r.get('reason','')[:120]}",
+                               artist=artist, typ=typ, title=best.get('title'), url=best.get('url'))
             return None
         body_html = _wrap_body(body_r['translated'], best['title'], True)
     else:
@@ -641,6 +667,8 @@ def publish_breaking(artist, sigs, typ):
         body_r = translate_ko_to_ja(prompt_text, 'K-POP速報記事の翻訳・要約。ソースにない情報は絶対に追加しない')
         if not body_r.get('success'):
             print(f"  [breaking] body翻訳失敗でskip: {body_r.get('reason','')[:80]}")
+            _log_breaking_skip(f"body_translate_fail: {body_r.get('reason','')[:120]}",
+                               artist=artist, typ=typ, title=best.get('title'), url=best.get('url'))
             return None
         body_html = _wrap_body(body_r['translated'], best['title'], True)
 
