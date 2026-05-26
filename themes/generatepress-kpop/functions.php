@@ -496,11 +496,12 @@ function kpop_single_sidebar_extras() {
 				'<h2 class="kpop-box-title">%sの最新記事 <span class="kpop-box-en">LATEST</span></h2>',
 				esc_html( $cat->name )
 			);
-			echo '<ul class="kpop-side-list">';
+			echo '<ul class="kpop-thumb-list">';
 			while ( $latest->have_posts() ) {
 				$latest->the_post();
-				echo '<li><a href="' . esc_url( get_permalink() ) . '">'
-					. esc_html( get_the_title() ) . '</a></li>';
+				echo function_exists( 'kpop_sc_thumb_item' )
+					? kpop_sc_thumb_item( get_the_ID() )
+					: '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></li>';
 			}
 			echo '</ul>';
 			echo '</div>';
@@ -597,6 +598,81 @@ function kpop_single_table_a11y() {
 	<?php
 }
 add_action( 'wp_footer', 'kpop_single_table_a11y' );
+
+/**
+ * イベントアーカイブ(The Events Calendar)の a11y 補正。
+ *
+ * 真因はプラグイン側のビューテンプレート出力で、テーマからは直せない:
+ *  (1) 空状態の「次のイベントへ進む」リンク(.tribe-events-...message-list-item-link
+ *      / data-js="tribe-events-view-link")が、JS 再描画時にアクセシブル名の
+ *      無い <a> として複製されることがある(axe: link-name / WCAG 4.1.2)。
+ *  (2) ビュー切替の <ul class="tribe-events-c-view-selector__list"> が直下に
+ *      <a> を持ち、<li> 以外を含む不正なリスト構造になる(axe: list / WCAG 1.3.1)。
+ *
+ * プラグインのビューは AJAX で再描画されるため、初回 + MutationObserver で
+ * 再適用する。既存の table a11y シムと同じ「テーマ側の防御」方針。
+ */
+function kpop_events_archive_a11y() {
+	if ( ! function_exists( 'is_post_type_archive' ) || ! is_post_type_archive( 'tribe_events' ) ) {
+		return;
+	}
+	?>
+	<script>
+	(function () {
+		function isHidden(el) {
+			var cs = getComputedStyle(el);
+			if (cs.display === 'none' || cs.visibility === 'hidden') { return true; }
+			var r = el.getBoundingClientRect();
+			return (r.width === 0 && r.height === 0);
+		}
+		function fix(root) {
+			if (!root) { return; }
+			// (1) リンクのアクセシブル名を整える。
+			//   プラグインは「次のイベントへ進む」リンクを非表示・0サイズの複製として
+			//   DOM に残すため、axe が link-name 違反として検出する。
+			//   - 不可視/0サイズのものは a11y ツリーとタブ順から除外(aria-hidden + tabindex=-1)
+			//   - 可視で名前が無いものだけ aria-label を補う
+			root.querySelectorAll('a[data-js="tribe-events-view-link"], a.tribe-events-c-messages__message-list-item-link').forEach(function (a) {
+				if (isHidden(a)) {
+					a.setAttribute('aria-hidden', 'true');
+					a.setAttribute('tabindex', '-1');
+					return;
+				}
+				var name = (a.textContent || '').trim();
+				if (!name && !a.getAttribute('aria-label')) {
+					a.setAttribute('aria-label', '次のイベントを表示');
+				}
+			});
+			// (1b) プラグイン i18n の二重語「イベントイベント」を 1 語に正規化
+			root.querySelectorAll('a[data-js="tribe-events-view-link"]').forEach(function (a) {
+				if (a.childElementCount === 0 && a.textContent.indexOf('イベントイベント') !== -1) {
+					a.textContent = a.textContent.replace(/イベントイベント/g, 'イベント');
+				}
+			});
+			// (2) view-selector の <ul> 直下 <a> を <li> でラップして正しいリスト構造に
+			root.querySelectorAll('ul.tribe-events-c-view-selector__list').forEach(function (ul) {
+				Array.prototype.slice.call(ul.children).forEach(function (child) {
+					if (child.tagName === 'A') {
+						var li = document.createElement('li');
+						li.className = 'tribe-events-c-view-selector__list-item';
+						ul.insertBefore(li, child);
+						li.appendChild(child);
+					}
+				});
+			});
+		}
+		var view = document.querySelector('.tribe-events-view') || document.body;
+		fix(view);
+		// プラグインの AJAX 再描画に追随
+		if (window.MutationObserver && view) {
+			var mo = new MutationObserver(function () { fix(view); });
+			mo.observe(view, { childList: true, subtree: true });
+		}
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'kpop_events_archive_a11y' );
 
 /**
  * 段階6 — カテゴリ/アーカイブページはサイドバーなしの全幅1カラム。
@@ -747,9 +823,89 @@ add_action( 'init', 'kpop_maybe_flush_rewrite', 99 );
 remove_action( 'wp_body_open', 'kpop_render_breaking_bar' );
 add_action( 'generate_after_header', 'kpop_render_breaking_bar' );
 
+/* ------------------------------------------------------------------
+ * イベントアーカイブ(/events/)の見出し帯 + 説明文
+ * The Events Calendar 既定では .tribe-events-header__title が非表示で、
+ * 初見の来訪者に「何のページか」が伝わらない。アーカイブ表示時のみ
+ * ブランド見出し + 一文の説明を出して文脈を与える。
+ * 速報バー(priority 10)の直後に出すため priority 15 で登録。
+ * ------------------------------------------------------------------ */
+function kpop_events_archive_intro() {
+	if ( ! function_exists( 'is_post_type_archive' ) ) {
+		return;
+	}
+	// TEC のアーカイブ(月/リスト/日いずれのビューでも post_type は tribe_events)
+	if ( ! is_post_type_archive( 'tribe_events' ) ) {
+		return;
+	}
+	echo '<section class="kpop-events-intro" role="region" aria-label="イベント情報">';
+	echo '<h1>K-POP イベントカレンダー</h1>';
+	echo '<p>K-POP アーティストの来日公演・ライブ・ファンミーティング・フェス出演を、'
+		. '開催日順にまとめています。月表示・リスト表示の切り替えやキーワード検索で、'
+		. '気になる公演を探せます。</p>';
+	echo '</section>';
+}
+add_action( 'generate_after_header', 'kpop_events_archive_intro', 15 );
+
+/* ------------------------------------------------------------------
+ * イベントアーカイブの meta description
+ * Lighthouse SEO 監査で /events/ アーカイブに meta description が無いと
+ * 検出された(SEO 82 の主因の一つ)。本サイトは AIOSEO が稼働中だが、
+ * tribe_events アーカイブには Search Appearance の説明が未設定で
+ * description が出ていない。
+ *
+ * 方針: 自前で <meta> を直書きすると AIOSEO のタグと二重化する恐れが
+ * あるため、AIOSEO の description フィルタに供給する。AIOSEO が既に
+ * 非空の説明を持っていればそれを尊重し、空のときだけ補完する。
+ * AIOSEO 不在の環境にも備え、フィルタが一度も走らなければ wp_head で
+ * フォールバック出力する(二重化はフラグで防止)。
+ * ------------------------------------------------------------------ */
+function kpop_events_archive_description_text() {
+	return 'K-POP アーティストの来日公演・ライブ・ファンミーティング・フェス出演スケジュールを'
+		. '開催日順に掲載。月表示／リスト表示と検索で気になる公演を探せる K-POP イベントカレンダーです。';
+}
+
+$GLOBALS['kpop_events_desc_handled'] = false;
+
+// AIOSEO 稼働時: description フィルタで補完(空のときだけ)。
+add_filter( 'aioseo_description', function ( $description ) {
+	if ( function_exists( 'is_post_type_archive' ) && is_post_type_archive( 'tribe_events' ) ) {
+		$GLOBALS['kpop_events_desc_handled'] = true;
+		if ( empty( trim( (string) $description ) ) ) {
+			return kpop_events_archive_description_text();
+		}
+	}
+	return $description;
+} );
+
+// フォールバック: SEO プラグインが description を扱わなかった場合のみ直書き。
+function kpop_events_archive_meta_description_fallback() {
+	if ( ! function_exists( 'is_post_type_archive' ) || ! is_post_type_archive( 'tribe_events' ) ) {
+		return;
+	}
+	if ( ! empty( $GLOBALS['kpop_events_desc_handled'] ) ) {
+		return; // AIOSEO 側で処理済み
+	}
+	echo "\n" . '<meta name="description" content="'
+		. esc_attr( kpop_events_archive_description_text() ) . '">' . "\n";
+}
+add_action( 'wp_head', 'kpop_events_archive_meta_description_fallback', 99 );
+
 /* --- A-2: 誕生日ウィジェット(今日/明日) を読み込む --- */
 require_once get_stylesheet_directory() . '/widgets/today_birthday.php';
 require_once get_stylesheet_directory() . '/widgets/tomorrow_birthday.php';
+
+/* --- サイドバー用ショートコード([kpop_birthday]/[kpop_popular]/[kpop_chart]/
+ *     [kpop_chart_ranking]/[kpop_events])を登録する。
+ * これらは sidebar-1 の Custom HTML widget に貼られているが、定義ファイルの
+ * require が抜けていたため未登録で、トップのサイドバーに生のショートコード
+ * 文字列([kpop_birthday] 等)が表示されていた(2026-05-26 修復)。
+ * ファイル側で widget_text / widget_custom_html_content に do_shortcode を有効化し、
+ * is_singular('post') では二重表示を抑制する設計(ファイル冒頭コメント参照)。 */
+$kpop_sidebar_sc = get_stylesheet_directory() . '/widgets/sidebar_shortcodes.php';
+if ( file_exists( $kpop_sidebar_sc ) ) {
+	require_once $kpop_sidebar_sc;
+}
 
 /* --- A-3: カムバック予定ボックスを削除 ---
  * 既存サイドバー4箱に「カムバック予定」がある場合、CSS で表示抑制。
@@ -767,41 +923,86 @@ require_once get_stylesheet_directory() . '/widgets/tomorrow_birthday.php';
  */
 function kpop_m11_sidebar_prepend() {
 	if ( ! is_singular( 'post' ) ) { return; }
-	// 順序の先頭: 今日の誕生日
-	if ( function_exists( 'kpop_render_today_birthday' ) ) {
-		kpop_render_today_birthday();
+	// 順序の先頭: 誕生日(今日+明日を1枚の統合カードで。2026-05-26 統合)
+	if ( function_exists( 'kpop_render_birthday_combined' ) ) {
+		kpop_render_birthday_combined();
+	} elseif ( function_exists( 'kpop_render_today_birthday' ) ) {
+		kpop_render_today_birthday(); // フォールバック(統合版未ロード時)
 	}
 }
 add_action( 'generate_before_right_sidebar_content', 'kpop_m11_sidebar_prepend', 5 );
 // priority 5 < 10 (kpop_single_sidebar_extras) で先頭に出る
 
+/**
+ * 人気記事の投稿ID配列を返す(サイドバー記事ページ用)。
+ * range='all'      → wp_popularpostsdata(累計)を pageviews 降順
+ * range='last24hours' → wp_popularpostssummary を直近24時間で集計し降順
+ * 不足分は最新記事で top-up し常に $limit 件埋める(トップ [kpop_popular] と同方針)。
+ * 2026-05-26: トップと記事ページのサイドバーUI統一に伴い切り出し。
+ */
+function kpop_sidebar_popular_ids( $range = 'all', $limit = 5 ) {
+	global $wpdb;
+	$limit = max( 1, (int) $limit );
+	$ids   = array();
+
+	if ( 'last24hours' === $range ) {
+		$table = $wpdb->prefix . 'popularpostssummary';
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . esc_sql( $table ) . "'" ) === $table ) {
+			$rows = $wpdb->get_col( $wpdb->prepare(
+				"SELECT s.postid FROM `{$table}` s
+				 INNER JOIN {$wpdb->posts} p ON p.ID = s.postid
+				 WHERE p.post_status='publish' AND p.post_type='post'
+				   AND s.view_datetime >= ( NOW() - INTERVAL 24 HOUR )
+				 GROUP BY s.postid ORDER BY SUM(s.pageviews) DESC LIMIT %d", $limit ) );
+			if ( $rows ) { $ids = array_map( 'intval', $rows ); }
+		}
+	} else {
+		$table = $wpdb->prefix . 'popularpostsdata';
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . esc_sql( $table ) . "'" ) === $table ) {
+			$rows = $wpdb->get_col( $wpdb->prepare(
+				"SELECT d.postid FROM `{$table}` d
+				 INNER JOIN {$wpdb->posts} p ON p.ID = d.postid
+				 WHERE p.post_status='publish' AND p.post_type='post'
+				 ORDER BY d.pageviews DESC LIMIT %d", $limit ) );
+			if ( $rows ) { $ids = array_map( 'intval', $rows ); }
+		}
+	}
+
+	// 不足分を最新記事で補完(重複除外)
+	if ( count( $ids ) < $limit ) {
+		$recent = get_posts( array(
+			'post_type' => 'post', 'post_status' => 'publish',
+			'numberposts' => $limit, 'fields' => 'ids',
+			'exclude' => $ids, 'no_found_rows' => true,
+		) );
+		foreach ( $recent as $rid ) {
+			if ( count( $ids ) >= $limit ) { break; }
+			if ( ! in_array( (int) $rid, $ids, true ) ) { $ids[] = (int) $rid; }
+		}
+	}
+	return $ids;
+}
+
 function kpop_m11_sidebar_append() {
 	if ( ! is_singular( 'post' ) ) { return; }
 
-	// 明日の誕生日
-	if ( function_exists( 'kpop_render_tomorrow_birthday' ) ) {
-		kpop_render_tomorrow_birthday();
-	}
+	// 明日の誕生日は今日と統合カード(prepend)に移動済み。ここでは出さない。
 
-	// 人気記事(WPP 累計)
-	if ( function_exists( 'wpp_get_mostpopular' ) ) {
+	// 人気記事(WPP 累計)— トップの [kpop_popular] と同じサムネ付きUIに統一(2026-05-26)
+	$popular_ids = kpop_sidebar_popular_ids( 'all', 5 );
+	if ( $popular_ids ) {
 		echo '<div class="kpop-sidebar-box kpop-popular-all" role="region" aria-label="人気記事(累計)">';
-		echo '<h2 class="widget-title">人気記事</h2>';
-		wpp_get_mostpopular( array(
-			'range'            => 'all',
-			'limit'            => 5,
-			'thumbnail_width'  => 80,
-			'thumbnail_height' => 60,
-			'stats_views'      => 0,
-			'stats_comments'   => 0,
-			'wpp_start'        => '<ul class="kpop-side-list">',
-			'wpp_end'          => '</ul>',
-			'post_html'        => '<li><a href="{url}">{text_title}</a></li>',
-		) );
-		echo '</div>';
+		echo '<h2 class="kpop-box-title">人気記事 <span class="kpop-box-en">POPULAR</span></h2>';
+		echo '<ul class="kpop-popular-list kpop-thumb-list">';
+		foreach ( $popular_ids as $pid ) {
+			echo function_exists( 'kpop_sc_thumb_item' )
+				? kpop_sc_thumb_item( $pid )
+				: '<li><a href="' . esc_url( get_permalink( $pid ) ) . '">' . esc_html( get_the_title( $pid ) ) . '</a></li>';
+		}
+		echo '</ul></div>';
 	}
 
-	// Today's Chart — チャートカテゴリ最新5件(WPP 不要、純粋に new posts)
+	// Today's Chart — チャートカテゴリ最新5件(サムネ付きに統一)
 	$chart_cat = get_category_by_slug( 'chart' );
 	if ( $chart_cat ) {
 		$chart_q = new WP_Query( array(
@@ -815,33 +1016,31 @@ function kpop_m11_sidebar_append() {
 		) );
 		if ( $chart_q->have_posts() ) {
 			echo '<div class="kpop-sidebar-box kpop-today-chart" role="region" aria-label="Today\'s Chart">';
-			echo '<h2 class="widget-title">Today&apos;s Chart</h2>';
-			echo '<ul class="kpop-side-list">';
+			echo '<h2 class="kpop-box-title">Today\'s Chart <span class="kpop-box-en">CHART</span></h2>';
+			echo '<ul class="kpop-chart-list kpop-thumb-list">';
 			while ( $chart_q->have_posts() ) {
 				$chart_q->the_post();
-				echo '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></li>';
+				echo function_exists( 'kpop_sc_thumb_item' )
+					? kpop_sc_thumb_item( get_the_ID() )
+					: '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></li>';
 			}
 			echo '</ul></div>';
 			wp_reset_postdata();
 		}
 	}
 
-	// 今日読まれている記事(WPP 24h)
-	if ( function_exists( 'wpp_get_mostpopular' ) ) {
+	// 今日読まれている記事(WPP 24h)— サムネ付きに統一
+	$today_ids = kpop_sidebar_popular_ids( 'last24hours', 5 );
+	if ( $today_ids ) {
 		echo '<div class="kpop-sidebar-box kpop-popular-24h" role="region" aria-label="今日読まれている記事">';
-		echo '<h2 class="widget-title">今日読まれている記事</h2>';
-		wpp_get_mostpopular( array(
-			'range'            => 'last24hours',
-			'limit'            => 5,
-			'thumbnail_width'  => 80,
-			'thumbnail_height' => 60,
-			'stats_views'      => 0,
-			'stats_comments'   => 0,
-			'wpp_start'        => '<ul class="kpop-side-list">',
-			'wpp_end'          => '</ul>',
-			'post_html'        => '<li><a href="{url}">{text_title}</a></li>',
-		) );
-		echo '</div>';
+		echo '<h2 class="kpop-box-title">今日読まれている記事 <span class="kpop-box-en">TODAY</span></h2>';
+		echo '<ul class="kpop-popular-list kpop-thumb-list">';
+		foreach ( $today_ids as $pid ) {
+			echo function_exists( 'kpop_sc_thumb_item' )
+				? kpop_sc_thumb_item( $pid )
+				: '<li><a href="' . esc_url( get_permalink( $pid ) ) . '">' . esc_html( get_the_title( $pid ) ) . '</a></li>';
+		}
+		echo '</ul></div>';
 	}
 
 	// 1ヶ月以内のイベント — TEC tribe_events から
@@ -882,6 +1081,118 @@ function kpop_m11_sidebar_append() {
 }
 add_action( 'generate_before_right_sidebar_content', 'kpop_m11_sidebar_append', 20 );
 // priority 20 > 10 で kpop_single_sidebar_extras の後ろに
+
+/* --- トップページ「近日開催イベント」EVENT セクション(2026-05-26 追加)---
+ * トップのメインカラムには LATEST / POP-UP / 各カテゴリ … は並ぶが
+ * イベント(tribe_events)への導線が無かった(実 HTML 確認済み)。
+ * front-page テンプレートはリポジトリ管理外(本番のみ)で直接編集は乖離リスクが
+ * 高いため、GeneratePress の generate_after_main_content フックで「トップのみ」
+ * メインカラム末尾に EVENT セクションを差し込む(kpop_render_breaking_bar と同じ
+ * フック差し込み方式)。データはサイドバー箱と同じ tribe_events / _EventStartDate。
+ */
+function kpop_home_events_section() {
+	// トップ(front page)かつメインクエリのみ。アーカイブ/個別では出さない。
+	if ( ! is_front_page() || ! is_main_query() ) { return; }
+	if ( ! post_type_exists( 'tribe_events' ) ) { return; }
+
+	$today = current_time( 'Y-m-d' );
+	$event_q = new WP_Query( array(
+		'post_type'      => 'tribe_events',
+		'post_status'    => 'publish',
+		'posts_per_page' => 6,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_EventStartDate',
+		'order'          => 'ASC',
+		'meta_query'     => array(
+			array(
+				'key'     => '_EventStartDate',
+				'value'   => $today,
+				'compare' => '>=',
+				'type'    => 'DATE',
+			),
+		),
+		'no_found_rows'  => true,
+	) );
+
+	if ( ! $event_q->have_posts() ) { wp_reset_postdata(); return; }
+
+	$events_url = function_exists( 'tribe_get_events_link' ) ? tribe_get_events_link() : home_url( '/events/' );
+
+	echo '<section class="kpop-cat-section kpop-home-events" aria-label="近日開催イベント">';
+	echo '<h2 class="kpop-section-title">近日開催イベント <span class="kpop-section-en">EVENT</span></h2>';
+	echo '<ul class="kpop-home-event-list">';
+	while ( $event_q->have_posts() ) {
+		$event_q->the_post();
+		$start = get_post_meta( get_the_ID(), '_EventStartDate', true );
+		$venue = '';
+		// 会場は本文の開催概要から拾わず、まず TEC Venue → 無ければ未表示。
+		if ( function_exists( 'tribe_get_venue' ) ) {
+			$venue = tribe_get_venue( get_the_ID() );
+		}
+		$date_label = $start ? esc_html( mysql2date( 'n月j日', $start ) ) : '';
+		echo '<li class="kpop-home-event-item">';
+		echo '<a class="kpop-home-event-link" href="' . esc_url( get_permalink() ) . '">';
+		if ( $date_label ) {
+			echo '<span class="kpop-home-event-date">' . $date_label . '</span>';
+		}
+		echo '<span class="kpop-home-event-title">' . esc_html( get_the_title() ) . '</span>';
+		if ( $venue ) {
+			echo '<span class="kpop-home-event-venue">' . esc_html( $venue ) . '</span>';
+		}
+		echo '</a></li>';
+	}
+	echo '</ul>';
+	echo '<p class="kpop-more-wrap"><a class="kpop-more" href="' . esc_url( $events_url ) . '">イベントカレンダーをすべて見る</a></p>';
+	echo '</section>';
+	wp_reset_postdata();
+}
+add_action( 'generate_after_main_content', 'kpop_home_events_section' );
+
+/* --- トップページ サイドバー「1ヶ月以内のイベント」箱(2026-05-26 追加)---
+ * 個別記事ページには kpop_m11_sidebar_append が同じ箱を出すが、トップ(front page)
+ * のサイドバーはウィジェット/本番テンプレ側で構成されておりイベント箱が無かった。
+ * 既存ウィジェットとの順序競合を避けるため generate_after_right_sidebar_content
+ * (サイドバー末尾)に「トップのみ」差し込む。個別記事の append 箱とは出る面が
+ * 排他(is_front_page vs is_singular)なので二重表示しない。 */
+function kpop_home_sidebar_events() {
+	if ( ! is_front_page() || ! is_main_query() ) { return; }
+	if ( ! post_type_exists( 'tribe_events' ) ) { return; }
+
+	$today = current_time( 'Y-m-d' );
+	$event_q = new WP_Query( array(
+		'post_type'      => 'tribe_events',
+		'post_status'    => 'publish',
+		'posts_per_page' => 5,
+		'orderby'        => 'meta_value',
+		'meta_key'       => '_EventStartDate',
+		'order'          => 'ASC',
+		'meta_query'     => array(
+			array(
+				'key'     => '_EventStartDate',
+				'value'   => array( $today, date( 'Y-m-d', strtotime( '+1 month' ) ) ),
+				'compare' => 'BETWEEN',
+				'type'    => 'DATE',
+			),
+		),
+		'no_found_rows'  => true,
+	) );
+	if ( ! $event_q->have_posts() ) { wp_reset_postdata(); return; }
+
+	echo '<div class="kpop-sidebar-box kpop-upcoming-events" role="region" aria-label="1ヶ月以内のイベント">';
+	echo '<h2 class="widget-title">1ヶ月以内のイベント</h2>';
+	echo '<ul class="kpop-side-list">';
+	while ( $event_q->have_posts() ) {
+		$event_q->the_post();
+		$start = get_post_meta( get_the_ID(), '_EventStartDate', true );
+		echo '<li><a href="' . esc_url( get_permalink() ) . '">'
+			. esc_html( get_the_title() ) . '</a>'
+			. ( $start ? ' <span class="kpop-event-date">' . esc_html( mysql2date( 'n/j', $start ) ) . '</span>' : '' )
+			. '</li>';
+	}
+	echo '</ul></div>';
+	wp_reset_postdata();
+}
+add_action( 'generate_after_right_sidebar_content', 'kpop_home_sidebar_events' );
 
 /* --- B-4b: お気に入り機能(cookie/localStorage)— ハートアイコン + 専用ページ ---
  * 進化的拡張 (Progressive Enhancement): JS なしでも記事は読める。
@@ -980,21 +1291,44 @@ function kpop_inject_internal_links( $content ) {
 	}
 	if ( empty( $cache ) ) { return $content; }
 
-	$linked = array();
-	foreach ( $cache as $title => $slug ) {
-		if ( isset( $linked[ $title ] ) ) { continue; }
-		$pattern = '/(?<![<>\w])(' . preg_quote( $title, '/' ) . ')(?![\w<>])/u';
-		$content = preg_replace_callback( $pattern, function( $m ) use ( $slug, $title, &$linked ) {
-			if ( isset( $linked[ $title ] ) ) { return $m[0]; } // 同一キーワードは初回のみ
-			$linked[ $title ] = true;
-			return sprintf(
-				'<a class="kpop-auto-link" href="/artists/%s/">%s</a>',
-				esc_attr( $slug ),
-				esc_html( $m[1] )
-			);
-		}, $content, 1 ); // 1回置換
+	// HTML を「タグ」と「テキスト」に分割し、テキストノードだけを置換対象にする。
+	// こうしないと <img src="...Jungkook.jpg" alt="..."> の属性値内にもマッチし、
+	// タグ内に <a> を注入して画像タグを破壊してしまう(alt 欠落 = a11y 違反の真因)。
+	$segments = preg_split( '/(<[^>]+>)/', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+	// 既存リンク(<a>...</a>)の内側にもネストさせない。タグ深度を追う。
+	$in_anchor = 0;
+	$linked    = array();
+
+	foreach ( $segments as $i => $seg ) {
+		if ( $seg === '' ) { continue; }
+		// タグ要素はそのまま通す。<a>/<a ...> で深度+1、</a> で深度-1。
+		if ( $seg[0] === '<' ) {
+			if ( preg_match( '/^<a[\s>]/i', $seg ) )      { $in_anchor++; }
+			elseif ( preg_match( '/^<\/a\s*>/i', $seg ) ) { $in_anchor = max( 0, $in_anchor - 1 ); }
+			continue;
+		}
+		// アンカー内のテキストは二重リンク防止のためスキップ。
+		if ( $in_anchor > 0 ) { continue; }
+
+		// このテキストノードに対してのみ、キーワードを1回ずつ置換。
+		foreach ( $cache as $title => $slug ) {
+			if ( isset( $linked[ $title ] ) ) { continue; }
+			$pattern = '/(?<![\w])(' . preg_quote( $title, '/' ) . ')(?![\w])/u';
+			$seg = preg_replace_callback( $pattern, function( $m ) use ( $slug, $title, &$linked ) {
+				if ( isset( $linked[ $title ] ) ) { return $m[0]; }
+				$linked[ $title ] = true;
+				return sprintf(
+					'<a class="kpop-auto-link" href="/artists/%s/">%s</a>',
+					esc_attr( $slug ),
+					esc_html( $m[1] )
+				);
+			}, $seg, 1 );
+		}
+		$segments[ $i ] = $seg;
 	}
-	return $content;
+
+	return implode( '', $segments );
 }
 add_filter( 'the_content', 'kpop_inject_internal_links', 30 );
 
