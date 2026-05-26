@@ -166,6 +166,7 @@ def generate_cta_block(programs_keys, article_title=''):
   <div class="kpj-cta-grid">
     {"".join(items_html)}
   </div>
+  <p class="kpj-cta-disclosure">広告 — リンク経由の購入で当サイトに収益が発生する場合があります。</p>
 </div>
 '''
     # 2026-05-11: A8素材HTMLが <p>未閉じを含むため BeautifulSoupで正規化
@@ -219,10 +220,8 @@ def inject_cta_into_content(title, content, force_genre=None):
         else:
             new_content = content + cta_block
 
-    # PR表記を末尾に追加
-    if 'kpj-disclosure' not in new_content:
-        new_content = new_content + PR_DISCLOSURE
-
+    # 開示は CTA ブロック内(ヘッダの (PR) + フッターの簡潔な一文)で行うため、
+    # 旧 PR_DISCLOSURE の独立ブロックは付けない(本文中の長文開示を廃止)。
     return new_content
 
 
