@@ -104,10 +104,29 @@ def _get_icon(meta):
 
 
 def _get_desc(meta):
+    # CTR を上げるベネフィット訴求文。best_for があれば「〜したいあなたへ」に。
     best_for = meta.get('best_for', [])
     if best_for:
-        return f"こんな方におすすめ: {best_for[0]}"
+        return f"{best_for[0]}なら、まずこちらをチェック"
     return meta.get('advertiser', '')
+
+
+def _get_cta_action(meta):
+    """カテゴリ別の行動喚起ボタン文言(サービス名の羅列でなく動詞で誘導=CTR向上)。"""
+    cats = meta.get('categories', []) or meta.get('cats', [])
+    cats = [str(c).lower() for c in cats]
+    name = meta.get('name', '詳細')
+    if any('vod' in c for c in cats):
+        return '今すぐ作品をチェック'
+    if any(k in c for c in cats for k in ('cosme', 'skincare', 'beauty')):
+        return '最新アイテムを見る'
+    if any('travel' in c or 'esim' in c or 'wifi' in c or 'hotel' in c for c in cats):
+        return 'お得なプランを探す'
+    if any(k in c for c in cats for k in ('goods', 'accessory', 'shopping', 'fashion')):
+        return '公式ショップを見る'
+    if any('language' in c or 'korean_language' in c for c in cats):
+        return '無料体験をはじめる'
+    return f'{name} を見る'
 
 
 def generate_cta_block(programs_keys, article_title=''):
@@ -121,7 +140,8 @@ def generate_cta_block(programs_keys, article_title=''):
         if not meta:
             continue
 
-        link_html = build_a8_link_with_html(prog_key, f"▶ {meta['name']}")
+        # ボタン文言はサービス名でなく行動喚起(CTR向上)。
+        link_html = build_a8_link_with_html(prog_key, _get_cta_action(meta))
         if not link_html:
             continue
 
@@ -142,7 +162,7 @@ def generate_cta_block(programs_keys, article_title=''):
 
     block = f'''
 <div class="kpj-cta-block">
-  <h3 class="kpj-cta-heading">関連おすすめ</h3>
+  <h3 class="kpj-cta-heading">ファンにおすすめのサービス</h3>
   <div class="kpj-cta-grid">
     {"".join(items_html)}
   </div>

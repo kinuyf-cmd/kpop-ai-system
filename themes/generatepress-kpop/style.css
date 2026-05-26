@@ -4830,55 +4830,68 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
 	gap: 12px;
 	margin-top: 14px;
 }
+/* CTR向上(2026-05-26 v2): カードを縦構成にし、ボタンを「カード全幅・大きめ・
+   矢印付き」で押したくなる主役に。アイコン+タイトルを上段、説明、最下部に
+   フル幅ボタン。カード全体に hover の浮き上がりで操作対象であることを示す。 */
 .kpop-single .entry-content .kpj-cta-item {
 	display: flex;
-	gap: 12px;
-	align-items: flex-start;
+	flex-direction: column;
 	background: #fff;
 	border: 1px solid #f0e3e8;
-	border-radius: 10px;
-	padding: 14px 16px;
-	transition: box-shadow .15s ease, transform .15s ease;
+	border-radius: 12px;
+	padding: 16px 16px 14px;
+	transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
 }
 .kpop-single .entry-content .kpj-cta-item:hover {
-	box-shadow: 0 4px 16px rgba(194,24,91,.12);
-	transform: translateY(-1px);
+	box-shadow: 0 6px 20px rgba(194,24,91,.16);
+	transform: translateY(-2px);
+	border-color: #f3c9da;
 }
 .kpop-single .entry-content .kpj-cta-icon {
-	flex: 0 0 auto;
-	font-size: 1.6rem;
+	font-size: 1.5rem;
 	line-height: 1;
+	margin-bottom: 6px;
 }
-.kpop-single .entry-content .kpj-cta-content { min-width: 0; }
+.kpop-single .entry-content .kpj-cta-content { min-width: 0; display: flex; flex-direction: column; flex: 1; }
 .kpop-single .entry-content .kpj-cta-title {
 	font-weight: 700;
-	font-size: 0.95rem;
-	color: #2b2b32;
-	margin-bottom: 3px;
+	font-size: 1rem;
+	color: #1a1a1a;
+	margin-bottom: 4px;
 }
 .kpop-single .entry-content .kpj-cta-desc {
-	font-size: 0.8rem;
+	font-size: 0.82rem;
 	color: #6a5560;      /* 白上 5.6:1 AA */
-	line-height: 1.5;
-	margin-bottom: 10px;
+	line-height: 1.55;
+	margin-bottom: 14px;
+	flex: 1;             /* 説明文の長短に関わらずボタンを下端に揃える */
 }
 .kpop-single .entry-content .kpj-cta-link { margin: 0; }
-/* CTA ボタン化: テキストリンクをブランドのピル型ボタンに */
+/* CTA ボタン: カード全幅・大きめ・矢印付きで主役化 */
 .kpop-single .entry-content .kpj-cta-link a {
-	display: inline-block;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
 	background: var(--kpop-pink-dark, #C2185B);
 	color: #fff;
 	text-decoration: none;
-	font-size: 0.85rem;
+	font-size: 0.92rem;
 	font-weight: 700;
-	padding: 8px 18px;
+	padding: 12px 18px;
 	border-radius: 999px;
-	transition: background-color .15s ease;
+	box-shadow: 0 2px 8px rgba(194,24,91,.22);
+	transition: background-color .15s ease, box-shadow .15s ease;
+}
+.kpop-single .entry-content .kpj-cta-link a::after {
+	content: " →";
+	font-weight: 700;
 }
 .kpop-single .entry-content .kpj-cta-link a:hover,
 .kpop-single .entry-content .kpj-cta-link a:focus-visible {
 	background: var(--kpop-pink-darker, #AD1457);   /* 白上 6.97:1 AA */
 	color: #fff;
+	box-shadow: 0 4px 14px rgba(194,24,91,.30);
 	outline: none;
 }
 /* CTA内に紛れる計測用画像(A8の1pxトラッカー等)はレイアウトに影響させない */

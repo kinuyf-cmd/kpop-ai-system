@@ -410,26 +410,16 @@ def unified_publish(
         log.append(f"internal_links err: {e}")
 
     # 6.3.1b. K-POP Artist Profile への inline link 注入 (本文中の初出のみ)
-    try:
-        from lib.comeback_calendar_inject import inject_profile_inline_links
-        content = inject_profile_inline_links(content)
-    except Exception as e:
-        log.append(f"profile_link err: {e}")
+    # (廃止 2026-05-26) inject_profile_inline_links は本文アーティスト名を
+    # /artist-{slug}/(404)へリンクしていた。本文中アーティスト名のリンクは
+    # テーマの kpop_inject_internal_links(/artists/{slug}/ 200)に一任。
+    log.append("profile_link: disabled (broken /artist- url)")
 
-    # 6.3.1c. K-POPカムバックカレンダーCTA挿入 (sticky page promotion)
-    try:
-        from lib.comeback_calendar_inject import maybe_inject_calendar_cta
-        _artist_for_cta = ''
-        for _g in ['BTS','BLACKPINK','TWICE','aespa','NewJeans','IVE','LE SSERAFIM',
-                   'Stray Kids','SEVENTEEN','ENHYPEN','NMIXX','ITZY','TXT','BABYMONSTER',
-                   'RIIZE','ILLIT','ATEEZ','TREASURE','BOYNEXTDOOR','TWS','KISS OF LIFE',
-                   'CORTIS','KATSEYE','IU']:
-            if _g.lower() in title_final.lower():
-                _artist_for_cta = _g
-                break
-        content = maybe_inject_calendar_cta(content, artist=_artist_for_cta)
-    except Exception as e:
-        log.append(f"calendar_cta err: {e}")
+    # 6.3.1c. (廃止 2026-05-26) K-POPカムバックカレンダーCTA注入。
+    # オーナー指摘「カムバック・カレンダーは不要」。プロフィール導線は
+    # テンプレ側 .kpop-idol-wiki-link CTA に、イベント導線は /events/ に一本化。
+    # 本文への焼き付き注入を止める(既存42記事の焼き付きは別途DB除去)。
+    log.append("calendar_cta: disabled (owner request)")
 
     # 6.3.2. CTA/リンク挿入後に再サニタイズ (unclosed_p 再発防止)
     content = sanitize_gpt_html(content)

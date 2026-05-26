@@ -467,14 +467,10 @@ def enrich_post(post_id: int) -> dict:
         modified = insert_summary_into_html(modified, summary_html)
         changes.append("summary_added")
 
-    # 2. Profile — タイトルに含まれるアーティストのみ（本文の言及で別グループ混入を防止）
-    if "kpj-artist-profile" not in content:
-        artists = detect_artist_in_text(title)
-        if artists:
-            profile_html = generate_profile_html(artists[0])
-            if profile_html:
-                modified = modified + "\n" + profile_html
-                changes.append(f"profile_added({artists[0]})")
+    # 2. Profile — (廃止 2026-05-26) 本文末への生プロフィール表(kpj-artist-profile)
+    # 注入を停止。オーナー指摘[3]「プロフィールはボタンで圧縮」。プロフィール導線は
+    # テンプレ側 .kpop-idol-wiki-link CTA(表示時に idol_artist へのボタンを出す)に
+    # 一任し、本文へ焼き付けない(長い dl 表が記事末を圧迫していた)。
 
     # 3. Thumbnail check
     thumb_verdict, thumb_size = _check_thumbnail_size(featured_media)
