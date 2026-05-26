@@ -80,6 +80,17 @@ chown www-data → rewrite flush → 器投稿シード確認、までを実施�
     `wp media import assets/writer_avatars/yui.png --post_id=<yui投稿ID> --featured_image`
   - 画像は stg/本番のメディアライブラリに入れる(テーマ同梱ではない)。
 
-## 後フェーズ
+## 記事の執筆者バイライン(実装済み)
 
-- 記事末尾の署名(ー ゆい 等)から該当ライターの `/writers/{key}/` へリンク(content-single.php 拡張)。
+記事メタの「執筆」を、担当ライターの `/writers/{key}/` へのリンクにした(`content-single.php` +
+`inc/writer-profiles.php` の `kpop_writer_byline()` / `kpop_resolve_post_writer()`)。
+
+- 担当解決: 記事の**タグ(アーティスト名)で最長一致 → カテゴリ(ジャンル)→ fallback(編集部)**。
+  X 投稿の `select_writer`(Python)と同じ思想を PHP で再現。
+- **DB 変更なし・既存記事に遡及適用・同記事は常に同じライター**(安定割当)。
+- 関数未ロード時は従来の `get_the_author()` にフォールバック。
+- 反映には `content-single.php` も含む(deploy スクリプトは対応済み)。
+
+## 後フェーズ(任意)
+
+- バイラインのアバター小表示、記事末尾の「この記事を書いた人」カード 等の追加装飾。

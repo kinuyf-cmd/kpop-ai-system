@@ -140,6 +140,121 @@ add_filter( 'generate_show_right_sidebar', function ( $show ) {
 	return $show;
 } );
 
+/* ── 記事 → 担当ライターの解決(署名リンク用) ─────────────────────────
+ * lib/x_persona_voice.select_writer と同じ思想を PHP で再現。
+ * 記事のタグ(=アーティスト名)優先 → カテゴリ(=ジャンル)→ fallback。
+ * DB 変更なし・既存記事に遡及適用・同記事は常に同じライター(安定割当)。
+ */
+function kpop_genre_aliases() {
+	$path = kpop_writers_json_path();
+	if ( is_readable( $path ) ) {
+		$data = json_decode( (string) file_get_contents( $path ), true );
+		if ( isset( $data['genre_aliases'] ) ) {
+			return $data['genre_aliases'];
+		}
+	}
+	return array();
+}
+
+/** カテゴリ名/slug から大まかなジャンルキーを推定(日本語カテゴリ対応)。 */
+function kpop_guess_genre_from_terms( $post_id ) {
+	$cats = get_the_category( $post_id );
+	$names = array();
+	foreach ( (array) $cats as $c ) {
+		$names[] = $c->slug;
+		$names[] = $c->name;
+	}
+	$blob = mb_strtolower( implode( ' ', $names ) );
+	$map = array(
+		'breaking' => array( 'breaking', '速報', 'news', 'ニュース' ),
+		'comeback' => array( 'comeback', 'カムバック', '新曲' ),
+		'chart'    => array( 'chart', 'チャート', 'ランキング', 'billboard' ),
+		'fashion'  => array( 'fashion', 'ファッション', 'beauty', '美容', 'コスメ' ),
+		'travel'   => array( 'travel', '旅行', 'グルメ', 'gourmet', 'ドラマ', 'cafe', 'カフェ' ),
+		'scandal'  => array( '熱愛', '炎上', 'scandal', '話題' ),
+		'analysis' => array( 'analysis', '考察', '解説' ),
+	);
+	foreach ( $map as $genre => $needles ) {
+		foreach ( $needles as $n ) {
+			if ( $n && mb_strpos( $blob, mb_strtolower( $n ) ) !== false ) {
+				return $genre;
+			}
+		}
+	}
+	return '';
+}
+
+/** 記事 ID → 担当ライターキー(無ければ fallback / 'editorial')。 */
+function kpop_resolve_post_writer( $post_id ) {
+	$writers = kpop_get_writers();
+	if ( empty( $writers ) ) {
+		return '';
+	}
+	// 1) タグ(アーティスト名)で最長一致
+	$tags = get_the_tags( $post_id );
+	$tagblob = '';
+	foreach ( (array) $tags as $t ) {
+		$tagblob .= ' ' . mb_strtolower( $t->name );
+	}
+	$best_key = '';
+	$best_len = 0;
+	if ( trim( $tagblob ) !== '' ) {
+		foreach ( $writers as $key => $w ) {
+			foreach ( (array) ( isset( $w['oshi'] ) ? $w['oshi'] : array() ) as $o ) {
+				$ol = mb_strtolower( $o );
+				if ( $ol !== '' && mb_strpos( $tagblob, $ol ) !== false && mb_strlen( $ol ) > $best_len ) {
+					$best_key = $key;
+					$best_len = mb_strlen( $ol );
+				}
+			}
+		}
+	}
+	if ( $best_key ) {
+		return $best_key;
+	}
+	// 2) カテゴリ→ジャンル一致
+	$genre = kpop_guess_genre_from_terms( $post_id );
+	$aliases = kpop_genre_aliases();
+	if ( isset( $aliases[ $genre ] ) ) {
+		$genre = $aliases[ $genre ];
+	}
+	if ( $genre ) {
+		foreach ( $writers as $key => $w ) {
+			if ( in_array( $genre, (array) ( isset( $w['genres'] ) ? $w['genres'] : array() ), true ) ) {
+				return $key;
+			}
+		}
+	}
+	// 3) fallback
+	$path = kpop_writers_json_path();
+	$fb = '';
+	if ( is_readable( $path ) ) {
+		$data = json_decode( (string) file_get_contents( $path ), true );
+		$fb = isset( $data['fallback_writer'] ) ? $data['fallback_writer'] : '';
+	}
+	return isset( $writers[ $fb ] ) ? $fb : 'editorial';
+}
+
+/**
+ * 記事の執筆者バイライン(リンク付き)を返す。
+ * content-single.php から呼ぶ。担当ライターが解決できれば名前を /writers/{key}/ へリンク。
+ * 解決不能なら従来の get_the_author() 名(リンクなし)を返す。
+ */
+function kpop_writer_byline( $post_id = 0 ) {
+	if ( ! $post_id ) {
+		$post_id = get_the_ID();
+	}
+	$writers = kpop_get_writers();
+	$key = kpop_resolve_post_writer( $post_id );
+	if ( $key && isset( $writers[ $key ] ) ) {
+		$name = isset( $writers[ $key ]['name'] ) ? $writers[ $key ]['name'] : $key;
+		$post = get_page_by_path( $key, OBJECT, 'writer' );
+		$url  = $post ? get_permalink( $post ) : home_url( '/writers/' . $key . '/' );
+		return '<a class="kpop-byline-link" href="' . esc_url( $url ) . '" rel="author">' . esc_html( $name ) . '</a>';
+	}
+	return esc_html( get_the_author() );
+}
+
 /* ── 個別ページ本文を JSON から描画 ───────────────────────────────────── */
 function kpop_render_writer_profile( $key, $w ) {
 	$name      = isset( $w['name'] ) ? $w['name'] : $key;

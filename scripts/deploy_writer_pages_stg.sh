@@ -4,8 +4,9 @@
 #
 # 反映物:
 #   - functions.php             (末尾に inc/writer-profiles.php の require を追加)
-#   - inc/writer-profiles.php   (新規: CPT登録+JSON駆動描画+CSS)
-#   - data/x_writer_personas.json (新規: テーマ同梱のライター定義)
+#   - inc/writer-profiles.php   (CPT登録+JSON駆動描画+CSS+記事署名リンク解決)
+#   - data/x_writer_personas.json (テーマ同梱のライター定義)
+#   - content-single.php        (執筆者表示を /writers/ へのリンクに)
 #
 # 使い方(オーナー):  sudo bash scripts/deploy_writer_pages_stg.sh
 # 本番反映は stg 検証 OK 後、TARGET を本番テーマパスに変えて再実行。
@@ -27,6 +28,7 @@ fi
 # PHP 構文チェック(壊れたまま反映しない)
 php -l "$SRC/functions.php" >/dev/null
 php -l "$SRC/inc/writer-profiles.php" >/dev/null
+php -l "$SRC/content-single.php" >/dev/null
 
 # バックアップ(functions.php のみ上書きのため)
 ts=$(date +%Y%m%d_%H%M%S)
@@ -35,11 +37,13 @@ echo "backup: functions.php.bak.$ts"
 
 # 反映
 install -d -o www-data -g www-data "$TARGET/inc" "$TARGET/data"
+cp -a "$TARGET/content-single.php" "$TARGET/content-single.php.bak.$ts" 2>/dev/null || true
 cp -a "$SRC/functions.php"            "$TARGET/functions.php"
 cp -a "$SRC/inc/writer-profiles.php"  "$TARGET/inc/writer-profiles.php"
 cp -a "$SRC/data/x_writer_personas.json" "$TARGET/data/x_writer_personas.json"
-chown -R "$OWNER" "$TARGET/inc" "$TARGET/data" "$TARGET/functions.php"
-echo "copied 3 files + chown $OWNER"
+cp -a "$SRC/content-single.php"       "$TARGET/content-single.php"
+chown -R "$OWNER" "$TARGET/inc" "$TARGET/data" "$TARGET/functions.php" "$TARGET/content-single.php"
+echo "copied 4 files + chown $OWNER"
 
 # rewrite flush(/writers/ の 404 防止)。wp-cli パスは環境に合わせて。
 WP_CLI="${WP_CLI:-wp}"

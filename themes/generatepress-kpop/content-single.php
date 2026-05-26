@@ -85,7 +85,15 @@ if ( $kpop_is_popup_single ) {
 					</time>
 				<?php endif; ?>
 				<span class="kpop-meta-item kpop-meta-author" itemprop="author">
-					<span class="kpop-meta-label">執筆</span><?php echo esc_html( get_the_author() ); ?>
+					<span class="kpop-meta-label">執筆</span><?php
+						/* 担当ライター(架空8人)を tags/category から解決し /writers/ へリンク。
+						   未ロード時は従来の WP 著者名にフォールバック。 */
+						if ( function_exists( 'kpop_writer_byline' ) ) {
+							echo kpop_writer_byline( get_the_ID() );
+						} else {
+							echo esc_html( get_the_author() );
+						}
+					?>
 				</span>
 				<?php if ( function_exists( 'kpop_reading_time' ) ) : ?>
 					<span class="kpop-meta-item kpop-meta-time">
