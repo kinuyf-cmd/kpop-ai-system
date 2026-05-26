@@ -39,7 +39,8 @@
         "デビュー記念日",
         "箱推しの幸せ",
         "娘と観た韓ドラ"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a calm, friendly Japanese woman in her early 40s, soft shoulder-length hair, gentle smile, wearing a simple elegant blouse, warm neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "yui": {
       "name": "ゆい",
@@ -85,7 +86,8 @@
         "昔のライブ",
         "give写真",
         "コンサートの思い出"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a cheerful Japanese woman in her mid 20s, trendy medium hair, casual stylish top, bright energetic expression, purple-pink background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "nono": {
       "name": "のの",
@@ -131,7 +133,8 @@
         "カムバ予告",
         "大学とオタ活の両立",
         "フェスの予定"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a youthful Japanese female university student around 21, casual hoodie, playful relaxed expression, pastel background, cute modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "saki": {
       "name": "さき",
@@ -172,7 +175,8 @@
         "予約戦争",
         "昔のVIP活動",
         "財布の中身"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a lively Japanese woman in her mid 30s, short bob hair, confident grin, casual cool jacket, warm background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "haruka": {
       "name": "はるか",
@@ -206,7 +210,8 @@
         "遠征の前乗りご飯",
         "見てるドラマの感想",
         "トッポギ"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a relaxed Japanese woman around 30, long wavy hair, soft easygoing smile, cozy cardigan, holding a small coffee cup, warm cafe-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "aya": {
       "name": "アヤ",
@@ -245,7 +250,8 @@
         "今季のトレンド",
         "推しのスタイリング",
         "色の組み合わせ"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a chic Japanese woman around 28, sleek straight hair, fashionable minimal outfit, cool composed expression, stylish neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "rika": {
       "name": "リカ",
@@ -280,7 +286,8 @@
         "初動の数字",
         "受賞ニュース",
         "動員数"
-      ]
+      ],
+      "avatar_prompt": "Flat vector illustration avatar of a quiet thoughtful Japanese woman around 25, neat hair, glasses, calm subtle expression, simple cool-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text"
     },
     "editorial": {
       "name": "編集部",
@@ -310,7 +317,8 @@
         "速報",
         "ざわついてる話題",
         "気になるニュース"
-      ]
+      ],
+      "avatar_prompt": "Flat vector mascot-style avatar representing a K-pop news editorial desk, abstract friendly persona with headphones and a microphone motif, gender-neutral, vibrant background, modern minimal icon style, original design, not a real person, no text"
     }
   },
   "genre_aliases": {

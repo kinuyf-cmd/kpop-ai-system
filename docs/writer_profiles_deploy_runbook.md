@@ -27,7 +27,20 @@ bash scripts/sync_writer_personas.sh
 # 3) 通常のテーマ反映(下記デプロイ)
 ```
 
-## デプロイ(オーナー作業)
+## デプロイ — ワンコマンド(オーナー作業)
+
+テーマ dir は www-data 所有のため sudo 必須 = オーナー実行。以下1コマンドで反映:
+
+```bash
+sudo bash scripts/deploy_writer_pages_stg.sh          # stg へ
+# 本番へは stg 検証 OK 後:
+sudo TARGET=/path/to/本番theme bash scripts/deploy_writer_pages_stg.sh
+```
+
+スクリプトは PHP 構文チェック → functions.php バックアップ → 3ファイル反映 →
+chown www-data → rewrite flush → 器投稿シード確認、までを実施する。
+
+## デプロイ — 手動手順(参考)
 
 メモリ [[kpop-stg-deploy-workflow]] / [[repo-stylecss-overwrites-built-sidebar-css]] の方針に従う。
 テーマファイルの本番反映は owner 実行。
@@ -53,7 +66,20 @@ bash scripts/sync_writer_personas.sh
 - [ ] アバターはイラスト未設定なのでイニシャル+カラーのプレースホルダ(後フェーズで画像差し替え)
 - [ ] PHP エラーログにフェイタル無し
 
+## アバター(生成済み)
+
+8人分のイラスト風アバターを生成済み: `assets/writer_avatars/{key}.png`
+(架空人物・フラットベクター。実在アイドル非依拠)。
+
+- 再生成: `python3 scripts/gen_writer_avatars.py --force`(または `--only {key}`)。
+  プロンプトは `config/x_writer_personas.json` の各 `avatar_prompt`。OpenAI 課金(約 $0.04/枚)。
+- **featured image 設定(オーナー作業)**: 各 `writer` 投稿(slug=key)のアイキャッチに
+  対応する `{key}.png` を設定すると、プロフィール/一覧のプレースホルダ(イニシャル)から
+  自動でイラストに切り替わる(`inc/writer-profiles.php` が has_post_thumbnail を見る)。
+  - 手順例(wp-cli, owner 実行): メディアに import → 各 writer 投稿へ set featured。
+    `wp media import assets/writer_avatars/yui.png --post_id=<yui投稿ID> --featured_image`
+  - 画像は stg/本番のメディアライブラリに入れる(テーマ同梱ではない)。
+
 ## 後フェーズ
 
-- アバターのイラスト生成 → 各 `writer` 投稿の featured image に設定(設定すれば自動でプレースホルダから切替)。
 - 記事末尾の署名(ー ゆい 等)から該当ライターの `/writers/{key}/` へリンク(content-single.php 拡張)。

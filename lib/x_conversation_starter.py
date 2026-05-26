@@ -28,6 +28,14 @@ import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+# .env を読む(X_PERSONA_LLM / OPENAI_API_KEY 等)。直接 CLI 実行(cron)でも
+# ペルソナ生成が有効になるよう、scheduler と同様にここで明示ロードする。
+try:
+    from dotenv import load_dotenv
+    load_dotenv(str(Path(__file__).resolve().parent.parent / ".env"))
+except Exception:
+    pass
+
 
 ROOT = Path(__file__).resolve().parent.parent
 # 直接実行 (python3 lib/x_conversation_starter.py) でも `lib.x_persona_voice` 等の
