@@ -190,10 +190,36 @@ def build_event_article(sig: dict) -> tuple[str, str, str, str]:
     has_real_title = bool(title_orig) and title_orig.strip() != artist.strip()
     event_name = title_orig.strip() if has_real_title else f"{artist} 公演"
 
-    # タイトルは簡潔に。「— 出典: {media}」は一覧/カレンダーのセル内で冗長になり
-    # (本文の lead / 引用ボックス / CTA で出典は明示済み)、popup 側で 2026-05-21 に
-    # 同じ接尾辞を撤去した方針に揃える。
-    new_title = f"{artist} ライブ・コンサート情報"
+    # PRTIMES 等の見出しは「煽り文 + 『正式公演名』 + 詳細解禁!」の構造が多く、
+    # そのままだと公演名が長い宣伝文になり一覧/タイトルで読みにくい。
+    # 『...』『...』や「...」で囲われた正式公演名があればそれを公演名に採る。
+    if has_real_title:
+        import re as _re
+        _q = _re.findall(r'[『「]([^』」]{4,60})[』」]', event_name)
+        if _q:
+            # 最も長い引用部 = 正式公演名の可能性が高い
+            event_name = max(_q, key=len).strip()
+
+    # タイトルは公演名を活かして具体化する。
+    #   ・正式な公演名あり → 「{artist}『{公演名}』ライブ・コンサート情報」
+    #     (誤分類があっても実公演名がタイトルに出るので人間が気づける。
+    #      例: 旧「IVE ライブ・コンサート情報」では BABY SHARK 公演の誤りに
+    #      気づけなかった。新「IVE『BABY SHARK LIVE!』…」なら一目で発覚する)
+    #   ・公演名が薄い(=artist と同一) → 従来どおり汎用タイトル
+    # 「— 出典: {media}」接尾辞は一覧/カレンダーで冗長なので付けない(本文で明示)。
+    if has_real_title:
+        _pn = event_name
+        # HTMLエンティティを戻す(&lt; 等が見出しに混入するのを防ぐ)
+        import html as _html
+        _pn = _html.unescape(_pn)
+        # 公演名が artist で始まる場合の重複を除く(例 "aespa aespa JAPAN..." )
+        if _pn.lower().startswith(artist.lower()):
+            _pn = _pn[len(artist):].lstrip(" 　:：-―")
+        _pn = _pn[:40].rstrip()
+        # 除去後に空ならアーティストのみの汎用タイトルに退避
+        new_title = f"{artist}『{_pn}』ライブ・コンサート情報" if _pn else f"{artist} ライブ・コンサート情報"
+    else:
+        new_title = f"{artist} ライブ・コンサート情報"
 
     lead = (
         f"<p>{esc_html(artist)} 関連のライブ・コンサート情報が "
