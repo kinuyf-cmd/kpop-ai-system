@@ -31,7 +31,10 @@ import time
 
 
 def sanitize_tweet(text: str) -> str:
-    """ツイート本文の最終サニタイズ (lib/x_boost_selector.py 由来、import 循環回避のため内蔵)"""
+    """ツイート本文の最終サニタイズ。
+    注記(2026-05-26): かつて lib/x_boost_selector.py に置く想定だったが同ファイルは
+    現存しない。この関数がサニタイズの唯一の実体(他に import 元なし)。旧コメントの
+    「x_boost_selector.py 由来」は別ファイルを読めば全容が分かるという誤解を生むため修正。"""
     if not text:
         return ""
     s = _html.unescape(text)
