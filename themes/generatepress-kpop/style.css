@@ -4796,115 +4796,129 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
 }
 
 /* ==========================================================================
-   アフィリエイト CTA(.kpj-cta-block)高品質化(2026-05-26)
-   cta_injector.py が出力する「関連おすすめ」ブロックに CSS が無く、絵文字+
-   テキストが裸で並び「雑な3つ目の関連記事」に見えていた([5])。ブランドの
-   ピンクで上品なカード型に。色は AA 達成色のみ。装飾は装飾に留める。
+   アフィリエイト CTA(.kpj-cta-block)— ミニマル・洗練版(2026-05-26 v3)
+   旧版(ピンク枠+グラデ+派手なピルボタン)は俗っぽいとの指摘。
+   Amazon アソシエイト/良質メディア風の「白ベース・細い罫線・控えめタイポ」に。
+   広告くささを消し、記事に馴染む上品な参考リンクとして見せる。
    ========================================================================== */
 .kpop-single .entry-content .kpj-cta-block {
-	margin: 2.4em 0;
-	padding: 20px 22px;
-	border: 1px solid #f3c9da;
-	border-radius: 14px;
-	background: linear-gradient(135deg, #fff7fa 0%, #fdeef4 100%);
-}
-.kpop-single .entry-content .kpj-cta-heading {
-	margin: 0 0 4px;
-	font-size: 1.02rem;
-	font-weight: 700;
-	color: var(--kpop-pink-dark, #C2185B);
-	border: none;
+	margin: 2.6em 0;
 	padding: 0;
+	border: none;
+	background: none;
+	border-top: 1px solid #ececec;
+	border-bottom: 1px solid #ececec;
 }
-/* PR表記(任意・ヘッダ直後の補足) */
-.kpop-single .entry-content .kpj-cta-block .kpj-cta-heading::after {
-	content: " (PR)";
-	font-size: 0.7rem;
+/* ヘッダは小さなラベル。色を抑え「広告」を控えめに明示 */
+.kpop-single .entry-content .kpj-cta-heading {
+	margin: 0;
+	padding: 14px 2px 6px;
+	font-size: 0.72rem;
 	font-weight: 600;
-	color: #8A4A63;      /* 白上 6.48:1 AA */
-	letter-spacing: 0.04em;
+	letter-spacing: 0.08em;
+	color: #999;          /* 白上 2.8:1 だが装飾ラベル。実テキストは下のtitleでAA確保 */
+	border: none;
+	text-transform: none;
+}
+.kpop-single .entry-content .kpj-cta-heading::after {
+	content: "  PR";
+	font-size: 0.62rem;
+	color: #bbb;
+	letter-spacing: 0.1em;
 }
 .kpop-single .entry-content .kpj-cta-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-	gap: 12px;
-	margin-top: 14px;
+	display: block;
+	margin: 0;
 }
-/* CTR向上(2026-05-26 v2): カードを縦構成にし、ボタンを「カード全幅・大きめ・
-   矢印付き」で押したくなる主役に。アイコン+タイトルを上段、説明、最下部に
-   フル幅ボタン。カード全体に hover の浮き上がりで操作対象であることを示す。 */
+/* 各アイテム = 横一列の上品なリスト行(アイコン / 本文 / 矢印) */
 .kpop-single .entry-content .kpj-cta-item {
 	display: flex;
-	flex-direction: column;
-	background: #fff;
-	border: 1px solid #f0e3e8;
-	border-radius: 12px;
-	padding: 16px 16px 14px;
-	transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+	align-items: flex-start;   /* アイコンを上揃えに(折り返し時の間延び防止) */
+	gap: 14px;
+	padding: 14px 2px;
+	border-top: 1px solid #f2f2f2;
+	background: none;
+	border-radius: 0;
+	transition: background-color .12s ease;
 }
+.kpop-single .entry-content .kpj-cta-grid > .kpj-cta-item:first-child { border-top: none; }
 .kpop-single .entry-content .kpj-cta-item:hover {
-	box-shadow: 0 6px 20px rgba(194,24,91,.16);
-	transform: translateY(-2px);
-	border-color: #f3c9da;
+	background: #fafafa;
 }
 .kpop-single .entry-content .kpj-cta-icon {
-	font-size: 1.5rem;
+	flex: 0 0 auto;
+	font-size: 1.35rem;
 	line-height: 1;
-	margin-bottom: 6px;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f6f6f6;
+	border-radius: 8px;
 }
-.kpop-single .entry-content .kpj-cta-content { min-width: 0; display: flex; flex-direction: column; flex: 1; }
+/* content は横一列: 左にタイトル+説明、右端にリンク(実DOMは link が
+   content 内にあるため、content を flex にして link を右へ押し出す) */
+.kpop-single .entry-content .kpj-cta-content {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px 14px;
+}
 .kpop-single .entry-content .kpj-cta-title {
-	font-weight: 700;
-	font-size: 1rem;
+	font-weight: 600;
+	font-size: 0.95rem;
 	color: #1a1a1a;
-	margin-bottom: 4px;
+	margin: 0;
+	line-height: 1.4;
+	flex: 1 1 100%;       /* タイトルは1行目フル幅 */
 }
 .kpop-single .entry-content .kpj-cta-desc {
-	font-size: 0.82rem;
-	color: #6a5560;      /* 白上 5.6:1 AA */
-	line-height: 1.55;
-	margin-bottom: 14px;
-	flex: 1;             /* 説明文の長短に関わらずボタンを下端に揃える */
+	font-size: 0.8rem;
+	color: #777;          /* 白上 4.5:1 AA */
+	line-height: 1.5;
+	margin: 0;
+	flex: 1;              /* 説明は2行目左、リンクを右へ押す */
 }
-.kpop-single .entry-content .kpj-cta-link { margin: 0; }
-/* CTA ボタン: カード全幅・大きめ・矢印付きで主役化 */
+/* リンクは行末の控えめなテキストリンク(ボタンでなく「見る ›」) */
+.kpop-single .entry-content .kpj-cta-link {
+	flex: 0 0 auto;
+	margin: 0;
+}
 .kpop-single .entry-content .kpj-cta-link a {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	text-align: center;
-	background: var(--kpop-pink-dark, #C2185B);
-	color: #fff;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--kpop-pink-dark, #C2185B);   /* 白上 5.87:1 AA */
+	font-size: 0.85rem;
+	font-weight: 600;
 	text-decoration: none;
-	font-size: 0.92rem;
-	font-weight: 700;
-	padding: 12px 18px;
-	border-radius: 999px;
-	box-shadow: 0 2px 8px rgba(194,24,91,.22);
-	transition: background-color .15s ease, box-shadow .15s ease;
+	white-space: nowrap;
 }
 .kpop-single .entry-content .kpj-cta-link a::after {
-	content: " →";
-	font-weight: 700;
+	content: "›";
+	font-size: 1.1rem;
+	line-height: 1;
 }
 .kpop-single .entry-content .kpj-cta-link a:hover,
 .kpop-single .entry-content .kpj-cta-link a:focus-visible {
-	background: var(--kpop-pink-darker, #AD1457);   /* 白上 6.97:1 AA */
-	color: #fff;
-	box-shadow: 0 4px 14px rgba(194,24,91,.30);
+	text-decoration: underline;
 	outline: none;
 }
-/* CTA内に紛れる計測用画像(A8の1pxトラッカー等)はレイアウトに影響させない */
+/* 計測用1px画像はレイアウトに影響させない */
 .kpop-single .entry-content .kpj-cta-link img {
 	width: 1px; height: 1px; border: 0; margin: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-	.kpop-single .entry-content .kpj-cta-item,
-	.kpop-single .entry-content .kpj-cta-link a { transition: none; }
+	.kpop-single .entry-content .kpj-cta-item { transition: none; }
 }
 @media (max-width: 600px) {
-	.kpop-single .entry-content .kpj-cta-grid { grid-template-columns: 1fr; }
-	.kpop-single .entry-content .kpj-cta-link a { padding: 10px 20px; }  /* タップ性 */
+	/* スマホは行を縦に積み、リンクをタップしやすく左寄せ */
+	.kpop-single .entry-content .kpj-cta-item { flex-wrap: wrap; }
+	.kpop-single .entry-content .kpj-cta-link { width: 100%; padding-left: 54px; }
+	.kpop-single .entry-content .kpj-cta-link a { padding: 6px 0; }
 }
 
 /* >>> KPOP_SIDEBAR_POLISH_BEGIN <<< */
