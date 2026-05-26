@@ -1440,6 +1440,29 @@ add_filter( 'the_content', 'kpop_mark_image_credit', 5 );
  *       <aside class="kpop-sources"> としてまとめて小さく描画。DBは非破壊。 */
 function kpop_consolidate_sources( $content ) {
 	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) { return $content; }
+
+	// 既存記事の <h2>情報ソース</h2><ul>...</ul> を控えめな aside に格下げ([2])。
+	// 本文と同格の大見出しで出典が目立つ問題を、表示時に小サイズ化(DB非破壊)。
+	$content = preg_replace_callback(
+		'/<h2[^>]*>\s*情報ソース\s*<\/h2>\s*(<ul\b.*?<\/ul>)/is',
+		function ( $m ) {
+			return '<aside class="kpop-sources" aria-label="情報ソース">'
+				. '<p class="kpop-sources-label">情報ソース・出典</p>'
+				. preg_replace( '/<ul\b[^>]*>/i', '<ul class="kpop-sources-list">', $m[1], 1 )
+				. '</aside>';
+		},
+		$content
+	);
+	// h2 の直後が <p>(元記事リンク等)のパターンも格下げ
+	$content = preg_replace_callback(
+		'/<h2[^>]*>\s*情報ソース\s*<\/h2>\s*(<p\b.*?<\/p>)/is',
+		function ( $m ) {
+			return '<aside class="kpop-sources" aria-label="情報ソース">'
+				. '<p class="kpop-sources-label">情報ソース・出典</p>' . $m[1] . '</aside>';
+		},
+		$content
+	);
+
 	if ( strpos( $content, '出典' ) === false && strpos( $content, '引用元' ) === false ) {
 		return $content;
 	}

@@ -247,18 +247,56 @@ if ( $kpop_is_popup_single ) {
 		   存在すれば、本文末尾に「<アーティスト名> の詳細プロフィール」リンクを
 		   表示する。これにより「個別記事 ⇔ Wiki 双方向リンク」を完成させる
 		   (Wiki → 記事は single-idol_artist.php の関連記事リストで実装済み)。 */
+		$kpop_wiki_links = array();
+		$kpop_seen_wiki = array();
+		// (a) タグ slug が idol_artist slug と一致するケース
 		$kpop_post_tags = get_the_tags( get_the_ID() );
 		if ( $kpop_post_tags && ! is_wp_error( $kpop_post_tags ) ) {
-			$kpop_wiki_links = array();
 			foreach ( $kpop_post_tags as $kpop_tag ) {
 				$kpop_idol = get_page_by_path( $kpop_tag->slug, OBJECT, 'idol_artist' );
-				if ( $kpop_idol && 'publish' === $kpop_idol->post_status ) {
+				if ( $kpop_idol && 'publish' === $kpop_idol->post_status
+					&& empty( $kpop_seen_wiki[ $kpop_idol->ID ] ) ) {
+					$kpop_seen_wiki[ $kpop_idol->ID ] = true;
 					$kpop_wiki_links[] = array(
 						'name' => get_the_title( $kpop_idol ),
 						'url'  => get_permalink( $kpop_idol ),
 					);
 				}
 			}
+		}
+		// (b) タグ slug が韓国語/速報等で一致しない記事向け: タイトルに含まれる
+		//     idol_artist 名でマッチ(タグ依存だと treasure 記事等で導線が出ない問題の補強)。
+		if ( empty( $kpop_wiki_links ) ) {
+			$kpop_title_l = ' ' . strtolower( get_the_title() ) . ' ';
+			$kpop_idol_q = new WP_Query( array(
+				'post_type'      => 'idol_artist',
+				'post_status'    => 'publish',
+				'posts_per_page' => 200,
+				'no_found_rows'  => true,
+			) );
+			$kpop_title_raw = get_the_title();
+			foreach ( $kpop_idol_q->posts as $kpop_idol_p ) {
+				$kpop_nm = get_the_title( $kpop_idol_p );
+				if ( mb_strlen( $kpop_nm ) < 3 ) { continue; } // V/IU 等の短名は誤マッチ回避
+				// 英数字のみの名(IVE/BTS 等)は単語境界一致(LIVE 内の IVE 誤検出を防ぐ)。
+				// 記号/日本語を含む名(&TEAM 等)は部分一致。
+				if ( preg_match( '/^[A-Za-z0-9]+$/', $kpop_nm ) ) {
+					$kpop_hit = (bool) preg_match( '/(?<![A-Za-z0-9])' . preg_quote( $kpop_nm, '/' ) . '(?![A-Za-z0-9])/i', $kpop_title_raw );
+				} else {
+					$kpop_hit = ( stripos( $kpop_title_raw, $kpop_nm ) !== false );
+				}
+				if ( $kpop_hit && empty( $kpop_seen_wiki[ $kpop_idol_p->ID ] ) ) {
+					$kpop_seen_wiki[ $kpop_idol_p->ID ] = true;
+					$kpop_wiki_links[] = array(
+						'name' => $kpop_nm,
+						'url'  => get_permalink( $kpop_idol_p ),
+					);
+					if ( count( $kpop_wiki_links ) >= 2 ) { break; } // 出しすぎ防止
+				}
+			}
+			wp_reset_postdata();
+		}
+		if ( true ) {
 			if ( ! empty( $kpop_wiki_links ) ) :
 			?>
 			<aside class="kpop-idol-wiki-link" aria-label="アーティストの詳細プロフィール">

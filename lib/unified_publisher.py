@@ -369,9 +369,15 @@ def unified_publish(
             f'{s.get("source_id","?").upper()}</a>: 記事を見る</li>'
             for s in source_signals[:5]
         )
-        sources_html = f'\n<h2>情報ソース</h2>\n<ul>{items}</ul>\n<p><em>※ 最新情報は各公式発表をご確認ください。</em></p>'
+        # 出典は本文と同格の h2 でなく、末尾の控えめな aside にまとめる(オーナー
+        # 指摘[2]「出典はまとめて下部に小さく」。CSS .kpop-sources で小サイズ表示)。
+        sources_html = (f'\n<aside class="kpop-sources" aria-label="情報ソース">'
+                        f'<p class="kpop-sources-label">情報ソース・出典</p>'
+                        f'<ul class="kpop-sources-list">{items}</ul></aside>')
     elif source_url:
-        sources_html = f'\n<h2>情報ソース</h2>\n<p>元記事: <a href="{source_url}" target="_blank" rel="noopener">{source_url[:60]}</a></p>'
+        sources_html = (f'\n<aside class="kpop-sources" aria-label="情報ソース">'
+                        f'<p class="kpop-sources-label">出典: '
+                        f'<a href="{source_url}" target="_blank" rel="noopener">{source_url[:60]}</a></p></aside>')
 
     content = f"{attribution_html}{body_html}\n\n{conf_note}\n{sources_html}"
 
