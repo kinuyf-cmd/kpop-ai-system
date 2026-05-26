@@ -30,6 +30,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+# 直接実行 (python3 lib/x_conversation_starter.py) でも `lib.x_persona_voice` 等の
+# `lib.` import が通るよう保険。-m / repo root からの import 時は無害。
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 LOG_DIR = Path.home() / ".kpop_recovery"
 LOG_FILE = LOG_DIR / "x_posting_log.jsonl"
 
@@ -144,17 +148,63 @@ def _weighted_artist(directives: dict) -> str:
     return random.choice(pool)
 
 
+def _persona_generate(artist: str, directives: dict) -> dict | None:
+    """X_PERSONA_LLM=1 のとき LLM ペルソナで純つぶやきを生成 (URLなし)。
+    成功時は generate() と同形の dict、失敗時は None (呼出側でテンプレ退避)。
+    2026-05-26: テンプレ使い回し(8テンプレ×{artist}差し替え)の根治。"""
+    if os.getenv("X_PERSONA_LLM", "") != "1":
+        return None
+    try:
+        from lib.x_persona_voice import generate_persona_post
+    except ImportError:
+        return None
+    # focus_themes をきっかけ語として渡す(時事連動)
+    themes = directives.get("focus_themes", [])
+    theme_text = " ".join(
+        (t.get("theme", "") if isinstance(t, dict) else str(t)) for t in themes
+    )[:80]
+    out = generate_persona_post(
+        {"artist": artist, "theme": theme_text},
+        kind="conversation", genre="default",
+    )
+    if not out.get("used_llm") or not out.get("text"):
+        return None
+    text = out["text"]
+    return {
+        "template_id": f"LLM-{out['persona']}",
+        "category": "persona",
+        "title": "ペルソナつぶやき",
+        "artist": artist,
+        "text": text,
+        "char_count": len(text),
+        "in_range": 20 <= len(text) <= 200,
+        "has_url": bool(re.search(r"https?://", text)),
+        "hashtag_count": len(re.findall(r"#\S+", text)),
+    }
+
+
 def generate(template_id: str | None, artist: str | None) -> dict:
     directives = _load_directives()
+    if not artist:
+        # 2026-05-26(施策1-a): focus_themes の時事アーティストを重み付け選択
+        artist = _weighted_artist(directives)
+    # 2026-05-26: テンプレより先に LLM ペルソナを試す(成功すれば使い回し回避)。
+    # template_id を明示指定された場合(--id)は従来テンプレを尊重しスキップ。
+    if not template_id:
+        persona = _persona_generate(artist, directives)
+        if persona is not None:
+            return persona
     if not template_id:
         template_id = random.choice(list(TEMPLATES.keys()))
     if template_id not in TEMPLATES:
         raise SystemExit(f"unknown template id: {template_id}")
-    if not artist:
-        # 2026-05-26(施策1-a): focus_themes の時事アーティストを重み付け選択
-        artist = _weighted_artist(directives)
     tmpl = TEMPLATES[template_id]
     pattern = random.choice(tmpl["patterns"])
+    # 2026-05-26: テンプレ内の `#{artist}` がスペースを残し `#Stray Kids` 等の
+    # 壊れたハッシュタグを生む事故を修正。本文中の {artist} はそのまま(スペース可)、
+    # ハッシュタグ位置のみスペース除去する。
+    artist_tag = artist.replace(" ", "")
+    pattern = pattern.replace("#{artist}", f"#{artist_tag}")
     text = pattern.format(artist=artist)
     char_count = len(text)
     # 文字数チェック(120-180字推奨、超過時は warn)

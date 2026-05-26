@@ -872,6 +872,14 @@ if ( file_exists( $kpop_sidebar_sc ) ) {
 	require_once $kpop_sidebar_sc;
 }
 
+/* --- ライター紹介ページ(writer CPT・JSON 連動)を読み込む ---
+ * config/x_writer_personas.json を真実のソースに /writers/ を生成。
+ * 詳細は inc/writer-profiles.php 冒頭コメント参照。 */
+$kpop_writer_inc = get_stylesheet_directory() . '/inc/writer-profiles.php';
+if ( file_exists( $kpop_writer_inc ) ) {
+	require_once $kpop_writer_inc;
+}
+
 /* --- A-3: カムバック予定ボックスを削除 ---
  * 既存サイドバー4箱に「カムバック予定」がある場合、CSS で表示抑制。
  * (functions.php に PHP 出力は無い — 段階5f の kpop_single_sidebar_extras

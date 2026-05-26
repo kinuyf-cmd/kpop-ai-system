@@ -460,5 +460,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "": {
+    "name": "있지",
+    "files": [
+      "_3039256a.jpg"
+    ],
+    "sources": [
+      {
+        "file": "_3039256a.jpg",
+        "wikimedia_title": "File:230102 ITZY (있지).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/230102_ITZY_%28%EC%9E%88%EC%A7%80%29.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

@@ -397,9 +397,23 @@ def determine_target(title: str, genre: str) -> str:
 
 
 def extract_artist(title: str) -> str:
-    """タイトルからアーティスト名を抽出する（KNOWN_ARTISTSのみ信頼）"""
-    for artist in KNOWN_ARTISTS:
-        if artist.lower() in title.lower():
+    """タイトルからアーティスト名を抽出する（KNOWN_ARTISTSのみ信頼）
+
+    2026-05-26: 部分文字列誤マッチを修正。素の `in` だと「TREASURE」が「IVE」に、
+    「ATEEZ」が…といった短い ASCII 名の包含で誤抽出していた(X ハッシュタグが
+    #IVE になる事故)。ASCII 名は単語境界、長い名前を優先して照合する。
+    """
+    tl = title.lower()
+    # 長い名前を優先(「Stray Kids」を「Kids」より、「TREASURE」を含む語を先に判定)
+    for artist in sorted(KNOWN_ARTISTS, key=len, reverse=True):
+        al = artist.lower()
+        # ASCII を含む名前は前後が英数字でない位置でのみ一致(単語境界)。
+        # 日本語名(カタカナ等)はそのまま包含で可。
+        if re.search(r'[a-z0-9]', al):
+            pat = r'(?<![a-z0-9])' + re.escape(al) + r'(?![a-z0-9])'
+            if re.search(pat, tl):
+                return artist
+        elif al in tl:
             return artist
     # KNOWN_ARTISTSに一致しない場合はカタカナ名のみフォールバック
     # （英字ブランド名やショップ名の誤抽出を防止）

@@ -421,11 +421,13 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
                           'breaking', 'comeback', 'controversy', 'live',
                           'chart', 'fashion', 'default'):
             _genre = CATEGORY_TO_GENRE.get(_genre, 'default')
-        # v14.0 Phase 2: X_TWEET_LLM=1 で LLM 駆動 (gpt-4o-mini) を有効化。
-        # post_id があれば WP から本文を取得して LLM に渡す。失敗時は Phase 1 にフォールバック。
+        # 2026-05-26: X_PERSONA_LLM=1 で「等身大ライターのつぶやき」フックを生成
+        # (テンプレ/タイトル丸写しの AI 臭を根治)。X_TWEET_LLM=1 は faceless 事実型の
+        # 旧 Phase2。どちらも本文(source)を読むため、有効なら WP から本文を取得する。
+        _persona_enabled = os.getenv('X_PERSONA_LLM', '0') == '1'
         _llm_enabled = os.getenv('X_TWEET_LLM', '0') == '1'
         _source_text = ''
-        if _llm_enabled and post_id:
+        if (_persona_enabled or _llm_enabled) and post_id:
             try:
                 import urllib.request as _ur
                 import json as _json
@@ -436,10 +438,23 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
                 _source_text = re.sub(r'<[^>]+>', '', _raw)[:1500]
             except Exception:
                 _source_text = ''
-        if _llm_enabled and _source_text:
-            hook_text = generate_tweet_llm(text, '', _source_text, _genre, include_url=False)
-        else:
-            hook_text = generate_tweet(text, '', _genre, include_url=False)
+        hook_text = ''
+        if _persona_enabled:
+            try:
+                from lib.x_persona_voice import generate_persona_post
+                _p = generate_persona_post(
+                    {'title': text, 'source_text': _source_text, 'artist': artist},
+                    kind='article', genre=_genre, include_url=False,
+                )
+                if _p.get('used_llm') and _p.get('text'):
+                    hook_text = _p['text']
+            except Exception:
+                hook_text = ''
+        if not hook_text:
+            if _llm_enabled and _source_text:
+                hook_text = generate_tweet_llm(text, '', _source_text, _genre, include_url=False)
+            else:
+                hook_text = generate_tweet(text, '', _genre, include_url=False)
     except Exception as _e:
         # フォールバック
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
@@ -535,11 +550,26 @@ def post_thread(text: str, url: str, post_id: int = None,
 
     # hook → 要点(reply) → url(reply) の順で3段を直接組む。
     _genre = genre or 'default'
+    hook_text = ''
+    # 2026-05-26: X_PERSONA_LLM=1 ならフックを等身大ライターのつぶやき化(要点は
+    # 従来の事実型 generate_tweet_llm のまま=人間の声+客観要点の二段構え)。
+    if os.getenv('X_PERSONA_LLM', '0') == '1':
+        try:
+            from lib.x_persona_voice import generate_persona_post
+            _p = generate_persona_post(
+                {'title': text, 'source_text': _source_text, 'artist': artist},
+                kind='article', genre=_genre, include_url=False,
+            )
+            if _p.get('used_llm') and _p.get('text'):
+                hook_text = _p['text']
+        except Exception:
+            hook_text = ''
     try:
         from lib.x_post_templates import generate_tweet, generate_tweet_llm, generate_url_reply
-        hook_text = generate_tweet(text, '', _genre, include_url=False)
+        if not hook_text:
+            hook_text = generate_tweet(text, '', _genre, include_url=False)
     except Exception:
-        hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+        hook_text = hook_text or (text[:200] + '\n\n#KPOPJOURNAL #KPOP')
     if not hook_text:
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
 

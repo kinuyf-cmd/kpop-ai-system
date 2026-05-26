@@ -1,240 +1,213 @@
 {
-  "updated": "2026-05-25 22:36",
-  "count": 28,
+  "updated": "2026-05-26 21:30",
+  "count": 45,
   "queue": [
     {
-      "title": "WOODZ「Drowning」Melonチャート70週連続10位",
-      "url": "https://www.kpopjournal.tokyo/woodz-drowning-melon-chart-70-weeks-top10/",
-      "post_id": 646,
-      "genre": "news",
-      "artist": "WOODZ",
-      "priority": "high",
-      "queued_at": "2026-05-23T21:23:57.247081"
-    },
-    {
-      "title": "BTSが2026年アメリカン・ミュージック・アワード出演",
-      "url": "https://www.kpopjournal.tokyo/?p=657",
-      "post_id": 657,
+      "title": "ILLITのウォンヒ、シャネルイベント出席",
+      "url": "https://www.kpopjournal.tokyo/illits-wonhee-chanel-event-attendance/",
+      "post_id": 2295,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "아일릿",
       "priority": "high",
-      "queued_at": "2026-05-23T22:45:04.569327"
+      "queued_at": "2026-05-26T17:37:33.665085"
     },
     {
-      "title": "ITZY、モロッコのマワジーン音楽祭ヘッドライナー決定",
-      "url": "https://www.kpopjournal.tokyo/itzy-morocco-mawazine-headliner/",
-      "post_id": 1073,
-      "genre": "breaking",
-      "artist": "ITZY",
-      "priority": "high",
-      "queued_at": "2026-05-23T23:23:36.966112"
-    },
-    {
-      "title": "Stray Kidsのスンミン、2026年Governors Ball欠席",
-      "url": "https://www.kpopjournal.tokyo/stray-kids-seungmin-governors-ball-absence/",
-      "post_id": 1080,
-      "genre": "breaking",
-      "artist": "Stray Kids",
-      "priority": "high",
-      "queued_at": "2026-05-23T23:23:50.670389"
-    },
-    {
-      "title": "aespaのWinter「未編集」ビジュアルが話題",
-      "url": "https://www.kpopjournal.tokyo/aespa-winter-unedited-visuals/",
-      "post_id": 1098,
-      "genre": "breaking",
-      "artist": "aespa",
-      "priority": "high",
-      "queued_at": "2026-05-23T23:24:28.576161"
-    },
-    {
-      "title": "ILLITのWONHEE、飲酒姿が批判される",
-      "url": "https://www.kpopjournal.tokyo/illits-wonhee-drinking-criticism/",
-      "post_id": 1118,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-05-23T23:25:05.897647"
-    },
-    {
-      "title": "SEVENTEENのディノ、別人格Picheolinデビュー",
-      "url": "https://www.kpopjournal.tokyo/seventeen-dino-picheolin-debut/",
-      "post_id": 1144,
-      "genre": "breaking",
-      "artist": "SEVENTEEN",
-      "priority": "high",
-      "queued_at": "2026-05-24T13:36:49.682154"
-    },
-    {
-      "title": "TXTのヨンジュンのガールグループカバー賛否両論",
-      "url": "https://www.kpopjournal.tokyo/txt-youngjoon-girlgroup-cover-debate/",
-      "post_id": 1157,
-      "genre": "breaking",
-      "artist": "TXT",
-      "priority": "high",
-      "queued_at": "2026-05-25T12:59:49.299014"
-    },
-    {
-      "title": "SEVENTEEN、日本で18万人と出会う生中継",
-      "url": "https://www.kpopjournal.tokyo/seventeen-japan-live-broadcast-180000/",
-      "post_id": 1219,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:05:19.950123"
-    },
-    {
-      "title": "TREASURE、ミニ4集タイトル曲「IF I」発表",
-      "url": "https://www.kpopjournal.tokyo/treasure-if-i-mini4th-album/",
-      "post_id": 1226,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:05:50.125307"
-    },
-    {
-      "title": "aespa、正規2集「LEMONADE」ハイライトメドレー公開",
-      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-highlights/",
-      "post_id": 1232,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:06:49.201617"
-    },
-    {
-      "title": "ボア、SM離脱後の驚きのビジュアル公開",
-      "url": "https://www.kpopjournal.tokyo/?p=1238",
-      "post_id": 1238,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:07:20.485949"
-    },
-    {
-      "title": "ボア、SM離脱後の変貌と新たな挑戦",
-      "url": "https://www.kpopjournal.tokyo/?p=1241",
-      "post_id": 1241,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:07:39.608606"
-    },
-    {
-      "title": "SEVENTEEN、京セラドーム大阪でファンミ成功",
-      "url": "https://www.kpopjournal.tokyo/seventeen-fanmeeting-kyocera-dome/",
-      "post_id": 1245,
-      "genre": "breaking",
-      "artist": "SEVENTEEN",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:08:15.638326"
-    },
-    {
-      "title": "LE SSERAFIM新アルバム「퓨어플로우」リリース",
-      "url": "https://www.kpopjournal.tokyo/le-sserafim-new-album-pureflow/",
-      "post_id": 1263,
-      "genre": "breaking",
-      "artist": "르세라핌",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:10:17.036554"
-    },
-    {
-      "title": "真美松監督『SILENT VOICES』カンヌ映画祭2等賞受賞",
-      "url": "https://www.kpopjournal.tokyo/mami-matsu-silent-voices-cannes-award/",
-      "post_id": 1296,
+      "title": "パク・ジフン、1600万動員映画で存在感発揮",
+      "url": "https://www.kpopjournal.tokyo/?p=2286",
+      "post_id": 2286,
       "genre": "breaking",
       "artist": "워너원",
       "priority": "high",
-      "queued_at": "2026-05-25T13:18:09.999262"
+      "queued_at": "2026-05-26T17:36:32.101123"
     },
     {
-      "title": "BTS、ラスベガスで「アリラン」披露し感謝",
-      "url": "https://www.kpopjournal.tokyo/bts-ariran-las-vegas-thanks/",
-      "post_id": 1299,
+      "title": "パク・ジフン、1600万人動員映画で活躍中",
+      "url": "https://www.kpopjournal.tokyo/park-jihoon-1600-man-movie-success/",
+      "post_id": 2285,
       "genre": "breaking",
-      "artist": "방탄소년단",
+      "artist": "워너원",
       "priority": "high",
-      "queued_at": "2026-05-25T13:19:15.275962"
+      "queued_at": "2026-05-26T17:36:31.809523"
     },
     {
-      "title": "MONSTA Xキヒョン、「Lazy Day」を初披露",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-keyhun-lazy-day-debut/",
-      "post_id": 1302,
-      "genre": "breaking",
-      "artist": "몬스타엑스",
-      "priority": "high",
-      "queued_at": "2026-05-25T13:20:21.085812"
-    },
-    {
-      "title": "BTS「ARIRANG」ビルボード200で9週連続10位",
-      "url": "https://www.kpopjournal.tokyo/?p=1308",
-      "post_id": 1308,
+      "title": "現石俊と金秀妍、5月に4回目の結婚発表",
+      "url": "https://www.kpopjournal.tokyo/genishi-toshiyuki-konkatsu-4th-announcement/",
+      "post_id": 2278,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-05-25T13:35:33.717042"
+      "queued_at": "2026-05-26T17:35:44.839199"
     },
     {
-      "title": "リン、6ヶ月ぶりカムバック新曲「아이 좋아」発表",
-      "url": "https://www.kpopjournal.tokyo/rin-6-months-comeback-new-song-ai-joa/",
-      "post_id": 1411,
+      "title": "NewJeansのダニエル目撃情報に賛否両論",
+      "url": "https://www.kpopjournal.tokyo/newjeans-daniel-sighting-controversy/",
+      "post_id": 2171,
       "genre": "breaking",
-      "artist": "화사",
+      "artist": "NewJeans",
       "priority": "high",
-      "queued_at": "2026-05-25T19:31:01.090096"
+      "queued_at": "2026-05-26T17:30:44.352819"
     },
     {
-      "title": "BTSファン、コンサート中に暴力や脅迫受ける",
-      "url": "https://www.kpopjournal.tokyo/bts-fan-concert-violence-threats/",
-      "post_id": 1420,
+      "title": "BLACKPINKのジェニー、シャネルフォトウォール登場",
+      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-chanel-photo-wall/",
+      "post_id": 2031,
+      "genre": "breaking",
+      "artist": "블랙핑크",
+      "priority": "high",
+      "queued_at": "2026-05-26T16:36:22.169044"
+    },
+    {
+      "title": "TREASURE、ファンコンサート「NEW WAV : LIVE」で8都市ツアー",
+      "url": "https://www.kpopjournal.tokyo/treasure-new-wav-live-8-city-tour/",
+      "post_id": 1979,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:38:03.140502"
+    },
+    {
+      "title": "チェ・ウォンジョン監督、卒業作がカンヌ招待",
+      "url": "https://www.kpopjournal.tokyo/che-won-jong-graduation-cannes-invitation/",
+      "post_id": 1974,
+      "genre": "breaking",
+      "artist": "워너원",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:36:55.201192"
+    },
+    {
+      "title": "NewJeans元メンバーDANIELLE、教会で目撃",
+      "url": "https://www.kpopjournal.tokyo/newjeans-danielle-church-sighting/",
+      "post_id": 1944,
+      "genre": "breaking",
+      "artist": "뉴진스",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:32:26.718137"
+    },
+    {
+      "title": "RIIZEがウンソクの「Silent Walker」トレーラー公開",
+      "url": "https://www.kpopjournal.tokyo/riize-unsok-silent-walker-trailer/",
+      "post_id": 1936,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:31:39.244404"
+    },
+    {
+      "title": "Stray Kidsヒョンジン写真使用の誤解釈明",
+      "url": "https://www.kpopjournal.tokyo/stray-kids-hyun-jin-photo-misunderstanding/",
+      "post_id": 1927,
+      "genre": "breaking",
+      "artist": "Stray Kids",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:30:49.282669"
+    },
+    {
+      "title": "ディンディン、イジュンとの過去の発言語る",
+      "url": "https://www.kpopjournal.tokyo/dindin-ijun-past-comments/",
+      "post_id": 1918,
+      "genre": "breaking",
+      "artist": "셔누",
+      "priority": "high",
+      "queued_at": "2026-05-26T13:02:39.548161"
+    },
+    {
+      "title": "ビビ、ウ・ウォンジェの「싸가지」論争に言及",
+      "url": "https://www.kpopjournal.tokyo/bibi-u-wonje-ssagaji-ronso/",
+      "post_id": 1900,
+      "genre": "breaking",
+      "artist": "비비",
+      "priority": "high",
+      "queued_at": "2026-05-26T10:31:50.255477"
+    },
+    {
+      "title": "BABYMONSTER新曲「SUGAR HONEY ICE TEA」発表",
+      "url": "https://www.kpopjournal.tokyo/babymonster-sugar-honey-ice-tea-2/",
+      "post_id": 1891,
+      "genre": "breaking",
+      "artist": "BABYMONSTER",
+      "priority": "high",
+      "queued_at": "2026-05-26T10:30:45.559084"
+    },
+    {
+      "title": "高俊熙、名品全て手放しITZYに言及",
+      "url": "https://www.kpopjournal.tokyo/?p=1887",
+      "post_id": 1887,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-05-26T07:33:59.724672"
+    },
+    {
+      "title": "高俊熙、13年ぶりの衣類整理法公開",
+      "url": "https://www.kpopjournal.tokyo/takashunhi-clothing-organization-2023/",
+      "post_id": 1882,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-05-26T07:33:03.975377"
+    },
+    {
+      "title": "ITZYファン告白が物議、批判の声も",
+      "url": "https://www.kpopjournal.tokyo/itzy-fan-confession-controversy/",
+      "post_id": 1877,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-05-26T07:32:37.010252"
+    },
+    {
+      "title": "TWICEのモモ、コンサート中の面白い転倒",
+      "url": "https://www.kpopjournal.tokyo/twice-momo-concert-fall-funny/",
+      "post_id": 1871,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-05-26T07:32:01.920436"
+    },
+    {
+      "title": "I.O.I デビュー10周年再結成とカムバック",
+      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-reunion-comeback/",
+      "post_id": 1865,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-05-26T07:31:15.447880"
+    },
+    {
+      "title": "BTS「ARIRANG」ビルボード200で9週連続トップ10",
+      "url": "https://www.kpopjournal.tokyo/bts-arirang-billboard-top10-9weeks/",
+      "post_id": 1860,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-05-25T19:32:08.443420"
+      "queued_at": "2026-05-26T07:31:02.855718"
     },
     {
-      "title": "MONSTA Xユニット、Shownu X Hyungwonが「LOVE ME」プロ",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-shownu-hyungwon-love-me/",
-      "post_id": 1430,
+      "title": "RIIZE 日本ファンミーティング2026開催決定",
+      "url": "https://www.kpopjournal.tokyo/riize-fanmeeting-2026/",
+      "post_id": 1852,
       "genre": "breaking",
-      "artist": "monsta x",
+      "artist": "RIIZE",
       "priority": "high",
-      "queued_at": "2026-05-25T19:33:32.102889"
+      "queued_at": "2026-05-26T07:01:36.036296"
     },
     {
-      "title": "BLACKPINKの友情、不和の噂を覆す",
-      "url": "https://www.kpopjournal.tokyo/blackpink-friendship-rumors/",
-      "post_id": 1436,
+      "title": "BABYMONSTER新デジタルシングル「SUGAR HONEY ICE TEA」発",
+      "url": "https://www.kpopjournal.tokyo/?p=1848",
+      "post_id": 1848,
       "genre": "breaking",
-      "artist": "BLACKPINK",
+      "artist": "BABYMONSTER",
       "priority": "high",
-      "queued_at": "2026-05-25T19:34:20.556890"
+      "queued_at": "2026-05-26T07:00:39.342477"
     },
     {
-      "title": "aespaのニンニンとジゼル、お揃いへそピアス",
-      "url": "https://www.kpopjournal.tokyo/aespa-ninnyun-giselle-matching-navel-piercings/",
-      "post_id": 1445,
+      "title": "BOYNEXTDOOR、1stアルバム「HOME」コンセプト公開",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-home-concept/",
+      "post_id": 1509,
       "genre": "breaking",
-      "artist": "aespa",
+      "artist": "BOYNEXTDOOR",
       "priority": "high",
-      "queued_at": "2026-05-25T19:35:17.033971"
-    },
-    {
-      "title": "キム・ユジョン、SNSに手書き手紙公開",
-      "url": "https://www.kpopjournal.tokyo/kim-yujeong-handwritten-letter-sns/",
-      "post_id": 1456,
-      "genre": "breaking",
-      "artist": "소녀시대",
-      "priority": "high",
-      "queued_at": "2026-05-25T19:36:29.593074"
-    },
-    {
-      "title": "BOYNEXTDOORとRIIZE出演「Kstyle PARTY」盛況",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-riize-kstyle-party/",
-      "post_id": 1464,
-      "genre": "breaking",
-      "artist": "라이즈",
-      "priority": "high",
-      "queued_at": "2026-05-25T19:37:11.766023"
+      "queued_at": "2026-05-25T22:36:27.079757"
     },
     {
       "title": "ジン・ミソン監督「特権層の話をしたい",
@@ -246,13 +219,193 @@
       "queued_at": "2026-05-25T19:39:24.636631"
     },
     {
-      "title": "BOYNEXTDOOR、1stアルバム「HOME」コンセプト公開",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-home-concept/",
-      "post_id": 1509,
+      "title": "BOYNEXTDOORとRIIZE出演「Kstyle PARTY」盛況",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-riize-kstyle-party/",
+      "post_id": 1464,
       "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
+      "artist": "라이즈",
       "priority": "high",
-      "queued_at": "2026-05-25T22:36:27.079757"
+      "queued_at": "2026-05-25T19:37:11.766023"
+    },
+    {
+      "title": "キム・ユジョン、SNSに手書き手紙公開",
+      "url": "https://www.kpopjournal.tokyo/kim-yujeong-handwritten-letter-sns/",
+      "post_id": 1456,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:36:29.593074"
+    },
+    {
+      "title": "aespaのニンニンとジゼル、お揃いへそピアス",
+      "url": "https://www.kpopjournal.tokyo/aespa-ninnyun-giselle-matching-navel-piercings/",
+      "post_id": 1445,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:35:17.033971"
+    },
+    {
+      "title": "BLACKPINKの友情、不和の噂を覆す",
+      "url": "https://www.kpopjournal.tokyo/blackpink-friendship-rumors/",
+      "post_id": 1436,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:34:20.556890"
+    },
+    {
+      "title": "MONSTA Xユニット、Shownu X Hyungwonが「LOVE ME」プロ",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-shownu-hyungwon-love-me/",
+      "post_id": 1430,
+      "genre": "breaking",
+      "artist": "monsta x",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:33:32.102889"
+    },
+    {
+      "title": "BTSファン、コンサート中に暴力や脅迫受ける",
+      "url": "https://www.kpopjournal.tokyo/bts-fan-concert-violence-threats/",
+      "post_id": 1420,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:32:08.443420"
+    },
+    {
+      "title": "リン、6ヶ月ぶりカムバック新曲「아이 좋아」発表",
+      "url": "https://www.kpopjournal.tokyo/rin-6-months-comeback-new-song-ai-joa/",
+      "post_id": 1411,
+      "genre": "breaking",
+      "artist": "화사",
+      "priority": "high",
+      "queued_at": "2026-05-25T19:31:01.090096"
+    },
+    {
+      "title": "BTS「ARIRANG」ビルボード200で9週連続10位",
+      "url": "https://www.kpopjournal.tokyo/?p=1308",
+      "post_id": 1308,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:35:33.717042"
+    },
+    {
+      "title": "MONSTA Xキヒョン、「Lazy Day」を初披露",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-keyhun-lazy-day-debut/",
+      "post_id": 1302,
+      "genre": "breaking",
+      "artist": "몬스타엑스",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:20:21.085812"
+    },
+    {
+      "title": "BTS、ラスベガスで「アリラン」披露し感謝",
+      "url": "https://www.kpopjournal.tokyo/bts-ariran-las-vegas-thanks/",
+      "post_id": 1299,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:19:15.275962"
+    },
+    {
+      "title": "真美松監督『SILENT VOICES』カンヌ映画祭2等賞受賞",
+      "url": "https://www.kpopjournal.tokyo/mami-matsu-silent-voices-cannes-award/",
+      "post_id": 1296,
+      "genre": "breaking",
+      "artist": "워너원",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:18:09.999262"
+    },
+    {
+      "title": "LE SSERAFIM新アルバム「퓨어플로우」リリース",
+      "url": "https://www.kpopjournal.tokyo/le-sserafim-new-album-pureflow/",
+      "post_id": 1263,
+      "genre": "breaking",
+      "artist": "르세라핌",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:10:17.036554"
+    },
+    {
+      "title": "SEVENTEEN、京セラドーム大阪でファンミ成功",
+      "url": "https://www.kpopjournal.tokyo/seventeen-fanmeeting-kyocera-dome/",
+      "post_id": 1245,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:08:15.638326"
+    },
+    {
+      "title": "ボア、SM離脱後の変貌と新たな挑戦",
+      "url": "https://www.kpopjournal.tokyo/?p=1241",
+      "post_id": 1241,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:07:39.608606"
+    },
+    {
+      "title": "ボア、SM離脱後の驚きのビジュアル公開",
+      "url": "https://www.kpopjournal.tokyo/?p=1238",
+      "post_id": 1238,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:07:20.485949"
+    },
+    {
+      "title": "aespa、正規2集「LEMONADE」ハイライトメドレー公開",
+      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-highlights/",
+      "post_id": 1232,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:06:49.201617"
+    },
+    {
+      "title": "TREASURE、ミニ4集タイトル曲「IF I」発表",
+      "url": "https://www.kpopjournal.tokyo/treasure-if-i-mini4th-album/",
+      "post_id": 1226,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:05:50.125307"
+    },
+    {
+      "title": "SEVENTEEN、日本で18万人と出会う生中継",
+      "url": "https://www.kpopjournal.tokyo/seventeen-japan-live-broadcast-180000/",
+      "post_id": 1219,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-05-25T13:05:19.950123"
+    },
+    {
+      "title": "TXTのヨンジュンのガールグループカバー賛否両論",
+      "url": "https://www.kpopjournal.tokyo/txt-youngjoon-girlgroup-cover-debate/",
+      "post_id": 1157,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-05-25T12:59:49.299014"
+    },
+    {
+      "title": "ビビ、ミノイのディス曲疑惑を否定",
+      "url": "https://www.kpopjournal.tokyo/bibi-diss-track-denial-minoi/",
+      "post_id": 2523,
+      "genre": "breaking",
+      "artist": "비비",
+      "priority": "high",
+      "queued_at": "2026-05-26T19:31:50.463199"
+    },
+    {
+      "title": "aespaのウィンターが広告法違反の疑い",
+      "url": "https://www.kpopjournal.tokyo/aespa-winter-advertising-violation/",
+      "post_id": 2555,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-05-26T21:30:44.898246"
     }
   ]
 }

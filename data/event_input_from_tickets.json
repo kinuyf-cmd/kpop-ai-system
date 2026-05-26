@@ -1,0 +1,244 @@
+{
+ "signals": [
+  {
+   "type": "event",
+   "artist_keyword": "Kwon Jin Ah",
+   "title": "Kwon Jin Ah",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2666183",
+   "source_media": "ぴあ",
+   "start_date": "2026-05-30",
+   "venue": "日本橋三井ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JANG HANEUM",
+   "title": "2026 JANG HANEUM FANMEETING IN TOKYO : To My Spring,BBZ",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667495",
+   "source_media": "ぴあ",
+   "start_date": "2026-05-31",
+   "venue": "板橋区立文化会館 大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SHINee",
+   "title": "SHINee",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668012",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-05",
+   "venue": "ベルーナドーム",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LEE YOUNGJI",
+   "title": "LEE YOUNGJI",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2666721",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-05",
+   "venue": "Zepp Haneda",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NEXZ",
+   "title": "NEXZ",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667321",
+   "source_media": "ぴあ",
+   "start_date": "2026-05-30",
+   "venue": "国立代々木競技場 第一体育館",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HAN SEUNG WOO",
+   "title": "HAN SEUNG WOO TOKYO SPECIAL FANMEETING",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667945",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LEE JI HOON",
+   "title": "LEE JI HOON TOKYO SPECIAL FANMEETING",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667943",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HAN SEUNG WOO",
+   "title": "LEE JI HOON × HAN SEUNG WOO TOKYO SPECIAL FANMEETING “KICK&SOUL”",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667941",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MYNAME",
+   "title": "MYNAME",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667133",
+   "source_media": "ぴあ",
+   "start_date": "2026-05-27",
+   "venue": "SHIBUYA PLEASURE PLEASURE",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MYNAME",
+   "title": "MYNAME",
+   "source_url": "https://eplus.jp/sf/detail/0728230001-P0030087P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-05-29",
+   "venue": "SPADE BOX",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Kwon Jin Ah",
+   "title": "2026 Kwon Jin Ah 1st Concert in Japan",
+   "source_url": "https://eplus.jp/sf/detail/4533350001-P0030001P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-05-30",
+   "venue": "日本橋三井ホール",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "WI HA JUN",
+   "title": "WI HA JUN",
+   "source_url": "https://eplus.jp/sf/detail/4135860001-P0030003P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-05-30",
+   "venue": "天王洲 銀河劇場",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "IVE",
+   "title": "vanvanV4 45th Anniversary ×辿るvol.4 DAY1",
+   "source_url": "https://eplus.jp/sf/detail/4523570001-P0030001P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-07-18",
+   "venue": "金沢vanvanV4",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NCT",
+   "title": "NAOTO Concert Tour 2026「Sanctuary」「Blue’G’」",
+   "source_url": "https://eplus.jp/sf/detail/4504900001-P0030001P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-07-11",
+   "venue": "名古屋CLUB QUATTRO",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NCT",
+   "title": "junction 2manshow STINKY   HAWAIAN6",
+   "source_url": "https://eplus.jp/sf/detail/4527510001-P0030001P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-08-08",
+   "venue": "output",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "IVE",
+   "title": "BABY SHARK LIVE! -The Hidden Treasure-",
+   "source_url": "https://eplus.jp/sf/detail/4004320001-P0030032P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-05-30",
+   "venue": "海老名市文化会館 大ホール",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TREASURE",
+   "title": "Newfound Treasures",
+   "source_url": "https://eplus.jp/sf/detail/4537160001-P0030001P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-06-09",
+   "venue": "live music club PADOMA",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TREASURE",
+   "title": "TREASURE",
+   "source_url": "https://eplus.jp/sf/detail/3729900001-P0030034P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-07-18",
+   "venue": "Kアリーナ横浜",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TREASURE",
+   "title": "TREASURE05X 2026",
+   "source_url": "https://eplus.jp/sf/detail/0433120001-P0030039P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-09-05",
+   "venue": "蒲郡ラグーナビーチ",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BABYMONSTER",
+   "title": "BABYMONSTER",
+   "source_url": "https://eplus.jp/sf/detail/4069140001-P0030016P021001",
+   "source_media": "イープラス",
+   "start_date": "2026-07-08",
+   "venue": "GLION ARENA KOBE",
+   "_source_id": "eplus"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SHINee",
+   "title": "SHINee - The Trilogy I - 2026 SHINee WORLD VIII : [THE INVERT] | ticket board",
+   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15554",
+   "source_media": "チケットボード",
+   "start_date": "2026-06-05",
+   "venue": "ベルーナドーム",
+   "_source_id": "tickebo"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "aespa",
+   "title": "aespa MY-J presents aespa JAPAN FANMEETING 2026 “MY CLASSMaeTE” | ticket board",
+   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15598",
+   "source_media": "チケットボード",
+   "start_date": "2026-07-18",
+   "venue": "【1部】京王アリーナTOKYO",
+   "_source_id": "tickebo"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "RIIZE",
+   "title": "RIIZE RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME - | ticket board",
+   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15601",
+   "source_media": "チケットボード",
+   "start_date": "2026-07-10",
+   "venue": "マリンメッセ福岡B館",
+   "_source_id": "tickebo"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NMIXX",
+   "title": "NMIXX NMIXX 1ST WORLD TOUR <EPISODE 1: ZERO FRONTIER> IN JAPAN | ticket board",
+   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15627",
+   "source_media": "チケットボード",
+   "start_date": "2026-08-08",
+   "venue": "KEIO ARENA TOKYO",
+   "_source_id": "tickebo"
+  }
+ ]
+}
