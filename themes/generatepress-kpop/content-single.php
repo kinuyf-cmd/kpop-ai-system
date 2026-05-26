@@ -124,8 +124,10 @@ if ( $kpop_is_popup_single ) {
 		?>
 
 		<?php
-		/* ── ヒーロー画像 を 3行まとめの後、本文の前に配置 */
-		if ( has_post_thumbnail() ) :
+		/* ── ヒーロー画像 を 3行まとめの後、本文の前に配置
+		   writer CPT(ライター紹介)はテンプレ側で小さい丸アバターを出すので、
+		   ここでの大きな featured 表示は抑制する(拡大写真の二重表示を防ぐ)。 */
+		if ( has_post_thumbnail() && ! is_singular( 'writer' ) ) :
 			?>
 			<figure class="kpop-single-hero">
 				<?php the_post_thumbnail( 'large', array( 'alt' => esc_attr( get_the_title() ) ) ); ?>
