@@ -51,6 +51,13 @@ ENRICH_SECTION_HINTS = {
 }
 DEFAULT_HINTS = ["詳細・基本情報", "よくある質問"]
 
+# 完全自動 enrich を行わないテーマ(オーナー判断 2026-05-26)。
+# ダンス番組/個人プロフィール記事は既に網羅的なうえ、追記しようとすると
+# メンバー個々の出身国・生年・チーム名由来など「検証困難な固有情報」に
+# 踏み込みやすく捏造リスクが高い。作品系(movie_anime/kdrama=声優・楽曲・
+# あらすじが公式確認できる)に絞る。これらは drop=queue除外。
+ENRICH_BLOCKED_THEMES = {"dance_show", "artist"}
+
 MAX_ENRICH_PER_POST = 2     # auto_rewriter と同じく記事あたり上限
 
 
@@ -230,8 +237,10 @@ def process_one(item, dry_run=False):
     # 記事取得(URL→slug 経由で WP REST 検索)
     posts, err = wp_request("GET", f"/posts?slug={slug}&_fields=id,title,content,link,status")
     if err or not posts:
-        _log({"slug": slug, "result": "skip", "reason": f"wp_fetch_fail:{err}"})
-        return "skip"
+        # 記事が存在しない(GSC に残るが本番404=消失記事)。enrich 対象外なので
+        # queue から恒久除外する(再生成は別フローの仕事)。
+        _log({"slug": slug, "result": "drop", "reason": f"not_found_404:{err}"})
+        return "drop"
     post = posts[0]
     pid = post["id"]
     title = post["title"]["rendered"] if isinstance(post.get("title"), dict) else post.get("title", "")
@@ -239,6 +248,11 @@ def process_one(item, dry_run=False):
     if post.get("status") != "publish":
         _log({"slug": slug, "result": "skip", "reason": "not_publish"})
         return "skip"
+
+    # テーマガード: ダンス番組/個人プロフィール系は自動enrich対象外(捏造リスク)
+    if item.get("theme") in ENRICH_BLOCKED_THEMES:
+        _log({"slug": slug, "result": "drop", "reason": f"blocked_theme:{item.get('theme')}"})
+        return "drop"
 
     # 曖昧名ガード
     if not _ambiguous_artist_ok(title, content):
@@ -308,7 +322,7 @@ def run(limit=3, dry_run=False):
     if not queue:
         print("[enrich] enrich_queue が空。bridge を先に実行してください。")
         return 0
-    processed, done = 0, []
+    processed, done, dropped = 0, [], []
     for item in queue:
         if processed >= limit:
             break
@@ -318,10 +332,15 @@ def run(limit=3, dry_run=False):
         processed += 1
         if result in ("updated", "dry_run_ok"):
             done.append(item.get("url"))
-    # 成功した URL を queue から除去(dry-run では除去しない)
-    if not dry_run and done:
-        remaining = [i for i in queue if i.get("url") not in done]
+        elif result == "drop":
+            dropped.append(item.get("url"))  # 404等=恒久除外
+    # 成功 URL と 404 URL を queue から除去(dry-run では除去しない)
+    if not dry_run and (done or dropped):
+        remove = set(done) | set(dropped)
+        remaining = [i for i in queue if i.get("url") not in remove]
         _save_queue(remaining)
+        if dropped:
+            print(f"[enrich] queueから除外(404等): {len(dropped)}件")
     print(f"[enrich] 完了: {processed}件処理")
     return 0
 
