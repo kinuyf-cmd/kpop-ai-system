@@ -4707,6 +4707,42 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	.kpop-events-intro h1 { font-size: 1.4rem; }
 }
 
+/* ============================================================
+   CLS 対策 (2026-05-26) — AdSense auto ads の枠スペース予約
+   GSC「CLS 0.25超(モバイル)」の主犯は auto ads が JS 実行時に広告を
+   動的注入し、表示前の高さが未予約でコンテンツが押し下げられるシフト。
+   実測でカテゴリ/Idol Wiki の ins.adsbygoogle がシフト寄与トップだった。
+   広告の中身・収益は一切触らず、表示前に min-height を予約してシフトを消す。
+   ※ auto ads は読み込み後に実高さへ調整されるため、予約は「下限」のみ。
+   ============================================================ */
+/* 表示前(data-ad-status 未設定)の枠だけ高さを予約 → 広告が降りてくる前に
+   スペース確保しシフトを防ぐ。auto ads が「広告なし」と判断した slot は
+   data-ad-status="unfilled" を付け 0 に畳むので、その場合は予約を解除して
+   空白を残さない(UX を損なわない)。 */
+ins.adsbygoogle {
+	display: block;
+	min-height: 100px;        /* 表示前の下限予約 */
+	background: transparent;
+}
+ins.adsbygoogle[data-ad-status="unfilled"] {
+	min-height: 0 !important;  /* 広告が入らなかった枠は畳む(空白回避) */
+	display: none !important;
+}
+/* モバイルのレスポンシブ/インフィードは縦に大きくなりやすく、シフトも大きい。
+   表示前の予約を厚めに(unfilled は上で畳まれるので空白にはならない)。 */
+@media (max-width: 768px) {
+	ins.adsbygoogle:not([data-ad-status="unfilled"]) {
+		min-height: 250px;
+	}
+}
+/* auto ads の noablate スロットは status=filled でも一旦 h=0 で挿入され、
+   広告が降りてから 255px 前後に膨らむ瞬間にシフトする(実測 0.027)。
+   filled/未判定の noablate に下限を強制してその膨張シフトを吸収する。
+   unfilled になった場合は上の display:none ルールが優先され畳まれる。 */
+ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
+	min-height: 280px;
+}
+
 /* >>> KPOP_SIDEBAR_POLISH_BEGIN <<< */
 /* ============================================================
    サイドバーUI磨き (2026-05-25) — 誕生日枠・イベント枠 + chart/popular
@@ -4875,7 +4911,8 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .kpop-mchart-body { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
 .kpop-mchart-song { font-size: 12.5px; font-weight: 600; color: #212529; overflow-wrap: anywhere; }
 .kpop-mchart-artist { font-size: 11px; color: #6b6b6b; }   /* 5.33:1 AA */
-.kpop-mchart-source { margin: 10px 0 0; font-size: 11px; text-align: right; }
+.kpop-mchart-asof { margin: 8px 0 0; font-size: 10.5px; text-align: right; color: #6b6b6b; }  /* 5.33:1 AA */
+.kpop-mchart-source { margin: 4px 0 0; font-size: 11px; text-align: right; }
 .kpop-mchart-source a { color: #AD1457; text-decoration: none; }  /* 6.97:1 AA */
 .kpop-mchart-source a:hover { text-decoration: underline; }
 
