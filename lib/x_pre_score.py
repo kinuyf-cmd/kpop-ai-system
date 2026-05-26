@@ -99,6 +99,14 @@ def similarity_score(text: str, win_records: list[dict]) -> tuple[float, list[st
 
     text_kws = set(extract_keywords(text))
 
+    # 2026-05-26(施策3b): overlap を「実測エンゲージ価値」で重み付け。
+    # title_performance.jsonl の win レコードに x_score_per_impression があれば、
+    # 実際に伸びた勝ちパターンほど強く引っ張る(アルゴ重み準拠の実測フィードバック)。
+    # 指標が無い旧レコードは weight=1.0(従来挙動・後方互換)。
+    spi_values = [float(r.get("x_score_per_impression", 0) or 0) for r in win_records]
+    max_spi = max(spi_values) if spi_values else 0.0
+
+    best_effective = 0.0   # overlap × engagement weight
     best_overlap = 0.0
     best_title = ""
     for r in win_records:
@@ -107,15 +115,21 @@ def similarity_score(text: str, win_records: list[dict]) -> tuple[float, list[st
         if not win_kws:
             continue
         overlap = len(text_kws & win_kws) / len(win_kws)
-        if overlap > best_overlap:
+        # engagement weight: 実測ある勝ちは 1.0〜2.0、無い勝ちは 1.0
+        spi = float(r.get("x_score_per_impression", 0) or 0)
+        eng_w = 1.0 + (spi / max_spi) if max_spi > 0 and spi > 0 else 1.0
+        effective = overlap * eng_w
+        if effective > best_effective:
+            best_effective = effective
             best_overlap = overlap
             best_title = title
 
-    # BASE(8) + overlap加算で最大15点
-    score = min(15.0, BASE + best_overlap * (15.0 - BASE) / 0.5)  # 0.5 overlap → 15点
+    # BASE(8) + effective加算で最大15点(effective 0.5 で満点。重み付きなので
+    # 実測の強い勝ちに近いほど少ない overlap でも上限へ近づく)
+    score = min(15.0, BASE + best_effective * (15.0 - BASE) / 0.5)
     reasons = []
     if best_title:
-        reasons.append(f"最類似勝ちタイトル: 「{best_title[:30]}…」(overlap={best_overlap:.2f})")
+        reasons.append(f"最類似勝ちタイトル: 「{best_title[:30]}…」(overlap={best_overlap:.2f}, eff={best_effective:.2f})")
     return score, reasons
 
 

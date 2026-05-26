@@ -104,6 +104,69 @@ def post_tweet(text: str, reply_to: str | None = None, creds: dict | None = None
         return "", str(e)[:300]
 
 
+def get_public_metrics(ids: list[str], creds: dict | None = None) -> dict:
+    """tweet_id のリストから public_metrics を取得し {tweet_id: metrics_dict} を返す。
+    GET /2/tweets?ids=...&tweet.fields=public_metrics(OAuth1.0a)。最大100件/回。
+    取得失敗・該当なしは空 dict をスキップ(エラーは握りつぶさず print)。"""
+    ids = [str(i) for i in ids if str(i).strip() and str(i).isdigit()]
+    if not ids:
+        return {}
+    if creds is None:
+        creds, errors = validate_credentials()
+        if creds is None:
+            print("get_public_metrics: " + "; ".join(errors), file=sys.stderr)
+            return {}
+    out = {}
+    for i in range(0, len(ids), 100):
+        chunk = ids[i:i + 100]
+        base = "https://api.twitter.com/2/tweets"
+        query = "ids=" + ",".join(chunk) + "&tweet.fields=public_metrics"
+        url = f"{base}?{query}"
+        # 署名は GET、クエリパラメータも署名対象に含める必要がある
+        req = urllib.request.Request(url, method="GET", headers={
+            "Authorization": _oauth_header_with_params(
+                "GET", base, creds, {"ids": ",".join(chunk), "tweet.fields": "public_metrics"}),
+            "User-Agent": "KPOPJournalBot/1.0",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=30) as res:
+                data = json.loads(res.read())
+            for t in data.get("data", []):
+                out[t["id"]] = t.get("public_metrics", {})
+        except urllib.error.HTTPError as e:
+            print(f"get_public_metrics HTTP {e.code}: {e.read().decode()[:200]}", file=sys.stderr)
+        except Exception as e:  # noqa: BLE001
+            print(f"get_public_metrics err: {e}", file=sys.stderr)
+    return out
+
+
+def _oauth_header_with_params(method: str, url: str, creds: dict, extra: dict) -> str:
+    """GET 等でクエリパラメータも署名対象に含める版の OAuth1.0a ヘッダ。"""
+    oauth_params = {
+        "oauth_consumer_key": creds["api_key"],
+        "oauth_nonce": uuid.uuid4().hex,
+        "oauth_signature_method": "HMAC-SHA1",
+        "oauth_timestamp": str(int(time.time())),
+        "oauth_token": creds["access_token"],
+        "oauth_version": "1.0",
+    }
+    all_params = {**oauth_params, **extra}
+    params_string = "&".join(
+        f"{urllib.parse.quote(k, safe='')}=" + f"{urllib.parse.quote(str(v), safe='')}"
+        for k, v in sorted(all_params.items())
+    )
+    base_string = f"{method}&{urllib.parse.quote(url, safe='')}&{urllib.parse.quote(params_string, safe='')}"
+    signing_key = f"{urllib.parse.quote(creds['api_secret'], safe='')}&{urllib.parse.quote(creds['access_token_secret'], safe='')}"
+    signature = base64.b64encode(
+        hmac.new(signing_key.encode(), base_string.encode(), hashlib.sha1).digest()
+    ).decode()
+    oauth_params["oauth_signature"] = signature
+    return "OAuth " + ", ".join(
+        f'{urllib.parse.quote(k, safe="")}="{urllib.parse.quote(v, safe="")}"'
+        for k, v in sorted(oauth_params.items())
+    )
+
+
 def _cli() -> int:
     ap = argparse.ArgumentParser(description="X/Twitter 投稿(OAuth1.0a)")
     ap.add_argument("text", nargs="?", default="", help="投稿テキスト")
