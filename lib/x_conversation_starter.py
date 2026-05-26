@@ -120,13 +120,39 @@ def list_templates() -> None:
     print(f"\n  total: {len(TEMPLATES)} templates")
 
 
+def _load_directives() -> dict:
+    """config/auto_directives.json を安全に読む(無ければ空)。
+    focus_themes(時事テーマ)/ winning_words(稼ぐ語)/ stop_doing(避ける表現)を使う。"""
+    path = ROOT / "config" / "auto_directives.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _weighted_artist(directives: dict) -> str:
+    """focus_themes に登場するアーティスト名を優先して artist を選ぶ(時事連動)。
+    該当が無ければ DEFAULT_ARTIST_POOL からランダム。"""
+    themes = directives.get("focus_themes", [])
+    theme_text = " ".join(
+        (t.get("theme", "") if isinstance(t, dict) else str(t)) for t in themes
+    )
+    hits = [a for a in DEFAULT_ARTIST_POOL if a in theme_text]
+    pool = hits if hits else DEFAULT_ARTIST_POOL
+    return random.choice(pool)
+
+
 def generate(template_id: str | None, artist: str | None) -> dict:
+    directives = _load_directives()
     if not template_id:
         template_id = random.choice(list(TEMPLATES.keys()))
     if template_id not in TEMPLATES:
         raise SystemExit(f"unknown template id: {template_id}")
     if not artist:
-        artist = random.choice(DEFAULT_ARTIST_POOL)
+        # 2026-05-26(施策1-a): focus_themes の時事アーティストを重み付け選択
+        artist = _weighted_artist(directives)
     tmpl = TEMPLATES[template_id]
     pattern = random.choice(tmpl["patterns"])
     text = pattern.format(artist=artist)
@@ -155,7 +181,38 @@ def validate(post: dict) -> list[str]:
         issues.append("contains URL (suppression risk, move to self-reply)")
     if post["hashtag_count"] > 3:
         issues.append(f"too many hashtags ({post['hashtag_count']}, 3 max)")
+    # 2026-05-26(施策1-a): auto_directives.stop_doing の語を含む投稿は弾く
+    stop = _load_directives().get("stop_doing", [])
+    stop_terms = [s.get("term", "") if isinstance(s, dict) else str(s) for s in stop]
+    for term in stop_terms:
+        t = (term or "").strip()
+        if len(t) >= 3 and t in post["text"]:
+            issues.append(f"stop_doing 語を含む: {t[:20]}")
     return issues
+
+
+# ─── engagement watch(施策1-b): 投稿後の返信収集ウィンドウ管理 ──────────
+WATCH_FILE = LOG_DIR / "x_engagement_watch.jsonl"
+WATCH_MARKS_MIN = [10, 30, 60]  # 投稿後この分数で返信をスキャン(最初30分が勝負)
+
+
+def register_watch(tweet_id: str, text: str) -> None:
+    """投稿直後に呼ぶ。返信スキャンの予定(due時刻)を記録。
+    x_engagement_responder --scan-watch が due を処理する。"""
+    if not tweet_id or str(tweet_id).startswith("DRYRUN"):
+        return
+    LOG_DIR.mkdir(exist_ok=True)
+    now = datetime.now(timezone(timedelta(hours=9)))
+    entry = {
+        "tweet_id": str(tweet_id),
+        "text": text,
+        "posted_at": now.isoformat(),
+        "marks_min": WATCH_MARKS_MIN,
+        "done_marks": [],          # 処理済みのmark(分)
+        "status": "watching",
+    }
+    with WATCH_FILE.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
 def log_event(post: dict, action: str, detail: str = "") -> None:
@@ -251,21 +308,23 @@ def maybe_alert_consecutive_failures() -> None:
         pass  # 通知失敗で投稿処理を止めない
 
 
-def post_via_api(text: str, dry_run: bool) -> tuple[bool, str]:
-    """既存 google_metrics/post_to_x.py に委譲"""
+def post_via_api(text: str, dry_run: bool) -> tuple[bool, str, str]:
+    """既存 google_metrics/post_to_x.py に委譲。(ok, detail, tweet_id) を返す。"""
     poster = ROOT / "google_metrics" / "post_to_x.py"
     if not poster.exists():
-        return False, "post_to_x.py not found"
+        return False, "post_to_x.py not found", ""
     if dry_run:
-        return True, "DRY_RUN (not actually posted)"
+        return True, "DRY_RUN (not actually posted)", ""
     try:
         result = subprocess.run(
             ["python3", str(poster), text],
             capture_output=True, text=True, timeout=30,
         )
-        return result.returncode == 0, (result.stdout + result.stderr)[:200]
+        out = result.stdout + result.stderr
+        m = re.search(r"^TWEET_ID=(\S+)", out, re.M)
+        return result.returncode == 0, out[:200], (m.group(1) if m else "")
     except subprocess.TimeoutExpired:
-        return False, "timeout"
+        return False, "timeout", ""
 
 
 def main() -> int:
@@ -304,13 +363,16 @@ def main() -> int:
         print("---")
 
     if args.post or args.dry_run:
-        ok, detail = post_via_api(post["text"], args.dry_run)
+        ok, detail, tweet_id = post_via_api(post["text"], args.dry_run)
         action = "post_dry" if args.dry_run else ("post_live" if ok else "post_fail")
         log_event(post, action, detail)
         print(f"  post result: {ok}  {detail}")
         # エラー可視化: 連続失敗で Discord 通知。成功したら sentinel 解除(次の連続で再通知可)。
         if action == "post_live":
             _ALERT_SENTINEL.unlink(missing_ok=True)
+            # 施策1-b: 投稿成功なら返信収集ウィンドウを登録(著者返信+75を取りに行く)
+            if tweet_id:
+                register_watch(tweet_id, post["text"])
         elif action == "post_fail":
             maybe_alert_consecutive_failures()
     else:
