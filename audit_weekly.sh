@@ -148,6 +148,61 @@ except Exception: print(0)
 fi
 log "sanitize 週次: C-Y 矯正=${SANI_CY}, C-Z 矯正=${SANI_CZ}, 対象ファイル=${SANI_FILES}"
 
+# ─── [4.5] 速報翻訳skip率の週次集計 ────────────────────────────────────
+# breaking_articles.jsonl の status(publish/draft/skipped)を直近7日で集計。
+# skip率 = skipped / (publish+draft+skipped)。翻訳skipは品質ゲートの正常動作
+# だが、高止まりは翻訳経路(固有名詞・引用の取りこぼし)の兆候。背景:
+# memory breaking-skip-observability.md
+log "--- [4.5] 速報翻訳skip率の週次集計 ---"
+BREAKING_LOG="${SCRIPT_DIR}/logs/breaking_articles.jsonl"
+read -r BRK_PUB BRK_DRAFT BRK_SKIP BRK_RATE BRK_REASONS <<< "$(python3 - "$BREAKING_LOG" << 'PY'
+import json, sys, datetime, collections
+path = sys.argv[1]
+cutoff = (datetime.datetime.now() - datetime.timedelta(days=7))
+pub = draft = skip = 0
+reasons = collections.Counter()
+try:
+    for line in open(path, encoding='utf-8'):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            d = json.loads(line)
+        except Exception:
+            continue
+        ts = str(d.get('ts') or d.get('date') or '')
+        try:
+            t = datetime.datetime.fromisoformat(ts)
+        except Exception:
+            t = datetime.datetime.strptime(ts[:10], '%Y-%m-%d') if len(ts) >= 10 else None
+        if t is not None and t < cutoff:
+            continue
+        st = d.get('status', '?')
+        if st == 'skipped':
+            skip += 1
+            r = (d.get('skip_reason') or 'unknown').split(':')[0]
+            reasons[r] += 1
+        elif st == 'draft':
+            draft += 1
+        elif st == 'publish':
+            pub += 1
+except FileNotFoundError:
+    pass
+total = pub + draft + skip
+rate = (skip / total * 100) if total else 0.0
+top = ';'.join(f'{k}x{v}' for k, v in reasons.most_common(3)) or 'none'
+print(f'{pub} {draft} {skip} {rate:.0f} {top}')
+PY
+)"
+log "速報 週次: publish=${BRK_PUB:-0}, draft=${BRK_DRAFT:-0}, skip=${BRK_SKIP:-0}, skip率=${BRK_RATE:-0}%, skip理由=${BRK_REASONS:-none}"
+# skip率40%超は翻訳経路の劣化を疑い urgent 連携対象に積む
+BRK_ALERT=""
+if [[ "${BRK_RATE:-0}" -ge 40 ]] 2>/dev/null; then
+  BRK_ALERT="速報skip率 ${BRK_RATE}% (>=40%) — 翻訳経路の取りこぼし疑い"
+  log "  ⚠️ ${BRK_ALERT}"
+  ROBOTS_NEW_BAN+=("$BRK_ALERT")
+fi
+
 # ─── [5] Discord 通知(weekly_board_report)──────────────────────────────
 log "--- [5] Discord 通知(weekly_board_report)---"
 if [[ "${AUDIT_DRY_RUN:-0}" == "1" ]]; then
@@ -168,6 +223,7 @@ import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).g
   ✅ クリア媒体: ${ROBOTS_OK}/5
 ${BAN_LIST}
 **sanitize 矯正(週次)**: C-Y ${SANI_CY}件, C-Z ${SANI_CZ}件
+**速報(週次)**: publish ${BRK_PUB:-0} / draft ${BRK_DRAFT:-0} / skip ${BRK_SKIP:-0} (skip率 ${BRK_RATE:-0}%, ${BRK_REASONS:-none})
 **ログ**: ${LOG_FILE##*/}"
     AUDIT_MSG="$MSG" AUDIT_WH="$WEBHOOK" python3 -c "
 import json, urllib.request, os, sys
