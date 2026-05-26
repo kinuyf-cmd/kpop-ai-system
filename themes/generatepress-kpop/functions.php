@@ -203,6 +203,7 @@ function kpop_render_footer_columns() {
 						'en'    => 'ABOUT',
 						'links' => array(
 							array( 'サイトについて',          home_url( '/about/' ) ),
+							array( 'ライター紹介',            home_url( '/writers/' ) ),
 							array( 'お問い合わせ',            home_url( '/contact/' ) ),
 							array( 'プライバシーポリシー',    home_url( '/privacy-policy/' ) ),
 						),
