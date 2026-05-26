@@ -12,18 +12,6 @@
   "route": "enrich"
  },
  {
-  "query": "デーモンハンターズ キャラクター",
-  "url": "https://www.kpopjournal.tokyo/kpop-demon-hunters-cast-characters/",
-  "slug": "kpop-demon-hunters-cast-characters",
-  "position": 8.28,
-  "impressions": 625,
-  "clicks": 7,
-  "potential": 941,
-  "theme": "movie_anime",
-  "source": "seo_lane_c_bridge",
-  "route": "enrich"
- },
- {
   "query": "ラブブ ポップアップ",
   "url": "https://www.kpopjournal.tokyo/lovebob-popup-report-2025/",
   "slug": "lovebob-popup-report-2025",
@@ -56,18 +44,6 @@
   "clicks": 1,
   "potential": 152,
   "theme": "other",
-  "source": "seo_lane_c_bridge",
-  "route": "enrich"
- },
- {
-  "query": "bigbang top 脱退 理由",
-  "url": "https://www.kpopjournal.tokyo/bigbang-top-profile-removed/",
-  "slug": "bigbang-top-profile-removed",
-  "position": 11.14,
-  "impressions": 86,
-  "clicks": 0,
-  "potential": 107,
-  "theme": "artist",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
  },

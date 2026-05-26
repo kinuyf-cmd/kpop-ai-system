@@ -224,10 +224,15 @@ def process_one(item, dry_run=False):
         _log({"slug": slug, "result": "skip", "reason": "no_new_sections"})
         return "skip"
 
-    # 内部リンク集約(追記分+全文のキーワードで関連記事を束ねる)
+    # 内部リンク集約(追記分にインラインリンクのみ。末尾「関連記事」セクションは
+    # 既存記事側に既にあるため付けない=重複防止。insert_internal_links は末尾
+    # セクションを必ず足す仕様なので、内部の _insert_inline_links を直接使う)。
     try:
-        from lib.internal_links import insert_internal_links
-        sections_html = insert_internal_links(sections_html, post_title=title, current_url=url)
+        from lib.internal_links import (
+            _find_related_articles, _insert_inline_links, get_article_index)
+        idx = get_article_index()
+        related = _find_related_articles(sections_html, title, idx, current_url=url)
+        sections_html = _insert_inline_links(sections_html, related)
     except Exception as e:
         print(f"  [enrich] internal_links 失敗(続行): {e}", file=sys.stderr)
 

@@ -43,7 +43,13 @@ MAX_PER_LANE = 40
 GOSSIP_SLUG_TERMS = [
     "dating", "scandal", "relationship", "controversy", "rumor",
     "divorce", "marriage", "enlist", "military-service",
+    "removed", "leave", "leaving", "withdrawal", "disband",
 ]
+
+
+def _is_gossip_slug(slug):
+    sl = (slug or "").lower()
+    return any(g in sl for g in GOSSIP_SLUG_TERMS)
 
 
 def _service():
@@ -137,8 +143,7 @@ def run(dry_run=False, days=90):
             continue
         seen_urls.add(url)
         # ゴシップ/私的事実 slug は除外(最終防御)
-        slug_l = _slug_from_url(url).lower()
-        if any(g in slug_l for g in GOSSIP_SLUG_TERMS):
+        if _is_gossip_slug(_slug_from_url(url)):
             unmatched.append({"query": query, "url": url, "reason": "gossip_slug_excluded"})
             continue
         pos = page["position"]
@@ -191,7 +196,10 @@ def run(dry_run=False, days=90):
     by_url = {e.get("url"): e for e in existing if isinstance(e, dict)}
     for r in routed_enrich:
         by_url[r["url"]] = r  # 最新の指標で上書き
-    merged = sorted(by_url.values(), key=lambda r: -r.get("potential", 0))
+    # 既存エントリにゴシップが残っていれば落とす(過去版のキューを掃除)
+    merged = sorted(
+        (r for r in by_url.values() if not _is_gossip_slug(r.get("slug", ""))),
+        key=lambda r: -r.get("potential", 0))
     os.makedirs(os.path.dirname(ENRICH_QUEUE), exist_ok=True)
     json.dump(merged, open(ENRICH_QUEUE, "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
