@@ -63,9 +63,32 @@ KPOP_ARTISTS = [
 
 
 def _is_kpop_eplus(title):
-    """eplus signal が確実にK-POPか(主要アーティスト名の部分一致)。"""
-    tl = title.lower()
-    return any(a.lower() in tl for a in KPOP_ARTISTS)
+    """eplus signal が確実にK-POPか。
+    eplus_enricher._is_kpop の堅牢判定(単語境界+曖昧名の文脈語ガード)に統一。
+    旧実装は単純部分一致で 'The Hidden Treasure' を TREASURE と誤判定していた。"""
+    try:
+        from lib.eplus_enricher import _is_kpop as _robust_is_kpop
+        return _robust_is_kpop(title)
+    except Exception:
+        # フォールバック(import 失敗時のみ): 単語境界一致 + 曖昧名は文脈語必須
+        import re as _re
+        if not title:
+            return False
+        tl = title.lower()
+        _ambig = {'treasure', 'ive', 'ace'}
+        _ctx = ['k-pop', 'kpop', '韓国', 'korea', 'ソウル', 'アイドル',
+                'ファンミ', 'ワールドツアー', '트레저', '아이브']
+        has_ctx = any(c in tl for c in _ctx)
+        for a in KPOP_ARTISTS:
+            al = a.lower()
+            if a.isascii() and a.replace(' ', '').replace('-', '').isalnum():
+                if _re.search(r'(?<![a-z0-9])' + _re.escape(al) + r'(?![a-z0-9])', tl):
+                    if al in _ambig and not has_ctx:
+                        continue
+                    return True
+            elif al in tl:
+                return True
+        return False
 
 
 def load_ticket_signals(path):

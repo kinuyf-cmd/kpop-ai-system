@@ -100,18 +100,37 @@ EPLUS_KPOP_ARTISTS = [
 ]
 
 
+# 一般英単語と同綴で誤マッチしやすい曖昧アーティスト名(小文字)。
+# これらは単語境界一致でも一般名詞に当たる(例: "The Hidden Treasure" の
+# treasure が TREASURE に完全一致)。文脈語(K-POP関連)が共起する時のみ採用。
+# 実害: BABY SHARK LIVE!(Hidden Treasure) を K-POP の TREASURE と誤判定し
+# IVE/TREASURE 等のイベント記事を捏造した事故(2026-05-26)。
+_EPLUS_AMBIGUOUS = {'treasure', 'ive', 'ace', 'red velvet'}
+# 曖昧名を救う文脈語(これが本文/タイトルに有れば K-POP と判断)
+_EPLUS_KPOP_CONTEXT = [
+    'k-pop', 'kpop', 'ケイポップ', '韓国', 'コリア', 'korea', 'ソウル',
+    'カムバック', 'comeback', 'アイドル', 'idol', 'ファンミーティング', 'fanmeeting',
+    'ワールドツアー', 'world tour', '트레저', '아이브',
+]
+
+
 def _is_kpop(text: str) -> bool:
     """K-POP アーティスト名一致判定。ASCII の短い名(IVE/EXO 等)は
     単語境界一致で判定し、'LIVE' 内の 'IVE' のような部分一致誤検知を防ぐ。
-    記号や日本語を含む名(&TEAM/(G)I-DLE 等)は単純部分一致。"""
+    記号や日本語を含む名(&TEAM/(G)I-DLE 等)は単純部分一致。
+    一般英単語と同綴の曖昧名(TREASURE 等)は文脈語が共起する時のみ採用。"""
     if not text:
         return False
     tl = text.lower()
+    has_ctx = any(c in tl for c in _EPLUS_KPOP_CONTEXT)
     for a in EPLUS_KPOP_ARTISTS:
         al = a.lower()
         if a.isascii() and a.replace(' ', '').replace('-', '').isalnum():
             # 英数字のみの名は単語境界一致(前後が英数字でない位置のみヒット)
             if re.search(r'(?<![a-z0-9])' + re.escape(al) + r'(?![a-z0-9])', tl):
+                # 曖昧名は文脈語が無ければ偽陽性として却下
+                if al in _EPLUS_AMBIGUOUS and not has_ctx:
+                    continue
                 return True
         else:
             # &TEAM / (G)I-DLE / Kwon Jin Ah 等は部分一致
