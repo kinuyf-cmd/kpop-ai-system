@@ -1206,6 +1206,84 @@ function kpop_home_sidebar_events() {
 }
 add_action( 'generate_after_right_sidebar_content', 'kpop_home_sidebar_events' );
 
+/* --- Event 構造化データ(JSON-LD)の補完(2026-05-26 GSC重大エラー対応)---
+ * GSC が tribe_events の Event JSON-LD で「location 欠落(重大)」「organizer/offers/image
+ * 欠落(推奨)」を検出。原因: 収集パイプラインは会場名を本文の開催概要box
+ * (.kpop-event-info-value)に書くだけで TEC の Venue エンティティ(_EventVenueID)に
+ * 登録していないため、TEC が location を出力できない。
+ * → データ移行(Venue登録)は DB リスクが高いので、TEC の JSON-LD フィルタで
+ *   本文から会場名を抽出して location(Place)を補完する。image は featured→og-default、
+ *   organizer はサイト運営者、url は出典(本文の出典リンク)を入れる。
+ *   offers は価格データが無く不正確な offers は逆にペナルティのため出さない(url で代替)。
+ * フィルタ tribe_json_ld_event_object は TEC が各 Event オブジェクトを出力直前に通す安定API。 */
+if ( ! function_exists( 'kpop_event_extract_venue' ) ) :
+function kpop_event_extract_venue( $post_id ) {
+	// 本文の開催概要box: <span class="kpop-event-info-label">会場</span>
+	//                    <span class="kpop-event-info-value">○○</span>
+	$content = get_post_field( 'post_content', $post_id );
+	if ( ! $content ) { return ''; }
+	if ( preg_match(
+		'/kpop-event-info-label">\s*会場\s*<\/span>\s*<span class="kpop-event-info-value">([^<]+)<\/span>/u',
+		$content, $m ) ) {
+		return trim( $m[1] );
+	}
+	return '';
+}
+endif;
+
+if ( ! function_exists( 'kpop_augment_event_json_ld' ) ) :
+function kpop_augment_event_json_ld( $data, $args, $type ) {
+	// $data は stdClass の Event オブジェクト群(post_id => obj)または単一 obj。
+	$objects = is_array( $data ) ? $data : array( $data );
+	foreach ( $objects as $obj ) {
+		if ( ! is_object( $obj ) || empty( $obj->{'@type'} ) ) { continue; }
+		// post_id 解決: TEC は url から、または別途。ここでは現在ループ post を使う。
+		$pid = get_the_ID();
+		if ( ! $pid && isset( $obj->url ) ) {
+			$pid = url_to_postid( $obj->url );
+		}
+		// location 補完(重大エラーの本丸)
+		if ( empty( $obj->location ) && $pid ) {
+			$venue = kpop_event_extract_venue( $pid );
+			if ( $venue ) {
+				$obj->location = array(
+					'@type' => 'Place',
+					'name'  => $venue,
+					// 住所は不明だが Place.address が無いと一部で弱いため会場名を addressLocality 代替に
+					'address' => array(
+						'@type'           => 'PostalAddress',
+						'addressCountry'  => 'JP',
+						'addressLocality' => $venue,
+					),
+				);
+			}
+		}
+		// image 補完(featured → og-default fallback)
+		if ( empty( $obj->image ) && $pid ) {
+			$img = get_the_post_thumbnail_url( $pid, 'full' );
+			if ( ! $img ) {
+				$img = home_url( '/wp-content/uploads/2026/05/og-default.png' );
+			}
+			$obj->image = array( $img );
+		}
+		// organizer 補完(サイト運営者)
+		if ( empty( $obj->organizer ) ) {
+			$obj->organizer = array(
+				'@type' => 'Organization',
+				'name'  => get_bloginfo( 'name' ),
+				'url'   => home_url( '/' ),
+			);
+		}
+		// url 補完(個別イベントページ)
+		if ( empty( $obj->url ) && $pid ) {
+			$obj->url = get_permalink( $pid );
+		}
+	}
+	return $data;
+}
+endif;
+add_filter( 'tribe_json_ld_event_object', 'kpop_augment_event_json_ld', 20, 3 );
+
 /* --- B-4b: お気に入り機能(cookie/localStorage)— ハートアイコン + 専用ページ ---
  * 進化的拡張 (Progressive Enhancement): JS なしでも記事は読める。
  * - 個別記事ページのタイトル横にハートアイコン(クライアント JS で切替)
