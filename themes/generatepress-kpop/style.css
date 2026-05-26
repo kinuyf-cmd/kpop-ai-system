@@ -4743,6 +4743,105 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
 	min-height: 280px;
 }
 
+/* ==========================================================================
+   アフィリエイト CTA(.kpj-cta-block)高品質化(2026-05-26)
+   cta_injector.py が出力する「関連おすすめ」ブロックに CSS が無く、絵文字+
+   テキストが裸で並び「雑な3つ目の関連記事」に見えていた([5])。ブランドの
+   ピンクで上品なカード型に。色は AA 達成色のみ。装飾は装飾に留める。
+   ========================================================================== */
+.kpop-single .entry-content .kpj-cta-block {
+	margin: 2.4em 0;
+	padding: 20px 22px;
+	border: 1px solid #f3c9da;
+	border-radius: 14px;
+	background: linear-gradient(135deg, #fff7fa 0%, #fdeef4 100%);
+}
+.kpop-single .entry-content .kpj-cta-heading {
+	margin: 0 0 4px;
+	font-size: 1.02rem;
+	font-weight: 700;
+	color: var(--kpop-pink-dark, #C2185B);
+	border: none;
+	padding: 0;
+}
+/* PR表記(任意・ヘッダ直後の補足) */
+.kpop-single .entry-content .kpj-cta-block .kpj-cta-heading::after {
+	content: " (PR)";
+	font-size: 0.7rem;
+	font-weight: 600;
+	color: #8A4A63;      /* 白上 6.48:1 AA */
+	letter-spacing: 0.04em;
+}
+.kpop-single .entry-content .kpj-cta-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 12px;
+	margin-top: 14px;
+}
+.kpop-single .entry-content .kpj-cta-item {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	background: #fff;
+	border: 1px solid #f0e3e8;
+	border-radius: 10px;
+	padding: 14px 16px;
+	transition: box-shadow .15s ease, transform .15s ease;
+}
+.kpop-single .entry-content .kpj-cta-item:hover {
+	box-shadow: 0 4px 16px rgba(194,24,91,.12);
+	transform: translateY(-1px);
+}
+.kpop-single .entry-content .kpj-cta-icon {
+	flex: 0 0 auto;
+	font-size: 1.6rem;
+	line-height: 1;
+}
+.kpop-single .entry-content .kpj-cta-content { min-width: 0; }
+.kpop-single .entry-content .kpj-cta-title {
+	font-weight: 700;
+	font-size: 0.95rem;
+	color: #2b2b32;
+	margin-bottom: 3px;
+}
+.kpop-single .entry-content .kpj-cta-desc {
+	font-size: 0.8rem;
+	color: #6a5560;      /* 白上 5.6:1 AA */
+	line-height: 1.5;
+	margin-bottom: 10px;
+}
+.kpop-single .entry-content .kpj-cta-link { margin: 0; }
+/* CTA ボタン化: テキストリンクをブランドのピル型ボタンに */
+.kpop-single .entry-content .kpj-cta-link a {
+	display: inline-block;
+	background: var(--kpop-pink-dark, #C2185B);
+	color: #fff;
+	text-decoration: none;
+	font-size: 0.85rem;
+	font-weight: 700;
+	padding: 8px 18px;
+	border-radius: 999px;
+	transition: background-color .15s ease;
+}
+.kpop-single .entry-content .kpj-cta-link a:hover,
+.kpop-single .entry-content .kpj-cta-link a:focus-visible {
+	background: var(--kpop-pink-darker, #AD1457);   /* 白上 6.97:1 AA */
+	color: #fff;
+	outline: none;
+}
+/* CTA内に紛れる計測用画像(A8の1pxトラッカー等)はレイアウトに影響させない */
+.kpop-single .entry-content .kpj-cta-link img {
+	width: 1px; height: 1px; border: 0; margin: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+	.kpop-single .entry-content .kpj-cta-item,
+	.kpop-single .entry-content .kpj-cta-link a { transition: none; }
+}
+@media (max-width: 600px) {
+	.kpop-single .entry-content .kpj-cta-grid { grid-template-columns: 1fr; }
+	.kpop-single .entry-content .kpj-cta-link a { padding: 10px 20px; }  /* タップ性 */
+}
+
 /* >>> KPOP_SIDEBAR_POLISH_BEGIN <<< */
 /* ============================================================
    サイドバーUI磨き (2026-05-25) — 誕生日枠・イベント枠 + chart/popular

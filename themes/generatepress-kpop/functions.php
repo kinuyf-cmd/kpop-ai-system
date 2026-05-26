@@ -408,45 +408,10 @@ function kpop_render_single_footer( $post_id ) {
 	echo '</div>';
 	echo '</div>';
 
-	// --- 関連記事(同カテゴリの最新4件、現記事を除く) ---
-	$cats = get_the_category( $post_id );
-	if ( $cats ) {
-		$related = new WP_Query( array(
-			'post_type'           => 'post',
-			'post_status'         => 'publish',
-			'cat'                 => $cats[0]->term_id,
-			'post__not_in'        => array( $post_id ),
-			'posts_per_page'      => 4,
-			'orderby'             => 'date',
-			'order'               => 'DESC',
-			'ignore_sticky_posts' => true,
-			'no_found_rows'       => true,
-		) );
-		if ( $related->have_posts() ) {
-			echo '<section class="kpop-related" aria-label="関連記事">';
-			echo '<h2 class="kpop-section-title">関連記事 <span class="kpop-section-en">RELATED</span></h2>';
-			echo '<ul class="kpop-related-grid">';
-			while ( $related->have_posts() ) {
-				$related->the_post();
-				echo '<li class="kpop-card">';
-				echo '<a class="kpop-card-link" href="' . esc_url( get_permalink() ) . '">';
-				echo '<span class="kpop-card-thumb">';
-				if ( has_post_thumbnail() ) {
-					the_post_thumbnail( 'medium', array( 'alt' => '' ) );
-				} else {
-					echo '<span class="kpop-card-thumb--placeholder" aria-hidden="true"></span>';
-				}
-				echo '</span>';
-				echo '<span class="kpop-card-title">' . esc_html( get_the_title() ) . '</span>';
-				echo '<time class="kpop-card-date" datetime="' . esc_attr( get_the_date( 'c' ) ) . '">'
-					. esc_html( get_the_date( 'Y.m.d' ) ) . '</time>';
-				echo '</a></li>';
-			}
-			echo '</ul>';
-			echo '</section>';
-			wp_reset_postdata();
-		}
-	}
+	// --- 関連記事はここでは描画しない ---
+	// content-single.php の B-4a「関連記事5枚カード」(タグ+カテゴリ重みづけ)に一本化。
+	// 以前はこのフッター関数でも同カテゴリ4件を描画しており、1記事に「関連記事」が
+	// 二重(B-4a 5枚 + フッター4件)に出ていた([4]重複の主因、2026-05-26 解消)。
 
 	echo '</footer>';
 }

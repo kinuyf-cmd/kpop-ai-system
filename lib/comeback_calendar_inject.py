@@ -120,18 +120,21 @@ def maybe_inject_calendar_cta(body_html: str, artist: str = '') -> str:
             cta_lines.append(f'<li>{date} — {type_label} {title}</li>')
         cta_lines.append('</ul>')
 
+    # カレンダー全体リンクは存在しない /release-calendar/(404)を避け、
+    # 稼働中のイベントカレンダー /events/ に統一(オーナー指示 2026-05-26)。
     cta_lines.append(
-        '<p>K-POP主要22グループの今後90日の公式カムバック・リリース情報をまとめています。'
-        '<a href="https://www.kpopjournal.tokyo/release-calendar/" '
-        'target="_blank" rel="noopener"><strong>カレンダー全体を見る →</strong></a></p>'
+        '<p>K-POPの公式カムバック・ライブ・イベント情報をまとめています。'
+        '<a href="https://www.kpopjournal.tokyo/events/" '
+        'rel="noopener"><strong>イベントカレンダーを見る →</strong></a></p>'
     )
 
-    # Artist profile page誘導 (/artist-{slug}/)
+    # アーティスト詳細は Idol Wiki(/artists/{slug}/、稼働中)へ誘導。
+    # 旧 /artist-{slug}/ は 404 だった([1]導線改善も兼ねる)。
     profile_slug = ARTIST_SLUG_MAP.get(artist)
-    if profile_slug and (PROFILE_DIR / f'{profile_slug}.json').exists():
+    if profile_slug:
         cta_lines.append(
-            f'<p>📖 <a href="https://www.kpopjournal.tokyo/artist-{profile_slug}/" '
-            f'target="_blank" rel="noopener"><strong>{artist} のメンバー・所属事務所・公式SNSなど詳細プロフィール →</strong></a></p>'
+            f'<p>📖 <a href="https://www.kpopjournal.tokyo/artists/{profile_slug}/" '
+            f'rel="noopener"><strong>{artist} のメンバー・所属事務所・公式SNSなど詳細プロフィール →</strong></a></p>'
         )
 
     cta_lines.append('</div>')
