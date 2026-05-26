@@ -1322,11 +1322,23 @@ body { color: #2B2B32; }
 /* ── ① リード段落: 最初の段落を少し大きく・濃く。記事の「つかみ」を作る ── */
 /* 本文先頭の段落(まれに先頭が画像/見出しのケースは対象外にしたいので
    :first-of-type を p に限定。色は本文 #3a3a3a よりわずかに濃い #2b2b32) */
-.kpop-single .entry-content > p:first-of-type {
+/* 出典キャプション(.kpop-img-credit)が先頭の引用記事では、それを飛ばして
+   最初の「本文」段落をリードにする。:not() で出典行を除外。 */
+.kpop-single .entry-content > p:first-of-type:not(.kpop-img-credit),
+.kpop-single .entry-content > p.kpop-img-credit + p {
     font-size: 1.08rem;
     line-height: 1.85;
     color: #2b2b32;
     margin-bottom: 1.6em;
+}
+/* 出典キャプション行: 小さく控えめに(本文より目立たせない) */
+.kpop-single .entry-content > p.kpop-img-credit {
+    font-size: 0.78rem;
+    color: #6a6a6a;             /* 白背景 5.7:1 AA */
+    margin-bottom: 1.2em;
+}
+.kpop-single .entry-content > p.kpop-img-credit a {
+    color: var(--kpop-pink-dark, #C2185B);
 }
 /* リード段落内のリンク/強調も本文と馴染ませる(サイズ継承) */
 .kpop-single .entry-content > p:first-of-type strong {

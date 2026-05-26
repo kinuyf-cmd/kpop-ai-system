@@ -1332,6 +1332,23 @@ function kpop_inject_internal_links( $content ) {
 }
 add_filter( 'the_content', 'kpop_inject_internal_links', 30 );
 
+/* 引用記事の先頭にある出典キャプション(<p>画像: ...元記事より</p>)に
+ * クラス kpop-img-credit を付与する。これがないと CSS の
+ * .entry-content > p:first-of-type(リード段落拡大)が出典行に誤適用され、
+ * 本文より出典が大きく表示される不具合になる(soompi以外の引用記事で発覚)。
+ * prio 5 = リンク注入(30)より前に走らせ、構造判定を素の状態で行う。 */
+function kpop_mark_image_credit( $content ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) { return $content; }
+	// 先頭の <p>(属性なし)で、中身が「画像:」で始まるものだけにクラスを付ける。
+	return preg_replace(
+		'/\A(\s*)<p>(\s*画像[:：])/u',
+		'$1<p class="kpop-img-credit">$2',
+		$content,
+		1
+	);
+}
+add_filter( 'the_content', 'kpop_mark_image_credit', 5 );
+
 /* ==========================================================================
    M11.5 段階9.5 (Day 9) — C ポップアップ刷新
    ACF 12項目 + taxonomy(popup_area / popup_status)+ archive フィルタ
