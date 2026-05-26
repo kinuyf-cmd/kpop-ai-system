@@ -45,6 +45,10 @@ function kpop_render_events_widget() {
 
     $calendar_url = home_url( '/events/' );
 
+    // 1ヶ月以内に開催のイベントはカレンダー一覧(/events/)へ誘導する(オーナー指示 2026-05-26)。
+    // それより先のイベントは従来どおり個別ページへ。境界=本日+1ヶ月。
+    $month_ahead = strtotime( '+1 month', current_time( 'timestamp' ) );
+
     echo '<div class="kpop-sidebar-box kpop-events" role="region" aria-label="イベント">';
     echo '<h2 class="kpop-box-title">イベント <span class="kpop-box-en">EVENTS</span></h2>';
 
@@ -53,13 +57,17 @@ function kpop_render_events_widget() {
     } else {
         echo '<ul class="kpop-events-list">';
         foreach ( $rows as $r ) {
-            $url   = get_permalink( $r->ID );
-            $date  = $r->start_date ? date_i18n( 'n/j', strtotime( $r->start_date ) ) : '';
+            $start_ts = $r->start_date ? strtotime( $r->start_date ) : 0;
+            $date  = $start_ts ? date_i18n( 'n/j', $start_ts ) : '';
             $title = get_the_title( $r->ID );
+            // 1ヶ月以内 → カレンダー(/events/)、それ以外 → 個別ページ
+            $soon  = ( $start_ts && $start_ts <= $month_ahead );
+            $url   = $soon ? $calendar_url : get_permalink( $r->ID );
             printf(
-                '<li class="kpop-events-item">%s<a href="%s">%s</a></li>',
+                '<li class="kpop-events-item">%s<a href="%s"%s>%s</a></li>',
                 $date ? '<span class="kpop-events-date">' . esc_html( $date ) . '</span> ' : '',
                 esc_url( $url ),
+                $soon ? ' aria-label="' . esc_attr( $title . ' をカレンダーで見る' ) . '"' : '',
                 esc_html( $title )
             );
         }

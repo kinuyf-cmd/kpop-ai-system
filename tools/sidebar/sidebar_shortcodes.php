@@ -21,25 +21,58 @@ function kpop_sc_suppressed_on_single() {
 }
 endif;
 
+/**
+ * サムネ + タイトルの 1 リスト項目を生成(Today's Chart / 人気記事 共通)。
+ * 2026-05-26: タイトルのみ → サムネ付きに変更(オーナー指示)。
+ * サムネ無し記事は薄ピンクのプレースホルダーで枠を保ち、行高のばらつきを防ぐ。
+ */
+if ( ! function_exists( 'kpop_sc_thumb_item' ) ) :
+function kpop_sc_thumb_item( $pid ) {
+    $pid   = (int) $pid;
+    $url   = get_permalink( $pid );
+    $title = get_the_title( $pid );
+    // 60x60 を優先(無ければ medium/thumbnail)。get_the_post_thumbnail は srcset 付きで返る。
+    $thumb = '';
+    if ( has_post_thumbnail( $pid ) ) {
+        $thumb = get_the_post_thumbnail( $pid, array( 64, 64 ), array(
+            'class'   => 'kpop-thumb-img',
+            'alt'     => '',
+            'loading' => 'lazy',
+        ) );
+    }
+    if ( '' === $thumb ) {
+        $thumb = '<span class="kpop-thumb-img kpop-thumb-placeholder" aria-hidden="true"></span>';
+    }
+    return sprintf(
+        '<li class="kpop-thumb-item"><a class="kpop-thumb-link" href="%s">'
+        . '<span class="kpop-thumb-wrap">%s</span>'
+        . '<span class="kpop-thumb-title">%s</span>'
+        . '</a></li>',
+        esc_url( $url ),
+        $thumb,
+        esc_html( $title )
+    );
+}
+endif;
+
 // 既存の render 関数を出力バッファで捕捉してショートコード戻り値にする
+// [kpop_birthday] — 今日+明日を1枚の統合カードで表示(2026-05-26 統合)。
 if ( ! function_exists( 'kpop_sc_birthday' ) ) :
 function kpop_sc_birthday() {
     if ( kpop_sc_suppressed_on_single() ) { return ''; }
-    if ( ! function_exists( 'kpop_render_today_birthday' ) ) { return ''; }
+    if ( ! function_exists( 'kpop_render_birthday_combined' ) ) { return ''; }
     ob_start();
-    kpop_render_today_birthday();
+    kpop_render_birthday_combined();
     return ob_get_clean();
 }
 add_shortcode( 'kpop_birthday', 'kpop_sc_birthday' );
 endif;
 
+// [kpop_birthday_tomorrow] — 旧・明日単独カード。統合カード化に伴い no-op
+// (既存 widget が残っていても空カードを出さないよう常に空文字を返す)。
 if ( ! function_exists( 'kpop_sc_birthday_tomorrow' ) ) :
 function kpop_sc_birthday_tomorrow() {
-    if ( kpop_sc_suppressed_on_single() ) { return ''; }
-    if ( ! function_exists( 'kpop_render_tomorrow_birthday' ) ) { return ''; }
-    ob_start();
-    kpop_render_tomorrow_birthday();
-    return ob_get_clean();
+    return '';
 }
 add_shortcode( 'kpop_birthday_tomorrow', 'kpop_sc_birthday_tomorrow' );
 endif;
@@ -72,13 +105,9 @@ function kpop_sc_chart( $atts ) {
     echo '<div class="kpop-sidebar-box kpop-today-chart" role="region" aria-label="Today\'s Chart">';
     echo '<h2 class="kpop-box-title">Today\'s Chart <span class="kpop-box-en">CHART</span></h2>';
     if ( $q->have_posts() ) {
-        echo '<ul class="kpop-chart-list">';
+        echo '<ul class="kpop-chart-list kpop-thumb-list">';
         while ( $q->have_posts() ) { $q->the_post();
-            printf(
-                '<li class="kpop-chart-item"><a href="%s">%s</a></li>',
-                esc_url( get_permalink() ),
-                esc_html( get_the_title() )
-            );
+            echo kpop_sc_thumb_item( get_the_ID() );
         }
         echo '</ul>';
         wp_reset_postdata();
@@ -133,13 +162,9 @@ function kpop_sc_popular( $atts ) {
     echo '<div class="kpop-sidebar-box kpop-popular-box" role="region" aria-label="人気記事">';
     echo '<h2 class="kpop-box-title">人気記事 <span class="kpop-box-en">POPULAR</span></h2>';
     if ( $ids ) {
-        echo '<ul class="kpop-popular-list">';
+        echo '<ul class="kpop-popular-list kpop-thumb-list">';
         foreach ( $ids as $pid ) {
-            printf(
-                '<li><a href="%s">%s</a></li>',
-                esc_url( get_permalink( $pid ) ),
-                esc_html( get_the_title( $pid ) )
-            );
+            echo kpop_sc_thumb_item( $pid );
         }
         echo '</ul>';
     } else {
@@ -182,6 +207,20 @@ function kpop_render_chart_ranking( $limit = 10 ) {
             );
         }
         echo '</ol>';
+        // 集計時点の明示(オーナー指示 2026-05-26): チャート週(title内 "... Week N")を優先し、
+        // 無ければ取得日時 fetched_at を日本時間で表示。読者がいつ時点のランキングか判別できるように。
+        $asof = '';
+        $title = ( is_array( $data ) && ! empty( $data['title'] ) ) ? $data['title'] : '';
+        if ( $title && preg_match( '/(\d{4})\s*,\s*([A-Za-z]+)\s*Week\s*(\d+)/i', $title, $wm ) ) {
+            $asof = sprintf( '%s %s Week %d 版', $wm[1], $wm[2], (int) $wm[3] );
+        }
+        if ( '' === $asof && is_array( $data ) && ! empty( $data['fetched_at'] ) ) {
+            $ts = strtotime( $data['fetched_at'] );
+            if ( $ts ) { $asof = date_i18n( 'Y年n月j日', $ts ) . ' 時点'; }
+        }
+        if ( $asof ) {
+            printf( '<p class="kpop-mchart-asof">%s</p>', esc_html( $asof ) );
+        }
         // 出典明記(citation-rules 準拠)
         $src = ( is_array( $data ) && ! empty( $data['url'] ) ) ? $data['url'] : 'https://www.soompi.com/';
         printf(

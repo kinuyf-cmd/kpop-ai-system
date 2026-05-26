@@ -14,6 +14,23 @@
 .kpop-birthday-today .widget-title::before { content: "🎂"; margin-right: 6px; }
 .kpop-birthday-tomorrow .widget-title::before { content: "🎉"; margin-right: 6px; }
 
+/* 統合カード(今日+明日を1枚に。2026-05-26)。カード見出し左にケーキ。
+   中の「今日」「明日」はサブ見出しで区切る。 */
+.kpop-birthday-card .widget-title::before { content: "🎂"; margin-right: 6px; }
+.kpop-birthday-section + .kpop-birthday-section { margin-top: 14px; }
+.kpop-birthday-subhead {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #AD1457;            /* 濃ピンク(白上 6.97:1 AA) */
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.kpop-birthday-section-today .kpop-birthday-subhead::before { content: "🎂"; }
+.kpop-birthday-section-tomorrow .kpop-birthday-subhead::before { content: "🎉"; }
+
 .kpop-birthday-list .kpop-birthday-item {
     display: flex;
     align-items: baseline;
@@ -80,34 +97,53 @@
 /* --- Today's Chart / 人気記事(新shortcode)--- */
 .kpop-today-chart .kpop-box-title::before { content: "📊"; margin-right: 6px; }
 .kpop-popular-box .kpop-box-title::before { content: "🔥"; margin-right: 6px; }
-.kpop-chart-list .kpop-chart-item,
-.kpop-popular-box .kpop-popular-list li {
-    padding: 7px 0;
+
+/* サムネ + タイトルのリスト(2026-05-26: タイトルのみ→サムネ付きに変更)。
+   Today's Chart / 人気記事 共通。番号バッジは廃し、サムネ自体を視覚アンカーにする。 */
+.kpop-thumb-list { list-style: none; margin: 0; padding: 0; }
+.kpop-thumb-item {
     border-bottom: 1px solid #f0e6ea;
+}
+.kpop-thumb-item:last-child { border-bottom: none; }
+.kpop-thumb-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    text-decoration: none;
+}
+.kpop-thumb-wrap {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fdeef4;
+}
+.kpop-thumb-img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    display: block;
+}
+.kpop-thumb-placeholder {
+    background: linear-gradient(135deg, #fdeef4 0%, #f8d7e3 100%);
+}
+.kpop-thumb-title {
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: 12.5px;
-    line-height: 1.5;
-    counter-increment: kpop-rank;
-    position: relative;
-    padding-left: 22px;
+    line-height: 1.45;
+    color: #212529;
+    font-weight: 600;
+    /* 長いタイトルは3行で省略しサムネ高さに収める(はみ出し防止) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
 }
-.kpop-chart-list .kpop-chart-item:last-child,
-.kpop-popular-box .kpop-popular-list li:last-child { border-bottom: none; }
-/* 順位番号を付けてランキング感を出す */
-.kpop-chart-list, .kpop-popular-box .kpop-popular-list { counter-reset: kpop-rank; }
-.kpop-chart-list .kpop-chart-item::before,
-.kpop-popular-box .kpop-popular-list li::before {
-    content: counter(kpop-rank);
-    position: absolute; left: 0; top: 7px;
-    width: 16px; height: 16px; line-height: 16px; text-align: center;
-    background: #C2185B; color: #fff;   /* 白文字 on 濃ピンク 5.87:1 AA */
-    border-radius: 50%; font-size: 10px; font-weight: 700;
-}
-.kpop-chart-list a, .kpop-popular-box .kpop-popular-list li a {
-    color: #212529; text-decoration: none;
-}
-.kpop-chart-list a:hover, .kpop-popular-box .kpop-popular-list li a:hover {
-    color: #C2185B; text-decoration: underline;
-}
+.kpop-thumb-link:hover .kpop-thumb-title { color: #C2185B; text-decoration: underline; }
 
 /* --- ミュージックチャート(Soompi Top10)ランキングUI --- */
 .kpop-music-chart .kpop-box-title::before { content: "🎵"; margin-right: 6px; }
@@ -129,7 +165,8 @@
 .kpop-mchart-body { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
 .kpop-mchart-song { font-size: 12.5px; font-weight: 600; color: #212529; overflow-wrap: anywhere; }
 .kpop-mchart-artist { font-size: 11px; color: #6b6b6b; }   /* 5.33:1 AA */
-.kpop-mchart-source { margin: 10px 0 0; font-size: 11px; text-align: right; }
+.kpop-mchart-asof { margin: 8px 0 0; font-size: 10.5px; text-align: right; color: #6b6b6b; }  /* 5.33:1 AA */
+.kpop-mchart-source { margin: 4px 0 0; font-size: 11px; text-align: right; }
 .kpop-mchart-source a { color: #AD1457; text-decoration: none; }  /* 6.97:1 AA */
 .kpop-mchart-source a:hover { text-decoration: underline; }
 
@@ -151,6 +188,33 @@
 /* box間の余白を全box統一(バラつき防止) */
 .kpop-sidebar-box { margin-bottom: 18px; }
 .kpop-sidebar-box:last-child { margin-bottom: 0; }
+
+/* トップのサイドバーを投稿ページUIに合わせる(2026-05-26)。
+   トップのカードは WP widget 枠 <aside class="widget inner-padding"> に包まれ、
+   inner-padding(40px)+ widget margin で「二重枠+過剰な余白」になっていた。
+   投稿ページは .kpop-sidebar-box 直描画(枠の余白なし)なので、widget 枠の
+   padding/margin/border/背景を打ち消し、中の .kpop-sidebar-box だけを見せる。
+   → 中の .kpop-sidebar-box が投稿ページと同一の体裁(白/角丸10px/枠/16px)になる。 */
+#right-sidebar .widget.inner-padding,
+#right-sidebar .widget_text.widget {
+    padding: 0;
+    margin: 0 0 18px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+#right-sidebar .widget.inner-padding:last-child { margin-bottom: 0; }
+/* widget 枠直下の .kpop-sidebar-box の下マージンは枠側に集約(二重マージン防止) */
+#right-sidebar .widget.inner-padding > .textwidget > .kpop-sidebar-box,
+#right-sidebar .widget.inner-padding > .kpop-sidebar-box { margin-bottom: 0; }
 /* 各box内の本文先頭余白を統一 */
 .kpop-sidebar-box > ul:first-of-type,
 .kpop-sidebar-box > ol:first-of-type { margin-top: 0; }
+
+/* 空のカスタムHTMLウィジェット枠を消す(2026-05-26)。
+   記事ページでは shortcode が suppress され空文字を返すが、widget の <aside> 枠
+   (inner-padding)だけが残り「空カード」として並んでしまう。中身が空の
+   custom_html widget を全ページで非表示にする(:has で空 textwidget を持つ枠を狙う)。
+   :has 未対応ブラウザ向けに、空 textwidget 自体の余白も殺してフォールバックする。 */
+.widget_custom_html:has(> .textwidget.custom-html-widget:empty) { display: none; }
+.textwidget.custom-html-widget:empty { display: none; margin: 0; padding: 0; }
