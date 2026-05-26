@@ -881,16 +881,22 @@ body { color: #2B2B32; }
 /* カード */
 .kpop-card {
     min-width: 0;
+    list-style: none;
 }
 .kpop-card-link {
     display: flex;
     flex-direction: column;
     gap: 6px;
     text-decoration: none;
+    /* カード全面をタップ可能に。従来は中身幅(≒110px)に縮みカード右側が
+       タップに反応しなかった(スマホで「押しても無反応」体験の原因)。 */
+    width: 100%;
+    height: 100%;
 }
 .kpop-card-thumb {
     position: relative;
     display: block;
+    width: 100%;          /* img固有幅(300px)に縮まずカード幅いっぱいに */
     border-radius: 8px;
     overflow: hidden;
     aspect-ratio: 16 / 10;
@@ -963,7 +969,11 @@ body { color: #2B2B32; }
         margin: 0;
         padding: 0 0 8px;
     }
-    .kpop-card {
+    /* この 64% 幅は横スクロールカルーセル(.kpop-cat-grid)専用。
+       .kpop-card は .kpop-archive-grid(カテゴリ一覧の2列グリッド)でも
+       再利用されており、限定しないと一覧カードまで 64%(≒110px)に縮み
+       カード右側がタップ無反応になる。.kpop-cat-grid 配下に限定する。 */
+    .kpop-cat-grid > .kpop-card {
         flex: 0 0 64%;
         max-width: 64%;
         scroll-snap-align: start;
