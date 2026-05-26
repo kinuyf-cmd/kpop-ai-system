@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""seo_lane_c_bridge.py — SEO opportunity queue を「実行キュー」に配線する。
+
+seo_opportunity_scanner.py は data/seo_opportunity_queue.json に Lane C/B 候補を
+query 単位で出すが、それを消費する経路が無かった(最大の欠落配線)。本スクリプトが:
+
+  1. queue の lane_C_rewrite / lane_B_new の各 query を GSC の query×page 次元で
+     突合し、その query を主に拾っている自サイト URL(=post)を特定する。
+  2. position でルート分岐:
+       pos 4.0-6.0  → logs/regeneration_queue.jsonl(auto_rewriter が CTR 改善)
+       pos 6.1-12.0 → data/enrich_queue.json(body_enrich が本文拡充)
+  3. 突合できない query はログに残す(新規記事候補=Lane B の本来の姿)。
+
+使い方:
+  venv_kpi/bin/python3 lib/seo_lane_c_bridge.py --dry-run   # 振り分けを表示のみ
+  venv_kpi/bin/python3 lib/seo_lane_c_bridge.py             # 実キュー書き込み
+依存: google-api-python-client / service_account.json(venv_kpi に存在)
+"""
+import os
+import sys
+import json
+import argparse
+from datetime import date, timedelta
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SA_FILE = os.path.join(BASE_DIR, "google_metrics", "service_account.json")
+SITE = os.environ.get("GSC_SITE_URL", "https://www.kpopjournal.tokyo/")
+
+QUEUE_IN = os.path.join(BASE_DIR, "data", "seo_opportunity_queue.json")
+REGEN_QUEUE = os.path.join(BASE_DIR, "logs", "regeneration_queue.jsonl")
+ENRICH_QUEUE = os.path.join(BASE_DIR, "data", "enrich_queue.json")
+UNMATCHED_LOG = os.path.join(BASE_DIR, "logs", "lane_c_bridge_unmatched.jsonl")
+
+# position 分岐の境界(plan で確定)
+POS_REWRITE = (4.0, 6.0)      # CTR 改善で 1ページ目内上位化(auto_rewriter)
+POS_ENRICH = (6.01, 12.0)     # 本文拡充が必要(body_enrich)
+
+# 1回の bridge 実行で扱う上位件数(暴走防止)
+MAX_PER_LANE = 40
+
+# ゴシップ/私的事実の slug は enrich/rewrite 対象から除外(E-E-A-T・規約リスク。
+# scanner のクエリ除外をすり抜けて突合 page がゴシップ記事になるケースの最終防御)。
+GOSSIP_SLUG_TERMS = [
+    "dating", "scandal", "relationship", "controversy", "rumor",
+    "divorce", "marriage", "enlist", "military-service",
+]
+
+
+def _service():
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
+    creds = service_account.Credentials.from_service_account_file(
+        SA_FILE, scopes=["https://www.googleapis.com/auth/webmasters.readonly"])
+    return build("searchconsole", "v1", credentials=creds)
+
+
+def fetch_page_for_query(svc, query, days=90):
+    """指定 query を最も多く拾っている自サイト page(URL)と指標を返す。
+    query×page 次元で引き、impression 最大の page を採用。無ければ None。"""
+    end = date.today().isoformat()
+    start = (date.today() - timedelta(days=days)).isoformat()
+    body = {
+        "startDate": start,
+        "endDate": end,
+        "dimensions": ["page"],
+        "dimensionFilterGroups": [{
+            "filters": [{
+                "dimension": "query",
+                "operator": "equals",
+                "expression": query,
+            }]
+        }],
+        "rowLimit": 5,
+    }
+    try:
+        res = svc.searchanalytics().query(siteUrl=SITE, body=body).execute()
+    except Exception as e:
+        print(f"  GSC error for query={query!r}: {e}", file=sys.stderr)
+        return None
+    rows = res.get("rows", [])
+    if not rows:
+        return None
+    # impression 最大の page
+    top = max(rows, key=lambda r: r.get("impressions", 0))
+    return {
+        "url": top["keys"][0],
+        "clicks": int(top.get("clicks", 0)),
+        "impressions": int(top.get("impressions", 0)),
+        "ctr": float(top.get("ctr", 0.0)),
+        "position": float(top.get("position", 0.0)),
+    }
+
+
+def _slug_from_url(url):
+    return url.rstrip("/").rsplit("/", 1)[-1] if url else ""
+
+
+def _append_jsonl(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
+
+def _load_enrich_queue():
+    if os.path.exists(ENRICH_QUEUE):
+        try:
+            return json.load(open(ENRICH_QUEUE, encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def run(dry_run=False, days=90):
+    if not os.path.exists(QUEUE_IN):
+        print(f"[bridge] queue 無し: {QUEUE_IN}", file=sys.stderr)
+        return 1
+    q = json.load(open(QUEUE_IN, encoding="utf-8"))
+    svc = _service()
+
+    candidates = (q.get("lane_C_rewrite", [])[:MAX_PER_LANE]
+                  + q.get("lane_B_new", [])[:MAX_PER_LANE])
+
+    routed_rewrite, routed_enrich, unmatched = [], [], []
+    seen_urls = set()  # 同一 URL の二重投入を防ぐ
+
+    for cand in candidates:
+        query = cand.get("query", "")
+        if not query:
+            continue
+        page = fetch_page_for_query(svc, query, days=days)
+        if not page or not page["url"]:
+            unmatched.append({"query": query, "reason": "no_page_for_query",
+                              "potential": cand.get("potential", 0)})
+            continue
+        url = page["url"]
+        if url in seen_urls:
+            continue
+        seen_urls.add(url)
+        # ゴシップ/私的事実 slug は除外(最終防御)
+        slug_l = _slug_from_url(url).lower()
+        if any(g in slug_l for g in GOSSIP_SLUG_TERMS):
+            unmatched.append({"query": query, "url": url, "reason": "gossip_slug_excluded"})
+            continue
+        pos = page["position"]
+        rec = {
+            "query": query,
+            "url": url,
+            "slug": _slug_from_url(url),
+            "position": round(pos, 2),
+            "impressions": page["impressions"],
+            "clicks": page["clicks"],
+            "potential": cand.get("potential", 0),
+            "theme": cand.get("theme", ""),
+            "source": "seo_lane_c_bridge",
+        }
+        if POS_REWRITE[0] <= pos <= POS_REWRITE[1]:
+            rec["route"] = "rewrite"
+            routed_rewrite.append(rec)
+        elif POS_ENRICH[0] <= pos <= POS_ENRICH[1]:
+            rec["route"] = "enrich"
+            routed_enrich.append(rec)
+        else:
+            unmatched.append({"query": query, "url": url, "position": round(pos, 2),
+                              "reason": "pos_out_of_range"})
+
+    # potential 降順
+    routed_rewrite.sort(key=lambda r: -r["potential"])
+    routed_enrich.sort(key=lambda r: -r["potential"])
+
+    print(f"[bridge] rewrite={len(routed_rewrite)} enrich={len(routed_enrich)} "
+          f"unmatched={len(unmatched)} (dry_run={dry_run})")
+    for r in routed_rewrite[:5]:
+        print(f"  REWRITE pos{r['position']:>5} pot+{r['potential']:>5} {r['slug']}")
+    for r in routed_enrich[:5]:
+        print(f"  ENRICH  pos{r['position']:>5} pot+{r['potential']:>5} {r['slug']}")
+
+    if dry_run:
+        return 0
+
+    # rewrite → auto_rewriter が読む regeneration_queue.jsonl(追記式)
+    for r in routed_rewrite:
+        _append_jsonl(REGEN_QUEUE, {
+            "post_id": None,            # auto_rewriter は url/slug でも解決可。未解決は side で対応
+            "url": r["url"], "slug": r["slug"],
+            "reason": "lane_c_bridge_rewrite", "priority": "P1",
+            "potential": r["potential"], "query": r["query"], "position": r["position"],
+        })
+
+    # enrich → body_enrich が読む enrich_queue.json(マージ・URL重複排除)
+    existing = _load_enrich_queue()
+    by_url = {e.get("url"): e for e in existing if isinstance(e, dict)}
+    for r in routed_enrich:
+        by_url[r["url"]] = r  # 最新の指標で上書き
+    merged = sorted(by_url.values(), key=lambda r: -r.get("potential", 0))
+    os.makedirs(os.path.dirname(ENRICH_QUEUE), exist_ok=True)
+    json.dump(merged, open(ENRICH_QUEUE, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+
+    for u in unmatched:
+        _append_jsonl(UNMATCHED_LOG, u)
+
+    print(f"[bridge] 書き込み完了: regen+{len(routed_rewrite)} "
+          f"enrich_queue={len(merged)}件 unmatched_log+{len(unmatched)}")
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--days", type=int, default=90)
+    args = ap.parse_args()
+    sys.exit(run(dry_run=args.dry_run, days=args.days))
+
+
+if __name__ == "__main__":
+    main()
