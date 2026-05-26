@@ -387,27 +387,28 @@ def unified_publish(
     content = strip_template_labels(content)
     content = sanitize_gpt_html(content)
 
-    # 6.3. CTA自動挿入 (Phase 14)
-    try:
-        content = inject_cta_into_content(title_final, content)
-    except Exception as e:
-        log.append(f"CTA inject err: {e}")
-
-    # 6.3.1. 内部リンク自動挿入(インラインのみ)。
-    # 注意: insert_internal_links は末尾に <section class="related-articles">
-    # を焼き付ける仕様。テンプレ側(content-single.php B-4a 関連記事5枚カード)が
-    # 既に関連記事を描画するため、本文へ焼き付けると1記事に関連記事が2つ出る
-    # (2026-05-26: 既存41記事で発生。表示時除去できずDB修正が必要だった)。
-    # よって本文にはインラインリンクのみ挿入し、末尾セクションは付けない。
+    # 6.3.0. 内部リンク自動挿入(インラインのみ)を CTA より「先」に実行。
+    # 注意1: insert_internal_links は末尾に <section class="related-articles">
+    # を焼き付ける仕様。テンプレ側 B-4a が既に関連記事を描画するため、本文には
+    # インラインリンクのみ挿入し末尾セクションは付けない。
+    # 注意2: CTA より先に実行することで、CTA ブロック内テキスト(「ポップアップ」
+    # 「韓国旅行」等)に内部リンクが混入するのを防ぐ(2026-05-26: 既存記事で
+    # CTA 内に記事リンクが混入していた事故の根本対処)。
     try:
         from lib.internal_links import (
             _find_related_articles, _insert_inline_links, get_article_index)
         _idx = get_article_index()
         _related = _find_related_articles(content, title_final, _idx)
         content = _insert_inline_links(content, _related)
-        log.append("internal_links(inline-only) OK")
+        log.append("internal_links(inline-only, pre-CTA) OK")
     except Exception as e:
         log.append(f"internal_links err: {e}")
+
+    # 6.3. CTA自動挿入 (Phase 14) — 内部リンク挿入の「後」に行い CTA 内混入を防ぐ
+    try:
+        content = inject_cta_into_content(title_final, content)
+    except Exception as e:
+        log.append(f"CTA inject err: {e}")
 
     # 6.3.1b. K-POP Artist Profile への inline link 注入 (本文中の初出のみ)
     # (廃止 2026-05-26) inject_profile_inline_links は本文アーティスト名を
