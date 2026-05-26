@@ -92,20 +92,25 @@ for hdr in "Strict-Transport-Security" "X-Content-Type-Options" "X-Frame-Options
 done
 
 # ─── [3] SSL 証明書 ─────────────────────
+# 公開面(本番)を最優先で測る。stg も併せて確認(両方の失効を取りこぼさない)。
 log "--- [3] SSL 証明書有効期限 ---"
-CERT_END=$(echo | openssl s_client -servername "$STG_HOST" -connect "${STG_HOST}:443" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | sed 's/notAfter=//')
-if [[ -n "$CERT_END" ]]; then
-  CERT_EPOCH=$(date -d "$CERT_END" '+%s' 2>/dev/null || echo "0")
-  NOW_EPOCH=$(date '+%s')
-  DAYS_LEFT=$(( (CERT_EPOCH - NOW_EPOCH) / 86400 ))
-  if [[ "$DAYS_LEFT" -lt 30 ]] && [[ "$DAYS_LEFT" -gt 0 ]]; then
-    add_finding "HIGH" "security" "SSL 証明書が ${DAYS_LEFT} 日以内に失効" "expire=$CERT_END days_left=$DAYS_LEFT"
-  elif [[ "$DAYS_LEFT" -le 0 ]]; then
-    add_finding "CRITICAL" "security" "SSL 証明書が失効済み" "expire=$CERT_END"
+for SSL_HOST in "$PROD_HOST" "$STG_HOST"; do
+  CERT_END=$(echo | openssl s_client -servername "$SSL_HOST" -connect "${SSL_HOST}:443" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | sed 's/notAfter=//')
+  if [[ -n "$CERT_END" ]]; then
+    CERT_EPOCH=$(date -d "$CERT_END" '+%s' 2>/dev/null || echo "0")
+    NOW_EPOCH=$(date '+%s')
+    DAYS_LEFT=$(( (CERT_EPOCH - NOW_EPOCH) / 86400 ))
+    if [[ "$DAYS_LEFT" -lt 30 ]] && [[ "$DAYS_LEFT" -gt 0 ]]; then
+      add_finding "HIGH" "security" "SSL 証明書が ${DAYS_LEFT} 日以内に失効 (${SSL_HOST})" "expire=$CERT_END days_left=$DAYS_LEFT"
+    elif [[ "$DAYS_LEFT" -le 0 ]]; then
+      add_finding "CRITICAL" "security" "SSL 証明書が失効済み (${SSL_HOST})" "expire=$CERT_END"
+    else
+      log "  SSL OK (${SSL_HOST}): ${DAYS_LEFT} 日残り"
+    fi
   else
-    log "  SSL OK: ${DAYS_LEFT} 日残り"
+    log "  SSL: ${SSL_HOST} の証明書を読めず(到達不能?)"
   fi
-fi
+done
 
 # ─── [4] WP / プラグインバージョン ─────────────────────
 log "--- [4] WordPress バージョン ---"
