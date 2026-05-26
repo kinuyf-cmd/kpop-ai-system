@@ -173,6 +173,82 @@ def log_event(post: dict, action: str, detail: str = "") -> None:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
+def _load_webhook() -> str:
+    """.env から URGENT_ERRORS webhook を取得(無ければ汎用 DISCORD_WEBHOOK)。
+    値の生読み(メモリ: discord-notify-placeholder-not-expanded)を避け、必ず実 URL を返す。"""
+    url = os.environ.get("DISCORD_WEBHOOK_URGENT_ERRORS") or os.environ.get("DISCORD_WEBHOOK") or ""
+    if url.startswith("http"):
+        return url
+    env = ROOT / ".env"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            for key in ("DISCORD_WEBHOOK_URGENT_ERRORS", "DISCORD_WEBHOOK"):
+                if line.startswith(key + "="):
+                    v = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    if v.startswith("http"):
+                        return v
+    return ""
+
+
+# 連続失敗 N 件で通知。同じ失敗で毎回鳴らさないよう sentinel ファイルで抑制。
+_CONSEC_FAIL_THRESHOLD = 3
+_ALERT_SENTINEL = LOG_DIR / ".x_consecutive_fail_alerted"
+
+
+def _recent_consecutive_fails(n: int) -> int:
+    """LOG_FILE 末尾を見て、直近から連続している post_fail の件数を数える。"""
+    if not LOG_FILE.exists():
+        return 0
+    try:
+        lines = LOG_FILE.read_text().splitlines()
+    except OSError:
+        return 0
+    count = 0
+    for line in reversed(lines):
+        try:
+            d = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        act = d.get("action", "")
+        if act == "post_fail":
+            count += 1
+        elif act in ("post_live", "post_dry"):
+            break  # 成功でリセット
+        # generated 等はスキップ(投稿成否に無関係)
+        if count >= n:
+            break
+    return count
+
+
+def maybe_alert_consecutive_failures() -> None:
+    """直近が _CONSEC_FAIL_THRESHOLD 件連続失敗なら Discord に1度だけ通知。
+    成功すると sentinel を消し、次の連続失敗で再通知できる(post_via_api 成功時に解除)。"""
+    fails = _recent_consecutive_fails(_CONSEC_FAIL_THRESHOLD)
+    if fails < _CONSEC_FAIL_THRESHOLD:
+        return
+    if _ALERT_SENTINEL.exists():
+        return  # 既に通知済み(復旧=成功まで再通知しない)
+    webhook = _load_webhook()
+    if not webhook:
+        return
+    msg = (
+        f"⚠️ **X自動投稿が{fails}回連続で失敗しています**\n"
+        f"直近ログ: `{LOG_FILE}`\n"
+        f"`~/.x_credentials` の失効(HTTP 401)や API 制限の可能性。"
+        f"認証を確認してください。"
+    )
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            webhook, data=json.dumps({"content": msg}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        urllib.request.urlopen(req, timeout=10)
+        _ALERT_SENTINEL.touch()
+    except Exception:
+        pass  # 通知失敗で投稿処理を止めない
+
+
 def post_via_api(text: str, dry_run: bool) -> tuple[bool, str]:
     """既存 google_metrics/post_to_x.py に委譲"""
     poster = ROOT / "google_metrics" / "post_to_x.py"
@@ -230,6 +306,11 @@ def main() -> int:
         action = "post_dry" if args.dry_run else ("post_live" if ok else "post_fail")
         log_event(post, action, detail)
         print(f"  post result: {ok}  {detail}")
+        # エラー可視化: 連続失敗で Discord 通知。成功したら sentinel 解除(次の連続で再通知可)。
+        if action == "post_live":
+            _ALERT_SENTINEL.unlink(missing_ok=True)
+        elif action == "post_fail":
+            maybe_alert_consecutive_failures()
     else:
         log_event(post, "generated", "no post requested")
     return 0 if post["valid"] else 1
