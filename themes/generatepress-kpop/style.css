@@ -1418,6 +1418,44 @@ body { color: #2B2B32; }
     .kpop-single .entry-content a.kpop-auto-link { transition: none; }
 }
 
+/* ==========================================================================
+   スマホ最適化(2026-05-26) — タップターゲット拡大が主目的
+   実機監査(360/375/390px)で横はみ出し0・本文17px/行間1.85は良好と確認済。
+   実害はタップ要素が小さい点(内部リンク20px・タグ28px < 推奨44px)。
+   ========================================================================== */
+@media (max-width: 600px) {
+    /* 本文の行内自動リンク: 行間を壊さずタップ領域だけ上下に拡張。
+       padding で当たり判定を広げ、負 margin で行の高さへの影響を相殺。 */
+    .kpop-single .entry-content a.kpop-auto-link {
+        padding: 9px 4px;
+        margin: -9px 0;
+        border-radius: 4px;
+    }
+    /* タグ chip: 40px 程度の高さを確保しタップしやすく。文字も少し大きく。
+       元の .kpop-tag 定義がソース順で後にあるため、詳細度を上げて確実に勝たせる。 */
+    .kpop-single-tags { gap: 10px; }
+    .kpop-single-tags a.kpop-tag {
+        font-size: 0.82rem;
+        padding: 9px 16px;
+        line-height: 1.4;
+    }
+    /* 引用ボックス: スマホでは左右パディングを詰めて本文幅を稼ぐ */
+    .kpop-single .entry-content blockquote {
+        padding-left: 38px;
+        padding-right: 14px;
+    }
+    .kpop-single .entry-content blockquote::before { left: 9px; font-size: 2rem; }
+    /* 本文画像: スマホは影を弱め・角丸やや小さく(画面が狭いので軽く) */
+    .kpop-single .entry-content .kpop-cite-thumb,
+    .kpop-single .entry-content img.kpop-cite-thumb {
+        border-radius: 8px;
+        box-shadow: 0 1px 8px rgba(0,0,0,.10), 0 0 0 1px rgba(0,0,0,.04);
+        margin: 1.2em auto;
+    }
+    /* 3行まとめ: スマホでパディングを最適化 */
+    .kpop-single .kpj-summary-lead .kpj-summary { padding: 14px 16px 14px 18px; }
+}
+
 /* ── 段階5e: 記事フッター(タグ / シェア / フィードバック / 関連) ───── */
 .kpop-single-footer {
     margin-top: 32px;
