@@ -680,7 +680,23 @@ body { color: #2B2B32; }
     display: block;
 }
 .latest-thumb--placeholder {
-    background: linear-gradient(135deg, #f8c8d8, #f0c0d0);
+    /* featured 未設定時のブランドプレースホルダー。
+       のっぺりした単色グラデを、ブランドピンクの斜めグラデ + 中央の
+       音符モチーフ(KPOP らしさ)に。装飾なので aria-hidden 済み。 */
+    position: relative;
+    background: linear-gradient(135deg, #fbd9e6 0%, #f3b9cf 60%, #ecaac6 100%);
+    overflow: hidden;
+}
+.latest-thumb--placeholder::after {
+    content: "♪";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: rgba(194, 24, 91, .45);   /* ブランドピンクの淡色 */
+    font-weight: 700;
 }
 .latest-body {
     display: flex;
