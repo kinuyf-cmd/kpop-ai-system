@@ -241,7 +241,9 @@ def maybe_alert_consecutive_failures() -> None:
         import urllib.request
         req = urllib.request.Request(
             webhook, data=json.dumps({"content": msg}).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
+            # User-Agent 必須: 既定の Python-urllib は Discord/Cloudflare に 403(1010)で
+            # 拒否される(lib/discord_channel_router.py / lib/alert_queue.py と同方針)。
+            headers={"Content-Type": "application/json", "User-Agent": "KpopJournal-Bot/2.0"},
         )
         urllib.request.urlopen(req, timeout=10)
         _ALERT_SENTINEL.touch()
