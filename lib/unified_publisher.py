@@ -387,11 +387,19 @@ def unified_publish(
     except Exception as e:
         log.append(f"CTA inject err: {e}")
 
-    # 6.3.1. 内部リンク自動挿入
+    # 6.3.1. 内部リンク自動挿入(インラインのみ)。
+    # 注意: insert_internal_links は末尾に <section class="related-articles">
+    # を焼き付ける仕様。テンプレ側(content-single.php B-4a 関連記事5枚カード)が
+    # 既に関連記事を描画するため、本文へ焼き付けると1記事に関連記事が2つ出る
+    # (2026-05-26: 既存41記事で発生。表示時除去できずDB修正が必要だった)。
+    # よって本文にはインラインリンクのみ挿入し、末尾セクションは付けない。
     try:
-        from lib.internal_links import insert_internal_links
-        content = insert_internal_links(content, post_title=title_final)
-        log.append("internal_links OK")
+        from lib.internal_links import (
+            _find_related_articles, _insert_inline_links, get_article_index)
+        _idx = get_article_index()
+        _related = _find_related_articles(content, title_final, _idx)
+        content = _insert_inline_links(content, _related)
+        log.append("internal_links(inline-only) OK")
     except Exception as e:
         log.append(f"internal_links err: {e}")
 
