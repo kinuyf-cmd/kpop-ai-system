@@ -1431,6 +1431,83 @@ function kpop_mark_image_credit( $content ) {
 }
 add_filter( 'the_content', 'kpop_mark_image_credit', 5 );
 
+/* [2] 本文中にバラバラに出る出典表記を、末尾に小さくまとめる(2026-05-26)。
+ * 対象: 本文直下の <p>(class に citation-source / citation-cta を含む、または
+ *       「出典:」「引用元:」で始まる段落)。
+ * 保護: <figure> 内の figcaption 出典(画像の著作権明示)は動かさない。
+ *       → <figure>...</figure> をプレースホルダに退避してから処理する。
+ * 動作: 該当 <p> を本文から除去し、URLで重複排除のうえ末尾に
+ *       <aside class="kpop-sources"> としてまとめて小さく描画。DBは非破壊。 */
+function kpop_consolidate_sources( $content ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) { return $content; }
+	if ( strpos( $content, '出典' ) === false && strpos( $content, '引用元' ) === false ) {
+		return $content;
+	}
+
+	// figure ブロックを退避(figcaption の出典は保持・移動しない)
+	$figures = array();
+	$content = preg_replace_callback( '/<figure\b.*?<\/figure>/is', function ( $m ) use ( &$figures ) {
+		$key = '%%KPOPFIG' . count( $figures ) . '%%';
+		$figures[ $key ] = $m[0];
+		return $key;
+	}, $content );
+
+	// 本文直下の出典段落を収集して除去。
+	// 注意: popup 記事の <p class="kpop-citation-cta"> は content-single.php の
+	// CTA 移動ロジックがマーカーとして参照するため、消さない(除外)。
+	$collected = array();
+	$pattern = '/<p\b[^>]*>\s*(?:出典|引用元)[:：].*?<\/p>/isu';
+	$content = preg_replace_callback( $pattern, function ( $m ) use ( &$collected ) {
+		if ( strpos( $m[0], 'kpop-citation-cta' ) !== false ) {
+			return $m[0]; // popup CTA マーカーは温存
+		}
+		// <a href> を取り出して dedup 用に保持
+		if ( preg_match( '/<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)<\/a>/is', $m[0], $a ) ) {
+			$collected[ $a[1] ] = wp_strip_all_tags( $a[2] ) ?: $a[1];
+		} else {
+			// リンク無し出典はテキストだけ拾う
+			$txt = trim( wp_strip_all_tags( $m[0] ) );
+			if ( $txt ) { $collected[ $txt ] = ''; }
+		}
+		return ''; // 本文からは除去
+	}, $content );
+
+	// figure を復元
+	if ( $figures ) {
+		$content = strtr( $content, $figures );
+	}
+
+	// 収集した出典が複数あるときだけ末尾に集約(1件以下なら元のままで十分)
+	if ( count( $collected ) >= 2 ) {
+		$items = '';
+		foreach ( $collected as $url => $label ) {
+			if ( $label === '' && filter_var( $url, FILTER_VALIDATE_URL ) === false ) {
+				// テキストのみ出典
+				$items .= '<li>' . esc_html( $url ) . '</li>';
+			} else {
+				$items .= '<li><a href="' . esc_url( $url ) . '" rel="noopener nofollow">'
+					. esc_html( $label ?: $url ) . '</a></li>';
+			}
+		}
+		$content .= '<aside class="kpop-sources" aria-label="情報ソース">'
+			. '<p class="kpop-sources-label">情報ソース・出典</p>'
+			. '<ul class="kpop-sources-list">' . $items . '</ul></aside>';
+	} elseif ( count( $collected ) === 1 ) {
+		// 1件のみ: 元の位置から消してしまったので末尾に小さく1行で戻す
+		foreach ( $collected as $url => $label ) {
+			$content .= '<aside class="kpop-sources" aria-label="情報ソース">'
+				. '<p class="kpop-sources-label">出典: '
+				. ( ( $label === '' && filter_var( $url, FILTER_VALIDATE_URL ) === false )
+					? esc_html( $url )
+					: '<a href="' . esc_url( $url ) . '" rel="noopener nofollow">' . esc_html( $label ?: $url ) . '</a>' )
+				. '</p></aside>';
+		}
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'kpop_consolidate_sources', 35 );
+
 /* ==========================================================================
    M11.5 段階9.5 (Day 9) — C ポップアップ刷新
    ACF 12項目 + taxonomy(popup_area / popup_status)+ archive フィルタ

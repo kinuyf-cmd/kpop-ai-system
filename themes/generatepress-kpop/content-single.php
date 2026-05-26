@@ -262,7 +262,7 @@ if ( $kpop_is_popup_single ) {
 			if ( ! empty( $kpop_wiki_links ) ) :
 			?>
 			<aside class="kpop-idol-wiki-link" aria-label="アーティストの詳細プロフィール">
-				<p class="kpop-idol-wiki-link-label">この記事の関連アーティスト</p>
+				<p class="kpop-idol-wiki-link-label">メンバー・所属事務所・公式SNS など詳しくは Idol Wiki へ</p>
 				<ul class="kpop-idol-wiki-link-list">
 					<?php foreach ( $kpop_wiki_links as $kpop_link ) : ?>
 						<li>

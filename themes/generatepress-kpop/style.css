@@ -2356,6 +2356,44 @@ textarea:focus-visible,
     text-decoration: underline;
 }
 
+/* [2] 末尾に集約した「情報ソース・出典」ブロック。控えめに小さく。 */
+.kpop-single .entry-content .kpop-sources {
+    margin: 2em 0 0.5em;
+    padding-top: 12px;
+    border-top: 1px solid #f0e3e8;
+}
+.kpop-single .entry-content .kpop-sources-label {
+    margin: 0 0 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #6a6a6a;        /* 白上 5.7:1 AA */
+    letter-spacing: 0.02em;
+}
+.kpop-single .entry-content .kpop-sources-list {
+    margin: 0;
+    padding-left: 1.2em;
+    list-style: disc;
+}
+.kpop-single .entry-content .kpop-sources-list li {
+    font-size: 0.78rem;
+    color: #6a6a6a;
+    line-height: 1.6;
+    margin: 0;
+}
+.kpop-single .entry-content .kpop-sources a,
+.kpop-single .entry-content .kpop-sources-label a {
+    color: var(--kpop-pink-dark, #C2185B);
+    text-decoration: underline;
+    word-break: break-all;
+    font-weight: 400;     /* 出典リンクは控えめに(太字継承を打ち消す) */
+    font-size: 0.78rem;
+}
+/* 1件のみ末尾集約した場合のラベル行も小さく揃える */
+.kpop-single .entry-content .kpop-sources-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 /* フォールバック: 画像取得失敗時の placeholder(alt テキストが見える状態) */
 .kpop-single .entry-content .kpop-cite-thumb[src=""],
 .kpop-single .entry-content .kpop-cite-thumb:not([src]) {
@@ -3050,19 +3088,28 @@ textarea:focus-visible,
 }
 
 /* M6 段階6.10 — E-5 記事 → Idol Wiki 直接リンク(本文末尾の aside) */
+/* 記事 → Idol Wiki 誘導 CTA カード([1]、2026-05-26 格上げ)。
+   従来は薄グレーの控えめなピルリンクだったが、Idol Wiki への回遊を促す
+   上品なブランドカードに。アイコン + 訴求文 + ピル型リンク。AA色のみ。 */
 .kpop-single .entry-content + .kpop-idol-wiki-link,
 .kpop-idol-wiki-link {
-    margin: 1.5em 0 1em;
-    padding: 1em 1.25em;
-    background: #fafafa;
-    border-left: 4px solid var(--kpop-pink-dark, #C2185B);
-    border-radius: 0 4px 4px 0;
+    margin: 2.2em 0 1.4em;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #fff7fa 0%, #fdeef4 100%);
+    border: 1px solid #f3c9da;
+    border-left: 5px solid var(--kpop-pink-dark, #C2185B);
+    border-radius: 12px;
 }
 .kpop-idol-wiki-link-label {
-    margin: 0 0 0.5em;
-    font-size: 0.875em;
-    color: #595959; /* AAA */
+    margin: 0 0 0.7em;
+    font-size: 0.95rem;
+    color: var(--kpop-pink-dark, #C2185B);
     font-weight: 700;
+}
+/* アイコン(本のグリフ)を見出し前に */
+.kpop-idol-wiki-link-label::before {
+    content: "\1F4D6";  /* 📖 */
+    margin-right: 6px;
 }
 .kpop-idol-wiki-link-list {
     list-style: none;
@@ -3070,28 +3117,33 @@ textarea:focus-visible,
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5em;
+    gap: 0.6em;
 }
 .kpop-idol-wiki-link-anchor {
     display: inline-block;
-    padding: 0.4em 0.9em;
-    background: #ffffff;
-    color: var(--kpop-pink-dark, #C2185B); /* AA on white = 5.87:1 */
-    border: 1px solid #d9d9d9;
+    padding: 9px 18px;
+    background: var(--kpop-pink-dark, #C2185B);
+    color: #fff;                 /* 濃ピンク背景 + 白 = 5.87:1 AA */
+    border: none;
     border-radius: 999px;
     text-decoration: none;
-    font-size: 0.875em;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: background-color .15s ease;
 }
-/* 矢印は ::after の疑似要素として描画 — axe の color-contrast 検査対象外、
-   かつ inline span による親背景継承の曖昧さを回避する */
 .kpop-idol-wiki-link-anchor::after {
     content: " →";
     color: inherit;
 }
 .kpop-idol-wiki-link-anchor:hover,
-.kpop-idol-wiki-link-anchor:focus {
-    background: #fff0f5;
-    text-decoration: underline;
+.kpop-idol-wiki-link-anchor:focus-visible {
+    background: var(--kpop-pink-darker, #AD1457);  /* 白上 6.97:1 AA */
+    color: #fff;
+    text-decoration: none;
+    outline: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .kpop-idol-wiki-link-anchor { transition: none; }
 }
 
 /* ==========================================================================
