@@ -1722,6 +1722,80 @@ body { color: #2B2B32; }
     color: #8A4A63;
     font-size: 0.8rem;
 }
+/* PR ラベル(ステマ規制対応・広告である旨の明示) */
+.kpop-ad-slot .kpop-ad-pr {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #8A4A63;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+}
+/* A8 アフィリエイト画像風カード */
+.kpop-ad-card {
+    display: block;
+    text-decoration: none;
+    border: 1px solid #f0dde4;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow .18s ease, transform .18s ease;
+}
+.kpop-ad-card:hover {
+    box-shadow: 0 6px 18px rgba(255, 78, 107, .18);
+    transform: translateY(-2px);
+}
+.kpop-ad-card .kpop-ad-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+/* 画像が無いときの CSS ビジュアル(✈ グラデーション) */
+.kpop-ad-card .kpop-ad-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 96px;
+    font-size: 2.4rem;
+    color: #fff;
+    background: linear-gradient(135deg, #ff7aa0 0%, #ff4e6b 100%);
+}
+.kpop-ad-card .kpop-ad-body {
+    display: block;
+    padding: 12px 14px 14px;
+    text-align: left;
+}
+.kpop-ad-card .kpop-ad-head {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #2a2a2a;        /* 白背景 12:1 */
+    line-height: 1.35;
+}
+.kpop-ad-card .kpop-ad-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.76rem;
+    color: #555;           /* 白背景 7.46:1 AA */
+    line-height: 1.4;
+}
+.kpop-ad-card .kpop-ad-cta {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #ff4e6b;
+    color: #fff;           /* #ff4e6b 上 white 3.3:1(大字相当/ボタン)→ font-weight強で可読 */
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+.kpop-ad-card:hover .kpop-ad-cta {
+    background: #e83e59;
+}
 
 /* サイドバー記事リスト(このカテゴリの最新) */
 .kpop-side-list {

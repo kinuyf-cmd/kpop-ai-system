@@ -418,6 +418,66 @@ function kpop_render_single_footer( $post_id ) {
 }
 
 /**
+ * サイドバー Advertisement 枠の中身を生成する(A8アフィリエイト・画像付きカード)。
+ * 素材は config/affiliate/sidebar_ad.json。優先順位:
+ *   1. banner_html(A8公式バナーHTMLを丸ごと)が非空ならそれを最優先で出力。
+ *   2. それ以外は affiliate_url へのリンクで画像風カードを生成。
+ *      banner_image_url があれば <img>、無ければ CSS ビジュアル(✈グラデ)でフォールバック。
+ * いずれも A8 計測ピクセル(tracking_pixel)を併せて出力し、rel="nofollow sponsored"。
+ * enabled:false / config 不在ならプレースホルダに戻す(壊さない)。
+ */
+function kpop_render_sidebar_ad() {
+	$path = get_stylesheet_directory() . '/../../../../config/affiliate/sidebar_ad.json';
+	// テーマ位置に依存しない実パス解決(wp_stg 配下からの相対が読めない場合の保険)。
+	if ( ! file_exists( $path ) ) {
+		$alt = '/home/aiuser/kpop-ai-system/config/affiliate/sidebar_ad.json';
+		if ( file_exists( $alt ) ) { $path = $alt; }
+	}
+	$cfg = file_exists( $path ) ? json_decode( (string) file_get_contents( $path ), true ) : null;
+	if ( ! is_array( $cfg ) || empty( $cfg['enabled'] ) ) {
+		return '<p class="kpop-box-placeholder">広告枠</p>';
+	}
+
+	// 1) A8 公式バナーHTMLをそのまま使う場合(最優先)。
+	$banner_html = isset( $cfg['banner_html'] ) ? trim( (string) $cfg['banner_html'] ) : '';
+	if ( $banner_html !== '' ) {
+		// 公式素材は信頼できる前提でそのまま出力(A8 の <a>+<img>)。rel 補完のみ。
+		if ( strpos( $banner_html, 'rel=' ) === false ) {
+			$banner_html = preg_replace( '/<a /i', '<a rel="nofollow sponsored" target="_blank" ', $banner_html, 1 );
+		}
+		return '<div class="kpop-ad-a8">' . $banner_html . '</div>';
+	}
+
+	$url = isset( $cfg['affiliate_url'] ) ? esc_url( $cfg['affiliate_url'] ) : '';
+	if ( $url === '' ) {
+		return '<p class="kpop-box-placeholder">広告枠</p>';
+	}
+	$headline  = isset( $cfg['headline'] ) ? esc_html( $cfg['headline'] ) : '';
+	$subtext   = isset( $cfg['subtext'] ) ? esc_html( $cfg['subtext'] ) : '';
+	$cta_label = isset( $cfg['cta_label'] ) && $cfg['cta_label'] !== '' ? esc_html( $cfg['cta_label'] ) : 'くわしく見る';
+	$img_url   = isset( $cfg['banner_image_url'] ) ? trim( (string) $cfg['banner_image_url'] ) : '';
+
+	// 2) 画像風カード。
+	$visual = ( $img_url !== '' )
+		? '<img class="kpop-ad-img" src="' . esc_url( $img_url ) . '" alt="' . $headline . '" loading="lazy">'
+		: '<span class="kpop-ad-visual" aria-hidden="true">✈</span>';
+
+	$out  = '<a class="kpop-ad-card" href="' . $url . '" rel="nofollow sponsored" target="_blank">';
+	$out .= $visual;
+	$out .= '<span class="kpop-ad-body">';
+	if ( $headline !== '' ) { $out .= '<span class="kpop-ad-head">' . $headline . '</span>'; }
+	if ( $subtext !== '' )  { $out .= '<span class="kpop-ad-sub">' . $subtext . '</span>'; }
+	$out .= '<span class="kpop-ad-cta">' . $cta_label . '</span>';
+	$out .= '</span></a>';
+
+	// A8 計測ピクセル(1x1)。リンク経由のクリックだけでなく表示計測も生かす。
+	if ( ! empty( $cfg['tracking_pixel'] ) ) {
+		$out .= '<img class="kpop-ad-px" src="' . esc_url( $cfg['tracking_pixel'] ) . '" width="1" height="1" alt="" style="position:absolute;left:-9999px;">';
+	}
+	return $out;
+}
+
+/**
  * 段階5f — 個別記事の右サイドバー追加コンテンツ。
  * GP の 'generate_before_right_sidebar_content' フックで、個別記事のときだけ
  * 目次 / ADVERTISEMENT 枠 / このカテゴリの最新記事 を sidebar-1 ウィジェットの
@@ -435,10 +495,10 @@ function kpop_single_sidebar_extras() {
 	// 見出しが無い記事用フォールバック(JS が空なら箱ごと隠す)。
 	echo '</div>';
 
-	// --- ADVERTISEMENT 枠(プレースホルダ。本タグは J項目) ---
+	// --- ADVERTISEMENT 枠(A8アフィリエイト。config/affiliate/sidebar_ad.json で素材差替) ---
 	echo '<div class="kpop-sidebar-box kpop-ad-slot">';
-	echo '<span class="kpop-ad-label">Advertisement</span>';
-	echo '<p class="kpop-box-placeholder">広告枠</p>';
+	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+	echo kpop_render_sidebar_ad(); // phpcs:ignore WordPress.Security.EscapeOutput -- 内部で必要箇所をエスケープ済み
 	echo '</div>';
 
 	// --- このカテゴリの最新記事5件 ---

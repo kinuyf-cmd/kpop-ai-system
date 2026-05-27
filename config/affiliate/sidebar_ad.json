@@ -1,0 +1,12 @@
+{
+  "_note": "記事右サイドのAdvertisement枠に出すA8アフィリエイト。banner_image_url が空ならCSSビジュアルでフォールバック。A8公式バナーHTMLを使う場合は banner_html に丸ごと貼ると最優先で使われる。",
+  "enabled": true,
+  "program_key": "airtori_intl",
+  "affiliate_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+64RJ6",
+  "tracking_pixel": "https://www16.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+64RJ6",
+  "headline": "航空券をかしこく予約",
+  "subtext": "国内・海外航空券の比較・予約はエアトリ",
+  "cta_label": "エアトリで探す",
+  "banner_image_url": "",
+  "banner_html": ""
+}
