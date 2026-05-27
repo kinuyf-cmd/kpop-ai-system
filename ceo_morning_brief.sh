@@ -21,52 +21,64 @@ METRICS_FILE=~/google_metrics/metrics_yesterday.json
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [1] 前日アーカイブ集計
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TOTAL=0; SUCCESS=0; STOPPED=0
-SPEED_OK=0; SPEED_NG=0
+# データソース: data/auto_article_processed.jsonl（1行=1処理）。
+# kind="breaking"=公開成功 / kind="*_blocked"=品質ゲートで停止。
+# 旧 ~/kpop_archives/*/summary.txt は 2026-04-15 を最後に書き込み停止しており
+# 集計に使うと「前日0本」と誤報する（2026-05-27 修正）。
+PROCESSED_FILE="$SCRIPT_DIR/data/auto_article_processed.jsonl"
+EVAL=$(YESTERDAY_KEY="$YESTERDAY_KEY" python3 -c "
+import os, json, collections
+key = os.environ['YESTERDAY_KEY']           # YYYYMMDD
+ymd = f'{key[:4]}-{key[4:6]}-{key[6:8]}'    # ISO の日付プレフィックス
+ok = ng = 0
+by_type_ok = collections.Counter()
+by_type_ng = collections.Counter()
+lines = []
+try:
+    with open('$PROCESSED_FILE') as f:
+        for raw in f:
+            try:
+                d = json.loads(raw)
+            except Exception:
+                continue
+            if not str(d.get('ts', '')).startswith(ymd):
+                continue
+            kind = d.get('kind', '')
+            typ = d.get('type', '') or 'other'
+            if kind == 'breaking':
+                ok += 1
+                by_type_ok[typ] += 1
+            elif kind.endswith('_blocked'):
+                ng += 1
+                by_type_ng[typ] += 1
+    total = ok + ng
+    rate = (ok * 100 // total) if total else 0
+    # 出力: 集計値（KEY=VALUE 形式で bash に渡す）
+    print(f'OK={ok}')
+    print(f'NG={ng}')
+    print(f'TOTAL={total}')
+    print(f'RATE={rate}')
+except FileNotFoundError:
+    print('OK=0'); print('NG=0'); print('TOTAL=0'); print('RATE=0')
+" 2>/dev/null)
+
+SUCCESS=$(echo "$EVAL" | grep '^OK=' | cut -d= -f2); SUCCESS=${SUCCESS:-0}
+STOPPED=$(echo "$EVAL" | grep '^NG=' | cut -d= -f2); STOPPED=${STOPPED:-0}
+TOTAL=$(echo "$EVAL" | grep '^TOTAL=' | cut -d= -f2); TOTAL=${TOTAL:-0}
+RATE=$(echo "$EVAL" | grep '^RATE=' | cut -d= -f2); RATE=${RATE:-0}
+
+# 速報/戦略/チャートの旧3分類は auto_article_processed では区別されないため
+# 「速報(breaking)」を speed 行に集約表示し、他は 0 とする。
+SPEED_OK=$SUCCESS; SPEED_NG=$STOPPED
 STRATEGY_OK=0; STRATEGY_NG=0
 CHART_OK=0; CHART_NG=0
-ARTICLE_LINES=""
-
-if [[ -n "$YESTERDAY_KEY" && -d "$ARCHIVE_BASE" ]]; then
-  for dir in "$ARCHIVE_BASE"/*/; do
-    [[ ! -d "$dir" ]] && continue
-    dir_id=$(basename "$dir")
-    dir_date=$(echo "$dir_id" | cut -c1-8)
-    [[ "$dir_date" != "$YESTERDAY_KEY" ]] && continue
-
-    TOTAL=$((TOTAL + 1))
-    summary="$dir/summary.txt"
-    [[ ! -f "$summary" ]] && continue
-
-    pipeline=$(grep 'パイプライン' "$summary" | sed 's/.*: *//' | tr -d ' ')
-    verdict=$(grep '判定' "$summary" | head -1)
-    title=$(grep 'タイトル' "$summary" | sed 's/.*: *//')
-    chars=$(grep '文字数' "$summary" | sed 's/.*: *//')
-
-    if echo "$verdict" | grep -q '投稿OK'; then
-      SUCCESS=$((SUCCESS + 1))
-      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ✅ [${pipeline}] ${title}（${chars}文字）\n"
-      case "$pipeline" in
-        speed)    SPEED_OK=$((SPEED_OK + 1)) ;;
-        strategy) STRATEGY_OK=$((STRATEGY_OK + 1)) ;;
-        chart)    CHART_OK=$((CHART_OK + 1)) ;;
-      esac
-    else
-      STOPPED=$((STOPPED + 1))
-      [[ -n "$title" ]] && ARTICLE_LINES="${ARTICLE_LINES}  ❌ [${pipeline}] ${title}（停止）\n"
-      case "$pipeline" in
-        speed)    SPEED_NG=$((SPEED_NG + 1)) ;;
-        strategy) STRATEGY_NG=$((STRATEGY_NG + 1)) ;;
-        chart)    CHART_NG=$((CHART_NG + 1)) ;;
-      esac
-    fi
-  done
-fi
-
-if [ "$TOTAL" -gt 0 ]; then
-  RATE=$(( SUCCESS * 100 / TOTAL ))
+if [ "$SUCCESS" -gt 0 ]; then
+  ARTICLE_LINES="  ✅ 速報 ${SUCCESS}本 公開\n"
 else
-  RATE=0
+  ARTICLE_LINES=""
+fi
+if [ "$STOPPED" -gt 0 ]; then
+  ARTICLE_LINES="${ARTICLE_LINES}  ⛔ ${STOPPED}本 品質ゲートで停止（誤情報/無関係コンテンツ等）\n"
 fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -121,19 +133,15 @@ fi
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 NOTABLE=""
 
+# STOPPED は品質ゲートのブロック数。高ブロック率は誤情報を弾いている＝正常動作の場合が
+# 多いので「異常」とは断じない。判断材料は「処理は走ったのに公開ゼロ」かどうか。
 if [ "$TOTAL" -eq 0 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 前日のパイプライン実行がゼロです\n"
-fi
-if [ "$STOPPED" -ge 3 ]; then
-  NOTABLE="${NOTABLE}  🚨 停止${STOPPED}回 — パイプライン異常の可能性\n"
-elif [ "$STOPPED" -ge 1 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 停止${STOPPED}回あり（原因確認推奨）\n"
+  NOTABLE="${NOTABLE}  ⚠ 前日の記事処理がゼロ（collector/detector の起動を確認）\n"
 fi
 if [ "$SUCCESS" -eq 0 ] && [ "$TOTAL" -gt 0 ]; then
-  NOTABLE="${NOTABLE}  🚨 成功ゼロ — 全パイプラインが停止\n"
-fi
-if [ "$TOTAL" -gt 0 ] && [ "$RATE" -lt 50 ]; then
-  NOTABLE="${NOTABLE}  ⚠ 成功率${RATE}% — 品質チェック基準の見直しを検討\n"
+  NOTABLE="${NOTABLE}  🚨 処理${TOTAL}件すべてゲートで停止・公開ゼロ — ソース品質かゲート閾値を確認\n"
+elif [ "$TOTAL" -gt 0 ] && [ "$RATE" -lt 20 ]; then
+  NOTABLE="${NOTABLE}  ⚠ 公開率${RATE}%（${SUCCESS}/${TOTAL}）— ソースの品質低下かゲート過剰の可能性\n"
 fi
 
 [[ -z "$NOTABLE" ]] && NOTABLE="  特になし\n"
@@ -144,13 +152,11 @@ fi
 POLICY=""
 
 if [ "$TOTAL" -eq 0 ]; then
-  POLICY="  → cron実行状況を確認。パイプラインが起動していない可能性"
-elif [ "$STOPPED" -ge 3 ]; then
-  POLICY="  → アーカイブログで停止原因を調査。品質チェック閾値の見直しを検討"
-elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -ge 1 ]; then
-  POLICY="  → 停止分の原因を確認しつつ、通常運用を継続"
-elif [ "$SUCCESS" -ge 1 ] && [ "$STOPPED" -eq 0 ]; then
-  POLICY="  → 全件成功。通常運用を継続"
+  POLICY="  → cron実行状況を確認。collector/detector が起動していない可能性"
+elif [ "$SUCCESS" -eq 0 ]; then
+  POLICY="  → 公開ゼロ。cron_breaking.log のブロック理由を確認しゲート閾値/ソースを点検"
+elif [ "$SUCCESS" -ge 1 ]; then
+  POLICY="  → 速報${SUCCESS}本公開・通常運用を継続（停止${STOPPED}件はゲート正常動作の範囲か確認）"
 else
   POLICY="  → 通常運用を継続"
 fi
@@ -165,8 +171,7 @@ fi
 BRIEF="📋 CEO Morning Brief — ${TODAY}
 
 【1. 前日サマリー（${YESTERDAY_LABEL}）】
-  投稿: ${SUCCESS}本成功 / ${STOPPED}本停止 / 計${TOTAL}回実行（成功率${RATE}%）
-  速報: ✅${SPEED_OK} ❌${SPEED_NG} / 戦略: ✅${STRATEGY_OK} ❌${STRATEGY_NG} / チャート: ✅${CHART_OK} ❌${CHART_NG}
+  記事: ${SUCCESS}本公開 / ${STOPPED}本ゲート停止 / 計${TOTAL}件処理（公開率${RATE}%）
 
 【2. 投稿記事一覧】
 $(echo -e "${ARTICLE_LINES:-  （なし）}")
