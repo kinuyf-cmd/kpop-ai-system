@@ -38,12 +38,27 @@ class _TextExtractor(HTMLParser):
 
 
 def _extract_text(html: str) -> str:
-    """HTMLからプレーンテキストを抽出する（ヘッダー・画像帰属・CTA除く）。"""
-    # 画像帰属行を事前に除去
-    html = re.sub(r'<p[^>]*>画像[：:].*?</p>', '', html)
-    html = re.sub(r'<p[^>]*>※当サイト.*?</p>', '', html)
-    # kpj-cta/kpj-hybrid-cta/kpj-disclosure ブロックを除去
-    html = re.sub(r'<div[^>]*class="kpj-(?:cta|hybrid|disclosure)[^"]*"[^>]*>.*?</div>', '', html, flags=re.DOTALL)
+    """HTMLからプレーンテキストを抽出する（ヘッダー・画像帰属・CTA・内部誘導リンク除く）。
+
+    要約は本文の「地の文」だけを対象にする。記事本文には以下の非・地の文が
+    混ざるため、文抽出の前に構造的に除去する（除去対象は本文書換えでなく要約用の
+    一時テキストのみ。記事DBには影響しない）:
+      - 画像帰属行 / 免責文
+      - CTAブロック（class が kpj-* / kpopj-* / kpopj-cta-* / data-cta 属性つき div）
+      - 本文末尾や段落内に注入された「関連記事」誘導リンク（自ドメイン記事への <a>）
+    """
+    # 画像帰属行・免責文を事前に除去
+    html = re.sub(r'<p[^>]*>画像[：:].*?</p>', '', html, flags=re.DOTALL)
+    html = re.sub(r'<p[^>]*>※当サイト.*?</p>', '', html, flags=re.DOTALL)
+    # CTAブロック除去: class が kpj-(cta|hybrid|disclosure) または kpopj-cta*、
+    # もしくは data-cta 属性を持つ <div> を中身ごと削除。
+    html = re.sub(r'<div[^>]*class="(?:kpj-(?:cta|hybrid|disclosure)|kpopj-cta)[^"]*"[^>]*>.*?</div>',
+                  '', html, flags=re.DOTALL)
+    html = re.sub(r'<div[^>]*\bdata-cta=[^>]*>.*?</div>', '', html, flags=re.DOTALL)
+    # 自ドメイン記事への誘導 <a>（関連記事リンク/カテゴリCTA）をテキストごと除去。
+    # 地の文の inline 内部リンクも巻き込むが、要約用テキストなので実害は軽微。
+    html = re.sub(r'<a\b[^>]*href="https?://(?:www\.)?kpopjournal\.tokyo/[^"]*"[^>]*>.*?</a>',
+                  '', html, flags=re.DOTALL | re.IGNORECASE)
     parser = _TextExtractor()
     parser.feed(html)
     return parser.get_text()
@@ -56,8 +71,14 @@ def _split_sentences(text: str) -> list[str]:
     sentences = []
     for p in parts:
         p = p.strip()
-        if p:
-            sentences.append(p)
+        if not p:
+            continue
+        # 引用符をまたいで文分割された断片対策: 先頭に取り残された閉じ括弧・読点
+        # （」』）)、，等）を剥がす。剥がした結果が極端に短ければ断片として捨てる。
+        p = re.sub(r'^[」』）\)】〕》、，,。\.\—\-…\s]+', '', p)
+        if len(p) < 10:
+            continue
+        sentences.append(p)
     return sentences
 
 
