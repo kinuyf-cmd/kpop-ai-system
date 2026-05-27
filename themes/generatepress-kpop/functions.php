@@ -450,17 +450,23 @@ function kpop_ad_banner_html( $key ) {
 }
 
 /** rotate_pool からランダムに1つ選んで描画(ページ読込毎に変わる)。 */
-function kpop_ad_rotate() {
+function kpop_ad_rotate( $count = 1, $exclude = array() ) {
 	$cfg = kpop_ad_config();
 	$pool = isset( $cfg['rotate_pool'] ) && is_array( $cfg['rotate_pool'] ) ? $cfg['rotate_pool'] : array();
+	$pool = array_values( array_diff( $pool, (array) $exclude ) ); // 固定表示中のキー等を除外
 	if ( empty( $pool ) ) { return ''; }
-	$key = $pool[ array_rand( $pool ) ];
-	return kpop_ad_banner_html( $key );
+	shuffle( $pool );                          // ページ読込毎にランダム順
+	$pick = array_slice( $pool, 0, max( 1, (int) $count ) ); // プール超過分は重複させず打ち止め
+	$out = '';
+	foreach ( $pick as $key ) {
+		$out .= kpop_ad_banner_html( $key );
+	}
+	return $out;
 }
 
-/** サイドバー Advertisement 枠の中身(rotate)。空ならプレースホルダに戻す。 */
+/** サイドバー Advertisement 枠の中身(rotate 3枚)。空ならプレースホルダに戻す。 */
 function kpop_render_sidebar_ad() {
-	$out = kpop_ad_rotate();
+	$out = kpop_ad_rotate( 3 );
 	return $out !== '' ? $out : '<p class="kpop-box-placeholder">広告枠</p>';
 }
 
@@ -477,8 +483,9 @@ function kpop_ad_placement_on( $name ) {
 function kpop_ad_top() {
 	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top' ) ) { return; }
 	$cfg   = kpop_ad_config();
-	$fixed = isset( $cfg['top_fixed_key'] ) ? kpop_ad_banner_html( $cfg['top_fixed_key'] ) : '';
-	$rot   = kpop_ad_rotate();
+	$fkey  = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
+	$fixed = $fkey !== '' ? kpop_ad_banner_html( $fkey ) : '';
+	$rot   = kpop_ad_rotate( 3, array( $fkey ) ); // 固定中のキーは除外して重複回避
 	if ( $fixed === '' && $rot === '' ) { return; }
 	echo '<div class="kpop-ad-row kpop-ad-top">';
 	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
@@ -489,10 +496,10 @@ function kpop_ad_top() {
 }
 add_action( 'generate_after_header', 'kpop_ad_top' );
 
-/** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー1枚。 */
+/** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー3枚。 */
 function kpop_ad_archive() {
 	if ( ! ( is_category() || is_archive() || is_tax() ) || ! kpop_ad_placement_on( 'archive' ) ) { return; }
-	$rot = kpop_ad_rotate();
+	$rot = kpop_ad_rotate( 3 );
 	if ( $rot === '' ) { return; }
 	echo '<div class="kpop-ad-row kpop-ad-archive">';
 	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
@@ -502,14 +509,14 @@ function kpop_ad_archive() {
 add_action( 'generate_after_header', 'kpop_ad_archive' );
 
 /**
- * 記事本文の中ほどにローテバナー1枚を挿入(the_content フィルタ)。
+ * 記事本文の中ほどにローテバナー3枚を挿入(the_content フィルタ)。
  * 既存の cta_injector(本文中CTA)と重ならないよう、段落数が十分な記事のみ・1回だけ。
  */
 function kpop_ad_in_content( $content ) {
 	if ( ! is_singular( 'post' ) || ! is_main_query() || ! in_the_loop() || ! kpop_ad_placement_on( 'in_content' ) ) {
 		return $content;
 	}
-	$rot = kpop_ad_rotate();
+	$rot = kpop_ad_rotate( 3 );
 	if ( $rot === '' ) { return $content; }
 	// 段落の「閉じタグ」位置で分割し、中ほどの段落の直後(</p>の後)に広告を挿し込む。
 	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
