@@ -25,6 +25,13 @@ CACHE_TTL_SEC = 12 * 3600  # 12時間 (販売状況がそこそこ流動的)
 
 # K-POP/韓流/アジア カテゴリ artist hub の固定ID
 KPOP_HUB_URL = 'https://l-tike.com/artist/000000000632997/'
+# 複数ハブをマージして発見漏れを減らす(2026-05-27 追加)。
+#   - artist/000000000632997 : ローチケ K-POP/韓流/アジア アーティストハブ
+#   - concert/hanryu         : 韓流コンサート一覧(artist hub と重複は一部のみ)
+HUB_URLS = [
+    KPOP_HUB_URL,
+    'https://l-tike.com/concert/hanryu/',
+]
 
 CURL_IMPERSONATE = Path.home() / '.local' / 'bin' / 'curl-impersonate' / 'curl_chrome116'
 
@@ -74,19 +81,25 @@ def _is_fresh(entry: dict, ttl: int = CACHE_TTL_SEC) -> bool:
 
 
 def discover_kpop_events() -> list[tuple[str, str]]:
-    """K-POP/韓流/アジア hub から (path_prefix, mid) のリストを取得"""
-    html = _fetch(KPOP_HUB_URL)
-    if not html:
-        return []
+    """K-POP/韓流 hub から (path_prefix, mid) のリストを取得。
+
+    複数ハブをマージして mid で dedup する。実測(2026-05-27)で
+    artist/632997 と concert/hanryu は重複が一部のみ(共通5/各24・10)=
+    両方読むと取りこぼしが減る。新ハブ追加は HUB_URLS に足すだけ。
+    """
     seen = set()
     out = []
-    # absolute and relative both
-    for m in re.finditer(r'href="(?:https?://l-tike\.com)?/([a-z]+)/mevent/\?mid=(\d+)"', html):
-        prefix, mid = m.group(1), m.group(2)
-        if mid in seen:
+    for hub in HUB_URLS:
+        html = _fetch(hub)
+        if not html:
             continue
-        seen.add(mid)
-        out.append((prefix, mid))
+        # absolute and relative both
+        for m in re.finditer(r'href="(?:https?://l-tike\.com)?/([a-z]+)/mevent/\?mid=(\d+)"', html):
+            prefix, mid = m.group(1), m.group(2)
+            if mid in seen:
+                continue
+            seen.add(mid)
+            out.append((prefix, mid))
     return out
 
 
