@@ -215,6 +215,7 @@ def pre_publish_gate(
     status='publish', source_text_length=None,
     source_title=None,
     skip_llm_factcheck=False,
+    structural_only=False,
 ):
     """統一公開前ゲート
 
@@ -225,10 +226,41 @@ def pre_publish_gate(
             'block_reasons': list[str],
             'warn_reasons': list[str],
         }
+
+    structural_only=True のとき:
+      内部リンク数 / HTML タグ均衡 など「最終(注入後)本文でないと正しく検査できない
+      構造系」だけを評価する軽量パス。LLM factcheck / 重複タイトル WP クエリ /
+      web 検査 などのコンテンツ系・高コスト処理は一切行わない。
+      これらの構造検査は全て WARN 止まり(BLOCK_TYPES 非含)なので BLOCK は生まれない。
+      コンテンツ/事実の判定は別途「注入前 raw 本文」に対する通常パスで行う想定
+      (unified_publisher が 2 パスでマージ)。
     """
     issues = []
     post_dict = _build_post_dict(title, body_html, slug, featured_media, categories, excerpt)
     criteria = CRITERIA.get(post_type, CRITERIA['post'])
+
+    if structural_only:
+        s_issues = []
+        # check_content_quality は length/typo/fabrication 等のコンテンツ信号も返すため、
+        # タグ均衡(unclosed_h2 / unclosed_p)だけを抽出する。
+        for ci in check_content_quality(post_dict, criteria):
+            if ci.get('type') in ('unclosed_h2', 'unclosed_p'):
+                s_issues.extend(_map_audit_issues([ci]))
+        s_issues.extend(_map_audit_issues(check_internal_links(post_dict, criteria)))
+        s_issues.extend(_check_html_structure(body_html))
+        if status == 'draft':
+            for i in s_issues:
+                if i['severity'] == 'block':
+                    i['severity'] = 'warn'
+        block_issues = [i for i in s_issues if i['severity'] == 'block']
+        warn_issues = [i for i in s_issues if i['severity'] == 'warn']
+        verdict = 'BLOCK' if block_issues else ('WARN' if warn_issues else 'PASS')
+        # 注: jsonl ログ(section 5)より前に return = ゲートログは記事1件につき1行を維持。
+        return {
+            'verdict': verdict, 'issues': s_issues,
+            'block_reasons': [i['detail'] for i in block_issues],
+            'warn_reasons': [i['detail'] for i in warn_issues],
+        }
 
     # --- 1. 壊滅チェック (BLOCK候補) ---
 

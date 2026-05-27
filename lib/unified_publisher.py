@@ -387,45 +387,8 @@ def unified_publish(
     content = strip_template_labels(content)
     content = sanitize_gpt_html(content)
 
-    # 6.3.0. 内部リンク自動挿入(インラインのみ)を CTA より「先」に実行。
-    # 注意1: insert_internal_links は末尾に <section class="related-articles">
-    # を焼き付ける仕様。テンプレ側 B-4a が既に関連記事を描画するため、本文には
-    # インラインリンクのみ挿入し末尾セクションは付けない。
-    # 注意2: CTA より先に実行することで、CTA ブロック内テキスト(「ポップアップ」
-    # 「韓国旅行」等)に内部リンクが混入するのを防ぐ(2026-05-26: 既存記事で
-    # CTA 内に記事リンクが混入していた事故の根本対処)。
-    try:
-        from lib.internal_links import (
-            _find_related_articles, _insert_inline_links, get_article_index)
-        _idx = get_article_index()
-        _related = _find_related_articles(content, title_final, _idx)
-        content = _insert_inline_links(content, _related)
-        log.append("internal_links(inline-only, pre-CTA) OK")
-    except Exception as e:
-        log.append(f"internal_links err: {e}")
-
-    # 6.3. CTA自動挿入 (Phase 14) — 内部リンク挿入の「後」に行い CTA 内混入を防ぐ
-    try:
-        content = inject_cta_into_content(title_final, content)
-    except Exception as e:
-        log.append(f"CTA inject err: {e}")
-
-    # 6.3.1b. K-POP Artist Profile への inline link 注入 (本文中の初出のみ)
-    # (廃止 2026-05-26) inject_profile_inline_links は本文アーティスト名を
-    # /artist-{slug}/(404)へリンクしていた。本文中アーティスト名のリンクは
-    # テーマの kpop_inject_internal_links(/artists/{slug}/ 200)に一任。
-    log.append("profile_link: disabled (broken /artist- url)")
-
-    # 6.3.1c. (廃止 2026-05-26) K-POPカムバックカレンダーCTA注入。
-    # オーナー指摘「カムバック・カレンダーは不要」。プロフィール導線は
-    # テンプレ側 .kpop-idol-wiki-link CTA に、イベント導線は /events/ に一本化。
-    # 本文への焼き付き注入を止める(既存42記事の焼き付きは別途DB除去)。
-    log.append("calendar_cta: disabled (owner request)")
-
-    # 6.3.2. CTA/リンク挿入後に再サニタイズ (unclosed_p 再発防止)
-    content = sanitize_gpt_html(content)
-
-    # 6.3.3. カテゴリ解決 (ゲート前に必要)
+    # 6.3.3. カテゴリ解決 (ゲート前に必要)。title_final + raw body_html のみ参照で
+    # 注入後 content に非依存 → 注入より前に出しても挙動不変。両ゲートパスが使う。
     cat_ids = []
     if force_category_id:
         cat_ids = [force_category_id]
@@ -467,10 +430,16 @@ def unified_publish(
     if len(cat_ids) > 1 and 2 in cat_ids:
         cat_ids = [c for c in cat_ids if c != 2]
 
-    # 6.4. 統一公開前ゲート (fact_check + 品質 + HTML + メタデータを一括判定)
+    # 6.4. 統一公開前ゲート【パス1: コンテンツ判定 = 注入前の raw 本文】
+    # 内部リンク/CTA を注入する「前」に factcheck/関連性/事実検査を行うことで、
+    # 自社の注入物(アフィリエイトCTA・関連記事リンク)が「無関係コンテンツ」と
+    # 誤判定される自滅的ブロックを根絶する(2026-05-27 修正)。
+    # LLM factcheck・重複タイトル WP クエリ・web 検査はこのパス1のみ=1回だけ実行。
+    raw_content_for_gate = content  # サニタイズ済・注入前
+    _gate_block_reasons = []
+    _gate_warn_reasons = []
     try:
         from lib.pre_publish_gate import pre_publish_gate as _gate
-        # ソースタイトルを取得（タイトル乖離チェック用）
         _src_title = None
         if source_signals and isinstance(source_signals, list):
             for _sig in source_signals[:3]:
@@ -479,7 +448,7 @@ def unified_publish(
                     _src_title = _st
                     break
         _gate_r = _gate(
-            title=title_final, body_html=content,
+            title=title_final, body_html=raw_content_for_gate,
             post_type='post', kind=kind,
             source_url=source_url, source_signals=source_signals,
             slug=slug, featured_media=media_id,
@@ -487,20 +456,64 @@ def unified_publish(
             status='publish',
             source_title=_src_title,
         )
-        if _gate_r['verdict'] == 'BLOCK':
-            log.append(f"\U0001f534 Gate BLOCK: {_gate_r['block_reasons']}")
-            _log_publish({
-                'success': False, 'ts': datetime.now().isoformat(),
-                'title': title_final, 'kind': kind,
-                'error': f'gate_block: {_gate_r["block_reasons"]}', 'log': log,
-            })
-            return {'success': False, 'error': f'Gate BLOCK: {_gate_r["block_reasons"]}', 'log': log}
-        elif _gate_r['verdict'] == 'WARN':
-            log.append(f"\u26a0\ufe0f Gate WARN ({len(_gate_r['warn_reasons'])}件): {_gate_r['warn_reasons'][:3]}")
-        else:
-            log.append("\u2705 Gate PASS")
+        _gate_block_reasons += _gate_r.get('block_reasons', [])
+        _gate_warn_reasons += _gate_r.get('warn_reasons', [])
     except Exception as _e:
-        log.append(f"Gate skip: {_e}")
+        log.append(f"Gate(content) skip: {_e}")
+
+    # 6.3.0. 内部リンク自動挿入(インラインのみ)を CTA より「先」に実行。
+    try:
+        from lib.internal_links import (
+            _find_related_articles, _insert_inline_links, get_article_index)
+        _idx = get_article_index()
+        _related = _find_related_articles(content, title_final, _idx)
+        content = _insert_inline_links(content, _related)
+        log.append("internal_links(inline-only, pre-CTA) OK")
+    except Exception as e:
+        log.append(f"internal_links err: {e}")
+
+    # 6.3. CTA自動挿入 (Phase 14) — 内部リンク挿入の「後」に行い CTA 内混入を防ぐ
+    try:
+        content = inject_cta_into_content(title_final, content)
+    except Exception as e:
+        log.append(f"CTA inject err: {e}")
+
+    # 6.3.1b/1c. (廃止 2026-05-26) profile inline link / カムバックカレンダーCTA注入。
+    log.append("profile_link: disabled (broken /artist- url)")
+    log.append("calendar_cta: disabled (owner request)")
+
+    # 6.3.2. CTA/リンク挿入後に再サニタイズ (unclosed_p 再発防止)
+    content = sanitize_gpt_html(content)
+
+    # 6.4b. 統一公開前ゲート【パス2: 構造判定 = 注入後の最終本文】
+    # structural_only=True で LLM/WP クエリは走らない(WARN のみ・BLOCK は生まれない)。
+    try:
+        from lib.pre_publish_gate import pre_publish_gate as _gate2
+        _gate_s = _gate2(
+            title=title_final, body_html=content,
+            post_type='post', kind=kind,
+            slug=slug, featured_media=media_id,
+            categories=cat_ids, excerpt=meta_desc,
+            status='publish', structural_only=True,
+        )
+        _gate_block_reasons += _gate_s.get('block_reasons', [])
+        _gate_warn_reasons += _gate_s.get('warn_reasons', [])
+    except Exception as _e:
+        log.append(f"Gate(structural) skip: {_e}")
+
+    # 6.4c. 2パスのマージ判定: どちらかが BLOCK なら公開しない。
+    if _gate_block_reasons:
+        log.append(f"\U0001f534 Gate BLOCK: {_gate_block_reasons}")
+        _log_publish({
+            'success': False, 'ts': datetime.now().isoformat(),
+            'title': title_final, 'kind': kind,
+            'error': f'gate_block: {_gate_block_reasons}', 'log': log,
+        })
+        return {'success': False, 'error': f'Gate BLOCK: {_gate_block_reasons}', 'log': log}
+    elif _gate_warn_reasons:
+        log.append(f"\u26a0\ufe0f Gate WARN ({len(_gate_warn_reasons)}件): {_gate_warn_reasons[:3]}")
+    else:
+        log.append("\u2705 Gate PASS")
 
     import re as _re
     _body_text = _re.sub(r'<[^>]+>', '', body_html).strip()
