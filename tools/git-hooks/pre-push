@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# pre-push — push される範囲の差分だけを静的チェックする軽量ゲート。
+#
+# 目的: 壊れた shell/python や機密混入を「push する前」に止める(リグレッションの
+#       大半=構文崩れ・秘密情報を確実に捕捉)。LLM 不要・高速・決定的。
+# 設計:
+#   - push 範囲(local..remote)で変更された追跡ファイルのみ対象(リポ全体は見ない=
+#     既存の別ファイルの問題で止めない・高速)。
+#   - .sh は `bash -n`、.py は `py_compile` で構文チェック。
+#   - 機密パターン(discord webhook 実URL / sk- / ghp_ / AKIA)を差分内で検査。
+#     ※ kpop_auto_push.sh の secrets ガードと二重だが、手動 push も守るため hook 側にも置く。
+#   - 問題があれば exit 1 で push 中止。緊急回避は `git push --no-verify`。
+# 導入: bash tools/git-hooks/install.sh
+set -uo pipefail
+
+z40=0000000000000000000000000000000000000000
+fail=0
+changed_all=""
+
+# stdin から push 対象の ref を受け取り、各 ref の push 範囲の変更ファイルを集める
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$z40" ] && continue   # ブランチ削除 push は対象外
+  if [ "$remote_sha" = "$z40" ]; then
+    # 新規ブランチ: 既存のリモート追跡に無いコミット分
+    range="$local_sha"
+    files=$(git diff --name-only --diff-filter=ACM "$(git merge-base "$local_sha" HEAD 2>/dev/null || echo "$local_sha")" "$local_sha" 2>/dev/null)
+  else
+    range="$remote_sha..$local_sha"
+    files=$(git diff --name-only --diff-filter=ACM "$remote_sha" "$local_sha" 2>/dev/null)
+  fi
+  changed_all="$changed_all"$'\n'"$files"
+done
+
+# 重複排除・空行除去
+changed=$(printf '%s\n' "$changed_all" | sort -u | sed '/^$/d')
+[ -z "$changed" ] && exit 0
+
+echo "[pre-push] 静的チェック: $(printf '%s\n' "$changed" | wc -l | tr -d ' ') ファイル"
+
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  [ -f "$f" ] || continue   # 削除済みファイルは skip
+  case "$f" in
+    *.sh)
+      if ! bash -n "$f" 2>/tmp/pp_sh_err; then
+        echo "  ✗ shell構文エラー: $f"; sed 's/^/      /' /tmp/pp_sh_err; fail=1
+      fi ;;
+    *.py)
+      if ! python3 -m py_compile "$f" 2>/tmp/pp_py_err; then
+        echo "  ✗ python構文エラー: $f"; sed 's/^/      /' /tmp/pp_py_err; fail=1
+      fi ;;
+  esac
+  # 機密パターン(追加された行のみを対象にしたいが、簡潔さ優先でファイル全体を検査)
+  if grep -EqI 'https://discord(app)?\.com/api/webhooks/[0-9]|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}' "$f" 2>/dev/null; then
+    echo "  ✗ 機密情報の疑い: $f(webhook実URL/APIキー/AWSキー)"; fail=1
+  fi
+done <<< "$changed"
+
+rm -f /tmp/pp_sh_err /tmp/pp_py_err
+if [ "$fail" -ne 0 ]; then
+  echo "[pre-push] 中止。修正して再 push(緊急時のみ git push --no-verify)。"
+  exit 1
+fi
+echo "[pre-push] OK"
+exit 0
