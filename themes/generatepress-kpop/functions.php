@@ -596,12 +596,12 @@ function kpop_sidebar_buffer_end() {
 }
 add_action( 'generate_after_right_sidebar_content', 'kpop_sidebar_buffer_end', 999 );
 
-/** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー3枚。 */
+/** 記事一覧(カテゴリ/アーカイブ)のヘッダー下にトップと同じ横長バナー(ローテ1枚)。 */
 function kpop_ad_archive() {
 	if ( ! ( is_category() || is_archive() || is_tax() ) || ! kpop_ad_placement_on( 'archive' ) ) { return; }
-	$rot = kpop_ad_rotate( 3 );
+	$rot = kpop_ad_header_rotate(); // トップ(kpop_ad_top)と同じ横長プール・1枚
 	if ( $rot === '' ) { return; }
-	echo '<div class="kpop-ad-row kpop-ad-archive">';
+	echo '<div class="kpop-ad-row kpop-ad-top kpop-ad-lead kpop-ad-archive">';
 	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
 	echo '<div class="kpop-ad-row-inner">' . $rot . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	echo '</div>';
