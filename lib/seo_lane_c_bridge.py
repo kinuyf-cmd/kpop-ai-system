@@ -52,6 +52,58 @@ def _is_gossip_slug(slug):
     return any(g in sl for g in GOSSIP_SLUG_TERMS)
 
 
+# body_enrich が捏造リスクで処理を拒否するテーマ(プロフ系)。bridge 側でも
+# 落としておき enrich_queue を実際に処理可能な候補だけにする(配線の自浄)。
+# 根拠: 完全自動 enrich が安全に効くのは作品系(movie_anime/kdrama)の公式情報のみ。
+# dance_show/artist はメンバー出身国・生年・チーム名由来など検証困難な固有情報で
+# factcheck をすり抜ける捏造を生む(seo-lane-c-pipeline-page-one の教訓)。
+ENRICH_BLOCKED_THEMES = {"dance_show", "artist"}
+
+# theme が scanner で "other" 等に誤ラベルされても、slug 形状でプロフ系を捕捉する保険。
+# 例: ダンスクルー系プロフ(swf3-*/supa3-*/*-profile)は出身国・生年・チーム名由来など
+# 検証困難な固有情報の宝庫で enrich の捏造リスクが高い。
+import re as _re
+PROFILE_SLUG_RE = _re.compile(r"(^|[-_])(swf\d|supa\d)([-_]|$)|(-profile)([-_]|$)", _re.I)
+
+
+def _is_profile_slug(slug):
+    return bool(PROFILE_SLUG_RE.search(slug or ""))
+
+
+# 既に enrich 済みの slug は queue に入れ直さない(自浄)。判定は body_enrich の
+# 履歴ログ(result="updated")を流用。consumer の上限(2)より保守的に「1回でも
+# 拡充済みなら除外」=未着手記事に機会を回す。
+ENRICH_LOG = os.path.join(BASE_DIR, "logs", "body_enrich.jsonl")
+
+
+def _already_enriched(slug):
+    if not os.path.exists(ENRICH_LOG):
+        return False
+    for line in open(ENRICH_LOG, encoding="utf-8"):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        if r.get("slug") == slug and r.get("result") == "updated":
+            return True
+    return False
+
+
+def _url_is_live(url, timeout=8):
+    """突合 URL が本番で 200 か。404(GSC に残るが本番消失)は enrich でなく
+    再生成案件なので enrich_queue から除外する。判定不能(例外)は live 扱いで残す。"""
+    import urllib.request
+    try:
+        req = urllib.request.Request(url, method="HEAD",
+                                     headers={"User-Agent": "KpopJournalBot/1.0 lane-c-bridge"})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.status == 200
+    except urllib.error.HTTPError as e:
+        return e.code != 404
+    except Exception:
+        return True  # ネットワーク等の一時失敗で取りこぼさない
+
+
 def _service():
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
@@ -146,6 +198,20 @@ def run(dry_run=False, days=90):
         if _is_gossip_slug(_slug_from_url(url)):
             unmatched.append({"query": query, "url": url, "reason": "gossip_slug_excluded"})
             continue
+        # 捏造リスクの高いプロフ系は enrich/rewrite 対象から除外(theme + slug 形状の二重)
+        theme = cand.get("theme", "")
+        if theme in ENRICH_BLOCKED_THEMES:
+            unmatched.append({"query": query, "url": url,
+                              "reason": f"blocked_theme:{theme}"})
+            continue
+        if _is_profile_slug(_slug_from_url(url)):
+            unmatched.append({"query": query, "url": url,
+                              "reason": "profile_slug_excluded"})
+            continue
+        if _already_enriched(_slug_from_url(url)):
+            unmatched.append({"query": query, "url": url,
+                              "reason": "already_enriched"})
+            continue
         pos = page["position"]
         rec = {
             "query": query,
@@ -162,6 +228,11 @@ def run(dry_run=False, days=90):
             rec["route"] = "rewrite"
             routed_rewrite.append(rec)
         elif POS_ENRICH[0] <= pos <= POS_ENRICH[1]:
+            # 本番 404(GSC に残るが消失)は本文拡充でなく再生成案件 → enrich から除外
+            if not _url_is_live(url):
+                unmatched.append({"query": query, "url": url, "position": round(pos, 2),
+                                  "reason": "url_404_regen_candidate"})
+                continue
             rec["route"] = "enrich"
             routed_enrich.append(rec)
         else:
@@ -196,10 +267,21 @@ def run(dry_run=False, days=90):
     by_url = {e.get("url"): e for e in existing if isinstance(e, dict)}
     for r in routed_enrich:
         by_url[r["url"]] = r  # 最新の指標で上書き
-    # 既存エントリにゴシップが残っていれば落とす(過去版のキューを掃除)
-    merged = sorted(
-        (r for r in by_url.values() if not _is_gossip_slug(r.get("slug", ""))),
-        key=lambda r: -r.get("potential", 0))
+    # 既存エントリも全除外フィルタで掃除(過去版・フィルタ追加前に入った滞留を自浄):
+    # ゴシップ slug / プロフ slug / ブロックテーマ / enrich済み / 本番404 を落とす。
+    def _keep(r):
+        slug = r.get("slug", "")
+        if _is_gossip_slug(slug) or _is_profile_slug(slug):
+            return False
+        if r.get("theme", "") in ENRICH_BLOCKED_THEMES:
+            return False
+        if _already_enriched(slug):
+            return False
+        if r.get("url") and not _url_is_live(r["url"]):
+            return False
+        return True
+    merged = sorted((r for r in by_url.values() if _keep(r)),
+                    key=lambda r: -r.get("potential", 0))
     os.makedirs(os.path.dirname(ENRICH_QUEUE), exist_ok=True)
     json.dump(merged, open(ENRICH_QUEUE, "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
