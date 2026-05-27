@@ -500,47 +500,101 @@ function kpop_ad_top() {
 add_action( 'generate_after_header', 'kpop_ad_top' );
 
 /**
- * トップページのサイドバーに「固定(top_fixed_key)」+「ローテ1枚」を出す。
- * トップのサイドバーカード(誕生日/チャート/人気=widget)は widget エリアに描画され、
- * before_right_sidebar_content より後に出る。広告をそこに置くと最上部=連続気味になるため、
- * after_right_sidebar_content(widget カード群の後)に置き、上のカード群と下のイベントカードで
- * 挟む(オーナー要望4=広告を他カードに挟む)。
- * 固定とローテも連続しないよう、間に「区切りの小見出し」を挟んで視覚的に分離する。
+ * トップページのサイドバーに広告ボックス(固定 + ローテ1枚)を「出力」する。
+ * 配置順の保証は kpop_sidebar_reorder()(全ページ共通の並べ替え)が担うため、
+ * ここでは順序を気にせずボックスを emit するだけでよい。
  */
 function kpop_ad_top_sidebar() {
 	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_sidebar' ) ) { return; }
 	$cfg   = kpop_ad_config();
 	$fkey  = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
 	$fixed = $fkey !== '' ? kpop_ad_banner_html( $fkey ) : '';
-	$rot   = kpop_ad_rotate( 1, array( $fkey ) ); // 固定中キーを除外しローテ1枚
-	if ( $fixed === '' ) { $fixed = $rot; $rot = ''; } // 固定が無ければローテを主に
-	if ( $fixed === '' ) { return; }
-	// 1枠目(固定)
-	echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
-	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
-	echo $fixed; // phpcs:ignore WordPress.Security.EscapeOutput
-	echo '</div>';
+	$rot   = kpop_ad_rotate( 1, array( $fkey ) );
+	foreach ( array( $fixed, $rot ) as $b ) {
+		if ( $b === '' ) { continue; }
+		echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
+		echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+		echo $b; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '</div>';
+	}
 }
-// widget カード群の後(after フック)。kpop_home_sidebar_events より前(prio5)に置き、
-// 上=widgetカード / 下=イベントカード に挟まれるようにする。
-add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar', 5 );
+add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar', 30 );
 
-/**
- * トップサイドバーのローテ広告(2枠目)。固定枠と連続させないため、イベントカードの後
- * (after フック prio30)に単独で置く=固定広告とローテ広告の間にイベントカードが入る。
- */
-function kpop_ad_top_sidebar_rotate() {
-	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_sidebar' ) ) { return; }
-	$cfg  = kpop_ad_config();
-	$fkey = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
-	$rot  = kpop_ad_rotate( 1, array( $fkey ) );
-	if ( $rot === '' ) { return; }
-	echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
-	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
-	echo $rot; // phpcs:ignore WordPress.Security.EscapeOutput
-	echo '</div>';
+/* ─────────────────────────────────────────────────────────────────────────
+ * サイドバー広告の「非連続」を全ページ共通で保証する並べ替え。
+ * GP の右サイドバー出力全体(widget + before/after フックのカード)をバッファし、
+ * トップレベルの .kpop-sidebar-box を分解 → 広告ボックス(.kpop-ad-slot)が
+ *   ①先頭でない ②末尾でない ③広告同士が隣接しない
+ * ように非広告カードの「間」に分散配置する。挟める非広告カードが無ければ広告は出さない。
+ * ページ種別(トップ/記事/一覧/その他)に依存せず効くのが利点。
+ * ───────────────────────────────────────────────────────────────────────── */
+function kpop_sidebar_buffer_start() { ob_start(); }
+add_action( 'generate_before_right_sidebar_content', 'kpop_sidebar_buffer_start', 1 );
+
+function kpop_sidebar_buffer_end() {
+	$html = ob_get_clean();
+	if ( $html === false || $html === '' ) { return; }
+
+	// トップレベルの <div class="...kpop-sidebar-box...">…</div> を順に切り出す。
+	// ネストした div を正しく対応付けるため、開始タグ位置から手動で深さを数える。
+	$boxes = array();      // 各 .kpop-sidebar-box の完全な HTML
+	$other = '';           // box 以外(空白等)はそのまま末尾保持用に捨てない
+	$offset = 0;
+	$len = strlen( $html );
+	if ( ! preg_match_all( '/<div\b[^>]*class="[^"]*kpop-sidebar-box[^"]*"[^>]*>/i', $html, $m, PREG_OFFSET_CAPTURE ) ) {
+		echo $html; // box が無ければそのまま(並べ替え不要)
+		return;
+	}
+	foreach ( $m[0] as $hit ) {
+		$start = $hit[1];
+		// この <div> に対応する </div> を深さカウントで探す。
+		$i = $start;
+		$depth = 0;
+		while ( $i < $len ) {
+			$next_open  = stripos( $html, '<div', $i );
+			$next_close = stripos( $html, '</div>', $i );
+			if ( $next_close === false ) { break; }
+			if ( $next_open !== false && $next_open < $next_close ) {
+				$depth++; $i = $next_open + 4;
+			} else {
+				$depth--; $i = $next_close + 6;
+				if ( $depth === 0 ) { break; }
+			}
+		}
+		$boxes[] = substr( $html, $start, $i - $start );
+	}
+
+	// 広告 / 非広告に仕分け。
+	$ads = array();
+	$cards = array();
+	foreach ( $boxes as $b ) {
+		if ( strpos( $b, 'kpop-ad-slot' ) !== false ) { $ads[] = $b; } else { $cards[] = $b; }
+	}
+
+	// 挟める非広告カードが無ければ広告は出さない(=連続/孤立を作らない)。
+	if ( empty( $cards ) ) {
+		echo implode( '', $cards );
+		return;
+	}
+	// 非広告カードの「間(末尾含む各カードの後ろ)」に広告を1枚ずつ分散。
+	// gap 候補は cards[0]の後, cards[1]の後 … で、先頭(cards前)には置かない=広告は必ず
+	// 上に非広告カードがある。隣接も起きない(各 gap に最大1枚)。
+	$result = '';
+	$gap = 1; // cards[0] の後ろから挿入(先頭を避ける)
+	$ai = 0;
+	for ( $ci = 0; $ci < count( $cards ); $ci++ ) {
+		$result .= $cards[ $ci ];
+		// このカードの後ろに広告を1枚(まだ残っていて、末尾カードの後でなければ)。
+		if ( $ai < count( $ads ) && $ci < count( $cards ) - 1 && $ci >= 0 ) {
+			// 先頭カード(ci=0)の後は OK、ただし最後のカードの後(ci=last)は末尾広告になるので避ける。
+			$result .= $ads[ $ai ];
+			$ai++;
+		}
+	}
+	// 余った広告(カードが少なく gap が足りない場合)は出さない=連続を避ける。
+	echo $result;
 }
-add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar_rotate', 30 );
+add_action( 'generate_after_right_sidebar_content', 'kpop_sidebar_buffer_end', 999 );
 
 /** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー3枚。 */
 function kpop_ad_archive() {
