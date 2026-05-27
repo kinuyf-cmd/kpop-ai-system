@@ -9,6 +9,7 @@ from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 
 BASE_DIR = os.path.expanduser("~/google_metrics")
 
@@ -204,13 +205,37 @@ def get_adsense_credentials():
         creds = Credentials.from_authorized_user_file(ADSENSE_TOKEN_FILE, scopes)
 
     if not creds or not creds.valid:
+        refreshed = False
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+                refreshed = True
+            except RefreshError:
+                # refresh_token が Google 側で失効(invalid_grant)。
+                # 黙ってスキップせず、同意フローで再取得できるよう死トークンを捨てる。
+                creds = None
+        if not refreshed and not (creds and creds.valid):
             flow = InstalledAppFlow.from_client_secrets_file(
                 ADSENSE_CLIENT_SECRET_FILE, scopes
             )
-            creds = flow.run_local_server(port=0)
+            # ヘッドレスVM(DISPLAY無し)では自動でブラウザを開けない。
+            # run_console は google-auth-oauthlib 1.0 で廃止されたため、
+            # 固定ポートの run_local_server + 手元PCからのSSHポート転送で承認する。
+            #   手元PC: ssh -L 8765:localhost:8765 <vm>
+            #   表示されたURLを手元ブラウザで開く → localhost:8765 へリダイレクトされ完了
+            if os.environ.get("DISPLAY"):
+                creds = flow.run_local_server(port=0)
+            else:
+                oob_port = int(os.environ.get("ADSENSE_OAUTH_PORT", "8765"))
+                creds = flow.run_local_server(
+                    host="localhost", port=oob_port,
+                    open_browser=False,
+                    authorization_prompt_message=(
+                        "\n手元PCで別ターミナルを開き次を実行(ポート転送):\n"
+                        f"    ssh -L {oob_port}:localhost:{oob_port} aiuser@<このVM>\n"
+                        "そのうえで以下のURLを手元ブラウザで開いて承認してください:\n\n    {url}\n"
+                    ),
+                )
         with open(ADSENSE_TOKEN_FILE, "w") as f:
             f.write(creds.to_json())
 
