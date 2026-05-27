@@ -73,7 +73,8 @@ sys.stdout.write(insert_summary_into_html(html, summ))
   if [ "$APPLY" = 1 ]; then
     printf '%s' "$content" > "$BAKDIR/$pid.html"          # ロールバック源
     $RW post update "$pid" --post_content="$(cat "$newfile")" >/dev/null 2>&1
-    # 適用後の本文を読み直して破壊検証(95%未満=破壊→ロールバック)
+    sleep 1   # 書込コミットの確定待ち(即読み戻しのレース回避)
+    # 適用後の本文を読み直して破壊検証(85%未満 or まとめ未挿入=破壊→ロールバック)
     after="$($RO post get "$pid" --field=post_content 2>/dev/null)"
     after_len=$(printf '%s' "$after" | wc -m)
     thresh=$(( orig_len * 85 / 100 ))   # dup-lead除去で-1〜2%は正常。85%未満=破壊。
