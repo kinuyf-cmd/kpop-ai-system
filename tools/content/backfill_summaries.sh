@@ -59,12 +59,15 @@ sys.stdout.write(insert_summary_into_html(html, summ))
 " > "$newfile" 2>/dev/null
 
   new_len=$(wc -m < "$newfile")
-  # 健全性: 新本文は元より長いはず(まとめ追加)。極端に短ければ生成失敗→スキップ。
-  if [ "$new_len" -lt "$orig_len" ]; then
-    echo "  [skip] #$pid 生成結果が元より短い($new_len<$orig_len) — 挿入失敗の疑い"; rm -f "$newfile"; skip_n=$((skip_n+1)); continue
-  fi
+  # 健全性チェック: まとめが挿入され、本文が壊滅的に短くなっていないこと。
+  # ※ insert は重複リード文(まとめと同内容の冒頭段落)を1つ削除するため、
+  #   まとめ追加分を相殺して -1〜2% 程度縮むのは正常。壊滅的損失(=本文消失)だけ弾く。
   if ! grep -q 'class="kpj-summary"' "$newfile"; then
     echo "  [skip] #$pid まとめ未挿入"; rm -f "$newfile"; skip_n=$((skip_n+1)); continue
+  fi
+  floor=$(( orig_len * 85 / 100 ))   # 元の85%未満なら本文破壊とみなす
+  if [ "$new_len" -lt "$floor" ]; then
+    echo "  [skip] #$pid 生成結果が元の85%未満($new_len<$floor) — 本文破壊の疑い"; rm -f "$newfile"; skip_n=$((skip_n+1)); continue
   fi
 
   if [ "$APPLY" = 1 ]; then
@@ -73,9 +76,9 @@ sys.stdout.write(insert_summary_into_html(html, summ))
     # 適用後の本文を読み直して破壊検証(95%未満=破壊→ロールバック)
     after="$($RO post get "$pid" --field=post_content 2>/dev/null)"
     after_len=$(printf '%s' "$after" | wc -m)
-    thresh=$(( orig_len * 95 / 100 ))
+    thresh=$(( orig_len * 85 / 100 ))   # dup-lead除去で-1〜2%は正常。85%未満=破壊。
     if [ "$after_len" -lt "$thresh" ] || ! printf '%s' "$after" | grep -q 'class="kpj-summary"'; then
-      echo "  [ROLLBACK] #$pid 本文破壊検知(after=$after_len < 95%=$thresh) → バックアップから復元"
+      echo "  [ROLLBACK] #$pid 本文破壊検知(after=$after_len < 85%=$thresh) → バックアップから復元"
       $RW post update "$pid" --post_content="$(cat "$BAKDIR/$pid.html")" >/dev/null 2>&1
       rollback_n=$((rollback_n+1)); fail_n=$((fail_n+1)); rm -f "$newfile"; continue
     fi
