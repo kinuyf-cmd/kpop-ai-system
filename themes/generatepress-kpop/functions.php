@@ -1326,6 +1326,50 @@ function kpop_home_events_section() {
 // サイドバーのイベントカード(kpop_home_sidebar_events)は残す。
 // add_action( 'generate_after_main_content', 'kpop_home_events_section' );
 
+/**
+ * トップページ本文下(新着記事の下)に「POPUP」セクションを出す(2026-05-27 オーナー要望)。
+ * popup は category=popup の通常記事。新着記事と同じ .kpop-card / .kpop-cat-grid で
+ * 6件カード表示し、/category/popup/ への導線を付ける。EVENT 削除で空いた
+ * generate_after_main_content に差し込む(トップのメインクエリのみ)。
+ */
+function kpop_home_popup_section() {
+	if ( ! is_front_page() || ! is_main_query() ) { return; }
+
+	$q = new WP_Query( array(
+		'post_type'           => 'post',
+		'post_status'         => 'publish',
+		'category_name'       => 'popup',
+		'posts_per_page'      => 6,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+	) );
+	if ( ! $q->have_posts() ) { wp_reset_postdata(); return; }
+
+	$popup_url = home_url( '/category/popup/' );
+	echo '<section class="kpop-cat-section kpop-home-popup" aria-label="ポップアップ">';
+	echo '<h2 class="kpop-section-title">ポップアップ <span class="kpop-section-en">POPUP</span></h2>';
+	echo '<ul class="kpop-cat-grid">';
+	while ( $q->have_posts() ) {
+		$q->the_post();
+		echo '<li class="kpop-card">';
+		echo '<a class="kpop-card-link" href="' . esc_url( get_permalink() ) . '">';
+		echo '<span class="kpop-card-thumb">';
+		if ( has_post_thumbnail() ) {
+			the_post_thumbnail( 'medium', array( 'class' => 'kpop-card-img', 'loading' => 'lazy', 'alt' => '' ) );
+		}
+		echo '</span>';
+		echo '<span class="kpop-card-badge">ポップアップ</span>';
+		echo '<span class="kpop-card-title">' . esc_html( get_the_title() ) . '</span>';
+		echo '<span class="kpop-card-date">' . esc_html( get_the_date( 'n/j' ) ) . '</span>';
+		echo '</a></li>';
+	}
+	echo '</ul>';
+	echo '<p class="kpop-more-wrap"><a class="kpop-more" href="' . esc_url( $popup_url ) . '">ポップアップをすべて見る</a></p>';
+	echo '</section>';
+	wp_reset_postdata();
+}
+add_action( 'generate_after_main_content', 'kpop_home_popup_section' );
+
 /* --- トップページ サイドバー「1ヶ月以内のイベント」箱(2026-05-26 追加)---
  * 個別記事ページには kpop_m11_sidebar_append が同じ箱を出すが、トップ(front page)
  * のサイドバーはウィジェット/本番テンプレ側で構成されておりイベント箱が無かった。
