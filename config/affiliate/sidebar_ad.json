@@ -1,5 +1,5 @@
 {
-  "_note": "記事/トップ/一覧/本文中の広告枠で使うA8バナー。banners=全素材HTML(A8公式)。rotate_pool=ページ毎ランダム表示するキー群。top_fixed_key=トップ固定で出すキー。enabled:falseで全停止。",
+  "_note": "広告素材。banners=全A8公式HTML。rotate_pool=300x250系のローテ。top_header_pool=トップのヘッダーカテゴリ下に出す横長バナー。top_fixed_key=トップサイドバー固定。placements で各所ON/OFF(in_content廃止)。",
   "enabled": true,
   "banners": {
     "airtori": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+609HT\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187220&wid=002&eno=01&mid=s00000013798001009000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+609HT\" alt=\"\">",
@@ -9,7 +9,10 @@
     "banner6": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2XDRMI+348K+4ATCFL\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www20.a8.net/svt/bgt?aid=250620187177&wid=002&eno=01&mid=s00000014546026003000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+2XDRMI+348K+4ATCFL\" alt=\"\">",
     "banner7": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+5URHP6+59Z6+5Z6WX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=250620187354&wid=002&eno=01&mid=s00000024621001004000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+5URHP6+59Z6+5Z6WX\" alt=\"\">",
     "banner8": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+6QMKH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187222&wid=002&eno=01&mid=s00000023041001132000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www14.a8.net/0.gif?a8mat=457NRV+3O69UI+4XSA+6QMKH\" alt=\"\">",
-    "top_fixed": "<a href=\"https://px.a8.net/svt/ejp?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=260406198083&wid=002&eno=01&mid=s00000027255001003000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" alt=\"\">"
+    "top_fixed": "<a href=\"https://px.a8.net/svt/ejp?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=260406198083&wid=002&eno=01&mid=s00000027255001003000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" alt=\"\">",
+    "lead_qoo10": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+32QO2I+4QYG+626XT\" rel=\"nofollow\"><img border=\"0\" width=\"468\" height=\"60\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187186&wid=002&eno=01&mid=s00000022156001018000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+32QO2I+4QYG+626XT\" alt=\"\">",
+    "lead_airtori": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+7TF69\" rel=\"nofollow\"><img border=\"0\" width=\"728\" height=\"90\" alt=\"\" src=\"https://www29.a8.net/svt/bgt?aid=250620187220&wid=002&eno=01&mid=s00000013798001313000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+7TF69\" alt=\"\">",
+    "lead_amazon": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5ZU29\" rel=\"nofollow\"><img border=\"0\" width=\"640\" height=\"100\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187622&wid=002&eno=01&mid=s00000026427001007000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5ZU29\" alt=\"\">"
   },
   "rotate_pool": [
     "airtori",
@@ -23,8 +26,14 @@
   "top_fixed_key": "top_fixed",
   "placements": {
     "sidebar": true,
-    "top": true,
+    "top_header": true,
+    "top_sidebar": true,
     "archive": true,
-    "in_content": true
-  }
+    "in_content": false
+  },
+  "top_header_pool": [
+    "lead_qoo10",
+    "lead_airtori",
+    "lead_amazon"
+  ]
 }

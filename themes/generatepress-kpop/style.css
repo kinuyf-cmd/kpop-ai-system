@@ -1845,6 +1845,15 @@ body { color: #2B2B32; }
 .kpop-ad-incontent {
     margin: 32px auto;
 }
+/* トップ ヘッダーカテゴリ下の横長バナー(468x60/728x90/640x100)。
+   モバイルではみ出さないよう画像を幅100%・縦横比保持で縮小 */
+.kpop-ad-lead {
+    margin: 14px auto 4px;
+}
+.kpop-ad-lead .kpop-ad-a8 img {
+    max-width: 100%;
+    height: auto;
+}
 
 /* サイドバー記事リスト(このカテゴリの最新) */
 .kpop-side-list {

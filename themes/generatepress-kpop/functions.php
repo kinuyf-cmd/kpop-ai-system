@@ -476,25 +476,48 @@ function kpop_ad_placement_on( $name ) {
 	return ! empty( $cfg['enabled'] ) && ! empty( $cfg['placements'][ $name ] );
 }
 
+/** top_header_pool(横長バナー)からランダム1枚。 */
+function kpop_ad_header_rotate() {
+	$cfg  = kpop_ad_config();
+	$pool = isset( $cfg['top_header_pool'] ) && is_array( $cfg['top_header_pool'] ) ? $cfg['top_header_pool'] : array();
+	if ( empty( $pool ) ) { return ''; }
+	return kpop_ad_banner_html( $pool[ array_rand( $pool ) ] );
+}
+
 /**
- * トップページに「固定バナー(top_fixed_key)」+「ローテバナー」を出す。
- * generate_after_header フックで front-page のときだけ。
+ * トップページのヘッダーカテゴリー下に「横長バナー(ローテ1枚)」を出す。
+ * generate_after_header(ナビ下)で front-page のときだけ。
  */
 function kpop_ad_top() {
-	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top' ) ) { return; }
+	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_header' ) ) { return; }
+	$rot = kpop_ad_header_rotate();
+	if ( $rot === '' ) { return; }
+	echo '<div class="kpop-ad-row kpop-ad-top kpop-ad-lead">';
+	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+	echo '<div class="kpop-ad-row-inner">' . $rot . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+	echo '</div>';
+}
+add_action( 'generate_after_header', 'kpop_ad_top' );
+
+/**
+ * トップページのサイドバーに「固定(top_fixed_key)」+「ローテ1枚」を出す。
+ * 他のカードと連続しないよう、サイドバーの prepend(prio5)と append(prio20)の
+ * 間(prio10)に差し込む=前後を別カードで挟む(オーナー要望4)。
+ */
+function kpop_ad_top_sidebar() {
+	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_sidebar' ) ) { return; }
 	$cfg   = kpop_ad_config();
 	$fkey  = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
 	$fixed = $fkey !== '' ? kpop_ad_banner_html( $fkey ) : '';
-	$rot   = kpop_ad_rotate( 3, array( $fkey ) ); // 固定中のキーは除外して重複回避
+	$rot   = kpop_ad_rotate( 1, array( $fkey ) ); // 固定中キーを除外しローテ1枚
 	if ( $fixed === '' && $rot === '' ) { return; }
-	echo '<div class="kpop-ad-row kpop-ad-top">';
+	echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
 	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
-	echo '<div class="kpop-ad-row-inner">';
 	echo $fixed; // phpcs:ignore WordPress.Security.EscapeOutput
 	echo $rot;   // phpcs:ignore WordPress.Security.EscapeOutput
-	echo '</div></div>';
+	echo '</div>';
 }
-add_action( 'generate_after_header', 'kpop_ad_top' );
+add_action( 'generate_before_right_sidebar_content', 'kpop_ad_top_sidebar', 10 );
 
 /** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー3枚。 */
 function kpop_ad_archive() {
@@ -507,31 +530,7 @@ function kpop_ad_archive() {
 	echo '</div>';
 }
 add_action( 'generate_after_header', 'kpop_ad_archive' );
-
-/**
- * 記事本文の中ほどにローテバナー3枚を挿入(the_content フィルタ)。
- * 既存の cta_injector(本文中CTA)と重ならないよう、段落数が十分な記事のみ・1回だけ。
- */
-function kpop_ad_in_content( $content ) {
-	if ( ! is_singular( 'post' ) || ! is_main_query() || ! in_the_loop() || ! kpop_ad_placement_on( 'in_content' ) ) {
-		return $content;
-	}
-	$rot = kpop_ad_rotate( 3 );
-	if ( $rot === '' ) { return $content; }
-	// 段落の「閉じタグ」位置で分割し、中ほどの段落の直後(</p>の後)に広告を挿し込む。
-	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
-	// $parts は [本文, '</p>', 本文, '</p>', ...]。</p> の出現回数を数える。
-	$close_idx = array();
-	foreach ( $parts as $i => $p ) {
-		if ( strtolower( $p ) === '</p>' ) { $close_idx[] = $i; }
-	}
-	if ( count( $close_idx ) < 5 ) { return $content; } // 段落が少ない記事には入れない
-	$target = $close_idx[ (int) floor( count( $close_idx ) / 2 ) ]; // 中央の </p>
-	$ad = '<div class="kpop-ad-row kpop-ad-incontent"><span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span><div class="kpop-ad-row-inner">' . $rot . '</div></div>';
-	$parts[ $target ] .= $ad; // その </p> の直後に広告
-	return implode( '', $parts );
-}
-add_filter( 'the_content', 'kpop_ad_in_content', 30 );
+// 記事本文中の広告は廃止(オーナー要望3)。kpop_ad_in_content は削除。
 
 /**
  * 段階5f — 個別記事の右サイドバー追加コンテンツ。
