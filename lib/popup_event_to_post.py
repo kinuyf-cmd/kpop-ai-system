@@ -180,6 +180,9 @@ def build_event_article(sig: dict) -> tuple[str, str, str, str]:
     source_url = sig["source_url"]
     media = sig["source_media"]
     start_date = sig.get("start_date", "")
+    # 開演時刻(任意)。"HH:MM" 形式があれば metadata 用に start_dt へ合成する。
+    # 本文の「公演日」は date のみ表示のままにし、時刻は Events Calendar のメタへ反映。
+    start_time = (sig.get("start_time") or "").strip()
     venue = (sig.get("venue") or "").strip()
 
     # title がアーティスト名そのもの(enrichment で正式名を取れなかった)ケースは
@@ -283,7 +286,10 @@ def build_event_article(sig: dict) -> tuple[str, str, str, str]:
     uniq = hashlib.md5(uniq_seed.encode("utf-8")).hexdigest()[:6]
     date_part = (start_date or datetime.now().strftime('%Y%m%d')).replace("-", "")
     slug = slugify(f"{artist}-event-{date_part}-{uniq}")
-    return new_title, body, slug, start_date
+    # メタ用の開始日時: 開演時刻があれば "YYYY-MM-DD HH:MM" を返す(無ければ date のみ)。
+    # slug は date_part のみ使用=時刻が変わっても dedup キーは不変(同一公演を二重作成しない)。
+    start_dt = f"{start_date} {start_time}" if (start_date and start_time) else start_date
+    return new_title, body, slug, start_dt
 
 def esc_html(s: str) -> str:
     """HTML エスケープ。"""
@@ -837,12 +843,32 @@ def add_event_date_meta(post_id: int, start_date: str) -> None:
     """
     if not start_date:
         return
-    # start_date は YYYY-MM-DD 想定。19:00 開演デフォルト、UTC は JST -9h
-    start_jst = f"{start_date} 19:00:00"
-    end_jst = f"{start_date} 21:00:00"
-    # 簡易 UTC 計算: 19:00 JST = 10:00 UTC
-    start_utc = f"{start_date} 10:00:00"
-    end_utc = f"{start_date} 12:00:00"
+    # start_date は "YYYY-MM-DD" または "YYYY-MM-DD HH:MM"("HH:MM:SS"も可)。
+    # 開演時刻が含まれていればそれを使い、無ければ 19:00 をデフォルトとする
+    # (2026-05-27: e-plus 等の実開演時刻を反映。旧実装は一律 19:00 固定だった)。
+    from datetime import datetime as _dt, timedelta as _td
+    _s = str(start_date).strip().replace("T", " ")
+    _date_only = _s[:10]
+    _hh, _mm = 19, 0
+    _m = re.search(r"\b(\d{1,2}):(\d{2})", _s)
+    if _m:
+        _h, _mi = int(_m.group(1)), int(_m.group(2))
+        if 0 <= _h <= 23 and 0 <= _mi <= 59:
+            _hh, _mm = _h, _mi
+    try:
+        _start = _dt.strptime(f"{_date_only} {_hh:02d}:{_mm:02d}", "%Y-%m-%d %H:%M")
+    except Exception:
+        _start = _dt.strptime(f"{_date_only} 19:00", "%Y-%m-%d %H:%M")
+    _end = _start + _td(hours=2)                 # 公演尺は不明なので従来通り +2h 固定
+    _start_u = _start - _td(hours=9)             # JST → UTC
+    _end_u = _end - _td(hours=9)
+    _F = "%Y-%m-%d %H:%M:%S"
+    start_jst = _start.strftime(_F)
+    end_jst = _end.strftime(_F)
+    start_utc = _start_u.strftime(_F)
+    end_utc = _end_u.strftime(_F)
+    # 以降の slug/postmeta で日付のみを使う箇所のため YYYY-MM-DD を保持
+    start_date = _date_only
 
     # 1. postmeta
     meta_sqls = [
