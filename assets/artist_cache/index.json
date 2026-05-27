@@ -474,5 +474,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "nmixx": {
+    "name": "NMIXX",
+    "files": [
+      "nmixx_7a747392.jpg"
+    ],
+    "sources": [
+      {
+        "file": "nmixx_7a747392.jpg",
+        "wikimedia_title": "File:20230414 NMIXX (엔믹스).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/20230414_NMIXX_%28%EC%97%94%EB%AF%B9%EC%8A%A4%29.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
