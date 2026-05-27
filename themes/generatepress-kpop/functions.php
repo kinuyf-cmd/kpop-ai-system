@@ -501,8 +501,11 @@ add_action( 'generate_after_header', 'kpop_ad_top' );
 
 /**
  * トップページのサイドバーに「固定(top_fixed_key)」+「ローテ1枚」を出す。
- * 他のカードと連続しないよう、サイドバーの prepend(prio5)と append(prio20)の
- * 間(prio10)に差し込む=前後を別カードで挟む(オーナー要望4)。
+ * トップのサイドバーカード(誕生日/チャート/人気=widget)は widget エリアに描画され、
+ * before_right_sidebar_content より後に出る。広告をそこに置くと最上部=連続気味になるため、
+ * after_right_sidebar_content(widget カード群の後)に置き、上のカード群と下のイベントカードで
+ * 挟む(オーナー要望4=広告を他カードに挟む)。
+ * 固定とローテも連続しないよう、間に「区切りの小見出し」を挟んで視覚的に分離する。
  */
 function kpop_ad_top_sidebar() {
 	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_sidebar' ) ) { return; }
@@ -510,14 +513,34 @@ function kpop_ad_top_sidebar() {
 	$fkey  = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
 	$fixed = $fkey !== '' ? kpop_ad_banner_html( $fkey ) : '';
 	$rot   = kpop_ad_rotate( 1, array( $fkey ) ); // 固定中キーを除外しローテ1枚
-	if ( $fixed === '' && $rot === '' ) { return; }
+	if ( $fixed === '' ) { $fixed = $rot; $rot = ''; } // 固定が無ければローテを主に
+	if ( $fixed === '' ) { return; }
+	// 1枠目(固定)
 	echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
 	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
 	echo $fixed; // phpcs:ignore WordPress.Security.EscapeOutput
-	echo $rot;   // phpcs:ignore WordPress.Security.EscapeOutput
 	echo '</div>';
 }
-add_action( 'generate_before_right_sidebar_content', 'kpop_ad_top_sidebar', 10 );
+// widget カード群の後(after フック)。kpop_home_sidebar_events より前(prio5)に置き、
+// 上=widgetカード / 下=イベントカード に挟まれるようにする。
+add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar', 5 );
+
+/**
+ * トップサイドバーのローテ広告(2枠目)。固定枠と連続させないため、イベントカードの後
+ * (after フック prio30)に単独で置く=固定広告とローテ広告の間にイベントカードが入る。
+ */
+function kpop_ad_top_sidebar_rotate() {
+	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top_sidebar' ) ) { return; }
+	$cfg  = kpop_ad_config();
+	$fkey = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
+	$rot  = kpop_ad_rotate( 1, array( $fkey ) );
+	if ( $rot === '' ) { return; }
+	echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';
+	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+	echo $rot; // phpcs:ignore WordPress.Security.EscapeOutput
+	echo '</div>';
+}
+add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar_rotate', 30 );
 
 /** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー3枚。 */
 function kpop_ad_archive() {
