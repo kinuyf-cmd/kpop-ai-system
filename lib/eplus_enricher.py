@@ -94,6 +94,11 @@ EPLUS_KPOP_ARTISTS = [
     'Hearts2Hearts', 'YENA', 'MYNAME', 'SMTR', 'WI HA JUN', 'BOYNEXTDOOR',
     'xikers', 'TWS', 'CORTIS', 'Kwon Jin Ah', 'KANG JI YOUNG', 'LEE MINHYUK',
     'HAN SEUNG WOO', 'LEE JI HOON', 'LEE YOUNGJI', 'JANG HANEUM',
+    # 2026-05-27 追加: l-tike 収集で取りこぼした「曖昧でない」K-POP実演者。
+    # 英単語衝突なし(語境界一致で ikonic/falconry 等に誤爆しない)もののみ採用。
+    # WINNER 等の一般英単語と同綴の組は下の _EPLUS_AMBIGUOUS 行きで別管理。
+    'iKON', 'JAEJOONG', 'ジェジュン', 'WINNER',  # WINNER は _EPLUS_AMBIGUOUS で文脈語必須
+    'ウィ・ハジュン',  # WI HA JUN の日本語表記(英語表記は既出だが和名タイトル対策)
     # 注: 'K-POP'/'KPOP' の汎用語はホワイトリストに入れない。eplus detail ページの
     # ジャンルラベル等で米倉千尋/DA PUMP 等の非K-POPが誤マッチするため、
     # 具体的なアーティスト名一致のみで判定する(誤検知を排除)。
@@ -105,7 +110,9 @@ EPLUS_KPOP_ARTISTS = [
 # treasure が TREASURE に完全一致)。文脈語(K-POP関連)が共起する時のみ採用。
 # 実害: BABY SHARK LIVE!(Hidden Treasure) を K-POP の TREASURE と誤判定し
 # IVE/TREASURE 等のイベント記事を捏造した事故(2026-05-26)。
-_EPLUS_AMBIGUOUS = {'treasure', 'ive', 'ace', 'red velvet'}
+# 2026-05-27: 'winner' を追加(WINNER は YG の実在K-POP組だが "award winner" 等の
+# 一般英単語と衝突。文脈語が共起する時のみ K-POP と判定)。
+_EPLUS_AMBIGUOUS = {'treasure', 'ive', 'ace', 'red velvet', 'winner'}
 # 曖昧名を救う文脈語(これが本文/タイトルに有れば K-POP と判断)
 _EPLUS_KPOP_CONTEXT = [
     'k-pop', 'kpop', 'ケイポップ', '韓国', 'コリア', 'korea', 'ソウル',
