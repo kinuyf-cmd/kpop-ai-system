@@ -1,12 +1,30 @@
 {
-  "_note": "記事右サイドのAdvertisement枠に出すA8アフィリエイト。banner_image_url が空ならCSSビジュアルでフォールバック。A8公式バナーHTMLを使う場合は banner_html に丸ごと貼ると最優先で使われる。",
+  "_note": "記事/トップ/一覧/本文中の広告枠で使うA8バナー。banners=全素材HTML(A8公式)。rotate_pool=ページ毎ランダム表示するキー群。top_fixed_key=トップ固定で出すキー。enabled:falseで全停止。",
   "enabled": true,
-  "program_key": "airtori_intl",
-  "affiliate_url": "https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+64RJ6",
-  "tracking_pixel": "https://www16.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+64RJ6",
-  "headline": "航空券をかしこく予約",
-  "subtext": "国内・海外航空券の比較・予約はエアトリ",
-  "cta_label": "エアトリで探す",
-  "banner_image_url": "",
-  "banner_html": ""
+  "banners": {
+    "airtori": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3MZEMY+2YGS+609HT\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187220&wid=002&eno=01&mid=s00000013798001009000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+3MZEMY+2YGS+609HT\" alt=\"\">",
+    "qoo10": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+32QO2I+4QYG+65EOH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"300\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187186&wid=002&eno=01&mid=s00000022156001033000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+32QO2I+4QYG+65EOH\" alt=\"\">",
+    "amazon": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5ZEMP\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187622&wid=002&eno=01&mid=s00000026427001005000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5ZEMP\" alt=\"\">",
+    "dazzy": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3TJ6AI+4ZFQ+BYLJL\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187231&wid=002&eno=01&mid=s00000023255002009000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+3TJ6AI+4ZFQ+BYLJL\" alt=\"\">",
+    "banner6": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+2XDRMI+348K+4ATCFL\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www20.a8.net/svt/bgt?aid=250620187177&wid=002&eno=01&mid=s00000014546026003000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www16.a8.net/0.gif?a8mat=457NRV+2XDRMI+348K+4ATCFL\" alt=\"\">",
+    "banner7": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+5URHP6+59Z6+5Z6WX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=250620187354&wid=002&eno=01&mid=s00000024621001004000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www15.a8.net/0.gif?a8mat=457NRV+5URHP6+59Z6+5Z6WX\" alt=\"\">",
+    "banner8": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3O69UI+4XSA+6QMKH\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www21.a8.net/svt/bgt?aid=250620187222&wid=002&eno=01&mid=s00000023041001132000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www14.a8.net/0.gif?a8mat=457NRV+3O69UI+4XSA+6QMKH\" alt=\"\">",
+    "top_fixed": "<a href=\"https://px.a8.net/svt/ejp?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www26.a8.net/svt/bgt?aid=260406198083&wid=002&eno=01&mid=s00000027255001003000&mc=1\"></a><img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=4B1EPI+1DF0RE+5UAU+5YZ75\" alt=\"\">"
+  },
+  "rotate_pool": [
+    "airtori",
+    "qoo10",
+    "amazon",
+    "dazzy",
+    "banner6",
+    "banner7",
+    "banner8"
+  ],
+  "top_fixed_key": "top_fixed",
+  "placements": {
+    "sidebar": true,
+    "top": true,
+    "archive": true,
+    "in_content": true
+  }
 }

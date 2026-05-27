@@ -418,64 +418,113 @@ function kpop_render_single_footer( $post_id ) {
 }
 
 /**
- * サイドバー Advertisement 枠の中身を生成する(A8アフィリエイト・画像付きカード)。
- * 素材は config/affiliate/sidebar_ad.json。優先順位:
- *   1. banner_html(A8公式バナーHTMLを丸ごと)が非空ならそれを最優先で出力。
- *   2. それ以外は affiliate_url へのリンクで画像風カードを生成。
- *      banner_image_url があれば <img>、無ければ CSS ビジュアル(✈グラデ)でフォールバック。
- * いずれも A8 計測ピクセル(tracking_pixel)を併せて出力し、rel="nofollow sponsored"。
- * enabled:false / config 不在ならプレースホルダに戻す(壊さない)。
+ * A8 バナー広告の共通基盤。素材は config/affiliate/sidebar_ad.json。
+ *   banners: キー→A8公式バナーHTML(<a>+<img>+計測px をそのまま)。
+ *   rotate_pool: ページ読込毎にランダムで1つ出すキー群。
+ *   top_fixed_key: トップに固定表示するキー。
+ * A8 公式素材は信頼できる前提でそのまま出力(rel 補完のみ)。enabled:false で全停止。
  */
-function kpop_render_sidebar_ad() {
+function kpop_ad_config() {
+	static $cfg = null;
+	if ( $cfg !== null ) { return $cfg; }
 	$path = get_stylesheet_directory() . '/../../../../config/affiliate/sidebar_ad.json';
-	// テーマ位置に依存しない実パス解決(wp_stg 配下からの相対が読めない場合の保険)。
 	if ( ! file_exists( $path ) ) {
 		$alt = '/home/aiuser/kpop-ai-system/config/affiliate/sidebar_ad.json';
 		if ( file_exists( $alt ) ) { $path = $alt; }
 	}
-	$cfg = file_exists( $path ) ? json_decode( (string) file_get_contents( $path ), true ) : null;
-	if ( ! is_array( $cfg ) || empty( $cfg['enabled'] ) ) {
-		return '<p class="kpop-box-placeholder">広告枠</p>';
-	}
-
-	// 1) A8 公式バナーHTMLをそのまま使う場合(最優先)。
-	$banner_html = isset( $cfg['banner_html'] ) ? trim( (string) $cfg['banner_html'] ) : '';
-	if ( $banner_html !== '' ) {
-		// 公式素材は信頼できる前提でそのまま出力(A8 の <a>+<img>)。rel 補完のみ。
-		if ( strpos( $banner_html, 'rel=' ) === false ) {
-			$banner_html = preg_replace( '/<a /i', '<a rel="nofollow sponsored" target="_blank" ', $banner_html, 1 );
-		}
-		return '<div class="kpop-ad-a8">' . $banner_html . '</div>';
-	}
-
-	$url = isset( $cfg['affiliate_url'] ) ? esc_url( $cfg['affiliate_url'] ) : '';
-	if ( $url === '' ) {
-		return '<p class="kpop-box-placeholder">広告枠</p>';
-	}
-	$headline  = isset( $cfg['headline'] ) ? esc_html( $cfg['headline'] ) : '';
-	$subtext   = isset( $cfg['subtext'] ) ? esc_html( $cfg['subtext'] ) : '';
-	$cta_label = isset( $cfg['cta_label'] ) && $cfg['cta_label'] !== '' ? esc_html( $cfg['cta_label'] ) : 'くわしく見る';
-	$img_url   = isset( $cfg['banner_image_url'] ) ? trim( (string) $cfg['banner_image_url'] ) : '';
-
-	// 2) 画像風カード。
-	$visual = ( $img_url !== '' )
-		? '<img class="kpop-ad-img" src="' . esc_url( $img_url ) . '" alt="' . $headline . '" loading="lazy">'
-		: '<span class="kpop-ad-visual" aria-hidden="true">✈</span>';
-
-	$out  = '<a class="kpop-ad-card" href="' . $url . '" rel="nofollow sponsored" target="_blank">';
-	$out .= $visual;
-	$out .= '<span class="kpop-ad-body">';
-	if ( $headline !== '' ) { $out .= '<span class="kpop-ad-head">' . $headline . '</span>'; }
-	if ( $subtext !== '' )  { $out .= '<span class="kpop-ad-sub">' . $subtext . '</span>'; }
-	$out .= '<span class="kpop-ad-cta">' . $cta_label . '</span>';
-	$out .= '</span></a>';
-
-	// A8 計測ピクセル(1x1)。リンク経由のクリックだけでなく表示計測も生かす。
-	if ( ! empty( $cfg['tracking_pixel'] ) ) {
-		$out .= '<img class="kpop-ad-px" src="' . esc_url( $cfg['tracking_pixel'] ) . '" width="1" height="1" alt="" style="position:absolute;left:-9999px;">';
-	}
-	return $out;
+	$cfg = file_exists( $path ) ? json_decode( (string) file_get_contents( $path ), true ) : array();
+	if ( ! is_array( $cfg ) ) { $cfg = array(); }
+	return $cfg;
 }
+
+/** 指定キーのバナーHTMLを安全に整形して返す(rel 補完 + カード wrap)。無効なら ''。 */
+function kpop_ad_banner_html( $key ) {
+	$cfg = kpop_ad_config();
+	if ( empty( $cfg['enabled'] ) || empty( $cfg['banners'][ $key ] ) ) { return ''; }
+	$html = (string) $cfg['banners'][ $key ];
+	// rel に nofollow/sponsored と target=_blank を補完(A8素材は rel="nofollow" のみのことが多い)。
+	if ( strpos( $html, 'sponsored' ) === false ) {
+		$html = preg_replace( '/<a\s+href=/i', '<a rel="nofollow sponsored" target="_blank" href=', $html, 1 );
+	}
+	return '<div class="kpop-ad-a8">' . $html . '</div>';
+}
+
+/** rotate_pool からランダムに1つ選んで描画(ページ読込毎に変わる)。 */
+function kpop_ad_rotate() {
+	$cfg = kpop_ad_config();
+	$pool = isset( $cfg['rotate_pool'] ) && is_array( $cfg['rotate_pool'] ) ? $cfg['rotate_pool'] : array();
+	if ( empty( $pool ) ) { return ''; }
+	$key = $pool[ array_rand( $pool ) ];
+	return kpop_ad_banner_html( $key );
+}
+
+/** サイドバー Advertisement 枠の中身(rotate)。空ならプレースホルダに戻す。 */
+function kpop_render_sidebar_ad() {
+	$out = kpop_ad_rotate();
+	return $out !== '' ? $out : '<p class="kpop-box-placeholder">広告枠</p>';
+}
+
+/** placement が config で有効か。 */
+function kpop_ad_placement_on( $name ) {
+	$cfg = kpop_ad_config();
+	return ! empty( $cfg['enabled'] ) && ! empty( $cfg['placements'][ $name ] );
+}
+
+/**
+ * トップページに「固定バナー(top_fixed_key)」+「ローテバナー」を出す。
+ * generate_after_header フックで front-page のときだけ。
+ */
+function kpop_ad_top() {
+	if ( ! ( is_front_page() || is_home() ) || ! kpop_ad_placement_on( 'top' ) ) { return; }
+	$cfg   = kpop_ad_config();
+	$fixed = isset( $cfg['top_fixed_key'] ) ? kpop_ad_banner_html( $cfg['top_fixed_key'] ) : '';
+	$rot   = kpop_ad_rotate();
+	if ( $fixed === '' && $rot === '' ) { return; }
+	echo '<div class="kpop-ad-row kpop-ad-top">';
+	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+	echo '<div class="kpop-ad-row-inner">';
+	echo $fixed; // phpcs:ignore WordPress.Security.EscapeOutput
+	echo $rot;   // phpcs:ignore WordPress.Security.EscapeOutput
+	echo '</div></div>';
+}
+add_action( 'generate_after_header', 'kpop_ad_top' );
+
+/** 記事一覧(カテゴリ/アーカイブ)上部にローテバナー1枚。 */
+function kpop_ad_archive() {
+	if ( ! ( is_category() || is_archive() || is_tax() ) || ! kpop_ad_placement_on( 'archive' ) ) { return; }
+	$rot = kpop_ad_rotate();
+	if ( $rot === '' ) { return; }
+	echo '<div class="kpop-ad-row kpop-ad-archive">';
+	echo '<span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span>';
+	echo '<div class="kpop-ad-row-inner">' . $rot . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+	echo '</div>';
+}
+add_action( 'generate_after_header', 'kpop_ad_archive' );
+
+/**
+ * 記事本文の中ほどにローテバナー1枚を挿入(the_content フィルタ)。
+ * 既存の cta_injector(本文中CTA)と重ならないよう、段落数が十分な記事のみ・1回だけ。
+ */
+function kpop_ad_in_content( $content ) {
+	if ( ! is_singular( 'post' ) || ! is_main_query() || ! in_the_loop() || ! kpop_ad_placement_on( 'in_content' ) ) {
+		return $content;
+	}
+	$rot = kpop_ad_rotate();
+	if ( $rot === '' ) { return $content; }
+	// 段落の「閉じタグ」位置で分割し、中ほどの段落の直後(</p>の後)に広告を挿し込む。
+	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
+	// $parts は [本文, '</p>', 本文, '</p>', ...]。</p> の出現回数を数える。
+	$close_idx = array();
+	foreach ( $parts as $i => $p ) {
+		if ( strtolower( $p ) === '</p>' ) { $close_idx[] = $i; }
+	}
+	if ( count( $close_idx ) < 5 ) { return $content; } // 段落が少ない記事には入れない
+	$target = $close_idx[ (int) floor( count( $close_idx ) / 2 ) ]; // 中央の </p>
+	$ad = '<div class="kpop-ad-row kpop-ad-incontent"><span class="kpop-ad-label">Advertisement <span class="kpop-ad-pr">PR</span></span><div class="kpop-ad-row-inner">' . $rot . '</div></div>';
+	$parts[ $target ] .= $ad; // その </p> の直後に広告
+	return implode( '', $parts );
+}
+add_filter( 'the_content', 'kpop_ad_in_content', 30 );
 
 /**
  * 段階5f — 個別記事の右サイドバー追加コンテンツ。

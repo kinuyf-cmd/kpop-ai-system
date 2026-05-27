@@ -1797,6 +1797,55 @@ body { color: #2B2B32; }
     background: #e83e59;
 }
 
+/* A8 公式バナー(<a>+<img>)のラッパ。サイドバー内で中央寄せ・はみ出し防止 */
+.kpop-ad-a8 {
+    text-align: center;
+    line-height: 0;          /* img 下の余白除去 */
+}
+.kpop-ad-a8 img {
+    max-width: 100%;
+    height: auto;
+}
+/* トップ/一覧/本文中の広告行(サイドバー外) */
+.kpop-ad-row {
+    margin: 24px auto;
+    text-align: center;
+}
+.kpop-ad-row .kpop-ad-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: #8A4A63;
+    text-transform: uppercase;
+}
+.kpop-ad-row .kpop-ad-pr {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #8A4A63;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+}
+/* 複数バナーを横並び(トップの固定+ローテ)。狭幅で縦積み */
+.kpop-ad-row-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    align-items: flex-start;
+}
+.kpop-ad-row-inner .kpop-ad-a8 {
+    flex: 0 0 auto;
+}
+.kpop-ad-incontent {
+    margin: 32px auto;
+}
+
 /* サイドバー記事リスト(このカテゴリの最新) */
 .kpop-side-list {
     list-style: none;
