@@ -1322,7 +1322,9 @@ function kpop_home_events_section() {
 	echo '</section>';
 	wp_reset_postdata();
 }
-add_action( 'generate_after_main_content', 'kpop_home_events_section' );
+// オーナー要望(2026-05-27): トップ新着記事下の EVENT セクションは削除。
+// サイドバーのイベントカード(kpop_home_sidebar_events)は残す。
+// add_action( 'generate_after_main_content', 'kpop_home_events_section' );
 
 /* --- トップページ サイドバー「1ヶ月以内のイベント」箱(2026-05-26 追加)---
  * 個別記事ページには kpop_m11_sidebar_append が同じ箱を出すが、トップ(front page)
@@ -1944,6 +1946,19 @@ function kpop_popup_filter_query( $query ) {
 	}
 }
 add_action( 'pre_get_posts', 'kpop_popup_filter_query' );
+
+/**
+ * トップページ(フロント)の新着記事を 30 件にする。
+ * WP 全体の posts_per_page(20)は変えず、フロントのメインクエリのみ上書き=
+ * カテゴリ/アーカイブ等は 20 のまま(オーナー要望: トップを 20→30)。
+ */
+function kpop_front_posts_per_page( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) { return; }
+	if ( $query->is_home() || $query->is_front_page() ) {
+		$query->set( 'posts_per_page', 30 );
+	}
+}
+add_action( 'pre_get_posts', 'kpop_front_posts_per_page' );
 
 /* --- C-3: popup 開催状況バッジ判定(一覧 category-popup.php と個別 content-single.php で共有)
  * 開催期間(popup_period_start 〜 popup_period_end、いずれも Y-m-d 文字列)を
