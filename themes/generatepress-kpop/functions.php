@@ -1339,7 +1339,7 @@ function kpop_home_popup_section() {
 		'post_type'           => 'post',
 		'post_status'         => 'publish',
 		'category_name'       => 'popup',
-		'posts_per_page'      => 6,
+		'posts_per_page'      => 8,
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
 	) );
