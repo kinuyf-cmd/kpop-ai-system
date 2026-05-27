@@ -392,7 +392,11 @@ def generate_persona_post(context: dict, *, kind: str = "conversation",
         body = body[:128] + "…"
 
     hashtags = build_hashtags(artist, genre)
-    signature = w.get("signature", "")
+    # 署名 = 絵文字で名前を両側から挟む(💐ももか💐)。sign_emoji があればそれで生成し、
+    # 無ければ config の signature 文字列にフォールバック(後方互換)。
+    _emoji = w.get("sign_emoji", "")
+    _name = w.get("name", "")
+    signature = f"{_emoji}{_name}{_emoji}" if (_emoji and _name) else w.get("signature", "")
 
     # レイアウト: 本文 → 署名 → (URL) → ハッシュタグ
     parts = [body]

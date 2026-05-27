@@ -31,7 +31,7 @@
         "にわか叩き",
         "世代で優劣をつける論調"
       ],
-      "signature": "ー ミナ",
+      "signature": "🌙ミナ🌙",
       "topics": [
         "東方神起",
         "昔のライブ映像",
@@ -40,7 +40,8 @@
         "箱推しの幸せ",
         "娘と観た韓ドラ"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a calm, friendly Japanese woman in her early 40s, soft shoulder-length hair, gentle smile, wearing a simple elegant blouse, warm neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a calm, friendly Japanese woman in her early 40s, soft shoulder-length hair, gentle smile, wearing a simple elegant blouse, warm neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "🌙"
     },
     "yui": {
       "name": "ゆい",
@@ -78,7 +79,7 @@
         "アンチ",
         "知ったかぶりの分析"
       ],
-      "signature": "ー ゆい",
+      "signature": "💜ゆい💜",
       "topics": [
         "BTSのソロ曲",
         "メンバーの近況",
@@ -87,7 +88,8 @@
         "give写真",
         "コンサートの思い出"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a cheerful Japanese woman in her mid 20s, trendy medium hair, casual stylish top, bright energetic expression, purple-pink background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a cheerful Japanese woman in her mid 20s, trendy medium hair, casual stylish top, bright energetic expression, purple-pink background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "💜"
     },
     "nono": {
       "name": "のの",
@@ -125,7 +127,7 @@
         "長文考察",
         "最近の子は論"
       ],
-      "signature": "ー のの",
+      "signature": "⚡のの⚡",
       "topics": [
         "新人のティザー",
         "第4世代のMV",
@@ -134,7 +136,8 @@
         "大学とオタ活の両立",
         "フェスの予定"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a youthful Japanese female university student around 21, casual hoodie, playful relaxed expression, pastel background, cute modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a youthful Japanese female university student around 21, casual hoodie, playful relaxed expression, pastel background, cute modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "⚡"
     },
     "saki": {
       "name": "さき",
@@ -167,7 +170,7 @@
         "真面目すぎる議論",
         "推しの活動休止の話題"
       ],
-      "signature": "ー さき",
+      "signature": "👑さき👑",
       "topics": [
         "BIGBANGのグッズ",
         "GDの新ブランド",
@@ -176,7 +179,8 @@
         "昔のVIP活動",
         "財布の中身"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a lively Japanese woman in her mid 30s, short bob hair, confident grin, casual cool jacket, warm background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a lively Japanese woman in her mid 30s, short bob hair, confident grin, casual cool jacket, warm background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "👑"
     },
     "haruka": {
       "name": "はるか",
@@ -202,7 +206,7 @@
         "辛すぎる店",
         "ネタバレ"
       ],
-      "signature": "ー はるか",
+      "signature": "🍙はるか🍙",
       "topics": [
         "ソウルの食べ歩き",
         "韓国ドラマのOST",
@@ -211,7 +215,8 @@
         "見てるドラマの感想",
         "トッポギ"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a relaxed Japanese woman around 30, long wavy hair, soft easygoing smile, cozy cardigan, holding a small coffee cup, warm cafe-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a relaxed Japanese woman around 30, long wavy hair, soft easygoing smile, cozy cardigan, holding a small coffee cup, warm cafe-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "🍙"
     },
     "aya": {
       "name": "アヤ",
@@ -242,7 +247,7 @@
         "量産型と言われること",
         "ファッションを浅いと見る風潮"
       ],
-      "signature": "ー アヤ",
+      "signature": "👗アヤ👗",
       "topics": [
         "空港ファッション",
         "新作コスメ",
@@ -251,7 +256,8 @@
         "推しのスタイリング",
         "色の組み合わせ"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a chic Japanese woman around 28, sleek straight hair, fashionable minimal outfit, cool composed expression, stylish neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a chic Japanese woman around 28, sleek straight hair, fashionable minimal outfit, cool composed expression, stylish neutral background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "👗"
     },
     "rika": {
       "name": "リカ",
@@ -278,7 +284,7 @@
         "煽り見出し",
         "にわか比較"
       ],
-      "signature": "ー リカ",
+      "signature": "📊リカ📊",
       "topics": [
         "週間チャート",
         "ストリーミング数",
@@ -287,7 +293,8 @@
         "受賞ニュース",
         "動員数"
       ],
-      "avatar_prompt": "Flat vector illustration avatar of a quiet thoughtful Japanese woman around 25, neat hair, glasses, calm subtle expression, simple cool-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text"
+      "avatar_prompt": "Flat vector illustration avatar of a quiet thoughtful Japanese woman around 25, neat hair, glasses, calm subtle expression, simple cool-toned background, modern minimal portrait icon style, original fictional character, not a real person, no text",
+      "sign_emoji": "📊"
     },
     "editorial": {
       "name": "ももか",
@@ -310,7 +317,7 @@
         "速報"
       ],
       "dislikes": [],
-      "signature": "ー ももか",
+      "signature": "💐ももか💐",
       "topics": [
         "今日のトレンド",
         "タイムラインの話題",
@@ -319,7 +326,8 @@
         "気になるニュース",
         "見逃せない動き"
       ],
-      "avatar_prompt": "Flat vector mascot-style avatar representing a K-pop news editorial desk, abstract friendly persona with headphones and a microphone motif, gender-neutral, vibrant background, modern minimal icon style, original design, not a real person, no text"
+      "avatar_prompt": "Flat vector mascot-style avatar representing a K-pop news editorial desk, abstract friendly persona with headphones and a microphone motif, gender-neutral, vibrant background, modern minimal icon style, original design, not a real person, no text",
+      "sign_emoji": "💐"
     }
   },
   "genre_aliases": {
