@@ -3342,6 +3342,25 @@ textarea:focus-visible,
 	font-size: 12px;
 	margin-left: 4px;
 }
+/* 1ヶ月以内のイベント: 各イベントを1行に収める(タイトルは省略記号、日付は右端固定)。
+   このカード(kpop-upcoming-events)限定で .kpop-side-list の既定 block 表示を上書き。 */
+.kpop-upcoming-events .kpop-side-list li {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+.kpop-upcoming-events .kpop-side-list a {
+	flex: 1 1 auto;
+	min-width: 0;            /* flex子の省略を効かせる */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.kpop-upcoming-events .kpop-event-date {
+	flex: 0 0 auto;
+	margin-left: auto;       /* 日付を右端へ */
+	white-space: nowrap;
+}
 
 /* イベント詳細「開催概要」ボックス(lib/popup_event_to_post.py build_event_article)
    公演名 / 公演日 / 会場 を構造化表示。enrichment 由来データを必ず見せ、
