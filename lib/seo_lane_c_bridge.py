@@ -76,32 +76,46 @@ def _is_profile_slug(slug):
 ENRICH_LOG = os.path.join(BASE_DIR, "logs", "body_enrich.jsonl")
 
 
-def _already_enriched(slug):
+def _enriched_slugs():
+    """body_enrich 履歴(result="updated")から拡充済み slug 集合を1回読みで構築。
+    呼ばれる度の全行再走査(O(候補数×ログ行数))を避けるため lru_cache で1回に固定。"""
+    slugs = set()
     if not os.path.exists(ENRICH_LOG):
-        return False
+        return slugs
     for line in open(ENRICH_LOG, encoding="utf-8"):
         try:
             r = json.loads(line)
         except Exception:
             continue
-        if r.get("slug") == slug and r.get("result") == "updated":
-            return True
-    return False
+        if r.get("result") == "updated" and r.get("slug"):
+            slugs.add(r["slug"])
+    return slugs
 
 
-def _url_is_live(url, timeout=8):
+def _already_enriched(slug, _cache={}):
+    if "set" not in _cache:
+        _cache["set"] = _enriched_slugs()
+    return slug in _cache["set"]
+
+
+def _url_is_live(url, timeout=8, _cache={}):
     """突合 URL が本番で 200 か。404(GSC に残るが本番消失)は enrich でなく
-    再生成案件なので enrich_queue から除外する。判定不能(例外)は live 扱いで残す。"""
+    再生成案件なので enrich_queue から除外する。判定不能(例外)は live 扱いで残す。
+    同一 bridge 実行内の重複 URL は結果をメモ化(同期HEADの再発行を防ぐ)。"""
+    if url in _cache:
+        return _cache[url]
     import urllib.request
     try:
         req = urllib.request.Request(url, method="HEAD",
                                      headers={"User-Agent": "KpopJournalBot/1.0 lane-c-bridge"})
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.status == 200
+            live = (r.status == 200)
     except urllib.error.HTTPError as e:
-        return e.code != 404
+        live = (e.code != 404)
     except Exception:
-        return True  # ネットワーク等の一時失敗で取りこぼさない
+        live = True  # ネットワーク等の一時失敗で取りこぼさない
+    _cache[url] = live
+    return live
 
 
 def _service():

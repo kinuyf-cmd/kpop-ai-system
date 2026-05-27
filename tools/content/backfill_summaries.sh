@@ -37,6 +37,11 @@ echo "=== 3行まとめ遡及生成: $([ "$APPLY" = 1 ] && echo APPLY || echo DR
 
 mapfile -t IDS < <($RO post list --post_type=post --post_status=publish --field=ID 2>/dev/null)
 echo "  publish 記事: ${#IDS[@]}"
+# 0件は「対象なし」でなく取得失敗(sudo不可/wp-cliエラー等)の疑い。誤った成功報告を防ぐ。
+if [ "${#IDS[@]}" -eq 0 ]; then
+  echo "  ✗ publish記事の取得に失敗(0件)。read-onlyラッパー権限/wp-cliを確認。中断。" >&2
+  exit 1
+fi
 
 done_n=0; skip_n=0; fail_n=0; rollback_n=0
 for pid in "${IDS[@]}"; do
