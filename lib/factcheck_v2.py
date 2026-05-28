@@ -44,6 +44,25 @@ CACHE_TTL_SEC = 30 * 86400  # 30 days
 PID_CACHE_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_pid_cache.json')
 PID_CACHE_TTL_SEC = 24 * 3600  # 24h
 
+# 2026-05-28: CTA/アフィリ注入起因の指摘はキャッシュに保存しない(再発防止)。
+# 注入はpre_publish_gate(注入前評価)の後段で行われるため、ここで critical/high に
+# 残っているCTA関連指摘は過去の評価対象汚染(注入後本文をLLMに渡していた時代の遺物)。
+_CTA_NOISE_RE = re.compile(
+    r'エアトリ|見出し風|推し活|アフィリエイトリンクが複数挿入|商業アフィリエイト|別記事の見出し|無関係な見出し|別コンテンツ'
+)
+
+
+def _strip_cta_noise(result: dict) -> dict:
+    """result内のcritical/high/mediumからCTA注入起因のnoiseを除去して返す。"""
+    if not isinstance(result, dict):
+        return result
+    out = dict(result)
+    for level in ('critical', 'high', 'medium'):
+        items = out.get(level) or []
+        if items:
+            out[level] = [x for x in items if not _CTA_NOISE_RE.search(str(x))]
+    return out
+
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
 KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
 
@@ -158,7 +177,7 @@ def _cache_put(key: str, result: dict) -> None:
         cache = _cache_load()
         now = time.time()
         cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= CACHE_TTL_SEC}
-        cache[key] = {'ts': now, 'result': result}
+        cache[key] = {'ts': now, 'result': _strip_cta_noise(result)}
         CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
         CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
     except OSError:
@@ -192,7 +211,7 @@ def _pid_cache_put(pid, result: dict) -> None:
         cache = {}
     now = time.time()
     cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= PID_CACHE_TTL_SEC}
-    cache[str(pid)] = {'ts': now, 'result': result}
+    cache[str(pid)] = {'ts': now, 'result': _strip_cta_noise(result)}
     try:
         PID_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
         PID_CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
@@ -374,6 +393,8 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
             },
         })
 
+        # CTA注入起因のnoiseを除去してから返す&キャッシュ(2026-05-28)
+        result = _strip_cta_noise(result)
         # 同一 title+content の連続呼び出しを 1回に折り畳むため結果をキャッシュ
         _cache_put(ck, result)
         # pid 軸 24h dedup にも書き込み (enricher 編集後の再factcheck を遮断)
