@@ -998,10 +998,69 @@ function kpop_events_archive_intro() {
 	}
 	echo '<section class="kpop-events-intro" role="region" aria-label="イベント情報">';
 	echo '<h1>K-POP イベントカレンダー</h1>';
-	echo '<p>K-POP アーティストの来日公演・ライブ・ファンミーティング・フェス出演を、'
-		. '開催日順にまとめています。月表示・リスト表示の切り替えやキーワード検索で、'
-		. '気になる公演を探せます。</p>';
+	echo '<p>K-POP アーティストの来日公演・ライブ・ファンミーティング・フェス出演に加え、'
+		. 'メンバーのお誕生日 🎂 やポップアップストア情報も表示しています。'
+		. '下のフィルタで種別を切り替えられます。</p>';
+
+	// フィルタトグル(イベント/誕生日/Popup)
+	echo '<div class="kpj-event-filter" role="group" aria-label="表示するイベント種別">';
+	echo '<span class="kpj-event-filter__label">表示:</span>';
+	echo '<button type="button" class="kpj-event-filter__btn" data-kind="event" aria-pressed="true">🎤 ライブ・イベント</button>';
+	echo '<button type="button" class="kpj-event-filter__btn" data-kind="birthday" aria-pressed="true">🎂 誕生日</button>';
+	echo '<button type="button" class="kpj-event-filter__btn" data-kind="popup" aria-pressed="true">🛍️ ポップアップ</button>';
+	echo '</div>';
+
 	echo '</section>';
+
+	// イベント種別フィルタ JS (インライン、依存ライブラリなし)
+	// 各イベントカードを title prefix で分類: 🎂→birthday / 🛍️ or POPUP→popup / else→event
+	?>
+	<script>
+	(function(){
+	  var state = { event: true, birthday: true, popup: true };
+	  function detectKind(text){
+	    if (!text) return 'event';
+	    if (text.indexOf('🎂') === 0 || /^\s*🎂/.test(text)) return 'birthday';
+	    if (text.indexOf('🛍') >= 0 || text.indexOf('POPUP') >= 0 || text.indexOf('ポップアップ') >= 0) return 'popup';
+	    return 'event';
+	  }
+	  function apply(){
+	    // 月表示の日別イベントセル + リスト表示のイベント行
+	    var nodes = document.querySelectorAll(
+	      '.tribe-events-calendar-month__calendar-event, ' +
+	      '.tribe-events-calendar-month__multiday-event, ' +
+	      '.tribe-events-calendar-month__mobile-events-mobile-day-marker ~ * .tribe-events-calendar-month__mobile-events-mobile-event, ' +
+	      '.tribe-events-calendar-list__event-row, ' +
+	      '.tribe-events-calendar-day__event'
+	    );
+	    nodes.forEach(function(node){
+	      var titleEl = node.querySelector('a, .tribe-events-calendar-month__calendar-event-title, .tribe-events-calendar-list__event-title');
+	      var text = (titleEl ? titleEl.textContent : node.textContent) || '';
+	      var kind = detectKind(text);
+	      node.classList.toggle('kpj-event-hidden', !state[kind]);
+	      if (kind === 'birthday') node.classList.add('kpj-birthday-event');
+	    });
+	  }
+	  document.addEventListener('click', function(e){
+	    var btn = e.target.closest('.kpj-event-filter__btn');
+	    if (!btn) return;
+	    var kind = btn.getAttribute('data-kind');
+	    state[kind] = !state[kind];
+	    btn.setAttribute('aria-pressed', state[kind] ? 'true' : 'false');
+	    apply();
+	  });
+	  // 初回 + TEC が ajax で月切替した時に再適用
+	  document.addEventListener('DOMContentLoaded', apply);
+	  document.addEventListener('tribeViewLoaded', apply);
+	  // SPAっぽい遷移にも保険でMutationObserver
+	  var obs = new MutationObserver(function(){ apply(); });
+	  document.addEventListener('DOMContentLoaded', function(){
+	    var root = document.querySelector('.tribe-events-view, .tribe-events-l-container');
+	    if (root) obs.observe(root, {childList: true, subtree: true});
+	  });
+	})();
+	</script>
+	<?php
 }
 add_action( 'generate_after_header', 'kpop_events_archive_intro', 15 );
 

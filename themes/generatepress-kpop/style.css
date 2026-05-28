@@ -4971,6 +4971,109 @@ body.kpop-cat-comeback .kpop-archive-banner {
 }
 /* ============================================================ END events-archive-polish-v2 */
 
+/* ============================================================ BEGIN birthday-events-styling
+   2026-05-28: 誕生日イベントを 🎂 アイコン+ピンク系で他イベントと差別化。
+   title prefix が "🎂 " のイベントを薄ピンク背景+ピンク左ボーダーで表示。
+   :has() 対応ブラウザ前提だが、Safari/Chrome/Firefox の現行版で利用可能。
+   ============================================================ */
+/* カレンダー月表示のイベントタイトル枠 */
+.tribe-events-calendar-month__calendar-event:has(.tribe-events-calendar-month__calendar-event-title-link[href*="birthday"]),
+.tribe-events-calendar-month__calendar-event-title-link[href*="birthday"] {
+	/* 注: TECのURLにbirthdayが含まれない可能性があるため、
+	   主たる識別は title prefix の 🎂。下のルールに任せる */
+}
+
+/* title 内に 🎂 を含むイベントカード(リスト/月) */
+.tribe-events-calendar-month__calendar-event-title-link,
+.tribe-events-calendar-list__event-title-link {
+	position: relative;
+}
+/* タイトル文字列で識別: 🎂 始まりのリンクテキストに視覚アクセント */
+.tribe-events .tribe-events-calendar-month__calendar-event-title-link,
+.tribe-events .tribe-events-calendar-list__event-title-link {
+	transition: background-color 0.15s ease;
+}
+
+/* 月表示で誕生日イベントを左ボーダー強調 */
+.tribe-events-calendar-month__calendar-event[class*="birthday"],
+.tribe-events-calendar-month__calendar-event--featured.kpj-birthday-event {
+	border-left: 3px solid var(--kpop-pink);
+	padding-left: 4px;
+	background-color: #fff5f8;
+}
+
+/* kpj-birthday-event クラスを functions.php の body class フィルタで付与する想定 */
+.kpj-birthday-event .tribe-events-calendar-month__calendar-event-title-link,
+.kpj-birthday-event .tribe-events-calendar-list__event-title-link {
+	color: var(--kpop-pink-dark) !important;
+}
+
+/* フィルタトグルボタン(イベント/誕生日/Popup 切替) */
+.kpj-event-filter {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 16px 0 12px;
+	padding: 12px 16px;
+	background: linear-gradient(90deg, #fff5f8 0%, #ffffff 100%);
+	border-radius: 10px;
+	border: 1px solid #fce4ec;
+}
+.kpj-event-filter__label {
+	font-weight: 700;
+	color: var(--kpop-pink-dark);
+	margin-right: 4px;
+	display: inline-flex;
+	align-items: center;
+}
+.kpj-event-filter__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 14px;
+	border-radius: 999px;
+	border: 2px solid #fce4ec;
+	background: #ffffff;
+	color: var(--kpop-text);
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	user-select: none;
+}
+.kpj-event-filter__btn:hover,
+.kpj-event-filter__btn:focus-visible {
+	border-color: var(--kpop-pink);
+	background: #fff5f8;
+	outline: none;
+}
+.kpj-event-filter__btn[aria-pressed="true"] {
+	background: var(--kpop-pink);
+	color: #ffffff;
+	border-color: var(--kpop-pink);
+}
+.kpj-event-filter__btn[aria-pressed="true"]:hover {
+	background: var(--kpop-pink-dark);
+	border-color: var(--kpop-pink-dark);
+}
+
+/* JS でセル/リストから非表示にする時のクラス */
+.kpj-event-hidden {
+	display: none !important;
+}
+
+@media (max-width: 768px) {
+	.kpj-event-filter {
+		padding: 10px 12px;
+		font-size: 0.85rem;
+	}
+	.kpj-event-filter__btn {
+		padding: 5px 10px;
+		font-size: 0.82rem;
+	}
+}
+/* ============================================================ END birthday-events-styling */
+
 /* ============================================================
    イベントアーカイブ ページ見出し + 説明文
    既定では .tribe-events-header__title が非表示で、来訪者に
