@@ -84,16 +84,6 @@
    "type": "event",
    "artist_keyword": "MYNAME",
    "title": "MYNAME",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667133",
-   "source_media": "ぴあ",
-   "start_date": "2026-05-27",
-   "venue": "SHIBUYA PLEASURE PLEASURE",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "MYNAME",
-   "title": "MYNAME",
    "source_url": "https://eplus.jp/sf/detail/0728230001-P0030087P021001",
    "source_media": "イープラス",
    "start_date": "2026-05-29",
@@ -169,6 +159,106 @@
    "start_date": "2026-08-08",
    "venue": "KEIO ARENA TOKYO",
    "_source_id": "tickebo"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ウィ・ハジュン",
+   "title": "ウィ・ハジュン 2026 ファンミーティング ＜WI-TH U＞ in 東京",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667711",
+   "source_media": "ぴあ",
+   "start_date": "2026-05-30",
+   "venue": "天王洲 銀河劇場",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HAN SEUNG WOO",
+   "title": "LEE JI HOON × HAN SEUNG WOO",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=784200",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "iKON",
+   "title": "iKON",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=341153",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "東京ガーデンシアター",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HAN SEUNG WOO",
+   "title": "HAN SEUNG WOO",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=693926",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LE SSERAFIM",
+   "title": "LE SSERAFIM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-07-25",
+   "venue": "大阪城ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ILLIT",
+   "title": "ILLIT",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "愛知県芸術劇場 大ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LEE JI HOON",
+   "title": "LEE JI HOON",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=784192",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "神田明神ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ウィ・ハジュン",
+   "title": "ウィ・ハジュン",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=781953",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-05-30",
+   "venue": "天王洲 銀河劇場",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KISS OF LIFE",
+   "title": "KISS OF LIFE",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=746098",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-27",
+   "venue": "市川市文化会館 大ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JAEJOONG",
+   "title": "JAEJOONG",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-05-31",
+   "venue": "川口リリア・フカガワみらいホール(メインホール)",
+   "_source_id": "ltike"
   }
  ]
 }

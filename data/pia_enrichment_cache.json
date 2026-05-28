@@ -163,5 +163,19 @@
     "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
     "performances": [],
     "cached_at": "2026-05-25T23:32:08.689344"
+  },
+  "b2667711": {
+    "event_bundle_cd": "b2667711",
+    "title": "ウィ・ハジュン 2026 ファンミーティング ＜WI-TH U＞ in 東京",
+    "description": "ドラマ『イカゲーム』『シスターズ』などに出演の俳優ウィ・ハジュンが、約2年ぶりとなる来日ファンミーティングを5/30(土)天王洲 銀河劇場にて開催！",
+    "image": "https://image.pia.jp/images/202604/202604240051_ex.png",
+    "performances": [
+      {
+        "date": "2026-05-30",
+        "venue": "天王洲 銀河劇場",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-05-28T04:02:12.152623"
   }
 }

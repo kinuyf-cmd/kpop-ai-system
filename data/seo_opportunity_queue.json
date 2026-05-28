@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-05-25",
+ "generated_at": "2026-05-28",
  "window_days": 480,
  "params": {
   "min_imp": 300,
@@ -14,7 +14,7 @@
   ]
  },
  "totals": {
-  "queries_scanned": 21401,
+  "queries_scanned": 21450,
   "lane_B_new": 67,
   "lane_C_rewrite": 190,
   "excluded": {
@@ -23,7 +23,7 @@
    "breaking": 10,
    "hard_competition": 0
   },
-  "existing_slugs": 138
+  "existing_slugs": 191
  },
  "lane_B_new": [
   {
@@ -418,7 +418,7 @@
   },
   {
    "query": "rht. メンバー 年齢",
-   "imp": 683,
+   "imp": 684,
    "clicks": 61,
    "position": 6.9,
    "ctr_pct": 8.9,
@@ -498,7 +498,7 @@
   },
   {
    "query": "チャウヌ 除隊日",
-   "imp": 348,
+   "imp": 349,
    "clicks": 1,
    "position": 7.1,
    "ctr_pct": 0.3,
@@ -688,7 +688,7 @@
   },
   {
    "query": "ive ライトスティック2",
-   "imp": 358,
+   "imp": 359,
    "clicks": 42,
    "position": 7.1,
    "ctr_pct": 11.7,
@@ -710,7 +710,7 @@
   },
   {
    "query": "ラブブとは",
-   "imp": 16355,
+   "imp": 16357,
    "clicks": 3,
    "position": 8.8,
    "ctr_pct": 0.0,
@@ -810,7 +810,7 @@
   },
   {
    "query": "オジョギャング メンバー",
-   "imp": 7130,
+   "imp": 7131,
    "clicks": 537,
    "position": 5.1,
    "ctr_pct": 7.5,
@@ -830,7 +830,7 @@
   },
   {
    "query": "ojo gang メンバー",
-   "imp": 7213,
+   "imp": 7214,
    "clicks": 635,
    "position": 5.8,
    "ctr_pct": 8.8,
@@ -1090,7 +1090,7 @@
   },
   {
    "query": "コンフィデンスマンkr 吹き替え",
-   "imp": 2429,
+   "imp": 2430,
    "clicks": 223,
    "position": 5.8,
    "ctr_pct": 9.2,
@@ -1200,7 +1200,7 @@
   },
   {
    "query": "rhtokyo",
-   "imp": 1648,
+   "imp": 1649,
    "clicks": 140,
    "position": 5.4,
    "ctr_pct": 8.5,
@@ -1340,7 +1340,7 @@
   },
   {
    "query": "デーモンハンターズ キャラ",
-   "imp": 1921,
+   "imp": 1922,
    "clicks": 243,
    "position": 4.2,
    "ctr_pct": 12.6,
@@ -2300,7 +2300,7 @@
   },
   {
    "query": "デーモンハンターズ キャラクター 名前",
-   "imp": 730,
+   "imp": 731,
    "clicks": 94,
    "position": 3.5,
    "ctr_pct": 12.9,
@@ -2400,12 +2400,12 @@
   },
   {
    "query": "デーモンハンターズキャラ名前",
-   "imp": 312,
+   "imp": 313,
    "clicks": 21,
    "position": 3.9,
    "ctr_pct": 6.7,
    "theme": "movie_anime",
-   "potential": 41,
+   "potential": 42,
    "lane": "C_rewrite"
   },
   {
@@ -2460,10 +2460,10 @@
   },
   {
    "query": "ケーポップデーモンハンターズ 名前",
-   "imp": 366,
+   "imp": 367,
    "clicks": 39,
    "position": 3.5,
-   "ctr_pct": 10.7,
+   "ctr_pct": 10.6,
    "theme": "movie_anime",
    "potential": 34,
    "lane": "C_rewrite"
@@ -2530,10 +2530,10 @@
   },
   {
    "query": "riehatatokyo メンバー",
-   "imp": 315,
+   "imp": 316,
    "clicks": 43,
-   "position": 5.2,
-   "ctr_pct": 13.7,
+   "position": 5.3,
+   "ctr_pct": 13.6,
    "theme": "dance_show",
    "potential": 20,
    "lane": "C_rewrite"
@@ -2569,6 +2569,16 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "kpopガールズ デーモン・ハンターズ キャラクター",
+   "imp": 1938,
+   "clicks": 400,
+   "position": 4.1,
+   "ctr_pct": 20.6,
+   "theme": "movie_anime",
+   "potential": -12,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "韓国アイドル スキンケア",
    "imp": 447,
    "clicks": 101,
@@ -2576,16 +2586,6 @@
    "ctr_pct": 22.6,
    "theme": "beauty",
    "potential": -12,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "kpopガールズ デーモン・ハンターズ キャラクター",
-   "imp": 1936,
-   "clicks": 400,
-   "position": 4.1,
-   "ctr_pct": 20.7,
-   "theme": "movie_anime",
-   "potential": -13,
    "lane": "C_rewrite"
   },
   {
