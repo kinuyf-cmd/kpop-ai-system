@@ -12,7 +12,7 @@ import types
 if 'anthropic' not in sys.modules:
     sys.modules['anthropic'] = types.ModuleType('anthropic')
 
-from lib.factcheck_v2 import _strip_cta_noise
+from lib.factcheck_v2 import _strip_cta_noise, strip_cta_blocks_from_html
 
 
 def test_strip_removes_airtri_critical():
@@ -40,6 +40,27 @@ def test_strip_removes_heading_injection():
     out = _strip_cta_noise(result)
     assert out['critical'] == []
     assert out['high'] == []
+
+
+def test_html_strip_removes_cta_blocks():
+    html = (
+        '<p>BTSが新曲を発表しました。</p>'
+        '<div data-cta="top" class="kpopj-cta-top">速報カテゴリへ→</div>'
+        '<p>詳細は以下の通りです。</p>'
+        '<div class="kpj-cta-block"><h3>ファンにおすすめ</h3>エアトリで韓国へ</div>'
+    )
+    out = strip_cta_blocks_from_html(html)
+    assert 'BTSが新曲' in out
+    assert '詳細は以下' in out
+    assert 'エアトリ' not in out
+    assert '速報カテゴリ' not in out
+    assert 'kpj-cta-block' not in out
+    assert 'data-cta' not in out
+
+
+def test_html_strip_handles_empty_and_none():
+    assert strip_cta_blocks_from_html('') == ''
+    assert strip_cta_blocks_from_html(None) is None
 
 
 def test_strip_preserves_legitimate_critical():

@@ -52,6 +52,32 @@ _CTA_NOISE_RE = re.compile(
 )
 
 
+def strip_cta_blocks_from_html(html: str) -> str:
+    """LLMに渡す前にCTA/アフィリブロックをHTMLから物理的に除去(2026-05-28 A対応)。
+
+    factcheck_v2 が「広告/CTAは本文外」と認識できないため、評価入力から
+    完全に取り除く。cta_injector が出力するマーカーを網羅:
+      - data-cta="top|mid|bottom" 属性を持つ <div>
+      - class に kpj-cta-block / kpopj-cta- を含む <div>
+      - class に kpj-cta-item / kpj-affiliate-card を含むブロック
+    """
+    if not html or not isinstance(html, str):
+        return html
+    patterns = [
+        r'<div[^>]*data-cta=["\'][^"\']*["\'][^>]*>.*?</div>\s*',
+        r'<div[^>]*class=["\'][^"\']*kpj-cta-block[^"\']*["\'][^>]*>.*?</div>\s*',
+        r'<div[^>]*class=["\'][^"\']*kpopj-cta-[^"\']*["\'][^>]*>.*?</div>\s*',
+        r'<div[^>]*class=["\'][^"\']*kpj-affiliate[^"\']*["\'][^>]*>.*?</div>\s*',
+    ]
+    out = html
+    for pat in patterns:
+        prev = None
+        while prev != out:
+            prev = out
+            out = re.sub(pat, '', out, flags=re.DOTALL | re.IGNORECASE)
+    return out
+
+
 def _strip_cta_noise(result: dict) -> dict:
     """result内のcritical/high/mediumからCTA注入起因のnoiseを除去して返す。"""
     if not isinstance(result, dict):
@@ -102,6 +128,7 @@ KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです�
 - 「TWICE・ITZY・Stray Kids」のようなグループ列挙は「TWICEはX人」と主張していないので、メンバー数誤りとして報告してはならない
 - 「JYP所属のTWICE」のような所属関係の記述は事実関係でメンバー数とは無関係
 - slug/URL/メタ情報は本文の事実とは無関係
+- 広告/アフィリエイト/CTA ブロック (エアトリ、Amazon、楽天、ファンクラブ案内、「推し活ガイド」「速報カテゴリへ」等の誘導リンク・末尾バナー・別記事への内部リンクカード) は **記事の事実評価対象外**。記事本来のニュース部分のみを評価し、これらの存在を critical/high として報告してはならない。広告/CTAの有無や種類・配置・「他記事の見出しが末尾にある」事象も問題として扱わない。
 
 ## スコア基準
 - 95-100: 問題なし
@@ -231,6 +258,10 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     """
     title = post['title']['rendered'] if isinstance(post.get('title'), dict) else post.get('title', '')
     content = post['content']['rendered'] if isinstance(post.get('content'), dict) else post.get('content', '')
+    # 2026-05-28 (A対応): CTA/アフィリブロックを評価入力から物理的に除去。
+    # body_enrich / post_publish_hook 経路は注入後本文を渡してくるため、
+    # ここで一律に剥がすことで「CTA混入」criticalの再発生自体を断つ。
+    content = strip_cta_blocks_from_html(content)
     plain = re.sub(r'<[^>]+>', ' ', content)
     plain = re.sub(r'\s+', ' ', plain).strip()[:2500]
     pid = post.get('id')
