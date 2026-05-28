@@ -258,8 +258,11 @@ def _send_discord(text: str, channel: str = 'daily_ceo_report') -> int:
         return 0
     import urllib.request
     payload = json.dumps({'content': text[:1900]}).encode()
+    # 2026-05-28: Cloudflare error 1010 回避。Python-urllib デフォUAが bot 判定で
+    # 403になる(本日17:00夕ブリーフが送信失敗した直接原因)。明示UAで204成功。
     req = urllib.request.Request(url, data=payload,
-                                 headers={'Content-Type': 'application/json'})
+                                 headers={'Content-Type': 'application/json',
+                                          'User-Agent': 'KPOPJournalBot/1.0 (+https://www.kpopjournal.tokyo)'})
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             return resp.status
