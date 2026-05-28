@@ -469,16 +469,40 @@ def process_queue(dry_run: bool = False) -> dict:
 
         # 2026-05-26(施策4): high priority 記事はスレッド(フック→要点→URL、単発比+40-60%imp)、
         # その他は従来の2段。post_thread は要点生成不可なら自動で2段にフォールバック。
+        # M10 AB (2026-05-28): post_idの偶奇で variant を交互割当(A=ペルソナ/B=PopCrave)。
+        # post_id不在時は時刻のepoch秒偶奇で代替(完全な交互は保証しないが概ね半々)。
+        if post_id is not None:
+            variant = 'A' if (int(post_id) % 2 == 0) else 'B'
+        else:
+            import time as _t
+            variant = 'A' if (int(_t.time()) % 2 == 0) else 'B'
         if entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
             from lib.x_poster import post_thread
-            result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist)
+            result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
         else:
             from lib.x_poster import post_hook_and_reply
-            result = post_hook_and_reply(title, url, post_id=post_id, genre=genre, artist=artist)
+            result = post_hook_and_reply(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
         if result.get('success'):
             tid = result.get('tweet_id', '')
             rid = result.get('reply_id', '')
-            print(f"    ✓ hook={tid} reply={rid}")
+            actual_variant = result.get('variant', variant)
+            print(f"    ✓ hook={tid} reply={rid} variant={actual_variant}")
+            # M10 AB log: tweet_id, variant, post_id, title を記録(72h後に集計)
+            try:
+                import json as _j, os as _o
+                from datetime import datetime as _dt
+                _ab_log = "/home/aiuser/kpop-ai-system/logs/x_ab_log.jsonl"
+                _o.makedirs(_o.path.dirname(_ab_log), exist_ok=True)
+                with open(_ab_log, "a", encoding="utf-8") as _f:
+                    _f.write(_j.dumps({
+                        "ts": _dt.now().isoformat(),
+                        "tweet_id": tid, "reply_id": rid,
+                        "variant": actual_variant, "post_id": post_id,
+                        "title": title[:120], "genre": genre,
+                        "mode": result.get('mode', 'hook_reply'),
+                    }, ensure_ascii=False) + "\n")
+            except Exception as _e:
+                print(f"    [warn] AB log write failed: {_e}")
             processed += 1
             new_queue.remove(entry)
             # tweet_idをWPに書き戻し（kpop_pipeline.sh互換）

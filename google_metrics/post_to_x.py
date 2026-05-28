@@ -64,7 +64,58 @@ def _oauth_header(method: str, url: str, creds: dict) -> str:
     )
 
 
-def post_tweet(text: str, reply_to: str | None = None, creds: dict | None = None) -> tuple[str, str]:
+_MEDIA_UPLOAD_URL = "https://upload.twitter.com/1.1/media/upload.json"
+
+
+def upload_media(image_bytes: bytes, creds: dict | None = None,
+                 mime_type: str = "image/jpeg") -> tuple[str, str]:
+    """X v1.1 media/upload に画像をアップロードし (media_id_string, "") を返す。
+    失敗時は ("", error)。multipart/form-data 送信、OAuth1.0a 署名は
+    oauth_* パラメータのみ(multipart body は署名対象外、X仕様)。
+
+    Args:
+        image_bytes: 画像バイナリ(<=5MB推奨、3MB目安)
+        mime_type: image/jpeg / image/png / image/webp 等
+    """
+    if not image_bytes:
+        return "", "image_bytes 空"
+    if len(image_bytes) > 5 * 1024 * 1024:
+        return "", f"画像サイズ超過 ({len(image_bytes)} > 5MB)"
+    if creds is None:
+        creds, errors = validate_credentials()
+        if creds is None:
+            return "", "; ".join(errors)
+    if DRYRUN:
+        return f"DRYRUN-MEDIA-{uuid.uuid4().hex[:12]}", ""
+
+    boundary = f"----kpopjournal{uuid.uuid4().hex}"
+    ext = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}.get(mime_type, "jpg")
+    body = (
+        f"--{boundary}\r\n"
+        f'Content-Disposition: form-data; name="media"; filename="image.{ext}"\r\n'
+        f"Content-Type: {mime_type}\r\n\r\n"
+    ).encode() + image_bytes + f"\r\n--{boundary}--\r\n".encode()
+
+    req = urllib.request.Request(
+        _MEDIA_UPLOAD_URL, data=body,
+        headers={
+            "Authorization": _oauth_header("POST", _MEDIA_UPLOAD_URL, creds),
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "User-Agent": "KPOPJournalBot/1.0",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as res:
+            result = json.loads(res.read())
+            return result.get("media_id_string", ""), ""
+    except urllib.error.HTTPError as e:
+        return "", f"HTTP {e.code}: {e.read().decode()[:300]}"
+    except Exception as e:  # noqa: BLE001
+        return "", str(e)[:300]
+
+
+def post_tweet(text: str, reply_to: str | None = None, creds: dict | None = None,
+               media_ids: list[str] | None = None) -> tuple[str, str]:
     """ツイート投稿。成功で (tweet_id, "") を返す。失敗は (",", error_detail)。
 
     reply_to を指定すると in_reply_to_tweet_id 付きの返信として投稿する(致命バグB修正)。
@@ -80,6 +131,8 @@ def post_tweet(text: str, reply_to: str | None = None, creds: dict | None = None
     body = {"text": text}
     if reply_to:
         body["reply"] = {"in_reply_to_tweet_id": str(reply_to)}
+    if media_ids:
+        body["media"] = {"media_ids": [str(m) for m in media_ids]}
 
     if DRYRUN:
         # 署名・送信をせず擬似IDを返す(検証用)

@@ -342,15 +342,64 @@ def _log(d):
         f.write(json.dumps(d, ensure_ascii=False) + '\n')
 
 
+def _fetch_and_upload_featured(post_id: int, creds: dict) -> list:
+    """WP記事の featured_media URL を取得→ダウンロード→X v1.1 media/upload。
+    成功時は [media_id_string]、画像なし/失敗時は []。両variantで共用。
+    画像なし(featured_media=0)はサムネ不一致防止で記事側スキップ済みのため通常は来ない。
+    """
+    try:
+        import urllib.request as _ur, json as _json
+        _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=featured_media,_links'
+        with _ur.urlopen(_u, timeout=10) as _r:
+            _wp = _json.loads(_r.read())
+        fm_id = _wp.get('featured_media', 0)
+        if not fm_id:
+            return []
+        _mu = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/media/{fm_id}?_fields=source_url,media_details'
+        with _ur.urlopen(_mu, timeout=10) as _r:
+            _media = _json.loads(_r.read())
+        img_url = _media.get('source_url') or ''
+        if not img_url:
+            return []
+        # 取得→bytesへ。WP生成のmedium/largeサイズがあれば優先(<3MB目安)。
+        sizes = _media.get('media_details', {}).get('sizes', {}) or {}
+        for key in ('large', 'medium_large', 'medium'):
+            if key in sizes and sizes[key].get('source_url'):
+                img_url = sizes[key]['source_url']
+                break
+        with _ur.urlopen(img_url, timeout=15) as _r:
+            img_bytes = _r.read()
+        # MIME推定
+        if img_url.lower().endswith('.png'):
+            mime = 'image/png'
+        elif img_url.lower().endswith('.webp'):
+            mime = 'image/webp'
+        else:
+            mime = 'image/jpeg'
+        from google_metrics.post_to_x import upload_media
+        mid, err = upload_media(img_bytes, creds=creds, mime_type=mime)
+        if err:
+            print(f"[x_poster] media upload失敗 pid={post_id}: {err}", file=sys.stderr)
+            return []
+        return [mid] if mid else []
+    except Exception as e:
+        print(f"[x_poster] _fetch_and_upload_featured pid={post_id} err: {str(e)[:120]}", file=sys.stderr)
+        return []
+
+
 def post_hook_and_reply(text: str, url: str, post_id: int = None,
-                        genre: str = "", artist: str = "") -> dict:
+                        genre: str = "", artist: str = "",
+                        variant: str = None) -> dict:
     """2段投稿: フック(URLなし)→URLリプライ (IMP最大化ハック)
 
     1) generate_tweet(include_url=False) でフック投稿（URLペナルティ回避）
     2) tweet_idに対してURLリプライを投稿（OGPカード表示）
 
+    variant: M10 AB割当。"A"=ペルソナ型(等身大ライター)、"B"=Pop Crave型(faceless事実)。
+             Noneは.env (X_PERSONA_LLM/X_TWEET_LLM) を尊重し後方互換維持。
+
     Returns:
-        {'success': bool, 'tweet_id': str, 'reply_id': str|None, 'error': str|None}
+        {'success': bool, 'tweet_id': str, 'reply_id': str|None, 'error': str|None, 'variant': str}
     """
     import time as _time
 
@@ -426,6 +475,11 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
         # 旧 Phase2。どちらも本文(source)を読むため、有効なら WP から本文を取得する。
         _persona_enabled = os.getenv('X_PERSONA_LLM', '0') == '1'
         _llm_enabled = os.getenv('X_TWEET_LLM', '0') == '1'
+        # M10 AB: variant指定で動的上書き(.envより優先)
+        if variant == 'A':
+            _persona_enabled, _llm_enabled = True, False
+        elif variant == 'B':
+            _persona_enabled, _llm_enabled = False, True
         _source_text = ''
         if (_persona_enabled or _llm_enabled) and post_id:
             try:
@@ -462,8 +516,12 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
     if not hook_text:
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
 
+    # 2026-05-28: 画像同梱(featured_mediaがある記事のみ)。両variantに適用。
+    # 失敗してもtext-onlyで投稿継続(致命にしない)。
+    _media_ids = _fetch_and_upload_featured(post_id, creds) if post_id else []
+
     try:
-        tweet_id, attempts = _post(hook_text, '', creds)
+        tweet_id, attempts = _post(hook_text, '', creds, media_ids=_media_ids or None)
     except Exception as e:
         err = str(e)[:200]
         _log({'ts': datetime.now().isoformat(), 'text': hook_text[:120],
@@ -503,11 +561,13 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
                 'reply_to': tweet_id, 'post_id': post_id,
             })
 
-    return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id}
+    _variant_used = variant or ('A' if _persona_enabled else ('B' if _llm_enabled else None))
+    return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id, 'variant': _variant_used}
 
 
 def post_thread(text: str, url: str, post_id: int = None,
-                genre: str = "", artist: str = "") -> dict:
+                genre: str = "", artist: str = "",
+                variant: str = None) -> dict:
     """3段スレッド投稿(施策4): フック(text-only)→要点(text-only)→URL(OGPカード)。
 
     スレッドは単発比 +40-60% imp(最新Xアルゴ)。本文URLは最終段のみ=非Premium
@@ -546,14 +606,16 @@ def post_thread(text: str, url: str, post_id: int = None,
 
     # 要点が作れない/フックと酷似なら 2段にフォールバック(スレッドにする意味が無い)
     if not point_text or point_text.strip()[:40] == text.strip()[:40]:
-        return post_hook_and_reply(text, url, post_id=post_id, genre=genre, artist=artist)
+        return post_hook_and_reply(text, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
 
     # hook → 要点(reply) → url(reply) の順で3段を直接組む。
     _genre = genre or 'default'
     hook_text = ''
     # 2026-05-26: X_PERSONA_LLM=1 ならフックを等身大ライターのつぶやき化(要点は
     # 従来の事実型 generate_tweet_llm のまま=人間の声+客観要点の二段構え)。
-    if os.getenv('X_PERSONA_LLM', '0') == '1':
+    # M10 AB: variant='A'→ペルソナ強制、variant='B'→ペルソナ無効(faceless)。
+    _persona_for_thread = (variant == 'A') if variant in ('A', 'B') else (os.getenv('X_PERSONA_LLM', '0') == '1')
+    if _persona_for_thread:
         try:
             from lib.x_persona_voice import generate_persona_post
             _p = generate_persona_post(
@@ -573,8 +635,11 @@ def post_thread(text: str, url: str, post_id: int = None,
     if not hook_text:
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
 
+    # 2026-05-28: 画像同梱(featured_mediaがある記事のみ)。3段スレッドはhook段のみ画像。
+    _media_ids = _fetch_and_upload_featured(post_id, creds) if post_id else []
+
     try:
-        t1, _ = _post(hook_text, '', creds)
+        t1, _ = _post(hook_text, '', creds, media_ids=_media_ids or None)
     except Exception as e:
         return {'success': False, 'error': f'hook投稿失敗: {str(e)[:120]}'}
     _log({'ts': datetime.now().isoformat(), 'tweet_id': t1, 'text': hook_text[:120],
@@ -609,7 +674,7 @@ def post_thread(text: str, url: str, post_id: int = None,
             _log({'ts': datetime.now().isoformat(), 'url': url, 'status': 'reply_error',
                   'error': str(e)[:100], 'reply_to': reply_to, 'post_id': post_id})
 
-    return {'success': True, 'tweet_id': t1, 'point_id': t2, 'reply_id': reply_id, 'mode': 'thread'}
+    return {'success': True, 'tweet_id': t1, 'point_id': t2, 'reply_id': reply_id, 'mode': 'thread', 'variant': variant or ('A' if _persona_for_thread else 'B')}
 
 
 if __name__ == '__main__':
