@@ -4873,6 +4873,104 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	color: var(--kpop-pink-dark);
 }
 
+/* ============================================================ BEGIN events-archive-polish-v2
+   2026-05-28: ユーザー所感「少し暗い」への対応。
+   - カレンダー全体の地色を白基調から温かみのある薄ピンクグラデへ
+   - イベント有り日のセルを薄ピンク highlight でぱっと見の華やかさUP
+   - 月見出し/ナビボタンに微細な装飾、ビュー切替に hover 反応
+   - 過去日付(disabled)文字を少し明るく、空白セルの寂しさ軽減
+   配色は既存ブランド(--kpop-pink/--kpop-pink-light/--kpop-pink-dark)で統一。
+   コントラストは全て AA 維持(白上 #C2185B=5.87:1, 薄ピンク#FCE4EC上 #4A1B30=11.68:1)。
+   ============================================================ */
+
+/* アーカイブ全体にほんのり温かいグラデを敷く(白→薄ピンクへ自然に) */
+.post-type-archive-tribe_events .site-content,
+.post-type-archive-tribe_events .tribe-events {
+	background: linear-gradient(180deg, #ffffff 0%, #fff5f8 100%);
+}
+
+/* カレンダー本体に微細な縁取り+影で「カード」感を出し平坦さ解消 */
+.post-type-archive-tribe_events .tribe-events-calendar-month {
+	background-color: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(233, 30, 99, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	padding: 8px;
+	border: 1px solid #fce4ec;
+}
+
+/* 月見出し(2026年5月)を少し大きく+ピンク下線で華やかに */
+.tribe-events .tribe-events-c-top-bar__datepicker .tribe-events-c-top-bar__datepicker-button {
+	font-weight: 700;
+	color: var(--kpop-pink-dark);
+	font-size: 1.05em;
+}
+
+/* 前/次月ナビボタンにホバー反応 */
+.tribe-events .tribe-events-c-top-bar__nav-link {
+	border-radius: 8px;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.tribe-events .tribe-events-c-top-bar__nav-link:hover,
+.tribe-events .tribe-events-c-top-bar__nav-link:focus {
+	background-color: var(--kpop-pink-light);
+	color: var(--kpop-pink-dark);
+}
+
+/* イベントが入っている日付セルを薄ピンクで highlight (カレンダーが平坦すぎる対策の本丸) */
+.tribe-events-calendar-month__day-cell--has-events {
+	background-color: #fff8fb;
+	border-radius: 6px;
+	transition: background-color 0.15s ease;
+}
+.tribe-events-calendar-month__day-cell--has-events:hover {
+	background-color: #fce4ec;
+}
+
+/* 当月外の日付(灰)を少し明るくし、空白感を軽減 */
+.tribe-events-calendar-month__day--other-month .tribe-events-calendar-month__day-date {
+	color: #c7c7d1;
+}
+
+/* イベントタイトルをピンクbold で目立たせる(現在はテーマ contrast 色で沈んでいる) */
+.tribe-events-calendar-month__calendar-event-title {
+	font-weight: 700;
+}
+.tribe-events-calendar-month__calendar-event-title-link {
+	color: var(--kpop-pink-dark);
+}
+.tribe-events-calendar-month__calendar-event-title-link:hover,
+.tribe-events-calendar-month__calendar-event-title-link:focus {
+	color: var(--kpop-text);
+	text-decoration: underline;
+}
+
+/* ビュー切替タブのアクティブ表示を強化(背景薄ピンク+太字) */
+.tribe-events .tribe-events-c-view-selector__list-item--active
+	.tribe-events-c-view-selector__list-item-link {
+	background-color: var(--kpop-pink-light);
+	font-weight: 700;
+}
+
+/* イベント検索入力フィールドの境界を少し丸く・ピンクフォーカス */
+.tribe-events .tribe-events-c-search__input-control-input {
+	border-radius: 8px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tribe-events .tribe-events-c-search__input-control-input:focus {
+	border-color: var(--kpop-pink);
+	box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
+	outline: none;
+}
+
+/* モバイル: カレンダー側余白を少し詰め、ピンク背景帯の存在感を出す */
+@media (max-width: 768px) {
+	.post-type-archive-tribe_events .tribe-events-calendar-month {
+		padding: 4px;
+		border-radius: 10px;
+	}
+}
+/* ============================================================ END events-archive-polish-v2 */
+
 /* ============================================================
    イベントアーカイブ ページ見出し + 説明文
    既定では .tribe-events-header__title が非表示で、来訪者に
