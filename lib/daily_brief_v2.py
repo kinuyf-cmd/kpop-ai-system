@@ -166,10 +166,10 @@ def _build_morning(now: date) -> str:
 
     lines.append('')
     lines.append('### 本日の方針')
-    lines.append('- 速報パイプライン継続(目標 5本/日)')
-    lines.append('- X投稿 3回(7時/17時/21時)')
+    lines.append(f'- 速報パイプライン継続(目標 {tgt_articles}本/日)')
+    lines.append(f'- X投稿 目標 {tgt_x}件/日(scheduler自動配信)')
     lines.append('- 公開率<30%でアラート発火(`publish_rate_alert.sh`)')
-    lines.append('- 夕ブリーフ 20:00 で当日進捗を再確認')
+    lines.append('- 夕ブリーフ 17:00 で当日進捗を再確認')
     return '\n'.join(lines)
 
 
@@ -181,7 +181,7 @@ def _build_evening(now: date) -> str:
     gsc = _gsc_metrics(today)
 
     lines = []
-    lines.append(f'## 🌙 夕ブリーフ — {now.strftime("%Y-%m-%d")} (20:00 JST)')
+    lines.append(f'## 🌙 夕ブリーフ — {now.strftime("%Y-%m-%d")} (17:00 JST)')
     lines.append('')
     lines.append('### 本日途中経過')
 
@@ -193,11 +193,11 @@ def _build_evening(now: date) -> str:
     lines.append(_kpi_row('X投稿(累計)', x_n, tgt_x, '件'))
     lines.append(_kpi_row('Pipeline稼働率', proc['rate'], tgt_uptime, '%'))
 
-    # 達成見込み: 残り時間で目標達成可能か
+    # 達成見込み: 17時時点から22時までを1日の運用終了と想定し、現在ペースで外挿
     hour_now = datetime.now().hour
-    elapsed_ratio = max(hour_now / 21, 0.5)  # 21時を1日の運用終了と想定
+    elapsed_ratio = max(hour_now / 22, 0.5)  # 22時を1日の運用終了と想定
     forecast = int(proc['published'] / max(elapsed_ratio, 0.01))
-    lines.append(f'### 本日最終予測(21時時点): 約{forecast}本公開見込み')
+    lines.append(f'### 本日最終予測(22時時点): 約{forecast}本公開見込み')
 
     lines.append('')
     lines.append(f'### 停止内訳: {proc["blocked"]}件 (品質ゲート停止)')
