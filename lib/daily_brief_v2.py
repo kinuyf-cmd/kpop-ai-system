@@ -121,6 +121,195 @@ def _roadmap_status() -> str:
     return f'{done}/{total}項目 done'
 
 
+METRICS_YESTERDAY = Path(os.path.expanduser('~/google_metrics/metrics_yesterday.json'))
+COST_LEDGER = ROOT / 'data' / 'cost_ledger.jsonl'
+AB_LOG = ROOT / 'logs' / 'x_ab_log.jsonl'
+RED_LOG = Path(os.path.expanduser('~/.kpop_recovery/red_team_log.jsonl'))
+BLUE_LOG = Path(os.path.expanduser('~/.kpop_recovery/blue_team_log.jsonl'))
+USD_JPY = 155  # 概算レート(売上/コストの円換算用、ブリーフ向け概算)
+
+
+def _weekly_summary(today_iso: str) -> dict:
+    """直近7日(today含む)の集計: 記事/コスト/X投稿。
+    metrics_yesterday は日次スナップショットでないため売上は集計不可、コストと運用のみ。"""
+    from datetime import datetime as _dt, timedelta as _td
+    end = _dt.fromisoformat(today_iso).date()
+    start = end - _td(days=6)
+    week_dates = {(start + _td(days=i)).isoformat() for i in range(7)}
+
+    articles = 0
+    blocked = 0
+    if PROCESSED.exists():
+        with PROCESSED.open() as f:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                d = (r.get('ts') or '')[:10]
+                if d in week_dates:
+                    k = r.get('kind', '')
+                    if k in ('breaking', 'original'):
+                        articles += 1
+                    elif k in ('breaking_blocked', 'blocked'):
+                        blocked += 1
+
+    cost = 0.0
+    if COST_LEDGER.exists():
+        with COST_LEDGER.open() as f:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if r.get('date') in week_dates:
+                    cost += float(r.get('cost_usd', 0) or 0)
+
+    x_posts = 0
+    if AB_LOG.exists():
+        with AB_LOG.open() as f:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                d = (r.get('ts') or '')[:10]
+                if d in week_dates and r.get('tweet_id'):
+                    x_posts += 1
+
+    return {
+        'start': start.isoformat(), 'end': end.isoformat(),
+        'articles': articles, 'blocked': blocked,
+        'cost_usd': round(cost, 4), 'cost_jpy': int(cost * USD_JPY),
+        'x_posts': x_posts,
+    }
+
+
+def _red_blue_summary(today_iso: str, days: int = 7) -> dict:
+    """RED/BLUE 直近N日のイベント集計。本日分は別カウント。"""
+    from datetime import datetime as _dt, timedelta as _td
+    today_dt = _dt.fromisoformat(today_iso).date()
+    cutoff = today_dt - _td(days=days)
+
+    def _load(path: Path):
+        if not path.exists():
+            return []
+        rows = []
+        with path.open() as f:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                try:
+                    d = _dt.fromisoformat(r['ts'].replace('+09:00', '')).date()
+                except Exception:
+                    continue
+                if d >= cutoff:
+                    rows.append((d, r))
+        return rows
+
+    red = _load(RED_LOG)
+    blue = _load(BLUE_LOG)
+
+    red_today_high = sum(1 for d, r in red if d == today_dt and r.get('severity') == 'HIGH')
+    red_today_med = sum(1 for d, r in red if d == today_dt and r.get('severity') == 'MEDIUM')
+    red_today_low = sum(1 for d, r in red if d == today_dt and r.get('severity') == 'LOW')
+    blue_today_queued = sum(1 for d, r in blue if d == today_dt and r.get('result') == 'queued')
+    blue_today_fixed = sum(1 for d, r in blue if d == today_dt and r.get('result') in ('fixed', 'resolved'))
+    red_today_samples = [r for d, r in red if d == today_dt][:3]
+
+    red_week = len(red)
+    blue_week = len(blue)
+    blue_week_fixed = sum(1 for d, r in blue if r.get('result') in ('fixed', 'resolved'))
+
+    return {
+        'red_today': {'HIGH': red_today_high, 'MEDIUM': red_today_med, 'LOW': red_today_low,
+                      'samples': red_today_samples},
+        'blue_today': {'queued': blue_today_queued, 'fixed': blue_today_fixed},
+        'red_week': red_week, 'blue_week': blue_week, 'blue_week_fixed': blue_week_fixed,
+    }
+
+
+def _load_yesterday_metrics() -> dict:
+    """朝バッチが生成した metrics_yesterday.json を読む。鮮度チェック付き。"""
+    if not METRICS_YESTERDAY.exists():
+        return {}
+    try:
+        return json.loads(METRICS_YESTERDAY.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+
+
+def _today_api_cost_usd(target_date: str) -> float:
+    """data/cost_ledger.jsonl から本日分のAPIコスト合計(USD)。"""
+    if not COST_LEDGER.exists():
+        return 0.0
+    total = 0.0
+    with COST_LEDGER.open() as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if r.get('date') == target_date:
+                total += float(r.get('cost_usd', 0) or 0)
+    return round(total, 4)
+
+
+def _ab_summary_brief(hours: int = 72) -> str:
+    """logs/x_ab_log.jsonl から直近Nh分の variant別 imp/eng_rate を1-2行で返す。
+    投稿が無い、または APIエラー時は空文字(ブロックを出さない)。"""
+    if not AB_LOG.exists():
+        return ''
+    from datetime import datetime as _dt, timedelta as _td
+    cutoff = _dt.now() - _td(hours=hours)
+    entries = []
+    with AB_LOG.open() as f:
+        for line in f:
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            try:
+                if _dt.fromisoformat(r['ts']).replace(tzinfo=None) < cutoff:
+                    continue
+            except Exception:
+                pass
+            if r.get('tweet_id') and r.get('variant'):
+                entries.append(r)
+    if not entries:
+        return ''
+    # public_metrics 取得(失敗時は件数のみ)
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(ROOT))
+        from google_metrics.post_to_x import get_public_metrics, validate_credentials
+        creds, _ = validate_credentials()
+        if not creds:
+            return f'AB log {len(entries)}件(認証NGで指標未取得)'
+        metrics = get_public_metrics([e['tweet_id'] for e in entries], creds=creds)
+    except Exception:
+        return f'AB log {len(entries)}件(指標取得失敗)'
+    from collections import defaultdict
+    agg = defaultdict(lambda: {'n': 0, 'imp': 0, 'eng': 0})
+    for e in entries:
+        v = e['variant']
+        m = metrics.get(e['tweet_id'], {})
+        a = agg[v]
+        a['n'] += 1
+        a['imp'] += int(m.get('impression_count', 0))
+        a['eng'] += (int(m.get('like_count', 0)) + int(m.get('retweet_count', 0))
+                     + int(m.get('reply_count', 0)) + int(m.get('bookmark_count', 0)))
+    parts = []
+    for v in sorted(agg):
+        a = agg[v]
+        n = max(a['n'], 1)
+        eng_rate = round(a['eng'] / max(a['imp'], 1) * 100, 2)
+        parts.append(f"{v}: n={a['n']} imp_avg={round(a['imp']/n, 1)} eng={eng_rate}%")
+    return ' / '.join(parts)
+
+
 def _build_morning(now: date) -> str:
     yesterday = (now - timedelta(days=1)).isoformat()
     targets = _load_targets()
@@ -180,10 +369,64 @@ def _build_evening(now: date) -> str:
     x_n = _x_posts_count(today)
     gsc = _gsc_metrics(today)
 
+    metrics = _load_yesterday_metrics()
+    ga4 = (metrics.get('ga4') or {}).get('summary') or {}
+    ads = metrics.get('adsense') or {}
+    gsc_top_pages = (metrics.get('gsc') or {}).get('top_pages') or []
+    gsc_top_queries = (metrics.get('gsc') or {}).get('top_queries') or []
+    gsc_label = (metrics.get('gsc') or {}).get('period_label', '?日前')
+    metrics_date = metrics.get('date', '?')
+
     lines = []
     lines.append(f'## 🌙 夕ブリーフ — {now.strftime("%Y-%m-%d")} (17:00 JST)')
     lines.append('')
-    lines.append('### 本日途中経過')
+
+    # ━━━━━ 📊 経営サマリー(前日確定) ━━━━━
+    lines.append(f'### 📊 経営サマリー(前日={metrics_date})')
+    rev_usd = float(ads.get('ESTIMATED_EARNINGS', 0) or 0)
+    rev_jpy = int(rev_usd * USD_JPY)
+    ads_clicks = ads.get('CLICKS', '?')
+    ads_rpm = ads.get('PAGE_VIEWS_RPM', '?')
+    cost_usd = _today_api_cost_usd(today)
+    cost_jpy = int(cost_usd * USD_JPY)
+    profit_jpy = rev_jpy - cost_jpy
+    margin = (profit_jpy / rev_jpy * 100) if rev_jpy > 0 else 0
+    lines.append(f'- 売上: ¥{rev_jpy:,} (AdSense ${rev_usd} / clicks {ads_clicks} / RPM ${ads_rpm}) / A8: 管理画面参照')
+    lines.append(f'- コスト(本日API): ¥{cost_jpy:,} (${cost_usd})')
+    lines.append(f'- 粗利: ¥{profit_jpy:,} (利益率 {margin:.0f}%)')
+    lines.append('')
+
+    # ━━━━━ 📈 トラフィック(前日確定) ━━━━━
+    lines.append(f'### 📈 トラフィック(GA4={metrics_date} / GSC={gsc_label})')
+    sessions = ga4.get('sessions', '?')
+    users = ga4.get('users', '?')
+    pv = ga4.get('pageviews', '?')
+    lines.append(f'- GA4: sessions {sessions} / users {users} / PV {pv}')
+    if gsc_top_pages:
+        gsc_clicks = sum(int(p.get('clicks', 0)) for p in gsc_top_pages)
+        gsc_imp = sum(int(p.get('impressions', 0)) for p in gsc_top_pages)
+        lines.append(f'- GSC: clicks {gsc_clicks} / imp {gsc_imp} (top_pages合算)')
+    else:
+        lines.append('- GSC: データなし')
+    lines.append('')
+
+    # ━━━━━ 🎯 SEO ハイライト ━━━━━
+    if gsc_top_pages:
+        lines.append('### 🎯 SEO上位ページ TOP3')
+        for p in gsc_top_pages[:3]:
+            slug = (p.get('page', '') or '').rstrip('/').rsplit('/', 1)[-1] or 'トップ'
+            lines.append(f'- {slug}: clicks {int(p.get("clicks", 0))} / pos {p.get("position", 0):.1f}')
+    if gsc_top_queries:
+        lines.append('### 🔍 クエリ流入 TOP3')
+        for q in gsc_top_queries[:3]:
+            lines.append(f'- 「{q.get("query", "")}」 clicks {int(q.get("clicks", 0))} / pos {q.get("position", 0):.1f}')
+    ab_line = _ab_summary_brief(hours=72)
+    if ab_line:
+        lines.append(f'### 🧪 M10 AB(直近72h): {ab_line}')
+    lines.append('')
+
+    # ━━━━━ 🔧 運用(本日進行中) ━━━━━
+    lines.append('### 🔧 本日運用途中経過')
 
     tgt_articles = (targets.get('articles_posted') or {}).get('target', 5)
     tgt_x = (targets.get('x_posts') or {}).get('target', 4)
@@ -232,8 +475,62 @@ def _build_evening(now: date) -> str:
             for k, v in top:
                 lines.append(f'- {k}: {v}件')
 
+    # ━━━━━ 📅 週次サマリー(直近7日) ━━━━━
+    wk = _weekly_summary(today)
     lines.append('')
-    lines.append('### 翌朝(明朝)までの宿題')
+    lines.append(f'### 📅 週次サマリー ({wk["start"]} 〜 {wk["end"]})')
+    lines.append(f'- 記事公開: {wk["articles"]}本 / 停止 {wk["blocked"]}件')
+    lines.append(f'- X投稿: {wk["x_posts"]}件')
+    lines.append(f'- APIコスト(7日合計): ¥{wk["cost_jpy"]:,} (${wk["cost_usd"]})')
+
+    # ━━━━━ 🛡️ RED/BLUE 監査チーム報告 ━━━━━
+    rb = _red_blue_summary(today)
+    rt = rb['red_today']
+    bt = rb['blue_today']
+    lines.append('')
+    lines.append('### 🛡️ RED/BLUE 監査チーム')
+    lines.append(f'- RED本日: HIGH {rt["HIGH"]} / MED {rt["MEDIUM"]} / LOW {rt["LOW"]} (週合計 {rb["red_week"]})')
+    lines.append(f'- BLUE本日: 修復済 {bt["fixed"]} / queued(要オーナー判断) {bt["queued"]} (週合計修復 {rb["blue_week_fixed"]}/{rb["blue_week"]})')
+    if rt['samples']:
+        lines.append('  RED本日抜粋:')
+        for s in rt['samples']:
+            sev = s.get('severity', '?')
+            msg = (s.get('message') or '')[:60]
+            lines.append(f'  - [{sev}] {msg}')
+
+    # ━━━━━ ⚠️ 要対処(赤信号項目の自動検出) ━━━━━
+    alerts = []
+    if proc['rate'] < 50:
+        alerts.append(f'- 🔴 Pipeline稼働率 {proc["rate"]}% 危険(目標{tgt_uptime}%、半分以下)')
+    elif proc['rate'] < tgt_uptime:
+        alerts.append(f'- 🟡 Pipeline稼働率 {proc["rate"]}% 未達(目標{tgt_uptime}%)')
+    if (metrics.get('errors') or {}).get('adsense'):
+        alerts.append(f'- 🔴 AdSense取得失敗: {metrics["errors"]["adsense"][:80]}')
+    if (metrics.get('errors') or {}).get('ga4'):
+        alerts.append(f'- 🔴 GA4取得失敗: {metrics["errors"]["ga4"][:80]}')
+    if (metrics.get('errors') or {}).get('gsc'):
+        alerts.append(f'- 🔴 GSC取得失敗: {metrics["errors"]["gsc"][:80]}')
+    if cost_usd > 5 and rev_jpy < cost_jpy:
+        alerts.append(f'- 🔴 本日コスト ¥{cost_jpy:,} > 前日売上 ¥{rev_jpy:,} (赤字傾向)')
+    if bt['queued'] >= 3:
+        alerts.append(f'- 🟡 BLUE未処理queue 本日 {bt["queued"]}件 → オーナー判断要')
+    if rt['HIGH'] >= 1:
+        alerts.append(f'- 🔴 RED本日 HIGH {rt["HIGH"]}件 → エスカレ済(BLUE経由)')
+    if metrics_date != '?':
+        from datetime import datetime as _dt
+        try:
+            age_days = (_dt.fromisoformat(today) - _dt.fromisoformat(metrics_date)).days
+            if age_days > 2:
+                alerts.append(f'- 🟡 metrics_yesterday.json が {age_days}日古い(朝バッチ要確認)')
+        except Exception:
+            pass
+    if alerts:
+        lines.append('')
+        lines.append('### ⚠️ 要対処')
+        lines.extend(alerts)
+
+    lines.append('')
+    lines.append('### ✅ 翌朝(明朝)までの宿題')
     rm_status = _roadmap_status()
     if rm_status:
         lines.append(f'- ロードマップ: {rm_status} → 翌朝ブリーフで未着手項目を再確認')
