@@ -49,6 +49,10 @@ PID_CACHE_TTL_SEC = 24 * 3600  # 24h
 # 残っているCTA関連指摘は過去の評価対象汚染(注入後本文をLLMに渡していた時代の遺物)。
 _CTA_NOISE_RE = re.compile(
     r'エアトリ|見出し風|推し活|アフィリエイトリンクが複数挿入|商業アフィリエイト|別記事の見出し|無関係な見出し|別コンテンツ'
+    # 2026-05-28 F対応: 「他記事タイトルが本文に挿入」系の構造批判もnoise扱い。
+    # 本来factcheckは「ソース記事の事実が正しいか」を見る役割で、CTA/関連リンク等の
+    # 構造的混入は別ゲート(pre_publish_gateのstructural pass)の責務。
+    r'|見出しが挿入|記述が突然挿入|無関係な情報が混在|構成崩壊|内部リンク.*混入|関連記事.*混入'
 )
 
 
@@ -68,6 +72,11 @@ def strip_cta_blocks_from_html(html: str) -> str:
         r'<div[^>]*class=["\'][^"\']*kpj-cta-block[^"\']*["\'][^>]*>.*?</div>\s*',
         r'<div[^>]*class=["\'][^"\']*kpopj-cta-[^"\']*["\'][^>]*>.*?</div>\s*',
         r'<div[^>]*class=["\'][^"\']*kpj-affiliate[^"\']*["\'][^>]*>.*?</div>\s*',
+        # 関連記事セクション(_build_related_section)も他記事タイトルが混入する原因。
+        r'<section[^>]*class=["\'][^"\']*related-articles[^"\']*["\'][^>]*>.*?</section>\s*',
+        # AdSense / Amazon / 楽天など外部広告iframe・script
+        r'<ins[^>]*class=["\'][^"\']*adsbygoogle[^"\']*["\'][^>]*>.*?</ins>\s*',
+        r'<iframe[^>]*(?:googlesyndication|amazon-adsystem|rakuten)[^>]*>.*?</iframe>\s*',
     ]
     out = html
     for pat in patterns:
