@@ -33,7 +33,7 @@ UNMATCHED_LOG = os.path.join(BASE_DIR, "logs", "lane_c_bridge_unmatched.jsonl")
 
 # position 分岐の境界(plan で確定)
 POS_REWRITE = (4.0, 6.0)      # CTR 改善で 1ページ目内上位化(auto_rewriter)
-POS_ENRICH = (6.01, 12.0)     # 本文拡充が必要(body_enrich)
+POS_ENRICH = (6.01, 20.0)     # 本文拡充が必要(body_enrich)。12→20拡張で2ページ目上位の常緑案件も対象化
 
 # 1回の bridge 実行で扱う上位件数(暴走防止)
 MAX_PER_LANE = 40
