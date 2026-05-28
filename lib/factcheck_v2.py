@@ -52,7 +52,10 @@ _CTA_NOISE_RE = re.compile(
     # 2026-05-28 F対応: 「他記事タイトルが本文に挿入」系の構造批判もnoise扱い。
     # 本来factcheckは「ソース記事の事実が正しいか」を見る役割で、CTA/関連リンク等の
     # 構造的混入は別ゲート(pre_publish_gateのstructural pass)の責務。
-    r'|見出しが挿入|記述が突然挿入|無関係な情報が混在|構成崩壊|内部リンク.*混入|関連記事.*混入'
+    # 距離制限付き(.{0,20}?)で過剰マッチを抑止。例えば「内部リンクが誤った
+    # 記事を指している」のような将来の正規criticalを握り潰さないため。
+    r'|見出しが挿入|記述が突然挿入|無関係な情報が混在|構成崩壊'
+    r'|内部リンク.{0,20}?混入|関連記事.{0,20}?混入'
 )
 
 
@@ -64,6 +67,11 @@ def strip_cta_blocks_from_html(html: str) -> str:
       - data-cta="top|mid|bottom" 属性を持つ <div>
       - class に kpj-cta-block / kpopj-cta- を含む <div>
       - class に kpj-cta-item / kpj-affiliate-card を含むブロック
+
+    注意: 正規表現ベースのため <div> のネストは非対応。cta_injector の
+    出力は単一階層のフラット構造を前提としており実害はないが、将来
+    CTAブロック内に <div> がネストされた場合は最初の </div> で切れる。
+    ネスト構造を導入する場合は BeautifulSoup ベースに書き換えること。
     """
     if not html or not isinstance(html, str):
         return html
@@ -213,7 +221,8 @@ def _cache_put(key: str, result: dict) -> None:
         cache = _cache_load()
         now = time.time()
         cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= CACHE_TTL_SEC}
-        cache[key] = {'ts': now, 'result': _strip_cta_noise(result)}
+        # 注: 呼び出し側(proofread_post_v2)で _strip_cta_noise 適用済の前提。
+        cache[key] = {'ts': now, 'result': result}
         CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
         CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
     except OSError:
@@ -247,7 +256,8 @@ def _pid_cache_put(pid, result: dict) -> None:
         cache = {}
     now = time.time()
     cache = {k: v for k, v in cache.items() if now - v.get('ts', 0) <= PID_CACHE_TTL_SEC}
-    cache[str(pid)] = {'ts': now, 'result': _strip_cta_noise(result)}
+    # 注: 呼び出し側(proofread_post_v2)で _strip_cta_noise 適用済の前提。
+    cache[str(pid)] = {'ts': now, 'result': result}
     try:
         PID_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
         PID_CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf-8')
@@ -294,6 +304,8 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     ck = _cache_key(title, plain)
     cached = _cache_get(ck)
     if cached is not None:
+        # 古い汚染エントリが残っていた場合の最終防衛(2026-05-28)
+        cached = _strip_cta_noise(cached)
         _pid_cache_put(pid, cached)
         _log({
             'pid': pid,

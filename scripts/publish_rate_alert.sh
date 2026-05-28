@@ -12,10 +12,11 @@ cd "$(dirname "$0")/.."
 THRESHOLD=30
 HOURS=6
 
-read -r TOTAL SUCCESS RATE <<< "$(python3 - <<EOF
-import json
+read -r TOTAL SUCCESS RATE <<< "$(HOURS="$HOURS" python3 - <<'EOF'
+import json, os
 from datetime import datetime, timedelta
-cutoff = datetime.now() - timedelta(hours=$HOURS)
+hours = int(os.environ.get('HOURS', '6'))
+cutoff = datetime.now() - timedelta(hours=hours)
 total = succ = 0
 with open('data/auto_article_processed.jsonl') as f:
     for line in f:
@@ -51,7 +52,7 @@ if [ -z "$WEBHOOK" ]; then
 fi
 
 MSG=$(cat <<EOF
-{"content":"🚨 **公開率低下アラート** (直近${HOURS}h)\n公開率 **${RATE}%** (${SUCCESS}/${TOTAL}) — 閾値${THRESHOLD}%を下回りました。\nfactcheck cache汚染/ゲート過剰/ソース品質低下を確認してください。\n調査: \`python3 -c \\\"import json,collections; c=collections.Counter();\\\"\` で reason 集計"}
+{"content":"🚨 **公開率低下アラート** (直近${HOURS}h)\n公開率 **${RATE}%** (${SUCCESS}/${TOTAL}) — 閾値${THRESHOLD}%を下回りました。\nfactcheck cache汚染/ゲート過剰/ソース品質低下を確認してください。"}
 EOF
 )
 

@@ -6,12 +6,6 @@ pid_cache(source_url pseudo-pid) が過去の注入後本文評価から
 保持し続け、新しい翻訳記事の注入前評価にも返していた事実が判明。
 _strip_cta_noise でキャッシュ書込時にこれらを除去する。
 """
-import sys
-import types
-
-if 'anthropic' not in sys.modules:
-    sys.modules['anthropic'] = types.ModuleType('anthropic')
-
 from lib.factcheck_v2 import _strip_cta_noise, strip_cta_blocks_from_html
 
 
