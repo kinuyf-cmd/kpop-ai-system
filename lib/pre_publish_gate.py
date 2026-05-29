@@ -46,6 +46,7 @@ BLOCK_TYPES = frozenset({
     'css_leak',                # CSS生テキスト混入 (2026-05-06追加)
     'title_source_mismatch',   # タイトルがソースと乖離 (2026-05-06追加)
     'llm_factcheck_critical',  # Claude v2 factcheck CRITICAL — 事実捏造/主語逆転等 (2026-05-11追加)
+    'non_kpop_topic',          # 非K-POPトピック(婚活リアリティ番組/政治/非アイドルゴシップ) (2026-05-29追加)
 })
 
 # fact_checker の critical → BLOCK にマッピングする type
@@ -263,6 +264,23 @@ def pre_publish_gate(
         }
 
     # --- 1. 壊滅チェック (BLOCK候補) ---
+
+    # 1a0. 非K-POPトピック判定 (news/breaking のみ。タイトル+本文で照合)
+    #   『나는 SOLO』婚活番組・政治論争・非アイドルゴシップの記事化を停止 (2026-05-29)
+    if kind in ('news', 'breaking'):
+        try:
+            from lib.kpop_topic_filter import classify_non_kpop_topic
+            _topic_text = f"{title or ''} {re.sub(r'<[^>]+>', ' ', body_html or '')}"
+            _ng = classify_non_kpop_topic(_topic_text)
+            if _ng:
+                issues.append({
+                    'type': 'non_kpop_topic',
+                    'severity': 'block',
+                    'detail': f'K-POPと無関係なトピック({_ng})。'
+                              '婚活リアリティ番組の一般人/政治/非アイドルゴシップは記事化しません',
+                })
+        except Exception:
+            pass  # フィルタ障害でゲート全体を止めない
 
     # 1a. 本文空チェック
     issues.extend(_check_content_empty(body_html))

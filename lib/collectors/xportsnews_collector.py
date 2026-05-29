@@ -3,6 +3,7 @@
 import sys, re
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log
+from lib.kpop_topic_filter import classify_non_kpop_topic
 
 
 def collect():
@@ -27,6 +28,11 @@ def collect():
             seen.add(url)
             kw = is_kpop_related(title)
             if not kw:
+                continue
+            # 「엑's 이슈」は婚活番組/政治/非アイドルゴシップを混在掲載するため除外
+            ng = classify_non_kpop_topic(title)
+            if ng:
+                log(f"Xports skip non-kpop({ng}): {title[:40]}")
                 continue
             signals.append(make_signal('xportsnews', title, url, kw, is_urgent(title)))
             if len(signals) >= 20:

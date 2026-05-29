@@ -1,0 +1,24 @@
+{
+  "_doc": "非K-POPトピック除外辞書。lib/kpop_topic_filter.py が使用。各語は korean_base の部分一致規則(ハングル前文字hangul排除/ASCII語境界)で照合。設計: docs/superpowers/specs/2026-05-29-non-kpop-topic-filter-design.md",
+  "reality_show_civilian": [
+    "나는 솔로",
+    "나는 SOLO",
+    "나솔",
+    "私はソロ",
+    "환승연애",
+    "하트시그널",
+    "솔로지옥",
+    "일반인 출연"
+  ],
+  "politics": [
+    "좌파",
+    "우파",
+    "정치 성향",
+    "대선",
+    "탄핵",
+    "5·18",
+    "5.18",
+    "좌파 없는 나라"
+  ],
+  "non_idol_celebrity_gossip": []
+}
