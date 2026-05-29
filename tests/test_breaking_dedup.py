@@ -51,6 +51,19 @@ def test_same_artist_different_topic():
     assert dup is False
 
 
+def test_topic_word_not_mistaken_for_artist():
+    """トピック語(カムバック等カタカナ/英語)をアーティスト名と誤認しない。
+    誤認すると別グループ(アイブ/エスパ)が同一キーになり誤排除される(code-review検出)。"""
+    k_ive = b._topic_key("アイブがカムバック")
+    k_aespa = b._topic_key("エスパがカムバック")
+    assert k_ive and k_aespa and k_ive != k_aespa
+
+
+def test_topic_only_no_artist_returns_empty():
+    """アーティスト名が特定できない(トピック語のみ)ときは判定しない=空。"""
+    assert b._topic_key("カムバック発表") == ""
+
+
 def test_legacy_soompi_key_compat():
     """従来の soompi記事ID 主キーが引き続き効く(後方互換)。"""
     dup, _ = b.is_duplicate(

@@ -171,12 +171,19 @@ def _topic_key(title):
     抽出できない場合は空文字(=この補助キーでは判定しない)。"""
     t = html.unescape(title or "")
     tl = t.lower()
-    # アーティスト名候補: ラテン文字連続 or カタカナ連続(2文字以上)
-    names = re.findall(r"[A-Za-z][A-Za-z0-9&.\- ]{1,}|[ァ-ヶー]{2,}", t)
-    names = [_norm(n) for n in names if len(_norm(n)) >= 2]
     cats = sorted({cat for cat, words in _TOPIC_GROUPS.items()
                    if any(w.lower() in tl for w in words)})
-    if not names or not cats:
+    if not cats:
+        return ""
+    # アーティスト名候補: ラテン文字連続 or カタカナ連続(2文字以上)
+    names = re.findall(r"[A-Za-z][A-Za-z0-9&.\- ]{1,}|[ァ-ヶー]{2,}", t)
+    # トピック語自身(カムバック/comeback等)を名前候補から除外。
+    # 除外しないと「アイブがカムバック」で main が"カムバック"になり、
+    # 別グループ(エスパがカムバック)と同一キー化して誤って重複排除される。
+    _topic_norms = {_norm(w) for words in _TOPIC_GROUPS.values() for w in words}
+    names = [_norm(n) for n in names if len(_norm(n)) >= 2 and _norm(n) not in _topic_norms]
+    # アーティスト名が特定できなければ判定しない(別グループ誤排除を防ぐ安全側)。
+    if not names:
         return ""
     # 最長の固有名 + トピックカテゴリ(ソート)で安定キー化
     main = sorted(names, key=len, reverse=True)[0]
