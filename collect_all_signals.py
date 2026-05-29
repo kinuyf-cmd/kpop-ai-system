@@ -25,6 +25,7 @@ COLLECTORS = [
     "soompi", "koreaboo", "allkpop", "mydaily", "osen",
     "kstyle", "koreaherald", "starnews", "newsen",
     "sportschosun", "xportsnews", "topstarnews", "wowkorea",
+    "sportsseoul",
 ]
 
 
