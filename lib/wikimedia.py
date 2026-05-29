@@ -292,6 +292,75 @@ def fetch_safe_image(artist_name, cache_dir, max_attempts=8, prefer_landscape=Tr
 
         return dest
 
+    # 5) Wikidata P18 fallback: テキスト検索で取れない新人グループ向け
+    # group→P18 で本人写真を確定的に得る ([[idol-wiki-images-wikidata-p18-method]])
+    try:
+        p18 = _wikidata_p18_image(artist_name)
+        if p18:
+            info = get_image_info(p18.get('title'))
+            if info and is_license_safe(info) and info.get('mime') in ('image/jpeg','image/png'):
+                url = info.get('url')
+                ext = 'jpg' if info.get('mime') == 'image/jpeg' else 'png'
+                fname = f"{slug}_{hashlib.md5(p18['title'].encode()).hexdigest()[:8]}.{ext}"
+                dest = os.path.join(cache_dir, fname)
+                try:
+                    download_image(url, dest)
+                    if slug not in index:
+                        index[slug] = {"name": artist_name, "files": [], "sources": []}
+                    if fname not in index[slug]["files"]:
+                        index[slug]["files"].append(fname)
+                        index[slug].setdefault("sources", []).append({
+                            "file": fname,
+                            "wikimedia_title": p18['title'],
+                            "url": url,
+                            "license": (info.get("extmetadata", {}).get("LicenseShortName", {}) or {}).get("value", ""),
+                            "via": f"wikidata:P18:{p18['qid']}",
+                        })
+                    with open(index_path, "w") as f:
+                        json.dump(index, f, ensure_ascii=False, indent=2)
+                    print(f"[wikimedia] P18 fallback OK: {artist_name} → {p18['qid']} / {p18['title']}")
+                    return dest
+                except Exception as e:
+                    print(f"[wikimedia] P18 download failed: {e}")
+    except Exception as e:
+        print(f"[wikimedia] P18 fallback error: {e}")
+
+    return None
+
+
+_KPOP_DESC_KW = (
+    'k-pop', 'kpop', 'korean', 'south korean', 'boy band', 'girl group',
+    'idol', 'boy group', 'girl band',
+)
+
+
+def _wikidata_p18_image(artist_name):
+    """Wikidata で artist_name を検索 → K-POP関連description で絞り込み →
+    P18 (image) claim を返す。返却: {'qid':..., 'title':<File:...>} or None
+    """
+    import urllib.parse as _up
+    ua = 'KPOP-JOURNAL-Bot/1.0 (+https://kpopjournal.tokyo; citation-only)'
+    def _get(url):
+        req = urllib.request.Request(url, headers={'User-Agent': ua})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read())
+    # 検索
+    sr = _get(f'https://www.wikidata.org/w/api.php?action=wbsearchentities&search={_up.quote(artist_name)}&language=en&type=item&format=json&limit=8')
+    qid = None
+    for hit in sr.get('search', []):
+        desc = (hit.get('description') or '').lower()
+        if any(kw in desc for kw in _KPOP_DESC_KW):
+            qid = hit.get('id')
+            break
+    if not qid:
+        return None
+    # P18 claim
+    cl = _get(f'https://www.wikidata.org/w/api.php?action=wbgetclaims&entity={qid}&property=P18&format=json')
+    claims = cl.get('claims', {}).get('P18', [])
+    for c in claims:
+        v = c.get('mainsnak', {}).get('datavalue', {}).get('value')
+        if v:
+            return {'qid': qid, 'title': f'File:{v}'}
     return None
 
 
