@@ -488,5 +488,89 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "red_velvet": {
+    "name": "Red Velvet",
+    "files": [
+      "red_velvet_9614356c.jpg"
+    ],
+    "sources": [
+      {
+        "file": "red_velvet_9614356c.jpg",
+        "wikimedia_title": "File:20230530 Red Velvet Amsterdam concert 108.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/20230530_Red_Velvet_Amsterdam_concert_108.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "taeyang": {
+    "name": "TAEYANG",
+    "files": [
+      "taeyang_761f514b.jpg"
+    ],
+    "sources": [
+      {
+        "file": "taeyang_761f514b.jpg",
+        "wikimedia_title": "File:Taeyang 2012.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Taeyang_2012.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "le_sserafim": {
+    "name": "LE SSERAFIM",
+    "files": [
+      "le_sserafim_74b30f4f.png"
+    ],
+    "sources": [
+      {
+        "file": "le_sserafim_74b30f4f.png",
+        "wikimedia_title": "File:Le Sserafim at the 2026 Golden Disc Awards.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Le_Sserafim_at_the_2026_Golden_Disc_Awards.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "g_dragon": {
+    "name": "G-DRAGON",
+    "files": [
+      "g_dragon_f335824e.jpg"
+    ],
+    "sources": [
+      {
+        "file": "g_dragon_f335824e.jpg",
+        "wikimedia_title": "File:G-Dragon (8177622170).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/G-Dragon_%288177622170%29.jpg",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
+  },
+  "cortis": {
+    "name": "CORTIS",
+    "files": [
+      "cortis_3982bd6e.png"
+    ],
+    "sources": [
+      {
+        "file": "cortis_3982bd6e.png",
+        "wikimedia_title": "File:CORTIS at Cultwo Show in 20250914.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/CORTIS_at_Cultwo_Show_in_20250914.png",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "cravity": {
+    "name": "CRAVITY",
+    "files": [
+      "cravity_9b927598.jpg"
+    ],
+    "sources": [
+      {
+        "file": "cravity_9b927598.jpg",
+        "wikimedia_title": "File:KOCIS Overseas Promotional Ambassadors 05 (52147778663).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/94/KOCIS_Overseas_Promotional_Ambassadors_05_%2852147778663%29.jpg",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
   }
 }
