@@ -45,3 +45,4 @@ data/soompi_chart_top10.json
 node_modules/
 package-lock.json
 package.json
+logs/breaking_news_detector.lock

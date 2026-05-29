@@ -798,4 +798,24 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
-    main(dry_run=args.dry_run)
+
+    # 2026-05-30: 単一インスタンスガード(再発防止)。
+    # 根因: trigger_breaking_if_urgent が save_signals 毎に detector を
+    # detached Popen で起動し、cron(:35) とも重なって複数インスタンスが並走。
+    # 各々が is_processed(url) を「公開→mark_processed」前に通過し、同一
+    # トピック(이솔이 1612207)を4回記事化(#4842/4864/4872/4877)+DALL-E 4枚浪費。
+    # is_processed は mark まで~90秒の窓があり、並走時は dedup を素通りする。
+    # flock(LOCK_NB)で同時実行を1本に制限し、窓を構造的に閉じる。
+    import fcntl
+    _lock_path = '/home/aiuser/kpop-ai-system/logs/breaking_news_detector.lock'
+    _lock_fp = open(_lock_path, 'w')
+    try:
+        fcntl.flock(_lock_fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print('[lock] 別の breaking_news_detector が実行中のためスキップ')
+        sys.exit(0)
+    try:
+        main(dry_run=args.dry_run)
+    finally:
+        fcntl.flock(_lock_fp, fcntl.LOCK_UN)
+        _lock_fp.close()
