@@ -442,7 +442,27 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
                         _lb_reject = True
                 except Exception as _e:
                     pass
+                _vision_reject = False
                 if not _lb_reject:
+                    # Vision検査: URL文字列で素通りした og:image を実画像レベルで身元確認
+                    # mydaily.co.kr/photos/202605291...jpg のような generic 数値ID対策
+                    try:
+                        import sys as _sys
+                        _sys.path.insert(0, '/home/aiuser/kpop-ai-system/lib')
+                        from article_topic_classifier import classify as _classify
+                        _cl = _classify(title or '', body or '')
+                        _subj = (_cl.get('subjects') or [''])[0]
+                        if _subj:
+                            from thumbnail_vision_gate import vision_validate
+                            _ok, _reason = vision_validate(src_out, _subj, title or '')
+                            if not _ok:
+                                print(f"  REJECT og:image (vision: {_reason[:120]})")
+                                try: os.remove(src_out)
+                                except: pass
+                                _vision_reject = True
+                    except Exception as _e:
+                        pass  # vision失敗時は通す(従来挙動を維持)
+                if not _lb_reject and not _vision_reject:
                     print(f"  source image OK: {r['image_url'][:60]}")
                     return {
                         'path': src_out,
