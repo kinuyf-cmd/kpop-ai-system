@@ -431,14 +431,26 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
                 try: os.remove(src_out)
                 except: pass
             else:
-                print(f"  source image OK: {r['image_url'][:60]}")
-                return {
-                    'path': src_out,
-                    'source': 'source_site',
-                    'attribution': '画像: 元記事より',
-                    'image_url': r['image_url'],
-                    'source_url': r['source_url'],
-                }
+                _lb_reject = False
+                try:
+                    from lib.cross_audit import check_letterbox
+                    _lb = check_letterbox(r['image_url'])
+                    if _lb.get('is_letterbox'):
+                        print(f"  REJECT og:image (letterbox {_lb.get('mode')} L_sim={_lb.get('left_color_sim')}): {r['image_url'][:80]}")
+                        try: os.remove(src_out)
+                        except: pass
+                        _lb_reject = True
+                except Exception as _e:
+                    pass
+                if not _lb_reject:
+                    print(f"  source image OK: {r['image_url'][:60]}")
+                    return {
+                        'path': src_out,
+                        'source': 'source_site',
+                        'attribution': '画像: 元記事より',
+                        'image_url': r['image_url'],
+                        'source_url': r['source_url'],
+                    }
 
     # 段階2: アーティスト写真 (YouTube/Wikimedia/cache)
     try:
