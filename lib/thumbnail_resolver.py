@@ -46,7 +46,7 @@ _MEME_OG_PATTERNS = (
 _KNOWN_IMAGE_CDN_PATTERNS = (
     'cdn.livedoor.jp', 'livedoor.blogimg.jp',
     'pstatic.net', 'nstatic.naver.net', 'phinf.pstatic.net',
-    'cdn.soompi.io', 'wp.com', 'wordpress.com',
+    'soompi.io', 'wp.com', 'wordpress.com',  # soompi.io: 0.soompi.io等の数字サブドメインも許可(2026-05-30)
     'pimg.allkpop.com', 'akamaihd.net', 'akamaized.net',
     'cdn.koreaboo.com', 'cloudfront.net',
     'res.cloudinary.com', 'cloudinary.com',
@@ -144,6 +144,13 @@ def _is_suspicious_og_image(og_url, source_url):
     og_reg = _registered_domain(og_host)
     src_reg = _registered_domain(src_host)
     if og_reg and src_reg and og_reg != src_reg:
+        # 2026-05-30: 同一運営の別TLD CDN救済 (例 soompi.io ↔ soompi.com)。
+        # 登録ドメインのSLD(第2レベル名)が一致すれば同一運営とみなし許可。
+        # CDN許可リストへのサブドメイン追記漏れ(0.soompi.io等)を構造的に根治。
+        og_sld = og_reg.split('.')[0]
+        src_sld = src_reg.split('.')[0]
+        if og_sld and og_sld == src_sld:
+            return False, ''
         return True, f'cross-domain (og={og_reg} vs src={src_reg})'
     return False, ''
 
