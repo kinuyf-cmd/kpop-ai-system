@@ -728,7 +728,50 @@ def publish_breaking(artist, sigs, typ):
     return None
 
 
+_LOCK_PATH = '/home/aiuser/kpop-ai-system/logs/breaking_news_detector.lock'
+
+
+def _acquire_single_instance_lock():
+    """detector の単一インスタンスロックを取得。取得できなければ None を返す。
+
+    2026-05-30 再発防止。根因: trigger_breaking_if_urgent が save_signals 毎に
+    detector を detached Popen で起動し、cron(:35) とも重なって複数インスタンスが
+    並走。各々が is_processed(url) を「公開→mark_processed(~90秒後)」前に通過し、
+    同一トピック(이솔이 1612207)を4回記事化(#4842/4864/4872/4877)+DALL-E 4枚浪費。
+    flock(LOCK_NB)で同時実行を1本に制限し、dedup 素通りの窓を構造的に閉じる。
+    flock は advisory でプロセス終了時(クラッシュ含む)に自動解放されるため、
+    stale ロックファイルが残っても無害=クリーンアップ不要。
+    返り値の file object は呼び出し側が保持し続けること(GC でロックが外れる)。
+    """
+    import fcntl
+    fp = open(_LOCK_PATH, 'w')
+    try:
+        fcntl.flock(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        fp.close()
+        return None
+    return fp
+
+
 def main(dry_run=False):
+    # 多層防御: __main__ 経由だけでなく main() を直接 import 呼び出しされた場合も
+    # 並走を防ぐ。dry-run は公開しないためロック競合させない(実運用を阻害しない)。
+    _lock_fp = None
+    if not dry_run:
+        _lock_fp = _acquire_single_instance_lock()
+        if _lock_fp is None:
+            print('[lock] 別の breaking_news_detector が実行中のためスキップ')
+            return 0
+    try:
+        return _main_inner(dry_run=dry_run)
+    finally:
+        if _lock_fp is not None:
+            import fcntl
+            fcntl.flock(_lock_fp, fcntl.LOCK_UN)
+            _lock_fp.close()
+
+
+def _main_inner(dry_run=False):
     count_today = today_breaking_count()
     print(f"本日の速報記事: {count_today}/{DAILY_BREAKING_LIMIT}")
     if count_today >= DAILY_BREAKING_LIMIT:
@@ -798,24 +841,5 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
-
-    # 2026-05-30: 単一インスタンスガード(再発防止)。
-    # 根因: trigger_breaking_if_urgent が save_signals 毎に detector を
-    # detached Popen で起動し、cron(:35) とも重なって複数インスタンスが並走。
-    # 各々が is_processed(url) を「公開→mark_processed」前に通過し、同一
-    # トピック(이솔이 1612207)を4回記事化(#4842/4864/4872/4877)+DALL-E 4枚浪費。
-    # is_processed は mark まで~90秒の窓があり、並走時は dedup を素通りする。
-    # flock(LOCK_NB)で同時実行を1本に制限し、窓を構造的に閉じる。
-    import fcntl
-    _lock_path = '/home/aiuser/kpop-ai-system/logs/breaking_news_detector.lock'
-    _lock_fp = open(_lock_path, 'w')
-    try:
-        fcntl.flock(_lock_fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
-        print('[lock] 別の breaking_news_detector が実行中のためスキップ')
-        sys.exit(0)
-    try:
-        main(dry_run=args.dry_run)
-    finally:
-        fcntl.flock(_lock_fp, fcntl.LOCK_UN)
-        _lock_fp.close()
+    # 単一インスタンスガードは main() 内に実装(多層防御・2026-05-30)。
+    main(dry_run=args.dry_run)

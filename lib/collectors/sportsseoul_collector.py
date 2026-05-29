@@ -25,25 +25,48 @@ from lib.collectors.korean_base import (
 # 除外語 (ブラックリスト)。スポーツ専用語 + 政治・事件。
 # K-POP generic語 (1위/데뷔 等) が野球記事(「데뷔 첫 홈런」「ERA 1위」)を
 # 誤通過させる実例があるため is_kpop_related の前段で適用する。
-_EXCLUDE_KW = [
+#
+# substring 判定で安全な語 (誤マッチしにくい固有スポーツ/政治用語)。
+_EXCLUDE_SUBSTR = [
     # スポーツ (一般)
     '축구', '야구', '배구', '농구', '골프', '감독', '리그', '월드컵', '시구',
-    '구단', '선수', '경기', 'kbo', 'k리그', '프로야구', '대표팀', '승부',
-    '홈런', '투수', '타자', '쿼터', 'npb', 'mlb', 'era', '득점', '결승골',
+    '구단', '선수', '경기', '프로야구', '대표팀', '승부',
+    '홈런', '투수', '타자', '쿼터', '득점', '결승골',
     '선발', '불펜', '볼질', '구원', '타석', '이닝', '안타', '선두권',
-    # 韓国プロ野球チーム名 (Sports Seoul はスポーツ紙のため頻出)
-    '삼성 ', 'lg ', 'kia', 'kt ', 'ssg', 'nc ', '두산', '롯데', '키움', '한화',
-    # e-sports (LoL: 젠지/T1/KT 等。芸能ではない)
-    '젠지', 't1', 'lck', '롤드컵', 'e스포츠', 'esports',
+    # 韓国プロ野球チーム名 (ハングルは substring で安全)
+    '두산', '롯데', '키움', '한화',
+    # e-sports
+    '젠지', '롤드컵', 'e스포츠',
     # 政治・社会 (韓国エンタメではない)
     '대통령', '국회', '의원', '장관', '정당', '선거', '검찰', '법원', '판결',
     '협회장', '취임', '사퇴', '대선', '여당', '야당',
+]
+# 単語境界が必要な語 (ASCII 略号/短語。エンタメタイトル内の偶発一致を防ぐ)。
+# 例: 'kt' を substring 判定すると "Katseye" 等に誤マッチしうるため境界で囲む
+# (KATSEYE/NCT は除外されないことを test で確認済)。
+# 既知の許容誤差: CJK を語境界扱いするため 'LG전자'(LG電子) は 'lg' に一致し
+# 除外される。LG電子モデルのエンタメ記事は稀で、下流の非K-POPフィルタが最終
+# ゲートのため許容。KT롤스터/LG트윈스 等のスポーツ団体名を捉える方を優先する。
+_EXCLUDE_WORD = [
+    'kbo', 'kia', 'kt', 'lg', 'ssg', 'nc', 'npb', 'mlb', 'era',
+    't1', 'lck', 'esports', 'k리그',
 ]
 
 
 def is_excluded(title: str) -> bool:
     """韓国エンタメ対象外 (スポーツ/政治/事件) か。アーティスト名判定より優先。"""
-    return any(s in title.lower() for s in _EXCLUDE_KW)
+    tl = title.lower()
+    if any(s in tl for s in _EXCLUDE_SUBSTR):
+        return True
+    # 単語境界: 前後が ASCII 英数でないこと (CJK は語境界扱い)
+    for w in _EXCLUDE_WORD:
+        for m in re.finditer(re.escape(w), tl):
+            s, e = m.start(), m.end()
+            before_ok = s == 0 or not (tl[s - 1].isascii() and tl[s - 1].isalnum())
+            after_ok = e == len(tl) or not (tl[e].isascii() and tl[e].isalnum())
+            if before_ok and after_ok:
+                return True
+    return False
 
 
 def extract_title(inner: str) -> str:
