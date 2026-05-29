@@ -211,8 +211,16 @@ def unified_publish(
     force_slug: str = None,
     is_breaking: bool = False,
     force_category_id: int = None,
+    thumbnail_og_only: bool = False,
 ) -> dict:
-    """統一投稿関数"""
+    """統一投稿関数
+
+    thumbnail_og_only=True のとき、サムネは出典 og:image のみ採用し、
+    アーティストDB照合フォールバックと DALL-E 生成を行わない。
+    純韓国エンタメ(한류)速報など、K-POP アーティストDBに無い被写体で
+    誤った人物写真や AI イラストが乗る事故を防ぐ(引用記事=og画像ルール)。
+    og が取れなければ featured 無しで公開する(誤画像より無画像が安全)。
+    """
     log = []
     auto_draft_reasons = []
 
@@ -327,7 +335,9 @@ def unified_publish(
                     )
 
     # ソース og:image が取得できなかった場合のフォールバック: アーティスト本人写真
-    if not media_id and artist:
+    # thumbnail_og_only=True (純韓国エンタメ等) では artist DB 照合をスキップ
+    # (DBに無い被写体で誤った人物写真が乗る事故を防ぐ)。
+    if not media_id and artist and not thumbnail_og_only:
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
             # 2026-05-12: 曲名 match で MV サムネを選定 (WDA 記事に THIRSTY MV 事故対策)
@@ -354,7 +364,8 @@ def unified_publish(
             log.append(f"artist_resolver error: {e}")
 
     # 5.1. サムネ未解決時のDALL-Eフォールバック
-    if not media_id:
+    # thumbnail_og_only=True では生成サムネを使わない(og 無しなら featured 無しで公開)。
+    if not media_id and not thumbnail_og_only:
         try:
             from lib.dalle_thumbnail_gen import generate_thumbnail
             import tempfile

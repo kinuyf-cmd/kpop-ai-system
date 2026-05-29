@@ -22,6 +22,9 @@ BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
 # 暴走防止の歯止め。品質は pre_publish_gate(HARD_FAIL)で担保。
 # cron は 7-21時の2時間おき(8回/日)。env DAILY_BREAKING_LIMIT で上書き可(段階調整用)。
 DAILY_BREAKING_LIMIT = int(os.environ.get('DAILY_BREAKING_LIMIT', '30'))
+# 純韓国エンタメ(한류=K-POP固有名なし)速報の1日上限。K-POP速報の枠を圧迫せず、
+# ゴシップ量産を防ぐ保守的キャップ(owner承認の保守設計)。env で調整可。
+HALLYU_LIMIT = int(os.environ.get('HALLYU_BREAKING_LIMIT', '3'))
 
 
 def _log_breaking_skip(reason, *, artist=None, typ=None, title=None, url=None):
@@ -242,6 +245,27 @@ def _pick_artist(arts):
     return None
 
 
+def _pick_subject_name(title):
+    """純韓国エンタメ(한류)タイトルから被写体の人物名を抽出する。
+
+    韓国芸能記事は「이름, 〜」「'배우자♥'본인名, 〜」形式が主題明示型。
+    先頭の装飾(引用符/角括弧/♥配偶者名)を除き、直後に **読点(,)** が続く
+    2〜4 文字のハングル人物名のみを返す。読点を必須にすることで、文章型
+    タイトル(「무대서만 느낄…」)やゲーム/施設名を主題と誤認しない。
+    抽出できなければ '' (=主題不明として速報化しない=安全側)。
+    K-POP 固有名は別経路(_pick_artist)で扱うため、ここでは扱わない。
+    """
+    import re as _re
+    t = (title or '').strip()
+    # 先頭の '配偶者♥' 装飾を除去 ('박성광♥'이솔이 → 이솔이)
+    t = _re.sub(r'^[‘’“”\'"\[(]*[가-힣A-Za-z.\s]{1,10}[♥♡]\s*[’”\'")\]]*', '', t)
+    # 残る先頭装飾を除去
+    t = _re.sub(r'^[‘’“”\'"\[(]+', '', t)
+    # 人物名の直後に読点(,)が来る主題明示型のみ採用(誤抽出を防ぐ)
+    m = _re.match(r'([가-힣]{2,4}),', t)
+    return m.group(1) if m else ''
+
+
 def detect_breaking(signals):
     from lib.collectors.korean_base import is_kpop_related
     candidates = []
@@ -317,6 +341,27 @@ def detect_breaking(signals):
         artist_titles.setdefault(artist, []).append(title)
         seen.add(artist)
         candidates.append((artist, [s], 'high_engagement'))
+
+    # 4. 純韓国エンタメ(한류): K-POP 固有名は無いが韓国芸能の人物記事
+    # (owner方針=韓国エンタメ全般を幅広く許容)。品質と量産防止のため:
+    #   - 被写体名が読点付きで明示されたものだけ(_pick_subject_name)
+    #   - 1日 HALLYU_LIMIT 件まで(K-POP速報の枠を圧迫しない)
+    #   - サムネは出典og固定(publish_breaking 側で thumbnail_og_only)
+    hallyu_picked = 0
+    for s in high_eng:
+        if hallyu_picked >= HALLYU_LIMIT:
+            break
+        # K-POP 固有名があるものは上記ループで既に扱い済み
+        if _pick_artist(is_kpop_related(s.get('title', ''))):
+            continue
+        if is_processed(s.get('url', '')):
+            continue
+        subject = _pick_subject_name(s.get('title', ''))
+        if not subject or subject in seen:
+            continue
+        seen.add(subject)
+        hallyu_picked += 1
+        candidates.append((subject, [s], 'hallyu'))
 
     return candidates
 
@@ -674,6 +719,9 @@ def publish_breaking(artist, sigs, typ):
 
     confidence = 'high' if typ == 'multi' else ('medium' if typ in ('urgent', 'single_multi') else 'low')
 
+    # 純韓国エンタメ(한류)は K-POP アーティストDBに無い被写体のため、
+    # サムネは出典og固定(artist DB照合/DALL-E をスキップ)。og 無しなら
+    # featured 無しで公開(誤った人物写真や AI イラストより無画像が安全)。
     r = unified_publish(
         raw_title=raw_title,
         body_html=body_html,
@@ -683,6 +731,7 @@ def publish_breaking(artist, sigs, typ):
         confidence=confidence,
         source_signals=sigs,
         is_breaking=True,
+        thumbnail_og_only=(typ == 'hallyu'),
     )
 
     if r and r.get('success'):
