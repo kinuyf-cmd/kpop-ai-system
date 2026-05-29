@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """サムネ2段fallback: ソース画像(引用) → DALL-E 3"""
-import os, json, re, urllib.request
+import os, json, re, sys, urllib.request
 from urllib.parse import urlparse
+
+# モジュール先頭で1回だけpath設定(hot pathでのinsertを避ける)
+_ROOT = '/home/aiuser/kpop-ai-system'
+for _p in (_ROOT, os.path.join(_ROOT, 'lib')):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 
 # OG画像が動画プレーヤー/広告由来の場合に拒否するためのドメイン/パスパターン
@@ -446,10 +452,9 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
                 if not _lb_reject:
                     # Vision検査: URL文字列で素通りした og:image を実画像レベルで身元確認
                     # mydaily.co.kr/photos/202605291...jpg のような generic 数値ID対策
+                    # NB: 段階1で reject すれば段階2へ降格できる(早期検知)。同一画像は
+                    # publisher._upload_media 側でも検査されるが prompt cache hit で実質コスト0
                     try:
-                        import sys as _sys
-                        _sys.path.insert(0, '/home/aiuser/kpop-ai-system/lib')
-                        _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
                         from article_topic_classifier import classify as _classify
                         _cl = _classify(title or '', body or '')
                         _subj = (_cl.get('subjects') or [''])[0]

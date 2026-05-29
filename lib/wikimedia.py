@@ -331,23 +331,29 @@ def fetch_safe_image(artist_name, cache_dir, max_attempts=8, prefer_landscape=Tr
 _KPOP_DESC_KW = (
     'k-pop', 'kpop', 'korean', 'south korean', 'boy band', 'girl group',
     'idol', 'boy group', 'girl band',
+    'korean singer', 'korean rapper', 'korean musician', 'korean idol',
+    'south korean musician', 'south korean singer',
 )
 
 
 def _wikidata_p18_image(artist_name):
     """Wikidata で artist_name を検索 → K-POP関連description で絞り込み →
     P18 (image) claim を返す。返却: {'qid':..., 'title':<File:...>} or None
+
+    堅牢化: timeout=30, 想定外レスポンス形状/value型をガード
     """
     import urllib.parse as _up
     ua = 'KPOP-JOURNAL-Bot/1.0 (+https://kpopjournal.tokyo; citation-only)'
     def _get(url):
         req = urllib.request.Request(url, headers={'User-Agent': ua})
-        with urllib.request.urlopen(req, timeout=15) as r:
+        with urllib.request.urlopen(req, timeout=30) as r:
             return json.loads(r.read())
     # 検索
     sr = _get(f'https://www.wikidata.org/w/api.php?action=wbsearchentities&search={_up.quote(artist_name)}&language=en&type=item&format=json&limit=8')
     qid = None
-    for hit in sr.get('search', []):
+    for hit in (sr.get('search') or []):
+        if not isinstance(hit, dict):
+            continue
         desc = (hit.get('description') or '').lower()
         if any(kw in desc for kw in _KPOP_DESC_KW):
             qid = hit.get('id')
@@ -356,10 +362,15 @@ def _wikidata_p18_image(artist_name):
         return None
     # P18 claim
     cl = _get(f'https://www.wikidata.org/w/api.php?action=wbgetclaims&entity={qid}&property=P18&format=json')
-    claims = cl.get('claims', {}).get('P18', [])
+    claims = (cl.get('claims') or {}).get('P18') or []
     for c in claims:
-        v = c.get('mainsnak', {}).get('datavalue', {}).get('value')
-        if v:
+        if not isinstance(c, dict):
+            continue
+        mainsnak = c.get('mainsnak') or {}
+        dv = mainsnak.get('datavalue') or {}
+        v = dv.get('value')
+        # P18のvalueは通常 str(filename) だが将来仕様変更で dict 化する可能性
+        if isinstance(v, str) and v:
             return {'qid': qid, 'title': f'File:{v}'}
     return None
 

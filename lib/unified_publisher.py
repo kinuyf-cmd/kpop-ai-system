@@ -17,6 +17,10 @@ try:
 except Exception:
     _x_post_tweet = None
 
+# WPの post_max_size を超えると 413 → upload失敗で段階3 DALL-Eに無意味に降格するため、
+# このサイズ超を 1200px JPEG q=82 に再エンコードする。Wikimedia原寸4MB級対策。
+MAX_UPLOAD_MB = 1.5
+
 # WP REST 認証(2026-05-23 移植: 旧サーバの application password ハードコードを撤去し
 # env 化。CLAUDE.md「パスワード・APIキーをコード/ドキュメントにハードコードしない」準拠)。
 # .env から WP_USER + WP_APP_PASS(無ければ WP_PASS)を読み Basic auth を組む。
@@ -124,28 +128,37 @@ def _upload_media(image_path, alt_text=''):
     # 大きすぎる画像はWPの413(post_max_size)で失敗→段階3 DALL-Eに無意味に降格するため
     # アップロード前に必ず1200px幅へ縮小し JPEG q=82 で書き出す(2026-05-29: 413で4件DALL-E誤採用事案)
     upload_path = image_path
+    _tmp_resized = None  # try/finally で削除するための一時パス
     try:
-        import os as _os
+        import os as _os, tempfile as _tempfile
         _size_mb = _os.path.getsize(image_path) / (1024*1024)
-        if _size_mb > 1.5:  # 1.5MB超は縮小
+        if _size_mb > MAX_UPLOAD_MB:
             from PIL import Image as _Image
             _im = _Image.open(image_path).convert('RGB')
             if _im.width > 1200:
                 _ratio = 1200 / _im.width
                 _im = _im.resize((1200, int(_im.height * _ratio)), _Image.LANCZOS)
-            _resized = image_path.rsplit('.', 1)[0] + '_u.jpg'
-            _im.save(_resized, 'JPEG', quality=82, optimize=True)
-            upload_path = _resized
+            _fd, _tmp_resized = _tempfile.mkstemp(prefix='thumb_resize_', suffix='.jpg', dir='/tmp')
+            _os.close(_fd)
+            _im.save(_tmp_resized, 'JPEG', quality=82, optimize=True)
+            upload_path = _tmp_resized
     except Exception:
         pass  # 縮小失敗時は原本でtry
     try:
         with open(upload_path, 'rb') as f:
             data = f.read()
     except Exception:
+        if _tmp_resized:
+            try: os.unlink(_tmp_resized)
+            except OSError: pass
         return None
     ext = os.path.splitext(upload_path)[1][1:].lower() or 'jpg'
     ct = 'image/png' if ext == 'png' else 'image/jpeg'
     filename = f"thumb_{int(datetime.now().timestamp())}.{ext}"
+    # 縮小一時ファイルを後始末(本関数のreturn経路すべてに効くよう finally の代わりに try で囲む)
+    if _tmp_resized:
+        try: os.unlink(_tmp_resized)
+        except OSError: pass
     req = urllib.request.Request(
         "https://www.kpopjournal.tokyo/wp-json/wp/v2/media",
         data=data,
