@@ -121,12 +121,29 @@ def _upload_media(image_path, alt_text=''):
         import sys as _sys
         _sys.stderr.write(f"[publisher] BLOCK upload: {image_path} ({reason})\n")
         return None
+    # 大きすぎる画像はWPの413(post_max_size)で失敗→段階3 DALL-Eに無意味に降格するため
+    # アップロード前に必ず1200px幅へ縮小し JPEG q=82 で書き出す(2026-05-29: 413で4件DALL-E誤採用事案)
+    upload_path = image_path
     try:
-        with open(image_path, 'rb') as f:
+        import os as _os
+        _size_mb = _os.path.getsize(image_path) / (1024*1024)
+        if _size_mb > 1.5:  # 1.5MB超は縮小
+            from PIL import Image as _Image
+            _im = _Image.open(image_path).convert('RGB')
+            if _im.width > 1200:
+                _ratio = 1200 / _im.width
+                _im = _im.resize((1200, int(_im.height * _ratio)), _Image.LANCZOS)
+            _resized = image_path.rsplit('.', 1)[0] + '_u.jpg'
+            _im.save(_resized, 'JPEG', quality=82, optimize=True)
+            upload_path = _resized
+    except Exception:
+        pass  # 縮小失敗時は原本でtry
+    try:
+        with open(upload_path, 'rb') as f:
             data = f.read()
     except Exception:
         return None
-    ext = os.path.splitext(image_path)[1][1:].lower() or 'jpg'
+    ext = os.path.splitext(upload_path)[1][1:].lower() or 'jpg'
     ct = 'image/png' if ext == 'png' else 'image/jpeg'
     filename = f"thumb_{int(datetime.now().timestamp())}.{ext}"
     req = urllib.request.Request(
