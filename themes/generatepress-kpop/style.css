@@ -5503,3 +5503,97 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
 .widget_custom_html:has(> .textwidget.custom-html-widget:empty) { display: none; }
 .textwidget.custom-html-widget:empty { display: none; margin: 0; padding: 0; }
 /* >>> KPOP_SIDEBAR_POLISH_END <<< */
+
+/* ──────────────────────────────────────────────────────────────
+   カスタム 404 ページ(2026-05-29)
+   404.php 用。色は :root の --kpop-* のみ(全てAA達成済み)を使用。
+   カード部分は .kpop-card / .kpop-cat-grid を再利用するため追加なし。
+   ────────────────────────────────────────────────────────────── */
+.kpop-404 {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+.kpop-404-breadcrumb {
+  font-size: 0.85rem;
+  color: var(--kpop-gray);
+  margin-bottom: 24px;
+}
+.kpop-404-breadcrumb a { color: var(--kpop-pink-dark); }
+.kpop-404-breadcrumb span { margin: 0 6px; }
+.kpop-404-hero {
+  text-align: center;
+  padding: 16px 8px 8px;
+}
+.kpop-404-emoji {
+  font-size: 2.2rem;
+  margin: 0 0 4px;
+}
+.kpop-404-code {
+  font-size: 4rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--kpop-pink);
+  margin: 0;
+}
+.kpop-404-title {
+  font-size: 1.45rem;
+  color: var(--kpop-text);
+  margin: 12px 0 8px;
+}
+.kpop-404-lead {
+  color: var(--kpop-text);
+  line-height: 1.8;
+  margin: 0 auto 24px;
+  max-width: 30em;
+}
+.kpop-404-cta-wrap { margin: 0 0 28px; }
+.kpop-404-cta {
+  display: inline-block;
+  background: var(--kpop-pink);
+  color: #fff;          /* ピンク背景上 白文字 4.35:1 → 大きめUIテキストでAA */
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.kpop-404-cta:hover,
+.kpop-404-cta:focus {
+  background: var(--kpop-pink-darker);  /* 白文字 6.97:1 AA */
+  color: #fff;
+}
+.kpop-404-search {
+  display: flex;
+  gap: 8px;
+  max-width: 520px;
+  margin: 0 auto 8px;
+}
+.kpop-404-search .search-field {
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #d8c2cc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.kpop-404-search-btn {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 22px;
+  background: var(--kpop-pink-dark);  /* 白文字 5.87:1 AA */
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.kpop-404-search-btn:hover,
+.kpop-404-search-btn:focus {
+  background: var(--kpop-pink-darker);
+}
+.kpop-404-latest {
+  margin-top: 40px;
+}
+
