@@ -449,9 +449,20 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
                     try:
                         import sys as _sys
                         _sys.path.insert(0, '/home/aiuser/kpop-ai-system/lib')
+                        _sys.path.insert(0, '/home/aiuser/kpop-ai-system')
                         from article_topic_classifier import classify as _classify
                         _cl = _classify(title or '', body or '')
                         _subj = (_cl.get('subjects') or [''])[0]
+                        # subject空 → is_kpop_related(より緩い検出)でfallback
+                        # ニックネーム/愛称タイトル(モカ/ウォニョン等)もVision検査対象に
+                        if not _subj:
+                            try:
+                                from lib.collectors.korean_base import is_kpop_related
+                                _hits = is_kpop_related(title or '')
+                                if _hits:
+                                    _subj = _hits[0]
+                            except Exception:
+                                pass
                         if _subj:
                             from thumbnail_vision_gate import vision_validate
                             _ok, _reason = vision_validate(src_out, _subj, title or '')
