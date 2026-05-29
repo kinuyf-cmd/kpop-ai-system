@@ -259,6 +259,36 @@
    "start_date": "2026-05-31",
    "venue": "川口リリア・フカガワみらいホール(メインホール)",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TOMORROW X TOGETHER",
+   "title": "TOMORROW X TOGETHER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-16",
+   "venue": "マリンメッセ福岡A館",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MYNAME",
+   "title": "MYNAME",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-05-31",
+   "venue": "ESAKA MUSE",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "&TEAM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-05-30",
+   "venue": "IGアリーナ",
+   "_source_id": "ltike"
   }
  ]
 }
