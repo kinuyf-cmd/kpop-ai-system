@@ -12,7 +12,7 @@ class TestBridgePosRouting:
         # plan で確定した境界
         assert b.POS_REWRITE == (4.0, 6.0)
         assert b.POS_ENRICH[0] > b.POS_REWRITE[1]   # 重複しない
-        assert b.POS_ENRICH[1] == 12.0
+        assert b.POS_ENRICH[1] == 20.0
 
     def test_slug_from_url(self):
         b = importlib.import_module("lib.seo_lane_c_bridge")
