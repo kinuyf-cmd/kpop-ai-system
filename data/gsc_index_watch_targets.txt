@@ -1,0 +1,9 @@
+# GSCインデックス監視対象(1行1スラッグ)。全indexedになったら空にして監視終了。
+music-awards-japan-2026-kpop-guide
+maj-2026-kpop-nominees
+maj-2026-how-to-watch-streaming
+maj-2026-best-song-asia-kpop-performers
+perfect-crown-21st-century-drama-guide
+perfect-crown-cast-iu-byeon-woo-seok
+perfect-crown-monarchy-setting-history-controversy
+mama-awards-2026-osaka-guide
