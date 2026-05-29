@@ -71,7 +71,33 @@ class TestWikidataP18:
     def test_handles_malformed_search_response(self):
         """search欠落でもAttributeErrorを出さない"""
         from lib import wikimedia as w
+        # ja試行→en試行の両方が空応答でNoneに収束
         with patch.object(urllib.request, 'urlopen',
-                          side_effect=_stub_urlopen(_fake_resp({}))):
+                          side_effect=_stub_urlopen(_fake_resp({}), _fake_resp({}))):
             r = w._wikidata_p18_image('X')
         assert r is None
+
+    def test_japanese_search_falls_back_to_english(self):
+        """ja で見つからない時 en で再検索する"""
+        from lib import wikimedia as w
+        ja_empty = {'search': []}
+        en_hit = {'search': [{'id': 'Q500', 'description': 'south korean girl group'}]}
+        claims = {'claims': {'P18': [
+            {'mainsnak': {'datavalue': {'value': 'Foo.jpg'}}}
+        ]}}
+        with patch.object(urllib.request, 'urlopen',
+                          side_effect=_stub_urlopen(_fake_resp(ja_empty), _fake_resp(en_hit), _fake_resp(claims))):
+            r = w._wikidata_p18_image('FooGroup')
+        assert r == {'qid': 'Q500', 'title': 'File:Foo.jpg'}
+
+    def test_japanese_description_keyword_matches(self):
+        """日本語description「韓国のアイドル」等でも採用"""
+        from lib import wikimedia as w
+        search = {'search': [{'id': 'Q600', 'description': '韓国の女性歌手'}]}
+        claims = {'claims': {'P18': [
+            {'mainsnak': {'datavalue': {'value': 'Bar.jpg'}}}
+        ]}}
+        with patch.object(urllib.request, 'urlopen',
+                          side_effect=_stub_urlopen(_fake_resp(search), _fake_resp(claims))):
+            r = w._wikidata_p18_image('Bar')
+        assert r == {'qid': 'Q600', 'title': 'File:Bar.jpg'}

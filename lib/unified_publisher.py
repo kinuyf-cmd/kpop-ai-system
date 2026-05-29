@@ -118,9 +118,11 @@ def _validate_thumbnail(image_path: str, expected_artist: str = '',
         return False, f"validate err: {e}"
 
 
-def _upload_media(image_path, alt_text=''):
+def _upload_media(image_path, alt_text='', expected_artist='', article_title=''):
     # 公開前gate: 不正サムネはアップロードしない
-    ok, reason = _validate_thumbnail(image_path)
+    # expected_artist指定時は Vision で身元検査(段階1で素通りした別人写真の最終防御)
+    ok, reason = _validate_thumbnail(image_path, expected_artist=expected_artist,
+                                     article_title=article_title)
     if not ok:
         import sys as _sys
         _sys.stderr.write(f"[publisher] BLOCK upload: {image_path} ({reason})\n")
@@ -314,7 +316,8 @@ def unified_publish(
             thumb = None
         if thumb and thumb.get('path'):
             _src_alt = f"{title_final}のサムネイル画像"
-            media_id = _upload_media(thumb['path'], alt_text=_src_alt)
+            media_id = _upload_media(thumb['path'], alt_text=_src_alt,
+                                     expected_artist=artist, article_title=title_final)
             if media_id:
                 log.append(f"media_id: {media_id} (source_og_primary: {thumb.get('source','')})")
                 if thumb.get('source_url'):
@@ -338,7 +341,8 @@ def unified_publish(
                     from lib.image_utils import aspect_preserve_resize
                     aspect_preserve_resize(_artist_thumb['image_path'], _resized)
                     _thumb_alt = f"{title_final}のサムネイル画像"
-                    media_id = _upload_media(_resized, alt_text=_thumb_alt)
+                    media_id = _upload_media(_resized, alt_text=_thumb_alt,
+                                             expected_artist=artist, article_title=title_final)
                     if media_id:
                         log.append(f"media_id: {media_id} (artist_fallback: {_artist_thumb.get('source')})")
                         if _artist_thumb.get('source') == 'source_site' and _artist_thumb.get('source_url'):

@@ -334,6 +334,10 @@ _KPOP_DESC_KW = (
     'korean singer', 'korean rapper', 'korean musician', 'korean idol',
     'south korean musician', 'south korean singer',
 )
+_KPOP_DESC_JA = (
+    '韓国', 'k-pop', 'kポップ', 'アイドル', 'ボーイズグループ', 'ガールズグループ',
+    '男性アイドル', '女性アイドル', '歌手', 'ラッパー', '韓国の歌手',
+)
 
 
 def _wikidata_p18_image(artist_name):
@@ -348,15 +352,21 @@ def _wikidata_p18_image(artist_name):
         req = urllib.request.Request(url, headers={'User-Agent': ua})
         with urllib.request.urlopen(req, timeout=30) as r:
             return json.loads(r.read())
-    # 検索
-    sr = _get(f'https://www.wikidata.org/w/api.php?action=wbsearchentities&search={_up.quote(artist_name)}&language=en&type=item&format=json&limit=8')
+    # 検索: 日本語名("イ・ヒジュン")も拾うため ja を先に試し、ヒット無しなら en にfallback
     qid = None
-    for hit in (sr.get('search') or []):
-        if not isinstance(hit, dict):
+    for _lang in ('ja', 'en'):
+        try:
+            sr = _get(f'https://www.wikidata.org/w/api.php?action=wbsearchentities&search={_up.quote(artist_name)}&language={_lang}&type=item&format=json&limit=8')
+        except Exception:
             continue
-        desc = (hit.get('description') or '').lower()
-        if any(kw in desc for kw in _KPOP_DESC_KW):
-            qid = hit.get('id')
+        for hit in (sr.get('search') or []):
+            if not isinstance(hit, dict):
+                continue
+            desc = (hit.get('description') or '').lower()
+            if any(kw in desc for kw in _KPOP_DESC_KW) or any(kw in desc for kw in _KPOP_DESC_JA):
+                qid = hit.get('id')
+                break
+        if qid:
             break
     if not qid:
         return None
