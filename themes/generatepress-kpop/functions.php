@@ -2770,3 +2770,38 @@ add_filter( 'tribe_events_views_v2_month_events_per_day', function () {
 add_filter( 'tribe_events_views_v2_stack_events', function () {
 	return [];
 } );
+
+/**
+ * (D) リストビューで当日開始イベント(誕生日含む)を先に出す。
+ *
+ * 問題: リストは ends_after=now で「会期中」イベントを取得し start_date 昇順で
+ * 並べるため、4月開始の長期 popup が先頭を占め、当日(今日)開始の誕生日が
+ * 4ページ目以降へ。1ページ目しか見ない「誕生日フィルタ」で誕生日が出ない
+ * 主因(実測: 誕生日は page4 初出現)。
+ *
+ * 対策: リストの upcoming 表示で取得基準を「ends_after(会期中=過去開始も
+ * 含む)」から「starts_after(これから始まる)」に置換。当日0時以降に"始まる"
+ * イベント(誕生日含む)を開始日順で並べ、4月開始で会期中の長期 popup が
+ * 先頭を占めて誕生日を後方ページへ押しやるのを防ぐ。past は触らない。
+ */
+add_filter( 'tribe_events_views_v2_view_repository_args', function ( $args, $context, $view ) {
+	$slug = '';
+	if ( is_object( $view ) ) {
+		if ( method_exists( $view, 'get_slug' ) ) {
+			$slug = $view->get_slug();
+		} elseif ( property_exists( $view, 'slug' ) ) {
+			$slug = $view->slug;
+		}
+	}
+	if ( 'list' !== $slug ) {
+		return $args;
+	}
+	$order = isset( $args['order'] ) ? strtoupper( (string) $args['order'] ) : 'ASC';
+	if ( 'ASC' === $order && isset( $args['ends_after'] ) ) {
+		$base      = is_string( $args['ends_after'] ) ? $args['ends_after'] : 'now';
+		$day_start = gmdate( 'Y-m-d 00:00:00', strtotime( $base ) );
+		unset( $args['ends_after'] );
+		$args['starts_after'] = $day_start;
+	}
+	return $args;
+}, 20, 3 );
