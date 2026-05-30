@@ -1500,7 +1500,10 @@ function kpop_home_sidebar_events() {
 			. ( $start ? ' <span class="kpop-event-date">' . esc_html( mysql2date( 'n/j', $start ) ) . '</span>' : '' )
 			. '</li>';
 	}
-	echo '</ul></div>';
+	echo '</ul>';
+	// 2026-05-30: イベントカレンダー(/events/)への導線(タスク3)
+	echo '<a class="kpop-side-event-more" href="' . esc_url( $events_cal ) . '">📅 イベントカレンダーをすべて見る</a>';
+	echo '</div>';
 	wp_reset_postdata();
 }
 add_action( 'generate_after_right_sidebar_content', 'kpop_home_sidebar_events' );

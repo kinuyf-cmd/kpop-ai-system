@@ -1863,6 +1863,25 @@ body { color: #2B2B32; }
     margin: 0;
     padding: 0;
 }
+/* 2026-05-30: トップ右サイド「1ヶ月以内のイベント」→カレンダー導線(タスク3) */
+.kpop-side-event-more {
+    display: block;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #FCE4EC;
+    color: #C2185B;
+    font-weight: 700;
+    font-size: 0.86rem;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+.kpop-side-event-more:hover,
+.kpop-side-event-more:focus {
+    background: #E91E63;
+    color: #fff;
+}
 .kpop-side-list li {
     border-bottom: 1px solid #f0e3e8;
 }
