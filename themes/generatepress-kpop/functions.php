@@ -1046,9 +1046,19 @@ function kpop_events_archive_intro() {
 	<script>
 	(function(){
 	  var state = { event: true, birthday: true, popup: true };
-	  function detectKind(text){
-	    if (!text) return 'event';
-	    if (text.indexOf('🎂') === 0 || /^\s*🎂/.test(text)) return 'birthday';
+	  function detectKind(text, href){
+	    // 2026-05-30: 最も確実な判定はリンクslug。絵文字prefixがカレンダー表示
+	    // テキストから落ちる問題を回避。誕生日slug=🎂始まりor -birthday、
+	    // popup slug=🛍始まりor popup-、ライブ=-event-。
+	    if (href) {
+	      var h;
+	      try { h = decodeURIComponent(href).toLowerCase(); } catch (e) { h = href.toLowerCase(); }
+	      if (h.indexOf('\u{1F382}') >= 0 || /-birthday(-\d+)?\/?$/.test(h)) return 'birthday';
+	      if (h.indexOf('\u{1F6CD}') >= 0 || h.indexOf('/popup-') >= 0) return 'popup';
+	      if (/-event-\d/.test(h)) return 'event';
+	    }
+	    text = text || '';
+	    if (text.indexOf('🎂') >= 0 || /Birthday\s*$/.test(text.trim()) || /誕生日/.test(text)) return 'birthday';
 	    if (text.indexOf('🛍') >= 0 || text.indexOf('POPUP') >= 0 || text.indexOf('ポップアップ') >= 0) return 'popup';
 	    return 'event';
 	  }
@@ -1064,7 +1074,9 @@ function kpop_events_archive_intro() {
 	    nodes.forEach(function(node){
 	      var titleEl = node.querySelector('a, .tribe-events-calendar-month__calendar-event-title, .tribe-events-calendar-list__event-title');
 	      var text = (titleEl ? titleEl.textContent : node.textContent) || '';
-	      var kind = detectKind(text);
+	      var linkEl = node.querySelector('a[href]');
+	      var href = linkEl ? linkEl.getAttribute('href') : '';
+	      var kind = detectKind(text, href);
 	      node.classList.toggle('kpj-event-hidden', !state[kind]);
 	      if (kind === 'birthday') node.classList.add('kpj-birthday-event');
 	    });
