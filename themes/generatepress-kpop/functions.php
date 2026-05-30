@@ -2708,8 +2708,10 @@ function kpj_revenue_head_tags() {
 add_action('wp_head', 'kpj_revenue_head_tags', 20);
 
 /**
- * 2026-05-30: 月カレンダーの popup 表示を「単日・名前付き」に正規化する
- * 非破壊フィルタ群。DB は一切変更しない(会期データは保持)。
+ * 2026-05-30: TEC カレンダーの popup / 誕生日 表示を正規化するフィルタ群。
+ * (A)〜(E) のレンダリング時フィルタは DB を変更しない非破壊処理。
+ * occurrence の根本的な単日化は別途 tools/popup_singleday.php(owner 実行・
+ * TEC API 経由・実行済 2026-05-30)で実施済み。
  *
  * 背景・真因(実測で確定):
  *   - popup 101件中98件が「終日(all_day)・複数日(multiday)」イベントで、
@@ -2717,31 +2719,28 @@ add_action('wp_head', 'kpj_revenue_head_tags', 20);
  *       ! ( $event->multiday > 1 || $event->all_day )
  *     で「通常イベント(名前が出る)」と「multiday スタック(名前なしの
  *     継続バー)」を振り分ける(src/.../Month_View.php:472)。
- *   - popup は multiday かつ all_day のため全て名前なし継続バー側に回り、
+ *   - popup / 誕生日は multiday/all_day のため全て名前なし継続バー側に回り、
  *     開始日〜終了日の全日に空帯を量産。1日最大126件・セル330px・
  *     モバイル9600px のロングページ化、かつ「名前が見える日が34日中7日」
- *     という事態を招いていた。
- *
- * 方針: DB を書き換えず、月ビューのレンダリング時だけ tribe_get_event の
- * 返すイベントオブジェクトの multiday/all_day を打ち消して、popup を
- * 「単日・名前付き」通常イベントとして開始日に表示させる。会期情報は
- * 記事本文・popup 一覧に温存され、可逆。
+ *     という事態を招いていた(誕生日が全く見えない主因もこれ)。
  */
 
 /**
- * (A) 月ビュー時のみ、popup(タイトルが 🛍 で始まる all_day イベント)の
- *     multiday/all_day フラグを打ち消し、通常イベント枠で名前を出させる。
+ * (A) popup(🛍)・誕生日(🎂)イベントの multiday/all_day フラグを打ち消し、
+ *     通常イベント枠で名前を出させる。
+ *
+ * tribe_get_event は全ビュー(月/リスト/単一/ウィジェット等)で発火する。
+ * popup/誕生日を全ビューで「単日・名前あり」に正規化することで、月グリッドの
+ * 名前なし継続バー化を防ぎ、リストでも誕生日が会期途中の長期 popup に
+ * 埋もれず開始日扱いになる。返すオブジェクトの一時プロパティのみ書き換え、
+ * DB(_EventEndDate 等)は触らない=非破壊・可逆。リスト/単一ページの日時は
+ * 日付のみ表示で崩れないことを実機確認済み。
  */
 add_filter( 'tribe_get_event', function ( $event ) {
 	if ( ! is_object( $event ) || empty( $event->post_title ) ) {
 		return $event;
 	}
 	// popup(🛍)と誕生日(🎂)は build 時に絵文字 prefix を付与している。
-	// どちらも _EventAllDay=yes のため、TEC は ! (multiday>1 || all_day) の
-	// all_day 条件で「名前なしの multiday 継続バー」側に振り分けてしまい、
-	// カレンダー上で名前が出ない(誕生日が全く見えない主因もこれ)。
-	// 月グリッド上だけ all_day/multiday を打ち消し「開始日に1点・名前あり」化。
-	// 会期データ(_EventEndDate)は触らない=非破壊。
 	$title = $event->post_title;
 	if ( mb_strpos( $title, '🛍' ) !== 0 && mb_strpos( $title, '🎂' ) !== 0 ) {
 		return $event;
@@ -2752,29 +2751,28 @@ add_filter( 'tribe_get_event', function ( $event ) {
 }, 20 );
 
 /**
- * (B) 1日あたりの取得件数を 30 に拡大する。
+ * (B) 1日あたりの取得件数を 8 に拡大する。
  *
- * 当初は 3 に絞っていたが、その slice が template 渡しの「前」に走るため
- * (Month_View.php:515)、popup が先に取得される日は誕生日が3件枠から漏れて
- * $day['events'] に入らず(実測: 5/30 は events が popup3件のみ・found=90)、
- * 後段でいくら並べ替えても誕生日を救えなかった。そこで取得を 30 件に広げて
- * 誕生日も $day['events'] に含め、後段 (E) で誕生日を先頭へ並べ替え、最終的な
- * 表示3件は CSS(__events > :nth-child(n+4){display:none})で担保する。
+ * 各日のイベントは events_per_day で array_slice されてから template に渡る
+ * (Month_View.php:515)。既定3件のままだと、同日に popup が先に取得される日は
+ * 誕生日が枠から漏れて $day['events'] に入らず、後段 (E) で並べ替えても救えない。
+ * popup 単日化(tools/popup_singleday.php)で各日のイベント総数が激減したため、
+ * 取得を 8 件に広げて誕生日も $day['events'] に含め、後段 (E) で先頭へソート。
+ * 最終表示は CSS で先頭 N 件に制限(PC: __events>nth-child(n+4)=3件 /
+ * モバイル当日: mobile-event nth-of-type(n+6)=5件)、超過は「他N件」へ。
  * 「他N件」リンクは found_events 基準なので件数表示は正しいまま。
  */
 add_filter( 'tribe_events_views_v2_month_events_per_day', function () {
-	// popup 単日化(tools/popup_singleday.php)で各日のイベント総数が激減した
-	// ため 8 に拡大。各日 events に誕生日も含まれ、後段 (E) が誕生日を先頭へ
-	// ソート。最終表示は CSS(PC: __events>nth-child(n+4) / モバイル:
-	// mobile-event の nth)で先頭3件に制限し、超過は「他N件」へ。
 	return 8;
 } );
 
 /**
- * (C) multiday スタック(名前なし継続バー)を月ビューで撤去する。
- *     popup は (A) で通常イベント化したので、本当に残すべき multiday は
- *     稀(長期ライブ等)。ここでスタックを空にして空帯の量産を根絶し、
- *     セル高さを揃える。multiday イベント自体は開始日に通常表示される。
+ * (C) multiday スタック(名前なし継続バー)を月/週ビューで撤去する。
+ *     popup/誕生日は (A) で通常イベント化済みなので、スタックに残るのは稀な
+ *     長期ライブ等のみ。ここでスタックを空にして空帯の量産を根絶し、セル
+ *     高さを揃える。撤去しても各イベントは (A) により開始日に通常表示される。
+ *     ※ stack_events は month/週ビューの multiday 描画専用フィルタで、リスト
+ *        ビューには影響しない。
  * @see src/Tribe/Views/V2/Utils/Stack.php:264
  */
 add_filter( 'tribe_events_views_v2_stack_events', function () {

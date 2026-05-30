@@ -4947,16 +4947,16 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	background-color: #fce4ec;
 }
 /* 2026-05-30: 月セルの高さを揃え、各日のイベント名を1行で見せる。
-   PHP側(functions.php)で popup を単日・名前付き通常イベント化(非破壊)
-   + events_per_day=3 + multiday スタック撤去 により、各日「名前付き最大3件
-   + 他N件」表示になった。あとは長い popup タイトルが2-3行に折り返して
-   セルが359px化していた(実測 1件50-66px)ので、タイトルを1行省略にして
-   1件あたりの高さを均一化し、全セルを揃える。 */
+   PHP側(functions.php)で popup/誕生日を単日・名前付き通常イベント化(A)
+   + events_per_day=8 で取得し誕生日優先ソート(E) + multiday スタック撤去(C)
+   により、各日「名前付き」イベントが取得される。長い popup タイトルが
+   2-3行折り返してセルが359px化していた(実測 1件50-66px)ため、タイトルを
+   1行省略にし、表示を先頭 N 件に制限して全セルの高さを揃える。 */
 .tribe-events-calendar-month__events {
 	overflow: hidden;
 }
-/* PC グリッド: 各日の表示は先頭3件まで(events_per_day=8 で取得し誕生日優先
-   ソート済みのうち、表示は3件に制限。4件目以降は「他N件」リンクへ集約)。 */
+/* PC グリッド: 各日の表示は先頭3件まで(events_per_day=8 で取得+誕生日優先
+   ソート済みのうち表示3件に制限。4件目以降は「他N件」リンクへ集約)。 */
 .tribe-events-calendar-month__events > *:nth-child(n+4) {
 	display: none;
 }

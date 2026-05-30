@@ -32,19 +32,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // --- 引数 ---
-// WP-CLI `wp eval-file <file> <arg1> <arg2> ...` は追加引数を $args 配列で渡す。
-// 例: wp eval-file popup_singleday.php --dry-run  →  $args = ['--dry-run']
+// WP-CLI `wp eval-file <file> <arg1> <arg2> ...` は追加の「位置引数」を $args 配列で
+// 渡す。`--dry-run` のような --フラグ形式は WP-CLI 本体が未知オプションとして弾く
+// ため、ここでは `--` を付けない位置引数で受ける:
+//   wp eval-file popup_singleday.php dry-run            → $args = ['dry-run']
+//   wp eval-file popup_singleday.php restore /path.csv  → $args = ['restore','/path.csv']
 $opts = array();
 if ( isset( $args ) && is_array( $args ) ) {
 	$opts = $args;             // WP-CLI eval-file の標準
 } elseif ( isset( $argv ) && is_array( $argv ) ) {
 	$opts = $argv;             // フォールバック
 }
-$dry_run = in_array( '--dry-run', $opts, true );
+// 旧 --dry-run / --restore= 形式も後方互換で受ける。
+$dry_run = in_array( 'dry-run', $opts, true ) || in_array( '--dry-run', $opts, true );
 $restore = '';
-foreach ( $opts as $o ) {
-	if ( strpos( (string) $o, '--restore=' ) === 0 ) {
+foreach ( $opts as $i => $o ) {
+	$o = (string) $o;
+	if ( strpos( $o, '--restore=' ) === 0 ) {
 		$restore = substr( $o, strlen( '--restore=' ) );
+	} elseif ( $o === 'restore' && isset( $opts[ $i + 1 ] ) ) {
+		$restore = (string) $opts[ $i + 1 ];
 	}
 }
 
@@ -119,7 +126,10 @@ foreach ( $targets as $pid ) {
 		continue;
 	}
 
-	// TEC 公式 API で更新(postmeta + wp_tec_occurrences を整合更新)
+	// TEC 公式 API で更新(postmeta + wp_tec_occurrences を整合更新)。
+	// TZ は各イベントの _EventTimezone(本サイトは全件 Asia/Tokyo)を TEC が
+	// 踏襲し UTC を再計算する。TZ が混在する環境では 'EventTimezone' も
+	// 明示すること(本サイトでは不要)。
 	$ok = tribe_update_event( $pid, array(
 		'EventStartDate' => $start_day . ' 00:00:00',
 		'EventEndDate'   => $new_end,
