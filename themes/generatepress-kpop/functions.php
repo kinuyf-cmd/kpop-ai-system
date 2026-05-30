@@ -2752,9 +2752,15 @@ add_filter( 'tribe_get_event', function ( $event ) {
 }, 20 );
 
 /**
- * (B) 1日あたりの表示イベント数を3件に制限。超過は TEC 標準の
- *     「他 N 件」リンク(more-events.php)で集約。
- * @see src/.../Month_View.php:319 tribe_events_views_v2_month_events_per_day
+ * (B) 1日あたりの取得件数を 30 に拡大する。
+ *
+ * 当初は 3 に絞っていたが、その slice が template 渡しの「前」に走るため
+ * (Month_View.php:515)、popup が先に取得される日は誕生日が3件枠から漏れて
+ * $day['events'] に入らず(実測: 5/30 は events が popup3件のみ・found=90)、
+ * 後段でいくら並べ替えても誕生日を救えなかった。そこで取得を 30 件に広げて
+ * 誕生日も $day['events'] に含め、後段 (E) で誕生日を先頭へ並べ替え、最終的な
+ * 表示3件は CSS(__events > :nth-child(n+4){display:none})で担保する。
+ * 「他N件」リンクは found_events 基準なので件数表示は正しいまま。
  */
 add_filter( 'tribe_events_views_v2_month_events_per_day', function () {
 	return 3;
@@ -2805,3 +2811,39 @@ add_filter( 'tribe_events_views_v2_view_repository_args', function ( $args, $con
 	}
 	return $args;
 }, 20, 3 );
+
+/**
+ * (E) 月ビューの各日 events 配列で「誕生日(🎂)」を先頭へ並べ替える。
+ *
+ * (B) で取得を30件に広げたので各日の $day['events'] に誕生日も含まれる。
+ * ここで誕生日を先頭へ安定ソートし、CSS が表示する先頭3件に誕生日が必ず
+ * 入るようにする(PCグリッド・モバイル当日リスト両方に効く)。popup の
+ * 多い日でも誕生日が「他N件」に埋もれず、「誕生日」フィルタでも表示される。
+ * @see mobile-day.php は multiday_events + events をマージ表示(events先頭順を尊重)
+ */
+$kpj_sort_bday_first = function ( $vars ) {
+	if ( empty( $vars['days'] ) || ! is_array( $vars['days'] ) ) {
+		return $vars;
+	}
+	foreach ( $vars['days'] as &$day ) {
+		if ( empty( $day['events'] ) || ! is_array( $day['events'] ) ) {
+			continue;
+		}
+		$rows = [];
+		foreach ( array_values( $day['events'] ) as $i => $ev ) {
+			$title   = is_object( $ev ) && isset( $ev->post_title ) ? (string) $ev->post_title : '';
+			$is_bday = ( mb_strpos( $title, '🎂' ) === 0 ) ? 0 : 1; // 誕生日=0(先頭)
+			$rows[]  = [ $is_bday, $i, $ev ];
+		}
+		usort( $rows, function ( $a, $b ) {
+			return ( $a[0] <=> $b[0] ) ?: ( $a[1] <=> $b[1] ); // 安定ソート
+		} );
+		$day['events'] = array_map( function ( $r ) { return $r[2]; }, $rows );
+	}
+	unset( $day );
+	return $vars;
+};
+// 汎用と月ビュー専用(slug付き=後勝ち)の両方に掛け、確実に最終データへ反映。
+add_filter( 'tribe_events_views_v2_view_template_vars', $kpj_sort_bday_first, 20 );
+add_filter( 'tribe_events_views_v2_view_month_template_vars', $kpj_sort_bday_first, 20 );
+
