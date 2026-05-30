@@ -2706,3 +2706,70 @@ function kpj_revenue_head_tags() {
     }
 }
 add_action('wp_head', 'kpj_revenue_head_tags', 20);
+
+/**
+ * 2026-05-30: 月カレンダーの popup 表示を「単日・名前付き」に正規化する
+ * 非破壊フィルタ群。DB は一切変更しない(会期データは保持)。
+ *
+ * 背景・真因(実測で確定):
+ *   - popup 101件中98件が「終日(all_day)・複数日(multiday)」イベントで、
+ *     会期が1〜3ヶ月。TEC 月ビューは Month_View が
+ *       ! ( $event->multiday > 1 || $event->all_day )
+ *     で「通常イベント(名前が出る)」と「multiday スタック(名前なしの
+ *     継続バー)」を振り分ける(src/.../Month_View.php:472)。
+ *   - popup は multiday かつ all_day のため全て名前なし継続バー側に回り、
+ *     開始日〜終了日の全日に空帯を量産。1日最大126件・セル330px・
+ *     モバイル9600px のロングページ化、かつ「名前が見える日が34日中7日」
+ *     という事態を招いていた。
+ *
+ * 方針: DB を書き換えず、月ビューのレンダリング時だけ tribe_get_event の
+ * 返すイベントオブジェクトの multiday/all_day を打ち消して、popup を
+ * 「単日・名前付き」通常イベントとして開始日に表示させる。会期情報は
+ * 記事本文・popup 一覧に温存され、可逆。
+ */
+
+/**
+ * (A) 月ビュー時のみ、popup(タイトルが 🛍 で始まる all_day イベント)の
+ *     multiday/all_day フラグを打ち消し、通常イベント枠で名前を出させる。
+ */
+add_filter( 'tribe_get_event', function ( $event ) {
+	// 月ビューのメインクエリ描画時のみ作用させる(他ビュー・単体は不変)。
+	if ( ! function_exists( 'tribe_context' ) ) {
+		return $event;
+	}
+	$view = tribe_context()->get( 'view', null );
+	if ( 'month' !== $view ) {
+		return $event;
+	}
+	if ( ! is_object( $event ) || empty( $event->post_title ) ) {
+		return $event;
+	}
+	// popup は build 時に 🛍 prefix を付与している(誕生日=🎂 等と区別)。
+	if ( mb_strpos( $event->post_title, '🛍' ) !== 0 ) {
+		return $event;
+	}
+	// 月グリッド上は「開始日に1点・名前あり」で扱う。会期データ(_EventEndDate)は触らない。
+	$event->multiday = 1;
+	$event->all_day  = false;
+	return $event;
+}, 20 );
+
+/**
+ * (B) 1日あたりの表示イベント数を3件に制限。超過は TEC 標準の
+ *     「他 N 件」リンク(more-events.php)で集約。
+ * @see src/.../Month_View.php:319 tribe_events_views_v2_month_events_per_day
+ */
+add_filter( 'tribe_events_views_v2_month_events_per_day', function () {
+	return 3;
+} );
+
+/**
+ * (C) multiday スタック(名前なし継続バー)を月ビューで撤去する。
+ *     popup は (A) で通常イベント化したので、本当に残すべき multiday は
+ *     稀(長期ライブ等)。ここでスタックを空にして空帯の量産を根絶し、
+ *     セル高さを揃える。multiday イベント自体は開始日に通常表示される。
+ * @see src/Tribe/Views/V2/Utils/Stack.php:264
+ */
+add_filter( 'tribe_events_views_v2_stack_events', function () {
+	return [];
+} );

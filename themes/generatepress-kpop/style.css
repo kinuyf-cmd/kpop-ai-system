@@ -4946,26 +4946,33 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .tribe-events-calendar-month__day-cell--has-events:hover {
 	background-color: #fce4ec;
 }
-/* 2026-05-30: popup大量で1日最大56件展開→セル縦長・文字潰れの是正。
-   各日のイベントリストを約4件分でクリップし、超過はセル内スクロール。
-   月全体が異常に縦長になるのを防ぎ、可読性を確保(PC)。 */
+/* 2026-05-30: 月セルの高さを揃え、各日のイベント名を1行で見せる。
+   PHP側(functions.php)で popup を単日・名前付き通常イベント化(非破壊)
+   + events_per_day=3 + multiday スタック撤去 により、各日「名前付き最大3件
+   + 他N件」表示になった。あとは長い popup タイトルが2-3行に折り返して
+   セルが359px化していた(実測 1件50-66px)ので、タイトルを1行省略にして
+   1件あたりの高さを均一化し、全セルを揃える。 */
 .tribe-events-calendar-month__events {
-	max-height: 280px;
-	overflow-y: auto;
-	scrollbar-width: thin;
-	scrollbar-color: #E91E63 #fce4ec;
+	overflow: hidden;
 }
-.tribe-events-calendar-month__events::-webkit-scrollbar {
-	width: 6px;
+/* 表示は先頭3件まで(events_per_day=3 の保険。4件目以降が万一出ても隠す) */
+.tribe-events-calendar-month__events > *:nth-child(n+4) {
+	display: none;
 }
-.tribe-events-calendar-month__events::-webkit-scrollbar-thumb {
-	background: #E91E63;
-	border-radius: 3px;
+/* イベント名を1行省略(…)に。各イベント1行=高さ均一でセルが揃う。 */
+.tribe-events-calendar-month__calendar-event-title,
+.tribe-events-calendar-month__calendar-event-title-link {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 }
-.tribe-events-calendar-month__events::-webkit-scrollbar-track {
-	background: #fce4ec;
+/* 「他N件」リンクは __events の外(兄弟)。セルは「最大3件 + 他N件」で揃う。 */
+.tribe-events-calendar-month__more-events {
+	margin-top: 2px;
 }
-/* イベント1件をコンパクトに(56件詰まっても潰れにくく) */
+/* イベント1件をコンパクトに(他N件リンクと併せて密度を保つ) */
 .tribe-events-calendar-month__calendar-event {
 	margin-bottom: 2px;
 }
