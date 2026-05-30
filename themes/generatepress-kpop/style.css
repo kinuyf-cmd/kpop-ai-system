@@ -1840,7 +1840,9 @@ body { color: #2B2B32; }
     align-items: flex-start;
 }
 .kpop-ad-row-inner .kpop-ad-a8 {
-    flex: 0 0 auto;
+    flex: 0 1 auto;       /* 2026-05-30: 狭幅で縮小を許可(横スクロール根治) */
+    max-width: 100%;      /* 広告バナー(640px等)がviewportをはみ出すのを防ぐ */
+    min-width: 0;
 }
 .kpop-ad-incontent {
     margin: 32px auto;

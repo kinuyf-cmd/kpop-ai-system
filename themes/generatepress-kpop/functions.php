@@ -1414,7 +1414,7 @@ function kpop_home_popup_section() {
 		echo '<a class="kpop-card-link" href="' . esc_url( get_permalink() ) . '">';
 		echo '<span class="kpop-card-thumb">';
 		if ( has_post_thumbnail() ) {
-			the_post_thumbnail( 'medium', array( 'class' => 'kpop-card-img', 'loading' => 'lazy', 'alt' => '' ) );
+			the_post_thumbnail( 'medium', array( 'class' => 'kpop-card-img', 'loading' => 'lazy', 'alt' => the_title_attribute( array( 'echo' => false ) ) ) );
 		}
 		echo '</span>';
 		echo '<span class="kpop-card-badge">ポップアップ</span>';
@@ -1606,7 +1606,7 @@ function kpop_favorites_script() {
 					data.forEach(function(p){
 						var thumb = (p._embedded && p._embedded['wp:featuredmedia'] && p._embedded['wp:featuredmedia'][0]) ? p._embedded['wp:featuredmedia'][0].source_url : '';
 						html += '<li class="kpop-fav-card"><a href="' + p.link + '">';
-						if (thumb) html += '<img src="' + thumb + '" alt="" loading="lazy">';
+						if (thumb) html += '<img src="' + thumb + '" alt="' + (p.title.rendered || '').replace(/<[^>]*>/g, '').replace(/"/g, '&quot;') + '" loading="lazy">';
 						html += '<span class="kpop-fav-title">' + (p.title.rendered || '') + '</span>';
 						html += '</a></li>';
 					});
@@ -2424,7 +2424,7 @@ function kpop_render_popup_recommendations( $current_post_id ) {
 			<a class="popup-card-link" href="<?php the_permalink(); ?>">
 				<span class="popup-card-thumb">
 					<?php if ( has_post_thumbnail() ) {
-						the_post_thumbnail( 'medium', array( 'alt' => '', 'loading' => 'lazy' ) );
+						the_post_thumbnail( 'medium', array( 'alt' => the_title_attribute( array( 'echo' => false ) ), 'loading' => 'lazy' ) );
 					} else {
 						echo '<span class="popup-card-thumb--placeholder" aria-hidden="true"></span>';
 					} ?>
@@ -2498,7 +2498,7 @@ function kpop_render_popup_upcoming( $current_post_id ) {
 			<a class="popup-card-link" href="<?php the_permalink(); ?>">
 				<span class="popup-card-thumb">
 					<?php if ( has_post_thumbnail() ) {
-						the_post_thumbnail( 'medium', array( 'alt' => '', 'loading' => 'lazy' ) );
+						the_post_thumbnail( 'medium', array( 'alt' => the_title_attribute( array( 'echo' => false ) ), 'loading' => 'lazy' ) );
 					} else {
 						echo '<span class="popup-card-thumb--placeholder" aria-hidden="true">';
 						echo '<span class="popup-card-ph-initial">' . esc_html( mb_substr( wp_strip_all_tags( get_the_title() ), 0, 1 ) ) . '</span>';

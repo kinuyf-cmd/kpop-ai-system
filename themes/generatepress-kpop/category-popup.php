@@ -258,7 +258,7 @@ if ( function_exists( 'kpop_sort_popup_areas' ) ) {
 							<span class="popup-card-thumb">
 								<?php
 								if ( has_post_thumbnail() ) {
-									the_post_thumbnail( 'medium', array( 'alt' => '', 'loading' => 'lazy' ) );
+									the_post_thumbnail( 'medium', array( 'alt' => the_title_attribute( array( 'echo' => false ) ), 'loading' => 'lazy' ) );
 								} else {
 									?>
 									<span class="popup-card-thumb--placeholder" aria-hidden="true">

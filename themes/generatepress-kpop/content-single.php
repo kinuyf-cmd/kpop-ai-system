@@ -235,7 +235,7 @@ if ( $kpop_is_popup_single ) {
 						<li class="kpop-related-card">
 							<a href="<?php echo esc_url( get_permalink() ); ?>">
 								<?php if ( has_post_thumbnail() ) :
-									the_post_thumbnail( 'thumbnail', array( 'alt' => '', 'loading' => 'lazy' ) );
+									the_post_thumbnail( 'thumbnail', array( 'alt' => esc_attr( get_the_title() ), 'loading' => 'lazy' ) );
 								endif; ?>
 								<span class="kpop-rc-title"><?php the_title(); ?></span>
 								<span class="kpop-rc-excerpt"><?php echo esc_html( $excerpt ); ?></span>
