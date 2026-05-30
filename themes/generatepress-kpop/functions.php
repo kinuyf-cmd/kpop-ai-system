@@ -982,6 +982,34 @@ remove_action( 'wp_body_open', 'kpop_render_breaking_bar' );
 add_action( 'generate_after_header', 'kpop_render_breaking_bar' );
 
 /* ------------------------------------------------------------------
+ * TEC が出力する screen-reader-text の h1「イベント」を h2 に降格する
+ * (2026-05-30)。自社 intro の <h1>K-POP イベントカレンダー</h1> と
+ * 重複して 1ページ h1 2個になり SEO / a11y 上の見出し階層が崩れるため。
+ * フッターの wp_footer で軽量 JS により tec-a11y-title-hidden の h1 を
+ * h2 相当に変える(SRテキストは保持)。出力バッファでページ全体を
+ * いじるより安全・低リスク。アーカイブ表示時のみ出力。
+ * ------------------------------------------------------------------ */
+function kpop_events_demote_tec_h1_js() {
+	if ( ! function_exists( 'is_post_type_archive' ) || ! is_post_type_archive( 'tribe_events' ) ) {
+		return;
+	}
+	?>
+	<script>
+	(function(){
+		var h = document.querySelector('h1.tec-a11y-title-hidden');
+		if (!h) return;
+		// h1 → h2 にタグ置換(SRテキスト・クラスは維持、見出し階層を1つに)
+		var h2 = document.createElement('h2');
+		h2.className = h.className;
+		h2.textContent = h.textContent;
+		h.parentNode.replaceChild(h2, h);
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'kpop_events_demote_tec_h1_js', 99 );
+
+/* ------------------------------------------------------------------
  * イベントアーカイブ(/events/)の見出し帯 + 説明文
  * The Events Calendar 既定では .tribe-events-header__title が非表示で、
  * 初見の来訪者に「何のページか」が伝わらない。アーカイブ表示時のみ
