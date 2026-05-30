@@ -2733,22 +2733,19 @@ add_action('wp_head', 'kpj_revenue_head_tags', 20);
  *     multiday/all_day フラグを打ち消し、通常イベント枠で名前を出させる。
  */
 add_filter( 'tribe_get_event', function ( $event ) {
-	// 月ビューのメインクエリ描画時のみ作用させる(他ビュー・単体は不変)。
-	if ( ! function_exists( 'tribe_context' ) ) {
-		return $event;
-	}
-	$view = tribe_context()->get( 'view', null );
-	if ( 'month' !== $view ) {
-		return $event;
-	}
 	if ( ! is_object( $event ) || empty( $event->post_title ) ) {
 		return $event;
 	}
-	// popup は build 時に 🛍 prefix を付与している(誕生日=🎂 等と区別)。
-	if ( mb_strpos( $event->post_title, '🛍' ) !== 0 ) {
+	// popup(🛍)と誕生日(🎂)は build 時に絵文字 prefix を付与している。
+	// どちらも _EventAllDay=yes のため、TEC は ! (multiday>1 || all_day) の
+	// all_day 条件で「名前なしの multiday 継続バー」側に振り分けてしまい、
+	// カレンダー上で名前が出ない(誕生日が全く見えない主因もこれ)。
+	// 月グリッド上だけ all_day/multiday を打ち消し「開始日に1点・名前あり」化。
+	// 会期データ(_EventEndDate)は触らない=非破壊。
+	$title = $event->post_title;
+	if ( mb_strpos( $title, '🛍' ) !== 0 && mb_strpos( $title, '🎂' ) !== 0 ) {
 		return $event;
 	}
-	// 月グリッド上は「開始日に1点・名前あり」で扱う。会期データ(_EventEndDate)は触らない。
 	$event->multiday = 1;
 	$event->all_day  = false;
 	return $event;
