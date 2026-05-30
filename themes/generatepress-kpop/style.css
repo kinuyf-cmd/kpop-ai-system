@@ -5032,17 +5032,17 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .tribe-events-calendar-list__event-title-link {
 	position: relative;
 }
-/* 2026-05-30: リスト表示の各イベント行をカード化(羅列感の解消)。
+/* 2026-05-30: リスト表示の各イベント行をコンパクトなカードに。
    TEC は .tribe-common-g-row 等で高詳細度のため .tribe-events で詳細度を上げる。 */
 .tribe-events .tribe-events-calendar-list__event-row {
-	margin-bottom: 12px;
+	margin-bottom: 10px;   /* 行間 40px→10px */
 	padding: 0;
 }
 .tribe-events .tribe-events-calendar-list__event {
-	padding: 14px 16px;
+	padding: 10px 14px;    /* 14px 16px→10px 14px */
 	border: 1px solid #f0e3e8;
 	border-left: 4px solid #E91E63;
-	border-radius: 10px;
+	border-radius: 8px;
 	background: #fff;
 	transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -5050,18 +5050,35 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	box-shadow: 0 3px 12px rgba(233, 30, 99, 0.12);
 	transform: translateY(-1px);
 }
-/* 誕生日行は左ボーダー色で種別を一目で区別(オレンジ) */
 .tribe-events .kpj-birthday-event .tribe-events-calendar-list__event,
 .tribe-events .kpj-birthday-event.tribe-events-calendar-list__event-row .tribe-events-calendar-list__event {
 	border-left-color: #FF9800;
 }
-.tribe-events-calendar-list__event-title {
-	margin: 0 0 4px;
-	line-height: 1.5;
+/* タイトルを小さめ・1行省略でコンパクトに(24px→17px) */
+.tribe-events .tribe-events-calendar-list__event-title {
+	margin: 0;
+	line-height: 1.4;
+	font-size: 1.05rem;
 }
-.tribe-events-calendar-list__event-datetime {
+.tribe-events .tribe-events-calendar-list__event-title-link {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.tribe-events .tribe-events-calendar-list__event-datetime {
 	color: #b8889a;
-	font-size: 0.82rem;
+	font-size: 0.78rem;
+	margin: 0;
+}
+/* 抜粋(続きを読む含む)はリストでは非表示にして1イベントを最小化。
+   TEC が後ろで !important で display を指定するため、より高詳細度で勝つ。 */
+body .tribe-events .tribe-events-calendar-list__event .tribe-events-calendar-list__event-description {
+	display: none !important;
+}
+/* 日付列の余白を詰める */
+.tribe-events .tribe-events-calendar-list__event-date-tag {
+	padding-right: 12px;
 }
 /* タイトル文字列で識別: 🎂 始まりのリンクテキストに視覚アクセント */
 .tribe-events .tribe-events-calendar-month__calendar-event-title-link,
