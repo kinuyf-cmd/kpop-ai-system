@@ -5034,20 +5034,29 @@ body.kpop-cat-comeback .kpop-archive-banner {
 }
 /* 2026-05-30: リスト表示の各イベント行をコンパクトなカードに。
    TEC は .tribe-common-g-row 等で高詳細度のため .tribe-events で詳細度を上げる。 */
-/* カード間余白: TEC が .tribe-common-g-row に上下 margin を当てるため
-   body 詳細度で margin-top/bottom 両方を詰める(48px+6px→6px)。 */
+/* カード間の隙間を撤去して連結リスト化。TEC の上下 margin を 0 に。
+   隙間ゼロでも各イベントは下罫線+左ボーダーで識別できる。 */
 body .tribe-events .tribe-events-calendar-list__event-row {
 	margin-top: 0 !important;
-	margin-bottom: 6px !important;
+	margin-bottom: 0 !important;
 	padding: 0;
 }
 .tribe-events .tribe-events-calendar-list__event {
-	padding: 5px 14px;     /* カード内縦余白を5pxに */
+	padding: 6px 14px;
 	border: 1px solid #f0e3e8;
+	border-top: none;          /* 隣接カードと罫線を共有(二重線回避) */
 	border-left: 4px solid #E91E63;
-	border-radius: 8px;
+	border-radius: 0;          /* 連結させるので角丸なし */
 	background: #fff;
 	transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+/* 連結リストの先頭/末尾だけ角丸 */
+body .tribe-events .tribe-events-calendar-list__event-row:first-child .tribe-events-calendar-list__event {
+	border-top: 1px solid #f0e3e8;
+	border-radius: 8px 8px 0 0;
+}
+body .tribe-events .tribe-events-calendar-list__event-row:last-child .tribe-events-calendar-list__event {
+	border-radius: 0 0 8px 8px;
 }
 .tribe-events .tribe-events-calendar-list__event:hover {
 	box-shadow: 0 3px 12px rgba(233, 30, 99, 0.12);
