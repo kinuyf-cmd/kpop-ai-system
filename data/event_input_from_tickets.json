@@ -82,16 +82,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "MYNAME",
-   "title": "MYNAME",
-   "source_url": "https://eplus.jp/sf/detail/0728230001-P0030087P021001",
-   "source_media": "イープラス",
-   "start_date": "2026-05-29",
-   "venue": "SPADE BOX",
-   "_source_id": "eplus"
-  },
-  {
-   "type": "event",
    "artist_keyword": "Kwon Jin Ah",
    "title": "2026 Kwon Jin Ah 1st Concert in Japan",
    "source_url": "https://eplus.jp/sf/detail/4533350001-P0030001P021001",
@@ -289,6 +279,16 @@
    "start_date": "2026-05-30",
    "venue": "IGアリーナ",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "N.Flying",
+   "title": "N.Flying",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667951",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-03",
+   "venue": "Kanadevia Hall",
+   "_source_id": "pia"
   }
  ]
 }

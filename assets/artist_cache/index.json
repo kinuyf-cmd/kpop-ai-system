@@ -572,5 +572,19 @@
         "license": "CC BY-SA 2.0"
       }
     ]
+  },
+  "exo": {
+    "name": "EXO",
+    "files": [
+      "exo_f6709b4e.png"
+    ],
+    "sources": [
+      {
+        "file": "exo_f6709b4e.png",
+        "wikimedia_title": "File:EXO at KBS Gayo Daejun on December 28, 2018.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/EXO_at_KBS_Gayo_Daejun_on_December_28%2C_2018.png",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
