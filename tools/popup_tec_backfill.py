@@ -23,7 +23,7 @@ for ln in lines:
     # duration = end - start (秒)。popupは複数日。
     try:
         dur=int((datetime.strptime(ej,'%Y-%m-%d %H:%M:%S')-datetime.strptime(sj,'%Y-%m-%d %H:%M:%S')).total_seconds())
-        if dur<=0: dur=86399
+        if dur<=0 or dur>8388607: dur=min(dur,8388607) if dur>0 else 86399
     except: dur=86399
     try:
         m.run_mysql(f"INSERT INTO wp_tec_events (post_id,start_date,end_date,timezone,start_date_utc,end_date_utc,duration,hash) VALUES ({pid},'{sj}','{ej}','Asia/Tokyo','{su}','{eu}',{dur},MD5(CONCAT({pid},'{sj}'))) ON DUPLICATE KEY UPDATE start_date=VALUES(start_date);")
