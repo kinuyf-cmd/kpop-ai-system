@@ -5034,12 +5034,15 @@ body.kpop-cat-comeback .kpop-archive-banner {
 }
 /* 2026-05-30: リスト表示の各イベント行をコンパクトなカードに。
    TEC は .tribe-common-g-row 等で高詳細度のため .tribe-events で詳細度を上げる。 */
-.tribe-events .tribe-events-calendar-list__event-row {
-	margin-bottom: 10px;   /* 行間 40px→10px */
+/* カード間余白: TEC が .tribe-common-g-row に上下 margin を当てるため
+   body 詳細度で margin-top/bottom 両方を詰める(48px+6px→6px)。 */
+body .tribe-events .tribe-events-calendar-list__event-row {
+	margin-top: 0 !important;
+	margin-bottom: 6px !important;
 	padding: 0;
 }
 .tribe-events .tribe-events-calendar-list__event {
-	padding: 7px 14px;     /* さらに薄く: 縦7px */
+	padding: 5px 14px;     /* カード内縦余白を5pxに */
 	border: 1px solid #f0e3e8;
 	border-left: 4px solid #E91E63;
 	border-radius: 8px;
