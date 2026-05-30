@@ -1063,16 +1063,16 @@ function kpop_events_archive_intro() {
 	    return 'event';
 	  }
 	  function apply(){
-	    // 月表示の日別イベントセル + リスト表示のイベント行
+	    // 月表示の日別イベントセル(PC) + モバイル当日リスト + リスト表示の行
 	    var nodes = document.querySelectorAll(
 	      '.tribe-events-calendar-month__calendar-event, ' +
 	      '.tribe-events-calendar-month__multiday-event, ' +
-	      '.tribe-events-calendar-month__mobile-events-mobile-day-marker ~ * .tribe-events-calendar-month__mobile-events-mobile-event, ' +
+	      '.tribe-events-calendar-month-mobile-events__mobile-event, ' +
 	      '.tribe-events-calendar-list__event-row, ' +
 	      '.tribe-events-calendar-day__event'
 	    );
 	    nodes.forEach(function(node){
-	      var titleEl = node.querySelector('a, .tribe-events-calendar-month__calendar-event-title, .tribe-events-calendar-list__event-title');
+	      var titleEl = node.querySelector('a, .tribe-events-calendar-month__calendar-event-title, .tribe-events-calendar-month-mobile-events__mobile-event-title, .tribe-events-calendar-list__event-title');
 	      var text = (titleEl ? titleEl.textContent : node.textContent) || '';
 	      var linkEl = node.querySelector('a[href]');
 	      var href = linkEl ? linkEl.getAttribute('href') : '';
@@ -2763,7 +2763,11 @@ add_filter( 'tribe_get_event', function ( $event ) {
  * 「他N件」リンクは found_events 基準なので件数表示は正しいまま。
  */
 add_filter( 'tribe_events_views_v2_month_events_per_day', function () {
-	return 3;
+	// popup 単日化(tools/popup_singleday.php)で各日のイベント総数が激減した
+	// ため 8 に拡大。各日 events に誕生日も含まれ、後段 (E) が誕生日を先頭へ
+	// ソート。最終表示は CSS(PC: __events>nth-child(n+4) / モバイル:
+	// mobile-event の nth)で先頭3件に制限し、超過は「他N件」へ。
+	return 8;
 } );
 
 /**

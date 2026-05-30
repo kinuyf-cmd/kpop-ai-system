@@ -4955,8 +4955,15 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .tribe-events-calendar-month__events {
 	overflow: hidden;
 }
-/* 表示は先頭3件まで(events_per_day=3 の保険。4件目以降が万一出ても隠す) */
+/* PC グリッド: 各日の表示は先頭3件まで(events_per_day=8 で取得し誕生日優先
+   ソート済みのうち、表示は3件に制限。4件目以降は「他N件」リンクへ集約)。 */
 .tribe-events-calendar-month__events > *:nth-child(n+4) {
+	display: none;
+}
+/* モバイル当日リスト: 同様に先頭5件まで(縦に余裕があるので少し多め)。
+   誕生日優先ソート済みなので、誕生日が必ず上位に入る。超過は「他N件」。 */
+.tribe-events-calendar-month-mobile-events__mobile-day
+	> .tribe-events-calendar-month-mobile-events__mobile-event:nth-of-type(n+6) {
 	display: none;
 }
 /* イベント名を1行省略(…)に。各イベント1行=高さ均一でセルが揃う。 */
