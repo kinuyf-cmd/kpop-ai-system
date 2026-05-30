@@ -5039,7 +5039,7 @@ body.kpop-cat-comeback .kpop-archive-banner {
 	padding: 0;
 }
 .tribe-events .tribe-events-calendar-list__event {
-	padding: 10px 14px;    /* 14px 16px→10px 14px */
+	padding: 7px 14px;     /* さらに薄く: 縦7px */
 	border: 1px solid #f0e3e8;
 	border-left: 4px solid #E91E63;
 	border-radius: 8px;
@@ -5054,17 +5054,20 @@ body.kpop-cat-comeback .kpop-archive-banner {
 .tribe-events .kpj-birthday-event.tribe-events-calendar-list__event-row .tribe-events-calendar-list__event {
 	border-left-color: #FF9800;
 }
-/* タイトルを小さめ・1行省略でコンパクトに(24px→17px) */
-.tribe-events .tribe-events-calendar-list__event-title {
+/* タイトルを小さめ・1行省略でコンパクトに(改行を減らす)。
+   TEC が h3 等に大きめ font-size を当てるため body 詳細度で確実に。 */
+body .tribe-events .tribe-events-calendar-list__event-title,
+body .tribe-events .tribe-events-calendar-list__event-title-link {
 	margin: 0;
-	line-height: 1.4;
-	font-size: 1.05rem;
+	line-height: 1.35;
+	font-size: 0.95rem;
+	font-weight: 700;
 }
-.tribe-events .tribe-events-calendar-list__event-title-link {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
+body .tribe-events .tribe-events-calendar-list__event-title-link {
+	display: block;
+	white-space: nowrap;
 	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .tribe-events .tribe-events-calendar-list__event-datetime {
 	color: #b8889a;
