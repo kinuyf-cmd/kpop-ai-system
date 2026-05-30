@@ -5015,6 +5015,56 @@ body.kpop-cat-comeback .kpop-archive-banner {
 }
 /* ============================================================ END events-archive-polish-v2 */
 
+/* ============================================================ BEGIN events-firstview-compaction
+   2026-05-30: ユーザー所感「カレンダー表示で上部に見えず、スクロールしないと
+   いけない箇所が多い」。実測(PC 1280x800)でカレンダーグリッドが top=815px
+   から始まり、ファーストビューに全く入らないことを確認。
+   主犯3つを実測で特定:
+     (1) .tribe-events-l-container の padding-top: 96px (TEC既定・最大の無駄余白)
+     (2) events-bar(検索+ビュー切替)の margin-bottom: 32px
+     (3) top-bar(月ナビ ← → 今月)の margin-bottom: 32px
+   これらを圧縮し、カレンダーグリッドを約120px引き上げてファーストビューに
+   曜日ヘッダー+1週目以降が入るようにする。
+   リスト/日付ビューにも l-container は共通だが、上部余白削減はそれらにも
+   有益なため全 events ビューに適用(行間ゼロのリストには無影響)。
+   ============================================================ */
+
+/* (1) 最大の主犯: container 上部 96px → 16px(本文より上の前置きを詰める) */
+body .tribe-events .tribe-events-l-container,
+body .post-type-archive-tribe_events .tribe-events-l-container {
+	padding-top: 16px !important;
+}
+
+/* (2) 検索+ビュー切替バーの下余白 32px → 12px */
+body .tribe-events .tribe-events-header__events-bar {
+	margin-bottom: 12px !important;
+}
+
+/* (3) 月ナビ(← → 今月)の下余白 32px → 12px */
+body .tribe-events .tribe-events-c-top-bar {
+	margin-bottom: 12px !important;
+}
+
+/* 見出し下の説明文(intro)の上余白も少し詰める(24px→12px)。
+   説明は残すが、ファーストビューを稼ぐため上下を圧縮。 */
+body .post-type-archive-tribe_events .tribe-events-before-html,
+body .post-type-archive-tribe_events .tribe-events-header__title + * {
+	margin-top: 12px !important;
+}
+
+/* モバイルはさらに詰める(縦が貴重なため container 上部を最小化) */
+@media (max-width: 768px) {
+	body .tribe-events .tribe-events-l-container,
+	body .post-type-archive-tribe_events .tribe-events-l-container {
+		padding-top: 8px !important;
+	}
+	body .tribe-events .tribe-events-header__events-bar,
+	body .tribe-events .tribe-events-c-top-bar {
+		margin-bottom: 8px !important;
+	}
+}
+/* ============================================================ END events-firstview-compaction */
+
 /* ============================================================ BEGIN birthday-events-styling
    2026-05-28: 誕生日イベントを 🎂 アイコン+ピンク系で他イベントと差別化。
    title prefix が "🎂 " のイベントを薄ピンク背景+ピンク左ボーダーで表示。
