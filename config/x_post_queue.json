@@ -1,15 +1,87 @@
 {
-  "updated": "2026-05-30 21:17",
-  "count": 47,
+  "updated": "2026-05-31 21:30",
+  "count": 38,
   "queue": [
     {
-      "title": "BTSメンバーの中で最もフォトジェニックは？",
-      "url": "https://www.kpopjournal.tokyo/?p=5632",
-      "post_id": 5632,
+      "title": "KARA、日本ファンミーティング延期を発表",
+      "url": "https://www.kpopjournal.tokyo/?p=5834",
+      "post_id": 5834,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "RIIZE",
       "priority": "high",
-      "queued_at": "2026-05-30T17:30:55.945874"
+      "queued_at": "2026-05-31T17:36:16.725333"
+    },
+    {
+      "title": "TREASURE、ツアー「PULSE ON」フィナーレ開催",
+      "url": "https://www.kpopjournal.tokyo/treasure-pulse-on-tour-finale/",
+      "post_id": 5821,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-05-31T15:31:28.130570"
+    },
+    {
+      "title": "TREASURE「IF I」トレーラー1100万回再生突破",
+      "url": "https://www.kpopjournal.tokyo/treasure-if-i-trailer-1100m-views/",
+      "post_id": 5816,
+      "genre": "breaking",
+      "artist": "TREASURE",
+      "priority": "high",
+      "queued_at": "2026-05-31T13:33:09.975404"
+    },
+    {
+      "title": "IUに対する悪質コメント投稿者、懲役刑確定",
+      "url": "https://www.kpopjournal.tokyo/iu-malicious-comments-sentencing/",
+      "post_id": 5811,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-05-31T13:31:00.196938"
+    },
+    {
+      "title": "ITZYのCHAERYEONG、デニムスタイルで「Motto」カムバック",
+      "url": "https://www.kpopjournal.tokyo/itzy-chaeryeong-denim-style-motto-comeback/",
+      "post_id": 5790,
+      "genre": "breaking",
+      "artist": "채령",
+      "priority": "high",
+      "queued_at": "2026-05-31T09:39:06.609263"
+    },
+    {
+      "title": "ハ・ジウォン、23年ぶり音楽番組カムバック",
+      "url": "https://www.kpopjournal.tokyo/?p=5786",
+      "post_id": 5786,
+      "genre": "breaking",
+      "artist": "하지원",
+      "priority": "high",
+      "queued_at": "2026-05-31T09:37:43.689287"
+    },
+    {
+      "title": "TREASURE、デビュー6年目全曲ヒップホップ新作",
+      "url": "https://www.kpopjournal.tokyo/treasure-6th-anniversary-hip-hop-album/",
+      "post_id": 5781,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-05-31T09:35:14.305236"
+    },
+    {
+      "title": "BoA、金髪姿で「アトランティスの少女」復活",
+      "url": "https://www.kpopjournal.tokyo/boa-atlantis-girl-comeback/",
+      "post_id": 5777,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-05-31T09:33:31.821710"
+    },
+    {
+      "title": "FIFTY FIFTYが4thミニアルバム公式メドレー公開",
+      "url": "https://www.kpopjournal.tokyo/fifty-fifty-4th-mini-album-medley/",
+      "post_id": 5761,
+      "genre": "breaking",
+      "artist": "FIFTY FIFTY",
+      "priority": "high",
+      "queued_at": "2026-05-31T07:33:07.757225"
     },
     {
       "title": "BTS、北米ツアー第1弾が約84万人動員成功",
@@ -246,184 +318,31 @@
       "queued_at": "2026-05-29T21:35:50.438304"
     },
     {
-      "title": "エックスのイシュー 31期出演者の論争続く",
-      "url": "https://www.kpopjournal.tokyo/x-issue-31-cast-controversy/",
-      "post_id": 4802,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-05-29T19:36:26.599478"
-    },
-    {
-      "title": "チェ・ジュニ、スタバ写真で心情吐露",
-      "url": "https://www.kpopjournal.tokyo/che-juni-starbucks-emotion/",
-      "post_id": 4798,
-      "genre": "breaking",
-      "artist": "지드래곤",
-      "priority": "high",
-      "queued_at": "2026-05-29T19:34:58.929603"
-    },
-    {
-      "title": "IVEのLiz、バカンスファッション披露",
-      "url": "https://www.kpopjournal.tokyo/?p=4789",
-      "post_id": 4789,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-05-29T19:31:09.294696"
-    },
-    {
-      "title": "ジエウン、甲状腺癌闘病中の健康状態明かす",
-      "url": "https://www.kpopjournal.tokyo/jieun-thyroid-cancer-health-update/",
-      "post_id": 4777,
-      "genre": "breaking",
-      "artist": "엑소",
-      "priority": "high",
-      "queued_at": "2026-05-29T17:36:07.738825"
-    },
-    {
-      "title": "SEVENTEENディノ、「ピ鉄人」として全国歌謡大賞出演",
-      "url": "https://www.kpopjournal.tokyo/seventeen-dino-kayo-taisho/",
-      "post_id": 4767,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-05-29T17:33:56.908814"
-    },
-    {
-      "title": "IVEのLeeseo、フォトコールでファン魅了",
-      "url": "https://www.kpopjournal.tokyo/ive-leeseo-photo-call-fans/",
-      "post_id": 4729,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-05-29T15:37:04.530178"
-    },
-    {
-      "title": "イ・ガンイン、ATM移籍消滅か バルセロナが1751億提示",
-      "url": "https://www.kpopjournal.tokyo/lee-gang-in-barcelona-atm-transfer-rumors/",
-      "post_id": 4717,
-      "genre": "breaking",
-      "artist": "제시",
-      "priority": "high",
-      "queued_at": "2026-05-29T15:35:13.426395"
-    },
-    {
-      "title": "IVEのジャン・ウォニョン、ファンサービス向上",
-      "url": "https://www.kpopjournal.tokyo/ive-jan-wonyoung-fan-service-improvement/",
-      "post_id": 4701,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-05-29T15:32:21.722315"
-    },
-    {
-      "title": "I.O.I、10年ぶり活動終了で涙の別れ",
-      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-activity-ending/",
-      "post_id": 4681,
-      "genre": "breaking",
-      "artist": "아이오아이",
-      "priority": "high",
-      "queued_at": "2026-05-29T13:39:47.871479"
-    },
-    {
-      "title": "Red Velvetジョイ、日本での記念ショット公開",
-      "url": "https://www.kpopjournal.tokyo/red-velvet-joy-japan-memorial-shot/",
-      "post_id": 4671,
-      "genre": "breaking",
-      "artist": "Red Velvet",
-      "priority": "high",
-      "queued_at": "2026-05-29T13:36:39.872303"
-    },
-    {
-      "title": "aespa、正規2集収録の新曲「LEMONADE」リリース",
-      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-new-song-release/",
-      "post_id": 4654,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-05-29T13:33:21.246789"
-    },
-    {
-      "title": "See Ya、15年ぶり完全体カムバックとMV公開",
-      "url": "https://www.kpopjournal.tokyo/see-ya-15th-anniversary-comeback-mv/",
-      "post_id": 4648,
-      "genre": "breaking",
-      "artist": "씨야",
-      "priority": "high",
-      "queued_at": "2026-05-29T13:32:09.110931"
-    },
-    {
-      "title": "aespa「Cringe」コメントがトム・ホランド投稿に反発",
-      "url": "https://www.kpopjournal.tokyo/aespa-cringe-tom-holland-comment/",
-      "post_id": 4645,
+      "title": "aespa「Lemonade」でNewJeans言及、韓国で物議",
+      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-newjeans-kankoku-mobigi/",
+      "post_id": 5851,
       "genre": "breaking",
       "artist": "aespa",
       "priority": "high",
-      "queued_at": "2026-05-29T13:32:02.911743"
+      "queued_at": "2026-05-31T19:31:22.903859"
     },
     {
-      "title": "ILLITのモカ、今日「ミュージックバンク」で復帰",
-      "url": "https://www.kpopjournal.tokyo/illit-moka-music-bank-return/",
-      "post_id": 4637,
+      "title": "カンナム、20kg減量後の新プロフィール公開",
+      "url": "https://www.kpopjournal.tokyo/kanna-20kg-diet-new-profile/",
+      "post_id": 5857,
       "genre": "breaking",
-      "artist": "아일릿",
+      "artist": "강남",
       "priority": "high",
-      "queued_at": "2026-05-29T13:30:57.209815"
+      "queued_at": "2026-05-31T19:36:11.905428"
     },
     {
-      "title": "See Ya、新曲MVでファンに感謝のメッセージ",
-      "url": "https://www.kpopjournal.tokyo/see-ya-new-song-mv-fan-thank-you/",
-      "post_id": 4607,
+      "title": "IU、侮辱した女性に懲役4ヶ月の判決",
+      "url": "https://www.kpopjournal.tokyo/iu-insult-woman-sentence-4months/",
+      "post_id": 5861,
       "genre": "breaking",
-      "artist": "씨야",
+      "artist": "IU",
       "priority": "high",
-      "queued_at": "2026-05-29T09:33:47.669844"
-    },
-    {
-      "title": "BOYNEXTDOOR、正規1集「VIRAL」カムバック",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-viral-comeback/",
-      "post_id": 4601,
-      "genre": "breaking",
-      "artist": "보이넥스트도어",
-      "priority": "high",
-      "queued_at": "2026-05-29T09:31:07.515605"
-    },
-    {
-      "title": "P1Harmony、7月にイルサンでファンミ開催",
-      "url": "https://www.kpopjournal.tokyo/p1harmony-fanmeeting-ulsan-july/",
-      "post_id": 4593,
-      "genre": "breaking",
-      "artist": "피원하모니",
-      "priority": "high",
-      "queued_at": "2026-05-29T07:38:38.254988"
-    },
-    {
-      "title": "ハンファ・イーグルスが大逆転劇で18-7勝利",
-      "url": "https://www.kpopjournal.tokyo/hanhwa-eagles-gyakuten-18-7-win/",
-      "post_id": 4587,
-      "genre": "breaking",
-      "artist": "있지",
-      "priority": "high",
-      "queued_at": "2026-05-29T07:35:59.493970"
-    },
-    {
-      "title": "BLACKPINK「How You Like That」が20億回再生突破",
-      "url": "https://www.kpopjournal.tokyo/?p=4574",
-      "post_id": 4574,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-05-29T07:31:13.749806"
-    },
-    {
-      "title": "aespaの出演料1億超え大学フェス現実",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260530-193206/",
-      "post_id": 5743,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-05-30T19:32:53.825305"
+      "queued_at": "2026-05-31T21:30:55.646927"
     }
   ]
 }
