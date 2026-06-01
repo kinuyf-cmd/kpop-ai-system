@@ -235,6 +235,43 @@ def _is_registered_artist(name: str) -> bool:
     return name.lower() in _load_registered_artist_names()
 
 
+_ALIAS_CACHE = None
+
+
+def _load_artist_aliases() -> dict:
+    """data/artist_aliases.json のエイリアス→正規英語名マップを返す(キャッシュ)。"""
+    global _ALIAS_CACHE
+    if _ALIAS_CACHE is not None:
+        return _ALIAS_CACHE
+    _ALIAS_CACHE = {}
+    try:
+        path = os.path.join(os.path.dirname(__file__), '..', 'data', 'artist_aliases.json')
+        with open(path, encoding='utf-8') as f:
+            _ALIAS_CACHE = json.load(f).get('aliases', {}) or {}
+    except Exception:
+        _ALIAS_CACHE = {}
+    return _ALIAS_CACHE
+
+
+def normalize_artist_name(name):
+    """ハングル/カタカナ等の表記を正規英語名へ正規化する。
+
+    サムネ resolver が Wikimedia/YouTube 検索する前に呼ぶ。辞書(data/
+    artist_aliases.json)にあれば正規名を、無ければ入力をそのまま返す
+    (誤変換せず降格を許容する保守設計)。None/空は安全に通す。
+    2026-06-01: 아이오아이/레드벨벳 等の未正規化が AI生成降格49%の主因だった対処。
+    """
+    if not name:
+        return name
+    aliases = _load_artist_aliases()
+    if name in aliases:
+        return aliases[name]
+    stripped = name.strip()
+    if stripped in aliases:
+        return aliases[stripped]
+    return name
+
+
 def resolve_wikimedia(artist_name: str) -> dict | None:
     """Check local cache first, then fetch from Wikimedia Commons API.
 
@@ -946,7 +983,13 @@ def resolve(artist_name: str, genre: str = "", post_id: str = "",
         2026-05-15: chain 順序を YouTube → artist_cache → Wikimedia に変更。
         Wikimedia は textual match 由来の誤マッチが多いため、検証済 cache を
         先に試行する (See Ya / Aiki 事故の構造的回避)。
+        2026-06-01: 検索前に表記を正規化(아이오아이→I.O.I 等)。ハングル/カタカナ
+        のままだと YouTube/Wikimedia がヒットせず AI生成へ無駄降格していた対処。
         """
+        norm = normalize_artist_name(artist)
+        if norm != artist:
+            sys.stderr.write(f"[resolver] 正規化: '{artist}' → '{norm}'\n")
+            artist = norm
         # 1. YouTube (official_accounts 登録済 channel のみ、attribution check 込み)
         r = resolve_youtube(artist, prefer=yt_order, prefer_keywords=song_keywords or None)
         if r:
