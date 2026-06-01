@@ -53,7 +53,13 @@ case "$SUITE" in
   unit)        PYTEST_TARGETS=(tests/unit) ;;
   regression)  PYTEST_TARGETS=(tests/regression) ;;
   e2e)         PYTEST_TARGETS=(tests/e2e); export KPOP_E2E_ENABLE=1 ;;
-  all)         PYTEST_TARGETS=(tests/unit tests/regression) ;;
+  all)         PYTEST_TARGETS=(tests/unit tests/regression)
+               # --e2e / QA_FULL=1 のとき suite=all でも E2E を対象に含める
+               # (旧実装は KPOP_E2E_ENABLE だけ立てて tests/e2e を追加し忘れ、
+               #  --e2e 単独では E2E が一切走らなかった。2026-06-01 修正)
+               if [[ "$E2E" == "1" || "${QA_FULL:-0}" == "1" ]]; then
+                 PYTEST_TARGETS+=(tests/e2e)
+               fi ;;
   *) echo "unknown suite: $SUITE" >&2; exit 2 ;;
 esac
 
