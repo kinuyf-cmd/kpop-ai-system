@@ -66,7 +66,15 @@ def check_letterbox(image_url: str, threshold: float = 0.18) -> dict:
         return {'is_letterbox': False, 'error': 'PIL/numpy not available'}
 
     try:
-        with urllib.request.urlopen(image_url, timeout=15) as r:
+        # 2026-06-01: UA なしだと allkpop 等が 403 を返し、画像取得失敗で
+        # is_letterbox=False(error)→ 段階1 で別経路の誤ブロックに繋がっていた。
+        # _download_image と同じ Chrome UA を付けて 403 を回避する。
+        _req = urllib.request.Request(image_url, headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+                          'AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/125.0.0.0 Safari/537.36',
+        })
+        with urllib.request.urlopen(_req, timeout=15) as r:
             img = Image.open(BytesIO(r.read())).convert('RGB')
     except Exception as e:
         return {'is_letterbox': False, 'error': str(e)[:100]}

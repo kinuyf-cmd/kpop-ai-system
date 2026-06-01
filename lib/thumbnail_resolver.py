@@ -390,6 +390,23 @@ def fetch_source_image(source_url, output_path):
 
         og_url = _normalize_url(og_url, source_url)
 
+        # 低品質 og ドメイン(osen等)は og が 300px portrait の縮小版を出すため、
+        # full-res(landscape)版に書き換えてから検査する。これをしないと段階1の
+        # 縦長/letterbox 検査が縮小版を見て誤 REJECT し、無駄に段階2へ降格していた
+        # (2026-06-01: osen 速報サムネ letterbox ブロック8件/日の主因)。
+        # full-res が取得できない/404 のときは元の og_url を維持(従来挙動)。
+        try:
+            from thumbnail_source_resolver import (
+                _is_low_quality_og_domain, _upgrade_low_quality_og_url)
+            if _is_low_quality_og_domain(og_url):
+                _full = _upgrade_low_quality_og_url(og_url)
+                if _full and _download_image(_full, output_path + '.fulltest'):
+                    og_url = _full
+                if os.path.exists(output_path + '.fulltest'):
+                    os.remove(output_path + '.fulltest')
+        except Exception:
+            pass  # 書き換え失敗時は元 og_url を維持
+
         # --- og:image をダウンロード & 処理 ---
         if _download_image(og_url, output_path) and _validate_and_crop(output_path):
             if _has_face(output_path):
