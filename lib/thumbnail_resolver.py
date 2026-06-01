@@ -9,6 +9,11 @@ for _p in (_ROOT, os.path.join(_ROOT, 'lib')):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+# 画像/HTML取得時の共通ブラウザ UA(UA なしだと一部メディアが 403 を返す)
+_BROWSER_UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+               'AppleWebKit/537.36 (KHTML, like Gecko) '
+               'Chrome/125.0.0.0 Safari/537.36')
+
 
 # OG画像が動画プレーヤー/広告由来の場合に拒否するためのドメイン/パスパターン
 _SUSPICIOUS_OG_HOST_PATTERNS = (
@@ -286,7 +291,7 @@ def _download_image(img_url, output_path):
     """画像をダウンロード、5KB以上なら成功"""
     try:
         img_req = urllib.request.Request(img_url, headers={
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+            'User-Agent': _BROWSER_UA,
         })
         with urllib.request.urlopen(img_req, timeout=20) as resp:
             with open(output_path, 'wb') as f:
@@ -320,7 +325,7 @@ def fetch_source_image(source_url, output_path):
     """
     try:
         req = urllib.request.Request(source_url, headers={
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+            'User-Agent': _BROWSER_UA,
         })
         html = urllib.request.urlopen(req, timeout=20).read().decode('utf-8', errors='replace')
 
@@ -394,21 +399,22 @@ def fetch_source_image(source_url, output_path):
         # full-res(landscape)版に書き換えてから検査する。これをしないと段階1の
         # 縦長/letterbox 検査が縮小版を見て誤 REJECT し、無駄に段階2へ降格していた
         # (2026-06-01: osen 速報サムネ letterbox ブロック8件/日の主因)。
-        # full-res が取得できない/404 のときは元の og_url を維持(従来挙動)。
+        # full-res が取得できない/404 のときは元の og_url にフォールバック(従来挙動)。
+        # 本来のダウンロード先(output_path)に直接落として二重DLを避ける。
+        downloaded = False
         try:
             from thumbnail_source_resolver import (
                 _is_low_quality_og_domain, _upgrade_low_quality_og_url)
             if _is_low_quality_og_domain(og_url):
                 _full = _upgrade_low_quality_og_url(og_url)
-                if _full and _download_image(_full, output_path + '.fulltest'):
+                if _full and _download_image(_full, output_path):
                     og_url = _full
-                if os.path.exists(output_path + '.fulltest'):
-                    os.remove(output_path + '.fulltest')
+                    downloaded = True
         except Exception:
-            pass  # 書き換え失敗時は元 og_url を維持
+            pass  # 書き換え失敗時は元 og_url で通常DLにフォールバック
 
         # --- og:image をダウンロード & 処理 ---
-        if _download_image(og_url, output_path) and _validate_and_crop(output_path):
+        if (downloaded or _download_image(og_url, output_path)) and _validate_and_crop(output_path):
             if _has_face(output_path):
                 return {'path': output_path, 'image_url': og_url, 'source_url': source_url}
             else:
