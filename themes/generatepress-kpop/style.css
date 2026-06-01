@@ -5768,3 +5768,47 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
   margin-top: 40px;
 }
 
+
+/* ============================================================
+   Lane C push: FAQ セクション用スタイル(2026-06-01)
+   子テーマ generatepress-kpop の style.css 末尾に追記する。
+   既存 sentinel ブロック(sidebar_polish 等)は触らないこと。
+   コントラストは本文色 #1a1a1a / アクセント #C2185B で AA 準拠。
+   ============================================================ */
+.kpop-faq {
+  margin: 2.5rem 0 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #f0d4df;
+  border-radius: 12px;
+  background: #fdf6f9;
+}
+.kpop-faq > h2 {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+  color: #1a1a1a;
+}
+.kpop-faq-item + .kpop-faq-item {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0d4df;
+}
+.kpop-faq-q {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #C2185B; /* AA on #fdf6f9 */
+}
+.kpop-faq-q::before {
+  content: "Q. ";
+  font-weight: 700;
+}
+.kpop-faq-a {
+  margin: 0;
+  line-height: 1.7;
+  color: #1a1a1a;
+}
+.kpop-faq-a::before {
+  content: "A. ";
+  font-weight: 700;
+  color: #8A4A63; /* AA on #fdf6f9 */
+}

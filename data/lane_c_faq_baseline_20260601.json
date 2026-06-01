@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-06-01",
+  "intervention": "Lane C FAQ schema (FAQPage JSON-LD + visible FAQ)",
+  "measure_after": "2026-06-15",
+  "articles": [
+    {
+      "post_id": 1317,
+      "slug": "kpop-demon-hunters-cast-characters",
+      "baseline_clicks": 10027,
+      "baseline_pos": 5.46
+    },
+    {
+      "post_id": 1318,
+      "slug": "swf3-osaka-ojo-gang-members",
+      "baseline_clicks": 7486,
+      "baseline_pos": 7.04
+    },
+    {
+      "post_id": 1338,
+      "slug": "kpop-demon-hunters-golden-analysis",
+      "baseline_clicks": 1703,
+      "baseline_pos": 7.17
+    },
+    {
+      "post_id": 1319,
+      "slug": "confidence-man-kr-guide",
+      "baseline_clicks": 2153,
+      "baseline_pos": 8.44
+    }
+  ]
+}
