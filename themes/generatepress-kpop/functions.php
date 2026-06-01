@@ -2849,3 +2849,44 @@ $kpj_sort_bday_first = function ( $vars ) {
 add_filter( 'tribe_events_views_v2_view_template_vars', $kpj_sort_bday_first, 20 );
 add_filter( 'tribe_events_views_v2_view_month_template_vars', $kpj_sort_bday_first, 20 );
 
+/* ============================================================
+ * RED-2026-06-01 security hardening: kpj_harden_user_enumeration
+ * RED チーム監査(2026-06-01)検出のユーザー名列挙 + WPバージョン露出に対処。
+ * 子テーマ完結で同居サイトに波及しない(nginx/サーバ設定は変更しない)。
+ * ============================================================ */
+
+// (1) ?author=N による author アーカイブ→ユーザー名露出のリダイレクトを停止。
+//     未ログイン時に /?author=1 を 404 にし、kpopstg_admin 等の露出を防ぐ。
+add_action( 'template_redirect', function () {
+	if ( is_author() && ! is_user_logged_in() ) {
+		global $wp_query;
+		$wp_query->set_404();
+		status_header( 404 );
+		nocache_headers();
+	}
+} );
+// author クエリ変数自体を未ログイン時に剥がす(?author=1 の解決を防ぐ二重防御)。
+add_filter( 'request', function ( $query_vars ) {
+	if ( ! is_user_logged_in() && isset( $query_vars['author'] ) ) {
+		unset( $query_vars['author'] );
+	}
+	return $query_vars;
+} );
+
+// (2) REST API のユーザー一覧(/wp-json/wp/v2/users)を未認証で返さない。
+//     ログイン済みで list_users 権限がある場合のみ許可(編集画面の正常動作は維持)。
+add_filter( 'rest_endpoints', function ( $endpoints ) {
+	if ( ! is_user_logged_in() ) {
+		foreach ( array( '/wp/v2/users', '/wp/v2/users/(?P<id>[\d]+)' ) as $route ) {
+			if ( isset( $endpoints[ $route ] ) ) {
+				unset( $endpoints[ $route ] );
+			}
+		}
+	}
+	return $endpoints;
+} );
+
+// (3) WordPress バージョン露出(<meta name="generator">)を除去。
+remove_action( 'wp_head', 'wp_generator' );
+add_filter( 'the_generator', '__return_empty_string' );
+
