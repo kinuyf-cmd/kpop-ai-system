@@ -2890,3 +2890,19 @@ add_filter( 'rest_endpoints', function ( $endpoints ) {
 remove_action( 'wp_head', 'wp_generator' );
 add_filter( 'the_generator', '__return_empty_string' );
 
+// (4) 静的アセットの ?ver=<コアバージョン> を剥がす。WP同梱 JS/CSS の
+//     ?ver=7.0 でバージョンを特定されるのを防ぐ(readme.html を消せない
+//     環境でのバージョン秘匿の代替防御)。テーマ側 filemtime キャッシュ
+//     バスト ver は GLOBAL $wp_version と一致しないので影響しない。
+$kpj_strip_core_ver = function ( $src ) {
+	if ( $src && false !== strpos( $src, 'ver=' ) ) {
+		global $wp_version;
+		if ( $wp_version && false !== strpos( $src, 'ver=' . $wp_version ) ) {
+			$src = remove_query_arg( 'ver', $src );
+		}
+	}
+	return $src;
+};
+add_filter( 'style_loader_src', $kpj_strip_core_ver, 9999 );
+add_filter( 'script_loader_src', $kpj_strip_core_ver, 9999 );
+
