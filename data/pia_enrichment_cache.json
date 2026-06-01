@@ -199,5 +199,20 @@
     "image": "https://image.pia.jp/images/202512/202512250032_ex.png",
     "performances": [],
     "cached_at": "2026-05-30T06:47:50.108662"
+  },
+  "b2665743": {
+    "event_bundle_cd": "b2665743",
+    "title": "LYNKPOP : Stray Kids World Tour ＜dominATE JAPAN＞ VR〈6月〉",
+    "description": "LYNKPOP : Stray Kids World Tour ＜dominATE JAPAN＞ VR〈6月〉(西武渋谷店Ｂ館地下１階イベントスペース)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-06-01",
+        "venue": "西武渋谷店B館地下1階イベントスペース",
+        "prefecture": "東京都",
+        "date_end": "2026-06-21"
+      }
+    ],
+    "cached_at": "2026-06-01T04:01:23.760122"
   }
 }

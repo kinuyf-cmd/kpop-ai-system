@@ -2,16 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "JANG HANEUM",
-   "title": "2026 JANG HANEUM FANMEETING IN TOKYO : To My Spring,BBZ",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667495",
-   "source_media": "ぴあ",
-   "start_date": "2026-05-31",
-   "venue": "板橋区立文化会館 大ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "SHINee",
    "title": "SHINee",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668012",
@@ -182,32 +172,12 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JAEJOONG",
-   "title": "JAEJOONG",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-05-31",
-   "venue": "川口リリア・フカガワみらいホール(メインホール)",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "TOMORROW X TOGETHER",
    "title": "TOMORROW X TOGETHER",
    "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
    "source_media": "ローソンチケット",
    "start_date": "2026-06-16",
    "venue": "マリンメッセ福岡A館",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "MYNAME",
-   "title": "MYNAME",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-05-31",
-   "venue": "ESAKA MUSE",
    "_source_id": "ltike"
   },
   {
@@ -222,16 +192,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "&TEAM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-05-31",
-   "venue": "IGアリーナ",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "MYNAME",
    "title": "MYNAME",
    "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
@@ -242,12 +202,42 @@
   },
   {
    "type": "event",
+   "artist_keyword": "Stray Kids",
+   "title": "LYNKPOP : Stray Kids World Tour ＜dominATE JAPAN＞ VR〈6月〉",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2665743",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-01",
+   "venue": "西武渋谷店B館地下1階イベントスペース",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "&TEAM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "北九州メッセ",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
    "artist_keyword": "NEXZ",
    "title": "NEXZ",
    "source_url": "https://l-tike.com/concert/mevent/?mid=751198",
    "source_media": "ローソンチケット",
-   "start_date": "2026-05-31",
-   "venue": "国立代々木競技場 第一体育館",
+   "start_date": "2026-06-12",
+   "venue": "大阪城ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JAEJOONG",
+   "title": "JAEJOONG",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-11",
+   "venue": "KT Zepp Yokohama",
    "_source_id": "ltike"
   }
  ]

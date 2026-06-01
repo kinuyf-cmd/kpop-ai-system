@@ -586,5 +586,33 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "mamamoo": {
+    "name": "MAMAMOO",
+    "files": [
+      "mamamoo_4689cb4c.jpg"
+    ],
+    "sources": [
+      {
+        "file": "mamamoo_4689cb4c.jpg",
+        "wikimedia_title": "File:Mamamoo in 2023.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Mamamoo_in_2023.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "zerobaseone": {
+    "name": "ZEROBASEONE",
+    "files": [
+      "zerobaseone_78c34a01.jpg"
+    ],
+    "sources": [
+      {
+        "file": "zerobaseone_78c34a01.jpg",
+        "wikimedia_title": "File:230513 ZEROBASEONE (ZB1).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/be/230513_ZEROBASEONE_%28ZB1%29.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
