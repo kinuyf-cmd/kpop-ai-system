@@ -125,7 +125,9 @@ webhook = os.environ.get('AUDIT_WH', '')
 try:
     payload = json.dumps({'content': msg[:1900]}).encode()
     req = urllib.request.Request(webhook, data=payload,
-        headers={'Content-Type': 'application/json'}, method='POST')
+        headers={'Content-Type': 'application/json',
+                 'User-Agent': 'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+        method='POST')
     urllib.request.urlopen(req, timeout=15)
     print('OK')
 except Exception as e:
@@ -157,7 +159,9 @@ import json, urllib.request, os
 msg = os.environ['AUDIT_MSG']; wh = os.environ['AUDIT_WH']
 urllib.request.urlopen(urllib.request.Request(wh,
     data=json.dumps({'content': msg[:1900]}).encode(),
-    headers={'Content-Type':'application/json'}, method='POST'), timeout=15)
+    headers={'Content-Type':'application/json',
+             'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+    method='POST'), timeout=15)
 " 2>>"$LOG_FILE" || log "urgent_errors 通知失敗"
   fi
 fi

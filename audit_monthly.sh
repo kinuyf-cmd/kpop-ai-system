@@ -146,9 +146,8 @@ log "--- [6] Discord 通知(monthly_board_report)---"
 if [[ "${AUDIT_DRY_RUN:-0}" == "1" ]]; then
   log "🧪 DRY RUN: Discord 通知をスキップ"
 else
-  WEBHOOK=$(python3 -c "
-import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('monthly_board_report',''))
-" 2>/dev/null)
+  # webhook は ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  WEBHOOK=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" monthly_board_report 2>/dev/null)
   if [[ -n "$WEBHOOK" ]]; then
     MSG="📊 **月次サイト全体監査** [${DATE}]
 **audit_72h(30日)**: ${MONTH_SCORE}/100 (グレード${MONTH_GRADE})
@@ -163,7 +162,9 @@ import json, urllib.request, os, sys
 try:
     urllib.request.urlopen(urllib.request.Request(os.environ['AUDIT_WH'],
         data=json.dumps({'content': os.environ['AUDIT_MSG'][:1900]}).encode(),
-        headers={'Content-Type':'application/json'}, method='POST'), timeout=15)
+        headers={'Content-Type':'application/json',
+                 'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+        method='POST'), timeout=15)
     print('OK')
 except Exception as e:
     print(f'NG: {e}', file=sys.stderr); sys.exit(1)

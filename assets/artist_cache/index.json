@@ -614,5 +614,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "itzy": {
+    "name": "ITZY",
+    "files": [
+      "itzy_adc3a0d9.jpg"
+    ],
+    "sources": [
+      {
+        "file": "itzy_adc3a0d9.jpg",
+        "wikimedia_title": "File:ITZY K-POP Debut SHOWCASE (cropped).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/ITZY_K-POP_Debut_SHOWCASE_%28cropped%29.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
   }
 }

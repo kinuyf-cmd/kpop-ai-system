@@ -90,13 +90,8 @@ ls -lh "$BACKUP_DIR"/ 2>&1 | tee -a "$LOG_FILE" | head -20
 
 # ─── Discord 通知 ─────────────────────
 if [[ -f "${SCRIPT_DIR}/config/discord_webhooks.json" ]]; then
-  WEBHOOK=$(python3 -c "
-import json
-try:
-    c=json.load(open('${SCRIPT_DIR}/config/discord_webhooks.json'))
-    print(c.get('weekly_board_report',''))
-except: print('')
-" 2>/dev/null)
+  # webhook は ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  WEBHOOK=$(python3 "${SCRIPT_DIR}/lib/resolve_discord_webhook.py" weekly_board_report 2>/dev/null)
   if [[ -n "$WEBHOOK" ]]; then
     DB_INFO=""
     [[ -f "${BACKUP_DIR}/${DATE}_db.sql.gz" ]] && DB_INFO=" db=$(ls -lh "${BACKUP_DIR}/${DATE}_db.sql.gz" | awk '{print $5}')"

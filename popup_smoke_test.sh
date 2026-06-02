@@ -171,15 +171,9 @@ fi
 
 # Discord 通知(urgent_errors、失効中はログのみ。常に exit 0 でロバスト)
 if [[ "$FAILS" -gt 0 ]]; then
-  WEBHOOK_URL=$(python3 - "$SCRIPT_DIR" <<'PY'
-import json, sys
-try:
-    c = json.load(open(f"{sys.argv[1]}/config/discord_webhooks.json"))
-    print(c.get("urgent_errors", "") or c.get("alert_summary", ""))
-except Exception:
-    print("")
-PY
-)
+  # ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  WEBHOOK_URL=$(python3 "${SCRIPT_DIR}/lib/resolve_discord_webhook.py" urgent_errors 2>/dev/null)
+  [[ -z "$WEBHOOK_URL" ]] && WEBHOOK_URL=$(python3 "${SCRIPT_DIR}/lib/resolve_discord_webhook.py" alert_summary 2>/dev/null)
   if [[ -n "$WEBHOOK_URL" ]]; then
     MSG="⚠️ Popup スモークテスト失敗 (${DATE}): [SMOKE-FAIL] ${FAILS} 件。詳細: ${SMOKE_LOG}"
     curl -s -X POST -H "Content-Type: application/json" \

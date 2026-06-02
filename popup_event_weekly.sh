@@ -62,14 +62,8 @@ else
 fi
 
 # ─── 4. Discord 通知(weekly_board_report、失効中はログのみ)───
-WEBHOOK_URL=$(python3 -c "
-import json
-try:
-    c = json.load(open('${SCRIPT_DIR}/config/discord_webhooks.json'))
-    print(c.get('weekly_board_report', ''))
-except Exception:
-    print('')
-" 2>/dev/null)
+# ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+WEBHOOK_URL=$(python3 "${SCRIPT_DIR}/lib/resolve_discord_webhook.py" weekly_board_report 2>/dev/null)
 if [[ -n "$WEBHOOK_URL" ]]; then
   MSG="📅 週次 Popup/Event 自動収集 (${DATE})\\n取得: total=${SIG_COUNT} (popup=${POPUP_COUNT}, event=${EVENT_COUNT})"
   curl -s -X POST -H "Content-Type: application/json" \

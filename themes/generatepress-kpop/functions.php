@@ -2906,3 +2906,43 @@ $kpj_strip_core_ver = function ( $src ) {
 add_filter( 'style_loader_src', $kpj_strip_core_ver, 9999 );
 add_filter( 'script_loader_src', $kpj_strip_core_ver, 9999 );
 
+// (5) Permissions-Policy / Content-Security-Policy をテーマから付与(BLUE-003)。
+//     nginx を触らず子テーマ完結で送出する(同居サイトに波及しない)。
+//     ・Permissions-Policy: 当サイトが使わない強権限機能を明示的に無効化。
+//       広告/解析は影響を受けないブラウザ機能のみを切るので即時有効化して安全。
+//     ・CSP: AdSense/A8 はリクエスト毎にサブドメインが動的拡張するため、
+//       いきなり enforce するとサイト破壊リスクが高い。まず Report-Only で
+//       違反だけ収集し、許可リストを実測で固めてから enforce へ昇格する(§11 段階導入)。
+add_action( 'send_headers', function () {
+	if ( is_admin() ) {
+		return; // 管理画面は対象外(エディタ等の動作を阻害しない)
+	}
+
+	// --- Permissions-Policy(即時 enforce で安全) ---
+	// 使用しない高権限機能を無効化。当サイトはカメラ/マイク/位置情報/決済等を使わない。
+	header(
+		'Permissions-Policy: '
+		. 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), '
+		. 'magnetometer=(), gyroscope=(), accelerometer=(), '
+		. 'browsing-topics=(), interest-cohort=()'
+	);
+
+	// --- Content-Security-Policy(Report-Only で段階導入) ---
+	// 既知の正当ドメイン:AdSense(googlesyndication/doubleclick/google),
+	// GA4/GTM(googletagmanager/google-analytics), A8(a8.net), Soompi, X(twitter)。
+	// 'unsafe-inline'/'unsafe-eval' は広告・解析タグが必要とするため当面許可。
+	$csp = implode( '; ', array(
+		"default-src 'self'",
+		"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com https://*.doubleclick.net https://*.a8.net",
+		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+		"img-src 'self' data: https:",
+		"font-src 'self' data: https://fonts.gstatic.com",
+		"frame-src https://*.googlesyndication.com https://*.doubleclick.net https://*.a8.net https://x.com https://twitter.com https://www.soompi.com",
+		"connect-src 'self' https://*.google-analytics.com https://*.googlesyndication.com https://*.doubleclick.net",
+		"object-src 'none'",
+		"base-uri 'self'",
+		"frame-ancestors 'self'",
+	) );
+	header( 'Content-Security-Policy-Report-Only: ' . $csp );
+} );
+

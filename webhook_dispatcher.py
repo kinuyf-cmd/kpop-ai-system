@@ -136,7 +136,16 @@ def build_payload(event: str, args) -> dict:
 
 def send_webhook(url: str, payload: dict, timeout: int = 10) -> tuple[bool, str]:
     data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+    # User-Agent 必須: 既定の python-urllib UA は Discord/Cloudflare に
+    # error code 1010(HTTP 403)でブロックされる。明示 UA で 204 成功。
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)",
+        },
+    )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return (200 <= resp.status < 300, f"HTTP {resp.status}")

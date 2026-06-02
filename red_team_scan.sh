@@ -230,13 +230,8 @@ fi
 
 # ─── Discord 通知 ─────────────────────
 if [[ "$DRY_RUN" != "1" ]] && [[ -f "${SCRIPT_DIR}/config/discord_webhooks.json" ]]; then
-  WEBHOOK=$(python3 -c "
-import json
-try:
-    c=json.load(open('${SCRIPT_DIR}/config/discord_webhooks.json'))
-    print(c.get('weekly_board_report',''))
-except: print('')
-" 2>/dev/null)
+  # webhook は ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  WEBHOOK=$(python3 "${SCRIPT_DIR}/lib/resolve_discord_webhook.py" weekly_board_report 2>/dev/null)
   if [[ -n "$WEBHOOK" ]]; then
     MSG="🔴 RED チーム週次監査 (${DATE})\\nCRITICAL=${N_CRITICAL} HIGH=${N_HIGH} MEDIUM=${N_MEDIUM} LOW=${N_LOW}"
     curl -s -X POST -H "Content-Type: application/json" -d "{\"content\":\"${MSG}\"}" "$WEBHOOK" > /dev/null 2>&1 || log "Discord 通知失敗(webhook 失効?)"

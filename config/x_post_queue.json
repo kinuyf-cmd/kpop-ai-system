@@ -1,7 +1,187 @@
 {
-  "updated": "2026-06-01 21:30",
-  "count": 29,
+  "updated": "2026-06-02 21:17",
+  "count": 36,
   "queue": [
+    {
+      "title": "PSY、医療法違反の疑いで検察送致",
+      "url": "https://www.kpopjournal.tokyo/?p=6181",
+      "post_id": 6181,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-06-02T17:32:42.065835"
+    },
+    {
+      "title": "BTS、2026 FESTA全スケジュール発表",
+      "url": "https://www.kpopjournal.tokyo/bts-2026-festa-schedule/",
+      "post_id": 6167,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-02T15:35:08.539600"
+    },
+    {
+      "title": "BTSのジョングク、サセン暴露を警告",
+      "url": "https://www.kpopjournal.tokyo/bts-jungkook-sasen-bullying-warning/",
+      "post_id": 6163,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-02T15:33:52.864192"
+    },
+    {
+      "title": "朴明洙元マネージャー、家族3人の病状告白",
+      "url": "https://www.kpopjournal.tokyo/park-myung-soo-family-health-issues/",
+      "post_id": 6158,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-06-02T15:31:25.983818"
+    },
+    {
+      "title": "SHINee、新ミニアルバム「Atmos」でiTunes16地域1位",
+      "url": "https://www.kpopjournal.tokyo/shinee-atmos-itunes-1/",
+      "post_id": 6154,
+      "genre": "breaking",
+      "artist": "샤이니",
+      "priority": "high",
+      "queued_at": "2026-06-02T13:41:18.052430"
+    },
+    {
+      "title": "チョンハ、7月にソロカムバック決定",
+      "url": "https://www.kpopjournal.tokyo/chungha-solo-comeback-july/",
+      "post_id": 6133,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-06-02T13:31:31.911207"
+    },
+    {
+      "title": "TWICE、7月にソウルでワールドツアー大団円",
+      "url": "https://www.kpopjournal.tokyo/twice-world-tour-final-seoul/",
+      "post_id": 6117,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-02T11:37:12.105615"
+    },
+    {
+      "title": "G-DRAGON、父からの感動的手紙公開",
+      "url": "https://www.kpopjournal.tokyo/?p=6107",
+      "post_id": 6107,
+      "genre": "breaking",
+      "artist": "지드래곤",
+      "priority": "high",
+      "queued_at": "2026-06-02T11:32:47.482422"
+    },
+    {
+      "title": "TWICEミナ、シックでエレガントな魅力爆発",
+      "url": "https://www.kpopjournal.tokyo/twice-mina-chic-elegant/",
+      "post_id": 6101,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:44:27.986838"
+    },
+    {
+      "title": "THE BOYZのジュハニョン、虚偽報道記者起訴",
+      "url": "https://www.kpopjournal.tokyo/the-boyz-juhyun-false-report-lawsuit/",
+      "post_id": 6097,
+      "genre": "breaking",
+      "artist": "더보이즈",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:42:56.195873"
+    },
+    {
+      "title": "パク・ジユン、離婚後の噂に本音「ITZYだけが悔しい",
+      "url": "https://www.kpopjournal.tokyo/park-jiyun-divorce-itzy-rumors/",
+      "post_id": 6093,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:41:13.521936"
+    },
+    {
+      "title": "aespa、空港でサセンファン約30人に囲まれる",
+      "url": "https://www.kpopjournal.tokyo/aespa-airport-sasaen-fans-30/",
+      "post_id": 6087,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:36:45.653484"
+    },
+    {
+      "title": "T.O.P、2026年7月9日日本で無料ファンミ開催",
+      "url": "https://www.kpopjournal.tokyo/top-japan-free-fanmeet-2026/",
+      "post_id": 6082,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:34:03.507220"
+    },
+    {
+      "title": "イ・スヒョン、30kg減量前の苦悩語る",
+      "url": "https://www.kpopjournal.tokyo/lee-suhyun-weight-loss-struggles/",
+      "post_id": 6078,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:32:45.887387"
+    },
+    {
+      "title": "tripleS、新曲「Baby Flower」披露イベント開催",
+      "url": "https://www.kpopjournal.tokyo/triples-baby-flower-event/",
+      "post_id": 6074,
+      "genre": "breaking",
+      "artist": "트리플에스",
+      "priority": "high",
+      "queued_at": "2026-06-02T09:30:55.342005"
+    },
+    {
+      "title": "イ・グムヒ、BTSのVを理想のタイプと謝罪",
+      "url": "https://www.kpopjournal.tokyo/lee-geumhee-bts-v-ideal-type-apology/",
+      "post_id": 6058,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-02T07:33:17.552442"
+    },
+    {
+      "title": "STAYCが6月16日新曲「2:LOVE」でカムバック",
+      "url": "https://www.kpopjournal.tokyo/stayc-2love-comeback-june16/",
+      "post_id": 6054,
+      "genre": "breaking",
+      "artist": "STAYC",
+      "priority": "high",
+      "queued_at": "2026-06-02T07:31:50.684312"
+    },
+    {
+      "title": "TREASURE、ミニアルバム「NEW WAV」リリース",
+      "url": "https://www.kpopjournal.tokyo/treasure-new-wav-release/",
+      "post_id": 6032,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-06-01T19:36:04.714605"
+    },
+    {
+      "title": "NCT WISH、NEXZ出演「Venue101 EXTRA」公開収録",
+      "url": "https://www.kpopjournal.tokyo/nct-wish-venue101-extra-public-recording/",
+      "post_id": 6024,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-01T19:03:24.775287"
+    },
+    {
+      "title": "JKキムドク、イ・ヨンジの政治色論争に言及",
+      "url": "https://www.kpopjournal.tokyo/jk-kimduk-lee-youngji-seiji-ronso/",
+      "post_id": 6019,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-06-01T19:01:06.090545"
+    },
     {
       "title": "TWICEのダヒョン、誕生日に3000万ウォン寄付",
       "url": "https://www.kpopjournal.tokyo/twice-dahyun-birthday-donation-3000w/",
@@ -129,139 +309,22 @@
       "queued_at": "2026-06-01T07:36:53.381405"
     },
     {
-      "title": "aespa「Lemonade」でNewJeans言及、韓国で物議",
-      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-newjeans-kankoku-mobigi/",
-      "post_id": 5851,
+      "title": "BTSのV、軍仲間批判のファンに反論",
+      "url": "https://www.kpopjournal.tokyo/bts-v-gun-fan-criticism-response/",
+      "post_id": 6190,
       "genre": "breaking",
-      "artist": "aespa",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-05-31T19:31:22.903859"
+      "queued_at": "2026-06-02T19:30:44.096172"
     },
     {
-      "title": "KARA、日本ファンミーティング延期を発表",
-      "url": "https://www.kpopjournal.tokyo/?p=5834",
-      "post_id": 5834,
+      "title": "I.O.Iチェ・ユジョン、コンサートでの感想述べる",
+      "url": "https://www.kpopjournal.tokyo/ioi-choi-yujung-concert-impressions/",
+      "post_id": 6196,
       "genre": "breaking",
-      "artist": "RIIZE",
+      "artist": "아이오아이",
       "priority": "high",
-      "queued_at": "2026-05-31T17:36:16.725333"
-    },
-    {
-      "title": "TREASURE、ツアー「PULSE ON」フィナーレ開催",
-      "url": "https://www.kpopjournal.tokyo/treasure-pulse-on-tour-finale/",
-      "post_id": 5821,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-05-31T15:31:28.130570"
-    },
-    {
-      "title": "TREASURE「IF I」トレーラー1100万回再生突破",
-      "url": "https://www.kpopjournal.tokyo/treasure-if-i-trailer-1100m-views/",
-      "post_id": 5816,
-      "genre": "breaking",
-      "artist": "TREASURE",
-      "priority": "high",
-      "queued_at": "2026-05-31T13:33:09.975404"
-    },
-    {
-      "title": "IUに対する悪質コメント投稿者、懲役刑確定",
-      "url": "https://www.kpopjournal.tokyo/iu-malicious-comments-sentencing/",
-      "post_id": 5811,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-05-31T13:31:00.196938"
-    },
-    {
-      "title": "ITZYのCHAERYEONG、デニムスタイルで「Motto」カムバック",
-      "url": "https://www.kpopjournal.tokyo/itzy-chaeryeong-denim-style-motto-comeback/",
-      "post_id": 5790,
-      "genre": "breaking",
-      "artist": "채령",
-      "priority": "high",
-      "queued_at": "2026-05-31T09:39:06.609263"
-    },
-    {
-      "title": "ハ・ジウォン、23年ぶり音楽番組カムバック",
-      "url": "https://www.kpopjournal.tokyo/?p=5786",
-      "post_id": 5786,
-      "genre": "breaking",
-      "artist": "하지원",
-      "priority": "high",
-      "queued_at": "2026-05-31T09:37:43.689287"
-    },
-    {
-      "title": "TREASURE、デビュー6年目全曲ヒップホップ新作",
-      "url": "https://www.kpopjournal.tokyo/treasure-6th-anniversary-hip-hop-album/",
-      "post_id": 5781,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-05-31T09:35:14.305236"
-    },
-    {
-      "title": "BoA、金髪姿で「アトランティスの少女」復活",
-      "url": "https://www.kpopjournal.tokyo/boa-atlantis-girl-comeback/",
-      "post_id": 5777,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-05-31T09:33:31.821710"
-    },
-    {
-      "title": "FIFTY FIFTYが4thミニアルバム公式メドレー公開",
-      "url": "https://www.kpopjournal.tokyo/fifty-fifty-4th-mini-album-medley/",
-      "post_id": 5761,
-      "genre": "breaking",
-      "artist": "FIFTY FIFTY",
-      "priority": "high",
-      "queued_at": "2026-05-31T07:33:07.757225"
-    },
-    {
-      "title": "JKキムドク、イ・ヨンジの政治色論争に言及",
-      "url": "https://www.kpopjournal.tokyo/jk-kimduk-lee-youngji-seiji-ronso/",
-      "post_id": 6019,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:01:06.090545"
-    },
-    {
-      "title": "NCT WISH、NEXZ出演「Venue101 EXTRA」公開収録",
-      "url": "https://www.kpopjournal.tokyo/nct-wish-venue101-extra-public-recording/",
-      "post_id": 6024,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:03:24.775287"
-    },
-    {
-      "title": "TREASURE、ミニアルバム「NEW WAV」リリース",
-      "url": "https://www.kpopjournal.tokyo/treasure-new-wav-release/",
-      "post_id": 6032,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:36:04.714605"
-    },
-    {
-      "title": "tripleS KIM CHAEWON、健康的なパフォーマンス披露",
-      "url": "https://www.kpopjournal.tokyo/triples-kim-chaewon-kenko-performance/",
-      "post_id": 6040,
-      "genre": "breaking",
-      "artist": "트리플에스",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:39:29.155123"
-    },
-    {
-      "title": "TWICEナヨン、ステージでの衝撃的姿に懸念",
-      "url": "https://www.kpopjournal.tokyo/twice-nayon-stage-concern/",
-      "post_id": 6045,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-06-01T21:30:54.432973"
+      "queued_at": "2026-06-02T19:33:35.091449"
     }
   ]
 }

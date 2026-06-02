@@ -117,9 +117,8 @@ fi
 
 # ─── 異常時 Discord 通知(失効中でも try、ログのみで完走)─────────────
 if [[ -n "$ANOMALIES" ]] && [[ "${LH_DRY_RUN:-0}" != "1" ]]; then
-  URGENT_WH=$(python3 -c "
-import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('urgent_errors',''))
-" 2>/dev/null)
+  # ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  URGENT_WH=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" urgent_errors 2>/dev/null)
   if [[ -n "$URGENT_WH" ]]; then
     MSG="🚨 **Lighthouse 異常値検出** [${DATE}]
 $(echo "$ANOMALIES" | head -10 | sed 's/^/  - /')
@@ -130,7 +129,9 @@ import json, urllib.request, os, sys
 try:
     urllib.request.urlopen(urllib.request.Request(os.environ['AUDIT_WH'],
         data=json.dumps({'content': os.environ['AUDIT_MSG'][:1900]}).encode(),
-        headers={'Content-Type':'application/json'}, method='POST'), timeout=15)
+        headers={'Content-Type':'application/json',
+                 'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+        method='POST'), timeout=15)
     print('OK')
 except Exception as e:
     print(f'NG: {e}', file=sys.stderr); sys.exit(1)

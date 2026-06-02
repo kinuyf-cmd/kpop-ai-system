@@ -285,7 +285,12 @@ def _do_send_legacy(channel: str, title: str, body: str, color: int,
         req = urllib.request.Request(
             url,
             data=data,
-            headers={"Content-Type": "application/json"},
+            # User-Agent 必須: 既定の python-urllib UA は Discord/Cloudflare に
+            # error code 1010(HTTP 403)でブロックされる。明示 UA で 204 成功。
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)",
+            },
             method="POST",
         )
         with urllib.request.urlopen(req, timeout=10) as resp:

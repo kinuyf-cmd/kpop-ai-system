@@ -208,9 +208,8 @@ log "--- [5] Discord 通知(weekly_board_report)---"
 if [[ "${AUDIT_DRY_RUN:-0}" == "1" ]]; then
   log "🧪 DRY RUN: Discord 通知をスキップ"
 else
-  WEBHOOK=$(python3 -c "
-import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('weekly_board_report',''))
-" 2>/dev/null)
+  # webhook は ${VAR} プレースホルダーを .env から展開して取得(未展開だと不正URL=失敗)。
+  WEBHOOK=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" weekly_board_report 2>/dev/null)
   if [[ -n "$WEBHOOK" ]]; then
     BAN_LIST=""
     if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 ]]; then
@@ -230,7 +229,9 @@ import json, urllib.request, os, sys
 try:
     urllib.request.urlopen(urllib.request.Request(os.environ['AUDIT_WH'],
         data=json.dumps({'content': os.environ['AUDIT_MSG'][:1900]}).encode(),
-        headers={'Content-Type':'application/json'}, method='POST'), timeout=15)
+        headers={'Content-Type':'application/json',
+                 'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+        method='POST'), timeout=15)
     print('OK')
 except Exception as e:
     print(f'NG: {e}', file=sys.stderr); sys.exit(1)
@@ -244,9 +245,7 @@ fi
 # ─── [6] 新規 AI bot Disallow 検出時は urgent_errors にも通知 ───────────
 if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 ]] && [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
   log "--- [6] CRITICAL: AI bot Disallow 検出 → urgent_errors 通知 ---"
-  URGENT_WH=$(python3 -c "
-import json; print(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('urgent_errors',''))
-" 2>/dev/null)
+  URGENT_WH=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" urgent_errors 2>/dev/null)
   if [[ -n "$URGENT_WH" ]]; then
     URG_MSG="🚨 **週次監査 CRITICAL** — 採用媒体で AI bot Disallow を検出
 $(printf '  - %s\n' "${ROBOTS_NEW_BAN[@]}")
@@ -255,7 +254,9 @@ $(printf '  - %s\n' "${ROBOTS_NEW_BAN[@]}")
 import json, urllib.request, os
 urllib.request.urlopen(urllib.request.Request(os.environ['AUDIT_WH'],
     data=json.dumps({'content': os.environ['AUDIT_MSG'][:1900]}).encode(),
-    headers={'Content-Type':'application/json'}, method='POST'), timeout=15)
+    headers={'Content-Type':'application/json',
+             'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+    method='POST'), timeout=15)
 " 2>>"$LOG_FILE" || log "urgent 通知失敗"
   fi
 fi
