@@ -33,6 +33,10 @@ LOG_FILE = LOG_DIR / "webhook_dispatcher_log.jsonl"
 
 WEBHOOK_CONFIG = ROOT / "config" / "discord_webhooks.json"
 
+# Discord 送信用 UA は lib/resolve_discord_webhook.py に集約(DRY)。
+sys.path.insert(0, str(ROOT / "lib"))
+from resolve_discord_webhook import DISCORD_USER_AGENT  # noqa: E402
+
 
 def now_iso() -> str:
     return datetime.now(timezone(timedelta(hours=9))).isoformat()
@@ -143,7 +147,7 @@ def send_webhook(url: str, payload: dict, timeout: int = 10) -> tuple[bool, str]
         data=data,
         headers={
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)",
+            "User-Agent": DISCORD_USER_AGENT,
         },
     )
     try:

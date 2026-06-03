@@ -329,6 +329,23 @@ def run_post_publish(post_id, post_type='post'):
         except Exception as _oe:
             print(f"  [hook] OGP err: {_oe}")
 
+    # 8. GSC Indexing API 申請（公開維持された記事のみ。draft化された記事は申請しない）
+    #    Google に URL_UPDATED を通知し、クロール/インデックスを促す。
+    #    notify_url_updated は本日重複送信を自動スキップする(二重申請の心配なし)。
+    if result.get('status') != 'draft':
+        try:
+            post_final = _fetch_post(post_id)
+            _slug = post_final.get('slug', '') if post_final else ''
+            if _slug:
+                _url = f"https://www.kpopjournal.tokyo/{_slug}/"
+                from lib.gsc_indexing import notify_url_updated
+                _gsc = notify_url_updated(_url)
+                _gst = _gsc.get('status', '?')
+                result['changes'].append(f"gsc_submit: {_gst}")
+                print(f"  [hook] GSC申請: {_gst} ({_url})")
+        except Exception as _ge:
+            print(f"  [hook] GSC申請 err: {_ge}")
+
     # ログ記録
     status_label = result['status']
     issue_count = len(result['issues'])

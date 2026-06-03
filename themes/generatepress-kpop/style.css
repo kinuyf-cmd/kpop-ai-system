@@ -5812,3 +5812,50 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
   font-weight: 700;
   color: #8A4A63; /* AA on #fdf6f9 */
 }
+
+/* ============================================================ BEGIN drama-character-chart
+   ドラマ相関図(CSSカード型・画像なし)。kpop-original-article のドラマ記事で
+   <table>の代わりに使う視覚的相関図。本文はクラスのみ(インラインstyle禁止/C-Y)。
+   配色は WCAG AA を満たす(文字色は背景に対し 4.5:1 以上)。
+   初出: 『素晴らしき新世界』キャスト&相関図(#6206)。
+   ============================================================ */
+.kpop-single .entry-content .kpop-chart { margin: 8px 0 32px; }
+.kpop-single .entry-content .kpop-chart-group {
+  border: 2px solid #E9C3D2; border-radius: 14px; padding: 18px 16px 16px;
+  margin: 22px 0; background: #fff; position: relative;
+}
+.kpop-single .entry-content .kpop-chart-group-title {
+  position: absolute; top: -13px; left: 16px; background: #C2185B; /* AA on #fff */
+  color: #fff; font-size: .8rem; font-weight: 700; padding: 3px 14px; border-radius: 20px;
+}
+.kpop-single .entry-content .kpop-chart-lead {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px;
+}
+.kpop-single .entry-content .kpop-chart-card {
+  flex: 1; min-width: 150px; border: 1px solid #EAD6DE; border-radius: 10px;
+  padding: 12px 14px; background: #FDF5F8;
+}
+.kpop-single .entry-content .kpop-chart-card.is-hero {
+  border: 2px solid #C2185B; background: #FFF0F5;
+}
+.kpop-single .entry-content .kpop-chart-role { font-weight: 700; font-size: 1.02rem; color: #2A2A2A; }
+.kpop-single .entry-content .kpop-chart-actor { font-size: .85rem; color: #8A4A63; margin-top: 2px; } /* AA on #FDF5F8 */
+.kpop-single .entry-content .kpop-chart-desc { font-size: .85rem; color: #4A4A4A; margin-top: 6px; }
+.kpop-single .entry-content .kpop-chart-bridge {
+  text-align: center; color: #C2185B; font-weight: 700; font-size: 1rem; margin: 14px 0 2px;
+}
+.kpop-single .entry-content ul.kpop-chart-members { list-style: none; padding: 0; margin: 6px 0 0; }
+.kpop-single .entry-content ul.kpop-chart-members li {
+  padding: 9px 12px; border-left: 3px solid #E9C3D2; margin: 7px 0;
+  background: #FDF5F8; font-size: .9rem; border-radius: 0 6px 6px 0; color: #2A2A2A;
+}
+.kpop-single .entry-content ul.kpop-chart-members li b { color: #A4154E; } /* AA on #FDF5F8 */
+.kpop-single .entry-content .kpop-chart-rel {
+  display: inline-block; font-size: .74rem; background: #F3D9E3; color: #8A1840; /* AA on #F3D9E3 */
+  border-radius: 12px; padding: 2px 10px; margin-right: 8px; font-weight: 700;
+}
+/* モバイル: 主役カードを縦積みにして文字を大きく保つ */
+@media (max-width: 600px) {
+  .kpop-single .entry-content .kpop-chart-lead { flex-direction: column; }
+}
+/* ============================================================ END drama-character-chart */

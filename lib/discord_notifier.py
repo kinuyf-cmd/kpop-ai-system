@@ -48,6 +48,8 @@ BASE = Path(__file__).parent.parent
 if str(BASE) not in sys.path:
     sys.path.insert(0, str(BASE))
 CONFIG_PATH  = BASE / "config" / "discord_webhooks.json"
+# Discord 送信用 UA は lib/resolve_discord_webhook.py に集約(DRY)。
+from lib.resolve_discord_webhook import DISCORD_USER_AGENT  # noqa: E402
 METRICS_PATH = BASE / "agent_metrics.json"
 REVENUE_PATH = BASE / "revenue_metrics.json"
 SUMMARY_PATH = BASE / "dashboard_summary.json"
@@ -289,7 +291,7 @@ def _do_send_legacy(channel: str, title: str, body: str, color: int,
             # error code 1010(HTTP 403)でブロックされる。明示 UA で 204 成功。
             headers={
                 "Content-Type": "application/json",
-                "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)",
+                "User-Agent": DISCORD_USER_AGENT,
             },
             method="POST",
         )

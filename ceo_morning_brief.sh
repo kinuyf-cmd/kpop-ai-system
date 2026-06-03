@@ -129,6 +129,61 @@ except Exception as e:
 fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [2.5] GSCインデックス申請状況(公開記事の未申請=機会損失を毎朝可視化)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GSC_SECTION=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro post list --post_type=post --post_status=publish --fields=post_name --format=json 2>/dev/null > /tmp/brief_gsc_posts.json && python3 -c "
+import json, re
+try:
+    submitted=set()
+    for line in open('data/gsc_indexing_log.jsonl'):
+        line=line.strip()
+        if not line: continue
+        try: d=json.loads(line)
+        except: continue
+        if d.get('status') not in ('ok','skipped_dup'): continue
+        m=re.search(r'tokyo/([^/?#]+)', d.get('url',''))
+        if m: submitted.add(m.group(1))
+    posts=json.load(open('/tmp/brief_gsc_posts.json'))
+    slugs=[p.get('post_name','') for p in posts if p.get('post_name')]
+    never=[s for s in slugs if s not in submitted]
+    # 当日申請数(JST今日)
+    from datetime import datetime, timezone, timedelta
+    today=datetime.now(timezone(timedelta(hours=9))).date().isoformat()
+    tod=sum(1 for line in open('data/gsc_indexing_log.jsonl') if today in line and '\"status\": \"ok\"' in line)
+    if never:
+        print(f'  GSC申請: 本日{tod}件 / 未申請残 {len(never)}件(翌5:15 backfillで自動申請)')
+    else:
+        print(f'  GSC申請: 本日{tod}件 / 未申請残 0件 ✅(漏れなし)')
+except Exception as e:
+    print(f'  GSC申請: 集計失敗')
+" 2>/dev/null || echo "  GSC申請: 集計スキップ")
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# [2.6] Idol Wiki リリース追記候補(verified=approve待ち。人間レビューを促す)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IDOL_WIKI_SECTION=$(python3 -c "
+import json
+from collections import Counter
+try:
+    st=Counter()
+    for l in open('data/idol_wiki_release_candidates.jsonl'):
+        l=l.strip()
+        if not l: continue
+        st[json.loads(l).get('status','?')]+=1
+    v=st.get('verified',0)
+    if v>0:
+        print(f'  Idol Wiki追記候補: verified {v}件 → 要レビュー(review_queue.py --list)')
+    elif st.get('conflict',0) or st.get('year_mismatch',0):
+        print(f'  Idol Wiki追記候補: 要確認 {st.get(\"conflict\",0)+st.get(\"year_mismatch\",0)}件(conflict/年不一致)')
+    else:
+        print('  Idol Wiki追記候補: verified 0件(approve待ちなし)')
+except FileNotFoundError:
+    pass
+except Exception:
+    print('  Idol Wiki追記候補: 集計スキップ')
+" 2>/dev/null)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # [3] 特筆事項
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 NOTABLE=""
@@ -177,6 +232,8 @@ BRIEF="📋 CEO Morning Brief — ${TODAY}
 $(echo -e "${ARTICLE_LINES:-  （なし）}")
 【3. SEO/アクセス】
 ${METRICS_SECTION}
+${GSC_SECTION}
+${IDOL_WIKI_SECTION}
 
 【4. 特筆事項】
 $(echo -e "$NOTABLE")

@@ -1,7 +1,88 @@
 {
-  "updated": "2026-06-02 21:17",
-  "count": 36,
+  "updated": "2026-06-03 21:36",
+  "count": 28,
   "queue": [
+    {
+      "title": "イム・ジヨン、バリでリラックスした近況公開",
+      "url": "https://www.kpopjournal.tokyo/im-jiyoung-bali-relax-update/",
+      "post_id": 6315,
+      "genre": "breaking",
+      "artist": "임지연",
+      "priority": "high",
+      "queued_at": "2026-06-03T17:37:35.298719"
+    },
+    {
+      "title": "NCTのレンジュン、中国ショーケースチケット完売",
+      "url": "https://www.kpopjournal.tokyo/nct-renjun-china-showcase-tickets-sold-out/",
+      "post_id": 6303,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-03T15:34:38.762609"
+    },
+    {
+      "title": "BTS、釜山公演控え宿泊施設の捜査開始",
+      "url": "https://www.kpopjournal.tokyo/bts-busan-concert-accommodation-investigation/",
+      "post_id": 6299,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-03T15:33:24.071056"
+    },
+    {
+      "title": "RIIZE、R&Bヒップホップ「Overdrive」でボーカル予告",
+      "url": "https://www.kpopjournal.tokyo/riize-overdrive-rb-hiphop/",
+      "post_id": 6294,
+      "genre": "breaking",
+      "artist": "라이즈",
+      "priority": "high",
+      "queued_at": "2026-06-03T15:31:23.295619"
+    },
+    {
+      "title": "コンミョン、弟NCTドヨンのOST参加秘話明かす",
+      "url": "https://www.kpopjournal.tokyo/konmyon-nct-doyoung-ost-hiketsu/",
+      "post_id": 6290,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-03T13:34:39.897619"
+    },
+    {
+      "title": "LE SSERAFIM、米ビルボード「バブリング・アンダー・ホット100」10位",
+      "url": "https://www.kpopjournal.tokyo/le-sserafim-bubbling-under-hot100-10th/",
+      "post_id": 6262,
+      "genre": "breaking",
+      "artist": "르세라핌",
+      "priority": "high",
+      "queued_at": "2026-06-03T09:40:10.877792"
+    },
+    {
+      "title": "(G)I-DLEミヨン、シドニー公演後の腹筋注目",
+      "url": "https://www.kpopjournal.tokyo/gi-dle-miyon-sydney-performance-abs/",
+      "post_id": 6254,
+      "genre": "breaking",
+      "artist": "(여자)아이들",
+      "priority": "high",
+      "queued_at": "2026-06-03T09:35:18.904333"
+    },
+    {
+      "title": "ILLITが日本ツアー全公演完売、人気証明",
+      "url": "https://www.kpopjournal.tokyo/illit-japan-tour-sold-out-popularity/",
+      "post_id": 6237,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-06-03T07:39:03.999063"
+    },
+    {
+      "title": "BTSメンバー残り物食べたレストラン批判",
+      "url": "https://www.kpopjournal.tokyo/bts-member-restaurant-criticism/",
+      "post_id": 6233,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-03T07:37:50.918952"
+    },
     {
       "title": "PSY、医療法違反の疑いで検察送致",
       "url": "https://www.kpopjournal.tokyo/?p=6181",
@@ -156,175 +237,22 @@
       "queued_at": "2026-06-02T07:31:50.684312"
     },
     {
-      "title": "TREASURE、ミニアルバム「NEW WAV」リリース",
-      "url": "https://www.kpopjournal.tokyo/treasure-new-wav-release/",
-      "post_id": 6032,
+      "title": "BLACKPINKのリサ、3000万円超えスポーツカーでドライブ",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-sports-car-drive/",
+      "post_id": 6323,
       "genre": "breaking",
-      "artist": "트레저",
+      "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-06-01T19:36:04.714605"
+      "queued_at": "2026-06-03T19:35:47.028162"
     },
     {
-      "title": "NCT WISH、NEXZ出演「Venue101 EXTRA」公開収録",
-      "url": "https://www.kpopjournal.tokyo/nct-wish-venue101-extra-public-recording/",
-      "post_id": 6024,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:03:24.775287"
-    },
-    {
-      "title": "JKキムドク、イ・ヨンジの政治色論争に言及",
-      "url": "https://www.kpopjournal.tokyo/jk-kimduk-lee-youngji-seiji-ronso/",
-      "post_id": 6019,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-01T19:01:06.090545"
-    },
-    {
-      "title": "TWICEのダヒョン、誕生日に3000万ウォン寄付",
-      "url": "https://www.kpopjournal.tokyo/twice-dahyun-birthday-donation-3000w/",
-      "post_id": 5993,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-01T15:36:04.539302"
-    },
-    {
-      "title": "GISELLE、オールブラックでシックなビジュアル",
-      "url": "https://www.kpopjournal.tokyo/giselle-all-black-chic-visual/",
-      "post_id": 5984,
-      "genre": "breaking",
-      "artist": "지젤",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:46:06.381483"
-    },
-    {
-      "title": "ハ・ヨンマン、See Yaの食事マナーに苦言",
-      "url": "https://www.kpopjournal.tokyo/ha-yongman-see-ya-shokuji-maners/",
-      "post_id": 5979,
-      "genre": "breaking",
-      "artist": "씨야",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:43:31.679515"
-    },
-    {
-      "title": "ソ・ジソブ、13年ぶりSBS復帰「キム部長",
-      "url": "https://www.kpopjournal.tokyo/so-ji-sub-sbs-return-kim-bu-jang/",
-      "post_id": 5975,
-      "genre": "breaking",
-      "artist": "태양",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:42:09.503349"
-    },
-    {
-      "title": "東方神起チャンミン、LGツインズ応援の姿披露",
-      "url": "https://www.kpopjournal.tokyo/tohoshinki-changmin-lg-twins-support/",
-      "post_id": 5971,
-      "genre": "breaking",
-      "artist": "동방신기",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:40:27.824294"
-    },
-    {
-      "title": "SUPER JUNIORのイェソン、ソロ10周年日本ツアー成功",
-      "url": "https://www.kpopjournal.tokyo/super-junior-yesung-solo-10th-anniversary-japan-tour-success/",
-      "post_id": 5966,
-      "genre": "breaking",
-      "artist": "슈퍼주니어",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:38:20.051958"
-    },
-    {
-      "title": "CRAVITY、マレーシア音楽フェスで存在感発揮",
-      "url": "https://www.kpopjournal.tokyo/cravity-malaysia-music-festival/",
-      "post_id": 5962,
-      "genre": "breaking",
-      "artist": "크래비티",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:36:48.025290"
-    },
-    {
-      "title": "TWS、日本シングル2集「SODA SODA」で活動拡大",
-      "url": "https://www.kpopjournal.tokyo/tws-soda-soda-activity-expansion/",
-      "post_id": 5958,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:35:24.054227"
-    },
-    {
-      "title": "安世英、シンガポールオープン優勝で3度目の栄冠",
-      "url": "https://www.kpopjournal.tokyo/an-sei-ei-singapore-open-victory-3rd-crown/",
-      "post_id": 5951,
-      "genre": "breaking",
-      "artist": "아이오아이",
-      "priority": "high",
-      "queued_at": "2026-06-01T13:31:48.012483"
-    },
-    {
-      "title": "ILLITのモカ、39日ぶり活動再開で涙",
-      "url": "https://www.kpopjournal.tokyo/illit-mocha-39days-activity-resume/",
-      "post_id": 5931,
-      "genre": "breaking",
-      "artist": "아일릿",
-      "priority": "high",
-      "queued_at": "2026-06-01T09:47:49.244587"
-    },
-    {
-      "title": "LE SSERAFIM、映画「スーパーガール」とコラボ音源公開",
-      "url": "https://www.kpopjournal.tokyo/le-sserafim-supergirl-collaboration/",
-      "post_id": 5924,
-      "genre": "breaking",
-      "artist": "르세라핌",
-      "priority": "high",
-      "queued_at": "2026-06-01T09:44:08.017704"
-    },
-    {
-      "title": "TWICEダヒョン、難易度高い「セーギルック」披露",
-      "url": "https://www.kpopjournal.tokyo/twice-dahyun-segilook-performance/",
-      "post_id": 5918,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-01T09:41:17.511471"
-    },
-    {
-      "title": "BTSのj-hope「Killin' It Girl」MVが1億回再生突破",
-      "url": "https://www.kpopjournal.tokyo/?p=5905",
-      "post_id": 5905,
+      "title": "BTSのV 元軍仲間の動画に強い姿勢示す",
+      "url": "https://www.kpopjournal.tokyo/bts-v-strong-attitude-video/",
+      "post_id": 6332,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-06-01T09:30:49.364840"
-    },
-    {
-      "title": "アン・セヨン、24歳で決勝戦56回目達成",
-      "url": "https://www.kpopjournal.tokyo/an-seyong-24-years-old-final-56th-achievement/",
-      "post_id": 5892,
-      "genre": "breaking",
-      "artist": "아이오아이",
-      "priority": "high",
-      "queued_at": "2026-06-01T07:36:53.381405"
-    },
-    {
-      "title": "BTSのV、軍仲間批判のファンに反論",
-      "url": "https://www.kpopjournal.tokyo/bts-v-gun-fan-criticism-response/",
-      "post_id": 6190,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-02T19:30:44.096172"
-    },
-    {
-      "title": "I.O.Iチェ・ユジョン、コンサートでの感想述べる",
-      "url": "https://www.kpopjournal.tokyo/ioi-choi-yujung-concert-impressions/",
-      "post_id": 6196,
-      "genre": "breaking",
-      "artist": "아이오아이",
-      "priority": "high",
-      "queued_at": "2026-06-02T19:33:35.091449"
+      "queued_at": "2026-06-03T21:36:27.980985"
     }
   ]
 }
