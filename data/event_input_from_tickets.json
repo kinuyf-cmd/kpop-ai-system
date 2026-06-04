@@ -182,16 +182,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "N.Flying",
-   "title": "N.Flying",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667951",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-03",
-   "venue": "Kanadevia Hall",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "MYNAME",
    "title": "MYNAME",
    "source_url": "https://l-tike.com/concert/mevent/?mid=291495",

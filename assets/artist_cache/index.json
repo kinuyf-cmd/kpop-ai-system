@@ -628,5 +628,19 @@
         "license": "CC BY-SA 4.0"
       }
     ]
+  },
+  "moonbyul": {
+    "name": "MOONBYUL",
+    "files": [
+      "moonbyul_5f2fa00e.jpg"
+    ],
+    "sources": [
+      {
+        "file": "moonbyul_5f2fa00e.jpg",
+        "wikimedia_title": "File:Mamamoo Moonbyul 240324.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Mamamoo_Moonbyul_240324.jpg",
+        "license": "CC BY 4.0"
+      }
+    ]
   }
 }
