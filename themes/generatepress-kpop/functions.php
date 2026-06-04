@@ -2890,6 +2890,11 @@ add_filter( 'rest_endpoints', function ( $endpoints ) {
 remove_action( 'wp_head', 'wp_generator' );
 add_filter( 'the_generator', '__return_empty_string' );
 
+// (3b) AIOSEO の <meta name="generator" content="All in One SEO (AIOSEO) x.y.z">
+//      を除去。プラグイン版数の特定手がかりを与えない(RED 2026-06-04 LOW)。
+//      AIOSEO 提供のフィルタを空文字化する。
+add_filter( 'aioseo_generator_tag', '__return_empty_string' );
+
 // (4) 静的アセットの ?ver=<コアバージョン> を剥がす。WP同梱 JS/CSS の
 //     ?ver=7.0 でバージョンを特定されるのを防ぐ(readme.html を消せない
 //     環境でのバージョン秘匿の代替防御)。テーマ側 filemtime キャッシュ
