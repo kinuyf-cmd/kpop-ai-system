@@ -2855,6 +2855,22 @@ add_filter( 'tribe_events_views_v2_view_month_template_vars', $kpj_sort_bday_fir
  * 子テーマ完結で同居サイトに波及しない(nginx/サーバ設定は変更しない)。
  * ============================================================ */
 
+// (0) 旧 Idol Wiki URL /artist-{slug}/ → 新 /artists/{slug}/ への 301。
+//     CPT permalink 変更で /artist-illit/ 等(46件・GSC計1214imp)が 404 化し
+//     旧URLの検索評価が死蔵していた(SEO 2026-06-04)。idol_artist が実在する
+//     slug のみ 301 で評価を生存ページへ引き継ぐ(存在しない slug は通常 404 のまま)。
+add_action( 'template_redirect', function () {
+	if ( ! is_404() ) { return; }
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ) : '';
+	if ( ! $path || ! preg_match( '#^/artist-([a-z0-9-]+)/?$#', $path, $m ) ) { return; }
+	$slug = $m[1];
+	$wiki = get_page_by_path( $slug, OBJECT, 'idol_artist' );
+	if ( $wiki && 'publish' === get_post_status( $wiki ) ) {
+		wp_safe_redirect( get_permalink( $wiki ), 301 );
+		exit;
+	}
+} );
+
 // (1) ?author=N による author アーカイブ→ユーザー名露出のリダイレクトを停止。
 //     未ログイン時に /?author=1 を 404 にし、kpopstg_admin 等の露出を防ぐ。
 add_action( 'template_redirect', function () {
