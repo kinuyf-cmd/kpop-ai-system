@@ -1675,19 +1675,50 @@ function kpop_inject_internal_links( $content ) {
 	static $cache = null;
 	if ( $cache === null ) {
 		$cache = array();
+		// 一般語と衝突する日本語別名のブロックリスト(誤リンク防止)。
+		// ここに載るキーは自動リンクのマッチ対象から除外する(英名/韓名では拾える)。
+		$kpop_ambiguous_names = array_fill_keys( array(
+			'ループ',   // LOONA  / loop
+			'ライズ',   // RIIZE  / rise
+			'カラ',     // KARA   / 空・カラ
+			'ボア',     // BoA    / boa(襟巻)
+			'ビビ',     // BIBI   / ビビる
+			'リサ',     // LISA   / 人名一般
+			'ロゼ',     // ROSÉ   / ワインのロゼ
+			'ジス',     // JISOO  / 一般
+			'アイヴ',   // IVE    / 一般化リスク低だが保守的に
+		), true );
 		$q = new WP_Query( array(
 			'post_type'      => 'idol_artist',
 			'post_status'    => 'publish',
-			'posts_per_page' => 100,
+			'posts_per_page' => -1, // 全件。100固定だと idol_artist 123組中100件で
+			                        // 打ち切られ、古い登録(ILLIT等)がリンク対象から
+			                        // 漏れていた(SEO 2026-06-04)。
 			'no_found_rows'  => true,
 		) );
 		while ( $q->have_posts() ) {
 			$q->the_post();
-			$title = get_the_title();
-			$slug  = get_post_field( 'post_name', get_the_ID() );
-			// 3文字未満のタイトルは誤マッチ多発なのでスキップ(V/RM 等)
-			if ( mb_strlen( $title ) < 3 ) { continue; }
-			$cache[ $title ] = $slug;
+			$pid   = get_the_ID();
+			$slug  = get_post_field( 'post_name', $pid );
+			// post_title + 別名(英/韓/日)を全てマッチキーにする。日本語サイトなのに
+			// post_title(英名)しか拾えず「アイリット」等の日本語名でリンクされない
+			// のが発火率ほぼ0の真因(SEO 2026-06-04)。artist_resolver と同じ
+			// name_en/ko/ja メタを使い、同一 slug へ寄せる。
+			$names = array( get_the_title() );
+			foreach ( array( 'name_ja', 'name_en', 'name_ko' ) as $mk ) {
+				$v = get_post_meta( $pid, $mk, true );
+				if ( is_string( $v ) && $v !== '' ) { $names[] = $v; }
+			}
+			foreach ( $names as $name ) {
+				// 3文字未満のキーは誤マッチ多発なのでスキップ(V/RM/IU 等)。
+				// 既に登録済みのキーは先勝ち(別 slug への上書きを防ぐ)。
+				if ( mb_strlen( $name ) < 3 ) { continue; }
+				// 一般語と衝突する日本語別名は除外(誤リンク防止)。LOONA「ループ」が
+				// loop の意味の「ループ」に誤マッチした事例(SEO 2026-06-04)。これらは
+				// 英名/韓名/post_title 側では引き続きリンクされる。
+				if ( isset( $kpop_ambiguous_names[ $name ] ) ) { continue; }
+				if ( ! isset( $cache[ $name ] ) ) { $cache[ $name ] = $slug; }
+			}
 		}
 		wp_reset_postdata();
 		// 長いキーワードから優先マッチ(GRAPEVINE が V より先にマッチするのを保証)
@@ -1718,7 +1749,16 @@ function kpop_inject_internal_links( $content ) {
 		// このテキストノードに対してのみ、キーワードを1回ずつ置換。
 		foreach ( $cache as $title => $slug ) {
 			if ( isset( $linked[ $title ] ) ) { continue; }
-			$pattern = '/(?<![\w])(' . preg_quote( $title, '/' ) . ')(?![\w])/u';
+			// 境界判定: PHP PCRE の (?<![\w]) は look-behind がマルチバイト境界で
+			// 誤動作し「ILLITの〜 のように日本語に挟まれた英名が一切マッチしない
+			// (日本語サイトで自動リンクがほぼ発火しなかった真因 / SEO 2026-06-04)。
+			// キーが ASCII 英数字を含むときだけ ASCII 単語境界を使い、日本語/ハングル
+			// のみのキーは境界チェック無し(部分一致は3文字以上+長い順優先で抑止)。
+			if ( preg_match( '/[A-Za-z0-9]/', $title ) ) {
+				$pattern = '/(?<![A-Za-z0-9])(' . preg_quote( $title, '/' ) . ')(?![A-Za-z0-9])/u';
+			} else {
+				$pattern = '/(' . preg_quote( $title, '/' ) . ')/u';
+			}
 			$seg = preg_replace_callback( $pattern, function( $m ) use ( $slug, $title, &$linked ) {
 				if ( isset( $linked[ $title ] ) ) { return $m[0]; }
 				$linked[ $title ] = true;
