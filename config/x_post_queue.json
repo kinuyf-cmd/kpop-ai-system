@@ -1,7 +1,106 @@
 {
-  "updated": "2026-06-04 21:32",
-  "count": 28,
+  "updated": "2026-06-05 21:31",
+  "count": 32,
   "queue": [
+    {
+      "title": "ヒョリン、緊急搬送から12日で退院",
+      "url": "https://www.kpopjournal.tokyo/hyolyn-hospitalization-recovery/",
+      "post_id": 6601,
+      "genre": "breaking",
+      "artist": "효린",
+      "priority": "high",
+      "queued_at": "2026-06-05T15:33:51.121195"
+    },
+    {
+      "title": "TWSがFIFAワールドカップ2026応援歌を発表",
+      "url": "https://www.kpopjournal.tokyo/tws-fifa-world-cup-2026-support-song/",
+      "post_id": 6595,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-06-05T15:31:03.666348"
+    },
+    {
+      "title": "EXOシウミン、日本のイベント出演キャンセル",
+      "url": "https://www.kpopjournal.tokyo/exo-xiumin-japan-event-cancel/",
+      "post_id": 6587,
+      "genre": "breaking",
+      "artist": "엑소",
+      "priority": "high",
+      "queued_at": "2026-06-05T13:39:42.291086"
+    },
+    {
+      "title": "NCTのジェヒョン、軍除隊後初のファンコンサート",
+      "url": "https://www.kpopjournal.tokyo/nct-jaehyun-fan-concert-after-military-service/",
+      "post_id": 6574,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-05T13:30:48.895906"
+    },
+    {
+      "title": "TWS、韓国代表応援歌「Dream With Us」を11日リリース",
+      "url": "https://www.kpopjournal.tokyo/tws-dream-with-us-kankoku/",
+      "post_id": 6555,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-06-05T11:36:01.508594"
+    },
+    {
+      "title": "ユ・スンジュン、入国への執着手放す意向",
+      "url": "https://www.kpopjournal.tokyo/yu-sung-jun-entry-intent-release/",
+      "post_id": 6548,
+      "genre": "breaking",
+      "artist": "유승준",
+      "priority": "high",
+      "queued_at": "2026-06-05T09:45:11.534605"
+    },
+    {
+      "title": "SEVENTEENのジョシュア、新たな領域への冒険",
+      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-new-adventure/",
+      "post_id": 6544,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-06-05T09:43:30.040500"
+    },
+    {
+      "title": "TREASURE、活動2幕本格始動「IF I」初披露",
+      "url": "https://www.kpopjournal.tokyo/treasure-if-i-activity-start/",
+      "post_id": 6531,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-06-05T09:36:20.747606"
+    },
+    {
+      "title": "BTSのV、軍服務のプライバシー問題に言及",
+      "url": "https://www.kpopjournal.tokyo/bts-v-military-service-privacy-issue/",
+      "post_id": 6511,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-05T07:34:04.437137"
+    },
+    {
+      "title": "NCT DREAMのRenjun、批判受けファン擁護",
+      "url": "https://www.kpopjournal.tokyo/nct-dream-renjun-fan-support-criticism/",
+      "post_id": 6505,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-05T07:31:54.363973"
+    },
+    {
+      "title": "RIIZE、収録曲「Like a Bomb」で愛表現",
+      "url": "https://www.kpopjournal.tokyo/?p=6483",
+      "post_id": 6483,
+      "genre": "breaking",
+      "artist": "라이즈",
+      "priority": "high",
+      "queued_at": "2026-06-04T19:32:55.625136"
+    },
     {
       "title": "SEVENTEEN出演回字幕ミスで「チャンネル十五夜」謝罪",
       "url": "https://www.kpopjournal.tokyo/seventeen-channels-jyuugoya-apology/",
@@ -147,112 +246,49 @@
       "queued_at": "2026-06-04T07:31:18.155735"
     },
     {
-      "title": "イム・ジヨン、バリでリラックスした近況公開",
-      "url": "https://www.kpopjournal.tokyo/im-jiyoung-bali-relax-update/",
-      "post_id": 6315,
+      "title": "3千ウォン夫婦」結婚後に動画削除",
+      "url": "https://www.kpopjournal.tokyo/3sen-won-fufu-kekkon-go-douga-sakujo/",
+      "post_id": 6623,
       "genre": "breaking",
-      "artist": "임지연",
+      "artist": "효린",
       "priority": "high",
-      "queued_at": "2026-06-03T17:37:35.298719"
+      "queued_at": "2026-06-05T19:30:45.079661"
     },
     {
-      "title": "NCTのレンジュン、中国ショーケースチケット完売",
-      "url": "https://www.kpopjournal.tokyo/nct-renjun-china-showcase-tickets-sold-out/",
-      "post_id": 6303,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-06-03T15:34:38.762609"
-    },
-    {
-      "title": "BTS、釜山公演控え宿泊施設の捜査開始",
-      "url": "https://www.kpopjournal.tokyo/bts-busan-concert-accommodation-investigation/",
-      "post_id": 6299,
+      "title": "BTSのジョングクとSEVENTEENのミンギュ交流物議",
+      "url": "https://www.kpopjournal.tokyo/bts-jungkook-seventeen-mingyu-communication-controversy/",
+      "post_id": 6627,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-06-03T15:33:24.071056"
+      "queued_at": "2026-06-05T19:31:39.614744"
     },
     {
-      "title": "RIIZE、R&Bヒップホップ「Overdrive」でボーカル予告",
-      "url": "https://www.kpopjournal.tokyo/riize-overdrive-rb-hiphop/",
-      "post_id": 6294,
+      "title": "KARINA、aespaの食事管理について語る",
+      "url": "https://www.kpopjournal.tokyo/karina-aespa-shokuji-kanri/",
+      "post_id": 6633,
       "genre": "breaking",
-      "artist": "라이즈",
+      "artist": "에스파",
       "priority": "high",
-      "queued_at": "2026-06-03T15:31:23.295619"
+      "queued_at": "2026-06-05T19:35:31.916053"
     },
     {
-      "title": "コンミョン、弟NCTドヨンのOST参加秘話明かす",
-      "url": "https://www.kpopjournal.tokyo/konmyon-nct-doyoung-ost-hiketsu/",
-      "post_id": 6290,
+      "title": "Red Velvetのアイリーン、仁川空港出国",
+      "url": "https://www.kpopjournal.tokyo/red-velvet-irene-incheon-airport-departure/",
+      "post_id": 6637,
       "genre": "breaking",
-      "artist": "NCT",
+      "artist": "레드벨벳",
       "priority": "high",
-      "queued_at": "2026-06-03T13:34:39.897619"
+      "queued_at": "2026-06-05T19:36:27.428052"
     },
     {
-      "title": "LE SSERAFIM、米ビルボード「バブリング・アンダー・ホット100」10位",
-      "url": "https://www.kpopjournal.tokyo/le-sserafim-bubbling-under-hot100-10th/",
-      "post_id": 6262,
+      "title": "G-DragonがBLACKPINK Jennieとのデート噂活動予定",
+      "url": "https://www.kpopjournal.tokyo/g-dragon-blackpink-jennie-date-rumors-activity/",
+      "post_id": 6646,
       "genre": "breaking",
-      "artist": "르세라핌",
+      "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-06-03T09:40:10.877792"
-    },
-    {
-      "title": "(G)I-DLEミヨン、シドニー公演後の腹筋注目",
-      "url": "https://www.kpopjournal.tokyo/gi-dle-miyon-sydney-performance-abs/",
-      "post_id": 6254,
-      "genre": "breaking",
-      "artist": "(여자)아이들",
-      "priority": "high",
-      "queued_at": "2026-06-03T09:35:18.904333"
-    },
-    {
-      "title": "ILLITが日本ツアー全公演完売、人気証明",
-      "url": "https://www.kpopjournal.tokyo/illit-japan-tour-sold-out-popularity/",
-      "post_id": 6237,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-06-03T07:39:03.999063"
-    },
-    {
-      "title": "BTSメンバー残り物食べたレストラン批判",
-      "url": "https://www.kpopjournal.tokyo/bts-member-restaurant-criticism/",
-      "post_id": 6233,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-03T07:37:50.918952"
-    },
-    {
-      "title": "RIIZE、収録曲「Like a Bomb」で愛表現",
-      "url": "https://www.kpopjournal.tokyo/?p=6483",
-      "post_id": 6483,
-      "genre": "breaking",
-      "artist": "라이즈",
-      "priority": "high",
-      "queued_at": "2026-06-04T19:32:55.625136"
-    },
-    {
-      "title": "LE SSERAFIMが「M Countdown」で1st Win獲得",
-      "url": "https://www.kpopjournal.tokyo/?p=6490",
-      "post_id": 6490,
-      "genre": "breaking",
-      "artist": "LE SSERAFIM",
-      "priority": "high",
-      "queued_at": "2026-06-04T21:30:43.603519"
-    },
-    {
-      "title": "高祖英の義姉、ソン・ヘギョやIU通う院長",
-      "url": "https://www.kpopjournal.tokyo/ko-soo-yeong-sister-song-hye-kyo-iu/",
-      "post_id": 6495,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-06-04T21:32:42.365264"
+      "queued_at": "2026-06-05T21:30:35.650737"
     }
   ]
 }

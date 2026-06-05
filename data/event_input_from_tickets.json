@@ -219,6 +219,16 @@
    "start_date": "2026-06-11",
    "venue": "KT Zepp Yokohama",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MYNAME",
+   "title": "MYNAME",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-11",
+   "venue": "仙台MACANA",
+   "_source_id": "ltike"
   }
  ]
 }
