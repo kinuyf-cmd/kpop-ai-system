@@ -57,6 +57,34 @@ DEFAULT_SLOT_SIZE = 0  # 上記以外の時間帯は投稿しない(上限厳守
 MIN_INTERVAL_MIN = 5   # 同一時間帯内の最低間隔(分)
 PRIORITY_GENRES = {'news', 'breaking', 'comeback', 'chart'}  # 優先ジャンル
 
+AB_LOG = "/home/aiuser/kpop-ai-system/logs/x_ab_log.jsonl"
+
+
+def _next_ab_variant() -> str:
+    """M10 AB の variant を「これまでの実投稿件数が少ない方」に割り当てる。
+    旧実装(post_id%2)は breaking 記事IDが偶奇に偏るため A:B が崩れた(実測16:36)。
+    AB_LOG の実件数を読み、少ない方を返す(同数なら A)。これで自動的に均衡する。
+    """
+    import json as _j
+    a = b = 0
+    try:
+        with open(AB_LOG, encoding="utf-8") as _f:
+            for _line in _f:
+                _line = _line.strip()
+                if not _line:
+                    continue
+                _v = _j.loads(_line).get("variant")
+                if _v == "A":
+                    a += 1
+                elif _v == "B":
+                    b += 1
+    except FileNotFoundError:
+        pass
+    except Exception:
+        # ログ破損時は偏らせないよう A/B いずれかに寄せきらない=Aで継続
+        return "A"
+    return "A" if a <= b else "B"
+
 # 2026-05-26(施策2): 時間帯の役割分担。最新Xアルゴは「会話/返信」が最強(返信13.5,
 # 著者返信+75)で、ゴールデン帯(19-21時)は会話起点 text-only が伸びる。一方 通勤/昼/夕は
 # 記事誘導(リンククリック+11)で流入を稼ぐ。混在帯は記事を主にしつつ時々会話。
@@ -469,13 +497,9 @@ def process_queue(dry_run: bool = False) -> dict:
 
         # 2026-05-26(施策4): high priority 記事はスレッド(フック→要点→URL、単発比+40-60%imp)、
         # その他は従来の2段。post_thread は要点生成不可なら自動で2段にフォールバック。
-        # M10 AB (2026-05-28): post_idの偶奇で variant を交互割当(A=ペルソナ/B=PopCrave)。
-        # post_id不在時は時刻のepoch秒偶奇で代替(完全な交互は保証しないが概ね半々)。
-        if post_id is not None:
-            variant = 'A' if (int(post_id) % 2 == 0) else 'B'
-        else:
-            import time as _t
-            variant = 'A' if (int(_t.time()) % 2 == 0) else 'B'
+        # M10 AB (2026-05-28 / 偏り修正 2026-06-05): variant を「実投稿件数が少ない方」へ
+        # 割当(A=ペルソナ/B=PopCrave)。旧 post_id%2 は記事IDの偶奇偏りで A:B=16:36 に崩れた。
+        variant = _next_ab_variant()
         if entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
             from lib.x_poster import post_thread
             result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
@@ -491,9 +515,8 @@ def process_queue(dry_run: bool = False) -> dict:
             try:
                 import json as _j, os as _o
                 from datetime import datetime as _dt
-                _ab_log = "/home/aiuser/kpop-ai-system/logs/x_ab_log.jsonl"
-                _o.makedirs(_o.path.dirname(_ab_log), exist_ok=True)
-                with open(_ab_log, "a", encoding="utf-8") as _f:
+                _o.makedirs(_o.path.dirname(AB_LOG), exist_ok=True)
+                with open(AB_LOG, "a", encoding="utf-8") as _f:
                     _f.write(_j.dumps({
                         "ts": _dt.now().isoformat(),
                         "tweet_id": tid, "reply_id": rid,
