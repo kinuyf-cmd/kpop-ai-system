@@ -1,7 +1,214 @@
 {
-  "updated": "2026-06-05 21:31",
-  "count": 32,
+  "updated": "2026-06-06 21:35",
+  "count": 35,
   "queue": [
+    {
+      "title": "VIVIZ、和解金認められBig Planet Madeに仮処分",
+      "url": "https://www.kpopjournal.tokyo/viviz-settlement-big-planet-made/",
+      "post_id": 6800,
+      "genre": "breaking",
+      "artist": "VIVIZ",
+      "priority": "high",
+      "queued_at": "2026-06-06T17:35:27.119696"
+    },
+    {
+      "title": "aespaが「LEMONADE」でUKシングルチャート初登場",
+      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-uk-chart-debut-2/",
+      "post_id": 6796,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-06T17:31:28.340561"
+    },
+    {
+      "title": "IU、政治的論争に巻き込まれコメント殺到",
+      "url": "https://www.kpopjournal.tokyo/iu-political-controversy-comments/",
+      "post_id": 6792,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-06-06T17:30:32.248842"
+    },
+    {
+      "title": "ソン・フンミン、MLSオールスター選出決定",
+      "url": "https://www.kpopjournal.tokyo/son-heung-min-mls-all-star-selection/",
+      "post_id": 6763,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:41:51.773911"
+    },
+    {
+      "title": "IUに対する先払い要求がSNSで議論に",
+      "url": "https://www.kpopjournal.tokyo/iu-prepayment-demand-discussion-sns/",
+      "post_id": 6759,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:40:46.092145"
+    },
+    {
+      "title": "ITZYのチェリョン、幼少期からのイメージ管理",
+      "url": "https://www.kpopjournal.tokyo/itzy-chaeryeong-image-management/",
+      "post_id": 6754,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:39:30.819174"
+    },
+    {
+      "title": "BTSからTWSまでHYBEが日本制覇",
+      "url": "https://www.kpopjournal.tokyo/bts-hybe-japan-seihai/",
+      "post_id": 6750,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:38:34.100516"
+    },
+    {
+      "title": "aespa「Lemonade」がUKシングルチャート初登場",
+      "url": "https://www.kpopjournal.tokyo/?p=6746",
+      "post_id": 6746,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:37:34.876955"
+    },
+    {
+      "title": "公明、NCTドヨンから車プレゼントされる",
+      "url": "https://www.kpopjournal.tokyo/koumei-nct-doyoung-car-gift/",
+      "post_id": 6740,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-06T13:35:50.191825"
+    },
+    {
+      "title": "aespaがリラックスした食生活とルーチン公開",
+      "url": "https://www.kpopjournal.tokyo/aespa-relaxing-diet-routine/",
+      "post_id": 6723,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-06T11:31:29.166444"
+    },
+    {
+      "title": "I.O.Iが10周年再会を涙と笑いで締めくくる",
+      "url": "https://www.kpopjournal.tokyo/i-o-i-10th-anniversary-reunion/",
+      "post_id": 6719,
+      "genre": "breaking",
+      "artist": "I.O.I",
+      "priority": "high",
+      "queued_at": "2026-06-06T11:30:30.027202"
+    },
+    {
+      "title": "ウェンディ、「ザ・スカウト」初のチーム戦1位獲得",
+      "url": "https://www.kpopjournal.tokyo/wendy-the-scout-team-1st-place/",
+      "post_id": 6715,
+      "genre": "breaking",
+      "artist": "웬디",
+      "priority": "high",
+      "queued_at": "2026-06-06T09:41:57.456333"
+    },
+    {
+      "title": "BIGBANG マゴメド・アンカラエフ 7月UFC対戦決定",
+      "url": "https://www.kpopjournal.tokyo/bigbang-magomed-ankalaev-ufc-july-fight/",
+      "post_id": 6707,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-06-06T09:38:55.076561"
+    },
+    {
+      "title": "BOYNEXTDOOR、新曲「VIRAL」での変身発表",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-viral-henshin-happyou/",
+      "post_id": 6697,
+      "genre": "breaking",
+      "artist": "보이넥스트도어",
+      "priority": "high",
+      "queued_at": "2026-06-06T09:35:28.302919"
+    },
+    {
+      "title": "新生ウホ、東アジアカップ予選でマカオに13-0勝利",
+      "url": "https://www.kpopjournal.tokyo/shinsei-uho-ea-cup-macao-win-13-0/",
+      "post_id": 6693,
+      "genre": "breaking",
+      "artist": "신상우호",
+      "priority": "high",
+      "queued_at": "2026-06-06T09:32:09.677728"
+    },
+    {
+      "title": "イ・デホ、ファイターズ4番打者として釜山帰還",
+      "url": "https://www.kpopjournal.tokyo/?p=6684",
+      "post_id": 6684,
+      "genre": "breaking",
+      "artist": "이대호",
+      "priority": "high",
+      "queued_at": "2026-06-06T07:41:48.439699"
+    },
+    {
+      "title": "南昌熙 妻の美しさと幸せな新婚生活",
+      "url": "https://www.kpopjournal.tokyo/nanchangxi-wife-beauty-happy-married-life/",
+      "post_id": 6680,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-06-06T07:40:40.574036"
+    },
+    {
+      "title": "aespa「LEMONADE」リミックスZeddらが参加",
+      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-remix-zedd-participation/",
+      "post_id": 6675,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-06T07:38:40.231408"
+    },
+    {
+      "title": "ITZYのイェジ、ショートヘアで魅力全開",
+      "url": "https://www.kpopjournal.tokyo/itzy-yeji-short-hair-charm/",
+      "post_id": 6663,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-06-06T07:35:35.365524"
+    },
+    {
+      "title": "NewJeansの「OMG」MVが4億回再生達成",
+      "url": "https://www.kpopjournal.tokyo/?p=6657",
+      "post_id": 6657,
+      "genre": "breaking",
+      "artist": "NewJeans",
+      "priority": "high",
+      "queued_at": "2026-06-06T07:30:29.088257"
+    },
+    {
+      "title": "KARINA、aespaの食事管理について語る",
+      "url": "https://www.kpopjournal.tokyo/karina-aespa-shokuji-kanri/",
+      "post_id": 6633,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-06-05T19:35:31.916053"
+    },
+    {
+      "title": "BTSのジョングクとSEVENTEENのミンギュ交流物議",
+      "url": "https://www.kpopjournal.tokyo/bts-jungkook-seventeen-mingyu-communication-controversy/",
+      "post_id": 6627,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-05T19:31:39.614744"
+    },
+    {
+      "title": "3千ウォン夫婦」結婚後に動画削除",
+      "url": "https://www.kpopjournal.tokyo/3sen-won-fufu-kekkon-go-douga-sakujo/",
+      "post_id": 6623,
+      "genre": "breaking",
+      "artist": "효린",
+      "priority": "high",
+      "queued_at": "2026-06-05T19:30:45.079661"
+    },
     {
       "title": "ヒョリン、緊急搬送から12日で退院",
       "url": "https://www.kpopjournal.tokyo/hyolyn-hospitalization-recovery/",
@@ -93,202 +300,22 @@
       "queued_at": "2026-06-05T07:31:54.363973"
     },
     {
-      "title": "RIIZE、収録曲「Like a Bomb」で愛表現",
-      "url": "https://www.kpopjournal.tokyo/?p=6483",
-      "post_id": 6483,
+      "title": "ILLITのウォンヒ、恋愛告白で話題に",
+      "url": "https://www.kpopjournal.tokyo/illits-wonhi-love-confession/",
+      "post_id": 6814,
       "genre": "breaking",
-      "artist": "라이즈",
+      "artist": "ILLIT",
       "priority": "high",
-      "queued_at": "2026-06-04T19:32:55.625136"
+      "queued_at": "2026-06-06T19:30:31.665897"
     },
     {
-      "title": "SEVENTEEN出演回字幕ミスで「チャンネル十五夜」謝罪",
-      "url": "https://www.kpopjournal.tokyo/seventeen-channels-jyuugoya-apology/",
-      "post_id": 6467,
+      "title": "CORTISのジェームス「10年後ドガニにサリル",
+      "url": "https://www.kpopjournal.tokyo/?p=6822",
+      "post_id": 6822,
       "genre": "breaking",
-      "artist": "SEVENTEEN",
+      "artist": "코르티스",
       "priority": "high",
-      "queued_at": "2026-06-04T17:37:20.467325"
-    },
-    {
-      "title": "BTS、釜山全域をフェスティバルの舞台に",
-      "url": "https://www.kpopjournal.tokyo/bts-busan-festival-stage/",
-      "post_id": 6463,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-06-04T17:36:07.975447"
-    },
-    {
-      "title": "KATSEYE「PINKY UP」UKシングルチャート7週連続ランクイン",
-      "url": "https://www.kpopjournal.tokyo/katseye-pinky-up-uk-single-chart-7-weeks/",
-      "post_id": 6459,
-      "genre": "breaking",
-      "artist": "KATSEYE",
-      "priority": "high",
-      "queued_at": "2026-06-04T17:34:39.898203"
-    },
-    {
-      "title": "MONSTA X「heal」がビルボードポップエアプレイ4週目",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-heal-billboard-pop-airplay/",
-      "post_id": 6451,
-      "genre": "breaking",
-      "artist": "monsta x",
-      "priority": "high",
-      "queued_at": "2026-06-04T17:31:59.283585"
-    },
-    {
-      "title": "ATEEZミンギ、強烈な眼差しで挨拶",
-      "url": "https://www.kpopjournal.tokyo/?p=6428",
-      "post_id": 6428,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-06-04T13:32:52.882197"
-    },
-    {
-      "title": "BLACKPINKのリサ 最新SNS更新が話題に",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-latest-sns-update/",
-      "post_id": 6405,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-06-04T11:31:57.546167"
-    },
-    {
-      "title": "IVE「LUCID DREAM」でオリコン・ビルボード1位獲得",
-      "url": "https://www.kpopjournal.tokyo/ive-lucid-dream-oricon-billboard-1/",
-      "post_id": 6400,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-06-04T09:37:48.590148"
-    },
-    {
-      "title": "クローザー、初の正規アルバム『Klozer』10曲収録",
-      "url": "https://www.kpopjournal.tokyo/klozer-first-album-10-tracks/",
-      "post_id": 6381,
-      "genre": "breaking",
-      "artist": "클로저",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:46:37.941537"
-    },
-    {
-      "title": "トニアン、ファンミーティングキャンセル謝罪",
-      "url": "https://www.kpopjournal.tokyo/tonyan-fan-meeting-cancellation-apology/",
-      "post_id": 6377,
-      "genre": "breaking",
-      "artist": "토니안",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:45:21.680530"
-    },
-    {
-      "title": "tripleS、6月4日「M COUNTDOWN」で「Baby Flower」披露",
-      "url": "https://www.kpopjournal.tokyo/triples-baby-flower-mcountdown/",
-      "post_id": 6373,
-      "genre": "breaking",
-      "artist": "트리플에스",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:44:01.818695"
-    },
-    {
-      "title": "医師ハ・チュンシク、411億寄付で話題",
-      "url": "https://www.kpopjournal.tokyo/ha-chunsik-411-billion-donation/",
-      "post_id": 6368,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:42:10.211689"
-    },
-    {
-      "title": "BTSとCORTIS、5月KMチャートで活躍",
-      "url": "https://www.kpopjournal.tokyo/bts-cortis-km-chart-may-2023/",
-      "post_id": 6363,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:39:30.772524"
-    },
-    {
-      "title": "IVEのウォニョン態度論争にネット支持広がる",
-      "url": "https://www.kpopjournal.tokyo/ive-wonyoung-attitude-controversy-support/",
-      "post_id": 6356,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:35:32.939017"
-    },
-    {
-      "title": "BTS 13周年祝う2026 FESTA開始 家族写真公開",
-      "url": "https://www.kpopjournal.tokyo/?p=6352",
-      "post_id": 6352,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:33:42.032071"
-    },
-    {
-      "title": "BLACKPINKのジェニー、Tame Impalaと「Dracula」初のトップ1",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-tame-impala-dracula-top1/",
-      "post_id": 6348,
-      "genre": "breaking",
-      "artist": "JENNIE",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:32:31.096038"
-    },
-    {
-      "title": "TWICEがRIAJトリプルプラチナとダブルプラチナ獲得",
-      "url": "https://www.kpopjournal.tokyo/?p=6344",
-      "post_id": 6344,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-06-04T07:31:18.155735"
-    },
-    {
-      "title": "3千ウォン夫婦」結婚後に動画削除",
-      "url": "https://www.kpopjournal.tokyo/3sen-won-fufu-kekkon-go-douga-sakujo/",
-      "post_id": 6623,
-      "genre": "breaking",
-      "artist": "효린",
-      "priority": "high",
-      "queued_at": "2026-06-05T19:30:45.079661"
-    },
-    {
-      "title": "BTSのジョングクとSEVENTEENのミンギュ交流物議",
-      "url": "https://www.kpopjournal.tokyo/bts-jungkook-seventeen-mingyu-communication-controversy/",
-      "post_id": 6627,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-05T19:31:39.614744"
-    },
-    {
-      "title": "KARINA、aespaの食事管理について語る",
-      "url": "https://www.kpopjournal.tokyo/karina-aespa-shokuji-kanri/",
-      "post_id": 6633,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-05T19:35:31.916053"
-    },
-    {
-      "title": "Red Velvetのアイリーン、仁川空港出国",
-      "url": "https://www.kpopjournal.tokyo/red-velvet-irene-incheon-airport-departure/",
-      "post_id": 6637,
-      "genre": "breaking",
-      "artist": "레드벨벳",
-      "priority": "high",
-      "queued_at": "2026-06-05T19:36:27.428052"
-    },
-    {
-      "title": "G-DragonがBLACKPINK Jennieとのデート噂活動予定",
-      "url": "https://www.kpopjournal.tokyo/g-dragon-blackpink-jennie-date-rumors-activity/",
-      "post_id": 6646,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-06-05T21:30:35.650737"
+      "queued_at": "2026-06-06T21:35:44.113704"
     }
   ]
 }

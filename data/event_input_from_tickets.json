@@ -2,26 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "SHINee",
-   "title": "SHINee",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668012",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-05",
-   "venue": "ベルーナドーム",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "LEE YOUNGJI",
-   "title": "LEE YOUNGJI",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2666721",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-05",
-   "venue": "Zepp Haneda",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "HAN SEUNG WOO",
    "title": "HAN SEUNG WOO TOKYO SPECIAL FANMEETING",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667945",
@@ -59,16 +39,6 @@
    "start_date": "2026-07-08",
    "venue": "GLION ARENA KOBE",
    "_source_id": "eplus"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "SHINee",
-   "title": "SHINee - The Trilogy I - 2026 SHINee WORLD VIII : [THE INVERT] | ticket board",
-   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15554",
-   "source_media": "チケットボード",
-   "start_date": "2026-06-05",
-   "venue": "ベルーナドーム",
-   "_source_id": "tickebo"
   },
   {
    "type": "event",
@@ -182,16 +152,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "MYNAME",
-   "title": "MYNAME",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-05",
-   "venue": "福岡BEAT STATION",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "&TEAM",
    "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
@@ -228,6 +188,16 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-06-11",
    "venue": "仙台MACANA",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-07-26",
+   "venue": "ローソン・ユナイテッドシネマ札幌",
    "_source_id": "ltike"
   }
  ]
