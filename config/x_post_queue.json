@@ -1,7 +1,97 @@
 {
-  "updated": "2026-06-06 21:35",
-  "count": 35,
+  "updated": "2026-06-07 21:35",
+  "count": 37,
   "queue": [
+    {
+      "title": "2026 Weverseコンフェスティバル」初日終了",
+      "url": "https://www.kpopjournal.tokyo/weverse-festival-2026-first-day/",
+      "post_id": 6911,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-06-07T17:33:29.088902"
+    },
+    {
+      "title": "TXTのヨンジュン、サングラスでアイコンタクト",
+      "url": "https://www.kpopjournal.tokyo/?p=6893",
+      "post_id": 6893,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-06-07T15:31:14.720596"
+    },
+    {
+      "title": "チャオル、過酷なアイドル時代を涙で語る",
+      "url": "https://www.kpopjournal.tokyo/chao-ru-idol-days-tears/",
+      "post_id": 6887,
+      "genre": "breaking",
+      "artist": "차오루",
+      "priority": "high",
+      "queued_at": "2026-06-07T13:37:49.378158"
+    },
+    {
+      "title": "MONSTA X、メキシコシティ全席完売の成功",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-mexico-city-sold-out-success/",
+      "post_id": 6880,
+      "genre": "breaking",
+      "artist": "몬스타엑스",
+      "priority": "high",
+      "queued_at": "2026-06-07T13:35:31.009364"
+    },
+    {
+      "title": "イ・ヒョン、息子をアメリカ才能キャンプへ送る",
+      "url": "https://www.kpopjournal.tokyo/lee-hyun-son-america-talent-camp/",
+      "post_id": 6876,
+      "genre": "breaking",
+      "artist": "이현이",
+      "priority": "high",
+      "queued_at": "2026-06-07T13:31:39.783017"
+    },
+    {
+      "title": "ILLIT、活動終了後も「It’s Me」が1位獲得",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260607-093218/",
+      "post_id": 6854,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-06-07T09:32:24.930950"
+    },
+    {
+      "title": "TWICEジヒョの新ファンカム再び話題に",
+      "url": "https://www.kpopjournal.tokyo/twice-jihyo-new-fancam-topic/",
+      "post_id": 6849,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-06-07T09:31:10.887044"
+    },
+    {
+      "title": "BTS Jiminの家族経営カフェが脅威直面",
+      "url": "https://www.kpopjournal.tokyo/bts-jimin-family-cafe-threat/",
+      "post_id": 6835,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-07T07:32:19.238691"
+    },
+    {
+      "title": "aespaのジゼルが減量憶測に言及",
+      "url": "https://www.kpopjournal.tokyo/aespa-giselle-weight-loss-rumors/",
+      "post_id": 6831,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-07T07:31:23.090500"
+    },
+    {
+      "title": "ZEROBASEONEパク・グンウク、謝罪後に新たな批判",
+      "url": "https://www.kpopjournal.tokyo/zerobaseone-park-gunwook-apology-criticism/",
+      "post_id": 6827,
+      "genre": "breaking",
+      "artist": "ZEROBASEONE",
+      "priority": "high",
+      "queued_at": "2026-06-07T07:30:30.212381"
+    },
     {
       "title": "VIVIZ、和解金認められBig Planet Madeに仮処分",
       "url": "https://www.kpopjournal.tokyo/viviz-settlement-big-planet-made/",
@@ -183,139 +273,67 @@
       "queued_at": "2026-06-06T07:30:29.088257"
     },
     {
-      "title": "KARINA、aespaの食事管理について語る",
-      "url": "https://www.kpopjournal.tokyo/karina-aespa-shokuji-kanri/",
-      "post_id": 6633,
+      "title": "aespaのジゼルが生放送で交際疑惑否定",
+      "url": "https://www.kpopjournal.tokyo/aespa-giselle-denies-relationship-rumors/",
+      "post_id": 6922,
       "genre": "breaking",
-      "artist": "에스파",
+      "artist": "aespa",
       "priority": "high",
-      "queued_at": "2026-06-05T19:35:31.916053"
+      "queued_at": "2026-06-07T19:30:29.826970"
     },
     {
-      "title": "BTSのジョングクとSEVENTEENのミンギュ交流物議",
-      "url": "https://www.kpopjournal.tokyo/bts-jungkook-seventeen-mingyu-communication-controversy/",
-      "post_id": 6627,
+      "title": "KATSEYE、ニューヨーク「ザ・ガバナーズ・ボール」でパフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/katseye-governors-ball-performance/",
+      "post_id": 6928,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "KATSEYE",
       "priority": "high",
-      "queued_at": "2026-06-05T19:31:39.614744"
+      "queued_at": "2026-06-07T19:35:19.281873"
     },
     {
-      "title": "3千ウォン夫婦」結婚後に動画削除",
-      "url": "https://www.kpopjournal.tokyo/3sen-won-fufu-kekkon-go-douga-sakujo/",
-      "post_id": 6623,
+      "title": "ケイシ、新曲「この上なく幸せになれるかな」チャレンジ参加",
+      "url": "https://www.kpopjournal.tokyo/keishi-happy-new-song-challenge/",
+      "post_id": 6932,
       "genre": "breaking",
-      "artist": "효린",
+      "artist": "케이시",
       "priority": "high",
-      "queued_at": "2026-06-05T19:30:45.079661"
+      "queued_at": "2026-06-07T19:36:17.996068"
     },
     {
-      "title": "ヒョリン、緊急搬送から12日で退院",
-      "url": "https://www.kpopjournal.tokyo/hyolyn-hospitalization-recovery/",
-      "post_id": 6601,
+      "title": "スジン、階段で屋外ショット公開…8月カムバック",
+      "url": "https://www.kpopjournal.tokyo/sujin-outdoor-shot-august-comeback/",
+      "post_id": 6936,
       "genre": "breaking",
-      "artist": "효린",
+      "artist": "수진",
       "priority": "high",
-      "queued_at": "2026-06-05T15:33:51.121195"
+      "queued_at": "2026-06-07T19:37:16.818127"
     },
     {
-      "title": "TWSがFIFAワールドカップ2026応援歌を発表",
-      "url": "https://www.kpopjournal.tokyo/tws-fifa-world-cup-2026-support-song/",
-      "post_id": 6595,
+      "title": "アン・セヨン、16年ぶりの「バックツーバック」優勝",
+      "url": "https://www.kpopjournal.tokyo/an-seyong-back-to-back-victory-16-years/",
+      "post_id": 6940,
       "genre": "breaking",
-      "artist": "TWS",
+      "artist": "안세영",
       "priority": "high",
-      "queued_at": "2026-06-05T15:31:03.666348"
+      "queued_at": "2026-06-07T19:38:19.228911"
     },
     {
-      "title": "EXOシウミン、日本のイベント出演キャンセル",
-      "url": "https://www.kpopjournal.tokyo/exo-xiumin-japan-event-cancel/",
-      "post_id": 6587,
+      "title": "HWASA、ジェンソン・ファンから称賛受ける",
+      "url": "https://www.kpopjournal.tokyo/hwasa-jenson-fan-praise/",
+      "post_id": 6944,
       "genre": "breaking",
-      "artist": "엑소",
+      "artist": "화사",
       "priority": "high",
-      "queued_at": "2026-06-05T13:39:42.291086"
+      "queued_at": "2026-06-07T21:30:50.085217"
     },
     {
-      "title": "NCTのジェヒョン、軍除隊後初のファンコンサート",
-      "url": "https://www.kpopjournal.tokyo/nct-jaehyun-fan-concert-after-military-service/",
-      "post_id": 6574,
+      "title": "LE SSERAFIMがGuru Randhawa起用で物議",
+      "url": "https://www.kpopjournal.tokyo/le-sserafim-guru-randhawa-controversy/",
+      "post_id": 6949,
       "genre": "breaking",
-      "artist": "NCT",
+      "artist": "LE SSERAFIM",
       "priority": "high",
-      "queued_at": "2026-06-05T13:30:48.895906"
-    },
-    {
-      "title": "TWS、韓国代表応援歌「Dream With Us」を11日リリース",
-      "url": "https://www.kpopjournal.tokyo/tws-dream-with-us-kankoku/",
-      "post_id": 6555,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-06-05T11:36:01.508594"
-    },
-    {
-      "title": "ユ・スンジュン、入国への執着手放す意向",
-      "url": "https://www.kpopjournal.tokyo/yu-sung-jun-entry-intent-release/",
-      "post_id": 6548,
-      "genre": "breaking",
-      "artist": "유승준",
-      "priority": "high",
-      "queued_at": "2026-06-05T09:45:11.534605"
-    },
-    {
-      "title": "SEVENTEENのジョシュア、新たな領域への冒険",
-      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-new-adventure/",
-      "post_id": 6544,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-06-05T09:43:30.040500"
-    },
-    {
-      "title": "TREASURE、活動2幕本格始動「IF I」初披露",
-      "url": "https://www.kpopjournal.tokyo/treasure-if-i-activity-start/",
-      "post_id": 6531,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-06-05T09:36:20.747606"
-    },
-    {
-      "title": "BTSのV、軍服務のプライバシー問題に言及",
-      "url": "https://www.kpopjournal.tokyo/bts-v-military-service-privacy-issue/",
-      "post_id": 6511,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-05T07:34:04.437137"
-    },
-    {
-      "title": "NCT DREAMのRenjun、批判受けファン擁護",
-      "url": "https://www.kpopjournal.tokyo/nct-dream-renjun-fan-support-criticism/",
-      "post_id": 6505,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-06-05T07:31:54.363973"
-    },
-    {
-      "title": "ILLITのウォンヒ、恋愛告白で話題に",
-      "url": "https://www.kpopjournal.tokyo/illits-wonhi-love-confession/",
-      "post_id": 6814,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-06-06T19:30:31.665897"
-    },
-    {
-      "title": "CORTISのジェームス「10年後ドガニにサリル",
-      "url": "https://www.kpopjournal.tokyo/?p=6822",
-      "post_id": 6822,
-      "genre": "breaking",
-      "artist": "코르티스",
-      "priority": "high",
-      "queued_at": "2026-06-06T21:35:44.113704"
+      "queued_at": "2026-06-07T21:32:06.379812"
     }
   ]
 }
