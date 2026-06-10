@@ -642,5 +642,33 @@
         "license": "CC BY 4.0"
       }
     ]
+  },
+  "hwasa": {
+    "name": "HWASA",
+    "files": [
+      "hwasa_8e091ca9.jpg"
+    ],
+    "sources": [
+      {
+        "file": "hwasa_8e091ca9.jpg",
+        "wikimedia_title": "File:HWASA in Seattle - 54383595949.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/64/HWASA_in_Seattle_-_54383595949.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "karina": {
+    "name": "KARINA",
+    "files": [
+      "karina_910474cf.jpg"
+    ],
+    "sources": [
+      {
+        "file": "karina_910474cf.jpg",
+        "wikimedia_title": "File:9519808 Karina 2012.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/9519808_Karina_2012.jpg",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
   }
 }

@@ -73,6 +73,21 @@ GSC 実データ（`data/gsc_query_opportunities.json` 208件）分析の結論:
 
 ## 5. 次ステップ
 
-1. オーナーが各記事の商品とAmazonアフィリエイトリンクを Claude に渡す
-2. Claude が記事ごとに生成（kpop-original-article スキル）
+1. オーナーが各記事の商品とAmazonアフィリエイトリンクを Claude に渡す → **完了(2026-06-10)**
+2. Claude が記事ごとに生成（kpop-original-article スキル）→ **完了。各商品URLを実際に読み、製品内容に合わせた文章にカスタマイズ済**
 3. 検証 → stg draft 投稿 → 監査 → 公開 → GSC 申請
+   → **検証PASS・stg draft投稿完了(post 7270-7274)**。**公開・サムネ・GSC申請はowner**。
+   → ランブック: `reports/amazon_revenue/OWNER_RUNBOOK.md`
+
+## 6. 実装結果(2026-06-10)
+
+5本すべて HARD_FAIL ゲート通過(独立機械検証済):
+3ペルソナPASS / 本文3,199-4,404字 / H2各4個 / インラインcolor 0 / PR開示あり /
+メタ110-125字 / AI定型文0 / blockquote 0(引用率20%上限を大きく下回る)。
+
+各記事は **オーナー提供の amzn.to 短縮URL を改変せず** `rel="nofollow sponsored" target="_blank"` で埋込。
+WebFetchで全12商品URLを解決・内容確認し、製品の実態に合わせて記述(例: 記事④の「変圧器」は
+降圧トランスであり形状変換プラグでないことを正確に説明、⑤の非公式コスプレ/ステッカーは「公式と断定しない」表現)。
+タグは短縮URL内 `amazon0d7a-22`(オーナー個人タグ)を保持。
+
+成果物: `reports/amazon_revenue/`(HTML×5, meta×5, product_facts.md, post_drafts.sh, gsc_submit.sh, OWNER_RUNBOOK.md)
