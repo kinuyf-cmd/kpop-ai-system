@@ -199,6 +199,46 @@
    "start_date": "2026-07-26",
    "venue": "ローソン・ユナイテッドシネマ札幌",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "古家正亨の新・韓流“考”",
+   "title": "古家正亨の新・韓流“考” ～気になる俳優がやってくる！～ Presented by 韓流ぴあ",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667590",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-25",
+   "venue": "四谷区民ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KISS OF LIFE",
+   "title": "2026 KISS OF LIFE ASIA FANMEETING TOUR ＜DEJA VU＞ IN TOKYO",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667705",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-27",
+   "venue": "市川市文化会館 大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "H1-KEY",
+   "title": "2026 H1-KEY 1st FANMEETING in Japan : THE FIRST KEY",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667288",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-28",
+   "venue": "日経ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TOMORROW X TOGETHER",
+   "title": "TOMORROW X TOGETHER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-23",
+   "venue": "GLION ARENA KOBE",
+   "_source_id": "ltike"
   }
  ]
 }

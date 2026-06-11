@@ -219,5 +219,47 @@
       }
     ],
     "cached_at": "2026-06-01T04:01:23.760122"
+  },
+  "b2667590": {
+    "event_bundle_cd": "b2667590",
+    "title": "古家正亨の新・韓流“考” ～気になる俳優がやってくる！～ Presented by 韓流ぴあ",
+    "description": "古家正亨の新・韓流“考” ～気になる俳優がやってくる！～ Presented by 韓流ぴあ(四谷区民ホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202604/202604240042_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-06-25",
+        "venue": "四谷区民ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-11T04:01:23.415471"
+  },
+  "b2667705": {
+    "event_bundle_cd": "b2667705",
+    "title": "2026 KISS OF LIFE ASIA FANMEETING TOUR ＜DEJA VU＞ IN TOKYO",
+    "description": "2026 KISS OF LIFE ASIA FANMEETING TOUR ＜DEJA VU＞ IN TOKYO(市川市文化会館　大ホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-06-27",
+        "venue": "市川市文化会館 大ホール",
+        "prefecture": "千葉県"
+      }
+    ],
+    "cached_at": "2026-06-11T04:01:24.549916"
+  },
+  "b2667288": {
+    "event_bundle_cd": "b2667288",
+    "title": "2026 H1-KEY 1st FANMEETING in Japan : THE FIRST KEY",
+    "description": "2026 H1-KEY 1st FANMEETING in Japan : THE FIRST KEY(日経ホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202605/202605180045_ex.png",
+    "performances": [
+      {
+        "date": "2026-06-28",
+        "venue": "日経ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-11T04:01:26.182453"
   }
 }
