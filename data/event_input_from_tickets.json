@@ -172,26 +172,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JAEJOONG",
-   "title": "JAEJOONG",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-11",
-   "venue": "KT Zepp Yokohama",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "MYNAME",
-   "title": "MYNAME",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=291495",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-11",
-   "venue": "仙台MACANA",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",
@@ -238,6 +218,36 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-06-23",
    "venue": "GLION ARENA KOBE",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ASH",
+   "title": "ASH ISLAND",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668245",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-03",
+   "venue": "Zepp Shinjuku",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ONEUS",
+   "title": "ONEUS",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668414",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-27",
+   "venue": "東京国際フォーラム ホールC",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JAEJOONG",
+   "title": "JAEJOONG",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-13",
+   "venue": "Zepp Haneda(TOKYO)",
    "_source_id": "ltike"
   }
  ]

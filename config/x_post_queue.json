@@ -1,7 +1,214 @@
 {
-  "updated": "2026-06-11 21:36",
-  "count": 46,
+  "updated": "2026-06-12 21:31",
+  "count": 42,
   "queue": [
+    {
+      "title": "オ・ヒョンギュ逆転ゴールで韓国勝利、16年ぶり初戦",
+      "url": "https://www.kpopjournal.tokyo/oh-hyungyu-reverse-goal-korea-victory/",
+      "post_id": 7785,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-12T15:37:58.200513"
+    },
+    {
+      "title": "ATEEZ、RIIZE、NCT WISHら「2026 Gayo Daejeon」出演",
+      "url": "https://www.kpopjournal.tokyo/ateez-riize-nct-gayo-daejeon-2026/",
+      "post_id": 7776,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-06-12T15:33:52.663647"
+    },
+    {
+      "title": "KATSEYEのソフィアがマノン復帰に言及",
+      "url": "https://www.kpopjournal.tokyo/katseye-sofia-manon-fukki/",
+      "post_id": 7772,
+      "genre": "breaking",
+      "artist": "KATSEYE",
+      "priority": "high",
+      "queued_at": "2026-06-12T15:32:47.150226"
+    },
+    {
+      "title": "ENHYPEN、新曲「We’ll Be Fine」で夏の爽やかさ",
+      "url": "https://www.kpopjournal.tokyo/enhypen-we-will-be-fine-summer-refreshing/",
+      "post_id": 7768,
+      "genre": "breaking",
+      "artist": "엔하이픈",
+      "priority": "high",
+      "queued_at": "2026-06-12T15:31:27.681484"
+    },
+    {
+      "title": "STAYCのシウン「金曜日の金の歌」特集出演",
+      "url": "https://www.kpopjournal.tokyo/stayc-siun-friday-gold-song/",
+      "post_id": 7764,
+      "genre": "breaking",
+      "artist": "스테이씨",
+      "priority": "high",
+      "queued_at": "2026-06-12T13:46:53.434342"
+    },
+    {
+      "title": "イジェ・LISAが「DNA」でワールドカップ開幕",
+      "url": "https://www.kpopjournal.tokyo/ije-lisa-dna-world-cup/",
+      "post_id": 7760,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-12T13:45:16.346124"
+    },
+    {
+      "title": "ILLIT、初ライブツアー香港公演追加開催",
+      "url": "https://www.kpopjournal.tokyo/illit-hongkong-live-tour/",
+      "post_id": 7756,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-06-12T13:43:21.830305"
+    },
+    {
+      "title": "BTS釜山公演控え宿泊料金急騰問題発生",
+      "url": "https://www.kpopjournal.tokyo/bts-busan-concert-accommodation-price-hike/",
+      "post_id": 7750,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-12T13:40:16.152738"
+    },
+    {
+      "title": "BTS ジン、ブランド「FRED」新キャンペーン公開",
+      "url": "https://www.kpopjournal.tokyo/?p=7723",
+      "post_id": 7723,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-12T11:39:18.302320"
+    },
+    {
+      "title": "BABYMONSTER、清涼感あふれる完璧ライブ",
+      "url": "https://www.kpopjournal.tokyo/babymonster-perfect-live-refreshing/",
+      "post_id": 7719,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-06-12T11:38:13.053409"
+    },
+    {
+      "title": "BOYNEXTDOOR、日本でオリコン1位獲得",
+      "url": "https://www.kpopjournal.tokyo/?p=7715",
+      "post_id": 7715,
+      "genre": "breaking",
+      "artist": "보이넥스트도어",
+      "priority": "high",
+      "queued_at": "2026-06-12T11:36:40.814193"
+    },
+    {
+      "title": "RIIZE、2026年6月15日新アルバム『투』リリース",
+      "url": "https://www.kpopjournal.tokyo/riize-new-album-2026/",
+      "post_id": 7710,
+      "genre": "breaking",
+      "artist": "라이즈",
+      "priority": "high",
+      "queued_at": "2026-06-12T11:30:52.599710"
+    },
+    {
+      "title": "BTS、6月12日新曲「Come Over」音源公開",
+      "url": "https://www.kpopjournal.tokyo/bts-come-over-new-song-release/",
+      "post_id": 7699,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-06-12T09:37:00.320206"
+    },
+    {
+      "title": "TREASURE、カムバック直後に1位獲得",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260612-093518/",
+      "post_id": 7695,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-06-12T09:35:43.969688"
+    },
+    {
+      "title": "Billlie、初の正規アルバム祝うバスキングイベント",
+      "url": "https://www.kpopjournal.tokyo/billlie-first-album-busking-event/",
+      "post_id": 7691,
+      "genre": "breaking",
+      "artist": "Billlie",
+      "priority": "high",
+      "queued_at": "2026-06-12T09:31:32.723994"
+    },
+    {
+      "title": "TWICEのサナ、オフショルダードレスで魅了",
+      "url": "https://www.kpopjournal.tokyo/twice-sana-off-shoulder-dress/",
+      "post_id": 7678,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-12T07:36:28.060515"
+    },
+    {
+      "title": "NewJeansのDANIELLE退団訴訟の主張と反論",
+      "url": "https://www.kpopjournal.tokyo/newjeans-danielle-resignation-lawsuit-claims/",
+      "post_id": 7674,
+      "genre": "breaking",
+      "artist": "뉴진스",
+      "priority": "high",
+      "queued_at": "2026-06-12T07:35:15.132930"
+    },
+    {
+      "title": "aespaのジゼル、ADHDが食欲に影響と告白",
+      "url": "https://www.kpopjournal.tokyo/aespa-giselle-adhd-appetite-impact/",
+      "post_id": 7667,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-06-12T07:32:17.247379"
+    },
+    {
+      "title": "ILLITのミンジュ、成功したダイエットの秘訣",
+      "url": "https://www.kpopjournal.tokyo/illits-minju-successful-diet-tips/",
+      "post_id": 7663,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-06-12T07:31:12.905248"
+    },
+    {
+      "title": "Red Velvetが8月にフルグループでカムバック",
+      "url": "https://www.kpopjournal.tokyo/?p=7643",
+      "post_id": 7643,
+      "genre": "breaking",
+      "artist": "Red Velvet",
+      "priority": "high",
+      "queued_at": "2026-06-11T21:33:47.555062"
+    },
+    {
+      "title": "イライ、離婚5年後に再婚発表とウェディングフォト公開",
+      "url": "https://www.kpopjournal.tokyo/irai-remarriage-wedding-photos/",
+      "post_id": 7639,
+      "genre": "breaking",
+      "artist": "레드벨벳",
+      "priority": "high",
+      "queued_at": "2026-06-11T21:32:33.702930"
+    },
+    {
+      "title": "BTS「Swim」で大胆な挑戦と賭けを語る",
+      "url": "https://www.kpopjournal.tokyo/bts-swim-challenge-bet/",
+      "post_id": 7626,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-11T19:33:35.337289"
+    },
+    {
+      "title": "CORTIS、サンフランシスコ追加公演が完売",
+      "url": "https://www.kpopjournal.tokyo/cortis-sanfrancisco-kouen-kanpai/",
+      "post_id": 7622,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-06-11T19:32:22.740938"
+    },
     {
       "title": "パク・ジヨン『参教育』反響、怒りの声続出",
       "url": "https://www.kpopjournal.tokyo/park-jiyoung-sankyouiku-hankyou-ikari/",
@@ -147,274 +354,31 @@
       "queued_at": "2026-06-11T07:31:21.051895"
     },
     {
-      "title": "BTS Vの未編集「素顔」ビジュアル公開",
-      "url": "https://www.kpopjournal.tokyo/bts-v-sugao-bijuaru-koukai/",
-      "post_id": 7454,
+      "title": "BTSジョングクとVの親密な姿が話題に",
+      "url": "https://www.kpopjournal.tokyo/bts-jungkook-v-intimate-moments/",
+      "post_id": 7806,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-06-10T19:30:43.334146"
+      "queued_at": "2026-06-12T19:31:18.689167"
     },
     {
-      "title": "イ・ジェウク、軍務中にサプライズ歌手デビュー",
-      "url": "https://www.kpopjournal.tokyo/lee-jae-wook-surprise-singer-debut/",
-      "post_id": 7450,
+      "title": "OH MY GIRL MIMI「17歳以降、恋愛なし」告白",
+      "url": "https://www.kpopjournal.tokyo/oh-my-girl-mimi-17sai-koi-nashi/",
+      "post_id": 7814,
       "genre": "breaking",
-      "artist": "이재욱",
+      "artist": "오마이걸",
       "priority": "high",
-      "queued_at": "2026-06-10T19:05:34.118588"
+      "queued_at": "2026-06-12T19:37:08.443333"
     },
     {
-      "title": "PLAVE、ワールドツアー「KEEP IT MANIC」仁川公演発表",
-      "url": "https://www.kpopjournal.tokyo/plave-keep-it-manic-incheon-concert/",
-      "post_id": 7446,
-      "genre": "breaking",
-      "artist": "플레이브",
-      "priority": "high",
-      "queued_at": "2026-06-10T19:04:26.837650"
-    },
-    {
-      "title": "TREASURE、アルバム「NEWWAV」オリコン1位獲得",
-      "url": "https://www.kpopjournal.tokyo/?p=7442",
-      "post_id": 7442,
-      "genre": "breaking",
-      "artist": "TREASURE",
-      "priority": "high",
-      "queued_at": "2026-06-10T19:03:10.838812"
-    },
-    {
-      "title": "TWICE ナヨン、可愛さの具現化を披露",
-      "url": "https://www.kpopjournal.tokyo/twice-nayon-cuteness-manifestation/",
-      "post_id": 7438,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-10T19:02:05.385517"
-    },
-    {
-      "title": "WJSNダヨン、12kg減量で変化を実感",
-      "url": "https://www.kpopjournal.tokyo/wjsn-dayoung-12kg-weight-loss-change/",
-      "post_id": 7428,
-      "genre": "breaking",
-      "artist": "우주소녀",
-      "priority": "high",
-      "queued_at": "2026-06-10T17:34:11.477709"
-    },
-    {
-      "title": "aespaのカリナ、空港での表情を説明",
-      "url": "https://www.kpopjournal.tokyo/aespa-karina-airport-expressions/",
-      "post_id": 7424,
-      "genre": "breaking",
-      "artist": "aespa",
-      "priority": "high",
-      "queued_at": "2026-06-10T17:32:56.359759"
-    },
-    {
-      "title": "BOYNEXTDOOR、カムバックショーケース世界160国視聴",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-comeback-showcase-160-countries/",
-      "post_id": 7411,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-06-10T15:34:10.134264"
-    },
-    {
-      "title": "IVE ウォニョン「Miu Miu Beauty」日本・韓国アンバサダー就任",
-      "url": "https://www.kpopjournal.tokyo/ive-wonyoung-miu-miu-beauty-ambassador/",
-      "post_id": 7406,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-06-10T15:32:00.408546"
-    },
-    {
-      "title": "TWICEのモモに関するファンの反論",
-      "url": "https://www.kpopjournal.tokyo/twice-momo-fan-argument/",
-      "post_id": 7399,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-06-10T13:35:34.521953"
-    },
-    {
-      "title": "ILLITミンジュ 整形疑惑に反響広がる",
-      "url": "https://www.kpopjournal.tokyo/illit-minju-seikei-uyaku-hankou/",
-      "post_id": 7395,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-06-10T13:34:25.239142"
-    },
-    {
-      "title": "THE BOYZのQがドラマ「My Idol, My Debut」に出演",
-      "url": "https://www.kpopjournal.tokyo/the-boyz-q-my-idol-my-debut/",
-      "post_id": 7389,
-      "genre": "breaking",
-      "artist": "THE BOYZ",
-      "priority": "high",
-      "queued_at": "2026-06-10T13:31:34.317192"
-    },
-    {
-      "title": "TWS「NO TRAGEDY」で日本ゴールドディスク5回目獲得",
-      "url": "https://www.kpopjournal.tokyo/tws-no-tragedy-gold-disk-5th/",
-      "post_id": 7372,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-06-10T11:33:02.529633"
-    },
-    {
-      "title": "ILLIT「It’s Me」がビルボード5週連続チャートイン",
-      "url": "https://www.kpopjournal.tokyo/illit-its-me-billboard-chart-5-weeks/",
-      "post_id": 7368,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-06-10T11:31:45.224124"
-    },
-    {
-      "title": "BLACKPINKのジェニー、Governors Ball舞台裏公開",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-governors-ball-behind-the-scenes/",
-      "post_id": 7364,
+      "title": "BLACKPINKのリサ、イ・カンインのジャージ着用",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-lee-kang-in-jersey/",
+      "post_id": 7819,
       "genre": "breaking",
       "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-06-10T11:30:37.376129"
-    },
-    {
-      "title": "aespa「レモネード」でビルボード9位獲得",
-      "url": "https://www.kpopjournal.tokyo/aespa-lemonade-billboard-9th-place/",
-      "post_id": 7358,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-10T09:37:01.273451"
-    },
-    {
-      "title": "RIIZE、同い年高校生に変身しカムバック",
-      "url": "https://www.kpopjournal.tokyo/riize-highschool-transformation-comeback/",
-      "post_id": 7353,
-      "genre": "breaking",
-      "artist": "라이즈",
-      "priority": "high",
-      "queued_at": "2026-06-10T09:35:32.738060"
-    },
-    {
-      "title": "テヨン、BoomとILLITのバイラルチャレンジに笑い",
-      "url": "https://www.kpopjournal.tokyo/taeyeon-boom-illits-viral-challenge/",
-      "post_id": 7349,
-      "genre": "breaking",
-      "artist": "ILLIT",
-      "priority": "high",
-      "queued_at": "2026-06-10T09:32:01.393435"
-    },
-    {
-      "title": "BTSとHYBEの約束破棄 釜山の苦悩",
-      "url": "https://www.kpopjournal.tokyo/bts-hybe-promise-busan-struggles/",
-      "post_id": 7344,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-10T09:30:40.654035"
-    },
-    {
-      "title": "ウズ、ベルリンのカフェでリラックスした近況",
-      "url": "https://www.kpopjournal.tokyo/uz-berlin-cafe-relax-update/",
-      "post_id": 7336,
-      "genre": "breaking",
-      "artist": "우즈",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:40:28.868495"
-    },
-    {
-      "title": "BTS「SWIM」、米ビルボード「Hot 100」で41位上昇",
-      "url": "https://www.kpopjournal.tokyo/bts-swim-billboard-hot-100-41/",
-      "post_id": 7329,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:38:16.277800"
-    },
-    {
-      "title": "スヨン・チョン・ギョンホ 14年交際の終焉",
-      "url": "https://www.kpopjournal.tokyo/suyon-chung-kyungho-14years-relationship-end/",
-      "post_id": 7325,
-      "genre": "breaking",
-      "artist": "소녀시대",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:37:08.287067"
-    },
-    {
-      "title": "KIA、キム・ドヨン3点本塁打で連勝維持",
-      "url": "https://www.kpopjournal.tokyo/kia-kim-doyon-home-run-streak/",
-      "post_id": 7321,
-      "genre": "breaking",
-      "artist": "TXT",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:36:02.252150"
-    },
-    {
-      "title": "Tablo、娘HaruのRIIZE歌詞貢献を明かす",
-      "url": "https://www.kpopjournal.tokyo/tablo-haru-riize-lyrics-contribution/",
-      "post_id": 7316,
-      "genre": "breaking",
-      "artist": "RIIZE",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:33:10.401835"
-    },
-    {
-      "title": "BOYNEXTDOORがiTunes1位、全曲Melon30位入り",
-      "url": "https://www.kpopjournal.tokyo/?p=7310",
-      "post_id": 7310,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-06-10T07:31:14.613979"
-    },
-    {
-      "title": "CORTIS、サンフランシスコ追加公演が完売",
-      "url": "https://www.kpopjournal.tokyo/cortis-sanfrancisco-kouen-kanpai/",
-      "post_id": 7622,
-      "genre": "breaking",
-      "artist": "코르티스",
-      "priority": "high",
-      "queued_at": "2026-06-11T19:32:22.740938"
-    },
-    {
-      "title": "BTS「Swim」で大胆な挑戦と賭けを語る",
-      "url": "https://www.kpopjournal.tokyo/bts-swim-challenge-bet/",
-      "post_id": 7626,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-11T19:33:35.337289"
-    },
-    {
-      "title": "イライ、離婚5年後に再婚発表とウェディングフォト公開",
-      "url": "https://www.kpopjournal.tokyo/irai-remarriage-wedding-photos/",
-      "post_id": 7639,
-      "genre": "breaking",
-      "artist": "레드벨벳",
-      "priority": "high",
-      "queued_at": "2026-06-11T21:32:33.702930"
-    },
-    {
-      "title": "Red Velvetが8月にフルグループでカムバック",
-      "url": "https://www.kpopjournal.tokyo/?p=7643",
-      "post_id": 7643,
-      "genre": "breaking",
-      "artist": "Red Velvet",
-      "priority": "high",
-      "queued_at": "2026-06-11T21:33:47.555062"
-    },
-    {
-      "title": "TWICE「THIS IS FOR」ファイナルコンサート予約開始",
-      "url": "https://www.kpopjournal.tokyo/twice-this-is-for-final-concert-reservation/",
-      "post_id": 7648,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-11T21:36:16.773863"
+      "queued_at": "2026-06-12T21:31:17.140889"
     }
   ]
 }

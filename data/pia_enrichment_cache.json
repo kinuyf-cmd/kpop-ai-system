@@ -203,7 +203,7 @@
     "description": "デビュー10周年を記念したワールドツアー「DAY6 10th Anniversary Tour ＜The DECADE＞」。その一環となる日本公演が4月に東京、6月に兵庫にて開催！",
     "image": "https://image.pia.jp/images/202512/202512250032_ex.png",
     "performances": [],
-    "cached_at": "2026-05-30T06:47:50.108662"
+    "cached_at": "2026-06-12T04:01:24.439024"
   },
   "b2665743": {
     "event_bundle_cd": "b2665743",
@@ -261,5 +261,38 @@
       }
     ],
     "cached_at": "2026-06-11T04:01:26.182453"
+  },
+  "b2668245": {
+    "event_bundle_cd": "b2668245",
+    "title": "ASH ISLAND",
+    "description": "ASH ISLAND(Ｚｅｐｐ　Ｓｈｉｎｊｕｋｕ（ＴＯＫＹＯ）)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202605/202605180042_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-03",
+        "venue": "Zepp Shinjuku",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-12T04:01:25.695216"
+  },
+  "b2668414": {
+    "event_bundle_cd": "b2668414",
+    "title": "ONEUS",
+    "description": "6/27(土)東京国際フォーラム ホールC・7/5(日)南海浪切ホール 大ホールにて、「2026 ONEUS FANCON : Welcome to < US’s ISLAND > in JAPAN」開催！",
+    "image": "https://image.pia.jp/images/202606/202606090043_ex.png",
+    "performances": [
+      {
+        "date": "2026-06-27",
+        "venue": "東京国際フォーラム ホールC",
+        "prefecture": "東京都"
+      },
+      {
+        "date": "2026-07-05",
+        "venue": "南海浪切ホール 大ホール",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-06-12T04:01:26.900497"
   }
 }
