@@ -162,16 +162,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "NEXZ",
-   "title": "NEXZ",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=751198",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-12",
-   "venue": "大阪城ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",

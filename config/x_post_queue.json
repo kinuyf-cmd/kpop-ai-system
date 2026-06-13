@@ -1,7 +1,61 @@
 {
-  "updated": "2026-06-12 21:31",
-  "count": 42,
+  "updated": "2026-06-13 21:35",
+  "count": 31,
   "queue": [
+    {
+      "title": "ジョン・パク、「リセンヌ」1位祈願の団体祈り",
+      "url": "https://www.kpopjournal.tokyo/john-pak-risenn-prayer-1/",
+      "post_id": 7889,
+      "genre": "breaking",
+      "artist": "존박",
+      "priority": "high",
+      "queued_at": "2026-06-13T17:33:02.752496"
+    },
+    {
+      "title": "ジフンが音楽への思い語る「CEREMONY」盛況",
+      "url": "https://www.kpopjournal.tokyo/jihun-music-thoughts-ceremony/",
+      "post_id": 7876,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-06-13T15:39:26.835957"
+    },
+    {
+      "title": "IVE、2年ぶりオーストラリア・ニュージーランド公演",
+      "url": "https://www.kpopjournal.tokyo/?p=7871",
+      "post_id": 7871,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-06-13T15:37:06.131582"
+    },
+    {
+      "title": "BTS、釜山で1000台ドローンショー開催",
+      "url": "https://www.kpopjournal.tokyo/bts-busan-drone-show-1000/",
+      "post_id": 7855,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-06-13T13:31:01.975927"
+    },
+    {
+      "title": "パク・ギュリョンとイ・ダヒの大胆バックレス対決",
+      "url": "https://www.kpopjournal.tokyo/park-gyuryung-backless-showdown/",
+      "post_id": 7835,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-13T09:31:10.966476"
+    },
+    {
+      "title": "BTSジョングクとVの親密な姿が話題に",
+      "url": "https://www.kpopjournal.tokyo/bts-jungkook-v-intimate-moments/",
+      "post_id": 7806,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-12T19:31:18.689167"
+    },
     {
       "title": "オ・ヒョンギュ逆転ゴールで韓国勝利、16年ぶり初戦",
       "url": "https://www.kpopjournal.tokyo/oh-hyungyu-reverse-goal-korea-victory/",
@@ -192,193 +246,40 @@
       "queued_at": "2026-06-11T21:32:33.702930"
     },
     {
-      "title": "BTS「Swim」で大胆な挑戦と賭けを語る",
-      "url": "https://www.kpopjournal.tokyo/bts-swim-challenge-bet/",
-      "post_id": 7626,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-11T19:33:35.337289"
-    },
-    {
-      "title": "CORTIS、サンフランシスコ追加公演が完売",
-      "url": "https://www.kpopjournal.tokyo/cortis-sanfrancisco-kouen-kanpai/",
-      "post_id": 7622,
-      "genre": "breaking",
-      "artist": "코르티스",
-      "priority": "high",
-      "queued_at": "2026-06-11T19:32:22.740938"
-    },
-    {
-      "title": "パク・ジヨン『参教育』反響、怒りの声続出",
-      "url": "https://www.kpopjournal.tokyo/park-jiyoung-sankyouiku-hankyou-ikari/",
-      "post_id": 7613,
-      "genre": "breaking",
-      "artist": "레드벨벳",
-      "priority": "high",
-      "queued_at": "2026-06-11T17:38:51.664026"
-    },
-    {
-      "title": "BoA、SM離れ新たなスタート初ファンコンサート開催",
-      "url": "https://www.kpopjournal.tokyo/boa-new-start-first-fan-concert/",
-      "post_id": 7604,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-06-11T17:33:20.297054"
-    },
-    {
-      "title": "BABYMONSTER、超高速カムバックで「サマークイーン」獲得",
-      "url": "https://www.kpopjournal.tokyo/babymonster-summer-queen-comeback/",
-      "post_id": 7599,
-      "genre": "breaking",
-      "artist": "베이비몬스터",
-      "priority": "high",
-      "queued_at": "2026-06-11T17:31:15.145269"
-    },
-    {
-      "title": "Red Velvetスルギのいとこスジンが急逝",
-      "url": "https://www.kpopjournal.tokyo/red-velvet-seulgi-cousin-sujin-passed-away/",
-      "post_id": 7582,
-      "genre": "breaking",
-      "artist": "Red Velvet",
-      "priority": "high",
-      "queued_at": "2026-06-11T13:34:51.125427"
-    },
-    {
-      "title": "BIGBANG、日本4都市でワールドツアー発表",
-      "url": "https://www.kpopjournal.tokyo/bigbang-world-tour-japan-4cities/",
-      "post_id": 7576,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-06-11T13:31:29.192920"
-    },
-    {
-      "title": "TWICEナヨン、爽やかビジュアルで注目",
-      "url": "https://www.kpopjournal.tokyo/twice-nayon-refreshing-visuals/",
-      "post_id": 7563,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-11T13:01:45.272540"
-    },
-    {
-      "title": "キム・ジェウォンとIVEリズがKGMA司会務める",
-      "url": "https://www.kpopjournal.tokyo/kim-jaewon-ive-riz-kgma-host/",
-      "post_id": 7548,
-      "genre": "breaking",
-      "artist": "IVE",
-      "priority": "high",
-      "queued_at": "2026-06-11T11:31:49.680204"
-    },
-    {
-      "title": "イ・サンジュン、ミガクボイズで「Mカウントダウン」出演",
-      "url": "https://www.kpopjournal.tokyo/lee-sang-jun-migakuboys-m-countdown/",
-      "post_id": 7542,
-      "genre": "breaking",
-      "artist": "이상준",
-      "priority": "high",
-      "queued_at": "2026-06-11T09:42:37.395595"
-    },
-    {
-      "title": "BOYNEXTDOOR、\"VIRAL\"で完璧なパフォーマンス",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-viral-performance/",
-      "post_id": 7538,
-      "genre": "breaking",
-      "artist": "보이넥스트도어",
-      "priority": "high",
-      "queued_at": "2026-06-11T09:41:12.601355"
-    },
-    {
-      "title": "東方神起 チャンミン KBSワールドカップ プリショー参加",
-      "url": "https://www.kpopjournal.tokyo/tohoshinki-changmin-kbs-worldcup-pre-show/",
-      "post_id": 7534,
-      "genre": "breaking",
-      "artist": "동방신기",
-      "priority": "high",
-      "queued_at": "2026-06-11T09:39:57.877523"
-    },
-    {
-      "title": "ATEEZ、アクション本能爆発のカムバック発表",
-      "url": "https://www.kpopjournal.tokyo/?p=7527",
-      "post_id": 7527,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-06-11T09:35:27.328561"
-    },
-    {
-      "title": "ジェンソンファン、MAMAMOO HWASAを絶賛",
-      "url": "https://www.kpopjournal.tokyo/jensonfan-mamamoo-hwasa-zessan/",
-      "post_id": 7508,
-      "genre": "breaking",
-      "artist": "마마무",
-      "priority": "high",
-      "queued_at": "2026-06-11T07:39:28.982327"
-    },
-    {
-      "title": "BTSのRM、ラッパーSleepyに1000万ウォン贈呈",
-      "url": "https://www.kpopjournal.tokyo/bts-rm-sleepy-1000man-won/",
-      "post_id": 7503,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-11T07:37:00.174521"
-    },
-    {
-      "title": "THE BOYZのQ、ドラマデビューキャラ写真公開",
-      "url": "https://www.kpopjournal.tokyo/the-boyz-q-drama-debut-character-photo/",
-      "post_id": 7495,
-      "genre": "breaking",
-      "artist": "THE BOYZ",
-      "priority": "high",
-      "queued_at": "2026-06-11T07:34:26.831688"
-    },
-    {
-      "title": "RIIZEのAntonがブリーチ眉毛で話題に",
-      "url": "https://www.kpopjournal.tokyo/riize-anton-bleach-eyebrows/",
-      "post_id": 7489,
-      "genre": "breaking",
-      "artist": "RIIZE",
-      "priority": "high",
-      "queued_at": "2026-06-11T07:32:21.915419"
-    },
-    {
-      "title": "BTS Vの未編集映像に「老化ビジュアル」批判",
-      "url": "https://www.kpopjournal.tokyo/bts-v-aging-visuals-criticism/",
-      "post_id": 7485,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-11T07:31:21.051895"
-    },
-    {
-      "title": "BTSジョングクとVの親密な姿が話題に",
-      "url": "https://www.kpopjournal.tokyo/bts-jungkook-v-intimate-moments/",
-      "post_id": 7806,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-12T19:31:18.689167"
-    },
-    {
-      "title": "OH MY GIRL MIMI「17歳以降、恋愛なし」告白",
-      "url": "https://www.kpopjournal.tokyo/oh-my-girl-mimi-17sai-koi-nashi/",
-      "post_id": 7814,
-      "genre": "breaking",
-      "artist": "오마이걸",
-      "priority": "high",
-      "queued_at": "2026-06-12T19:37:08.443333"
-    },
-    {
-      "title": "BLACKPINKのリサ、イ・カンインのジャージ着用",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-lee-kang-in-jersey/",
-      "post_id": 7819,
+      "title": "BLACKPINKのリサ「World Cup」パフォーマンス批判受ける",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-world-cup-performance-criticism/",
+      "post_id": 7897,
       "genre": "breaking",
       "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-06-12T21:31:17.140889"
+      "queued_at": "2026-06-13T19:30:49.472219"
+    },
+    {
+      "title": "BTSテーマの釜山地下鉄駅がファン手で変身",
+      "url": "https://www.kpopjournal.tokyo/bts-busan-subway-station-transformation/",
+      "post_id": 7909,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-13T19:37:03.217187"
+    },
+    {
+      "title": "BTS、13周年祝うRMの感謝メッセージ公開",
+      "url": "https://www.kpopjournal.tokyo/bts-rm-anniversary-thank-you-message/",
+      "post_id": 7919,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-13T21:33:37.637239"
+    },
+    {
+      "title": "イ・ダヒ、TAEYEONの衝撃ビジュアルに言葉失う",
+      "url": "https://www.kpopjournal.tokyo/?p=7923",
+      "post_id": 7923,
+      "genre": "breaking",
+      "artist": "태연",
+      "priority": "high",
+      "queued_at": "2026-06-13T21:35:12.623920"
     }
   ]
 }
