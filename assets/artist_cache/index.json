@@ -670,5 +670,19 @@
         "license": "CC BY-SA 4.0"
       }
     ]
+  },
+  "monsta_x": {
+    "name": "monsta x",
+    "files": [
+      "monsta_x_bd26d29a.png"
+    ],
+    "sources": [
+      {
+        "file": "monsta_x_bd26d29a.png",
+        "wikimedia_title": "File:Концерт Monsta X в Чикаго.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/%D0%9A%D0%BE%D0%BD%D1%86%D0%B5%D1%80%D1%82_Monsta_X_%D0%B2_%D0%A7%D0%B8%D0%BA%D0%B0%D0%B3%D0%BE.png",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

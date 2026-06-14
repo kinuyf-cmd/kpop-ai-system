@@ -294,5 +294,19 @@
       }
     ],
     "cached_at": "2026-06-12T04:01:26.900497"
+  },
+  "b2668775": {
+    "event_bundle_cd": "b2668775",
+    "title": "YANG YOSEOP",
+    "description": "YANG YOSEOP(豊洲ＰＩＴ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202606/202606030067_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-04",
+        "venue": "豊洲PIT",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-14T04:01:21.643152"
   }
 }

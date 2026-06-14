@@ -2,36 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "HAN SEUNG WOO",
-   "title": "HAN SEUNG WOO TOKYO SPECIAL FANMEETING",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667945",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "LEE JI HOON",
-   "title": "LEE JI HOON TOKYO SPECIAL FANMEETING",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667943",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "HAN SEUNG WOO",
-   "title": "LEE JI HOON × HAN SEUNG WOO TOKYO SPECIAL FANMEETING “KICK&SOUL”",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667941",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "BABYMONSTER",
    "title": "BABYMONSTER",
    "source_url": "https://eplus.jp/sf/detail/4069140001-P0030016P021001",
@@ -72,62 +42,12 @@
   },
   {
    "type": "event",
-   "artist_keyword": "HAN SEUNG WOO",
-   "title": "LEE JI HOON × HAN SEUNG WOO",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=784200",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "iKON",
-   "title": "iKON",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=341153",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "東京ガーデンシアター",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "HAN SEUNG WOO",
-   "title": "HAN SEUNG WOO",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=693926",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "LE SSERAFIM",
    "title": "LE SSERAFIM",
    "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
    "source_media": "ローソンチケット",
    "start_date": "2026-07-25",
    "venue": "大阪城ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ILLIT",
-   "title": "ILLIT",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "愛知県芸術劇場 大ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "LEE JI HOON",
-   "title": "LEE JI HOON",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=784192",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "神田明神ホール",
    "_source_id": "ltike"
   },
   {
@@ -148,16 +68,6 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-06-16",
    "venue": "マリンメッセ福岡A館",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "&TEAM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "北九州メッセ",
    "_source_id": "ltike"
   },
   {
@@ -232,12 +142,42 @@
   },
   {
    "type": "event",
+   "artist_keyword": "YANG",
+   "title": "YANG YOSEOP",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668775",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-04",
+   "venue": "豊洲PIT",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "iKON",
+   "title": "iKON",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=341153",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-14",
+   "venue": "東京ガーデンシアター",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ILLIT",
+   "title": "ILLIT",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-14",
+   "venue": "愛知県芸術劇場 大ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
    "artist_keyword": "JAEJOONG",
    "title": "JAEJOONG",
    "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
    "source_media": "ローソンチケット",
-   "start_date": "2026-06-13",
-   "venue": "Zepp Haneda(TOKYO)",
+   "start_date": "2026-07-02",
+   "venue": "LINE CUBE SHIBUYA",
    "_source_id": "ltike"
   }
  ]
