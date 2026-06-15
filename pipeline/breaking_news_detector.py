@@ -664,11 +664,24 @@ def _pre_generation_gate(artist, sigs):
 
 
 def publish_breaking(artist, sigs, typ):
-    """unified_publish経由で速報投稿（ソース本文取得→Web検索→生成→公開）"""
+    """unified_publish経由で速報投稿（生成前ゲート→ソース本文→Web検索→生成→公開）"""
     best = max(sigs, key=lambda s: len(s.get('title', '')))
 
-    # Step 0: ソースURLから本文を直接取得（最も重要な事実の根拠）
-    source_text = read_sources(sigs)
+    # 生成前ゲート(2026-06-16): 重複・短文をコスト発生前に弾く。
+    _ok, _reason, _source_text = _pre_generation_gate(artist, sigs)
+    if not _ok:
+        print(f"  [breaking] 生成前ゲートでskip: {_reason}")
+        for s in sigs:
+            mark_processed({
+                'ts': datetime.now().isoformat(), 'source_url': s['url'],
+                'kind': 'breaking_blocked', 'reason': _reason, 'type': typ,
+            })
+        _log_breaking_skip(_reason, artist=artist, typ=typ,
+                           title=best.get('title'), url=best.get('url'))
+        return None
+
+    # Step 0: ソース本文(生成前ゲートで取得済みを再利用)
+    source_text = _source_text
 
     # Step 1: Web検索で補完事実を収集
     web_facts = _enrich_with_web_search(best['title'], sigs)
