@@ -6,6 +6,8 @@ BLOCKは壊滅レベル6種のみ。WARNを厚く。draft時はBLOCK不可。
 import re
 import json
 import os
+import urllib.request
+import urllib.parse
 from datetime import datetime, timezone, timedelta
 
 # --- 既存チェック関数の再利用 ---
@@ -219,7 +221,6 @@ def find_duplicate_published(keywords):
     if not keywords:
         return None
     try:
-        import urllib.request, urllib.parse
         search_q = ' '.join(keywords[:3])
         wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
         search_url = (

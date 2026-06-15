@@ -30,6 +30,16 @@ def test_returns_none_when_no_overlap():
     assert dup is None
 
 
+def test_returns_dup_on_overlap_rate_branch():
+    """固有名詞でない漢字語が2語一致 かつ overlap率>40% の分岐を検証。"""
+    existing = [{"id": 42, "title": {"rendered": "活動 休止 を発表"}}]
+    # new_kw=3語中2語(漢字)が一致 → proper_overlap=0 だが overlap=2, rate=2/3>0.4
+    with patch("urllib.request.urlopen", return_value=_fake_resp(existing)):
+        dup = find_duplicate_published(["活動", "休止", "ダンス"])
+    assert dup is not None
+    assert dup["id"] == 42
+
+
 def test_returns_none_on_api_error():
     with patch("urllib.request.urlopen", side_effect=OSError("boom")):
         dup = find_duplicate_published(["aespa", "Winter"])
