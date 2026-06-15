@@ -25,11 +25,21 @@ import sys
 import subprocess
 import shlex
 import urllib.parse
+import ssl
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 DRY_RUN = bool(int(os.environ.get("DRY_RUN", "0")))
 LIMIT = int(os.environ.get("LIMIT", "0"))
+
+# サムネ画像取得用 SSL コンテキスト。kbuzzlab は Let's Encrypt 新ルート
+# (ISRG Root YR)未収録のため、fetcher と同じ独自 CA バンドルを使う
+# (2026-06-15: 画像 DL 経路の検証失敗を修正。bundle 不在時はデフォルト検証)。
+_CA_BUNDLE = Path(__file__).resolve().parent.parent / "data" / "ca" / "kpop_ca_bundle.pem"
+try:
+    _IMG_SSL_CTX = ssl.create_default_context(cafile=str(_CA_BUNDLE)) if _CA_BUNDLE.is_file() else None
+except Exception:
+    _IMG_SSL_CTX = None
 
 # ─── 設定 ──────────────────────────────────────────────
 # stg DB 接続(/tmp/wp_stg.txt から読む)
@@ -524,7 +534,7 @@ def download_and_attach_thumbnail(post_id: int, image_url: str, sig: dict) -> in
             "User-Agent": "KpopJournalBot/1.0 (+https://www.kpopjournal.tokyo/about; research)",
             "Accept": "image/webp,image/jpeg,image/png,image/*,*/*;q=0.8",
         })
-        with urllib.request.urlopen(req, timeout=30) as r:
+        with urllib.request.urlopen(req, timeout=30, context=_IMG_SSL_CTX) as r:
             content_length = int(r.headers.get("Content-Length", "0") or 0)
             if content_length > 5 * 1024 * 1024:
                 print(f"  WARN: image too large ({content_length} bytes), skip")
