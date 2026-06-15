@@ -209,6 +209,40 @@ def _check_shop_article_without_details(title, body_html):
     }]
 
 
+def find_duplicate_published(keywords):
+    """公開済み記事に同テーマ(キーワード重複)があれば {'id','title'} を返す。無ければ None。
+
+    keywords: 正規化済みキーワードのリスト(英字2+/カタカナ3+/漢字2+)。
+    判定: 固有名詞(英字/カタカナ)が2語以上一致、または overlap>=2 かつ overlap率>40%。
+    APIエラー時は None(=重複なし扱い。ブロックしない=従来1g挙動を踏襲)。
+    """
+    if not keywords:
+        return None
+    try:
+        import urllib.request, urllib.parse
+        search_q = ' '.join(keywords[:3])
+        wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
+        search_url = (
+            f'{wp_api}/posts?search={urllib.parse.quote(search_q)}'
+            f'&status=publish&per_page=5&_fields=id,title'
+        )
+        req = urllib.request.Request(search_url, headers={'User-Agent': 'KPJ-Gate/1.0'})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            existing = json.loads(resp.read())
+        new_kw = set(k.lower() for k in keywords)
+        for ep in existing:
+            et = ep.get('title', {})
+            et_text = et.get('rendered', '') if isinstance(et, dict) else str(et)
+            ex_kw = set(re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', et_text.lower()))
+            overlap = new_kw & ex_kw
+            proper_overlap = {w for w in overlap if re.match(r'[a-z]', w) or re.match(r'[ァ-ヶー]', w)}
+            if len(proper_overlap) >= 2 or (len(overlap) >= 2 and len(overlap) / max(len(new_kw), 1) > 0.4):
+                return {'id': ep.get('id'), 'title': et_text}
+    except Exception:
+        return None
+    return None
+
+
 def pre_publish_gate(
     title, body_html, post_type='post', kind='news',
     source_url=None, source_signals=None, slug=None,
