@@ -484,38 +484,18 @@ def pre_publish_gate(
             'detail': f'meta_description(excerpt)が{len(_excerpt)}字。80字以上必須。SEO壊滅を防止',
         })
 
-    # 1g. 重複記事チェック (2026-05-06追加: 同テーマ記事の重複公開防止)
+    # 1g. 重複記事チェック (2026-05-06追加 / 2026-06-16 find_duplicate_published に集約)
     if status == 'publish' and title:
-        try:
-            import urllib.request, urllib.parse
-            _norm_title = re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', title).strip()
-            # 主要キーワード(英字+カタカナ+漢字2文字以上)を抽出して検索
-            _keywords = re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _norm_title)
-            _keywords = [k for k in _keywords if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
-            _search_q = ' '.join(_keywords[:3]) if _keywords else _norm_title[:20]
-            _wp_api = os.environ.get('WP_API_URL', 'https://www.kpopjournal.tokyo/wp-json/wp/v2')
-            _search_url = f'{_wp_api}/posts?search={urllib.parse.quote(_search_q)}&status=publish&per_page=5&_fields=id,title'
-            _req = urllib.request.Request(_search_url, headers={'User-Agent': 'KPJ-Gate/1.0'})
-            with urllib.request.urlopen(_req, timeout=10) as _resp:
-                _existing = json.loads(_resp.read())
-            for _ep in _existing:
-                _et = _ep.get('title', {})
-                _et_text = _et.get('rendered', '') if isinstance(_et, dict) else str(_et)
-                # キーワードベースの類似度チェック（固有名詞重視）
-                _ex_kw = set(re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _et_text.lower()))
-                _new_kw = set(k.lower() for k in _keywords)
-                _overlap = _new_kw & _ex_kw
-                # 固有名詞(英字2語以上 or カタカナ)が一致 = 同テーマ濃厚
-                _proper_overlap = {w for w in _overlap if re.match(r'[a-z]', w) or re.match(r'[ァ-ヶー]', w)}
-                if len(_proper_overlap) >= 2 or (len(_overlap) >= 2 and len(_overlap) / max(len(_new_kw), 1) > 0.4):
-                    issues.append({
-                        'type': 'duplicate_title',
-                        'severity': 'block',
-                        'detail': f'類似テーマの記事が公開済み (ID={_ep["id"]}): {_et_text[:40]}',
-                    })
-                    break
-        except Exception:
-            pass  # APIエラーは投稿をブロックしない
+        _norm_title = re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', title).strip()
+        _keywords = re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _norm_title)
+        _keywords = [k for k in _keywords if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
+        _dup = find_duplicate_published(_keywords)
+        if _dup:
+            issues.append({
+                'type': 'duplicate_title',
+                'severity': 'block',
+                'detail': f'類似テーマの記事が公開済み (ID={_dup["id"]}): {str(_dup["title"])[:40]}',
+            })
 
     # 1g2. 本文内フレーズ重複チェック（GPTハルシネーション検出）
     if body_html:
