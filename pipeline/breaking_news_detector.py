@@ -16,6 +16,7 @@ from lib.unified_publisher import unified_publish
 from lib.signal_deduplicator import deduplicate
 from pipeline.auto_event_article import is_processed, mark_processed
 from lib.source_reader import read_sources
+from lib.pre_publish_gate import find_duplicate_published
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
@@ -638,6 +639,28 @@ _BREAKING_PROMPT_TEMPLATE = """あなたはK-POP専門メディアの翻訳・�
 - 「Run BTS」のようなバラエティ番組を「新曲」と誤記
 
 5W1H(誰が・いつ・何を・どこで・なぜ)を明確に。ソースに書いていないことは書かない。"""
+
+
+def _pre_generation_gate(artist, sigs):
+    """生成前ゲート。重複→短文の順に判定。
+    戻り値 (ok: bool, reason: str, source_text: str)。
+    ok=False のとき呼び出し側は mark_processed + skip ログで return None する。
+    ok=True のとき source_text を生成本体で再利用する(read_sources 二重取得回避)。
+    """
+    import re as _re
+    best = max(sigs, key=lambda s: len(s.get('title', '')))
+    # チェックA: 公開済み記事との重複(WP REST API 1回のみで軽い → 先に判定)
+    _norm = _re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', best.get('title', '')).strip()
+    kw = _re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', f'{artist} {_norm}')
+    kw = [k for k in kw if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
+    dup = find_duplicate_published(kw)
+    if dup:
+        return (False, f'dup_pre_gen:ID={dup.get("id")}', '')
+    # チェックB: ソース本文が短すぎる(read_sources は HTTP 取得でやや重い → 後)
+    source_text = read_sources(sigs) or ''
+    if len(source_text.strip()) < SHORT_SOURCE_MIN:
+        return (False, f'short_source:{len(source_text.strip())}字', '')
+    return (True, '', source_text)
 
 
 def publish_breaking(artist, sigs, typ):
