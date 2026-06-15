@@ -15,9 +15,14 @@ from lib.korean_translator import translate_ko_to_ja
 from lib.unified_publisher import unified_publish
 from lib.signal_deduplicator import deduplicate
 from pipeline.auto_event_article import is_processed, mark_processed
+from lib.source_reader import read_sources
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
+# 生成前ゲート: ソース本文がこの文字数未満なら「薄すぎ」として生成前にスキップ。
+# 保守的な低閾値(Web検索で補える中間長は通す)。pre_publish_gate の content_empty(<400字)
+# より手前で、LLM生成コストを払う前に弾くのが目的。
+SHORT_SOURCE_MIN = 150
 # 日次生産上限(2026-05-23 量産設計。2026-05-26 オーナー指示で 20→30 に拡大)。
 # 暴走防止の歯止め。品質は pre_publish_gate(HARD_FAIL)で担保。
 # cron は 7-21時の2時間おき(8回/日)。env DAILY_BREAKING_LIMIT で上書き可(段階調整用)。
@@ -640,7 +645,6 @@ def publish_breaking(artist, sigs, typ):
     best = max(sigs, key=lambda s: len(s.get('title', '')))
 
     # Step 0: ソースURLから本文を直接取得（最も重要な事実の根拠）
-    from lib.source_reader import read_sources
     source_text = read_sources(sigs)
 
     # Step 1: Web検索で補完事実を収集
