@@ -575,8 +575,10 @@ def download_and_attach_thumbnail(post_id: int, image_url: str, sig: dict) -> in
         f"INSERT INTO wp_postmeta (post_id, meta_key, meta_value) "
         f"VALUES ({attachment_id}, '_wp_attached_file', '{esc_sql(rel_path)}');"
     )
-    # alt(Layer 2 出典明示)
-    alt = f"出典: kbuzzlab.com - {sig.get('title', '')[:80]}"
+    # alt(Layer 2 出典明示)。媒体は sig['source_media'] を使う
+    # (pops-in/PRTIMES 由来でも正しい出典を出す。2026-06-15: kbuzzlab 固定を修正)。
+    _media = sig.get("source_media") or "kbuzzlab.com"
+    alt = f"出典: {_media} - {sig.get('title', '')[:80]}"
     run_mysql(
         f"INSERT INTO wp_postmeta (post_id, meta_key, meta_value) "
         f"VALUES ({attachment_id}, '_wp_attachment_image_alt', '{esc_sql(alt)}');"
