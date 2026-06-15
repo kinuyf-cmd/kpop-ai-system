@@ -29,6 +29,15 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 
 log "===== popup_event_weekly.sh 開始 (DRY_RUN=${DRY_RUN:-0}) ====="
 
+# ─── 0. CA バンドル確保(kbuzzlab の Let's Encrypt 新ルート対応)──────
+# data/ca/ は .gitignore のためローカル生成物。不在なら自動生成する。
+# 不在のまま走ると kbuzzlab が TLS 検証で落ち、popup の主力ソースを失う
+# (2026-05〜06 の popup 更新停止の真因)。
+if [[ ! -s "${SCRIPT_DIR}/data/ca/kpop_ca_bundle.pem" ]]; then
+  log "Step 0: CA バンドル不在 → refresh_ca_bundle.sh で生成"
+  bash "${SCRIPT_DIR}/tools/refresh_ca_bundle.sh" 2>&1 | tee -a "$LOG_FILE" || log "CA バンドル生成失敗(デフォルト検証で継続)"
+fi
+
 # ─── 1. シグナル取得 ───────────────────────────────────
 log "Step 1: popup_event_fetcher.py 実行"
 if ! python3 "${SCRIPT_DIR}/lib/popup_event_fetcher.py" 2>&1 | tee -a "$LOG_FILE"; then

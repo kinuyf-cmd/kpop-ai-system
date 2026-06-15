@@ -65,6 +65,30 @@ def esc_sql(s: str | None) -> str:
         return ""
     return str(s).replace("\\", "\\\\").replace("'", "''")
 
+# ─── 自動公開の品質ゲート ──────────────────────────────────
+def popup_quality_gate(sig: dict, title: str) -> tuple[bool, str]:
+    """popup を自動 publish してよいか判定する。戻り値 (公開可, 理由)。
+
+    2026-05-26 に「無検査公開」を止めた事故対応の意図(空本文・薄い記事を出さない)を
+    保ったまま自動公開を再開するためのゲート。合格 → publish、不合格 → draft 据え置き。
+
+    合格条件(すべて満たす):
+      1. 固有タイトル … 「{artist} ポップアップストア開催決定 / 期間限定イベント情報」
+         のような汎用テンプレタイトルでない(= build_popup_article が原題を採用できた)。
+      2. 開催情報あり … 会場 or 開催期間 or 住所 のいずれかが取れている
+         (kbz_info / PRTIMES 抽出 由来)。日付/場所の無い「実質空」記事を publish しない。
+    """
+    artist = (sig.get("artist_keyword") or "").strip()
+    generic = {f"{artist} ポップアップストア開催決定", f"{artist} 期間限定イベント情報"}
+    if title.strip() in generic:
+        return False, "汎用タイトル(原題を採用できず)"
+    kbz = sig.get("kbz_info", {}) or {}
+    has_info = any(str(kbz.get(k, "")).strip() for k in ("会場", "開催期間", "住所", "開催エリア"))
+    if not has_info:
+        return False, "会場/期間が空(実質情報なし)"
+    return True, "固有タイトル+開催情報あり"
+
+
 # ─── 記事テンプレート(Layer 2 引用率 60% 上限) ──────────
 def build_popup_article(sig: dict) -> tuple[str, str, str]:
     """popup 型シグナルから記事(title, body_html, slug)を生成。
@@ -85,15 +109,22 @@ def build_popup_article(sig: dict) -> tuple[str, str, str]:
     # 自社タイトル(Layer 2: 原題は引用、自社は要約タイトル)
     # 出典はタイトルに含めない(本文の出典ボックス・カードのソース欄に別途明記する。
     # タイトルに「— 出典: xxx」を入れると一覧/個別で冗長になるため、2026-05-21 に撤去)。
-    # kbuzzlab は原題が分かりやすい(ブランド名 + エリア)ので原題ベース。
-    if sig.get("source_media") == "kbuzzlab":
-        # 原題末尾の「 | kbuzzlab」やサイト名サフィックスを除去
-        clean_title = re.sub(r"\s*[|｜]\s*kbuzzlab.*$", "", title_orig, flags=re.I).strip()
-        # 70 文字超は切詰め
+    #
+    # 2026-06-15: 原題ベースを全ソースに拡大(event 側 build_event_article と同方針)。
+    # 旧実装は kbuzzlab だけ原題を使い、pops-in/PRTIMES は artist しか使わず
+    # 「アイドル ポップアップストア開催決定」のような中身の無い汎用タイトルを量産
+    # していた(SEO 価値も低い)。実際の原題は「BLACKPINK x たまごっち SEOUL
+    # POP-UP STORE」のように固有名+具体名で十分良質なため、原題を正本に使う。
+    #   ・原題が薄い(artist と同一/空)とき だけ 従来の汎用タイトルにフォールバック。
+    clean_title = re.sub(r"\s*[|｜]\s*kbuzzlab.*$", "", title_orig or "", flags=re.I).strip()
+    # サイト名・媒体サフィックス(| pops-in 等)も保険で除去
+    clean_title = re.sub(r"\s*[|｜]\s*(pops-?in|PRTIMES).*$", "", clean_title, flags=re.I).strip()
+    has_real_title = bool(clean_title) and clean_title.strip() != (artist or "").strip()
+    if has_real_title:
         if len(clean_title) > 70:
             clean_title = clean_title[:67] + "…"
         new_title = clean_title
-    elif "ポップアップ" in title_orig or "POP-UP" in title_orig.upper() or "POPUP" in title_orig.upper():
+    elif "ポップアップ" in (title_orig or "") or "POP-UP" in (title_orig or "").upper() or "POPUP" in (title_orig or "").upper():
         new_title = f"{artist} ポップアップストア開催決定"
     else:
         new_title = f"{artist} 期間限定イベント情報"
@@ -364,12 +395,17 @@ def find_popup_by_source_url(source_url: str) -> tuple[int, str]:
     return 0, ""
 
 
-def insert_post(title: str, body: str, slug: str, post_type: str, category_slug: str | None = None) -> int:
-    """wp_posts に1件 INSERT してID返す。tribe_events の場合 category は使わない。"""
+def insert_post(title: str, body: str, slug: str, post_type: str,
+                category_slug: str | None = None, status: str = "draft") -> int:
+    """wp_posts に1件 INSERT してID返す。tribe_events の場合 category は使わない。
+
+    status: 'publish' か 'draft'。呼び出し側が品質ゲート(popup_quality_gate)で判定する。
+    """
     now = now_iso()
     title_esc = esc_sql(title)
     body_esc = esc_sql(body)
     slug_esc = esc_sql(slug)
+    status = "publish" if status == "publish" else "draft"
 
     sql = (
         f"INSERT INTO wp_posts (post_author, post_date, post_date_gmt, post_content, post_title, "
@@ -377,10 +413,11 @@ def insert_post(title: str, body: str, slug: str, post_type: str, category_slug:
         f"to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, "
         f"post_parent, menu_order, post_type, comment_count) "
         f"VALUES (1, '{now}', '{now}', '{body_esc}', '{title_esc}', "
-        # 2026-05-26: 即時 publish を廃止し draft で作成する。
-        # 空本文・サムネ無し・汎用タイトルの popup 記事が無検査で公開された事故の恒久対応。
-        # 公開は本文・サムネ・タイトルを人手 or 後段ゲートで確認してから昇格する。
-        f"'', 'draft', 'closed', 'closed', '', '{slug_esc}', "
+        # 2026-05-26: 空本文・サムネ無し・汎用タイトルの popup が無検査公開された事故の対応で
+        #   一律 draft 化したが、結果 draft が滞留し popup 更新が止まった(2026-06-15 発覚)。
+        # 2026-06-15: 品質ゲート(固有タイトル + 会場/期間あり)を通った記事のみ自動 publish に。
+        #   ゲート不合格(薄い)は従来どおり draft 据え置きで人手確認に回す。
+        f"'', '{status}', 'closed', 'closed', '', '{slug_esc}', "
         f"'', '', '{now}', '{now}', '', "
         f"0, 0, '{post_type}', 0);"
     )
@@ -958,7 +995,10 @@ def main(signals_path: str) -> int:
                                "url": f"https://stg.kpopjournal.tokyo/?p={existing_id}", "skipped_dedup": True})
                 continue
             title, body, slug = build_popup_article(sig)
-            pid = insert_post(title, body, slug, post_type="post")
+            ok_pub, gate_reason = popup_quality_gate(sig, title)
+            status = "publish" if ok_pub else "draft"
+            print(f"  品質ゲート: {'PUBLISH' if ok_pub else 'DRAFT'} — {gate_reason}")
+            pid = insert_post(title, body, slug, post_type="post", status=status)
             if pid and not DRY_RUN:
                 assign_category(pid, "popup")
                 # M11.5 段階9.5 + タスク#27: ACF を投入。

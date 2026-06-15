@@ -14,7 +14,7 @@ if not _creds.exists():
 from lib.popup_event_to_post import (
     slugify, esc_sql, esc_html,
     _parse_period_dates, _guess_popup_area, _guess_popup_status,
-    build_popup_article,
+    build_popup_article, popup_quality_gate,
 )
 
 
@@ -119,6 +119,86 @@ class TestPrtimesSlugAscii:
         # multibyte が混ざらない(pretty permalink が解決できる)
         assert slug.isascii(), f"slug must be ASCII, got {slug!r}"
         assert "000000063-000030872" in slug
+
+
+class TestPopupTitleAllSources:
+    """2026-06-15 回帰防止: popup タイトルは全ソースで原題ベース。
+    旧実装は kbuzzlab だけ原題を使い、pops-in/PRTIMES は「{artist} ポップアップ
+    ストア開催決定」の汎用名を量産していた(popup更新停止の一因)。"""
+
+    def test_popsin_uses_real_title(self):
+        sig = {
+            "type": "popup",
+            "title": "BLACKPINK x たまごっち SEOUL POP-UP STORE",
+            "artist_keyword": "SEOUL",
+            "source_url": "https://pops-in.com/event/?number=1",
+            "source_media": "pops-in",
+        }
+        title, _, _ = build_popup_article(sig)
+        assert title == "BLACKPINK x たまごっち SEOUL POP-UP STORE"
+        assert "開催決定" not in title
+
+    def test_prtimes_uses_real_title(self):
+        sig = {
+            "type": "popup",
+            "title": "BOYNEXTDOOR 1st Studio Album [HOME] POP-UP",
+            "artist_keyword": "アイドル",
+            "source_url": "https://prtimes.jp/main/html/rd/p/000000001.000000002.html",
+            "source_media": "PRTIMES",
+        }
+        title, _, _ = build_popup_article(sig)
+        assert title == "BOYNEXTDOOR 1st Studio Album [HOME] POP-UP"
+
+    def test_generic_fallback_when_title_equals_artist(self):
+        # 原題が artist と同一(=薄い)ときだけ従来の汎用タイトルにフォールバック
+        sig = {
+            "type": "popup",
+            "title": "aespa",
+            "artist_keyword": "aespa",
+            "source_url": "https://prtimes.jp/main/html/rd/p/000000003.000000004.html",
+            "source_media": "PRTIMES",
+        }
+        title, _, _ = build_popup_article(sig)
+        assert title == "aespa 期間限定イベント情報"
+
+    def test_kbuzzlab_suffix_stripped(self):
+        sig = {
+            "type": "popup",
+            "title": "テヤン展示 QUINTESSENCE | kbuzzlab",
+            "artist_keyword": "テヤン",
+            "source_url": "https://kbuzzlab.com/popup_event/abc/",
+            "source_media": "kbuzzlab",
+        }
+        title, _, _ = build_popup_article(sig)
+        assert "kbuzzlab" not in title
+
+
+class TestPopupQualityGate:
+    """2026-06-15: 自動 publish の品質ゲート。固有タイトル + 会場/期間あり → publish。
+    薄い記事(汎用タイトル or 情報なし)は draft 据え置き。"""
+
+    def test_pass_specific_title_with_venue(self):
+        sig = {
+            "type": "popup", "artist_keyword": "SEOUL",
+            "kbz_info": {"会場": "聖水 AKプラザ", "開催期間": "2026/06/16〜06/25"},
+        }
+        ok, _ = popup_quality_gate(sig, "BLACKPINK x たまごっち SEOUL POP-UP STORE")
+        assert ok is True
+
+    def test_fail_generic_title(self):
+        sig = {
+            "type": "popup", "artist_keyword": "aespa",
+            "kbz_info": {"会場": "どこか"},
+        }
+        ok, reason = popup_quality_gate(sig, "aespa ポップアップストア開催決定")
+        assert ok is False
+        assert "汎用" in reason
+
+    def test_fail_no_venue_or_date(self):
+        sig = {"type": "popup", "artist_keyword": "RIIZE", "kbz_info": {}}
+        ok, reason = popup_quality_gate(sig, "RIIZE POP-UP [ARCHIIVE]")
+        assert ok is False
+        assert "会場" in reason or "期間" in reason
 
 
 class TestEscHtml:

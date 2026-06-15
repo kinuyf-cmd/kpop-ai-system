@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import time
+import ssl
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
@@ -36,6 +37,22 @@ TIMEOUT = 30
 SLEEP = 1.0  # 媒体ごとの間隔
 OUT_DIR = Path.home() / ".kpop_recovery" / "popup_event_signals"
 DRY_RUN = bool(int(os.environ.get("DRY_RUN", "0")))
+
+# ─── SSL: kbuzzlab は Let's Encrypt 新ルート "ISRG Root YR" を使う。
+# このルートはまだ OS / certifi の信頼ストアに未収録のため、検証が
+# CERTIFICATE_VERIFY_FAILED で落ちる(2026-06 実測、5月以降 popup 取得停止の一因)。
+# 対策: certifi に Root YR(X1クロス署名 + 自己署名)を足した独自バンドルを使う。
+# バンドルは tools/refresh_ca_bundle.sh が生成・更新する。
+# 不在時はデフォルト検証にフォールバック(他ホストは標準CAで通る)。
+_CA_BUNDLE = Path(__file__).resolve().parent.parent / "data" / "ca" / "kpop_ca_bundle.pem"
+def _make_ssl_context() -> ssl.SSLContext | None:
+    if _CA_BUNDLE.is_file():
+        try:
+            return ssl.create_default_context(cafile=str(_CA_BUNDLE))
+        except Exception:
+            return None
+    return None
+_SSL_CTX = _make_ssl_context()
 
 # K-POP キーワード — 短いラテン語キーワードは単語境界マッチ(false positive 防止)
 # 例: "V" は "GRAPEVINE" にマッチさせない、"Lisa" は "LiSA" にマッチさせない
@@ -119,7 +136,7 @@ def fetch(url: str, accept: str = "*/*") -> str:
     """URLを取得しテキストを返す。失敗時は空文字。"""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": accept})
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+        with urllib.request.urlopen(req, timeout=TIMEOUT, context=_SSL_CTX) as r:
             data = r.read()
             ctype = r.headers.get("Content-Type", "")
             # decode
