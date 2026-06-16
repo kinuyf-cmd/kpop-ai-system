@@ -179,6 +179,16 @@
    "start_date": "2026-06-20",
    "venue": "オリックス劇場",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-08-21",
+   "venue": "Kアリーナ横浜",
+   "_source_id": "ltike"
   }
  ]
 }
