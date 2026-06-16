@@ -343,6 +343,15 @@ def run_post_publish(post_id, post_type='post'):
                 _gst = _gsc.get('status', '?')
                 result['changes'].append(f"gsc_submit: {_gst}")
                 print(f"  [hook] GSC申請: {_gst} ({_url})")
+                # IndexNow(Bing/Yahoo/Yandex)へも通知。GSC=Google専用の対。
+                # GA4実測でBing/Yahooが第2第3チャネル([[reach-channels-beyond-x-20260616]])。
+                try:
+                    from lib.indexnow import submit as _indexnow_submit
+                    _instatus, _inbody = _indexnow_submit([_url])
+                    result['changes'].append(f"indexnow: {_instatus}")
+                    print(f"  [hook] IndexNow申請: {_instatus} ({_url})")
+                except Exception as _ie:
+                    print(f"  [hook] IndexNow申請 err: {_ie}")
         except Exception as _ge:
             print(f"  [hook] GSC申請 err: {_ge}")
 
