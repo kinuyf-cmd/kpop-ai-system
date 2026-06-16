@@ -448,6 +448,67 @@ def fetch_source_image(source_url, output_path):
     return None
 
 
+def _canonical_artist(subject: str, title: str = '') -> str:
+    """検出されたアーティスト名を本人写真取得に使える canonical 英名へ正規化する
+    (2026-06-16 真因修理: 段階2が classify の日本語ニックネーム('スキズ'等)/空を
+    そのまま _tsr_resolve に渡し、artist_master/Wikimedia 照合に通らず本人写真が
+    取れなかった。normalize_artist_name は存在したが呼ばれていなかった)。
+
+    手順: ①subject を alias 辞書で正規化 ②それでも未解決(=subjectが空/別名のまま)
+    なら title 内のアーティストを is_kpop_related で抽出して正規化。
+    正規化できなければ元の subject を返す(誤変換せず段階3へ降格を許容)。
+    """
+    try:
+        sys.path.insert(0, '/home/aiuser/kpop-ai-system/lib')
+        from thumbnail_source_resolver import normalize_artist_name
+    except Exception:
+        return subject or ''
+
+    # ① subject を正規化
+    if subject:
+        norm = normalize_artist_name(subject)
+        if norm and norm != subject:
+            return norm  # alias ヒット(例: スキズ→Stray Kids)
+        # alias 未登録でも、英名がそのまま canonical なら採用
+        if norm == subject:
+            from_resolver = _resolver_canonical(subject)
+            if from_resolver:
+                return from_resolver
+            return subject  # LABUBU 等の非登録題材はそのまま(段階3へ)
+
+    # ② subject 不在 → title からアーティスト抽出
+    if title:
+        try:
+            from lib.collectors.korean_base import is_kpop_related
+        except Exception:
+            try:
+                from collectors.korean_base import is_kpop_related
+            except Exception:
+                return subject or ''
+        hits = list(is_kpop_related(title) or [])
+        for h in hits:
+            norm = normalize_artist_name(h)
+            if norm:
+                cano = _resolver_canonical(norm) or normalize_artist_name(norm)
+                if cano and cano != h:
+                    return cano
+                return norm
+    return subject or ''
+
+
+def _resolver_canonical(name: str) -> str:
+    """artist_resolver(Idol Wiki 名前解決)で canonical 英名を引く。無ければ ''。"""
+    try:
+        from lib.artist_resolver import resolve as _ar_resolve
+    except Exception:
+        try:
+            from artist_resolver import resolve as _ar_resolve
+        except Exception:
+            return ''
+    r = _ar_resolve(name)
+    return r.get('canonical', '') if r else ''
+
+
 def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
     """3段fallback: ソース画像 → アーティスト写真 → DALL-E 3
 
@@ -527,9 +588,15 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
 
         classification = classify(title, body or '')
         subjects = classification.get('subjects', [])
-        artist = subjects[0] if subjects else ''
+        raw_artist = subjects[0] if subjects else ''
+        # 真因修理(2026-06-16): classify の日本語ニックネーム/空を canonical 英名へ
+        # 正規化してから本人写真取得に渡す(未正規化だと artist_master/Wikimedia 照合に
+        # 通らず本人写真が取れなかった)。
+        artist = _canonical_artist(raw_artist, title)
 
         if artist:
+            if artist != raw_artist:
+                print(f"  アーティスト正規化: {raw_artist!r} → {artist!r}")
             print(f"  アーティスト検出: {artist} → 本人写真を優先取得")
             _tsr = _tsr_resolve(artist_name=artist, article_type='concrete',
                                 post_id=str(post_id) if post_id else '')
