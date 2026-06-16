@@ -11,10 +11,14 @@ _creds = Path("/tmp/wp_stg.txt")
 if not _creds.exists():
     _creds.write_text("DB_HOST=localhost\nDB_NAME=test\nDB_USER=test\nDB_PASS=test\n")
 
+from unittest import mock
+
+import lib.popup_event_to_post as P
 from lib.popup_event_to_post import (
     slugify, esc_sql, esc_html,
     _parse_period_dates, _guess_popup_area, _guess_popup_status,
     build_popup_article, popup_quality_gate,
+    download_and_attach_thumbnail,
 )
 
 
@@ -213,3 +217,126 @@ class TestEscHtml:
     def test_double_quote_escaped(self):
         result = esc_html('say "hi"')
         assert '"' not in result
+
+
+class _FakeResp:
+    """urllib.request.urlopen のコンテキストマネージャ互換スタブ。"""
+    def __init__(self, data=b"\xff\xd8imgdata", content_type="image/webp"):
+        self._data = data
+        self.headers = {"Content-Length": str(len(data)), "Content-Type": content_type}
+    def __enter__(self):
+        return self
+    def __exit__(self, *a):
+        return False
+    def read(self, n=-1):
+        return self._data
+
+
+def _run_factory(import_rc=0, import_stdout="9999\n"):
+    """subprocess.run のフェイク。kpop-wp-rw.sh の呼び出しを記録する。
+
+    - media import      → returncode/stdout を制御(attachment_id を返す経路)
+    - post meta update  → 常に成功
+    - その他(mysql 等) → 成功扱い(本テストでは呼ばれないことも検証)
+    """
+    calls = []
+
+    def fake_run(cmd, *args, **kwargs):
+        calls.append(cmd)
+        rc, out, err = 0, "", ""
+        if isinstance(cmd, list) and "media" in cmd and "import" in cmd:
+            rc, out = import_rc, import_stdout
+        return mock.Mock(returncode=rc, stdout=out, stderr=err)
+
+    fake_run.calls = calls
+    return fake_run
+
+
+class TestDownloadAndAttachThumbnail:
+    """根治: uploads 直書きをやめ kpop-wp-rw.sh media import 経由にする
+    (2026-06-16 設計 docs/superpowers/specs/2026-06-16-popup-thumbnail-rw-import-design.md)。"""
+
+    SIG = {"title": "テスト ポップアップ 聖水", "source_media": "kbuzzlab.com"}
+
+    def test_success_calls_rw_media_import_and_returns_att_id(self):
+        fake_run = _run_factory(import_rc=0, import_stdout="9999\n")
+        with mock.patch("urllib.request.urlopen", return_value=_FakeResp()), \
+             mock.patch.object(P, "DRY_RUN", False), \
+             mock.patch.object(P.subprocess, "run", side_effect=fake_run):
+            att = download_and_attach_thumbnail(123, "https://kbuzzlab.com/x.webp", self.SIG)
+
+        assert att == 9999
+        # media import が rw ラッパー経由・正しい引数で呼ばれている
+        import_calls = [c for c in fake_run.calls
+                        if isinstance(c, list) and "media" in c and "import" in c]
+        assert len(import_calls) == 1
+        cmd = import_calls[0]
+        assert cmd[0:2] == ["sudo", "-n"]
+        assert P.WP_RW in cmd
+        assert "--featured_image" in cmd
+        assert "--porcelain" in cmd
+        assert "--post_id=123" in cmd
+        # uploads への手動 SQL INSERT(attachment/_thumbnail_id)は発行されない
+        mysql_calls = [c for c in fake_run.calls
+                       if isinstance(c, list) and c and c[0] == "mysql"]
+        assert mysql_calls == []
+
+    def test_sets_alt_via_rw_meta_update(self):
+        fake_run = _run_factory(import_rc=0, import_stdout="9999\n")
+        with mock.patch("urllib.request.urlopen", return_value=_FakeResp()), \
+             mock.patch.object(P, "DRY_RUN", False), \
+             mock.patch.object(P.subprocess, "run", side_effect=fake_run):
+            download_and_attach_thumbnail(123, "https://kbuzzlab.com/x.webp", self.SIG)
+
+        meta_calls = [c for c in fake_run.calls
+                      if isinstance(c, list) and "meta" in c and "update" in c]
+        assert len(meta_calls) == 1
+        cmd = meta_calls[0]
+        assert cmd[0:2] == ["sudo", "-n"]
+        assert "9999" in cmd
+        assert "_wp_attachment_image_alt" in cmd
+        # 出典明示(citation-rules)が alt に含まれる
+        assert any("出典: kbuzzlab.com" in str(x) for x in cmd)
+
+    def test_import_failure_returns_zero_and_skips_meta(self):
+        fake_run = _run_factory(import_rc=1, import_stdout="")
+        with mock.patch("urllib.request.urlopen", return_value=_FakeResp()), \
+             mock.patch.object(P, "DRY_RUN", False), \
+             mock.patch.object(P.subprocess, "run", side_effect=fake_run):
+            att = download_and_attach_thumbnail(123, "https://kbuzzlab.com/x.webp", self.SIG)
+
+        assert att == 0
+        meta_calls = [c for c in fake_run.calls
+                      if isinstance(c, list) and "meta" in c and "update" in c]
+        assert meta_calls == []
+
+    def test_dry_run_does_not_download_or_import(self):
+        fake_run = _run_factory()
+        with mock.patch("urllib.request.urlopen", side_effect=AssertionError("must not download")), \
+             mock.patch.object(P, "DRY_RUN", True), \
+             mock.patch.object(P.subprocess, "run", side_effect=fake_run):
+            att = download_and_attach_thumbnail(123, "https://kbuzzlab.com/x.webp", self.SIG)
+
+        assert att == 0
+        assert fake_run.calls == []
+
+    def test_tempfile_cleaned_up_on_success(self, tmp_path, monkeypatch):
+        created = []
+        real_mkstemp = P.tempfile.mkstemp if hasattr(P, "tempfile") else None
+
+        fake_run = _run_factory(import_rc=0, import_stdout="9999\n")
+        with mock.patch("urllib.request.urlopen", return_value=_FakeResp()), \
+             mock.patch.object(P, "DRY_RUN", False), \
+             mock.patch.object(P.subprocess, "run", side_effect=fake_run):
+            download_and_attach_thumbnail(123, "https://kbuzzlab.com/x.webp", self.SIG)
+
+        # import に渡したファイルパスが実行後に残っていない
+        import_calls = [c for c in fake_run.calls
+                        if isinstance(c, list) and "media" in c and "import" in c]
+        assert import_calls, "media import が呼ばれていない"
+        # import コマンド中のファイルパス引数(/tmp 配下)を探す
+        paths = [x for x in import_calls[0] if isinstance(x, str) and x.startswith("/")
+                 and not x.startswith("/usr") and not x.startswith("--")]
+        assert paths, "import にファイルパスが渡っていない"
+        for p in paths:
+            assert not Path(p).exists(), f"一時ファイルが残存: {p}"

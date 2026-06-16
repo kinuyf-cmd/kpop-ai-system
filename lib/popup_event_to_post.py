@@ -24,12 +24,18 @@ import hashlib
 import sys
 import subprocess
 import shlex
+import tempfile
 import urllib.parse
 import ssl
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 DRY_RUN = bool(int(os.environ.get("DRY_RUN", "0")))
+
+# uploads(www-data 所有)への書込は cron 実行ユーザ(aiuser)では EPERM になるため、
+# サムネ取込は www-data 権限ラッパー経由で行う(2026-06-16 根治。
+# [[popup-cron-thumbnail-aiuser-write-fail]])。
+WP_RW = "/usr/local/sbin/kpop/kpop-wp-rw.sh"
 LIMIT = int(os.environ.get("LIMIT", "0"))
 
 # サムネ画像取得用 SSL コンテキスト。kbuzzlab は Let's Encrypt 新ルート
@@ -477,129 +483,98 @@ def assign_category(post_id: int, slug: str) -> None:
     )
 
 def download_and_attach_thumbnail(post_id: int, image_url: str, sig: dict) -> int:
-    """M11.5 9.5.8-F-B: kbuzzlab の og:image を取得し WP uploads に複製 + attachment 登録 + featured_image セット。
+    """og:image を取得し WP の featured_image としてセットする。成功時 attachment_id、失敗時 0。
 
-    M3 段階3.7 で確立した「画質維持・縦横比維持・再エンコードなし」方式を踏襲。
-    成功時に attachment_id を返す。失敗時は 0。
+    根治(2026-06-16 / [[popup-cron-thumbnail-aiuser-write-fail]]):
+    uploads は www-data 所有で cron 実行ユーザ(aiuser)から直書きできず EPERM になる。
+    そのため「aiuser 権限で一時ファイルへ DL → kpop-wp-rw.sh(www-data 権限)で
+    `wp media import --featured_image`」に委譲する。WP がリサイズ/srcset 等の
+    _wp_attachment_metadata まで正規生成するため、別途 regenerate が不要。
 
     安全設計:
-    - HTTP HEAD でサイズ + Content-Type 確認
-    - 上限 5MB(極端な大ファイル防止)
-    - 配置先: /var/www/wp_stg/wp-content/uploads/YYYY/MM/{filename}
-    - 衝突: 既存ファイル名なら -1/-2 サフィックス
-    - alt: 「出典: kbuzzlab.com - {タイトル}」(Layer 2 引用元明示)
+    - 画像 DL は独自 CA バンドル(_IMG_SSL_CTX)使用 = kbuzzlab の LE Root YR 問題を回避
+      ([[popup-update-stall-ssl-and-autopublish]])。
+    - 上限 5MB(極端な大ファイル防止)、タイムアウト 30s。
+    - 一時ファイルは world-readable(0644)= www-data が読めるようにし、必ず後始末する。
+    - alt: 「出典: {media} - {タイトル}」(Layer 2 引用元明示。citation-rules §8)。
     """
     if not image_url:
         return 0
-    import urllib.request, urllib.error, hashlib, mimetypes
-    from datetime import datetime as _dt
+    import urllib.request, urllib.error
 
-    UPLOADS_BASE = "/var/www/wp_stg/wp-content/uploads"
-    now = _dt.now()
-    year_month = now.strftime("%Y/%m")
-    target_dir = f"{UPLOADS_BASE}/{year_month}"
-    # 配置先ディレクトリの存在(www-data 所有、aiuser からは sudo なしでは書けない可能性大)
-    if not Path(target_dir).is_dir():
-        print(f"  warning: target dir not writable / not exists: {target_dir}")
-        # 試しに mkdir(失敗しても継続して download まで)
-        try:
-            Path(target_dir).mkdir(parents=True, exist_ok=True)
-        except PermissionError:
-            print(f"  WARN: PermissionError on {target_dir} — オーナーが sudo で uploads ディレクトリを準備済か確認")
-            return 0
-
-    # filename 抽出(URL 末尾)
+    # filename 抽出(URL 末尾)→ 安全な ASCII slug。import 先のファイル名に使う。
     filename = image_url.rsplit("/", 1)[-1].split("?")[0]
-    # 日本語 URL エンコードはそのまま、安全な ASCII slug に置換
     safe_name = re.sub(r"[^A-Za-z0-9._-]", "-", filename)[:80] or f"popup-{post_id}.jpg"
-    # 拡張子が無い場合 .jpg
     if "." not in safe_name:
         safe_name += ".jpg"
 
-    target_path = Path(target_dir) / safe_name
-    # 衝突回避
-    suffix = 0
-    base, ext = (target_path.stem, target_path.suffix)
-    while target_path.exists():
-        suffix += 1
-        target_path = Path(target_dir) / f"{base}-{suffix}{ext}"
-
     if DRY_RUN:
-        print(f"[DRY_RUN] download {image_url[:60]} → {target_path}")
+        print(f"[DRY_RUN] download {image_url[:60]} → (rw media import) post={post_id}")
         return 0
 
-    # download
+    # ── aiuser 権限で一時ファイルへ DL(world-readable) ──
+    # uploads 上のファイル名は import するファイルの basename になるため、
+    # tempdir 内で safe_name そのものを使い、クリーンなファイル名を維持する。
+    tmp_dir = tempfile.mkdtemp(prefix="popup_thumb_")
+    os.chmod(tmp_dir, 0o755)  # www-data が import 時にディレクトリを traverse できるように
+    tmp_path = os.path.join(tmp_dir, safe_name)
     try:
-        req = urllib.request.Request(image_url, headers={
-            "User-Agent": "KpopJournalBot/1.0 (+https://www.kpopjournal.tokyo/about; research)",
-            "Accept": "image/webp,image/jpeg,image/png,image/*,*/*;q=0.8",
-        })
-        with urllib.request.urlopen(req, timeout=30, context=_IMG_SSL_CTX) as r:
-            content_length = int(r.headers.get("Content-Length", "0") or 0)
-            if content_length > 5 * 1024 * 1024:
-                print(f"  WARN: image too large ({content_length} bytes), skip")
-                return 0
-            mime = r.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
-            data = r.read(5 * 1024 * 1024 + 1)  # 上限 5MB+1
-            if len(data) > 5 * 1024 * 1024:
-                print(f"  WARN: stream too large, skip")
-                return 0
-        target_path.write_bytes(data)
-        print(f"  thumb saved: {target_path} ({len(data)} bytes, {mime})")
-    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError) as e:
-        print(f"  WARN: thumbnail download failed: {e}")
-        return 0
+        try:
+            req = urllib.request.Request(image_url, headers={
+                "User-Agent": "KpopJournalBot/1.0 (+https://www.kpopjournal.tokyo/about; research)",
+                "Accept": "image/webp,image/jpeg,image/png,image/*,*/*;q=0.8",
+            })
+            with urllib.request.urlopen(req, timeout=30, context=_IMG_SSL_CTX) as r:
+                content_length = int(r.headers.get("Content-Length", "0") or 0)
+                if content_length > 5 * 1024 * 1024:
+                    print(f"  WARN: image too large ({content_length} bytes), skip")
+                    return 0
+                mime = r.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
+                data = r.read(5 * 1024 * 1024 + 1)  # 上限 5MB+1
+                if len(data) > 5 * 1024 * 1024:
+                    print(f"  WARN: stream too large, skip")
+                    return 0
+            Path(tmp_path).write_bytes(data)
+            os.chmod(tmp_path, 0o644)  # www-data が読めるように
+            print(f"  thumb fetched: {tmp_path} ({len(data)} bytes, {mime})")
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError) as e:
+            print(f"  WARN: thumbnail download failed: {e}")
+            return 0
 
-    # attachment 登録
-    guid = f"https://stg.kpopjournal.tokyo/wp-content/uploads/{year_month}/{target_path.name}"
-    title_esc = esc_sql(target_path.stem)
-    # post_mime_type は mime から決定
-    mime_esc = esc_sql(mime)
-    now_iso_str = now_iso()
+        # ── www-data 権限で import + featured_image(uploads 複製/メタ生成は WP が実施)──
+        imp = subprocess.run(
+            ["sudo", "-n", WP_RW, "media", "import", tmp_path,
+             f"--post_id={post_id}", "--featured_image", "--porcelain"],
+            capture_output=True, text=True, timeout=120,
+        )
+        if imp.returncode != 0:
+            print(f"  WARN: media import 失敗(featured 未設定): {imp.stderr.strip()[:160]}")
+            return 0
+        try:
+            attachment_id = int(imp.stdout.strip().splitlines()[-1])
+        except (ValueError, IndexError):
+            print(f"  WARN: porcelain att_id parse 失敗: {imp.stdout.strip()[:80]}")
+            return 0
 
-    att_sql = (
-        f"INSERT INTO wp_posts (post_author, post_date, post_date_gmt, post_content, post_title, "
-        f"post_excerpt, post_status, comment_status, ping_status, post_password, post_name, "
-        f"to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, "
-        f"post_parent, guid, menu_order, post_type, post_mime_type, comment_count) "
-        f"VALUES (1, '{now_iso_str}', '{now_iso_str}', '', '{title_esc}', "
-        f"'', 'inherit', 'open', 'closed', '', '{esc_sql(target_path.stem)}', "
-        f"'', '', '{now_iso_str}', '{now_iso_str}', '', "
-        f"{post_id}, '{esc_sql(guid)}', 0, 'attachment', '{mime_esc}', 0);"
-    )
-    run_mysql(att_sql)
-    # attachment_id 取得
-    rel_path = f"{year_month}/{target_path.name}"
-    att_id_row = run_mysql(
-        f"SELECT ID FROM wp_posts WHERE post_type='attachment' AND post_parent={post_id} "
-        f"AND guid='{esc_sql(guid)}' ORDER BY ID DESC LIMIT 1;"
-    ).splitlines()
-    att_ids = [l.strip() for l in att_id_row if l.strip().isdigit()]
-    if not att_ids:
-        print(f"  WARN: attachment ID lookup failed")
-        return 0
-    attachment_id = int(att_ids[0])
-
-    # _wp_attached_file(WP の uploads 相対パス)
-    run_mysql(
-        f"INSERT INTO wp_postmeta (post_id, meta_key, meta_value) "
-        f"VALUES ({attachment_id}, '_wp_attached_file', '{esc_sql(rel_path)}');"
-    )
-    # alt(Layer 2 出典明示)。媒体は sig['source_media'] を使う
-    # (pops-in/PRTIMES 由来でも正しい出典を出す。2026-06-15: kbuzzlab 固定を修正)。
-    _media = sig.get("source_media") or "kbuzzlab.com"
-    alt = f"出典: {_media} - {sig.get('title', '')[:80]}"
-    run_mysql(
-        f"INSERT INTO wp_postmeta (post_id, meta_key, meta_value) "
-        f"VALUES ({attachment_id}, '_wp_attachment_image_alt', '{esc_sql(alt)}');"
-    )
-    # post の _thumbnail_id(featured_image)
-    run_mysql(
-        f"INSERT INTO wp_postmeta (post_id, meta_key, meta_value) "
-        f"VALUES ({post_id}, '_thumbnail_id', '{attachment_id}');"
-    )
-    print(f"  featured_image set: post={post_id}, attachment={attachment_id}")
-    return attachment_id
+        # ── alt(Layer 2 出典明示)。media は sig['source_media'] を使う ──
+        _media = sig.get("source_media") or "kbuzzlab.com"
+        alt = f"出典: {_media} - {sig.get('title', '')[:80]}"
+        subprocess.run(
+            ["sudo", "-n", WP_RW, "post", "meta", "update",
+             str(attachment_id), "_wp_attachment_image_alt", alt],
+            capture_output=True, text=True, timeout=60,
+        )
+        print(f"  featured_image set: post={post_id}, attachment={attachment_id}")
+        return attachment_id
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        try:
+            os.rmdir(tmp_dir)
+        except OSError:
+            pass
 
 
 def assign_popup_taxonomy(post_id: int, area_slug: str, status_slug: str) -> None:
