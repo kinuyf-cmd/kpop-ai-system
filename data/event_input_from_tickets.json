@@ -62,16 +62,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "TOMORROW X TOGETHER",
-   "title": "TOMORROW X TOGETHER",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-16",
-   "venue": "マリンメッセ福岡A館",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",
@@ -188,6 +178,16 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-08-21",
    "venue": "Kアリーナ横浜",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TOMORROW X TOGETHER",
+   "title": "TOMORROW X TOGETHER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-17",
+   "venue": "マリンメッセ福岡A館",
    "_source_id": "ltike"
   }
  ]

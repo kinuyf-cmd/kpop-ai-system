@@ -684,5 +684,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "see_ya": {
+    "name": "See Ya",
+    "files": [
+      "see_ya_9d5b44cc.jpg"
+    ],
+    "sources": [
+      {
+        "file": "see_ya_9d5b44cc.jpg",
+        "wikimedia_title": "File:See ya later (14231229996).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/See_ya_later_%2814231229996%29.jpg",
+        "license": "Public domain"
+      }
+    ]
   }
 }
