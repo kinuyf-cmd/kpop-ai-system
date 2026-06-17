@@ -361,53 +361,58 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
     try:
         client = _get_client()
-        # 2026-05-12 (Phase 2): cache_control に ttl=1h を明示。
-        # default の 5min TTL は publish 散発時に頻繁に miss して cache_create 課金が
-        # 発生していた (write は read の 12.5x コスト)。1h TTL は write 1.6x だが、
-        # 並列racing + cron 間隔 (8h ごとの llm_proofreader) で hit 率が劇的に上がる。
-        # lessons は時間窓で動的なので 2つ目の cache breakpoint として独立 cache する。
-        system_blocks = [{
-            "type": "text",
-            "text": KPOP_FACTCHECK_PREFIX,
-            "cache_control": {"type": "ephemeral", "ttl": "1h"},
-        }]
-        if lessons_section:
-            system_blocks.append({
-                "type": "text",
-                "text": lessons_section,
-                "cache_control": {"type": "ephemeral", "ttl": "1h"},
-            })
-
-        # 2026-05-12 (Phase 4): artist_master.json から生成した K-POP コーパスを
-        # document block で渡し、cache_control 1h で固定する。メンバー人数/デビュー日/
-        # 所属事務所等の確定情報を Web Search に頼らず参照可能になり、捏造検出が
-        # 決定的になる + Web Search 発火頻度をさらに削減できる。
+        # 2026-06-17 (コスト削減): prompt cache を真因修理。
+        # 旧実装は prefix/lessons を system に 1h cache、corpus を user の document block に
+        # 1h cache と、cache breakpoint を 3つに分散していた。実測 (cost_ledger) では
+        # corpus(~6k tok) を含む ~10.8k tok が「毎回」cache_create され、system prefix
+        # (1676 tok) だけが read hit していた = corpus block の cache が call 毎に invalidate。
+        # 結果 cache_read/cache_write=0.81 (read より write が多い破綻) で factcheck が
+        # 全API費の 89% を占め、その 72% が cache write 課金だった。
+        #
+        # 修理点:
+        #  (1) 静的な corpus を user の document block から system の frozen prefix に移動。
+        #      静的内容は breakpoint より「前」に置くのが prompt caching の鉄則
+        #      (corpus は @lru_cache でバイト同一・per-article で変化しない)。
+        #  (2) cache breakpoint を最後の system block 1つに集約 (prefix+lessons+corpus を
+        #      1つの安定 prefix として cache。20-block lookback と prefix 一致が安定する)。
+        #  (3) ttl を 1h(write 2x) → 5m(write 1.25x) に変更。実測の連続呼出 gap は
+        #      cache write を伴う呼出の 734/900 が 5分以内 = 5m TTL で大半カバーでき、
+        #      write 単価が 4割安い。散発分(166件)は cold write だが 5m でも 1h でも write。
+        #
         # 注: Citations (citations.enabled=true) は structured outputs と非互換のため
-        # ここでは citations 無効で純粋な参考資料として渡す。
+        # corpus は純粋な参考テキストとして system に埋め込む (citations 不要)。
         try:
             from lib.factcheck_corpus import build_corpus
             corpus = build_corpus()
         except Exception:
             corpus = ''
 
+        # 安定 prefix を 1ブロックに連結し、最後に cache breakpoint を 1つだけ置く。
+        prefix_text = KPOP_FACTCHECK_PREFIX
         if corpus:
-            user_content = [
-                {
-                    "type": "document",
-                    "source": {
-                        "type": "text",
-                        "media_type": "text/plain",
-                        "data": corpus,
-                    },
-                    "title": "K-POP artist master data",
-                    "context": "確定済みの K-POP アーティスト基礎情報。本文と矛盾があれば指摘する根拠として使用。",
-                    "citations": {"enabled": False},
-                    "cache_control": {"type": "ephemeral", "ttl": "1h"},
-                },
-                {"type": "text", "text": user_prompt},
-            ]
-        else:
-            user_content = user_prompt
+            prefix_text += (
+                "\n\n## K-POPアーティスト基礎情報 (確定データ)\n"
+                "以下は確定済みの K-POP アーティスト基礎情報。本文と矛盾があれば"
+                "critical/high で指摘する根拠として使用。記載のないアーティストは"
+                " web_search で別途検証。\n\n" + corpus
+            )
+
+        system_blocks = [{
+            "type": "text",
+            "text": prefix_text,
+        }]
+        if lessons_section:
+            system_blocks.append({
+                "type": "text",
+                "text": lessons_section,
+            })
+        # cache breakpoint は最後の system block 1つだけ (prefix+corpus+lessons をまとめて
+        # 安定 prefix として cache)。volatile な per-article 本文は user 側に置き cache 対象外。
+        system_blocks[-1]["cache_control"] = {"type": "ephemeral", "ttl": "5m"}
+
+        # per-article で変化する本文のみ user に置く (cache breakpoint より後 = 毎回 full price
+        # だが、これは元々小さい ~800 tok で corpus の cache 破綻に比べ無視できる)。
+        user_content = user_prompt
 
         response = client.messages.create(
             model='claude-sonnet-4-6',
