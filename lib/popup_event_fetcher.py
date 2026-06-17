@@ -19,6 +19,7 @@ K-POP 関連の Popup / Event シグナルを抽出して構造化 JSON に保�
 - Layer 2 引用記事 (60% 引用率) を生成する後段への入力データ
 """
 from __future__ import annotations
+import html as _html
 import json
 import os
 import re
@@ -507,25 +508,40 @@ def _extract_next_data_press_release(html: str) -> dict | None:
     return pr if isinstance(pr, dict) else None
 
 
+def extract_prtimes_image(html: str) -> str:
+    """PRTIMES 詳細ページの og:image をサムネ URL として抽出。
+
+    PRTIMES リリースは必ず og:image(prcdn の本リリース主画像)を持つ。
+    URL 中の HTML エンティティ(&amp; 等)を解いて返す。見つからなければ ""。
+    kbuzzlab/pops-in と同じ og:image 経路に揃える(2026-06-17: PRTIMES popup
+    のみ thumbnail_url 欠落で featured 画像が出ていなかった恒久対応)。
+    """
+    img = _extract_meta(html or "", "og:image") or ""
+    return _html.unescape(img)
+
+
 def fetch_prtimes_detail(url: str) -> dict:
     """PRTIMES 個別リリースページを fetch し開催情報(kbz_info 互換)を返す。
 
     レート負荷を上げないため、呼び出し側(parse_prtimes)で popup と判定された
     signal のみ呼ぶこと。本関数内でも SLEEP を入れる。
 
-    失敗(取得不可/NEXT_DATA 無し)時は {}(捏造せず空)。
+    返り値: {"info": <kbz_info 互換 dict>, "thumbnail_url": <og:image or "">}
+    失敗(取得不可/NEXT_DATA 無し)時は info を {}(捏造せず空)とし、
+    可能なら og:image だけは返す(featured 画像はサムネ目的で本文抽出と独立)。
     """
     time.sleep(SLEEP)
     html = fetch(url)
     if not html:
         log(f"  detail fetch 失敗: {url}")
-        return {}
+        return {"info": {}, "thumbnail_url": ""}
+    thumb = extract_prtimes_image(html)
     pr = _extract_next_data_press_release(html)
     if not pr:
         log(f"  detail NEXT_DATA 無し: {url}")
-        return {}
+        return {"info": {}, "thumbnail_url": thumb}
     info = extract_prtimes_event_info(pr.get("text") or "")
-    return info
+    return {"info": info, "thumbnail_url": thumb}
 
 
 def parse_prtimes(max_items: int = 60) -> list[dict]:
@@ -610,15 +626,22 @@ def parse_prtimes(max_items: int = 60) -> list[dict]:
             "description_snippet": keywords[:200],
             "published_at": pub_date,
             "fetched_at": now_iso(),
+            "thumbnail_url": "",
         }
         # タスク#27: popup のみ個別リリースページから開催情報を抽出して kbz_info
         # 互換 dict に格納(add_popup_acf_meta が読む)。event は詳細 fetch しない
         # (レート負荷を抑える / 日時は eplus/TEC 側で扱う)。
         if sig_type == "popup":
-            info = fetch_prtimes_detail(link)
+            detail = fetch_prtimes_detail(link)
+            info = detail.get("info") or {}
             if info:
                 sig["kbz_info"] = info
                 log(f"    開催情報抽出: {', '.join(info.keys())}")
+            # 2026-06-17: og:image を thumbnail_url に格納し、後段の
+            # download_and_attach_thumbnail が featured 画像を設定できるように。
+            if detail.get("thumbnail_url"):
+                sig["thumbnail_url"] = detail["thumbnail_url"]
+                log(f"    サムネ取得: og:image")
         signals.append(sig)
         log(f"  HIT [{sig_type}/{korea_genre}] {title[:60]}... (kw={matched_kw})")
         if len(signals) >= max_items:

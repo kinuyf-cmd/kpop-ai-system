@@ -9,6 +9,7 @@ from lib.popup_event_fetcher import (
     detect_korea_genre,
     matches_korea,
     extract_prtimes_event_info,
+    extract_prtimes_image,
 )
 
 
@@ -256,6 +257,40 @@ class TestExtractPrtimesEventInfo:
         info = extract_prtimes_event_info(recap)
         # 「開催期間（計12日間）」は prose 中であり日付が無いので period にならない
         assert "開催期間" not in info or info["開催期間"] != "（計12日間）"
+
+
+class TestExtractPrtimesImage:
+    """PRTIMES 詳細ページの og:image をサムネ URL として抽出。
+
+    PRTIMES popup signal は従来 thumbnail_url を持たず、後段の
+    download_and_attach_thumbnail が呼ばれず featured 画像が欠落していた
+    (2026-06-17 発覚)。og:image を拾い、HTML エンティティを解いて返す。
+    """
+
+    def test_extracts_og_image_and_unescapes(self):
+        html = (
+            '<head><meta property="og:image" '
+            'content="https://prcdn.freetls.fastly.net/release_image/'
+            '77024/206/x.jpg?format=jpeg&amp;auto=webp&amp;width=2400"></head>'
+        )
+        url = extract_prtimes_image(html)
+        assert url == (
+            "https://prcdn.freetls.fastly.net/release_image/77024/206/"
+            "x.jpg?format=jpeg&auto=webp&width=2400"
+        )
+
+    def test_content_before_property_order(self):
+        html = (
+            '<meta content="https://prcdn.example/img.jpg" '
+            'property="og:image">'
+        )
+        assert extract_prtimes_image(html) == "https://prcdn.example/img.jpg"
+
+    def test_no_og_image_returns_empty(self):
+        assert extract_prtimes_image("<head><title>x</title></head>") == ""
+
+    def test_empty_html_returns_empty(self):
+        assert extract_prtimes_image("") == ""
 
 
 class TestClassify:
