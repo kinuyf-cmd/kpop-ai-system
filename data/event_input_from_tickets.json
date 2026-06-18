@@ -179,16 +179,6 @@
    "start_date": "2026-08-21",
    "venue": "Kアリーナ横浜",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "TOMORROW X TOGETHER",
-   "title": "TOMORROW X TOGETHER",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-17",
-   "venue": "マリンメッセ福岡A館",
-   "_source_id": "ltike"
   }
  ]
 }
