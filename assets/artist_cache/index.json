@@ -698,5 +698,19 @@
         "license": "Public domain"
       }
     ]
+  },
+  "daesung": {
+    "name": "DAESUNG",
+    "files": [
+      "daesung_8a79298c.jpg"
+    ],
+    "sources": [
+      {
+        "file": "daesung_8a79298c.jpg",
+        "wikimedia_title": "File:Daesung 2012 2.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Daesung_2012_2.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
   }
 }
