@@ -154,7 +154,20 @@ fi
 
 # ─── [7] crontab の不審スクリプト ─────────────────────
 log "--- [7] crontab 健全性 ---"
-SUSPICIOUS=$(crontab -l 2>/dev/null | grep -E '^[^#].*(/tmp/|/var/tmp/|curl.*\|.*sh|wget.*\|.*sh)' | head -5)
+# 真の脅威のみを検出する:
+#   (1) /tmp /var/tmp 配下のファイルを「実行」している (bash/sh/python 等の直後、またはコマンド位置)
+#   (2) curl/wget でDLしたものを shell にパイプしている (remote code execution)
+# /tmp/*.lock や /tmp/*_heartbeat 等の lock/heartbeat ファイル「参照」は正常運用なので除外する。
+# 検出条件 (いずれか):
+#   A) /tmp /var/tmp 配下のファイルを「コマンド位置」で実行
+#      = 行頭(cron時刻欄の後)・; && || | ` $( の直後に裸の /tmp パスが来る
+#   B) インタプリタ (sh/bash/python) が引数として /tmp 配下を実行
+#   C) curl/wget の取得結果を shell にパイプ (remote code execution)
+# flock -n /tmp/x.lock や [ -f /tmp/x_heartbeat ] 等の lock/heartbeat 参照は
+# /tmp パスが「引数」位置なので A/B いずれにも該当せず除外される。
+SUSPICIOUS=$(crontab -l 2>/dev/null | grep -vE '^[[:space:]]*#' \
+  | grep -E '([;&|`(]|\$\()[[:space:]]*(/tmp/|/var/tmp/)[^[:space:]]+|(^|[;&|`([:space:]])(ba)?sh[[:space:]]+(/tmp/|/var/tmp/)|python[0-9.]*[[:space:]]+(/tmp/|/var/tmp/)|(curl|wget)[^|]*\|[[:space:]]*(ba)?sh' \
+  | head -5)
 if [[ -n "$SUSPICIOUS" ]]; then
   add_finding "HIGH" "operational" "crontab に不審なエントリ" "$(echo "$SUSPICIOUS" | head -3)"
 fi
