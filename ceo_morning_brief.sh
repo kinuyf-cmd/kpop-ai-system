@@ -110,6 +110,31 @@ try:
     ga4 = (d.get('ga4') or {}).get('summary', {}) or {}
     if ga4:
         lines.append(f\"  PV: {ga4.get('pageviews', '?')} / セッション: {ga4.get('sessions', '?')} / ユーザー: {ga4.get('users', '?')}\")
+    # 2026-06-22: PV日次履歴(metrics_history.jsonl)から直近7日トレンドを表示。
+    import os as _os
+    _hist = _os.path.join(_os.path.dirname('$METRICS_FILE'), 'metrics_history.jsonl')
+    try:
+        _rows = []
+        if _os.path.exists(_hist):
+            for _l in open(_hist, encoding='utf-8'):
+                _l = _l.strip()
+                if not _l:
+                    continue
+                try:
+                    _r = json.loads(_l)
+                except json.JSONDecodeError:
+                    continue
+                _pv = ((_r.get('ga4') or {}).get('summary') or {}).get('pageviews')
+                if _pv not in (None, '?'):
+                    _rows.append((_r.get('date',''), int(_pv)))
+        _rows = sorted(_rows)[-7:]
+        if len(_rows) >= 2:
+            _spark = ' '.join(f\"{pv}\" for _, pv in _rows)
+            _delta = _rows[-1][1] - _rows[0][1]
+            _sign = '↑' if _delta > 0 else ('↓' if _delta < 0 else '→')
+            lines.append(f\"  PV推移(直近{len(_rows)}日): {_spark}  {_sign}{_delta:+d}\")
+    except Exception:
+        pass
     gsc = d.get('gsc') or {}
     queries = gsc.get('top_queries', []) or []
     if queries:

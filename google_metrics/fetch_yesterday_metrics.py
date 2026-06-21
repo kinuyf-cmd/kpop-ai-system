@@ -282,6 +282,39 @@ def _safe(label, fn):
         return None, msg
 
 
+def _append_history(result):
+    """metrics_history.jsonl に1日1行で追記。同じ date の既存行は置換(re-run対応)。
+
+    全体の書込を止めないよう、履歴追記の失敗は警告のみで握りつぶす
+    (metrics_yesterday.json の上書きは既に成功している前提)。
+    """
+    hist_path = os.path.join(BASE_DIR, "metrics_history.jsonl")
+    try:
+        d = result.get("date")
+        rows = []
+        if os.path.exists(hist_path):
+            with open(hist_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue  # 壊れた行はスキップ
+                    if rec.get("date") == d:
+                        continue  # 同日は新しい result で置換するため除外
+                    rows.append(rec)
+        rows.append(result)
+        rows.sort(key=lambda r: r.get("date", ""))
+        with open(hist_path, "w", encoding="utf-8") as f:
+            for rec in rows:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        print(f"  history: {hist_path} ({len(rows)} days)")
+    except Exception as e:
+        print(f"  WARN: history 追記失敗 → スキップ ({type(e).__name__}: {str(e)[:80]})")
+
+
 def main():
     ga4, ga4_err = _safe("GA4", get_ga4_data)
     gsc, gsc_err = _safe("GSC", get_gsc_data)
@@ -300,6 +333,12 @@ def main():
     out_path = os.path.join(BASE_DIR, "metrics_yesterday.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
+
+    # 2026-06-22: metrics_yesterday.json は毎回上書きで日次履歴が残らず、
+    #   PV/検索のトレンドが追えない盲点だった(GSCは別途API直叩きで追えるが
+    #   GA4 PV は履歴ゼロ)。同じ result を date キーで dedup しつつ
+    #   metrics_history.jsonl に追記し、トレンド追跡を可能にする。
+    _append_history(result)
 
     # 1つでも取れていれば 0、全滅なら 1(cron ログで気づける)
     ok = any(x is not None for x in (ga4, gsc, adsense))
