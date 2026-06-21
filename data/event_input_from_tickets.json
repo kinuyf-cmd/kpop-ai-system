@@ -162,22 +162,32 @@
   },
   {
    "type": "event",
-   "artist_keyword": "ILLIT",
-   "title": "ILLIT",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-20",
-   "venue": "オリックス劇場",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
    "source_media": "ローソンチケット",
    "start_date": "2026-08-21",
    "venue": "Kアリーナ横浜",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SF9",
+   "title": "SF9",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668421",
+   "source_media": "ぴあ",
+   "start_date": "2026-06-27",
+   "venue": "NHK大阪ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ILLIT",
+   "title": "ILLIT",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-21",
+   "venue": "オリックス劇場",
    "_source_id": "ltike"
   }
  ]

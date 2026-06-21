@@ -1,7 +1,124 @@
 {
-  "updated": "2026-06-20 21:34",
-  "count": 25,
+  "updated": "2026-06-21 21:17",
+  "count": 27,
   "queue": [
+    {
+      "title": "ヒスン、ソロデビュー曲「Ride or Die」MV予告公開",
+      "url": "https://www.kpopjournal.tokyo/?p=9168",
+      "post_id": 9168,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-06-21T17:36:43.598092"
+    },
+    {
+      "title": "MONSTA Xキヒョンが2026ソウルパーク音楽祭でソロ予告",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-kihyun-2026-seoul-park-music-festival-solo-predicti/",
+      "post_id": 9164,
+      "genre": "breaking",
+      "artist": "monsta x",
+      "priority": "high",
+      "queued_at": "2026-06-21T17:35:40.409647"
+    },
+    {
+      "title": "ユソンウン、「人気歌謡」で「Glowing」披露",
+      "url": "https://www.kpopjournal.tokyo/yusungun-glowing-performance-popular-song/",
+      "post_id": 9149,
+      "genre": "breaking",
+      "artist": "유성은",
+      "priority": "high",
+      "queued_at": "2026-06-21T13:41:38.954976"
+    },
+    {
+      "title": "ATEEZ、ソウル歌謡大賞で大賞受賞",
+      "url": "https://www.kpopjournal.tokyo/ateez-soul-song-award-grand-prize/",
+      "post_id": 9144,
+      "genre": "breaking",
+      "artist": "에이티즈",
+      "priority": "high",
+      "queued_at": "2026-06-21T13:39:08.888382"
+    },
+    {
+      "title": "BTSメンバーの最優秀ソングライター投票開始",
+      "url": "https://www.kpopjournal.tokyo/bts-member-best-songwriter-vote/",
+      "post_id": 9140,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-21T13:37:42.198567"
+    },
+    {
+      "title": "NCT TAEYONG、シズニーへ優しい出国挨拶",
+      "url": "https://www.kpopjournal.tokyo/?p=9135",
+      "post_id": 9135,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-21T13:36:01.223546"
+    },
+    {
+      "title": "BTS ジンにキスした50代女性、7月公判控え",
+      "url": "https://www.kpopjournal.tokyo/?p=9127",
+      "post_id": 9127,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-21T13:30:43.957878"
+    },
+    {
+      "title": "TWICE「KPop Demon Hunters」MVで「TAKEDOWN」披露",
+      "url": "https://www.kpopjournal.tokyo/?p=9108",
+      "post_id": 9108,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-06-21T11:35:31.244825"
+    },
+    {
+      "title": "エバン、\"Ride or Die\"ティーザーでソロデビュー",
+      "url": "https://www.kpopjournal.tokyo/evan-ride-or-die-solo-debut/",
+      "post_id": 9104,
+      "genre": "breaking",
+      "artist": "에반",
+      "priority": "high",
+      "queued_at": "2026-06-21T09:40:27.725772"
+    },
+    {
+      "title": "少女時代ユニット「효리수」がSM復帰",
+      "url": "https://www.kpopjournal.tokyo/girlsgeneration-hyorisoo-sm-return/",
+      "post_id": 9100,
+      "genre": "breaking",
+      "artist": "효리수",
+      "priority": "high",
+      "queued_at": "2026-06-21T09:39:07.490518"
+    },
+    {
+      "title": "BTSのJINに強制キスした女性、裁判日程異議申し立て",
+      "url": "https://www.kpopjournal.tokyo/bts-jin-kiss-court-objection/",
+      "post_id": 9088,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-21T09:33:35.933306"
+    },
+    {
+      "title": "Billlieのツキ、初の外出写真公開",
+      "url": "https://www.kpopjournal.tokyo/billlie-tsuki-first-outing-photo/",
+      "post_id": 9083,
+      "genre": "breaking",
+      "artist": "빌리",
+      "priority": "high",
+      "queued_at": "2026-06-21T09:31:49.284293"
+    },
+    {
+      "title": "イジョンフ、ロンディポパークでの活躍期待",
+      "url": "https://www.kpopjournal.tokyo/lee-jung-hoo-londipo-park-activity-expectations/",
+      "post_id": 9066,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-06-21T07:31:44.365217"
+    },
     {
       "title": "BTSのRM、国立中央博物館初の広報大使就任",
       "url": "https://www.kpopjournal.tokyo/?p=9002",
@@ -120,112 +237,13 @@
       "queued_at": "2026-06-20T09:31:38.234214"
     },
     {
-      "title": "BLACKPINKのジェニーとBTSのVに交際噂再燃",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-bts-v-dating-rumors/",
-      "post_id": 8910,
+      "title": "ILLIT、宿舎初公開 フィギュアやコスメ紹介",
+      "url": "https://www.kpopjournal.tokyo/?p=9177",
+      "post_id": 9177,
       "genre": "breaking",
-      "artist": "BLACKPINK",
+      "artist": "ILLIT",
       "priority": "high",
-      "queued_at": "2026-06-19T19:35:37.795406"
-    },
-    {
-      "title": "ENA新作『허수아비』が歴代最高視聴率達成",
-      "url": "https://www.kpopjournal.tokyo/ena-new-release-hosuabi-highest-rating/",
-      "post_id": 8906,
-      "genre": "breaking",
-      "artist": "베이비몬스터",
-      "priority": "high",
-      "queued_at": "2026-06-19T19:31:36.864363"
-    },
-    {
-      "title": "SEVENTEEN ドギョム＆チェ・イェナ新恋愛番組8月スタート",
-      "url": "https://www.kpopjournal.tokyo/?p=8868",
-      "post_id": 8868,
-      "genre": "breaking",
-      "artist": "SEVENTEEN",
-      "priority": "high",
-      "queued_at": "2026-06-19T13:34:52.807084"
-    },
-    {
-      "title": "TWICE サナ、露出衣装に賛否の反応",
-      "url": "https://www.kpopjournal.tokyo/?p=8864",
-      "post_id": 8864,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-06-19T13:33:41.355314"
-    },
-    {
-      "title": "BTS Sugaの寄付、DUI事件後の議論",
-      "url": "https://www.kpopjournal.tokyo/bts-suga-donation-dui-incident-debate/",
-      "post_id": 8860,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-19T13:32:37.094802"
-    },
-    {
-      "title": "TWICEのサナ、衣装論争に心痛める",
-      "url": "https://www.kpopjournal.tokyo/twice-sana-costume-controversy/",
-      "post_id": 8820,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-19T11:31:06.028815"
-    },
-    {
-      "title": "TWS、2nd日本シングル「SODA SODA」夏の雰囲気",
-      "url": "https://www.kpopjournal.tokyo/tws-soda-soda-summer-vibe/",
-      "post_id": 8811,
-      "genre": "breaking",
-      "artist": "TWS",
-      "priority": "high",
-      "queued_at": "2026-06-19T09:33:29.222925"
-    },
-    {
-      "title": "NMIXXベイ「ショートヘア病」引き起こす美貌",
-      "url": "https://www.kpopjournal.tokyo/?p=8806",
-      "post_id": 8806,
-      "genre": "breaking",
-      "artist": "엔믹스",
-      "priority": "high",
-      "queued_at": "2026-06-19T09:31:37.402241"
-    },
-    {
-      "title": "TWICEのミナが大胆な「露出下着」スタイル",
-      "url": "https://www.kpopjournal.tokyo/twice-mina-bold-lingerie-style/",
-      "post_id": 8794,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-06-19T07:31:31.622301"
-    },
-    {
-      "title": "NMIXXソリュン、腰痛でシンガポール公演着席参加",
-      "url": "https://www.kpopjournal.tokyo/nmixx-soryeon-back-pain-singapore-performance/",
-      "post_id": 8773,
-      "genre": "breaking",
-      "artist": "NMIXX",
-      "priority": "high",
-      "queued_at": "2026-06-18T21:31:25.691352"
-    },
-    {
-      "title": "キム・ヒョンヨン、航空会社社員からチアリーダーへ挑戦",
-      "url": "https://www.kpopjournal.tokyo/kim-hyun-yeong-cheerleader-challenge/",
-      "post_id": 9031,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-06-20T19:36:03.839451"
-    },
-    {
-      "title": "BTS、5thアルバム収録「Merry Go Round」MV公開",
-      "url": "https://www.kpopjournal.tokyo/bts-merry-go-round-mv-release/",
-      "post_id": 9035,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-20T19:37:15.078554"
+      "queued_at": "2026-06-21T19:36:09.597963"
     }
   ]
 }

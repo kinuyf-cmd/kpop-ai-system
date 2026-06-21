@@ -307,6 +307,20 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-06-14T04:01:21.643152"
+    "cached_at": "2026-06-21T04:02:44.962352"
+  },
+  "b2668421": {
+    "event_bundle_cd": "b2668421",
+    "title": "SF9",
+    "description": "6月に東京と大阪にてファンミーティング『SF9 2026 SPECIAL FANMEETING IN JAPAN -LOVE LOVE LOVE-』を開催！",
+    "image": "https://image.pia.jp/images/202605/202605290060_ex.png",
+    "performances": [
+      {
+        "date": "2026-06-27",
+        "venue": "NHK大阪ホール",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-06-21T04:02:43.559550"
   }
 }
