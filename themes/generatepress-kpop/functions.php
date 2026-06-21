@@ -850,6 +850,90 @@ add_filter( 'generate_show_right_sidebar', function ( $show ) {
 } );
 
 /**
+ * 2026-06-22 — Idol Wiki(idol_artist)個別ページに MusicGroup / Person の
+ * JSON-LD 構造化データを出力する。AI検索(GEO/AEO)とGoogleの両方に「K-POP
+ * グループの一次データ」として読ませ、123組のDB資産を機械可読化する。
+ * ACF: agency / debut_date(YYYYMMDD) / fandom_name / group_type / artist_summary /
+ *      members(repeater: member_name / member_birthday / member_nationality)。
+ * 値が無いフィールドは出さない(空schemaで誤情報を与えない)。
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_singular( 'idol_artist' ) || ! function_exists( 'get_field' ) ) {
+		return;
+	}
+	$pid   = get_the_ID();
+	$name  = get_the_title( $pid );
+	if ( ! $name ) {
+		return;
+	}
+	$data = array(
+		'@context' => 'https://schema.org',
+		'@type'    => 'MusicGroup',
+		'name'     => $name,
+		'url'      => get_permalink( $pid ),
+	);
+
+	$summary = get_field( 'artist_summary', $pid );
+	if ( $summary ) {
+		$data['description'] = wp_strip_all_tags( $summary );
+	}
+	$agency = get_field( 'agency', $pid );
+	if ( $agency ) {
+		$data['recordLabel'] = array( '@type' => 'Organization', 'name' => $agency );
+	}
+	$fandom = get_field( 'fandom_name', $pid );
+	if ( $fandom ) {
+		// ファンダム名を alternateName として補足(検索/AIの手がかり)
+		$data['alternateName'] = $fandom;
+	}
+	// デビュー日 YYYYMMDD → ISO。get_field が日付フォーマットで返す場合に備え
+	// 生 postmeta も参照する(ACF の返却差異に依存しない)。
+	$debut = get_field( 'debut_date', $pid );
+	if ( ! $debut ) {
+		$debut = get_post_meta( $pid, 'debut_date', true );
+	}
+	if ( $debut && preg_match( '/(\d{4})[-\/]?(\d{2})[-\/]?(\d{2})/', (string) $debut, $m ) ) {
+		$data['foundingDate'] = "{$m[1]}-{$m[2]}-{$m[3]}";
+	}
+	// メンバー → member(Person配列)。ACF repeater が hydrate されない環境でも
+	// 確実に拾えるよう、生 postmeta(members=件数 / members_{i}_member_*)から組む。
+	$persons = array();
+	$mcount  = (int) get_post_meta( $pid, 'members', true );
+	for ( $i = 0; $i < $mcount; $i++ ) {
+		$mname = trim( (string) get_post_meta( $pid, "members_{$i}_member_name", true ) );
+		if ( $mname === '' ) {
+			continue;
+		}
+		$p  = array( '@type' => 'Person', 'name' => $mname );
+		$bd = (string) get_post_meta( $pid, "members_{$i}_member_birthday", true );
+		if ( preg_match( '/^(\d{4})(\d{2})(\d{2})$/', $bd, $mb ) ) {
+			$p['birthDate'] = "{$mb[1]}-{$mb[2]}-{$mb[3]}";
+		}
+		$nat = trim( (string) get_post_meta( $pid, "members_{$i}_member_nationality", true ) );
+		if ( $nat !== '' ) {
+			$p['nationality'] = $nat;
+		}
+		$persons[] = $p;
+	}
+	if ( $persons ) {
+		$data['member'] = $persons;
+	}
+	// ロゴ画像
+	$logo_id = get_field( 'logo_image', $pid );
+	if ( $logo_id ) {
+		$logo_url = wp_get_attachment_url( $logo_id );
+		if ( $logo_url ) {
+			$data['logo'] = $logo_url;
+			$data['image'] = $logo_url;
+		}
+	}
+
+	echo "\n" . '<script type="application/ld+json">'
+		. wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES )
+		. '</script>' . "\n";
+}, 20 );
+
+/**
  * ============================================================
  * M6 段階6.3 — Idol Wiki 用 CPT「idol_artist」+ taxonomy + REST API
  * (2026-05-20、M3 と並ぶ最大配点項目 E の実装)
