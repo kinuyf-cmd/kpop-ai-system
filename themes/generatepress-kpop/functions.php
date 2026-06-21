@@ -2948,8 +2948,38 @@ add_filter( 'the_generator', '__return_empty_string' );
 
 // (3b) AIOSEO の <meta name="generator" content="All in One SEO (AIOSEO) x.y.z">
 //      を除去。プラグイン版数の特定手がかりを与えない(RED 2026-06-04 LOW)。
-//      AIOSEO 提供のフィルタを空文字化する。
-add_filter( 'aioseo_generator_tag', '__return_empty_string' );
+//      注意: 旧 add_filter('aioseo_generator_tag', ...) は AIOSEO 4.9.x では
+//      該当フィルタが存在せず無効だった(本番で 4.9.8 が leak し続けていた)。
+//      AIOSEO の内部フック名はバージョン間で不安定なため、wp_head の出力を
+//      バッファして generator meta を正規表現で剥がす版数非依存の方式に変更。
+add_action( 'template_redirect', function () {
+	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_feed() ) {
+		return;
+	}
+	// wp_head は優先度 0〜200 の間で出力される。最後(999)に通った時点で
+	// それまでの出力バッファから AIOSEO generator meta を除去する。
+	add_action( 'wp_head', function () { ob_start(); }, -99999 );
+	add_action( 'wp_head', function () {
+		$html = ob_get_clean();
+		if ( false !== $html ) {
+			// 属性順に依存しないよう、generator meta かつ "All in One SEO" を
+			// 含む <meta> タグを丸ごと除去する(name/content の前後どちらでも可)。
+			$html = preg_replace_callback(
+				'#\s*<meta\b[^>]*>#i',
+				function ( $m ) {
+					$tag = $m[0];
+					if ( preg_match( '#name=["\']generator["\']#i', $tag )
+						&& false !== stripos( $tag, 'All in One SEO' ) ) {
+						return '';
+					}
+					return $tag;
+				},
+				$html
+			);
+			echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — 既存 head HTML を再出力
+		}
+	}, 99999 );
+}, 0 );
 
 // (4) 静的アセットの ?ver=<コアバージョン> を剥がす。WP同梱 JS/CSS の
 //     ?ver=7.0 でバージョンを特定されるのを防ぐ(readme.html を消せない
