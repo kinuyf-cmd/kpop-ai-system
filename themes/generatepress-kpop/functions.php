@@ -857,6 +857,29 @@ add_filter( 'generate_show_right_sidebar', function ( $show ) {
  *      members(repeater: member_name / member_birthday / member_nationality)。
  * 値が無いフィールドは出さない(空schemaで誤情報を与えない)。
  */
+/**
+ * 2026-06-22 — 多言語PoC(切り口A): 日本語↔英語の言語ペアに hreflang を出力。
+ * post meta `_hreflang_ja` / `_hreflang_en`(相互のURL)を持つ投稿で、
+ * ja / en / x-default の alternate を head に出す。プラグイン不要の軽量PoC。
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_singular( 'post' ) ) {
+		return;
+	}
+	$pid = get_the_ID();
+	$ja  = get_post_meta( $pid, '_hreflang_ja', true );
+	$en  = get_post_meta( $pid, '_hreflang_en', true );
+	if ( ! $ja || ! $en ) {
+		return;
+	}
+	$ja = esc_url( $ja );
+	$en = esc_url( $en );
+	echo "\n";
+	echo '<link rel="alternate" hreflang="ja" href="' . $ja . '" />' . "\n";
+	echo '<link rel="alternate" hreflang="en" href="' . $en . '" />' . "\n";
+	echo '<link rel="alternate" hreflang="x-default" href="' . $ja . '" />' . "\n";
+}, 5 );
+
 add_action( 'wp_head', function () {
 	if ( ! is_singular( 'idol_artist' ) || ! function_exists( 'get_field' ) ) {
 		return;
