@@ -38,20 +38,24 @@ QUEUE_FILE = BASE / 'config' / 'x_post_queue.json'
 POSTS_LOG = BASE / 'logs' / 'x_posts.jsonl'
 SCHEDULE_LOG = BASE / 'logs' / 'x_scheduled.log'
 
-# 2026-05-26: オーナー指示で日次上限を10件に。種別配分(会話3:記事7)で
-# 時間帯スロットを再設計し、合計が DAILY_POST_CAP に収まるようにする。
-DAILY_POST_CAP = 10           # 1日の総投稿上限(会話+記事の合計)
-# 時間帯ごとの最大投稿数。合計=10(会話帯3+記事帯7)。
+# 2026-06-22: シャドウバン(アカウント単位の可視性フィルタ)対処で日次上限を
+#   10→6に削減。本人では見えるが第三者アカウントで「このポストは表示でき
+#   ません」になる状態を確認(shadowban_x_20260622.md)。
+#   真因=投稿量過多(1記事=hook+要点+URLリプライ=3ツイート×日10件で raw 18-24
+#   tweet/日)+外部リンク比率57%+超低imp57% の bot シグネチャ。
+#   ※同日: 認証アカウント(Premium)へアップグレード済 → アルゴ4xboost+リンク
+#   ペナルティ緩和。よって量を絞りすぎず6件に。当面は評判回復を優先し、
+#   回復確認後に段階的に増やす(まず量と間隔で bot シグネチャを除去)。
+# 旧設定(参考): DAILY_POST_CAP=10 / SLOTS 7:2,8,12,13,17,18,19,20,21 各1
+DAILY_POST_CAP = 6            # 1日の総投稿上限(会話+記事の合計)
+# 時間帯ごとの最大投稿数。合計=6。記事4(朝昼夕)+会話2(夜ゴールデン)を
+# 大きく離して配置し、機械的な連投パターンを避ける。
 SLOTS = {
-    7:  2,   # 07:xx 通勤(記事)
-    8:  1,   # 08:xx
+    8:  1,   # 08:xx 通勤(記事)
     12: 1,   # 12:xx 昼(記事)
-    13: 1,   # 13:xx
     17: 1,   # 17:xx 夕(記事)
-    18: 1,   # 18:xx
     19: 1,   # 19:xx ゴールデン(会話主)
-    20: 1,   # 20:xx
-    21: 1,   # 21:xx
+    21: 1,   # 21:xx ゴールデン(会話主)
 }
 DEFAULT_SLOT_SIZE = 0  # 上記以外の時間帯は投稿しない(上限厳守)
 MIN_INTERVAL_MIN = 5   # 同一時間帯内の最低間隔(分)
@@ -91,8 +95,9 @@ def _next_ab_variant() -> str:
 #   'conversation' = 会話起点 text-only を投げる(x_conversation_starter)
 #   'article'      = queue から記事誘導(post_hook_and_reply / thread)
 #   'mix'          = 記事主。本回が mix なら記事、ただし会話cron(7/17/21)が別途会話を担う
-CONVERSATION_HOURS = {19, 20, 21}   # ゴールデン=会話主
-ARTICLE_HOURS = {7, 8, 12, 13}      # 通勤・昼=記事主
+# 2026-06-22: SLOTS削減に合わせて役割時間帯も {8,12,17}=記事 / {19,21}=会話 に整合。
+CONVERSATION_HOURS = {19, 21}       # ゴールデン=会話主
+ARTICLE_HOURS = {8, 12, 17}         # 通勤・昼・夕=記事主
 def slot_role(hour: int) -> str:
     if hour in CONVERSATION_HOURS:
         return 'conversation'
