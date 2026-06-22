@@ -1,1 +1,50 @@
-[]
+[
+ {
+  "query": "ラブブ ポップアップ",
+  "url": "https://www.kpopjournal.tokyo/lovebob-popup-report-2025/",
+  "slug": "lovebob-popup-report-2025",
+  "position": 12.14,
+  "impressions": 22,
+  "clicks": 0,
+  "potential": 425,
+  "theme": "trend_goods",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ },
+ {
+  "query": "コンフィデンス マン kr どこで 見れる",
+  "url": "https://www.kpopjournal.tokyo/how-to-watch-confidence-man-kr-amazon-prime/",
+  "slug": "how-to-watch-confidence-man-kr-amazon-prime",
+  "position": 12.27,
+  "impressions": 11,
+  "clicks": 0,
+  "potential": 398,
+  "theme": "kdrama",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ },
+ {
+  "query": "ルセラカムバ",
+  "url": "https://www.kpopjournal.tokyo/lesserafim-comeback-october-2025/",
+  "slug": "lesserafim-comeback-october-2025",
+  "position": 6.74,
+  "impressions": 580,
+  "clicks": 1,
+  "potential": 152,
+  "theme": "other",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ },
+ {
+  "query": "ショウタロウのデザート",
+  "url": "https://www.kpopjournal.tokyo/riize-shotaro-dessert-mc-2025/",
+  "slug": "riize-shotaro-dessert-mc-2025",
+  "position": 12.75,
+  "impressions": 4,
+  "clicks": 0,
+  "potential": 128,
+  "theme": "other",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ }
+]
