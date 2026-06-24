@@ -88,31 +88,40 @@ function kpop_sc_events() {
 add_shortcode( 'kpop_events', 'kpop_sc_events' );
 endif;
 
-// [kpop_chart] — Today's Chart: チャートカテゴリ(slug=chart)の最新記事を box 表示
+// [kpop_chart] — 今日読まれている記事(WPP 24h 人気ランキング)を box 表示。
+// 2026-06-25 オーナー指示: 旧「Today's Chart(chartカテゴリ記事の新着列挙)」は
+//   見出しと中身が不一致(音楽ランキングでなく記事羅列)だったため、24時間の人気記事
+//   ランキングへ差し替え。トップには別途「ミュージックチャート([kpop_chart_ranking]
+//   =Soompi Top10)」と「人気記事(累計)」があり、本枠はそれらと重複しない24h軸。
+//   shortcode 名 [kpop_chart] は既存ウィジェット互換のため維持。
 if ( ! function_exists( 'kpop_sc_chart' ) ) :
 function kpop_sc_chart( $atts ) {
     if ( kpop_sc_suppressed_on_single() ) { return ''; }
     $a = shortcode_atts( array( 'limit' => 5 ), $atts );
-    $q = new WP_Query( array(
-        'post_type'           => 'post',
-        'post_status'         => 'publish',
-        'category_name'       => 'chart',
-        'posts_per_page'      => (int) $a['limit'],
-        'ignore_sticky_posts' => true,
-        'no_found_rows'       => true,
-    ) );
+    $limit = max( 1, (int) $a['limit'] );
+
+    // 24h 人気IDの取得。functions.php の共通関数を再利用(無ければ最新記事フォールバック)。
+    $ids = array();
+    if ( function_exists( 'kpop_sidebar_popular_ids' ) ) {
+        $ids = kpop_sidebar_popular_ids( 'last24hours', $limit );
+    } else {
+        $ids = get_posts( array(
+            'post_type' => 'post', 'post_status' => 'publish',
+            'numberposts' => $limit, 'fields' => 'ids', 'no_found_rows' => true,
+        ) );
+    }
+
     ob_start();
-    echo '<div class="kpop-sidebar-box kpop-today-chart" role="region" aria-label="Today\'s Chart">';
-    echo '<h2 class="kpop-box-title">Today\'s Chart <span class="kpop-box-en">CHART</span></h2>';
-    if ( $q->have_posts() ) {
-        echo '<ul class="kpop-chart-list kpop-thumb-list">';
-        while ( $q->have_posts() ) { $q->the_post();
-            echo kpop_sc_thumb_item( get_the_ID() );
+    echo '<div class="kpop-sidebar-box kpop-popular-24h" role="region" aria-label="今日読まれている記事">';
+    echo '<h2 class="kpop-box-title">今日読まれている記事 <span class="kpop-box-en">TODAY</span></h2>';
+    if ( $ids ) {
+        echo '<ul class="kpop-popular-list kpop-thumb-list">';
+        foreach ( $ids as $pid ) {
+            echo kpop_sc_thumb_item( (int) $pid );
         }
         echo '</ul>';
-        wp_reset_postdata();
     } else {
-        echo '<p class="kpop-empty-msg">チャート記事は準備中です</p>';
+        echo '<p class="kpop-empty-msg">集計中です</p>';
     }
     echo '</div>';
     return ob_get_clean();
