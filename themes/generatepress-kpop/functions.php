@@ -1374,34 +1374,9 @@ function kpop_m11_sidebar_append() {
 		echo '</ul></div>';
 	}
 
-	// Today's Chart — チャートカテゴリ最新5件(サムネ付きに統一)
-	$chart_cat = get_category_by_slug( 'chart' );
-	if ( $chart_cat ) {
-		$chart_q = new WP_Query( array(
-			'post_type'      => 'post',
-			'post_status'    => 'publish',
-			'cat'            => $chart_cat->term_id,
-			'posts_per_page' => 5,
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-			'no_found_rows'  => true,
-		) );
-		if ( $chart_q->have_posts() ) {
-			echo '<div class="kpop-sidebar-box kpop-today-chart" role="region" aria-label="Today\'s Chart">';
-			echo '<h2 class="kpop-box-title">Today\'s Chart <span class="kpop-box-en">CHART</span></h2>';
-			echo '<ul class="kpop-chart-list kpop-thumb-list">';
-			while ( $chart_q->have_posts() ) {
-				$chart_q->the_post();
-				echo function_exists( 'kpop_sc_thumb_item' )
-					? kpop_sc_thumb_item( get_the_ID() )
-					: '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></li>';
-			}
-			echo '</ul></div>';
-			wp_reset_postdata();
-		}
-	}
-
-	// 今日読まれている記事(WPP 24h)— サムネ付きに統一
+	// 今日読まれている記事(WPP 24h 人気ランキング)— サムネ付きに統一
+	// 2026-06-25 オーナー指示: 旧「Today's Chart(chartカテゴリ記事の新着列挙)」を
+	//   実態に合わせて24時間の人気記事ランキングへ差し替え。重複していた旧 TODAY 枠は削除し一本化。
 	$today_ids = kpop_sidebar_popular_ids( 'last24hours', 5 );
 	if ( $today_ids ) {
 		echo '<div class="kpop-sidebar-box kpop-popular-24h" role="region" aria-label="今日読まれている記事">';
