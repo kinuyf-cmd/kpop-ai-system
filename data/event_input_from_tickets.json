@@ -102,16 +102,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "TOMORROW X TOGETHER",
-   "title": "TOMORROW X TOGETHER",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-23",
-   "venue": "GLION ARENA KOBE",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ASH",
    "title": "ASH ISLAND",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668245",
@@ -188,6 +178,16 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-06-29",
    "venue": "福岡サンパレス",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TOMORROW X TOGETHER",
+   "title": "TOMORROW X TOGETHER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-06-24",
+   "venue": "GLION ARENA KOBE",
    "_source_id": "ltike"
   }
  ]

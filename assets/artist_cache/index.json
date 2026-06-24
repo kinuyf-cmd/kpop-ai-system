@@ -712,5 +712,20 @@
         "license": "CC BY 2.0"
       }
     ]
+  },
+  "yeonjun": {
+    "name": "Yeonjun",
+    "files": [
+      "yeonjun_83286faa.jpg"
+    ],
+    "sources": [
+      {
+        "file": "yeonjun_83286faa.jpg",
+        "wikimedia_title": "File:Yeonjun 250625.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/25/Yeonjun_250625.jpg",
+        "license": "CC BY 3.0",
+        "via": "wikidata:P18:Q62396954"
+      }
+    ]
   }
 }
