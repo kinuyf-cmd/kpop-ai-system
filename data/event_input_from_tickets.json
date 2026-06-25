@@ -182,13 +182,13 @@
   },
   {
    "type": "event",
-   "artist_keyword": "TOMORROW X TOGETHER",
-   "title": "TOMORROW X TOGETHER",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-24",
-   "venue": "GLION ARENA KOBE",
-   "_source_id": "ltike"
+   "artist_keyword": "BABYMONSTER",
+   "title": "BABYMONSTER",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669211",
+   "source_media": "ぴあ",
+   "start_date": "2026-08-11",
+   "venue": "LaLa arena TOKYO-BAY",
+   "_source_id": "pia"
   }
  ]
 }

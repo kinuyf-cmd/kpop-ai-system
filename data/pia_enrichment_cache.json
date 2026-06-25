@@ -322,5 +322,30 @@
       }
     ],
     "cached_at": "2026-06-21T04:02:43.559550"
+  },
+  "b2669211": {
+    "event_bundle_cd": "b2669211",
+    "title": "BABYMONSTER",
+    "description": "初のドーム公演を含むワールドツアー開催！日本公演は7/8(水)GLION ARENA KOBEを皮切りに、9/23(水・祝)京セラドーム大阪まで6都市を巡る。",
+    "image": "https://image.pia.jp/images/202606/202606230091_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-08-11",
+        "venue": "LaLa arena TOKYO-BAY",
+        "prefecture": "千葉県",
+        "date_end": "2026-08-12"
+      },
+      {
+        "date": "2026-08-16",
+        "venue": "IGアリーナ",
+        "prefecture": "愛知県"
+      },
+      {
+        "date": "2026-09-22",
+        "venue": "京セラドーム大阪",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-06-25T04:02:03.294053"
   }
 }

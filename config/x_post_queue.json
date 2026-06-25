@@ -1,7 +1,196 @@
 {
-  "updated": "2026-06-24 21:17",
+  "updated": "2026-06-25 21:32",
   "count": 43,
   "queue": [
+    {
+      "title": "BABYMONSTER「SUGAR HONEY ICE TEA」MVが1億回突破",
+      "url": "https://www.kpopjournal.tokyo/babymonster-sugar-honey-ice-tea-1million-views/",
+      "post_id": 9850,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-06-25T15:39:12.889090"
+    },
+    {
+      "title": "BTSのVがファンにDM送信、大反響中",
+      "url": "https://www.kpopjournal.tokyo/bts-v-fan-dm-sending-reaction/",
+      "post_id": 9845,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-25T15:36:54.354627"
+    },
+    {
+      "title": "CORTIS、F1シンガポールグランプリ出演決定",
+      "url": "https://www.kpopjournal.tokyo/cortis-f1-singapore-grand-prix/",
+      "post_id": 9839,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-06-25T15:32:06.267795"
+    },
+    {
+      "title": "新地、離婚歴・子供の影響で強迫感抱く",
+      "url": "https://www.kpopjournal.tokyo/shinchi-divorce-children-impact/",
+      "post_id": 9834,
+      "genre": "breaking",
+      "artist": "신지",
+      "priority": "high",
+      "queued_at": "2026-06-25T13:36:49.131021"
+    },
+    {
+      "title": "イ・スンチョル「THE SCOUT」コンサート開催決定",
+      "url": "https://www.kpopjournal.tokyo/lee-sung-chul-the-scout-concert/",
+      "post_id": 9830,
+      "genre": "breaking",
+      "artist": "이승철",
+      "priority": "high",
+      "queued_at": "2026-06-25T13:35:40.246962"
+    },
+    {
+      "title": "Wonhee (ILLIT)とHong Eunchae初の遊園地アルバイト挑戦",
+      "url": "https://www.kpopjournal.tokyo/wonhee-illithong-eunchae-amusement-park-job/",
+      "post_id": 9826,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-06-25T13:33:52.125625"
+    },
+    {
+      "title": "YOONAが『夫たち』出演、ビラン妻役で大胆ビジュアル",
+      "url": "https://www.kpopjournal.tokyo/?p=9808",
+      "post_id": 9808,
+      "genre": "breaking",
+      "artist": "윤아",
+      "priority": "high",
+      "queued_at": "2026-06-25T11:33:17.411054"
+    },
+    {
+      "title": "ILLIT「Almond Chocolate」が再生数1億回突破",
+      "url": "https://www.kpopjournal.tokyo/illit-almond-chocolate-1/",
+      "post_id": 9803,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-06-25T11:31:08.443342"
+    },
+    {
+      "title": "ちゅーやん、キム・ジェジュンと東京でデート",
+      "url": "https://www.kpopjournal.tokyo/chuyan-kim-jaejoong-tokyo-date/",
+      "post_id": 9799,
+      "genre": "breaking",
+      "artist": "쯔양",
+      "priority": "high",
+      "queued_at": "2026-06-25T09:40:33.038713"
+    },
+    {
+      "title": "公勝連とTWICEジョンヨン、初の姉妹フォト",
+      "url": "https://www.kpopjournal.tokyo/kousen-twice-jongyeon-sister-photo/",
+      "post_id": 9794,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-25T09:38:30.912683"
+    },
+    {
+      "title": "SEVENTEEN ジョンハン、本日6/25召集解除",
+      "url": "https://www.kpopjournal.tokyo/?p=9790",
+      "post_id": 9790,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-06-25T09:37:09.921980"
+    },
+    {
+      "title": "ITZYのユナのダイエットと運動の秘密公開",
+      "url": "https://www.kpopjournal.tokyo/itzy-yuna-diet-exercise-secrets/",
+      "post_id": 9765,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-06-25T07:31:21.550707"
+    },
+    {
+      "title": "BABYMONSTER、初のドーム公演含むツアー開催",
+      "url": "https://www.kpopjournal.tokyo/babymonster-tour-dome-performance/",
+      "post_id": 9760,
+      "genre": "breaking",
+      "artist": "BABYMONSTER",
+      "priority": "high",
+      "queued_at": "2026-06-25T07:03:41.513325"
+    },
+    {
+      "title": "イ・ジンヒョク、tripleSカエデらがドラマ出演",
+      "url": "https://www.kpopjournal.tokyo/lee-jinhyuk-triples-kaede-drama-appearance/",
+      "post_id": 9756,
+      "genre": "breaking",
+      "artist": "tripleS",
+      "priority": "high",
+      "queued_at": "2026-06-25T07:02:00.146543"
+    },
+    {
+      "title": "BOYNEXTDOOR、I.O.I、CORTIS、BTSが首位獲得",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-i-o-i-cortis-bts-shuui/",
+      "post_id": 9752,
+      "genre": "breaking",
+      "artist": "BOYNEXTDOOR",
+      "priority": "high",
+      "queued_at": "2026-06-25T07:00:46.355924"
+    },
+    {
+      "title": "TWICEのジョンヨン、姉と同事務所移籍説浮上",
+      "url": "https://www.kpopjournal.tokyo/twice-jongyeon-sister-agency-move/",
+      "post_id": 9742,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-24T19:39:57.484089"
+    },
+    {
+      "title": "aespa WINTER、愛犬ポニョの入養経緯説明",
+      "url": "https://www.kpopjournal.tokyo/aespa-winter-ponyo-adoption-history/",
+      "post_id": 9738,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-06-24T19:38:51.179568"
+    },
+    {
+      "title": "イムジン 契約効力停止申請を勝ち取る",
+      "url": "https://www.kpopjournal.tokyo/imujin-keiyaku-kouryoku-teishi/",
+      "post_id": 9724,
+      "genre": "breaking",
+      "artist": "더보이즈",
+      "priority": "high",
+      "queued_at": "2026-06-24T17:40:59.638226"
+    },
+    {
+      "title": "イ・ヨンジン「モチ魅力をキャッチ」披露",
+      "url": "https://www.kpopjournal.tokyo/lee-yeong-jin-mochi-charm-catch/",
+      "post_id": 9720,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-24T17:38:57.325170"
+    },
+    {
+      "title": "ボア、SM離脱後の大胆な変身と新スタイル",
+      "url": "https://www.kpopjournal.tokyo/boa-sm-daitankanshinten-shinstyle/",
+      "post_id": 9715,
+      "genre": "breaking",
+      "artist": "보아",
+      "priority": "high",
+      "queued_at": "2026-06-24T17:36:22.736760"
+    },
+    {
+      "title": "BLACKPINK リサ、LVMH御曹司との破局説再燃",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-lvmh-breakup-rumors/",
+      "post_id": 9710,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-06-24T17:33:37.217506"
+    },
     {
       "title": "BIGBANG 2026年ワールドツアー先行予約開始",
       "url": "https://www.kpopjournal.tokyo/bigbang-2026-world-tour-pre-sale/",
@@ -138,256 +327,67 @@
       "queued_at": "2026-06-23T21:31:39.786756"
     },
     {
-      "title": "ボラミユ、イ・ジェウク・シン・イェウン「ドクターサムボイ」OSTリリース",
-      "url": "https://www.kpopjournal.tokyo/boramiyu-leejaewook-shinyeeun-doctorsamboi-ost-release/",
-      "post_id": 9563,
+      "title": "IVEのLeeseo、清楚な魅力で空港出発",
+      "url": "https://www.kpopjournal.tokyo/?p=9871",
+      "post_id": 9871,
       "genre": "breaking",
-      "artist": "보라미유",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-06-23T19:37:40.802757"
+      "queued_at": "2026-06-25T17:35:48.566530"
     },
     {
-      "title": "キム・ホジュン、飲酒ひき逃げで仮釈放決定",
-      "url": "https://www.kpopjournal.tokyo/kim-ho-jun-drunk-hit-and-run/",
-      "post_id": 9554,
+      "title": "BTSメンバー「デートの噂」急速拡大中",
+      "url": "https://www.kpopjournal.tokyo/bts-date-rumors-expanding/",
+      "post_id": 9881,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-06-23T19:34:15.660481"
+      "queued_at": "2026-06-25T19:30:46.381577"
     },
     {
-      "title": "NCT TAEYONG、MARKの近況に反応「良さそうで安心",
-      "url": "https://www.kpopjournal.tokyo/nct-taeyong-mark-kinjyou-hanshin/",
-      "post_id": 9542,
+      "title": "IVEのLizとGaeulが猫のような目つき披露",
+      "url": "https://www.kpopjournal.tokyo/?p=9886",
+      "post_id": 9886,
       "genre": "breaking",
-      "artist": "NCT",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-06-23T17:34:21.048949"
+      "queued_at": "2026-06-25T19:32:27.013289"
     },
     {
-      "title": "コアソン×キムミンギョン×チャールズエンター『都市女子避難所』好評理由",
-      "url": "https://www.kpopjournal.tokyo/koason-kimminkyoung-charlesentertainment-toshijoshihinanjo/",
-      "post_id": 9538,
+      "title": "TXT、日本のオリコン上半期「トップ10」入り",
+      "url": "https://www.kpopjournal.tokyo/txt-oricon-top10-2023/",
+      "post_id": 9890,
       "genre": "breaking",
-      "artist": "아이오아이",
+      "artist": "투모로우바이투게더",
       "priority": "high",
-      "queued_at": "2026-06-23T17:32:34.343815"
+      "queued_at": "2026-06-25T19:33:39.123723"
     },
     {
-      "title": "BOYNEXTDOOR初ワールドツアー「KNOCK ON Vol.2」ソウル全3公演",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-world-tour-knock-on-seoul/",
-      "post_id": 9519,
+      "title": "IVE Gaeul、「ダイブこんにちは」で注目集める",
+      "url": "https://www.kpopjournal.tokyo/?p=9896",
+      "post_id": 9896,
       "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-06-23T15:37:59.956487"
+      "queued_at": "2026-06-25T19:36:48.558942"
     },
     {
-      "title": "Stray Kidsの過酷スケジュールが健康懸念に",
-      "url": "https://www.kpopjournal.tokyo/stray-kids-kango-kakuso-sukejuuru/",
-      "post_id": 9515,
+      "title": "SEVENTEENのジョシュア、ユネスコでスピーチ",
+      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-speech-2/",
+      "post_id": 9905,
       "genre": "breaking",
-      "artist": "Stray Kids",
+      "artist": "세븐틴",
       "priority": "high",
-      "queued_at": "2026-06-23T15:36:48.785296"
+      "queued_at": "2026-06-25T19:40:47.701128"
     },
     {
-      "title": "ENHYPENがムードティーザーでブランドリニューアル予告",
-      "url": "https://www.kpopjournal.tokyo/?p=9508",
-      "post_id": 9508,
-      "genre": "breaking",
-      "artist": "ENHYPEN",
-      "priority": "high",
-      "queued_at": "2026-06-23T15:32:31.716066"
-    },
-    {
-      "title": "ITZY、香港単独コンサート全席完売成功",
-      "url": "https://www.kpopjournal.tokyo/itzy-hongkong-concert-sold-out-success/",
-      "post_id": 9500,
-      "genre": "breaking",
-      "artist": "ITZY",
-      "priority": "high",
-      "queued_at": "2026-06-23T13:46:18.561140"
-    },
-    {
-      "title": "ATEEZジョンホ、エイティニへ手のキス送信",
-      "url": "https://www.kpopjournal.tokyo/?p=9488",
-      "post_id": 9488,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-06-23T13:39:09.683462"
-    },
-    {
-      "title": "BTS「I NEED U」MVが2億ビュー突破",
-      "url": "https://www.kpopjournal.tokyo/bts-i-need-u-mv-2-million-views/",
-      "post_id": 9484,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-06-23T13:37:53.492146"
-    },
-    {
-      "title": "MONSTA Xキヒョン「ボーダーライン」カムバック予告",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-kihyun-borderline-comeback-preview/",
-      "post_id": 9480,
-      "genre": "breaking",
-      "artist": "몬스타엑스",
-      "priority": "high",
-      "queued_at": "2026-06-23T13:36:39.374289"
-    },
-    {
-      "title": "ウォノ、2026年7月カムバック決定",
-      "url": "https://www.kpopjournal.tokyo/wonho-comeback-2026-july/",
-      "post_id": 9471,
-      "genre": "breaking",
-      "artist": "원호",
-      "priority": "high",
-      "queued_at": "2026-06-23T11:37:38.861513"
-    },
-    {
-      "title": "FIFTY FIFTY、新曲「My Wonder」OSTで青春表現",
-      "url": "https://www.kpopjournal.tokyo/fifty-fifty-my-wonder-seishun-hyougen/",
-      "post_id": 9462,
-      "genre": "breaking",
-      "artist": "피프티피프티",
-      "priority": "high",
-      "queued_at": "2026-06-23T11:33:52.940715"
-    },
-    {
-      "title": "BTSの「アリラン」が「2026年の最高のアルバム」選出",
-      "url": "https://www.kpopjournal.tokyo/bts-ariran-2026-best-album/",
-      "post_id": 9457,
-      "genre": "breaking",
-      "artist": "방탄소년단",
-      "priority": "high",
-      "queued_at": "2026-06-23T11:31:40.013524"
-    },
-    {
-      "title": "ウォノ、2026年7月に9ヶ月ぶり新譜リリース",
-      "url": "https://www.kpopjournal.tokyo/wono-new-album-release-2026/",
-      "post_id": 9448,
-      "genre": "breaking",
-      "artist": "원호",
-      "priority": "high",
-      "queued_at": "2026-06-23T09:33:34.026432"
-    },
-    {
-      "title": "TREASURE新曲「난리나」MV公開、ヒップなエネルギー炸裂",
-      "url": "https://www.kpopjournal.tokyo/?p=9443",
-      "post_id": 9443,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-06-23T09:31:32.331646"
-    },
-    {
-      "title": "SEVENTEEN、58,000人魅了「SEVENTEEN in CARAT LAN",
-      "url": "https://www.kpopjournal.tokyo/seventeen-58000-people-carat-land/",
-      "post_id": 9432,
+      "title": "SEVENTEENのJoshuaがUNESCOで夢追求を鼓舞",
+      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-dream-inspiration/",
+      "post_id": 9913,
       "genre": "breaking",
       "artist": "SEVENTEEN",
       "priority": "high",
-      "queued_at": "2026-06-23T07:37:46.035487"
-    },
-    {
-      "title": "aespaのKARINA、遊園地で自然体の姿披露",
-      "url": "https://www.kpopjournal.tokyo/aespa-karina-yuenchi-shizen-tai/",
-      "post_id": 9413,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-22T21:39:31.958479"
-    },
-    {
-      "title": "シム・ウンウ、乳腺良性腫瘍手術を公表",
-      "url": "https://www.kpopjournal.tokyo/sim-eun-woo-breast-tumor-surgery/",
-      "post_id": 9409,
-      "genre": "breaking",
-      "artist": "슈퍼주니어",
-      "priority": "high",
-      "queued_at": "2026-06-22T21:38:10.038662"
-    },
-    {
-      "title": "MONSTA Xのミニョク、初ソロシングル「Reaching」称賛",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-minhyuk-reaching-solo-single/",
-      "post_id": 9405,
-      "genre": "breaking",
-      "artist": "monsta x",
-      "priority": "high",
-      "queued_at": "2026-06-22T21:36:25.184485"
-    },
-    {
-      "title": "PLAVEが「Fan N Star」で91週連続1位達成",
-      "url": "https://www.kpopjournal.tokyo/plave-fan-n-star-91-weeks-1st/",
-      "post_id": 9396,
-      "genre": "breaking",
-      "artist": "PLAVE",
-      "priority": "high",
-      "queued_at": "2026-06-22T21:33:05.137308"
-    },
-    {
-      "title": "NCTのTenが衝撃的な変身を遂げ話題",
-      "url": "https://www.kpopjournal.tokyo/nct-ten-henshin-shock/",
-      "post_id": 9391,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-06-22T21:30:48.490757"
-    },
-    {
-      "title": "BLACKPINK リサ、LVMH御曹司との破局説再燃",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-lvmh-breakup-rumors/",
-      "post_id": 9710,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:33:37.217506"
-    },
-    {
-      "title": "ボア、SM離脱後の大胆な変身と新スタイル",
-      "url": "https://www.kpopjournal.tokyo/boa-sm-daitankanshinten-shinstyle/",
-      "post_id": 9715,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:36:22.736760"
-    },
-    {
-      "title": "イ・ヨンジン「モチ魅力をキャッチ」披露",
-      "url": "https://www.kpopjournal.tokyo/lee-yeong-jin-mochi-charm-catch/",
-      "post_id": 9720,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:38:57.325170"
-    },
-    {
-      "title": "イムジン 契約効力停止申請を勝ち取る",
-      "url": "https://www.kpopjournal.tokyo/imujin-keiyaku-kouryoku-teishi/",
-      "post_id": 9724,
-      "genre": "breaking",
-      "artist": "더보이즈",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:40:59.638226"
-    },
-    {
-      "title": "aespa WINTER、愛犬ポニョの入養経緯説明",
-      "url": "https://www.kpopjournal.tokyo/aespa-winter-ponyo-adoption-history/",
-      "post_id": 9738,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-06-24T19:38:51.179568"
-    },
-    {
-      "title": "TWICEのジョンヨン、姉と同事務所移籍説浮上",
-      "url": "https://www.kpopjournal.tokyo/twice-jongyeon-sister-agency-move/",
-      "post_id": 9742,
-      "genre": "breaking",
-      "artist": "트와이스",
-      "priority": "high",
-      "queued_at": "2026-06-24T19:39:57.484089"
+      "queued_at": "2026-06-25T21:32:45.198372"
     }
   ]
 }
