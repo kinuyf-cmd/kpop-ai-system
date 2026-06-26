@@ -72,16 +72,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "古家正亨の新・韓流“考”",
-   "title": "古家正亨の新・韓流“考” ～気になる俳優がやってくる！～ Presented by 韓流ぴあ",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667590",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-25",
-   "venue": "四谷区民ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "KISS OF LIFE",
    "title": "2026 KISS OF LIFE ASIA FANMEETING TOUR ＜DEJA VU＞ IN TOKYO",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667705",
@@ -188,6 +178,56 @@
    "source_media": "ぴあ",
    "start_date": "2026-08-11",
    "venue": "LaLa arena TOKYO-BAY",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KIM",
+   "title": "KIM JUNSU",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668175",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-03",
+   "venue": "東京国際フォーラム ホールA",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "AND2BLE",
+   "title": "AND2BLE",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668727",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-01",
+   "venue": "Kアリーナ横浜",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "FNC",
+   "title": "FNC BAND KINGDOM 2026",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667975",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-11",
+   "venue": "ぴあアリーナMM",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "キム・ジョンヒョン",
+   "title": "2026 キム・ジョンヒョン ファンミーティング",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667352",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-18",
+   "venue": "きゅりあん(品川区立総合区民会館) 大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "CHOO",
+   "title": "CHOO YOUNG WOO",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668787",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-20",
+   "venue": "LINE CUBE SHIBUYA",
    "_source_id": "pia"
   }
  ]

@@ -1,7 +1,230 @@
 {
-  "updated": "2026-06-25 21:32",
-  "count": 43,
+  "updated": "2026-06-26 21:37",
+  "count": 49,
   "queue": [
+    {
+      "title": "IVE、日本ドームツアーで12万7千人動員",
+      "url": "https://www.kpopjournal.tokyo/ive-dome-tour-127000/",
+      "post_id": 10020,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-06-26T13:36:18.058144"
+    },
+    {
+      "title": "SEVENTEEN所属事務所が法的措置進捗を発表",
+      "url": "https://www.kpopjournal.tokyo/seventeen-hougetsu-soshiki-houteki-sochi/",
+      "post_id": 10015,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-06-26T13:32:01.002853"
+    },
+    {
+      "title": "ILLITのMVクイズ挑戦、スクリーンショットから正解は？",
+      "url": "https://www.kpopjournal.tokyo/?p=10011",
+      "post_id": 10011,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-06-26T13:30:52.725015"
+    },
+    {
+      "title": "チャ・ウヌ、最愛ドルスター「一緒にサッカーを応援したいスター」投票1位",
+      "url": "https://www.kpopjournal.tokyo/cha-eun-woo-football-vote-2026/",
+      "post_id": 9999,
+      "genre": "news",
+      "artist": "차은우",
+      "priority": "normal",
+      "queued_at": "2026-06-26T13:15:18.799501",
+      "x_variant": "news",
+      "main_text": "チャ・ウヌが、ファンダムアプリ「最愛ドルスター」の投票「一緒にサッカーを応援したいスター」で1位に。総投票数20,602票、2位グマユシ、3位チェ・ミンホという結果でした。\n#チャウヌ #最愛ドルスター #KPOP",
+      "reply_text": "記事はこちら👇\nhttps://www.kpopjournal.tokyo/cha-eun-woo-football-vote-2026/",
+      "posted": true,
+      "tweet_id": "2070384819926966631",
+      "reply_tweet_id": "2070384857923097027",
+      "posted_at": "2026-06-26T14:53:22.130604"
+    },
+    {
+      "title": "&TEAM、初のシネマティックVRコンサート上映",
+      "url": "https://www.kpopjournal.tokyo/team-cinematic-vr-concert/",
+      "post_id": 9991,
+      "genre": "breaking",
+      "artist": "&TEAM",
+      "priority": "high",
+      "queued_at": "2026-06-26T11:38:55.465035"
+    },
+    {
+      "title": "FIFTY FIFTY、金曜朝「アチマダン」でライブ披露",
+      "url": "https://www.kpopjournal.tokyo/fifty-fifty-achimadan-live-performance/",
+      "post_id": 9987,
+      "genre": "breaking",
+      "artist": "피프티피프티",
+      "priority": "high",
+      "queued_at": "2026-06-26T11:37:44.224131"
+    },
+    {
+      "title": "TREASURE、音楽番組で「ズームズーム」披露",
+      "url": "https://www.kpopjournal.tokyo/treasure-zoom-zoom-performance/",
+      "post_id": 9982,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-06-26T11:35:46.706075"
+    },
+    {
+      "title": "モモランドのナンシー、世界1位の美貌再び",
+      "url": "https://www.kpopjournal.tokyo/momoland-nancy-world-beauty/",
+      "post_id": 9977,
+      "genre": "breaking",
+      "artist": "낸시",
+      "priority": "high",
+      "queued_at": "2026-06-26T11:33:21.389704"
+    },
+    {
+      "title": "NCT JAEHYUNがインスタで彼女をソフトローンチ",
+      "url": "https://www.kpopjournal.tokyo/nct-jaehyun-instagram-girlfriend-soft-launch/",
+      "post_id": 9972,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-06-26T11:31:28.071515"
+    },
+    {
+      "title": "パク・ボム、新曲「Heaven」公開とイ・ミンホ愛",
+      "url": "https://www.kpopjournal.tokyo/park-bom-heaven-lee-min-ho-love/",
+      "post_id": 9967,
+      "genre": "breaking",
+      "artist": "박봄",
+      "priority": "high",
+      "queued_at": "2026-06-26T09:40:15.590124"
+    },
+    {
+      "title": "BABYMONSTER、ソウルで2回目ワールドツアー開幕",
+      "url": "https://www.kpopjournal.tokyo/babymonster-world-tour-seoul-2023/",
+      "post_id": 9963,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-06-26T09:37:18.143602"
+    },
+    {
+      "title": "キム・ヒチョル、「SUPER JUNIORの曲以上に歌唱",
+      "url": "https://www.kpopjournal.tokyo/kim-heechul-super-junior-singing/",
+      "post_id": 9958,
+      "genre": "breaking",
+      "artist": "김희철",
+      "priority": "high",
+      "queued_at": "2026-06-26T09:32:14.104814"
+    },
+    {
+      "title": "ソ・ジソブ、デビュー当初の苦悩語る",
+      "url": "https://www.kpopjournal.tokyo/so-ji-sub-debut-struggles/",
+      "post_id": 9949,
+      "genre": "breaking",
+      "artist": "소지섭",
+      "priority": "high",
+      "queued_at": "2026-06-26T07:41:41.649567"
+    },
+    {
+      "title": "ソン・ナウン、引き締まった体型を披露",
+      "url": "https://www.kpopjournal.tokyo/song-naun-tight-body/",
+      "post_id": 9945,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-26T07:40:27.049061"
+    },
+    {
+      "title": "RIIZEが「キム・イナの星空の夜」でからかい語る",
+      "url": "https://www.kpopjournal.tokyo/riize-kim-ina-starry-night/",
+      "post_id": 9941,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-06-26T07:39:19.627072"
+    },
+    {
+      "title": "TXTのヨンジュンがソロカムバック新ティーザー公開",
+      "url": "https://www.kpopjournal.tokyo/txt-youngjoon-solo-comeback-teaser/",
+      "post_id": 9937,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-06-26T07:38:06.395481"
+    },
+    {
+      "title": "BIGBANG DAESUNG、熱愛説に公式見解驚き",
+      "url": "https://www.kpopjournal.tokyo/bigbang-daesung-renai-susume-2023/",
+      "post_id": 9932,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-06-26T07:36:14.715699"
+    },
+    {
+      "title": "SEVENTEENのJoshuaがUNESCOで夢追求を鼓舞",
+      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-dream-inspiration/",
+      "post_id": 9913,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-06-25T21:32:45.198372"
+    },
+    {
+      "title": "SEVENTEENのジョシュア、ユネスコでスピーチ",
+      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-speech-2/",
+      "post_id": 9905,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-06-25T19:40:47.701128"
+    },
+    {
+      "title": "IVE Gaeul、「ダイブこんにちは」で注目集める",
+      "url": "https://www.kpopjournal.tokyo/?p=9896",
+      "post_id": 9896,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-06-25T19:36:48.558942"
+    },
+    {
+      "title": "TXT、日本のオリコン上半期「トップ10」入り",
+      "url": "https://www.kpopjournal.tokyo/txt-oricon-top10-2023/",
+      "post_id": 9890,
+      "genre": "breaking",
+      "artist": "투모로우바이투게더",
+      "priority": "high",
+      "queued_at": "2026-06-25T19:33:39.123723"
+    },
+    {
+      "title": "IVEのLizとGaeulが猫のような目つき披露",
+      "url": "https://www.kpopjournal.tokyo/?p=9886",
+      "post_id": 9886,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-06-25T19:32:27.013289"
+    },
+    {
+      "title": "BTSメンバー「デートの噂」急速拡大中",
+      "url": "https://www.kpopjournal.tokyo/bts-date-rumors-expanding/",
+      "post_id": 9881,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-25T19:30:46.381577"
+    },
+    {
+      "title": "IVEのLeeseo、清楚な魅力で空港出発",
+      "url": "https://www.kpopjournal.tokyo/?p=9871",
+      "post_id": 9871,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-06-25T17:35:48.566530"
+    },
     {
       "title": "BABYMONSTER「SUGAR HONEY ICE TEA」MVが1億回突破",
       "url": "https://www.kpopjournal.tokyo/babymonster-sugar-honey-ice-tea-1million-views/",
@@ -156,238 +379,76 @@
       "queued_at": "2026-06-24T19:38:51.179568"
     },
     {
-      "title": "イムジン 契約効力停止申請を勝ち取る",
-      "url": "https://www.kpopjournal.tokyo/imujin-keiyaku-kouryoku-teishi/",
-      "post_id": 9724,
-      "genre": "breaking",
-      "artist": "더보이즈",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:40:59.638226"
-    },
-    {
-      "title": "イ・ヨンジン「モチ魅力をキャッチ」披露",
-      "url": "https://www.kpopjournal.tokyo/lee-yeong-jin-mochi-charm-catch/",
-      "post_id": 9720,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:38:57.325170"
-    },
-    {
-      "title": "ボア、SM離脱後の大胆な変身と新スタイル",
-      "url": "https://www.kpopjournal.tokyo/boa-sm-daitankanshinten-shinstyle/",
-      "post_id": 9715,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:36:22.736760"
-    },
-    {
-      "title": "BLACKPINK リサ、LVMH御曹司との破局説再燃",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-lvmh-breakup-rumors/",
-      "post_id": 9710,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-06-24T17:33:37.217506"
-    },
-    {
-      "title": "BIGBANG 2026年ワールドツアー先行予約開始",
-      "url": "https://www.kpopjournal.tokyo/bigbang-2026-world-tour-pre-sale/",
-      "post_id": 9696,
-      "genre": "breaking",
-      "artist": "빅뱅",
-      "priority": "high",
-      "queued_at": "2026-06-24T15:46:42.841004"
-    },
-    {
-      "title": "ENHYPENに関するVogueの誤り指摘",
-      "url": "https://www.kpopjournal.tokyo/enhypen-vogue-mistake-correction/",
-      "post_id": 9689,
+      "title": "ENHYPEN「Bite Me」が2億回再生達成",
+      "url": "https://www.kpopjournal.tokyo/?p=10041",
+      "post_id": 10041,
       "genre": "breaking",
       "artist": "ENHYPEN",
       "priority": "high",
-      "queued_at": "2026-06-24T15:42:33.136347"
+      "queued_at": "2026-06-26T17:30:43.988441"
     },
     {
-      "title": "BTS JIMIN、パン帽子とレザーパンツ着こなし",
-      "url": "https://www.kpopjournal.tokyo/bts-jimin-pan-hat-leather-pants/",
-      "post_id": 9685,
+      "title": "ATEEZ、今日(26日)新ミニアルバムリリース",
+      "url": "https://www.kpopjournal.tokyo/ateez-new-mini-album-release/",
+      "post_id": 10046,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "에이티즈",
       "priority": "high",
-      "queued_at": "2026-06-24T15:41:20.405006"
+      "queued_at": "2026-06-26T17:36:45.409439"
     },
     {
-      "title": "ボア、デビュー26年目に大胆な変身披露",
-      "url": "https://www.kpopjournal.tokyo/boa-debut-26th-anniversary-transformation/",
-      "post_id": 9678,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-06-24T15:37:00.739023"
-    },
-    {
-      "title": "KHSエージェンシー、イ・ヨンエ・ファン・ジョンウムとCUBE提携",
-      "url": "https://www.kpopjournal.tokyo/khs-agency-lee-young-ae-fan-jung-eum-cube-partnership/",
-      "post_id": 9664,
-      "genre": "breaking",
-      "artist": "제시",
-      "priority": "high",
-      "queued_at": "2026-06-24T13:35:32.747504"
-    },
-    {
-      "title": "公効真、♥ケビンオと砂浜で新曲MV登場",
-      "url": "https://www.kpopjournal.tokyo/koukushin-kevin-sand-beach-mv/",
-      "post_id": 9631,
-      "genre": "breaking",
-      "artist": "공효진",
-      "priority": "high",
-      "queued_at": "2026-06-24T09:41:52.302951"
-    },
-    {
-      "title": "SEVENTEEN、ミニアルバム「V8」リリース",
-      "url": "https://www.kpopjournal.tokyo/seventeen-v8-release/",
-      "post_id": 9627,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-06-24T09:40:36.458132"
-    },
-    {
-      "title": "男女バスケットボール代表、8月に日本で評価戦開催",
-      "url": "https://www.kpopjournal.tokyo/danjo-basketball-representative-evaluation-match-japan-augus/",
-      "post_id": 9623,
-      "genre": "breaking",
-      "artist": "우즈",
-      "priority": "high",
-      "queued_at": "2026-06-24T09:39:26.573349"
-    },
-    {
-      "title": "TWS、日本地上波音楽番組に連続出演",
-      "url": "https://www.kpopjournal.tokyo/tws-nichijou-hou-onngaku/",
-      "post_id": 9619,
+      "title": "TWS直筆サイン入りポラを2名様にプレゼント",
+      "url": "https://www.kpopjournal.tokyo/tws-sign-pola-giveaway-2-winners/",
+      "post_id": 10050,
       "genre": "breaking",
       "artist": "TWS",
       "priority": "high",
-      "queued_at": "2026-06-24T09:37:50.526057"
+      "queued_at": "2026-06-26T17:37:54.375138"
     },
     {
-      "title": "高俊熙、9歳年下ファンドマネージャーと出会い",
-      "url": "https://www.kpopjournal.tokyo/takashunhi-fund-manager-meeting/",
-      "post_id": 9605,
+      "title": "キム・ムヨル、「参教育」グローバル1位に涙",
+      "url": "https://www.kpopjournal.tokyo/kim-muyol-sankyouiku-global-1/",
+      "post_id": 10056,
       "genre": "breaking",
-      "artist": "있지",
+      "artist": "김무열",
       "priority": "high",
-      "queued_at": "2026-06-24T07:36:20.364680"
+      "queued_at": "2026-06-26T19:31:47.277405"
     },
     {
-      "title": "BTSの「ARIRANG」2026年ベストアルバム選出",
-      "url": "https://www.kpopjournal.tokyo/bts-arirang-best-album-2026/",
-      "post_id": 9599,
+      "title": "TWS、初のアジアツアー明日開幕",
+      "url": "https://www.kpopjournal.tokyo/tws-asia-tour-starts-tomorrow/",
+      "post_id": 10061,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "TWS",
       "priority": "high",
-      "queued_at": "2026-06-24T07:33:04.072998"
+      "queued_at": "2026-06-26T19:36:28.384540"
     },
     {
-      "title": "BTS Jungkookの空港ファッション価格に驚愕",
-      "url": "https://www.kpopjournal.tokyo/bts-jungkook-airport-fashion-price-shocking/",
-      "post_id": 9594,
+      "title": "TXT＆TEAM、Adoら17組「人気歌謡」日本公演開催",
+      "url": "https://www.kpopjournal.tokyo/txt-team-ado-ninki-kayo-japan-concert/",
+      "post_id": 10066,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "TXT",
       "priority": "high",
-      "queued_at": "2026-06-24T07:31:20.611618"
+      "queued_at": "2026-06-26T19:39:06.345973"
     },
     {
-      "title": "BOYNEXTDOOR「HOME」でBillboard 200トップ20入り",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-home-billboard-200-top20/",
-      "post_id": 9589,
+      "title": "NCTジェヒョン、ビキニ女性との熱愛説否定",
+      "url": "https://www.kpopjournal.tokyo/nct-jaehyun-bikini-rumor-denial/",
+      "post_id": 10077,
       "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
+      "artist": "NCT",
       "priority": "high",
-      "queued_at": "2026-06-24T07:01:19.773692"
+      "queued_at": "2026-06-26T21:35:40.556663"
     },
     {
-      "title": "SEVENTEENのザ・エイトとバーノンが契約更新理由明かす",
-      "url": "https://www.kpopjournal.tokyo/seventeen-the8-vernon-contract-update/",
-      "post_id": 9572,
+      "title": "BIGBANG DAESUNG、ホ・ヨンジとの熱愛説否定",
+      "url": "https://www.kpopjournal.tokyo/bigbang-daesung-hoe-youngji-love-rumor-denial/",
+      "post_id": 10081,
       "genre": "breaking",
-      "artist": "SEVENTEEN",
+      "artist": "빅뱅",
       "priority": "high",
-      "queued_at": "2026-06-23T21:33:40.713291"
-    },
-    {
-      "title": "SUPER JUNIORリョウク、10周年記念シングル「Runaway」リリース",
-      "url": "https://www.kpopjournal.tokyo/super-junior-ryeowook-10th-anniversary-runaway/",
-      "post_id": 9567,
-      "genre": "breaking",
-      "artist": "슈퍼주니어",
-      "priority": "high",
-      "queued_at": "2026-06-23T21:31:39.786756"
-    },
-    {
-      "title": "IVEのLeeseo、清楚な魅力で空港出発",
-      "url": "https://www.kpopjournal.tokyo/?p=9871",
-      "post_id": 9871,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-06-25T17:35:48.566530"
-    },
-    {
-      "title": "BTSメンバー「デートの噂」急速拡大中",
-      "url": "https://www.kpopjournal.tokyo/bts-date-rumors-expanding/",
-      "post_id": 9881,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-06-25T19:30:46.381577"
-    },
-    {
-      "title": "IVEのLizとGaeulが猫のような目つき披露",
-      "url": "https://www.kpopjournal.tokyo/?p=9886",
-      "post_id": 9886,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-06-25T19:32:27.013289"
-    },
-    {
-      "title": "TXT、日本のオリコン上半期「トップ10」入り",
-      "url": "https://www.kpopjournal.tokyo/txt-oricon-top10-2023/",
-      "post_id": 9890,
-      "genre": "breaking",
-      "artist": "투모로우바이투게더",
-      "priority": "high",
-      "queued_at": "2026-06-25T19:33:39.123723"
-    },
-    {
-      "title": "IVE Gaeul、「ダイブこんにちは」で注目集める",
-      "url": "https://www.kpopjournal.tokyo/?p=9896",
-      "post_id": 9896,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-06-25T19:36:48.558942"
-    },
-    {
-      "title": "SEVENTEENのジョシュア、ユネスコでスピーチ",
-      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-speech-2/",
-      "post_id": 9905,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-06-25T19:40:47.701128"
-    },
-    {
-      "title": "SEVENTEENのJoshuaがUNESCOで夢追求を鼓舞",
-      "url": "https://www.kpopjournal.tokyo/seventeen-joshua-unesco-dream-inspiration/",
-      "post_id": 9913,
-      "genre": "breaking",
-      "artist": "SEVENTEEN",
-      "priority": "high",
-      "queued_at": "2026-06-25T21:32:45.198372"
+      "queued_at": "2026-06-26T21:37:01.232513"
     }
   ]
 }

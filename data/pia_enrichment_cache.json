@@ -260,7 +260,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-06-18T04:02:03.999409"
+    "cached_at": "2026-06-26T04:02:02.555814"
   },
   "b2668245": {
     "event_bundle_cd": "b2668245",
@@ -347,5 +347,82 @@
       }
     ],
     "cached_at": "2026-06-25T04:02:03.294053"
+  },
+  "b2668175": {
+    "event_bundle_cd": "b2668175",
+    "title": "KIM JUNSU",
+    "description": "KIM JUNSU(東京国際フォーラム　ホールＡ グランキューブ大阪　メインホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-07-03",
+        "venue": "東京国際フォーラム ホールA",
+        "prefecture": "東京都",
+        "date_end": "2026-07-04"
+      },
+      {
+        "date": "2026-07-09",
+        "venue": "グランキューブ大阪 メインホール",
+        "prefecture": "大阪府",
+        "date_end": "2026-07-10"
+      }
+    ],
+    "cached_at": "2026-06-26T04:02:04.003921"
+  },
+  "b2668727": {
+    "event_bundle_cd": "b2668727",
+    "title": "AND2BLE",
+    "description": "初の日本ショーケースライブ「＜2026 AND2BLE SHOW CONCERT：Welcome to Qurious＞ In Japan」。6/30(火)～7/2(木)Kアリーナ横浜、7/11(土)・7/12(日)GLION ARENA KOBEにて開催！",
+    "image": "https://image.pia.jp/images/202606/202606120049_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-01",
+        "venue": "Kアリーナ横浜",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-06-26T04:02:05.369325"
+  },
+  "b2667975": {
+    "event_bundle_cd": "b2667975",
+    "title": "FNC BAND KINGDOM 2026",
+    "description": "7月に神奈川・ぴあアリーナMMにてFNC ENTERTAINMENT所属のバンドグループが総出演する、夏のバンドフェスを開催！FTISLAND、CNBLUE、N.Flying、Hi-Fi Un!corn、AxMxPが出演！",
+    "image": "https://image.pia.jp/images/202605/202605280103_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-07-11",
+        "venue": "ぴあアリーナMM",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-06-26T04:02:06.722172"
+  },
+  "b2667352": {
+    "event_bundle_cd": "b2667352",
+    "title": "2026 キム・ジョンヒョン ファンミーティング",
+    "description": "ドラマ『愛の不時着』『セイレーンのキス』などに出演の俳優キム・ジョンヒョンが来日。7/18(土)きゅりあん(品川区立総合区民会館) 大ホールにて、「2026 KIM JUNG HYUN FANMEETING -The List of Ours-」開催！",
+    "image": "https://image.pia.jp/images/202605/202605210054_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-18",
+        "venue": "きゅりあん(品川区立総合区民会館) 大ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-26T04:02:08.057395"
+  },
+  "b2668787": {
+    "event_bundle_cd": "b2668787",
+    "title": "CHOO YOUNG WOO",
+    "description": "CHOO YOUNG WOO(ＬＩＮＥ　ＣＵＢＥ　ＳＨＩＢＵＹＡ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-07-20",
+        "venue": "LINE CUBE SHIBUYA",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-06-26T04:02:09.324004"
   }
 }
