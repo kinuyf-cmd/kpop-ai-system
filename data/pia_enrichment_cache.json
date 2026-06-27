@@ -274,7 +274,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-06-19T04:02:05.341900"
+    "cached_at": "2026-06-27T04:02:14.943678"
   },
   "b2668414": {
     "event_bundle_cd": "b2668414",
@@ -293,7 +293,7 @@
         "prefecture": "大阪府"
       }
     ],
-    "cached_at": "2026-06-19T04:02:06.801557"
+    "cached_at": "2026-06-27T04:02:16.297191"
   },
   "b2668775": {
     "event_bundle_cd": "b2668775",
@@ -424,5 +424,19 @@
       }
     ],
     "cached_at": "2026-06-26T04:02:09.324004"
+  },
+  "b2668839": {
+    "event_bundle_cd": "b2668839",
+    "title": "LUCY",
+    "description": "LUCY(ＫＴ　Ｚｅｐｐ　Ｙｏｋｏｈａｍａ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202606/202606020012_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-24",
+        "venue": "KT Zepp Yokohama",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-06-27T04:02:17.349973"
   }
 }

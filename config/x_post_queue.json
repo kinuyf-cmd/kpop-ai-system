@@ -1,6 +1,6 @@
 {
-  "updated": "2026-06-26 21:37",
-  "count": 49,
+  "updated": "2026-06-27 21:38",
+  "count": 60,
   "queue": [
     {
       "title": "IVE、日本ドームツアーで12万7千人動員",
@@ -449,6 +449,105 @@
       "artist": "빅뱅",
       "priority": "high",
       "queued_at": "2026-06-26T21:37:01.232513"
+    },
+    {
+      "title": "ATEEZ新曲「Bad」が「最悪」と評される問題",
+      "url": "https://www.kpopjournal.tokyo/ateez-bad-saiaku-problem/",
+      "post_id": 10098,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-06-27T07:30:49.033514"
+    },
+    {
+      "title": "チュ・ヨンウ、2026年ファンミーティング開催",
+      "url": "https://www.kpopjournal.tokyo/chu-youngwoo-2026-fanmeeting/",
+      "post_id": 10117,
+      "genre": "breaking",
+      "artist": "추영우",
+      "priority": "high",
+      "queued_at": "2026-06-27T11:38:03.831445"
+    },
+    {
+      "title": "イム・ウォンヒ、イ・ヒジンとの特別な関係明らかに",
+      "url": "https://www.kpopjournal.tokyo/im-wonhee-lee-hijin-special-relationship/",
+      "post_id": 10121,
+      "genre": "breaking",
+      "artist": "임원희",
+      "priority": "high",
+      "queued_at": "2026-06-27T13:32:30.566411"
+    },
+    {
+      "title": "P1Harmonyが今夏アジア3都市ツアー開催",
+      "url": "https://www.kpopjournal.tokyo/p1harmony-asia-tour-summer-2023/",
+      "post_id": 10129,
+      "genre": "breaking",
+      "artist": "P1Harmony",
+      "priority": "high",
+      "queued_at": "2026-06-27T15:37:08.782824"
+    },
+    {
+      "title": "SEVENTEENディエイト・バーノンV8始動、新譜公開",
+      "url": "https://www.kpopjournal.tokyo/seventeen-dino-vernon-v8-new-album-release/",
+      "post_id": 10137,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-06-27T17:32:42.560541"
+    },
+    {
+      "title": "ソジン、イ・ドンハへの愛情爆発「キム部長」出演",
+      "url": "https://www.kpopjournal.tokyo/sojin-love-for-lee-dongha-kim-bu-jang/",
+      "post_id": 10144,
+      "genre": "breaking",
+      "artist": "강다니엘",
+      "priority": "high",
+      "queued_at": "2026-06-27T19:33:58.625855"
+    },
+    {
+      "title": "キム・セジョン、ロンシャンバッグで近況報告",
+      "url": "https://www.kpopjournal.tokyo/kim-sejeong-longchamp-bag-update/",
+      "post_id": 10149,
+      "genre": "breaking",
+      "artist": "김세정",
+      "priority": "high",
+      "queued_at": "2026-06-27T19:36:15.930562"
+    },
+    {
+      "title": "チョン・チェヨン、I.O.I活動への未練表明",
+      "url": "https://www.kpopjournal.tokyo/?p=10154",
+      "post_id": 10154,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-06-27T21:33:11.105727"
+    },
+    {
+      "title": "元ENHYPEN ヒスン、漢江で野外ライブ開催",
+      "url": "https://www.kpopjournal.tokyo/heeseung-hangang-outdoor-live/",
+      "post_id": 10158,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-06-27T21:34:22.587377"
+    },
+    {
+      "title": "TXT ヒュニンカイ「風のようにひらりと」フォト",
+      "url": "https://www.kpopjournal.tokyo/?p=10163",
+      "post_id": 10163,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-06-27T21:35:59.637970"
+    },
+    {
+      "title": "ピオ、「参教育」グローバル1位達成し幸せ",
+      "url": "https://www.kpopjournal.tokyo/pio-global-1st-achievement-happiness/",
+      "post_id": 10168,
+      "genre": "breaking",
+      "artist": "피오",
+      "priority": "high",
+      "queued_at": "2026-06-27T21:38:09.683599"
     }
   ]
 }

@@ -229,6 +229,16 @@
    "start_date": "2026-07-20",
    "venue": "LINE CUBE SHIBUYA",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LUCY",
+   "title": "LUCY",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668839",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-24",
+   "venue": "KT Zepp Yokohama",
+   "_source_id": "pia"
   }
  ]
 }
