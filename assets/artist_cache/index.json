@@ -727,5 +727,19 @@
         "via": "wikidata:P18:Q62396954"
       }
     ]
+  },
+  "seeya": {
+    "name": "SeeYa",
+    "files": [
+      "seeya_49655cb0.png"
+    ],
+    "sources": [
+      {
+        "file": "seeya_49655cb0.png",
+        "wikimedia_title": "File:SeeYa in April 2026.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/SeeYa_in_April_2026.png",
+        "license": "CC BY 4.0"
+      }
+    ]
   }
 }

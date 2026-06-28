@@ -52,16 +52,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "KISS OF LIFE",
-   "title": "KISS OF LIFE",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=746098",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-06-27",
-   "venue": "市川市文化会館 大ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",
@@ -69,16 +59,6 @@
    "start_date": "2026-07-26",
    "venue": "ローソン・ユナイテッドシネマ札幌",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "KISS OF LIFE",
-   "title": "2026 KISS OF LIFE ASIA FANMEETING TOUR ＜DEJA VU＞ IN TOKYO",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667705",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-27",
-   "venue": "市川市文化会館 大ホール",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -98,16 +78,6 @@
    "source_media": "ぴあ",
    "start_date": "2026-07-03",
    "venue": "Zepp Shinjuku",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ONEUS",
-   "title": "ONEUS",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668414",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-27",
-   "venue": "東京国際フォーラム ホールC",
    "_source_id": "pia"
   },
   {
@@ -149,16 +119,6 @@
    "start_date": "2026-08-21",
    "venue": "Kアリーナ横浜",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "SF9",
-   "title": "SF9",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668421",
-   "source_media": "ぴあ",
-   "start_date": "2026-06-27",
-   "venue": "NHK大阪ホール",
-   "_source_id": "pia"
   },
   {
    "type": "event",

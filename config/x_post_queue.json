@@ -1,6 +1,6 @@
 {
-  "updated": "2026-06-27 21:38",
-  "count": 60,
+  "updated": "2026-06-28 21:36",
+  "count": 78,
   "queue": [
     {
       "title": "IVE、日本ドームツアーで12万7千人動員",
@@ -548,6 +548,168 @@
       "artist": "피오",
       "priority": "high",
       "queued_at": "2026-06-27T21:38:09.683599"
+    },
+    {
+      "title": "RIIZEが「Show Champion」で1st Win獲得",
+      "url": "https://www.kpopjournal.tokyo/riize-show-champion-1st-win/",
+      "post_id": 10172,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-06-28T07:30:46.875125"
+    },
+    {
+      "title": "TIFFANY新婚生活語る「愛の細胞のおかげ",
+      "url": "https://www.kpopjournal.tokyo/tiffany-shin-kon-seikatsu-ai-no-sai-bou/",
+      "post_id": 10184,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-06-28T07:37:51.219371"
+    },
+    {
+      "title": "ジェシー・マチ「南アフリカが優れたチーム",
+      "url": "https://www.kpopjournal.tokyo/jessie-machi-south-africa-team/",
+      "post_id": 10196,
+      "genre": "breaking",
+      "artist": "제시",
+      "priority": "high",
+      "queued_at": "2026-06-28T07:41:51.133028"
+    },
+    {
+      "title": "ウズベキスタンがホン・ミョンボ監督を支援",
+      "url": "https://www.kpopjournal.tokyo/uzbekistan-hong-myeong-bo-support/",
+      "post_id": 10202,
+      "genre": "breaking",
+      "artist": "우즈",
+      "priority": "high",
+      "queued_at": "2026-06-28T09:32:03.592425"
+    },
+    {
+      "title": "TWICE ナヨン CF撮影現場での爽やかさ",
+      "url": "https://www.kpopjournal.tokyo/?p=10210",
+      "post_id": 10210,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-06-28T09:37:19.054176"
+    },
+    {
+      "title": "BTS「SWIM」がUKでシルバー認定の記録",
+      "url": "https://www.kpopjournal.tokyo/?p=10219",
+      "post_id": 10219,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-28T11:31:11.121327"
+    },
+    {
+      "title": "TWS、日本で人気拡大中爽やか新曲「SODA SODA",
+      "url": "https://www.kpopjournal.tokyo/tws-soda-soda-popularity-japan/",
+      "post_id": 10227,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-06-28T11:38:00.042627"
+    },
+    {
+      "title": "HWASA、膝の怪我乗り越え笑顔でパフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/hwasa-knee-injury-performance/",
+      "post_id": 10231,
+      "genre": "breaking",
+      "artist": "화사",
+      "priority": "high",
+      "queued_at": "2026-06-28T11:39:29.326676"
+    },
+    {
+      "title": "ウズベキスタンが韓国救う！コンゴに1-0リード",
+      "url": "https://www.kpopjournal.tokyo/uzbekistan-korea-congo-lead-1-0/",
+      "post_id": 10236,
+      "genre": "breaking",
+      "artist": "우즈",
+      "priority": "high",
+      "queued_at": "2026-06-28T11:41:57.010480"
+    },
+    {
+      "title": "韓国代表、ワールドカップ32強進出厳しく",
+      "url": "https://www.kpopjournal.tokyo/kankokudaihyou-worldcup-32kyou-shinshutsu/",
+      "post_id": 10240,
+      "genre": "breaking",
+      "artist": "우즈",
+      "priority": "high",
+      "queued_at": "2026-06-28T11:43:31.236590"
+    },
+    {
+      "title": "CORTIS、Spotify初の単独曲2億再生達成",
+      "url": "https://www.kpopjournal.tokyo/cortis-spotify-dan-doku-kyoku-2oku-saisei/",
+      "post_id": 10245,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-06-28T13:32:33.434311"
+    },
+    {
+      "title": "CORTIS「GREENGREEN」がBillboard 200最長チャート入り",
+      "url": "https://www.kpopjournal.tokyo/cortis-greengreen-billboard-200-chart/",
+      "post_id": 10249,
+      "genre": "breaking",
+      "artist": "CORTIS",
+      "priority": "high",
+      "queued_at": "2026-06-28T15:31:35.459215"
+    },
+    {
+      "title": "オ・ヨンス、強制わいせつ疑い無罪判決確定",
+      "url": "https://www.kpopjournal.tokyo/?p=10254",
+      "post_id": 10254,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-06-28T15:33:19.602561"
+    },
+    {
+      "title": "BIGBANGのD-LITE、KARAヨンジとの熱愛説釈明",
+      "url": "https://www.kpopjournal.tokyo/bigbang-dlite-kara-yonji-love-rumor-explanation/",
+      "post_id": 10260,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-06-28T17:31:10.337606"
+    },
+    {
+      "title": "TWS ドフン、デビュー後初の赤髪イメチェン",
+      "url": "https://www.kpopjournal.tokyo/?p=10265",
+      "post_id": 10265,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-06-28T17:32:53.721381"
+    },
+    {
+      "title": "TREASURE、新曲「ZOOM ZOOM」・「난리나」披露",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260628-193144/",
+      "post_id": 10270,
+      "genre": "breaking",
+      "artist": "트레저",
+      "priority": "high",
+      "queued_at": "2026-06-28T19:31:57.801266"
+    },
+    {
+      "title": "BTSのV、ファッションウィークでセクシー登場",
+      "url": "https://www.kpopjournal.tokyo/bts-v-fashion-week-sexy-appearance/",
+      "post_id": 10278,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-06-28T21:31:46.054913"
+    },
+    {
+      "title": "イ・チャンウォン、STAYCシウンと「2 LOVE」チャレンジ",
+      "url": "https://www.kpopjournal.tokyo/lee-chan-won-stayc-siun-2-love-challenge/",
+      "post_id": 10283,
+      "genre": "breaking",
+      "artist": "스테이씨",
+      "priority": "high",
+      "queued_at": "2026-06-28T21:36:31.593031"
     }
   ]
 }
