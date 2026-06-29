@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-06-22",
+ "generated_at": "2026-06-29",
  "window_days": 480,
  "params": {
   "min_imp": 300,
@@ -14,16 +14,16 @@
   ]
  },
  "totals": {
-  "queries_scanned": 22190,
-  "lane_B_new": 67,
-  "lane_C_rewrite": 194,
+  "queries_scanned": 22428,
+  "lane_B_new": 68,
+  "lane_C_rewrite": 195,
   "excluded": {
    "brand": 6,
    "gossip": 21,
    "breaking": 10,
    "hard_competition": 0
   },
-  "existing_slugs": 839
+  "existing_slugs": 981
  },
  "lane_B_new": [
   {
@@ -48,7 +48,7 @@
   },
   {
    "query": "コーチェラ 2026 bigbang",
-   "imp": 1423,
+   "imp": 1424,
    "clicks": 3,
    "position": 4.8,
    "ctr_pct": 0.2,
@@ -118,7 +118,7 @@
   },
   {
    "query": "xg 衣装",
-   "imp": 759,
+   "imp": 760,
    "clicks": 11,
    "position": 4.0,
    "ctr_pct": 1.4,
@@ -228,12 +228,12 @@
   },
   {
    "query": "お嬢ギャング メンバー",
-   "imp": 674,
+   "imp": 683,
    "clicks": 26,
-   "position": 5.2,
-   "ctr_pct": 3.9,
+   "position": 5.3,
+   "ctr_pct": 3.8,
    "theme": "other",
-   "potential": 109,
+   "potential": 111,
    "lane": "B_new"
   },
   {
@@ -378,12 +378,22 @@
   },
   {
    "query": "jimin",
-   "imp": 629,
+   "imp": 637,
    "clicks": 45,
-   "position": 5.3,
-   "ctr_pct": 7.2,
+   "position": 5.9,
+   "ctr_pct": 7.1,
    "theme": "other",
-   "potential": 81,
+   "potential": 82,
+   "lane": "B_new"
+  },
+  {
+   "query": "rht. メンバー 年齢",
+   "imp": 701,
+   "clicks": 61,
+   "position": 6.9,
+   "ctr_pct": 8.7,
+   "theme": "other",
+   "potential": 79,
    "lane": "B_new"
   },
   {
@@ -417,16 +427,6 @@
    "lane": "B_new"
   },
   {
-   "query": "rht. メンバー 年齢",
-   "imp": 693,
-   "clicks": 61,
-   "position": 6.9,
-   "ctr_pct": 8.8,
-   "theme": "other",
-   "potential": 78,
-   "lane": "B_new"
-  },
-  {
    "query": "ibuki マネージャー",
    "imp": 531,
    "clicks": 30,
@@ -454,6 +454,16 @@
    "ctr_pct": 0.0,
    "theme": "other",
    "potential": 75,
+   "lane": "B_new"
+  },
+  {
+   "query": "鉄槌教師 吹き替え 声優",
+   "imp": 391,
+   "clicks": 4,
+   "position": 10.4,
+   "ctr_pct": 1.0,
+   "theme": "other",
+   "potential": 74,
    "lane": "B_new"
   },
   {
@@ -548,12 +558,12 @@
   },
   {
    "query": "k ジャーナル",
-   "imp": 326,
+   "imp": 330,
    "clicks": 3,
-   "position": 4.3,
+   "position": 4.2,
    "ctr_pct": 0.9,
    "theme": "other",
-   "potential": 62,
+   "potential": 63,
    "lane": "B_new"
   },
   {
@@ -700,7 +710,7 @@
  "lane_C_rewrite": [
   {
    "query": "golden 歌手",
-   "imp": 22053,
+   "imp": 22054,
    "clicks": 614,
    "position": 7.0,
    "ctr_pct": 2.8,
@@ -720,12 +730,12 @@
   },
   {
    "query": "デーモンハンターズ 曲",
-   "imp": 14172,
+   "imp": 14173,
    "clicks": 6,
    "position": 11.5,
    "ctr_pct": 0.0,
    "theme": "movie_anime",
-   "potential": 2828,
+   "potential": 2829,
    "lane": "C_rewrite"
   },
   {
@@ -740,7 +750,7 @@
   },
   {
    "query": "golden",
-   "imp": 11495,
+   "imp": 11496,
    "clicks": 11,
    "position": 9.2,
    "ctr_pct": 0.1,
@@ -750,7 +760,7 @@
   },
   {
    "query": "オジョギャング",
-   "imp": 11414,
+   "imp": 11415,
    "clicks": 287,
    "position": 9.0,
    "ctr_pct": 2.5,
@@ -770,7 +780,7 @@
   },
   {
    "query": "ゴールデン 歌ってる人",
-   "imp": 7309,
+   "imp": 7310,
    "clicks": 29,
    "position": 6.1,
    "ctr_pct": 0.4,
@@ -800,22 +810,22 @@
   },
   {
    "query": "デーモンハンターズ キャラクター",
-   "imp": 11572,
+   "imp": 11649,
    "clicks": 1358,
-   "position": 4.5,
+   "position": 4.6,
    "ctr_pct": 11.7,
    "theme": "movie_anime",
-   "potential": 956,
+   "potential": 972,
    "lane": "C_rewrite"
   },
   {
    "query": "オジョギャング メンバー",
-   "imp": 7164,
+   "imp": 7172,
    "clicks": 537,
    "position": 5.1,
    "ctr_pct": 7.5,
    "theme": "dance_show",
-   "potential": 896,
+   "potential": 897,
    "lane": "C_rewrite"
   },
   {
@@ -830,12 +840,12 @@
   },
   {
    "query": "ojo gang メンバー",
-   "imp": 7218,
+   "imp": 7227,
    "clicks": 636,
    "position": 5.8,
    "ctr_pct": 8.8,
    "theme": "dance_show",
-   "potential": 808,
+   "potential": 809,
    "lane": "C_rewrite"
   },
   {
@@ -850,7 +860,7 @@
   },
   {
    "query": "golden 誰が歌ってる",
-   "imp": 4011,
+   "imp": 4012,
    "clicks": 22,
    "position": 8.6,
    "ctr_pct": 0.5,
@@ -860,12 +870,12 @@
   },
   {
    "query": "デーモンハンターズ",
-   "imp": 3667,
+   "imp": 3670,
    "clicks": 14,
    "position": 4.8,
    "ctr_pct": 0.4,
    "theme": "movie_anime",
-   "potential": 719,
+   "potential": 720,
    "lane": "C_rewrite"
   },
   {
@@ -880,12 +890,12 @@
   },
   {
    "query": "ojogang メンバー",
-   "imp": 5086,
+   "imp": 5089,
    "clicks": 492,
    "position": 5.2,
    "ctr_pct": 9.7,
    "theme": "dance_show",
-   "potential": 525,
+   "potential": 526,
    "lane": "C_rewrite"
   },
   {
@@ -970,12 +980,12 @@
   },
   {
    "query": "デーモンハンターズ メンバー",
-   "imp": 2860,
+   "imp": 2863,
    "clicks": 234,
    "position": 5.6,
    "ctr_pct": 8.2,
    "theme": "movie_anime",
-   "potential": 338,
+   "potential": 339,
    "lane": "C_rewrite"
   },
   {
@@ -1000,22 +1010,22 @@
   },
   {
    "query": "ラブブ 正体",
-   "imp": 1592,
+   "imp": 1594,
    "clicks": 5,
    "position": 7.3,
    "ctr_pct": 0.3,
    "theme": "trend_goods",
-   "potential": 313,
+   "potential": 314,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズキャラ",
-   "imp": 2098,
-   "clicks": 120,
+   "imp": 2126,
+   "clicks": 121,
    "position": 4.3,
    "ctr_pct": 5.7,
    "theme": "movie_anime",
-   "potential": 300,
+   "potential": 304,
    "lane": "C_rewrite"
   },
   {
@@ -1030,10 +1040,10 @@
   },
   {
    "query": "スウパ",
-   "imp": 1538,
+   "imp": 1539,
    "clicks": 10,
-   "position": 10.7,
-   "ctr_pct": 0.7,
+   "position": 10.8,
+   "ctr_pct": 0.6,
    "theme": "dance_show",
    "potential": 298,
    "lane": "C_rewrite"
@@ -1080,12 +1090,12 @@
   },
   {
    "query": "ケーポップデーモンハンターズ",
-   "imp": 1347,
+   "imp": 1348,
    "clicks": 5,
    "position": 5.3,
    "ctr_pct": 0.4,
    "theme": "movie_anime",
-   "potential": 264,
+   "potential": 265,
    "lane": "C_rewrite"
   },
   {
@@ -1110,12 +1120,12 @@
   },
   {
    "query": "ケーポップデーモンハンターズ キャラ",
-   "imp": 2726,
-   "clicks": 299,
-   "position": 4.4,
-   "ctr_pct": 11.0,
+   "imp": 2744,
+   "clicks": 300,
+   "position": 4.5,
+   "ctr_pct": 10.9,
    "theme": "movie_anime",
-   "potential": 246,
+   "potential": 249,
    "lane": "C_rewrite"
   },
   {
@@ -1190,19 +1200,19 @@
   },
   {
    "query": "rhtokyo",
-   "imp": 1706,
-   "clicks": 143,
+   "imp": 1723,
+   "clicks": 145,
    "position": 5.3,
    "ctr_pct": 8.4,
    "theme": "dance_show",
-   "potential": 198,
+   "potential": 200,
    "lane": "C_rewrite"
   },
   {
    "query": "オジョギャングメンバー",
-   "imp": 1403,
+   "imp": 1404,
    "clicks": 85,
-   "position": 6.0,
+   "position": 6.1,
    "ctr_pct": 6.1,
    "theme": "dance_show",
    "potential": 196,
@@ -1210,12 +1220,12 @@
   },
   {
    "query": "ゴールデン",
-   "imp": 961,
+   "imp": 963,
    "clicks": 3,
-   "position": 5.2,
+   "position": 5.3,
    "ctr_pct": 0.3,
    "theme": "movie_anime",
-   "potential": 189,
+   "potential": 190,
    "lane": "C_rewrite"
   },
   {
@@ -1310,9 +1320,9 @@
   },
   {
    "query": "コンフィデンス マン kr キャスト",
-   "imp": 805,
+   "imp": 807,
    "clicks": 8,
-   "position": 15.4,
+   "position": 15.5,
    "ctr_pct": 1.0,
    "theme": "kdrama",
    "potential": 153,
@@ -1320,19 +1330,19 @@
   },
   {
    "query": "デーモンハンターズ キャラ",
-   "imp": 1948,
+   "imp": 1966,
    "clicks": 243,
    "position": 4.3,
-   "ctr_pct": 12.5,
+   "ctr_pct": 12.4,
    "theme": "movie_anime",
-   "potential": 147,
+   "potential": 150,
    "lane": "C_rewrite"
   },
   {
    "query": "kpop demon hunters",
-   "imp": 750,
+   "imp": 751,
    "clicks": 5,
-   "position": 8.9,
+   "position": 9.0,
    "ctr_pct": 0.7,
    "theme": "movie_anime",
    "potential": 145,
@@ -1380,12 +1390,12 @@
   },
   {
    "query": "デーモンハンター 名前",
-   "imp": 757,
+   "imp": 761,
    "clicks": 17,
    "position": 5.0,
    "ctr_pct": 2.2,
    "theme": "movie_anime",
-   "potential": 134,
+   "potential": 135,
    "lane": "C_rewrite"
   },
   {
@@ -1430,12 +1440,22 @@
   },
   {
    "query": "デーモンハンターズキャラクター",
-   "imp": 1087,
+   "imp": 1088,
    "clicks": 98,
    "position": 3.5,
    "ctr_pct": 9.0,
    "theme": "movie_anime",
-   "potential": 119,
+   "potential": 120,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "ロイヤルファミリー ダンス",
+   "imp": 699,
+   "clicks": 20,
+   "position": 5.5,
+   "ctr_pct": 2.9,
+   "theme": "dance_show",
+   "potential": 120,
    "lane": "C_rewrite"
   },
   {
@@ -1446,16 +1466,6 @@
    "ctr_pct": 0.3,
    "theme": "trend_goods",
    "potential": 119,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "ロイヤルファミリー ダンス",
-   "imp": 691,
-   "clicks": 20,
-   "position": 5.6,
-   "ctr_pct": 2.9,
-   "theme": "dance_show",
-   "potential": 118,
    "lane": "C_rewrite"
   },
   {
@@ -1510,7 +1520,7 @@
   },
   {
    "query": "デーモンハンターズ 最後の曲",
-   "imp": 655,
+   "imp": 656,
    "clicks": 19,
    "position": 6.8,
    "ctr_pct": 2.9,
@@ -1550,12 +1560,22 @@
   },
   {
    "query": "golden 誰の曲",
-   "imp": 579,
+   "imp": 580,
    "clicks": 6,
-   "position": 7.6,
+   "position": 7.7,
    "ctr_pct": 1.0,
    "theme": "movie_anime",
    "potential": 110,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズメンバー",
+   "imp": 669,
+   "clicks": 25,
+   "position": 5.0,
+   "ctr_pct": 3.7,
+   "theme": "movie_anime",
+   "potential": 109,
    "lane": "C_rewrite"
   },
   {
@@ -1566,16 +1586,6 @@
    "ctr_pct": 0.0,
    "theme": "movie_anime",
    "potential": 109,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "デーモンハンターズメンバー",
-   "imp": 665,
-   "clicks": 25,
-   "position": 4.9,
-   "ctr_pct": 3.8,
-   "theme": "movie_anime",
-   "potential": 108,
    "lane": "C_rewrite"
   },
   {
@@ -1639,6 +1649,16 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "kpopガールズ デーモンハンターズ 登場人物",
+   "imp": 1136,
+   "clicks": 127,
+   "position": 5.6,
+   "ctr_pct": 11.2,
+   "theme": "movie_anime",
+   "potential": 100,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "コンフィデンス マン kr 評価",
    "imp": 496,
    "clicks": 0,
@@ -1676,16 +1696,6 @@
    "ctr_pct": 4.4,
    "theme": "kdrama",
    "potential": 97,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "kpopガールズ デーモンハンターズ 登場人物",
-   "imp": 1116,
-   "clicks": 127,
-   "position": 5.5,
-   "ctr_pct": 11.4,
-   "theme": "movie_anime",
-   "potential": 96,
    "lane": "C_rewrite"
   },
   {
@@ -1749,6 +1759,16 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "デーモンハンター キャラ",
+   "imp": 785,
+   "clicks": 66,
+   "position": 4.1,
+   "ctr_pct": 8.4,
+   "theme": "movie_anime",
+   "potential": 91,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "大阪オジョーギャング メンバー",
    "imp": 1356,
    "clicks": 181,
@@ -1760,7 +1780,7 @@
   },
   {
    "query": "オジョ ギャング メンバー",
-   "imp": 624,
+   "imp": 626,
    "clicks": 35,
    "position": 4.9,
    "ctr_pct": 5.6,
@@ -1796,16 +1816,6 @@
    "ctr_pct": 2.4,
    "theme": "dance_show",
    "potential": 86,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "デーモンハンター キャラ",
-   "imp": 751,
-   "clicks": 65,
-   "position": 4.0,
-   "ctr_pct": 8.7,
-   "theme": "movie_anime",
-   "potential": 85,
    "lane": "C_rewrite"
   },
   {
@@ -1889,6 +1899,16 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "kpopデーモンハンターズ キャラ",
+   "imp": 976,
+   "clicks": 118,
+   "position": 4.7,
+   "ctr_pct": 12.1,
+   "theme": "movie_anime",
+   "potential": 77,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "mama投票方法",
    "imp": 482,
    "clicks": 19,
@@ -1896,16 +1916,6 @@
    "ctr_pct": 3.9,
    "theme": "awards",
    "potential": 77,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "kpopデーモンハンターズ キャラ",
-   "imp": 967,
-   "clicks": 118,
-   "position": 4.7,
-   "ctr_pct": 12.2,
-   "theme": "movie_anime",
-   "potential": 75,
    "lane": "C_rewrite"
   },
   {
@@ -2010,20 +2020,40 @@
   },
   {
    "query": "デーモンハンターズ キャラ 名前",
-   "imp": 680,
-   "clicks": 69,
+   "imp": 692,
+   "clicks": 70,
    "position": 3.6,
    "ctr_pct": 10.1,
+   "theme": "movie_anime",
+   "potential": 68,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズ 敵",
+   "imp": 380,
+   "clicks": 9,
+   "position": 5.8,
+   "ctr_pct": 2.4,
    "theme": "movie_anime",
    "potential": 67,
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズ 敵",
-   "imp": 375,
-   "clicks": 9,
-   "position": 5.8,
-   "ctr_pct": 2.4,
+   "query": "サジャボーイズ 声優",
+   "imp": 357,
+   "clicks": 4,
+   "position": 8.2,
+   "ctr_pct": 1.1,
+   "theme": "movie_anime",
+   "potential": 67,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズ キャラクター 名前",
+   "imp": 804,
+   "clicks": 95,
+   "position": 3.8,
+   "ctr_pct": 11.8,
    "theme": "movie_anime",
    "potential": 66,
    "lane": "C_rewrite"
@@ -2059,22 +2089,22 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズ キャラクター 名前",
-   "imp": 794,
-   "clicks": 95,
-   "position": 3.8,
-   "ctr_pct": 12.0,
-   "theme": "movie_anime",
-   "potential": 64,
-   "lane": "C_rewrite"
-  },
-  {
    "query": "オジョ ギャング その後",
    "imp": 362,
    "clicks": 8,
    "position": 8.8,
    "ctr_pct": 2.2,
    "theme": "dance_show",
+   "potential": 64,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズ 声優",
+   "imp": 327,
+   "clicks": 1,
+   "position": 6.4,
+   "ctr_pct": 0.3,
+   "theme": "movie_anime",
    "potential": 64,
    "lane": "C_rewrite"
   },
@@ -2129,13 +2159,13 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズ 声優",
-   "imp": 309,
-   "clicks": 1,
-   "position": 6.1,
-   "ctr_pct": 0.3,
+   "query": "ケーポップデーモンハンターズキャラ",
+   "imp": 388,
+   "clicks": 18,
+   "position": 4.8,
+   "ctr_pct": 4.6,
    "theme": "movie_anime",
-   "potential": 61,
+   "potential": 60,
    "lane": "C_rewrite"
   },
   {
@@ -2180,10 +2210,10 @@
   },
   {
    "query": "デーモンハンターズ メンバー 名前",
-   "imp": 343,
-   "clicks": 10,
+   "imp": 349,
+   "clicks": 11,
    "position": 5.6,
-   "ctr_pct": 2.9,
+   "ctr_pct": 3.2,
    "theme": "movie_anime",
    "potential": 59,
    "lane": "C_rewrite"
@@ -2235,16 +2265,6 @@
    "position": 6.3,
    "ctr_pct": 7.4,
    "theme": "kdrama",
-   "potential": 58,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "ケーポップデーモンハンターズキャラ",
-   "imp": 379,
-   "clicks": 18,
-   "position": 4.7,
-   "ctr_pct": 4.7,
-   "theme": "movie_anime",
    "potential": 58,
    "lane": "C_rewrite"
   },
@@ -2329,6 +2349,16 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "明洞 ケーポップショップ",
+   "imp": 328,
+   "clicks": 12,
+   "position": 6.6,
+   "ctr_pct": 3.7,
+   "theme": "travel",
+   "potential": 54,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "ハントリックス 声優 日本語",
    "imp": 312,
    "clicks": 8,
@@ -2349,10 +2379,10 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "明洞 ケーポップショップ",
+   "query": "明洞 kpopショップ",
    "imp": 318,
    "clicks": 12,
-   "position": 6.6,
+   "position": 6.7,
    "ctr_pct": 3.8,
    "theme": "travel",
    "potential": 52,
@@ -2369,22 +2399,12 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "明洞 kpopショップ",
-   "imp": 311,
-   "clicks": 12,
-   "position": 6.6,
-   "ctr_pct": 3.9,
+   "query": "明洞 アイドルグッズ",
+   "imp": 317,
+   "clicks": 14,
+   "position": 6.5,
+   "ctr_pct": 4.4,
    "theme": "travel",
-   "potential": 50,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "サジャボーイズ 声優 日本語",
-   "imp": 312,
-   "clicks": 13,
-   "position": 7.7,
-   "ctr_pct": 4.2,
-   "theme": "movie_anime",
    "potential": 49,
    "lane": "C_rewrite"
   },
@@ -2399,38 +2419,38 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "明洞 アイドルグッズ",
-   "imp": 309,
-   "clicks": 14,
-   "position": 6.5,
-   "ctr_pct": 4.5,
-   "theme": "travel",
+   "query": "サジャボーイズ 声優 日本語",
+   "imp": 325,
+   "clicks": 17,
+   "position": 7.6,
+   "ctr_pct": 5.2,
+   "theme": "movie_anime",
    "potential": 48,
    "lane": "C_rewrite"
   },
   {
    "query": "ケー ポップ デーモンハンターズ キャラ",
-   "imp": 702,
+   "imp": 706,
    "clicks": 94,
-   "position": 4.2,
-   "ctr_pct": 13.4,
+   "position": 4.3,
+   "ctr_pct": 13.3,
+   "theme": "movie_anime",
+   "potential": 47,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズキャラ名前",
+   "imp": 337,
+   "clicks": 21,
+   "position": 4.1,
+   "ctr_pct": 6.2,
    "theme": "movie_anime",
    "potential": 46,
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズキャラ名前",
-   "imp": 332,
-   "clicks": 21,
-   "position": 4.1,
-   "ctr_pct": 6.3,
-   "theme": "movie_anime",
-   "potential": 45,
-   "lane": "C_rewrite"
-  },
-  {
    "query": "kpopガールズ! デーモン・ハンターズ 登場人物",
-   "imp": 305,
+   "imp": 306,
    "clicks": 17,
    "position": 4.5,
    "ctr_pct": 5.6,
@@ -2460,9 +2480,19 @@
   },
   {
    "query": "デーモンハンター キャラクター",
-   "imp": 385,
+   "imp": 387,
    "clicks": 41,
    "position": 4.2,
+   "ctr_pct": 10.6,
+   "theme": "movie_anime",
+   "potential": 36,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "ケーポップデーモンハンターズ 名前",
+   "imp": 378,
+   "clicks": 40,
+   "position": 3.7,
    "ctr_pct": 10.6,
    "theme": "movie_anime",
    "potential": 36,
@@ -2489,38 +2519,28 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "ケーポップデーモンハンターズ 名前",
-   "imp": 376,
-   "clicks": 40,
-   "position": 3.7,
-   "ctr_pct": 10.6,
-   "theme": "movie_anime",
-   "potential": 35,
-   "lane": "C_rewrite"
-  },
-  {
    "query": "kpopガールズ デーモン・ハンターズ キャラ",
-   "imp": 394,
+   "imp": 397,
    "clicks": 45,
-   "position": 4.4,
-   "ctr_pct": 11.4,
+   "position": 4.5,
+   "ctr_pct": 11.3,
    "theme": "movie_anime",
    "potential": 34,
    "lane": "C_rewrite"
   },
   {
    "query": "ホンデ 24時間営業 ごはん",
-   "imp": 322,
-   "clicks": 35,
+   "imp": 331,
+   "clicks": 36,
    "position": 7.0,
    "ctr_pct": 10.9,
    "theme": "travel",
-   "potential": 29,
+   "potential": 30,
    "lane": "C_rewrite"
   },
   {
    "query": "ホンデ 24時間営業",
-   "imp": 311,
+   "imp": 312,
    "clicks": 33,
    "position": 7.5,
    "ctr_pct": 10.6,
@@ -2540,17 +2560,17 @@
   },
   {
    "query": "kpopガールズ デーモン・ハンターズ 名前",
-   "imp": 325,
+   "imp": 328,
    "clicks": 40,
-   "position": 3.9,
-   "ctr_pct": 12.3,
+   "position": 4.0,
+   "ctr_pct": 12.2,
    "theme": "movie_anime",
-   "potential": 25,
+   "potential": 26,
    "lane": "C_rewrite"
   },
   {
    "query": "ケーポップデーモンハンターズ キャラクター",
-   "imp": 311,
+   "imp": 312,
    "clicks": 38,
    "position": 3.9,
    "ctr_pct": 12.2,
@@ -2560,18 +2580,18 @@
   },
   {
    "query": "kpopガールズ デーモンハンターズ キャラクター",
-   "imp": 546,
+   "imp": 550,
    "clicks": 88,
    "position": 5.2,
-   "ctr_pct": 16.1,
+   "ctr_pct": 16.0,
    "theme": "movie_anime",
-   "potential": 21,
+   "potential": 22,
    "lane": "C_rewrite"
   },
   {
    "query": "riehatatokyo メンバー",
-   "imp": 319,
-   "clicks": 43,
+   "imp": 326,
+   "clicks": 44,
    "position": 5.3,
    "ctr_pct": 13.5,
    "theme": "dance_show",
@@ -2580,12 +2600,12 @@
   },
   {
    "query": "kpop demon hunters キャラクター",
-   "imp": 992,
+   "imp": 996,
    "clicks": 180,
    "position": 4.1,
    "ctr_pct": 18.1,
    "theme": "movie_anime",
-   "potential": 18,
+   "potential": 19,
    "lane": "C_rewrite"
   },
   {
@@ -2600,29 +2620,29 @@
   },
   {
    "query": "デーモンハンターズ 登場人物",
-   "imp": 835,
+   "imp": 848,
    "clicks": 160,
    "position": 4.9,
-   "ctr_pct": 19.2,
+   "ctr_pct": 18.9,
    "theme": "movie_anime",
-   "potential": 7,
+   "potential": 10,
    "lane": "C_rewrite"
   },
   {
    "query": "kpopガールズ デーモン・ハンターズ キャラクター",
-   "imp": 1945,
+   "imp": 1952,
    "clicks": 400,
    "position": 4.1,
-   "ctr_pct": 20.6,
+   "ctr_pct": 20.5,
    "theme": "movie_anime",
-   "potential": -11,
+   "potential": -10,
    "lane": "C_rewrite"
   },
   {
    "query": "韓国アイドル スキンケア",
-   "imp": 448,
+   "imp": 449,
    "clicks": 101,
-   "position": 5.4,
+   "position": 5.5,
    "ctr_pct": 22.5,
    "theme": "beauty",
    "potential": -11,
