@@ -697,8 +697,12 @@ def unified_publish(
             pass
 
     # 9. GSC Indexing（失敗時リトライ）
+    # 2026-07-01 fix: auto_draft 化された記事（品質ゲート不合格 / cluster_dup /
+    # source_text_short 等）は本番で 404 を返すため、GSC への index 申請は
+    # status='publish' の場合のみ行う。draft の URL を申請すると Googlebot が
+    # クロールして 404 を量産する（シンガポール等の DC 経由クロールで顕在化）。
     _gsc_ok = False
-    if post_url:
+    if post_url and _post_status == 'publish':
         try:
             _gsc_ok = _gsc_notify(post_url)
         except Exception:
