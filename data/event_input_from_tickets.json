@@ -132,16 +132,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "AND2BLE",
-   "title": "AND2BLE",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668727",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-01",
-   "venue": "Kアリーナ横浜",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "FNC",
    "title": "FNC BAND KINGDOM 2026",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667975",
@@ -198,6 +188,26 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-07-18",
    "venue": "GLION ARENA KOBE",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KANG",
+   "title": "KANG HA NEUL",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667424",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-25",
+   "venue": "KT Zepp Yokohama",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JAEJOONG",
+   "title": "JAEJOONG",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-07-05",
+   "venue": "新潟県民会館 大ホール",
    "_source_id": "ltike"
   }
  ]

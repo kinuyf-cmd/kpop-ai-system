@@ -861,6 +861,34 @@ body { color: #2B2B32; }
     max-width: 100%;
 }
 
+/* ==========================================================================
+   サイドバー下落ちの根治(2026-07-02)
+   真因: AdSense auto-ads が .site-content の直下に <div.google-auto-placed>
+   (や ins.adsbygoogle)を JS で動的注入し、content-area(70%)と
+   widget-area.sidebar(30%)の "間" に flex 子として割り込む。
+   flex-wrap:wrap のため 70% + 広告 + 30% が1行に収まらず折り返し、
+   サイドバーがページ最下部へ落ちていた(本番実測: between=[google-auto-placed])。
+   対策: hero / cat-section と同じ「想定外の直下子は独立全幅行」方針に、
+   広告など未列挙の直下子も含める + order で本文/サイドバー行の並びを固定。
+   content-area/sidebar には既存の flex 幅指定(70/30)がそのまま効く。
+   モバイル(<769px)は既存 display:block 縦積みが優先され影響なし。
+   ========================================================================== */
+@media (min-width: 769px) {
+    /* 想定外の直下子(AdSense 動的挿入など)は独立行・全幅で末尾へ逃がす */
+    .site-content > .google-auto-placed,
+    .site-content > ins.adsbygoogle,
+    .site-content > *:not(.content-area):not(.widget-area):not(.kpop-hero):not(.kpop-cat-section) {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        order: 5;
+    }
+    /* 本文(70%)+サイドバー(30%)を hero 直下・同一行に固定 */
+    .site-content > .kpop-hero { order: 0; }
+    .site-content > .content-area { order: 1; }
+    .site-content > .widget-area.sidebar { order: 2; }
+    .site-content > .kpop-cat-section { order: 6; }
+}
+
 /* 内側コンテナ: 1200px 中央寄せ。GP の .grid-container と幅を揃える */
 .kpop-cat-block {
     max-width: 1200px;

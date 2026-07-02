@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<title>KPOP JOURNAL 運用ダッシュボード</title>
+<style>
+ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f5f6f8;color:#222;margin:0;padding:24px}
+ h1{font-size:20px} h2{font-size:15px;border-left:4px solid #e91e8c;padding-left:8px;margin-top:28px}
+ .cards{display:flex;gap:12px;flex-wrap:wrap}
+ .card{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08);min-width:150px}
+ .num{font-size:26px;font-weight:700} .lbl{font-size:11px;color:#888}
+ table{border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);font-size:12px}
+ th,td{padding:6px 10px;border-bottom:1px solid #eee;text-align:left} th{background:#fafafa;font-size:11px;color:#666}
+ .ok{color:#2e7d32} .warn{color:#e6a23c;font-weight:600} .fail{color:#d32f2f;font-weight:700}
+ .bar{display:flex;height:18px;border-radius:4px;overflow:hidden;min-width:200px}
+ .seg{height:100%} .legend span{font-size:11px;margin-right:12px}
+ .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px}
+ .spark{display:flex;align-items:flex-end;gap:2px;height:48px}
+ .spark div{width:14px;background:#e91e8c;border-radius:2px 2px 0 0}
+ .muted{color:#999;font-size:11px}
+</style></head><body>
+<h1>🎤 KPOP JOURNAL 運用ダッシュボード <span class="muted">生成 2026-07-02 14:14</span></h1>
+<div class="cards">
+<div class="card"><div class="num ok">0</div><div class="lbl">アクティブ異常(最終チェック 2026-07-02T14:13)</div></div>
+<div class="card"><div class="num">550</div><div class="lbl">GSC 7d clicks</div></div>
+<div class="card"><div class="num">25</div><div class="lbl">昨日の公開数</div></div>
+<div class="card"><div class="num ok">16%</div><div class="lbl">DALL-Eサムネ率(昨日)</div></div>
+<div class="card"><div class="num">0</div><div class="lbl">メタ未設定(直近3日)</div></div>
+</div>
+<h2>GSC 7d clicks 推移(日次ヘルスチェック蓄積)</h2><div class='spark'>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+<div style="height:48px" title="2026-07-02: 550clk"></div>
+</div>
+<h2>直近7日の公開 × サムネsource</h2>
+<div class="legend"><span><i class="dot" style="background:#4caf7d"></i>og</span><span><i class="dot" style="background:#4a90d9"></i>artist</span><span><i class="dot" style="background:#e6a23c"></i>dalle</span><span><i class="dot" style="background:#999"></i>other</span><span><i class="dot" style="background:#d66"></i>no_thumb</span></div>
+<table><tr><th>日付</th><th>公開数</th><th>内訳</th></tr>
+<tr><td>2026-06-25</td><td>35</td><td><div class='bar'><div class="seg" style="width:63%;background:#4caf7d" title="og:22"></div><div class="seg" style="width:23%;background:#e6a23c" title="dalle:8"></div><div class="seg" style="width:14%;background:#4a90d9" title="artist:5"></div></div></td></tr>
+<tr><td>2026-06-26</td><td>29</td><td><div class='bar'><div class="seg" style="width:14%;background:#e6a23c" title="dalle:4"></div><div class="seg" style="width:79%;background:#4caf7d" title="og:23"></div><div class="seg" style="width:7%;background:#4a90d9" title="artist:2"></div></div></td></tr>
+<tr><td>2026-06-27</td><td>11</td><td><div class='bar'><div class="seg" style="width:55%;background:#4caf7d" title="og:6"></div><div class="seg" style="width:27%;background:#4a90d9" title="artist:3"></div><div class="seg" style="width:18%;background:#e6a23c" title="dalle:2"></div></div></td></tr>
+<tr><td>2026-06-28</td><td>21</td><td><div class='bar'><div class="seg" style="width:24%;background:#4a90d9" title="artist:5"></div><div class="seg" style="width:38%;background:#e6a23c" title="dalle:8"></div><div class="seg" style="width:38%;background:#4caf7d" title="og:8"></div></div></td></tr>
+<tr><td>2026-06-29</td><td>31</td><td><div class='bar'><div class="seg" style="width:32%;background:#e6a23c" title="dalle:10"></div><div class="seg" style="width:55%;background:#4caf7d" title="og:17"></div><div class="seg" style="width:13%;background:#4a90d9" title="artist:4"></div></div></td></tr>
+<tr><td>2026-06-30</td><td>25</td><td><div class='bar'><div class="seg" style="width:20%;background:#4a90d9" title="artist:5"></div><div class="seg" style="width:32%;background:#e6a23c" title="dalle:8"></div><div class="seg" style="width:48%;background:#4caf7d" title="og:12"></div></div></td></tr>
+<tr><td>2026-07-01</td><td>25</td><td><div class='bar'><div class="seg" style="width:16%;background:#4a90d9" title="artist:4"></div><div class="seg" style="width:68%;background:#4caf7d" title="og:17"></div><div class="seg" style="width:16%;background:#e6a23c" title="dalle:4"></div></div></td></tr>
+<tr><td>2026-07-02</td><td>21</td><td><div class='bar'><div class="seg" style="width:71%;background:#4caf7d" title="og:15"></div><div class="seg" style="width:19%;background:#4a90d9" title="artist:4"></div><div class="seg" style="width:10%;background:#e6a23c" title="dalle:2"></div></div></td></tr>
+</table>
+<h2>週次 勝ち記事 <span class='muted'>2026-07-02T14:12</span></h2>
+<table><tr><th></th><th>ページ</th><th>7d clicks</th><th>前週</th><th>pos</th></tr>
+<tr><td>🏆</td><td>/kpop-demon-hunters-cast-characters/</td><td>107</td><td>54</td><td>7</td></tr>
+<tr><td>🏆</td><td>/kpop-demon-hunters-movie-review/</td><td>114</td><td>65</td><td>7.6</td></tr>
+<tr><td>🏆</td><td>/</td><td>52</td><td>14</td><td>3.5</td></tr>
+<tr><td>🏆</td><td>/tettsui-kyoshi-dub-episodes/</td><td>29</td><td>6</td><td>9.7</td></tr>
+<tr><td>🏆</td><td>/ateez-bad-saiaku-problem/</td><td>21</td><td>0</td><td>6.2</td></tr>
+<tr><td>🏆</td><td>/netflix-renai-jikkenshitsu-guide/</td><td>14</td><td>0</td><td>5.3</td></tr>
+<tr><td>🏆</td><td>/bts-relationship-map-2026/</td><td>9</td><td>0</td><td>7.2</td></tr>
+<tr><td>🏆</td><td>/seventeen-v8-free-listening-event/</td><td>8</td><td>0</td><td>8.2</td></tr>
+<tr><td>📉</td><td>/monsta-x-jooheon-renai-jikken-shitsu/</td><td class='warn'>0</td><td>7</td><td></td></tr>
+<tr><td>📉</td><td>/twice-sana-underwear-costume-reaction/</td><td class='warn'>0</td><td>6</td><td></td></tr>
+</table>
+<h2>Lane C 候補キュー(押し上げ余地)</h2>
+<table><tr><th>imp</th><th>pos</th><th>クエリ</th><th>ページ</th></tr>
+<tr><td>580</td><td>10.5</td><td>鉄槌教師 吹き替え 声優</td><td>/tettsui-kyoshi-dub-episodes/</td></tr>
+<tr><td>319</td><td>8.0</td><td>サジャボーイズ 声優</td><td>/kpop-demon-hunters-movie-review/</td></tr>
+<tr><td>304</td><td>10.3</td><td>鉄槌教師 声優</td><td>/tettsui-kyoshi-dub-episodes/</td></tr>
+<tr><td>261</td><td>10.2</td><td>デーモンハンターズ キャラクター</td><td>/kpop-demon-hunters-cast-characters/</td></tr>
+</table>
+<h2>ヘルスチェック明細(最新)</h2><table><tr><th>状態</th><th>項目</th></tr>
+<tr><td class='ok'>PASS</td><td>速報パイプライン: 0.5h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>統一公開ログ: 0.5h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>Soompiチャート更新cron(自パイプライン死活): 66.7h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>Soompiチャート成果物(上流長期停止検知): 246.7h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>SEO機会スキャナ(週次): 80.0h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>X自動投稿: 5.9h前に更新</td></tr>
+<tr><td class='ok'>PASS</td><td>DALL-E採用率 16% (4/25)</td></tr>
+<tr><td class='ok'>PASS</td><td>昨日(2026-07-01)公開25件: og=17 本人=4 dalle=4 他=0 / GateWARN=25件</td></tr>
+<tr><td class='warn'>WARN</td><td>必須config欠落: concrete_vs_abstract.json (記事分類(サムネ精度に影響))</td></tr>
+<tr><td class='warn'>WARN</td><td>必須config欠落: article_themes.json (テーマ別サムネ設定)</td></tr>
+<tr><td class='warn'>WARN</td><td>必須config欠落: official_accounts.json (YouTube本人写真ソース)</td></tr>
+<tr><td class='ok'>PASS</td><td>直近3日公開のメタdesc未設定: 0件</td></tr>
+<tr><td class='ok'>PASS</td><td>GSC 7d clicks: 550 (前週比+76%)</td></tr>
+</table></body></html>

@@ -1,0 +1,9 @@
+{
+  "_comment": "daily_health_check.py の既知問題ACKリスト。ここに載せたkeyのWARNはDiscord通知から除外される(ログには残る)。問題を解決したらkeyを削除すること。",
+  "_acked_reasons": {
+    "cfg_concrete": "config欠落はowner判断待ち(memory: thumbnail-dalle-overuse-rootcause-cache-fix, 2026-07-02記録済)",
+    "cfg_themes": "同上",
+    "cfg_youtube": "同上(YOUTUBE_API_KEY未設定のため復元しても効果なし)"
+  },
+  "ack": ["cfg_concrete", "cfg_themes", "cfg_youtube"]
+}
