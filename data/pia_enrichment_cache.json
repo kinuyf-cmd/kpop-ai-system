@@ -376,12 +376,12 @@
     "image": "https://image.pia.jp/images/202606/202606120049_ex.png",
     "performances": [
       {
-        "date": "2026-07-01",
-        "venue": "Kアリーナ横浜",
-        "prefecture": "神奈川県"
+        "date": "2026-07-11",
+        "venue": "GLION ARENA KOBE",
+        "prefecture": "兵庫県"
       }
     ],
-    "cached_at": "2026-06-26T04:02:05.369325"
+    "cached_at": "2026-07-03T04:02:11.152966"
   },
   "b2667975": {
     "event_bundle_cd": "b2667975",
@@ -395,7 +395,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-06-26T04:02:06.722172"
+    "cached_at": "2026-07-03T04:02:12.673551"
   },
   "b2667352": {
     "event_bundle_cd": "b2667352",
@@ -409,7 +409,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-06-26T04:02:08.057395"
+    "cached_at": "2026-07-03T04:02:13.750279"
   },
   "b2668787": {
     "event_bundle_cd": "b2668787",
@@ -460,5 +460,19 @@
     "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
     "performances": [],
     "cached_at": "2026-07-02T04:02:16.726419"
+  },
+  "b2669471": {
+    "event_bundle_cd": "b2669471",
+    "title": "ソ・イングク",
+    "description": "ソ・イングク(ＳＧＣ　ＨＡＬＬ　ＡＲＩＡＫＥ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-07-09",
+        "venue": "SGC HALL ARIAKE",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-07-03T04:02:09.793135"
   }
 }
