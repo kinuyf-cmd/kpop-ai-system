@@ -1,0 +1,228 @@
+{
+  "_comment": "Official social media accounts for K-POP artists (YouTube MV sources for thumbnail resolver)",
+  "bts": {
+    "channel_name": "BTS (BANGTANTV)",
+    "youtube_channel_id": "UCLkAepWjdylmXSltofFvsYQ",
+    "youtube_video_ids": [
+      "XsX3ATc3FbA",
+      "7C2z4GqqS5E",
+      "WMweEpGlu_U",
+      "gdZLi9oWNZg",
+      "pBuZEGYXA6E",
+      "xEeFrLSkMm8",
+      "hmE9f-TEutc",
+      "i23NEQEFpgQ"
+    ],
+    "instagram": "bts.bighitofficial",
+    "channel_id": "UCLkAepWjdylmXSltofFvsYQ"
+  },
+  "blackpink": {
+    "channel_name": "BLACKPINK",
+    "youtube_channel_id": "UCOmHUn--16B90oW2L6FRR3A",
+    "youtube_video_ids": [
+      "ioNng23DkIM",
+      "Dxxvo0DGRMo",
+      "pSUydWEqKwE"
+    ],
+    "instagram": "blackpinkofficial",
+    "channel_id": "UCOmHUn--16B90oW2L6FRR3A"
+  },
+  "aespa": {
+    "channel_name": "aespa",
+    "youtube_channel_id": "UCk70PIv3ByxqsZZJFEfFaHQ",
+    "youtube_video_ids": [
+      "WPdWvnAAurg",
+      "OS8taasZl8k"
+    ],
+    "instagram": "aespa_official",
+    "channel_id": "UC9GtSLeksfK4yuJ_g1lgQbg"
+  },
+  "seventeen": {
+    "channel_name": "SEVENTEEN",
+    "youtube_channel_id": "UCy1TJ2M0aNCDfMrVNfLkbJA",
+    "youtube_video_ids": [
+      "9RUeTYIKBEM",
+      "FUkNJsqv78E"
+    ],
+    "instagram": "saythename_17",
+    "channel_id": "UCfkXDY7vwkcJ8ddFGz8KusA"
+  },
+  "riize": {
+    "channel_name": "RIIZE",
+    "youtube_channel_id": "UC4pLrO9fNB18nnJvYfSJCAg",
+    "youtube_video_ids": [
+      "Y4mH7kEsBZw"
+    ],
+    "instagram": "riaborosse",
+    "channel_id": "UCdVD0MsYecQaIE5Ru-pOIQQ"
+  },
+  "newjeans": {
+    "channel_name": "NewJeans",
+    "youtube_channel_id": "UC_TMXhayGvFj0BIqrrxyj-A",
+    "youtube_video_ids": [
+      "js1CtxSY38I",
+      "sVTy_wmn5SU"
+    ],
+    "instagram": "newjeans_official",
+    "channel_id": "UCMki_UkHb4qSc0qyEcOHHJw"
+  },
+  "ive": {
+    "channel_name": "IVE",
+    "youtube_channel_id": "UCE7BGeCAJPm3YFzU0PbNZcg",
+    "youtube_video_ids": [
+      "F0B7HDiY-10",
+      "6ZUIwj3FgUY"
+    ],
+    "instagram": "ivestarship",
+    "channel_id": "UC-Fnix71vRP64WXeo0ikd0Q"
+  },
+  "le_sserafim": {
+    "channel_name": "LE SSERAFIM",
+    "youtube_channel_id": "UCAKaXjr2ADHJlD0VL5Lw2dQ",
+    "youtube_video_ids": [
+      "pyf8cbqyfPs",
+      "dZs_cLHfnNA"
+    ],
+    "instagram": "le_sserafim",
+    "channel_id": "UCs-QBT4qkj_YiQw1ZntDO3g"
+  },
+  "stray_kids": {
+    "channel_name": "Stray Kids",
+    "youtube_channel_id": "UC0pPRWjGGsUmXugRKwdCfDg",
+    "youtube_video_ids": [
+      "EaswWiwKVs8",
+      "LYJDf9oPQ-0"
+    ],
+    "instagram": "realstraykids",
+    "channel_id": "UC9rMiEjNaCSsebs31MRDCRA"
+  },
+  "twice": {
+    "channel_name": "TWICE - Topic",
+    "youtube_channel_id": "UCzgxx_DM2Dcb9Y1spb9mUJA",
+    "youtube_video_ids": [
+      "kOHB85vDuow",
+      "mH0_XpSHkZo"
+    ],
+    "instagram": "twicetagram",
+    "channel_id": "UCAq0pFGa2w9SjxOq0ZxKVIw"
+  },
+  "bigbang": {
+    "channel_name": "BIGBANG",
+    "youtube_channel_id": "UCh7eJ2Yv0JjceHeyGBZrJnA",
+    "youtube_video_ids": [
+      "2ips2mM7Zqw",
+      "iIPH8LFYFRk"
+    ],
+    "instagram": "",
+    "channel_id": "UCI5OIwx9z32Zurb8t4Umzwg"
+  },
+  "enhypen": {
+    "channel_name": "ENHYPEN",
+    "youtube_channel_id": "UCx3ygIAME-3mPxPHp54VGwA",
+    "youtube_video_ids": [
+      "p1bjnyDqIX8"
+    ],
+    "instagram": "enhypen",
+    "channel_id": "UCArLZtok93cO5R9RI4_Y5Jw"
+  },
+  "txt": {
+    "channel_id": "UCtiObj3CsEAdNU6ZPWDsddQ",
+    "channel_name": "TOMORROW X TOGETHER OFFICIAL"
+  },
+  "illit": {
+    "channel_id": "UCEpFoWeCMCo5z3EvWaz6hQQ",
+    "channel_name": "ILLIT"
+  },
+  "babymonster": {
+    "channel_id": "UCqwUnggBBct-AY2lAdI88jQ",
+    "channel_name": "BABYMONSTER"
+  },
+  "boynextdoor": {
+    "channel_id": "UChhKBlh_wvspTh5n4mL0b5g",
+    "channel_name": "BOYNEXTDOOR"
+  },
+  "zerobaseone": {
+    "channel_id": "UCSAp0Yl9S0Zq5uDqE6im_XQ",
+    "channel_name": "ZEROBASEONE"
+  },
+  "nct_wish": {
+    "channel_id": "UCiZqWVAeChfqlom5ZPR3ZJA",
+    "channel_name": "NCT WISH"
+  },
+  "red_velvet": {
+    "channel_id": "UCk9GmdlDTBfgGRb7vXeRMoQ",
+    "channel_name": "Red Velvet"
+  },
+  "exo": {
+    "channel_id": "UCzCedBCSSltI1TFd3bKyN6g",
+    "channel_name": "EXO"
+  },
+  "tws": {
+    "channel_id": "UC8C6QOPDVYwmuaSBZksefdg",
+    "channel_name": "TWS"
+  },
+  "fromis_9": {
+    "channel_id": "UCXbRURMKT3H_w8dT-DWLIxA",
+    "channel_name": "fromis_9"
+  },
+  "kep1er": {
+    "channel_id": "UC8whlOg70m2Yr3qSMjUhh0g",
+    "channel_name": "Kep1er"
+  },
+  "xg": {
+    "channel_id": "UC12HMtO5MYph9dCZZ7yygng",
+    "channel_name": "XG"
+  },
+  "kiss_of_life": {
+    "channel_id": "UCvEEeBssb4XxIfWWIB8IjMw",
+    "channel_name": "KISS OF LIFE"
+  },
+  "nmixx": {
+    "channel_id": "UCnUAyD4t2LkvW68YrDh7fDg",
+    "channel_name": "NMIXX"
+  },
+  "g_i_dle": {
+    "channel_id": "UCritGVo7pLJLUS8wEu32vow"
+  },
+  "v": {
+    "channel_name": "V (BTS) via HYBE LABELS",
+    "channel_id": "",
+    "youtube_video_ids": [
+      "eI0iTRS0Ha8",
+      "62peQdQv4uo"
+    ],
+    "note": "ソロMV。channel_idは設定しない（API検索で誤チャンネルを取得するリスク回避）"
+  },
+  "itzy": {
+    "channel_id": "UCDhM2k2Cua-JdobAh5moMFg"
+  },
+  "hearts2hearts": {
+    "channel_id": "UC7Q3HUnJA3nvjZR2JeMn2Cw"
+  },
+  "treasure": {
+    "channel_name": "TREASURE (트레저)",
+    "youtube_channel_id": "UCpglvCYfpAwa45A_nnuDDdg",
+    "instagram": "treasuremembers",
+    "_note": "2026-05-10 added — Wikimedia fallback alone matched \"treasure\" 英単語=dragon art"
+  },
+  "hyolyn": {
+    "channel_name": "HYOLYN 효린",
+    "youtube_channel_id": "UCNJofNT5w33_mycys970x8g",
+    "instagram": "xhyolynx",
+    "channel_id": "UCNJofNT5w33_mycys970x8g",
+    "_verified_at": "2026-05-15 WebSearch + YouTube Music"
+  },
+  "aiki": {
+    "channel_name": "아이키 AIKI",
+    "youtube_channel_id": "UC2jHhn8GMouSKUiauOsiR3w",
+    "instagram": "aiki___ki",
+    "channel_id": "UC2jHhn8GMouSKUiauOsiR3w",
+    "_verified_at": "2026-05-15 WebSearch + YouTube Music"
+  },
+  "see-ya": {
+    "channel_name": "SEEYA 씨야 (2026 再結成、self-managed)",
+    "youtube_channel_id": null,
+    "_no_dedicated_channel": "2026 再結成 MV は 1theK channel (UCmaSJBQuO2-XF0XjGtVwTOg) 経由配信。SeeYa 専用の official YT channel は存在しない。resolver は artist_cache / DALL-E に降りる動作で問題なし。",
+    "channel_id": null
+  }
+}
