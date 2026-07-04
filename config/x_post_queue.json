@@ -1,7 +1,133 @@
 {
-  "updated": "2026-07-04 11:43",
-  "count": 45,
+  "updated": "2026-07-04 21:17",
+  "count": 43,
   "queue": [
+    {
+      "title": "TXTポップアップストア「アイスクリーム屋さん」オープン",
+      "url": "https://www.kpopjournal.tokyo/?p=11118",
+      "post_id": 11118,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-07-04T15:39:27.287628"
+    },
+    {
+      "title": "IVE「ForEVER IVE」始動、夏休み特別体験",
+      "url": "https://www.kpopjournal.tokyo/ive-forever-ive-summer-experience/",
+      "post_id": 11107,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-07-04T15:35:40.841890"
+    },
+    {
+      "title": "BLACKPINKのジェニー、コペンハーゲン旅行をシェア",
+      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-copenhagen-trip/",
+      "post_id": 11099,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-07-04T13:32:57.606713"
+    },
+    {
+      "title": "IVEのウォニョンがバルドヘアで話題に",
+      "url": "https://www.kpopjournal.tokyo/ive-wonyoung-bald-hair/",
+      "post_id": 11095,
+      "genre": "breaking",
+      "artist": "IVE",
+      "priority": "high",
+      "queued_at": "2026-07-04T13:31:55.101290"
+    },
+    {
+      "title": "ILLIT「NOT CUTE ANYMORE」急上昇、カデガーデンも再上昇",
+      "url": "https://www.kpopjournal.tokyo/illit-not-cute-anymore-kadegarden/",
+      "post_id": 11086,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-07-04T11:41:30.028464"
+    },
+    {
+      "title": "イ・ジュスン、『ディレクターズアリーナ』優勝で1億獲得",
+      "url": "https://www.kpopjournal.tokyo/lee-jusung-directors-arena-win-100-million/",
+      "post_id": 11081,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-04T11:39:14.596414"
+    },
+    {
+      "title": "IVE、日テレ「THE MUSIC DAY 2026」出演決定",
+      "url": "https://www.kpopjournal.tokyo/ive-the-music-day-2026/",
+      "post_id": 11077,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-07-04T11:38:04.317305"
+    },
+    {
+      "title": "イム・チャンジョン新曲「タッタッタ」リリース",
+      "url": "https://www.kpopjournal.tokyo/im-chang-jung-tatta-release/",
+      "post_id": 11069,
+      "genre": "breaking",
+      "artist": "임창정",
+      "priority": "high",
+      "queued_at": "2026-07-04T10:07:23.196805"
+    },
+    {
+      "title": "ユン・ジョンシン、600曲発表し著作権料1位",
+      "url": "https://www.kpopjournal.tokyo/yun-jung-shin-600-songs-royalties-1st/",
+      "post_id": 11064,
+      "genre": "breaking",
+      "artist": "윤종신",
+      "priority": "high",
+      "queued_at": "2026-07-04T10:05:15.540623"
+    },
+    {
+      "title": "P1Harmony、11月にトヨタアリーナで公演",
+      "url": "https://www.kpopjournal.tokyo/p1harmony-toyota-arena-concert/",
+      "post_id": 11060,
+      "genre": "breaking",
+      "artist": "피원하모니",
+      "priority": "high",
+      "queued_at": "2026-07-04T10:03:56.983715"
+    },
+    {
+      "title": "SEVENTEEN V8、グローバル高評価でハーフミリオンセラー",
+      "url": "https://www.kpopjournal.tokyo/seventeen-v8-global-high-rating-half-million-seller/",
+      "post_id": 11056,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-04T10:02:46.907578"
+    },
+    {
+      "title": "オ・ユナ 再婚と息子の就職で祝福受ける",
+      "url": "https://www.kpopjournal.tokyo/o-yuna-remarriage-son-employment/",
+      "post_id": 11052,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-04T10:01:33.756810"
+    },
+    {
+      "title": "ソ・ジソブ主演「キム部長」視聴率20%目前",
+      "url": "https://www.kpopjournal.tokyo/so-ji-sub-kim-bucho-ratings-20percent/",
+      "post_id": 11042,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-07-04T09:32:51.815766"
+    },
+    {
+      "title": "SEVENTEEN ミンギュ「뀨~のハートプレゼント」公開",
+      "url": "https://www.kpopjournal.tokyo/?p=11038",
+      "post_id": 11038,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-04T09:31:15.827756"
+    },
     {
       "title": "エヴァン、ENHYPEN脱退後のソロ転向理由",
       "url": "https://www.kpopjournal.tokyo/evan-enhypen-solo-career-reason/",
@@ -201,211 +327,67 @@
       "queued_at": "2026-07-03T07:31:32.714438"
     },
     {
-      "title": "ENHYPEN ニキが「MEN'S NON-NO」表紙に登場",
-      "url": "https://www.kpopjournal.tokyo/enhypen-niki-mens-non-no-cover/",
-      "post_id": 10870,
+      "title": "ミンヒジン、NewJeans独自活動主導疑惑浮上",
+      "url": "https://www.kpopjournal.tokyo/minhijin-newjeans-activity-controversy/",
+      "post_id": 11129,
       "genre": "breaking",
-      "artist": "ENHYPEN",
+      "artist": "뉴진스",
       "priority": "high",
-      "queued_at": "2026-07-02T19:37:19.783437"
+      "queued_at": "2026-07-04T17:35:57.363036"
     },
     {
-      "title": "BIGBANG、ワールドツアー詳細発表",
-      "url": "https://www.kpopjournal.tokyo/bigbang-world-tour-details/",
-      "post_id": 10866,
+      "title": "BABYMONSTERチキータ「完璧に密着した可愛さ",
+      "url": "https://www.kpopjournal.tokyo/?p=11133",
+      "post_id": 11133,
       "genre": "breaking",
-      "artist": "TWS",
+      "artist": "베이비몬스터",
       "priority": "high",
-      "queued_at": "2026-07-02T19:36:11.412292"
+      "queued_at": "2026-07-04T17:37:11.602263"
     },
     {
-      "title": "WJSNのダヨン、大胆スタイルでボディ披露",
-      "url": "https://www.kpopjournal.tokyo/wjsn-dayoung-bold-style-body-reveal/",
-      "post_id": 10857,
+      "title": "G-DRAGON入国審査場で歓声沸く瞬間",
+      "url": "https://www.kpopjournal.tokyo/?p=11137",
+      "post_id": 11137,
       "genre": "breaking",
-      "artist": "우주소녀",
+      "artist": "지드래곤",
       "priority": "high",
-      "queued_at": "2026-07-02T17:36:31.861482"
+      "queued_at": "2026-07-04T17:38:27.693626"
     },
     {
-      "title": "BTS V、ファンにホテル前訪問控え要請",
-      "url": "https://www.kpopjournal.tokyo/bts-v-hotel-visit-request/",
-      "post_id": 10849,
+      "title": "BTS、アルゼンチン・ラプラタ市の名誉賓客に",
+      "url": "https://www.kpopjournal.tokyo/?p=11142",
+      "post_id": 11142,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-07-02T17:33:09.921964"
+      "queued_at": "2026-07-04T17:40:06.707660"
     },
     {
-      "title": "TWICEがソウルで「THIS IS FOR」ポップアップストア開催",
-      "url": "https://www.kpopjournal.tokyo/twice-this-is-for-popup-store-seoul/",
-      "post_id": 10845,
+      "title": "チョ・ジョンソク、IUとのドラマ忘れ驚き",
+      "url": "https://www.kpopjournal.tokyo/cho-jung-seok-iu-drama-forgotten-surprise/",
+      "post_id": 11154,
       "genre": "breaking",
-      "artist": "TWICE",
+      "artist": "아이유",
       "priority": "high",
-      "queued_at": "2026-07-02T17:31:29.809346"
+      "queued_at": "2026-07-04T19:39:59.323738"
     },
     {
-      "title": "ENHYPENのニキ、ファッション誌表紙飾る",
-      "url": "https://www.kpopjournal.tokyo/enhypen-niki-fashion-magazine-cover/",
-      "post_id": 10834,
-      "genre": "breaking",
-      "artist": "엔하이픈",
-      "priority": "high",
-      "queued_at": "2026-07-02T15:38:47.558011"
-    },
-    {
-      "title": "MONSTA X、慶州でマフィアゲームを体験",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-mafia-game-experience/",
-      "post_id": 10830,
-      "genre": "breaking",
-      "artist": "몬스타엑스",
-      "priority": "high",
-      "queued_at": "2026-07-02T15:37:35.366247"
-    },
-    {
-      "title": "チョ・ミナ、「羊羹12万ウォン論争」で謝罪",
-      "url": "https://www.kpopjournal.tokyo/cho-mina-yokan-controversy-apology-2/",
-      "post_id": 10817,
-      "genre": "breaking",
-      "artist": "조민아",
-      "priority": "high",
-      "queued_at": "2026-07-02T13:42:25.207472"
-    },
-    {
-      "title": "ATEEZ、\"BAD\"リミックスでグローバルヒット継続",
-      "url": "https://www.kpopjournal.tokyo/ateez-bad-remix-global-hit/",
-      "post_id": 10813,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-07-02T13:41:11.697093"
-    },
-    {
-      "title": "SEVENTEEN V8、ユニットパワーでハーフミリオン達成",
-      "url": "https://www.kpopjournal.tokyo/seventeen-v8-unit-power-half-million/",
-      "post_id": 10809,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-07-02T13:39:53.296047"
-    },
-    {
-      "title": "aespa、7月24日に日本初ミニアルバム発売",
-      "url": "https://www.kpopjournal.tokyo/aespa-japan-first-mini-album-release/",
-      "post_id": 10799,
-      "genre": "breaking",
-      "artist": "에스파",
-      "priority": "high",
-      "queued_at": "2026-07-02T13:35:45.482915"
-    },
-    {
-      "title": "LE SSERAFIM、音楽界揺るがす「Sound Coin」音盤リリース",
-      "url": "https://www.kpopjournal.tokyo/le-sserafim-sound-coin-release/",
-      "post_id": 10780,
+      "title": "LE SSERAFIM、グル・ランダワとコラボ新曲公開",
+      "url": "https://www.kpopjournal.tokyo/le-sserafim-collab-new-song-guru-randawa/",
+      "post_id": 11159,
       "genre": "breaking",
       "artist": "르세라핌",
       "priority": "high",
-      "queued_at": "2026-07-02T11:35:49.404532"
+      "queued_at": "2026-07-04T19:42:13.620585"
     },
     {
-      "title": "SEVENTEEN ミンギュ「뀨~のハートプレゼント」公開",
-      "url": "https://www.kpopjournal.tokyo/?p=11038",
-      "post_id": 11038,
+      "title": "BABYMONSTERルカ 空港ファッションで魅力発揮",
+      "url": "https://www.kpopjournal.tokyo/?p=11163",
+      "post_id": 11163,
       "genre": "breaking",
-      "artist": "세븐틴",
+      "artist": "베이비몬스터",
       "priority": "high",
-      "queued_at": "2026-07-04T09:31:15.827756"
-    },
-    {
-      "title": "ソ・ジソブ主演「キム部長」視聴率20%目前",
-      "url": "https://www.kpopjournal.tokyo/so-ji-sub-kim-bucho-ratings-20percent/",
-      "post_id": 11042,
-      "genre": "breaking",
-      "artist": "빅뱅",
-      "priority": "high",
-      "queued_at": "2026-07-04T09:32:51.815766"
-    },
-    {
-      "title": "オ・ユナ 再婚と息子の就職で祝福受ける",
-      "url": "https://www.kpopjournal.tokyo/o-yuna-remarriage-son-employment/",
-      "post_id": 11052,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-07-04T10:01:33.756810"
-    },
-    {
-      "title": "SEVENTEEN V8、グローバル高評価でハーフミリオンセラー",
-      "url": "https://www.kpopjournal.tokyo/seventeen-v8-global-high-rating-half-million-seller/",
-      "post_id": 11056,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-07-04T10:02:46.907578"
-    },
-    {
-      "title": "P1Harmony、11月にトヨタアリーナで公演",
-      "url": "https://www.kpopjournal.tokyo/p1harmony-toyota-arena-concert/",
-      "post_id": 11060,
-      "genre": "breaking",
-      "artist": "피원하모니",
-      "priority": "high",
-      "queued_at": "2026-07-04T10:03:56.983715"
-    },
-    {
-      "title": "ユン・ジョンシン、600曲発表し著作権料1位",
-      "url": "https://www.kpopjournal.tokyo/yun-jung-shin-600-songs-royalties-1st/",
-      "post_id": 11064,
-      "genre": "breaking",
-      "artist": "윤종신",
-      "priority": "high",
-      "queued_at": "2026-07-04T10:05:15.540623"
-    },
-    {
-      "title": "イム・チャンジョン新曲「タッタッタ」リリース",
-      "url": "https://www.kpopjournal.tokyo/im-chang-jung-tatta-release/",
-      "post_id": 11069,
-      "genre": "breaking",
-      "artist": "임창정",
-      "priority": "high",
-      "queued_at": "2026-07-04T10:07:23.196805"
-    },
-    {
-      "title": "IVE、日テレ「THE MUSIC DAY 2026」出演決定",
-      "url": "https://www.kpopjournal.tokyo/ive-the-music-day-2026/",
-      "post_id": 11077,
-      "genre": "breaking",
-      "artist": "아이브",
-      "priority": "high",
-      "queued_at": "2026-07-04T11:38:04.317305"
-    },
-    {
-      "title": "イ・ジュスン、『ディレクターズアリーナ』優勝で1億獲得",
-      "url": "https://www.kpopjournal.tokyo/lee-jusung-directors-arena-win-100-million/",
-      "post_id": 11081,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-07-04T11:39:14.596414"
-    },
-    {
-      "title": "ILLIT「NOT CUTE ANYMORE」急上昇、カデガーデンも再上昇",
-      "url": "https://www.kpopjournal.tokyo/illit-not-cute-anymore-kadegarden/",
-      "post_id": 11086,
-      "genre": "breaking",
-      "artist": "아일릿",
-      "priority": "high",
-      "queued_at": "2026-07-04T11:41:30.028464"
-    },
-    {
-      "title": "XLOVE、ニューヨーク・LAでファンミ開催",
-      "url": "https://www.kpopjournal.tokyo/xlove-fanmeet-newyork-la/",
-      "post_id": 11090,
-      "genre": "breaking",
-      "artist": "엑스러브",
-      "priority": "high",
-      "queued_at": "2026-07-04T11:43:30.167377"
+      "queued_at": "2026-07-04T19:43:22.949260"
     }
   ]
 }
