@@ -411,16 +411,41 @@ def find_popup_by_source_url(source_url: str) -> tuple[int, str]:
     return 0, ""
 
 
+def build_popup_meta_desc(title: str, sig: dict) -> str:
+    """popup 記事の meta description を開催情報(kbz_info)から組み立てる。
+
+    AIOSEO は description 未設定時に post_excerpt へフォールバックするため、
+    excerpt に入れれば実レンダの meta description になる。popup 自動投稿は
+    excerpt='' 固定だったため、日次ヘルスチェックの「メタdesc未設定」WARN の
+    常連になっていた(2026-07-04 恒久対応)。
+    """
+    kbz = sig.get("kbz_info", {}) or {}
+    period = str(kbz.get("開催期間", "")).strip()
+    venue = str(kbz.get("会場", "") or kbz.get("住所", "") or kbz.get("開催エリア", "")).strip()
+    desc = title.strip().rstrip("。") + "の開催情報。"
+    if period:
+        desc += f"開催期間は{period}。"
+    if venue:
+        desc += f"会場は{venue}。"
+    desc += "期間・会場・アクセスなど詳細をまとめて紹介します。"
+    if len(desc) > 120:
+        desc = desc[:119] + "…"
+    return desc
+
+
 def insert_post(title: str, body: str, slug: str, post_type: str,
-                category_slug: str | None = None, status: str = "draft") -> int:
+                category_slug: str | None = None, status: str = "draft",
+                excerpt: str = "") -> int:
     """wp_posts に1件 INSERT してID返す。tribe_events の場合 category は使わない。
 
     status: 'publish' か 'draft'。呼び出し側が品質ゲート(popup_quality_gate)で判定する。
+    excerpt: meta description 用(AIOSEO が description 未設定時にフォールバック)。
     """
     now = now_iso()
     title_esc = esc_sql(title)
     body_esc = esc_sql(body)
     slug_esc = esc_sql(slug)
+    excerpt_esc = esc_sql(excerpt)
     status = "publish" if status == "publish" else "draft"
 
     sql = (
@@ -433,7 +458,7 @@ def insert_post(title: str, body: str, slug: str, post_type: str,
         #   一律 draft 化したが、結果 draft が滞留し popup 更新が止まった(2026-06-15 発覚)。
         # 2026-06-15: 品質ゲート(固有タイトル + 会場/期間あり)を通った記事のみ自動 publish に。
         #   ゲート不合格(薄い)は従来どおり draft 据え置きで人手確認に回す。
-        f"'', '{status}', 'closed', 'closed', '', '{slug_esc}', "
+        f"'{excerpt_esc}', '{status}', 'closed', 'closed', '', '{slug_esc}', "
         f"'', '', '{now}', '{now}', '', "
         f"0, 0, '{post_type}', 0);"
     )
@@ -985,7 +1010,8 @@ def main(signals_path: str) -> int:
             ok_pub, gate_reason = popup_quality_gate(sig, title)
             status = "publish" if ok_pub else "draft"
             print(f"  品質ゲート: {'PUBLISH' if ok_pub else 'DRAFT'} — {gate_reason}")
-            pid = insert_post(title, body, slug, post_type="post", status=status)
+            pid = insert_post(title, body, slug, post_type="post", status=status,
+                              excerpt=build_popup_meta_desc(title, sig))
             if pid and not DRY_RUN:
                 assign_category(pid, "popup")
                 # M11.5 段階9.5 + タスク#27: ACF を投入。
