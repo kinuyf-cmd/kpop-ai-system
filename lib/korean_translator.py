@@ -135,8 +135,9 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
               "7. 「~を引き寄せた」「~を集めた」など過度な韓国語直訳を避ける\n\n"
               "【出力】自然で読みやすい日本語のみ。説明・注釈・前置き・引用符は不要。本文のみ返す。\n\n"
               "【Lv2追加ルール】\n"
-              "- アーティスト名は初出時のみ「BTS (방탄소년단)」のように韓国語併記、以降は英語のみ\n"
-              "- 楽曲名: 英語=\"引用符\"、日本語=「鉤括弧」、韓国語=初出時のみ括弧併記\n"
+              "- アーティスト名は英語表記のみで書く。ハングルを出力に含めない\n"
+              "- 地名・機関名・事務所名・人名は日本語表記(漢字/カタカナ)にする。ハングルのまま残さない\n"
+              "- 楽曲名: 英語=\"引用符\"、日本語=「鉤括弧」、韓国語楽曲名はローマ字表記か公式邦題(ハングル不可)\n"
               "- 文末は連続3文以上同じ語尾を禁止 (です/ます/でした/とのことを分散)\n"
               "- 年度は半角4桁、順位は半角、序数は英数 (1st/2nd)\n"
               "- 「いかがでしょうか」「最後に」セクション禁止\n"
@@ -184,9 +185,61 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
     # translator 層で潰して呼び出し側の `if not success: continue` で skip させる。
     residue = _residue_verdict(translated)
     if residue['verdict'] == 'BLOCK':
+        # 2026-07-04: 速報skip率43%の真因対応。残存の主因は辞書未登録の固有名詞
+        # (トロット歌手/俳優/脇役名) を 4o-mini が訳し残すことなので、
+        # 「残ったハングルだけ置換して全文を返す」矯正パスを1回だけ挟む。
+        fixed = _retry_fix_residue(translated, key)
+        if fixed is not None:
+            return {'success': True, 'translated': fixed, 'cost_usd': cost,
+                    'residue_retry': True}
         return {'success': False, 'translated': translated, 'cost_usd': cost,
                 'reason': f'hangul_residue: {residue["reason"]}'}
     return {'success': True, 'translated': translated, 'cost_usd': cost}
+
+
+def _retry_fix_residue(translated: str, key: str) -> str | None:
+    """ハングル残存 BLOCK 時の矯正パス。残存部分のみ日本語表記化して全文を返させ、
+    再判定で PASS になった場合のみ矯正済みテキストを返す。失敗/依然 BLOCK は None。"""
+    user = (
+        "次の日本語記事にハングル(韓国語)が残っています。ハングル部分だけを"
+        "適切な日本語表記に置き換えてください。人名・グループ名は日本で定着した"
+        "英語表記があればそれを、なければカタカナ表記を使う。地名・番組名等も"
+        "同様。ハングル以外の部分は一字一句変えないこと。置き換え後の全文のみを"
+        "返す。説明・前置きは不要。\n\n" + translated
+    )
+    body = json.dumps({
+        'model': 'gpt-4o-mini',
+        'messages': [{'role': 'user', 'content': user}],
+        'temperature': 0.0,
+        'max_tokens': 2000,
+    }).encode()
+    req = urllib.request.Request(API, data=body, headers={
+        'Authorization': f'Bearer {key}',
+        'Content-Type': 'application/json',
+    })
+    try:
+        r = urllib.request.urlopen(req, timeout=60)
+        res = json.loads(r.read())
+        fixed = res['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        print(f"  [translation] residue retry error: {str(e)[:80]}")
+        return None
+    usage = res.get('usage', {})
+    cost = usage.get('prompt_tokens', 0) * 0.15 / 1e6 + usage.get('completion_tokens', 0) * 0.60 / 1e6
+    with open(LOG, 'a', encoding='utf-8') as f:
+        f.write(json.dumps({
+            'date': datetime.date.today().isoformat(),
+            'ts': datetime.datetime.now().isoformat(),
+            'cost_usd': cost,
+            'tokens': usage,
+            'residue_retry': True,
+        }) + '\n')
+    # 矯正の暴走ガード: 大幅な増減(±30%超)は本文改変とみなし採用しない
+    if not fixed or abs(len(fixed) - len(translated)) > max(50, int(len(translated) * 0.3)):
+        return None
+    if _residue_verdict(fixed)['verdict'] == 'BLOCK':
+        return None
+    return fixed
 
 
 def _residue_verdict(text: str) -> dict:
@@ -194,7 +247,8 @@ def _residue_verdict(text: str) -> dict:
     短い text (タイトル想定 <=100字) は1字でもBLOCK / 本文想定 (>100字) は20字以上でBLOCK。
     """
     try:
-        from lib.translation_residue_check import count_hangul, _strip_quoted_proper_nouns
+        from lib.translation_residue_check import (
+            count_hangul, _strip_quoted_proper_nouns, _strip_proper_noun_glosses)
     except Exception:
         return {'verdict': 'PASS', 'reason': ''}
     if not text:
@@ -206,7 +260,10 @@ def _residue_verdict(text: str) -> dict:
     # タイトル想定: 短文で1字でもアウト
     if len(text) <= 100 and hangul >= 1:
         return {'verdict': 'BLOCK', 'reason': f'短文(タイトル想定)にハングル{hangul}字残存'}
-    # 本文想定: 20字以上で BLOCK (gate と同基準)
+    # 本文想定: gloss形式(固有名詞+括弧併記)を除外した上で20字以上なら BLOCK
+    # (2026-07-04: skip率43%の実測で残存の大半が「양평군（ヤンピョングン）」型の
+    #  意図的併記だった。gloss は読者に読みが提供されており公開破壊でないため除外)
+    hangul = count_hangul(_strip_proper_noun_glosses(stripped))
     if hangul >= 20:
         return {'verdict': 'BLOCK', 'reason': f'本文にハングル{hangul}字残存'}
     return {'verdict': 'PASS', 'reason': ''}

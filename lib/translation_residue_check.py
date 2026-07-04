@@ -56,6 +56,28 @@ def _strip_quoted_proper_nouns(text: str) -> str:
     return re.sub(r"[「『\"'‘’“”][^」』\"'‘’“”]{1,30}[」』\"'‘’“”]", ' ', text)
 
 
+# ハングル語 + （日本語gloss）: 양평군（ヤンピョングン）/ 경기사회복지공동모금회（京畿社会福祉共同募金会）
+_HANGUL_TERM_GLOSS_RE = re.compile(
+    r'[가-힯ᄀ-ᇿ㄰-㆏][가-힯ᄀ-ᇿ㄰-㆏\s·]{0,24}\s?[（(][^（）()]{1,30}[）)]')
+# （ハングル併記）: BTS（방탄소년단）
+_PAREN_SPAN_RE = re.compile(r'[（(][^（）()]{1,30}[）)]')
+
+
+def _strip_proper_noun_glosses(text: str) -> str:
+    """本文中の意図的な固有名詞併記/glossを残存判定対象から除外する。
+
+    2026-07-04: body_translate_fail×351の実測で、BLOCK本文のハングルは
+    「양평군（ヤンピョングン）」「BTS（방탄소년단）」のような固有名詞gloss
+    だった(未翻訳文章ではない)。gloss形式は読者に読みが提供されており
+    公開破壊でないため除外。括弧に入らない生の未翻訳文は従来通り残す。
+    """
+    if not text:
+        return text
+    text = _HANGUL_TERM_GLOSS_RE.sub(' ', text)
+    return _PAREN_SPAN_RE.sub(
+        lambda m: ' ' if _HANGUL_RE.search(m.group(0)) else m.group(0), text)
+
+
 def assess_residue(title: str, body_text: str, alt_text: str = '') -> dict:
     """記事の翻訳残存ハングルを評価して verdict を返す
 
@@ -73,7 +95,9 @@ def assess_residue(title: str, body_text: str, alt_text: str = '') -> dict:
     # 2026-05-11: body_text にも適用 (チャート記事の楽曲名hangul誤検知対策)
     title_check = _strip_quoted_proper_nouns(title)
     alt_check = _strip_quoted_proper_nouns(alt_text)
-    body_check = _strip_quoted_proper_nouns(body_text)
+    # 本文のみ gloss形式(固有名詞+括弧併記)も除外 (2026-07-04 skip率43%対策)。
+    # タイトル/altは表示破壊リスクが高いため従来の厳格判定を維持。
+    body_check = _strip_proper_noun_glosses(_strip_quoted_proper_nouns(body_text))
 
     th = count_hangul(title_check)
     ah = count_hangul(alt_check)
