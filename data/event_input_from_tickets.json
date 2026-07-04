@@ -62,16 +62,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "ASH",
-   "title": "ASH ISLAND",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668245",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-03",
-   "venue": "Zepp Shinjuku",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "YANG",
    "title": "YANG YOSEOP",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668775",
@@ -108,16 +98,6 @@
    "source_media": "ぴあ",
    "start_date": "2026-08-11",
    "venue": "LaLa arena TOKYO-BAY",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "KIM",
-   "title": "KIM JUNSU",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668175",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-03",
-   "venue": "東京国際フォーラム ホールA",
    "_source_id": "pia"
   },
   {
@@ -218,6 +198,16 @@
    "source_media": "ぴあ",
    "start_date": "2026-07-11",
    "venue": "GLION ARENA KOBE",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "パク・ソンフン",
+   "title": "2026 パク・ソンフン　ファンミーティング",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668976",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-26",
+   "venue": "KT Zepp Yokohama",
    "_source_id": "pia"
   }
  ]
