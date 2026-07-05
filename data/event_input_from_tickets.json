@@ -62,16 +62,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "YANG",
-   "title": "YANG YOSEOP",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668775",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-04",
-   "venue": "豊洲PIT",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "iKON",
    "title": "iKON",
    "source_url": "https://l-tike.com/concert/mevent/?mid=341153",
@@ -209,6 +199,26 @@
    "start_date": "2026-07-26",
    "venue": "KT Zepp Yokohama",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "IVE",
+   "title": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668801",
+   "source_media": "ぴあ",
+   "start_date": "2026-07-31",
+   "venue": "Zepp Haneda",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SUPER JUNIOR",
+   "title": "2026 SUPER JUNIOR 83z  FAN-CON TOUR  [1983] IN JAPAN ライブ・ビューイング",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=785781",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-08-02",
+   "venue": "札幌シネマフロンティア",
+   "_source_id": "ltike"
   }
  ]
 }

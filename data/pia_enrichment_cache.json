@@ -423,7 +423,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-06-26T04:02:09.324004"
+    "cached_at": "2026-07-05T04:02:05.362234"
   },
   "b2668839": {
     "event_bundle_cd": "b2668839",
@@ -437,7 +437,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-06-27T04:02:17.349973"
+    "cached_at": "2026-07-05T04:02:06.429035"
   },
   "b2667424": {
     "event_bundle_cd": "b2667424",
@@ -488,5 +488,19 @@
       }
     ],
     "cached_at": "2026-07-04T04:02:05.181731"
+  },
+  "b2668801": {
+    "event_bundle_cd": "b2668801",
+    "title": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN",
+    "description": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN(Ｚｅｐｐ　Ｈａｎｅｄａ（ＴＯＫＹＯ）)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202606/202606050044_ex.png",
+    "performances": [
+      {
+        "date": "2026-07-31",
+        "venue": "Zepp Haneda",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-07-05T04:02:08.023853"
   }
 }
