@@ -741,5 +741,19 @@
         "license": "CC BY 4.0"
       }
     ]
+  },
+  "jihyo": {
+    "name": "Jihyo",
+    "files": [
+      "jihyo_3718d926.jpg"
+    ],
+    "sources": [
+      {
+        "file": "jihyo_3718d926.jpg",
+        "wikimedia_title": "File:Park Jihyo for Pearly Gates Korea 01.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/21/Park_Jihyo_for_Pearly_Gates_Korea_01.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

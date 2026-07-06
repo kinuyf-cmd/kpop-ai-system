@@ -162,16 +162,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JAEJOONG",
-   "title": "JAEJOONG",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-07-05",
-   "venue": "新潟県民会館 大ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ソ・イングク",
    "title": "ソ・イングク",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669471",
@@ -218,6 +208,16 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-08-02",
    "venue": "札幌シネマフロンティア",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JAEJOONG",
+   "title": "JAEJOONG",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-07-12",
+   "venue": "Zepp Osaka Bayside",
    "_source_id": "ltike"
   }
  ]
