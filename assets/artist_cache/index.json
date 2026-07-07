@@ -755,5 +755,33 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "hyolyn": {
+    "name": "Hyolyn",
+    "files": [
+      "hyolyn_8e7519e7.jpg"
+    ],
+    "sources": [
+      {
+        "file": "hyolyn_8e7519e7.jpg",
+        "wikimedia_title": "File:Hyolyn in 2011.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Hyolyn_in_2011.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "t_o_p": {
+    "name": "T.O.P",
+    "files": [
+      "t_o_p_c66fb8a8.jpg"
+    ],
+    "sources": [
+      {
+        "file": "t_o_p_c66fb8a8.jpg",
+        "wikimedia_title": "File:T.O.P 2012 5.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/T.O.P_2012_5.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
   }
 }

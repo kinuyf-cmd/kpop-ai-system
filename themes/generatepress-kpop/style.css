@@ -5310,6 +5310,35 @@ body .tribe-events .tribe-events-calendar-list__event .tribe-events-calendar-lis
 	.kpop-events-intro h1 { font-size: 1.4rem; }
 }
 
+/* トップ(投稿一覧ホーム)のブランドイントロ。指名検索の関連性補強用
+ * (2026-07-07)。events-intro と同じトーン・AA 準拠カラーで統一。 */
+.kpop-home-intro {
+	max-width: 1200px;
+	margin: 20px auto 8px;
+	padding: 0 20px;
+}
+.kpop-home-intro__title {
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: var(--kpop-text);
+	margin: 0 0 6px;
+	border-left: 6px solid var(--kpop-pink);
+	padding-left: 12px;
+	line-height: 1.4;
+}
+.kpop-home-intro__lead {
+	color: #495057;          /* AA on white 7.0:1 */
+	font-size: 0.95rem;
+	line-height: 1.7;
+	margin: 0;
+	padding-left: 18px;
+}
+.kpop-home-intro__lead strong { color: var(--kpop-text); }
+@media (max-width: 768px) {
+	.kpop-home-intro { margin-top: 14px; }
+	.kpop-home-intro__title { font-size: 1.3rem; }
+}
+
 /* ============================================================
    CLS 対策 (2026-05-26) — AdSense auto ads の枠スペース予約
    GSC「CLS 0.25超(モバイル)」の主犯は auto ads が JS 実行時に広告を

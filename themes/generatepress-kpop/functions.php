@@ -1212,6 +1212,36 @@ function kpop_events_archive_intro() {
 add_action( 'generate_after_header', 'kpop_events_archive_intro', 15 );
 
 /* ------------------------------------------------------------------
+ * トップページ(投稿一覧ホーム)のブランドイントロ見出し帯
+ * show_on_front=posts のため front page は投稿一覧テンプレートで H1 が
+ * 実質存在せず、指名検索(「Kジャーナル」「ケージャーナル」「K-Journal」)
+ * での関連性シグナルが弱かった。GSC 実測(2026-07-07)で当該クエリは
+ * トップが pos2-3 に留まり CTR 0.8-3%。schema の alternateName 配列は
+ * 反映済みだが、可視テキストでの指名語(特にカタカナ「ケージャーナル」)
+ * 露出がほぼ皆無だった。events archive intro と同じ generate_after_header
+ * 方式で、指名語を含む H1 + 一文の説明を出して関連性を補強する。
+ * 見出し階層: GP のサイトタイトル(.main-title)が既にトップの H1 と
+ * して機能しているため、ここは H2 で出す(H1 重複を作らない。1093 行
+ * の TEC h1 二重化対策と同じ配慮)。指名語の可視露出という目的は H2 でも
+ * 十分に達成できる。
+ * priority 12 = 速報バー(10)の直後・広告より前。front page のみ出力。
+ * ------------------------------------------------------------------ */
+function kpop_home_brand_intro() {
+	if ( ! is_front_page() || ! is_home() || ! is_main_query() ) {
+		return;
+	}
+	echo '<section class="kpop-home-intro" role="region" aria-label="サイト紹介">';
+	echo '<h2 class="kpop-home-intro__title">KPOP JOURNAL(Kジャーナル)</h2>';
+	echo '<p class="kpop-home-intro__lead">'
+		. '<strong>Kジャーナル(ケージャーナル / K-Journal)</strong>は、'
+		. 'K-POP の最新ニュース・カムバック速報・アーティスト情報・来日公演・'
+		. 'ポップアップ・推し活ガイドを毎日お届けする、日本最大級の K-POP 専門メディアです。'
+		. '</p>';
+	echo '</section>';
+}
+add_action( 'generate_after_header', 'kpop_home_brand_intro', 12 );
+
+/* ------------------------------------------------------------------
  * イベントアーカイブの meta description
  * Lighthouse SEO 監査で /events/ アーカイブに meta description が無いと
  * 検出された(SEO 82 の主因の一つ)。本サイトは AIOSEO が稼働中だが、
