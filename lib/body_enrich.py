@@ -38,6 +38,61 @@ except Exception:
 
 ENRICH_QUEUE = os.path.join(BASE_DIR, "data", "enrich_queue.json")
 ENRICH_LOG = os.path.join(BASE_DIR, "logs", "body_enrich.jsonl")
+BACKUP_DIR = os.path.join(BASE_DIR, "backups", "body_enrich")
+
+# 追記後の文字数が追記前よりこの倍率を超えて増える、または追記前を下回る場合は
+# 本文消失/異常膨張の兆候とみなし WP 更新をブロックする(wp post update stdin
+# 破壊事故の再発防止)。
+MAX_GROWTH_RATIO = 1.5
+
+
+def _backup_content(slug, pid, content):
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+    path = os.path.join(BACKUP_DIR, f"{slug}_{_now().replace(':', '')}.html")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return path
+
+
+def _size_sane(before_len, after_len):
+    if after_len < before_len:
+        return False, "shrunk"
+    if before_len > 0 and after_len > before_len * MAX_GROWTH_RATIO:
+        return False, f"growth_over_{MAX_GROWTH_RATIO}x"
+    return True, "ok"
+
+
+def _notify_discord(message):
+    try:
+        from lib.resolve_discord_webhook import resolve
+        import urllib.request
+        url = resolve("seo_insights")
+        if not url:
+            return
+        body = json.dumps({"content": message}, ensure_ascii=False).encode("utf-8")
+        req = urllib.request.Request(
+            url, data=body,
+            headers={"Content-Type": "application/json",
+                     "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)"},
+            method="POST")
+        urllib.request.urlopen(req, timeout=15)
+    except Exception as e:
+        print(f"  [enrich] discord通知失敗(続行): {e}", file=sys.stderr)
+
+
+def _verify_live_render(url, expected_h2_texts):
+    """公開後、実際に curl で本文を取得し追記した H2 が反映されているか確認する
+    (wp-ro db query/post get 出力汚染の教訓=書込み結果は必ず実レンダで確認)。"""
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)"})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            html = resp.read().decode("utf-8", errors="replace")
+        missing = [h for h in expected_h2_texts if h not in html]
+        return len(missing) == 0, missing
+    except Exception as e:
+        return False, [f"fetch_error:{e}"]
 
 # 追記する高CTR型セクションの候補(テーマ別の「不足しがちなH2」)
 ENRICH_SECTION_HINTS = {
@@ -297,11 +352,35 @@ def process_one(item, dry_run=False):
         print(f"  [enrich] DRY-OK {slug}: +{len(sections_html)}字 sections={wanted}")
         return "dry_run_ok"
 
+    # サイズ整合性チェック(本文消失/異常膨張の兆候を検知)
+    sane, size_reason = _size_sane(len(content), len(new_full))
+    if not sane:
+        _log({"slug": slug, "post_id": pid, "result": "size_block", "reason": size_reason,
+              "before_len": len(content), "after_len": len(new_full)})
+        _notify_discord(f"⚠️ body_enrich 異常検知: {slug} ({size_reason}) "
+                         f"本文更新をブロックしました。")
+        return "size_block"
+
+    # 更新前の本文をバックアップ(wp post update stdin破壊事故の再発防止)
+    backup_path = _backup_content(slug, pid, content)
+
     # WP 更新(content。slug 不変=GSC資産継承)
     resp, err = wp_request("POST", f"/posts/{pid}", {"content": new_full})
     if err or not (resp and resp.get("id")):
-        _log({"slug": slug, "post_id": pid, "result": "wp_update_fail", "error": err})
+        _log({"slug": slug, "post_id": pid, "result": "wp_update_fail", "error": err,
+              "backup": backup_path})
+        _notify_discord(f"⚠️ body_enrich WP更新失敗: {slug} ({err})")
         return "wp_update_fail"
+
+    # 公開後、実レンダで追記H2が反映されているか確認(汚染/消失の検知)
+    new_h2 = re.findall(r"<h2[^>]*>(.*?)</h2>", sections_html, re.S | re.I)
+    verified, missing = _verify_live_render(url, new_h2)
+    if not verified:
+        _log({"slug": slug, "post_id": pid, "result": "verify_fail",
+              "missing": missing, "backup": backup_path})
+        _notify_discord(f"⚠️ body_enrich 公開後検証失敗: {slug} missing={missing} "
+                         f"backup={backup_path}")
+        return "verify_fail"
 
     # Indexing 送信
     try:
@@ -312,7 +391,8 @@ def process_one(item, dry_run=False):
         pass
 
     _log({"slug": slug, "post_id": pid, "result": "updated",
-          "wanted": wanted, "added_chars": len(sections_html), "potential": item.get("potential", 0)})
+          "wanted": wanted, "added_chars": len(sections_html), "potential": item.get("potential", 0),
+          "backup": backup_path})
     print(f"  [enrich] UPDATED {slug}: +{len(sections_html)}字 sections={wanted}")
     return "updated"
 
@@ -342,6 +422,9 @@ def run(limit=3, dry_run=False):
         if dropped:
             print(f"[enrich] queueから除外(404等): {len(dropped)}件")
     print(f"[enrich] 完了: {processed}件処理")
+    if not dry_run and processed:
+        _notify_discord(f"📝 body_enrich 完了: {processed}件処理 / 成功{len(done)}件 / "
+                         f"除外{len(dropped)}件")
     return 0
 
 

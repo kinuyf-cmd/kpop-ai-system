@@ -86,6 +86,24 @@ def now_utc():
     return datetime.now(timezone.utc)
 
 
+def notify_discord(message):
+    try:
+        sys.path.insert(0, BASE_DIR)
+        from lib.resolve_discord_webhook import resolve
+        url = resolve("seo_insights")
+        if not url:
+            return
+        body = json.dumps({"content": message}, ensure_ascii=False).encode("utf-8")
+        req = urllib.request.Request(
+            url, data=body,
+            headers={"Content-Type": "application/json",
+                     "User-Agent": "Mozilla/5.0 (compatible; KpopJournalBot/1.0)"},
+            method="POST")
+        urllib.request.urlopen(req, timeout=15)
+    except Exception as e:
+        print(f"  [rewriter] discord通知失敗(続行): {e}", file=sys.stderr)
+
+
 def parse_ts(ts_str):
     if not ts_str:
         return None
@@ -496,5 +514,13 @@ if __name__ == "__main__":
         skipped = [r for r in results if r.get("skipped")]
         executed = [r for r in results if not r.get("skipped")]
         wp_ok    = [r for r in executed if r.get("wp_update_ok")]
+        wp_fail  = [r for r in executed if r.get("wp_error")]
         x_ok     = [r for r in executed if r.get("x_posted")]
-        print(f"\n完了: 実行={len(executed)} SKIP={len(skipped)} WP更新成功={len(wp_ok)} X投稿成功={len(x_ok)}")
+        summary = (f"完了: 実行={len(executed)} SKIP={len(skipped)} "
+                   f"WP更新成功={len(wp_ok)} X投稿成功={len(x_ok)}")
+        print(f"\n{summary}")
+        if executed:
+            notify_discord(f"✏️ auto_rewriter {summary}")
+        if wp_fail:
+            notify_discord(f"⚠️ auto_rewriter WP更新失敗: {len(wp_fail)}件 "
+                            f"post_id={[r['post_id'] for r in wp_fail]}")

@@ -219,6 +219,16 @@
    "start_date": "2026-07-12",
    "venue": "Zepp Osaka Bayside",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "&TEAM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-07-25",
+   "venue": "LaLa arena TOKYO-BAY",
+   "_source_id": "ltike"
   }
  ]
 }
