@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-08 19:37",
-  "count": 57,
+  "updated": "2026-07-09 21:36",
+  "count": 80,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -514,6 +514,213 @@
       "artist": "남주혁",
       "priority": "high",
       "queued_at": "2026-07-08T19:37:06.312461"
+    },
+    {
+      "title": "ATEEZとCORTISがCircleチャートでダブルクラウン獲得",
+      "url": "https://www.kpopjournal.tokyo/ateez-cortis-circle-chart-double-crown/",
+      "post_id": 11861,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-07-09T07:00:45.014840"
+    },
+    {
+      "title": "KATSEYE初長編映画「WILD HEARTS」世界公開決定",
+      "url": "https://www.kpopjournal.tokyo/?p=11865",
+      "post_id": 11865,
+      "genre": "breaking",
+      "artist": "KATSEYE",
+      "priority": "high",
+      "queued_at": "2026-07-09T07:01:55.017956"
+    },
+    {
+      "title": "NewJeansが米国で「ETA」著作権侵害訴訟",
+      "url": "https://www.kpopjournal.tokyo/newjeans-eta-copyright-lawsuit/",
+      "post_id": 11876,
+      "genre": "breaking",
+      "artist": "NewJeans",
+      "priority": "high",
+      "queued_at": "2026-07-09T07:32:55.824808"
+    },
+    {
+      "title": "イ・カンイン、アトレティコ・マドリード移籍決定",
+      "url": "https://www.kpopjournal.tokyo/lee-kang-in-atletico-madrid-transfer/",
+      "post_id": 11882,
+      "genre": "breaking",
+      "artist": "마마무",
+      "priority": "high",
+      "queued_at": "2026-07-09T07:37:18.656556"
+    },
+    {
+      "title": "性理、歌手目標はヒット曲と単独コンサート",
+      "url": "https://www.kpopjournal.tokyo/sei-ri-singer-hit-song-concert/",
+      "post_id": 11888,
+      "genre": "breaking",
+      "artist": "성리",
+      "priority": "high",
+      "queued_at": "2026-07-09T07:40:58.080605"
+    },
+    {
+      "title": "I.O.I、6月サークルチャートで4冠達成",
+      "url": "https://www.kpopjournal.tokyo/i-o-i-6gatsu-circle-chart-4kan/",
+      "post_id": 11895,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-07-09T09:38:18.126537"
+    },
+    {
+      "title": "TWICEサナ 映画デビュー作で佐藤健と共演",
+      "url": "https://www.kpopjournal.tokyo/twice-sana-movie-debut-sato-takeru/",
+      "post_id": 11902,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-07-09T11:35:42.108643"
+    },
+    {
+      "title": "SUPER JUNIOR-83z、ソロ曲収録ミニアルバム発表",
+      "url": "https://www.kpopjournal.tokyo/super-junior-83z-solo-mini-album/",
+      "post_id": 11910,
+      "genre": "breaking",
+      "artist": "슈퍼주니어",
+      "priority": "high",
+      "queued_at": "2026-07-09T11:39:26.414201"
+    },
+    {
+      "title": "MONSTA Xキヒョン、ソロアルバム「ボーダーライン」発表",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-keyhun-solo-album-borderline/",
+      "post_id": 11917,
+      "genre": "breaking",
+      "artist": "몬스타엑스",
+      "priority": "high",
+      "queued_at": "2026-07-09T13:30:59.239134"
+    },
+    {
+      "title": "RIIZE空港ビジュアル、ソヒの髪型が話題",
+      "url": "https://www.kpopjournal.tokyo/riize-airport-visual-sohi-hairstyle/",
+      "post_id": 11924,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-07-09T13:37:35.054905"
+    },
+    {
+      "title": "SEVENTEENのミンギュ、チョコ持ち「顔面攻撃",
+      "url": "https://www.kpopjournal.tokyo/seventeen-mingyu-choco-face-attack/",
+      "post_id": 11930,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-09T13:39:51.510860"
+    },
+    {
+      "title": "チョン・ヒョンム、未婚の理由はITZYか",
+      "url": "https://www.kpopjournal.tokyo/chun-hyunmu-itzy-unmarried-reason/",
+      "post_id": 11935,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-07-09T13:42:29.560457"
+    },
+    {
+      "title": "MAMAMOO SOLAR、運動で鍛えた腹筋公開",
+      "url": "https://www.kpopjournal.tokyo/mamamoo-solar-undo-kintai-abs/",
+      "post_id": 11943,
+      "genre": "breaking",
+      "artist": "마마무",
+      "priority": "high",
+      "queued_at": "2026-07-09T13:44:49.866684"
+    },
+    {
+      "title": "ジェシカ・アルバ、11歳年下とイタリアで熱愛",
+      "url": "https://www.kpopjournal.tokyo/jessica-alba-italy-love-11-years-younger/",
+      "post_id": 11952,
+      "genre": "breaking",
+      "artist": "제시",
+      "priority": "high",
+      "queued_at": "2026-07-09T17:31:53.005089"
+    },
+    {
+      "title": "WinwinのNCT退所後の活動が物議を醸す",
+      "url": "https://www.kpopjournal.tokyo/winwin-nct-taiso-katsudo-ronbun/",
+      "post_id": 11956,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-07-09T17:33:05.280004"
+    },
+    {
+      "title": "ATEEZユンホ、長期交際の彼女と別れ確認",
+      "url": "https://www.kpopjournal.tokyo/ateez-yunho-breakup-long-term-relationship/",
+      "post_id": 11960,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-07-09T17:34:19.747421"
+    },
+    {
+      "title": "IVEとAKMUが2026年上半期音源チャート1位",
+      "url": "https://www.kpopjournal.tokyo/ive-akmu-2026-chart-1st-half/",
+      "post_id": 11967,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-07-09T17:38:05.459859"
+    },
+    {
+      "title": "TWICEのモモ、東京・新宿でファッション撮影",
+      "url": "https://www.kpopjournal.tokyo/twice-momo-fashion-shoot-shinjuku/",
+      "post_id": 11974,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-07-09T19:02:32.642775"
+    },
+    {
+      "title": "SEVENTEENのジョンハン、除隊後ユニットデビュー",
+      "url": "https://www.kpopjournal.tokyo/seventeen-johnhan-unit-debut/",
+      "post_id": 11978,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-09T19:03:44.015633"
+    },
+    {
+      "title": "BTS Vのステージ行動が厳しい批判を受ける",
+      "url": "https://www.kpopjournal.tokyo/bts-v-stage-behavior-criticism/",
+      "post_id": 11983,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-09T19:31:19.401690"
+    },
+    {
+      "title": "G-DRAGON、姪誕生と権ダミの妊娠発表",
+      "url": "https://www.kpopjournal.tokyo/g-dragon-niece-birth-pregnancy-announcement/",
+      "post_id": 11987,
+      "genre": "breaking",
+      "artist": "지드래곤",
+      "priority": "high",
+      "queued_at": "2026-07-09T19:36:07.826102"
+    },
+    {
+      "title": "ヤノ・シホ、育児の悩みを率直に告白",
+      "url": "https://www.kpopjournal.tokyo/yano-shiho-ikuji-nayami-kokuhou/",
+      "post_id": 11992,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-07-09T19:38:54.906828"
+    },
+    {
+      "title": "キム・ヨンデ、入隊2ヶ月で陸軍軍楽隊合格",
+      "url": "https://www.kpopjournal.tokyo/?p=11998",
+      "post_id": 11998,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-07-09T21:31:39.499207"
     }
   ]
 }

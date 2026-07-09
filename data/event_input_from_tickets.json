@@ -2,16 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "BABYMONSTER",
-   "title": "BABYMONSTER",
-   "source_url": "https://eplus.jp/sf/detail/4069140001-P0030016P021001",
-   "source_media": "イープラス",
-   "start_date": "2026-07-08",
-   "venue": "GLION ARENA KOBE",
-   "_source_id": "eplus"
-  },
-  {
-   "type": "event",
    "artist_keyword": "aespa",
    "title": "aespa MY-J presents aespa JAPAN FANMEETING 2026 “MY CLASSMaeTE” | ticket board",
    "source_url": "https://ticket.tickebo.jp/show/event.html?info=15598",
@@ -229,6 +219,16 @@
    "start_date": "2026-07-25",
    "venue": "LaLa arena TOKYO-BAY",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "IVE",
+   "title": "岩田屋本店 天神開業90周年「THE FACT MUSIC AWARDS EXHIBITION - VISION FESTA(DIVE IN",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667709",
+   "source_media": "ぴあ",
+   "start_date": "2026-08-02",
+   "venue": "岩田屋本店 本館7階 大催事場",
+   "_source_id": "pia"
   }
  ]
 }
