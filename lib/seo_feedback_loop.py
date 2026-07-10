@@ -33,7 +33,6 @@ sys.path.insert(0, BASE_DIR)
 PROGRESS = os.path.join(BASE_DIR, "data", "page_one_progress.jsonl")
 ENRICH_LOG = os.path.join(BASE_DIR, "logs", "body_enrich.jsonl")
 REWRITE_LOG = os.path.join(BASE_DIR, "logs", "rewrite_actions.jsonl")
-ENRICH_QUEUE = os.path.join(BASE_DIR, "data", "enrich_queue.json")
 SEO_CONFIG = os.path.join(BASE_DIR, "config", "seo_config.json")
 PROPOSALS_LOG = os.path.join(BASE_DIR, "logs", "seo_config_proposals.jsonl")
 
@@ -74,16 +73,6 @@ def _recent_progress(weeks=LOOKBACK_WEEKS):
     return [r for r in rows if r.get("week", "") >= cutoff]
 
 
-def _slug_theme_map():
-    """enrich_queue.json(現行分)から slug -> theme のヒントを得る。
-    処理済みでqueueから除去済みの記事は分からないため、あくまで補助情報。"""
-    m = {}
-    for r in _load_json(ENRICH_QUEUE, default=[]):
-        if r.get("slug"):
-            m[r["slug"]] = r.get("theme", "unknown")
-    return m
-
-
 def _route_map():
     """slug/post_id -> 実行された施策("enrich"/"rewrite") のマップ。"""
     routes = {}
@@ -98,10 +87,10 @@ def _route_map():
 
 def aggregate():
     rows = _recent_progress()
-    theme_map = _slug_theme_map()
     groups = {}  # key(theme or "unknown") -> list of rows
     for r in rows:
-        theme = theme_map.get(r.get("slug", ""), "unknown")
+        # tracker が progress に theme を直接書く。slug 経由の引き直しは不要。
+        theme = r.get("theme", "unknown")
         groups.setdefault(theme, []).append(r)
     summary = {}
     for theme, rs in groups.items():
