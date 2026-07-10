@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""計測バグ由来の pending 提案を却下済みにマークする(1回限り)。
+"""計測バグ由来の pending 提案を却下済みにマークする。
 
 背景: tracker が theme を捨てていたため直近77件が 77/77 unknown になり、
       feedback_loop が「theme='unknown' は効果薄。enrich 対象から除外」を提案した。
       unknown は全件なので、これは実質「全記事を除外せよ」を意味する。却下する。
+
+progress の過去行に theme が無い間、週次 feedback_loop は同じ提案を出し続ける
+(3週後に窓から抜けて自然解消)。それまで本スクリプトを何度でも流せるよう、
+既に rejects_ts で打ち消した提案は再検出しない(冪等)。
 
 jsonl は追記専用。既存行は書き換えず、却下レコードを追記する。
 
@@ -26,22 +30,28 @@ REASON = ("計測バグ由来。tracker が theme を破棄していたため全
 
 
 def find_stale(path):
-    """theme='unknown' の pending 提案を返す。"""
+    """theme='unknown' の未却下 pending 提案を返す。
+
+    jsonl は追記専用で元行の status は書き換わらない。既に rejects_ts で
+    打ち消した提案を再検出すると、走らせるたびに却下レコードが増える。
+    """
     if not os.path.exists(path):
         return []
-    out = []
+    records = []
     with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
                 continue
             try:
-                d = json.loads(line)
+                records.append(json.loads(line))
             except ValueError:
                 continue
-            if d.get("status") == "pending_owner_review" and d.get("theme") == "unknown":
-                out.append(d)
-    return out
+    rejected_ts = {d.get("rejects_ts") for d in records if d.get("status") == "rejected"}
+    return [d for d in records
+            if d.get("status") == "pending_owner_review"
+            and d.get("theme") == "unknown"
+            and d.get("ts") not in rejected_ts]
 
 
 def main():
