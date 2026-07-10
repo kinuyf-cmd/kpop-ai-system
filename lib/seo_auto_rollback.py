@@ -32,7 +32,10 @@ BACKUP_DIR = os.path.join(BASE_DIR, "backups", "body_enrich")
 ROLLBACK_LOG = os.path.join(BASE_DIR, "logs", "seo_rollback.jsonl")
 
 ROLLBACK_WINDOW_DAYS = 7
-ROLLBACK_CLICKS_DELTA_THRESHOLD = -3  # baseline比でこれ以下悪化していたら差し戻し
+# 前週比でこれ以下悪化していたら差し戻し。値 -3 は baseline(28日累積)比の重みで
+# 決めたもので、前週比では過剰に効く。第2週以降の実 delta 分布を見て決め直すまで
+# main() が dry-run を固定する。
+ROLLBACK_CLICKS_DELTA_THRESHOLD = -3
 
 
 def _load_jsonl(path):
@@ -56,7 +59,14 @@ def _already_rolled_back(slugs_done, slug):
 
 
 def _latest_clicks_delta(progress_rows, slug):
-    matches = [r for r in progress_rows if r.get("slug") == slug]
+    """同一 slug の最新 clicks_delta。前週比定義(delta_basis='prev_week')の行のみ。
+
+    過去行の clicks_delta は baseline(28日累積) 比で、定義が異なる。
+    混ぜて判断すると閾値の意味が変わり過剰に差し戻す。
+    移行第1週は全件 delta=0 になるため rollback は構造的に発火しない(想定内)。
+    """
+    matches = [r for r in progress_rows
+               if r.get("slug") == slug and r.get("delta_basis") == "prev_week"]
     if not matches:
         return None
     matches.sort(key=lambda r: r.get("week", ""))
@@ -148,7 +158,16 @@ def run(dry_run=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--i-have-set-the-threshold-from-observed-distribution",
+                    action="store_true", dest="threshold_set",
+                    help="第2週以降の delta 分布を観測し閾値を決めた後にのみ指定")
     args = ap.parse_args()
+    if not args.threshold_set:
+        # 前週比への移行直後。閾値 -3 は baseline 比の重みで決めた値であり、
+        # 前週比では過剰に差し戻す。分布を観測するまで dry-run 固定。
+        print("[rollback] 移行期のため --dry-run 固定 "
+              "(第2週以降の分布を見て閾値を決めるまで本実行しない)", file=sys.stderr)
+        sys.exit(run(dry_run=True))
     sys.exit(run(dry_run=args.dry_run))
 
 
