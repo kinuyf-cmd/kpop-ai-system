@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-09 21:36",
-  "count": 80,
+  "updated": "2026-07-10 21:36",
+  "count": 106,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -721,6 +721,240 @@
       "artist": "NCT",
       "priority": "high",
       "queued_at": "2026-07-09T21:31:39.499207"
+    },
+    {
+      "title": "ATEEZユンホ、別れ後の「心が痛む」行動",
+      "url": "https://www.kpopjournal.tokyo/ateez-yunho-heartbreak-actions/",
+      "post_id": 12007,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-07-10T07:30:48.088012"
+    },
+    {
+      "title": "VROWN、BTS RM・Coldplayと肩並べ15日カムバック",
+      "url": "https://www.kpopjournal.tokyo/vrown-bts-rm-coldplay-comeback/",
+      "post_id": 12011,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-10T07:35:36.420963"
+    },
+    {
+      "title": "BTS JIMIN、ロンドン公演で魅了した存在感",
+      "url": "https://www.kpopjournal.tokyo/bts-jimin-london-performance/",
+      "post_id": 12018,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-07-10T07:39:05.140337"
+    },
+    {
+      "title": "SEVENTEEN、ミニアルバム11集が「ミリオン」認証獲得",
+      "url": "https://www.kpopjournal.tokyo/seventeen-mini-album-11-million-certification/",
+      "post_id": 12022,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-10T07:40:30.151687"
+    },
+    {
+      "title": "MAMAMOO WHEEIN、「The Symphony of Fxxkboys」リ",
+      "url": "https://www.kpopjournal.tokyo/mamamoo-wheein-symphony-fxxkboys/",
+      "post_id": 12027,
+      "genre": "breaking",
+      "artist": "마마무",
+      "priority": "high",
+      "queued_at": "2026-07-10T07:42:26.995601"
+    },
+    {
+      "title": "fromis_9、果汁美満載のサマーカムバック",
+      "url": "https://www.kpopjournal.tokyo/fromis9-summer-comeback-fruit-juice/",
+      "post_id": 12033,
+      "genre": "breaking",
+      "artist": "프로미스나인",
+      "priority": "high",
+      "queued_at": "2026-07-10T09:32:41.887034"
+    },
+    {
+      "title": "BABYMONSTER、神戸公演全席完売の成功",
+      "url": "https://www.kpopjournal.tokyo/babymonster-kobe-performance-sold-out/",
+      "post_id": 12039,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-07-10T09:34:55.786001"
+    },
+    {
+      "title": "ILLITが「I Got Your Back」ストリート写真公開",
+      "url": "https://www.kpopjournal.tokyo/illit-i-got-your-back-street-photo/",
+      "post_id": 12058,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:39:06.710854"
+    },
+    {
+      "title": "SEVENTEENのディノが「全国歌唱大会」でデビュー",
+      "url": "https://www.kpopjournal.tokyo/seventeen-dino-debut-zengokashokai/",
+      "post_id": 12062,
+      "genre": "breaking",
+      "artist": "SEVENTEEN",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:40:18.044436"
+    },
+    {
+      "title": "BOYNEXTDOOR、正規1集でゴールド認証獲得",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-gold-certification-1st-album/",
+      "post_id": 12066,
+      "genre": "breaking",
+      "artist": "보이넥스트도어",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:41:39.425770"
+    },
+    {
+      "title": "aespa KARINA、1日で4kg減量成功",
+      "url": "https://www.kpopjournal.tokyo/aespa-karina-4kg-genryou-success/",
+      "post_id": 12072,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:44:00.248073"
+    },
+    {
+      "title": "TWICE、6回のツアーで59地域188公演達成",
+      "url": "https://www.kpopjournal.tokyo/twice-tour-59regions-188shows/",
+      "post_id": 12076,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:45:32.969736"
+    },
+    {
+      "title": "ソン・フンミン、国会聴聞会参考人に選定",
+      "url": "https://www.kpopjournal.tokyo/son-heung-min-kokkai-choumonkai/",
+      "post_id": 12081,
+      "genre": "breaking",
+      "artist": "손흥민",
+      "priority": "high",
+      "queued_at": "2026-07-10T11:47:53.690618"
+    },
+    {
+      "title": "ジュニ「Heaven Can Wait」チャレンジに豪華共演者",
+      "url": "https://www.kpopjournal.tokyo/jun-heaven-can-wait-collaboration/",
+      "post_id": 12096,
+      "genre": "breaking",
+      "artist": "스테이씨",
+      "priority": "high",
+      "queued_at": "2026-07-10T13:36:12.056699"
+    },
+    {
+      "title": "IU・イジョンソク、公開恋愛4年で結別発表",
+      "url": "https://www.kpopjournal.tokyo/iu-lee-jong-suk-breakup-announcement/",
+      "post_id": 12100,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-10T15:30:58.943419"
+    },
+    {
+      "title": "IVEのガウル、2026 TIMA欠席決定",
+      "url": "https://www.kpopjournal.tokyo/ive-gaul-2026-tima-absence/",
+      "post_id": 12104,
+      "genre": "breaking",
+      "artist": "IVE",
+      "priority": "high",
+      "queued_at": "2026-07-10T15:32:18.869614"
+    },
+    {
+      "title": "NewJeansの曲盗作疑惑に対するADORの見解",
+      "url": "https://www.kpopjournal.tokyo/newjeans-plagiarism-ador-response/",
+      "post_id": 12108,
+      "genre": "breaking",
+      "artist": "뉴진스",
+      "priority": "high",
+      "queued_at": "2026-07-10T15:33:50.262453"
+    },
+    {
+      "title": "クリックB、11年ぶり再結集しコンサート準備",
+      "url": "https://www.kpopjournal.tokyo/clickb-reunion-concert-preparation/",
+      "post_id": 12112,
+      "genre": "breaking",
+      "artist": "클릭비",
+      "priority": "high",
+      "queued_at": "2026-07-10T15:35:52.848221"
+    },
+    {
+      "title": "NMIXXのヘウォン、新ショートヘア反響言及",
+      "url": "https://www.kpopjournal.tokyo/nmixx-hewon-short-hair-reaction/",
+      "post_id": 12124,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-07-10T17:34:13.579085"
+    },
+    {
+      "title": "BTS、「SWIM」盗作疑惑に強硬対応【公式】",
+      "url": "https://www.kpopjournal.tokyo/?p=12129",
+      "post_id": 12129,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-07-10T17:36:26.758517"
+    },
+    {
+      "title": "SM、aespaへの悪質コメント投稿者に法的措置",
+      "url": "https://www.kpopjournal.tokyo/sm-aespa-legal-action-harassment/",
+      "post_id": 12133,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-07-10T17:37:43.871705"
+    },
+    {
+      "title": "CRAVITY、100回突破の「ビティパーク」裏話",
+      "url": "https://www.kpopjournal.tokyo/cravity-bitypark-100kai-tokubetsu/",
+      "post_id": 12140,
+      "genre": "breaking",
+      "artist": "크래비티",
+      "priority": "high",
+      "queued_at": "2026-07-10T17:41:19.496591"
+    },
+    {
+      "title": "ENHYPEN、米「SDCC 2026」で監督と対談",
+      "url": "https://www.kpopjournal.tokyo/enhypen-sdcc-2026-interview/",
+      "post_id": 12144,
+      "genre": "breaking",
+      "artist": "엔하이픈",
+      "priority": "high",
+      "queued_at": "2026-07-10T17:42:32.222446"
+    },
+    {
+      "title": "ENHYPENが2026年サンディエゴ・コミコン参加",
+      "url": "https://www.kpopjournal.tokyo/enhypen-2026-comic-con-sandiego/",
+      "post_id": 12150,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-07-10T19:32:08.094830"
+    },
+    {
+      "title": "PLAVE、4thミニアルバム「Caligo Pt.2」がゴールド認定",
+      "url": "https://www.kpopjournal.tokyo/plave-caligo-pt2-gold-certification/",
+      "post_id": 12154,
+      "genre": "breaking",
+      "artist": "PLAVE",
+      "priority": "high",
+      "queued_at": "2026-07-10T19:33:18.364964"
+    },
+    {
+      "title": "NewJeans「How Sweet」盗作疑惑と分析動画公開",
+      "url": "https://www.kpopjournal.tokyo/newjeans-how-sweet-plagiarism-analysis/",
+      "post_id": 12159,
+      "genre": "breaking",
+      "artist": "뉴진스",
+      "priority": "high",
+      "queued_at": "2026-07-10T19:35:24.304836"
     }
   ]
 }
