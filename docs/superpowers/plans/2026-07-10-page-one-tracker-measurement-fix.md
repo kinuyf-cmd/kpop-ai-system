@@ -59,7 +59,7 @@ GSC の `page` 次元はフラグメント付き URL（`#kpop-h-0`）を別行�
 - Consumes: なし
 - Produces: `_slug_of(url: str) -> str` — 自サイトの記事 slug。外部ドメイン・トップページなら `""`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` を新規作成:
 
@@ -106,12 +106,12 @@ def test_slug_of_returns_empty_for_home_page():
     assert t._slug_of("https://www.kpopjournal.tokyo/") == ""
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: FAIL — `AttributeError: module 'lib.page_one_tracker' has no attribute '_slug_of'`
 
-- [ ] **Step 3: 最小実装を書く**
+- [x] **Step 3: 最小実装を書く**
 
 `lib/page_one_tracker.py` の import 群に追加:
 
@@ -138,12 +138,12 @@ def _slug_of(url):
 
 `urlsplit` はフラグメントとクエリを `path` から自動で切り離すため、明示的な除去は不要。
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 5 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -164,7 +164,7 @@ git commit -m "feat(tracker): URL から slug を逆引きする _slug_of を追
 - Consumes: なし
 - Produces: `_weighted_position(rows: list[dict]) -> float` — 各 row は `{"position": float, "impressions": int}` を持つ
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` の末尾に追加:
 
@@ -202,12 +202,12 @@ def test_weighted_position_empty_rows_returns_zero():
     assert t._weighted_position([]) == 0.0
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v -k weighted`
 Expected: FAIL — `AttributeError: ... has no attribute '_weighted_position'`
 
-- [ ] **Step 3: 最小実装を書く**
+- [x] **Step 3: 最小実装を書く**
 
 `lib/page_one_tracker.py` の `_slug_of` の直後に挿入:
 
@@ -226,12 +226,12 @@ def _weighted_position(rows):
                for r in rows) / total_imp
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 9 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -252,7 +252,7 @@ tie-break を怠ると実行ごとに slug が揺れ、rollback の突合が不�
 - Consumes: `_slug_of(url) -> str`（Task 1）
 - Produces: `_pick_slug(rows: list[dict]) -> str` — 各 row は `{"keys": [query, page_url], "impressions": int}`（GSC の query×page 応答形式）
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` の末尾に追加:
 
@@ -310,12 +310,12 @@ def test_pick_slug_returns_empty_when_no_internal_page():
     assert t._pick_slug([_row("https://soompi.com/a/1", 10)]) == ""
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v -k pick_slug`
 Expected: FAIL — `AttributeError: ... has no attribute '_pick_slug'`
 
-- [ ] **Step 3: 最小実装を書く**
+- [x] **Step 3: 最小実装を書く**
 
 `lib/page_one_tracker.py` の `_weighted_position` の直後に挿入:
 
@@ -341,12 +341,12 @@ def _pick_slug(rows):
     return sorted(agg.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 14 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -369,7 +369,7 @@ git commit -m "feat(tracker): 集約 imp 最大の slug を決定的に選ぶ _p
   - `_clicks_delta(cur_clicks: int, prev_row: dict | None) -> int`
   - `_last_progress_row(query: str, path: str = PROGRESS) -> dict | None` — progress.jsonl の同一 query 最終行。`clicks_abs` を持つ行のみ対象
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` の末尾に追加:
 
@@ -421,12 +421,12 @@ def test_last_progress_row_returns_none_when_file_missing(tmp_path):
     assert t._last_progress_row("何か", str(tmp_path / "nope.jsonl")) is None
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v -k "clicks_delta or last_progress"`
 Expected: FAIL — `AttributeError: ... has no attribute '_clicks_delta'`
 
-- [ ] **Step 3: 最小実装を書く**
+- [x] **Step 3: 最小実装を書く**
 
 `lib/page_one_tracker.py` の `_pick_slug` の直後に挿入:
 
@@ -467,12 +467,12 @@ def _clicks_delta(cur_clicks, prev_row):
     return int(cur_clicks) - int(prev_row.get("clicks_abs", 0))
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 20 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -499,7 +499,7 @@ git commit -m "feat(tracker): clicks_delta を前週比に変える _clicks_delt
 
 `_query_position` は `_rows_to_metrics` を呼ぶだけの薄い GSC ラッパになる。テストは `_rows_to_metrics` に対して行う（GSC を叩かないため）。
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` の末尾に追加:
 
@@ -578,12 +578,12 @@ def test_target_queries_theme_defaults_to_unknown_when_absent(tmp_path, monkeypa
     assert t._target_queries()["theme無し"]["theme"] == "unknown"
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v -k "rows_to_metrics or target_queries"`
 Expected: FAIL — `AttributeError: ... has no attribute '_rows_to_metrics'`
 
-- [ ] **Step 3: 実装する**
+- [x] **Step 3: 実装する**
 
 `lib/page_one_tracker.py` の `_clicks_delta` の直後に `_rows_to_metrics` を追加:
 
@@ -676,12 +676,12 @@ def _target_queries():
             }
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 25 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -714,7 +714,7 @@ progress は追記専用の計測ログ。壊れた行を書くと取り返し�
  "potential": 521}
 ```
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_page_one_tracker.py` の末尾に追加:
 
@@ -770,12 +770,12 @@ def test_build_progress_row_never_mutates_baseline_pos():
     assert BASE_META["baseline_pos"] == 8.68
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v -k build_progress_row`
 Expected: FAIL — `AttributeError: ... has no attribute '_build_progress_row'`
 
-- [ ] **Step 3: 実装する**
+- [x] **Step 3: 実装する**
 
 `lib/page_one_tracker.py` の `_rows_to_metrics` の直後に追加:
 
@@ -855,12 +855,12 @@ def main():
     sys.exit(do_baseline() if args.baseline else do_weekly(dry_run=args.dry_run))
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_page_one_tracker.py -v`
 Expected: PASS — 31 passed
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add tests/unit/test_page_one_tracker.py lib/page_one_tracker.py
@@ -881,7 +881,7 @@ git commit -m "feat(tracker): progress を新スキーマ(clicks_abs/delta_basis
 - Consumes: `lib.page_one_tracker._target_queries()`（Task 5）
 - Produces: `migrate(baseline: dict, targets: dict) -> tuple[dict, int]` — `(新 baseline, 更新件数)`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_migrate_baseline_theme.py` を新規作成:
 
@@ -946,14 +946,14 @@ def test_migrate_is_idempotent():
     assert n == 2
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_migrate_baseline_theme.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'tools.migrate_baseline_theme'`
 
 `tools/__init__.py` が無ければ `ImportError`。存在確認は Step 3 で行う。
 
-- [ ] **Step 3: 実装する**
+- [x] **Step 3: 実装する**
 
 まず `tools/` が package か確認する:
 
@@ -1031,19 +1031,19 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_migrate_baseline_theme.py -v`
 Expected: PASS — 5 passed
 
-- [ ] **Step 5: dry-run で実データの theme 分布を確認**
+- [x] **Step 5: dry-run で実データの theme 分布を確認**
 
 Run: `venv_kpi/bin/python3 tools/migrate_baseline_theme.py --dry-run`
 Expected: `theme 分布` が `unknown` 単一でなく、`movie_anime` / `dance_show` / `artist` 等に分かれること。`DRY-RUN — 書き込まない` で終わること。
 
 **この出力が `unknown` 単一なら先へ進まない。** `_target_queries()` が theme を拾えていない。
 
-- [ ] **Step 6: 本実行して baseline を更新**
+- [x] **Step 6: 本実行して baseline を更新**
 
 Run: `venv_kpi/bin/python3 tools/migrate_baseline_theme.py`
 Expected: `バックアップ: data/page_one_baseline.json.bak_...` と `theme を後付け: N クエリ`
@@ -1078,7 +1078,7 @@ Expected: `OK: baseline_pos/clicks 不変` と `theme 追加: N クエリ`
 cp "$(ls -1 data/page_one_baseline.json.bak_* | tail -1)" data/page_one_baseline.json
 ```
 
-- [ ] **Step 7: コミット**
+- [x] **Step 7: コミット**
 
 ```bash
 git add tools/migrate_baseline_theme.py tests/unit/test_migrate_baseline_theme.py tools/__init__.py data/page_one_baseline.json
@@ -1098,7 +1098,7 @@ git commit -m "feat(tracker): baseline に theme を後付けする移行スク�
 - Consumes: `do_weekly(dry_run=True)`（Task 6）
 - Produces: なし
 
-- [ ] **Step 1: 変更前の slug 空率を記録する**
+- [x] **Step 1: 変更前の slug 空率を記録する**
 
 ```bash
 python3 -c "
@@ -1112,7 +1112,7 @@ print(f'変更前 最新週 {w}: slug空 {sum(1 for r in cur if not r.get(\"slug
 
 Expected: `変更前 最新週 2026-07-10: slug空 12/16`
 
-- [ ] **Step 2: dry-run を実行する（GSC を叩くが progress へは書かない）**
+- [x] **Step 2: dry-run を実行する（GSC を叩くが progress へは書かない）**
 
 Run: `venv_kpi/bin/python3 lib/page_one_tracker.py --dry-run`
 
@@ -1123,7 +1123,7 @@ Expected: 各行の JSON が出力され、末尾に以下が出ること。
   theme 種別: ['artist', 'dance_show', 'movie_anime', ...]
 ```
 
-- [ ] **Step 3: 合否を判定する**
+- [x] **Step 3: 合否を判定する**
 
 | 観測 | 判定 |
 |---|---|
@@ -1132,7 +1132,7 @@ Expected: 各行の JSON が出力され、末尾に以下が出ること。
 | `theme 種別` が `['unknown']` のみ | **停止。** Task 7 の移行が効いていない |
 | GSC エラーが出る | **停止。** `service_account.json` の権限を確認 |
 
-- [ ] **Step 4: progress へ書き込まれていないことを確認する**
+- [x] **Step 4: progress へ書き込まれていないことを確認する**
 
 ```bash
 python3 -c "
@@ -1145,7 +1145,7 @@ print('週:', sorted({r['week'] for r in rows})[-1])
 
 Expected: `行数: 122`
 
-- [ ] **Step 5: 実測結果を設計文書に追記してコミット**
+- [x] **Step 5: 実測結果を設計文書に追記してコミット**
 
 `docs/superpowers/specs/2026-07-10-page-one-tracker-measurement-fix-design.md` の「成功基準」の直前に追記:
 
@@ -1201,7 +1201,7 @@ def aggregate():
 
 `_slug_theme_map()` は `enrich_queue.json`（現行6件）から `slug -> theme` を作る。tracker が slug を空固定していたため突合が全件ミスし、`unknown` に潰れていた。
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_seo_feedback_loop_theme.py` を新規作成:
 
@@ -1268,12 +1268,12 @@ def test_aggregate_falls_back_to_unknown_for_legacy_rows(monkeypatch):
     assert "unknown" in summary
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_seo_feedback_loop_theme.py -v`
 Expected: FAIL — `test_slug_theme_map_is_removed` が `hasattr` で落ちる
 
-- [ ] **Step 3: `_slug_theme_map()` を削除し theme を直読みする**
+- [x] **Step 3: `_slug_theme_map()` を削除し theme を直読みする**
 
 `lib/seo_feedback_loop.py` の `_slug_theme_map` 関数定義を丸ごと削除する（`def _slug_theme_map():` から次の `def _route_map():` の直前まで）。
 
@@ -1307,17 +1307,17 @@ grep -n "ENRICH_QUEUE" lib/seo_feedback_loop.py
 
 他に参照が残っていれば定数は残す。
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_seo_feedback_loop_theme.py -v`
 Expected: PASS — 5 passed
 
-- [ ] **Step 5: 全テストが壊れていないことを確認**
+- [x] **Step 5: 全テストが壊れていないことを確認**
 
 Run: `python3 -m pytest tests/ -q`
 Expected: 既存テストが1つも新たに失敗していないこと（`failed` が 0）
 
-- [ ] **Step 6: コミット**
+- [x] **Step 6: コミット**
 
 ```bash
 git add lib/seo_feedback_loop.py tests/unit/test_seo_feedback_loop_theme.py
@@ -1339,7 +1339,7 @@ git commit -m "fix(feedback): slug 経由の theme 引き直しを削除し prog
 - Consumes: progress 行の `delta_basis` フィールド（Task 6）
 - Produces: `_latest_clicks_delta(progress_rows, slug) -> int | None` — `delta_basis == "prev_week"` の行のみ評価
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `tests/unit/test_seo_auto_rollback_guard.py` を新規作成:
 
@@ -1394,12 +1394,12 @@ def test_first_week_all_zero_never_triggers_rollback():
     assert delta > rb.ROLLBACK_CLICKS_DELTA_THRESHOLD   # 0 > -3 → スキップされる
 ```
 
-- [ ] **Step 2: テストを実行し、失敗することを確認**
+- [x] **Step 2: テストを実行し、失敗することを確認**
 
 Run: `python3 -m pytest tests/unit/test_seo_auto_rollback_guard.py -v`
 Expected: FAIL — `test_ignores_legacy_rows_without_delta_basis` が `-14` を返して落ちる
 
-- [ ] **Step 3: `_latest_clicks_delta` にガードを入れる**
+- [x] **Step 3: `_latest_clicks_delta` にガードを入れる**
 
 `lib/seo_auto_rollback.py:58-63` を置換:
 
@@ -1419,12 +1419,12 @@ def _latest_clicks_delta(progress_rows, slug):
     return matches[-1].get("clicks_delta")
 ```
 
-- [ ] **Step 4: テストを実行し、通ることを確認**
+- [x] **Step 4: テストを実行し、通ることを確認**
 
 Run: `python3 -m pytest tests/unit/test_seo_auto_rollback_guard.py -v`
 Expected: PASS — 6 passed
 
-- [ ] **Step 5: dry-run を固定する**
+- [x] **Step 5: dry-run を固定する**
 
 `lib/seo_auto_rollback.py` の `main()`（150-152行付近）を置換し、`--dry-run` を強制する。閾値決定までは本実行させない。
 
@@ -1454,12 +1454,12 @@ if __name__ == "__main__":
 
 `return` に変えると終了コードが常に 0 になり、cron が失敗を検知できなくなる。`main()` 内で `sys.exit()` すること（元の実装もそうなっている）。
 
-- [ ] **Step 6: dry-run が発火ゼロで終わることを実測**
+- [x] **Step 6: dry-run が発火ゼロで終わることを実測**
 
 Run: `venv_kpi/bin/python3 lib/seo_auto_rollback.py`
 Expected: `[rollback] 移行期のため --dry-run 固定` が出て、差し戻し件数 0 で終わること。WP への書き込みが発生しないこと。
 
-- [ ] **Step 7: 全テストが壊れていないことを確認してコミット**
+- [x] **Step 7: 全テストが壊れていないことを確認してコミット**
 
 Run: `python3 -m pytest tests/ -q`
 Expected: `failed` が 0
@@ -1483,7 +1483,7 @@ git commit -m "fix(rollback): delta_basis ガードを追加し移行期は dry-
 - Consumes: なし
 - Produces: なし（1回限りの運用スクリプト）
 
-- [ ] **Step 1: 却下対象を特定する**
+- [x] **Step 1: 却下対象を特定する**
 
 ```bash
 python3 -c "
@@ -1497,7 +1497,7 @@ for i,l in enumerate(open('logs/seo_config_proposals.jsonl')):
 
 Expected: `theme: unknown` の pending 提案が1件以上表示される。0件なら Task 11 は不要（スキップして Task 12 へ）。
 
-- [ ] **Step 2: 却下スクリプトを書く**
+- [x] **Step 2: 却下スクリプトを書く**
 
 `tools/reject_stale_proposals.py` を新規作成:
 
@@ -1582,17 +1582,17 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-- [ ] **Step 3: dry-run で対象を確認**
+- [x] **Step 3: dry-run で対象を確認**
 
 Run: `venv_kpi/bin/python3 tools/reject_stale_proposals.py --dry-run`
 Expected: 却下対象の件数と ts が表示され、`DRY-RUN — 追記しない` で終わる
 
-- [ ] **Step 4: 本実行**
+- [x] **Step 4: 本実行**
 
 Run: `venv_kpi/bin/python3 tools/reject_stale_proposals.py`
 Expected: `N 件を却下済みとして追記`
 
-- [ ] **Step 5: 既存行が壊れていないことを確認**
+- [x] **Step 5: 既存行が壊れていないことを確認**
 
 ```bash
 python3 -c "
@@ -1608,7 +1608,7 @@ Expected: 全行パース成功。`rejected` が Step 4 の件数と一致。
 
 （`pending 残` は減らない。既存行は書き換えず追記する設計のため。下流が pending を読む場合は `rejects_ts` で突合する。）
 
-- [ ] **Step 6: コミット**
+- [x] **Step 6: コミット**
 
 ```bash
 git add tools/reject_stale_proposals.py logs/seo_config_proposals.jsonl
@@ -1624,7 +1624,7 @@ git commit -m "chore(seo): 計測バグ由来の unknown 提案を却下済み�
 **Files:**
 - 変更なし（検証のみ）
 
-- [ ] **Step 1: 全テストを走らせる**
+- [x] **Step 1: 全テストを走らせる**
 
 Run: `python3 -m pytest tests/ -q`
 
@@ -1647,7 +1647,7 @@ python3 -m pytest tests/unit/test_page_one_tracker.py \
                  tests/unit/test_seo_auto_rollback_guard.py -q
 ```
 
-- [ ] **Step 2: tracker を dry-run して最終確認**
+- [x] **Step 2: tracker を dry-run して最終確認**
 
 Run: `venv_kpi/bin/python3 lib/page_one_tracker.py --dry-run`
 
@@ -1659,12 +1659,23 @@ Expected:
 
 **ここで異常があれば progress へ書かない。** 該当タスクへ戻る。
 
-- [ ] **Step 3: progress へ本書き込みする**
+- [~] **Step 3: progress へ本書き込みする** — **スキップ（来週の cron に委譲 / owner 判断）**
+
+実装完了時点で当日分の週次 cron（金 6:15）が既に旧スキーマ16行を書き終えていた。
+手動で新スキーマ17行を追記すると同一週に33行が並び、feedback_loop の theme 別集計で
+当週だけ `unknown` が16件水増しされる（rollback・前週比には旧行が入らないため無害）。
+計測の連続性を優先して見送った。
+
+cron は引数なしで `lib/page_one_tracker.py` を呼ぶため、来週金曜（2026-07-17）の
+実行が新スキーマで書き込む。cron 変更は不要。progress は 122 行のまま。
 
 Run: `venv_kpi/bin/python3 lib/page_one_tracker.py`
 Expected: `[tracker] 週次計測 <today>` と追跡クエリ数
 
-- [ ] **Step 4: 書き込まれた行を検証する**
+- [~] **Step 4: 書き込まれた行を検証する** — **Step 3 とともに来週へ繰り延べ**
+
+（同等の検証は Task 8 / Task 12 Step 2 の dry-run 出力で実施済み。
+slug 空 0/17・theme 4種・`delta_basis: prev_week`・`clicks_abs` 保持を確認した）
 
 ```bash
 python3 -c "
@@ -1688,7 +1699,7 @@ Expected:
 - `clicks_abs 保持: True`
 - `全 clicks_delta: [0]` ← **第1週は全件 0。これが正常。** 前週行が無いため
 
-- [ ] **Step 5: 成功基準を照合する**
+- [x] **Step 5: 成功基準を照合する**
 
 設計文書の「成功基準」のうち、移行直後に検証できる4項目を確認する。
 
@@ -1701,7 +1712,7 @@ Expected:
 
 基準 5・6（rollback が5件を評価 / delta 分布から閾値決定）は**第2週以降でないと検証できない**。progress に `prev_week` 行が2週分そろって初めて成立する。
 
-- [ ] **Step 6: feedback_loop を走らせ theme 別集計を確認**
+- [x] **Step 6: feedback_loop を走らせ theme 別集計を確認**
 
 Run: `venv_kpi/bin/python3 lib/seo_feedback_loop.py`
 
@@ -1709,7 +1720,7 @@ Expected: theme 別の統計が `movie_anime` / `dance_show` / `artist` 等に�
 
 新たな pending 提案が出た場合は**まだ承認しない**。第1週は `clicks_delta` が全件 0 であり、`clicks_delta_avg <= 0` の条件を満たしてしまうため、`crossed_10_rate` が低い theme に対して誤って「効果薄」提案が出る可能性がある。第2週以降の判断を待つ。
 
-- [ ] **Step 7: 実測結果を設計文書に追記してコミット**
+- [x] **Step 7: 実測結果を設計文書に追記してコミット**
 
 設計文書の「実測結果」節（Task 8 Step 5 で作った節）に本書き込み後の値を追記し、コミットする。
 
