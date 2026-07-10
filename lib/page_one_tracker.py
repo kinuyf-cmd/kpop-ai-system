@@ -18,6 +18,7 @@ import sys
 import json
 import argparse
 from datetime import date, timedelta
+from urllib.parse import urlsplit
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SA_FILE = os.path.join(BASE_DIR, "google_metrics", "service_account.json")
@@ -35,6 +36,20 @@ def _service():
     creds = service_account.Credentials.from_service_account_file(
         SA_FILE, scopes=["https://www.googleapis.com/auth/webmasters.readonly"])
     return build("searchconsole", "v1", credentials=creds)
+
+
+def _slug_of(url):
+    """自サイト記事 URL → slug。外部ドメイン/トップページは ""。
+
+    GSC の page 次元は "#kpop-h-0" 等のフラグメントを別行で返すため除去する。
+    """
+    if not url:
+        return ""
+    parts = urlsplit(url)
+    site_host = urlsplit(SITE).netloc
+    if parts.netloc and parts.netloc != site_host:
+        return ""
+    return parts.path.strip("/").split("/")[-1]
 
 
 def _query_position(svc, query, days=28):
