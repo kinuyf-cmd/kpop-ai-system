@@ -139,6 +139,25 @@ def _rows_to_metrics(rows):
     }
 
 
+def _build_progress_row(week, query, base_meta, cur, prev_row):
+    """progress.jsonl の1行を組み立てる(純関数・IO しない)。"""
+    bp = base_meta["baseline_pos"]
+    cp = round(cur["position"], 2)
+    return {
+        "week": week, "query": query,
+        # GSC 逆引きを優先。baseline の slug は空のことが多い(欠陥1)
+        "slug": cur.get("slug") or base_meta.get("slug", ""),
+        "theme": base_meta.get("theme", "unknown"),
+        "baseline_pos": bp, "current_pos": cp,
+        "crossed_10": (bp >= 10) and (cp < 10),
+        "crossed_3": (bp >= 3) and (cp < 3),
+        "clicks_abs": int(cur["clicks"]),
+        "clicks_delta": _clicks_delta(cur["clicks"], prev_row),
+        "delta_basis": "prev_week",
+        "potential": base_meta.get("potential", 0),
+    }
+
+
 def _query_position(svc, query, days=28):
     """直近 days のそのクエリの position/clicks/slug。無ければ None。
 
@@ -211,37 +230,36 @@ def do_baseline():
     return 0
 
 
-def do_weekly():
+def do_weekly(dry_run=False):
     if not os.path.exists(BASELINE):
         print("[tracker] baseline が無い。先に --baseline を実行してください。", file=sys.stderr)
         return 1
     base = json.load(open(BASELINE, encoding="utf-8"))
     svc = _service()
     week = date.today().isoformat()
-    crossed_10 = crossed_3 = 0
     rows = []
     for query, b in base["queries"].items():
         cur = _query_position(svc, query)
         if not cur:
             continue
-        bp, cp = b["baseline_pos"], round(cur["position"], 2)
-        c10 = (bp >= 10) and (cp < 10)   # 新たに1ページ目進入
-        c3 = (bp >= 3) and (cp < 3)      # 新たに上位進入
-        if c10:
-            crossed_10 += 1
-        if c3:
-            crossed_3 += 1
-        rec = {
-            "week": week, "query": query, "slug": b.get("slug", ""),
-            "baseline_pos": bp, "current_pos": cp,
-            "crossed_10": c10, "crossed_3": c3,
-            "clicks_delta": cur["clicks"] - b.get("baseline_clicks", 0),
-            "potential": b.get("potential", 0),
-        }
-        rows.append(rec)
-        with open(PROGRESS, "a", encoding="utf-8") as f:
-            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        prev = _last_progress_row(query)
+        rows.append(_build_progress_row(week, query, b, cur, prev))
 
+    if dry_run:
+        print(f"[tracker] DRY-RUN {week} — progress へは書き込まない")
+        for r in rows:
+            print(json.dumps(r, ensure_ascii=False))
+        empty_slug = sum(1 for r in rows if not r["slug"])
+        themes = sorted({r["theme"] for r in rows})
+        print(f"  slug 空: {empty_slug}/{len(rows)}")
+        print(f"  theme 種別: {themes}")
+    else:
+        with open(PROGRESS, "a", encoding="utf-8") as f:
+            for r in rows:
+                f.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+    crossed_10 = sum(1 for r in rows if r["crossed_10"])
+    crossed_3 = sum(1 for r in rows if r["crossed_3"])
     in_page1 = sum(1 for r in rows if r["current_pos"] < 10)
     in_top3 = sum(1 for r in rows if r["current_pos"] < 3)
     total_clicks_delta = sum(r["clicks_delta"] for r in rows)
@@ -249,15 +267,17 @@ def do_weekly():
     print(f"  追跡クエリ: {len(rows)}")
     print(f"  今週 新規 pos<10 進入: {crossed_10} / 新規 pos<3 進入: {crossed_3}")
     print(f"  現在 pos<10: {in_page1} / pos<3: {in_top3}")
-    print(f"  clicks増分(baseline比): {total_clicks_delta:+d}")
+    print(f"  clicks増分(前週比): {total_clicks_delta:+d}")
     return 0
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--baseline", action="store_true", help="Week0 ベースライン固定")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="progress へ書かず出力のみ(slug 逆引き率・theme を検証)")
     args = ap.parse_args()
-    sys.exit(do_baseline() if args.baseline else do_weekly())
+    sys.exit(do_baseline() if args.baseline else do_weekly(dry_run=args.dry_run))
 
 
 if __name__ == "__main__":

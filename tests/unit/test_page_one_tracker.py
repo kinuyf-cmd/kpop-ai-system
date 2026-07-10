@@ -244,3 +244,54 @@ def test_target_queries_theme_defaults_to_unknown_when_absent(tmp_path, monkeypa
     monkeypatch.setattr(t, "QUEUE_IN", str(oq))
 
     assert t._target_queries()["theme無し"]["theme"] == "unknown"
+
+
+BASE_META = {"baseline_pos": 8.68, "baseline_clicks": 14, "slug": "",
+             "potential": 521, "theme": "dance_show"}
+CUR = {"position": 5.7981, "clicks": 0, "impressions": 104,
+       "slug": "swf3-osaka-ojo-gang-members"}
+
+
+def test_build_progress_row_has_new_schema():
+    """clicks_abs / delta_basis / theme を必ず持つ。"""
+    r = t._build_progress_row("2026-07-17", "ojogang メンバー", BASE_META, CUR, None)
+    assert r["clicks_abs"] == 0
+    assert r["delta_basis"] == "prev_week"
+    assert r["theme"] == "dance_show"
+
+
+def test_build_progress_row_prefers_reverse_looked_up_slug():
+    """baseline の slug が空でも GSC 逆引きの slug を書く。欠陥1の根治。"""
+    r = t._build_progress_row("2026-07-17", "ojogang メンバー", BASE_META, CUR, None)
+    assert r["slug"] == "swf3-osaka-ojo-gang-members"
+
+
+def test_build_progress_row_escapes_minus_14_fixation():
+    """回帰: 順位が 8.68 → 5.80 と改善しているのに -14 で固着していた。"""
+    r = t._build_progress_row("2026-07-17", "ojogang メンバー", BASE_META, CUR, None)
+    assert r["current_pos"] == 5.8
+    assert r["clicks_delta"] == 0   # -14 ではない
+
+
+def test_build_progress_row_uses_prev_week_when_available():
+    """前週行があれば前週比。"""
+    prev = {"week": "2026-07-10", "clicks_abs": 3}
+    cur = dict(CUR, clicks=5)
+    r = t._build_progress_row("2026-07-17", "ojogang メンバー", BASE_META, cur, prev)
+    assert r["clicks_delta"] == 2
+    assert r["clicks_abs"] == 5
+
+
+def test_build_progress_row_preserves_crossing_flags():
+    """crossed_10 / crossed_3 の既存判定を壊さない。"""
+    base = dict(BASE_META, baseline_pos=12.0)
+    r = t._build_progress_row("2026-07-17", "q", base, CUR, None)
+    assert r["crossed_10"] is True    # 12.0 >= 10 かつ 5.8 < 10
+    assert r["crossed_3"] is False    # 5.8 は 3 未満でない
+
+
+def test_build_progress_row_never_mutates_baseline_pos():
+    """baseline_pos は絶対に書き換えない。"""
+    r = t._build_progress_row("2026-07-17", "q", BASE_META, CUR, None)
+    assert r["baseline_pos"] == 8.68
+    assert BASE_META["baseline_pos"] == 8.68
