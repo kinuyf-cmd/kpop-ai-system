@@ -5,157 +5,183 @@
    "baseline_pos": 5.67,
    "baseline_clicks": 0,
    "slug": "swf3-osaka-ojo-gang-members",
-   "potential": 1996
+   "potential": 1996,
+   "theme": "dance_show"
   },
   "デーモンハンターズ キャラクター": {
    "baseline_pos": 9.24,
    "baseline_clicks": 0,
    "slug": "kpop-demon-hunters-cast-characters",
-   "potential": 941
+   "potential": 941,
+   "theme": "movie_anime"
   },
   "ラブブ ポップアップ": {
    "baseline_pos": 10.0,
    "baseline_clicks": 0,
    "slug": "lovebob-popup-report-2025",
-   "potential": 425
+   "potential": 425,
+   "theme": "trend_goods"
   },
   "ag squad": {
    "baseline_pos": 11.0,
    "baseline_clicks": 0,
    "slug": "supa3-ag-squad-profile",
-   "potential": 276
+   "potential": 276,
+   "theme": "unknown"
   },
   "ルセラカムバ": {
    "baseline_pos": 7.26,
    "baseline_clicks": 0,
    "slug": "lesserafim-comeback-october-2025",
-   "potential": 152
+   "potential": 152,
+   "theme": "other"
   },
   "bigbang top 脱退 理由": {
    "baseline_pos": 25.5,
    "baseline_clicks": 0,
    "slug": "bigbang-top-profile-removed",
-   "potential": 107
+   "potential": 107,
+   "theme": "unknown"
   },
   "ホンジニョン 年齢": {
    "baseline_pos": 13.0,
    "baseline_clicks": 0,
    "slug": "hong-jinyoung-trot-queen-profile",
-   "potential": 94
+   "potential": 94,
+   "theme": "unknown"
   },
   "rht. メンバー 年齢": {
    "baseline_pos": 9.67,
    "baseline_clicks": 0,
    "slug": "swf3-rhtokyo-profile",
-   "potential": 76
+   "potential": 76,
+   "theme": "unknown"
   },
   "golden 歌手": {
    "baseline_pos": 27.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 3796
+   "potential": 3796,
+   "theme": "movie_anime"
   },
   "ラブブとは": {
    "baseline_pos": 80.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 3268
+   "potential": 3268,
+   "theme": "trend_goods"
   },
   "デーモンハンターズ 曲": {
    "baseline_pos": 28.33,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 2828
+   "potential": 2828,
+   "theme": "movie_anime"
   },
   "golden": {
    "baseline_pos": 64.83,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 2286
+   "potential": 2286,
+   "theme": "movie_anime"
   },
   "kpopガールズ! デーモン・ハンターズ キャスト": {
    "baseline_pos": 15.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 1641
+   "potential": 1641,
+   "theme": "movie_anime"
   },
   "ゴールデン 歌ってる人": {
    "baseline_pos": 45.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 1433
+   "potential": 1433,
+   "theme": "movie_anime"
   },
   "ojo gang": {
    "baseline_pos": 7.33,
    "baseline_clicks": 1,
    "slug": "",
-   "potential": 1380
+   "potential": 1380,
+   "theme": "dance_show"
   },
   "オジョギャング メンバー": {
    "baseline_pos": 10.12,
    "baseline_clicks": 1,
    "slug": "",
-   "potential": 889
+   "potential": 889,
+   "theme": "dance_show"
   },
   "osaka ojo gang": {
    "baseline_pos": 41.17,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 848
+   "potential": 848,
+   "theme": "dance_show"
   },
   "ojo gang メンバー": {
    "baseline_pos": 11.72,
    "baseline_clicks": 1,
    "slug": "",
-   "potential": 808
+   "potential": 808,
+   "theme": "dance_show"
   },
   "デーモンハンターズ": {
    "baseline_pos": 76.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 718
+   "potential": 718,
+   "theme": "movie_anime"
   },
   "ojogang メンバー": {
    "baseline_pos": 8.68,
    "baseline_clicks": 14,
    "slug": "",
-   "potential": 521
+   "potential": 521,
+   "theme": "dance_show"
   },
   "ラブブ どこで買える": {
    "baseline_pos": 44.33,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 498
+   "potential": 498,
+   "theme": "trend_goods"
   },
   "オジョギャング いぶき": {
    "baseline_pos": 27.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 372
+   "potential": 372,
+   "theme": "dance_show"
   },
   "デーモンハンターズ メンバー": {
    "baseline_pos": 11.21,
    "baseline_clicks": 1,
    "slug": "",
-   "potential": 338
+   "potential": 338,
+   "theme": "movie_anime"
   },
   "xgとは": {
    "baseline_pos": 69.5,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 325
+   "potential": 325,
+   "theme": "other"
   },
   "ジミン": {
    "baseline_pos": 114.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 123
+   "potential": 123,
+   "theme": "other"
   },
   "ラブブ twice": {
    "baseline_pos": 6.0,
    "baseline_clicks": 0,
    "slug": "",
-   "potential": 116
+   "potential": 116,
+   "theme": "artist"
   }
  }
 }
