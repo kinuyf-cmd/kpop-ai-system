@@ -87,6 +87,42 @@ def _pick_slug(rows):
     return sorted(agg.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
 
 
+def _last_progress_row(query, path=PROGRESS):
+    """progress.jsonl の同一 query 最終行。clicks_abs を持つ行のみ対象。
+
+    過去行(122行)に clicks_abs は無く、その clicks_delta は baseline 比で
+    定義が違う。前週比の基準にはできないため None を返す。
+    """
+    if not os.path.exists(path):
+        return None
+    best = None
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if r.get("query") != query or "clicks_abs" not in r:
+                continue
+            if best is None or r.get("week", "") >= best.get("week", ""):
+                best = r
+    return best
+
+
+def _clicks_delta(cur_clicks, prev_row):
+    """前週比 clicks。前週が無ければ 0(判断保留)。
+
+    従来は cur - baseline_clicks。両者とも28日累積であり、baseline は
+    2026-05-26 固定。5月のバズが窓から抜ければ機械的にマイナスへ張り付く。
+    """
+    if not prev_row:
+        return 0
+    return int(cur_clicks) - int(prev_row.get("clicks_abs", 0))
+
+
 def _query_position(svc, query, days=28):
     """直近 days のそのクエリの position/clicks(query 次元)。無ければ None。"""
     end = date.today().isoformat()

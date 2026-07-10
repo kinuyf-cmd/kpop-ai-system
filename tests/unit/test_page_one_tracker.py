@@ -9,6 +9,8 @@ GSC の28日窓は毎週スライドするため、ライブ値をアサート�
 
 実行: python3 -m pytest tests/unit/test_page_one_tracker.py -v
 """
+import json
+
 import lib.page_one_tracker as t
 
 
@@ -124,3 +126,47 @@ def test_pick_slug_ignores_external_domains():
 def test_pick_slug_returns_empty_when_no_internal_page():
     """自サイト行が1つも無ければ空文字。theme は queue 由来なので生き残る。"""
     assert t._pick_slug([_row("https://soompi.com/a/1", 10)]) == ""
+
+
+def test_clicks_delta_returns_zero_when_no_prev():
+    """初回は前週が無い。差分ゼロ = 判断保留。誤って「悪化」と読まれないため。"""
+    assert t._clicks_delta(0, None) == 0
+    assert t._clicks_delta(37, None) == 0
+
+
+def test_clicks_delta_is_week_over_week():
+    """前週比。累積 baseline との差ではない。"""
+    assert t._clicks_delta(5, {"clicks_abs": 3}) == 2
+    assert t._clicks_delta(3, {"clicks_abs": 5}) == -2
+
+
+def test_clicks_delta_ojogang_escapes_minus_14():
+    """回帰: ojogang は baseline_clicks=14 に対し cur=0 で -14 固着していた。
+    前週も 0 なら delta は 0。順位改善が「劣化」と誤読されない。"""
+    assert t._clicks_delta(0, {"clicks_abs": 0}) == 0
+
+
+def test_last_progress_row_returns_latest_by_week(tmp_path):
+    """同一 query の最終行を week 順で返す。"""
+    p = tmp_path / "progress.jsonl"
+    p.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in [
+        {"week": "2026-07-03", "query": "ojogang メンバー", "clicks_abs": 5},
+        {"week": "2026-07-10", "query": "ojogang メンバー", "clicks_abs": 2},
+        {"week": "2026-07-10", "query": "別クエリ", "clicks_abs": 99},
+    ]) + "\n", encoding="utf-8")
+    row = t._last_progress_row("ojogang メンバー", str(p))
+    assert row["clicks_abs"] == 2
+
+
+def test_last_progress_row_ignores_legacy_rows_without_clicks_abs(tmp_path):
+    """過去122行に clicks_abs は無い。それらは前週比の基準にできないので無視。"""
+    p = tmp_path / "progress.jsonl"
+    p.write_text(json.dumps(
+        {"week": "2026-07-03", "query": "ojogang メンバー", "clicks_delta": -14},
+        ensure_ascii=False) + "\n", encoding="utf-8")
+    assert t._last_progress_row("ojogang メンバー", str(p)) is None
+
+
+def test_last_progress_row_returns_none_when_file_missing(tmp_path):
+    """progress が無ければ None。初回実行で落ちない。"""
+    assert t._last_progress_row("何か", str(tmp_path / "nope.jsonl")) is None
