@@ -123,47 +123,69 @@ def _clicks_delta(cur_clicks, prev_row):
     return int(cur_clicks) - int(prev_row.get("clicks_abs", 0))
 
 
+def _rows_to_metrics(rows):
+    """GSC query×page 行 → 集約メトリクス。空行なら None(圏外)。
+
+    clicks/impressions はアンカー分割を合算、position は imp 加重平均、
+    slug は集約 imp 最大のものを逆引きする。
+    """
+    if not rows:
+        return None
+    return {
+        "position": _weighted_position(rows),
+        "clicks": sum(int(r.get("clicks", 0)) for r in rows),
+        "impressions": sum(int(r.get("impressions", 0)) for r in rows),
+        "slug": _pick_slug(rows),
+    }
+
+
 def _query_position(svc, query, days=28):
-    """直近 days のそのクエリの position/clicks(query 次元)。無ければ None。"""
+    """直近 days のそのクエリの position/clicks/slug。無ければ None。
+
+    query×page 次元で引く。GSC はフラグメント(#kpop-h-N)別に行を返すため、
+    slug を逆引きでき、同時に position の imp 加重平均が取れる。
+    """
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=days)).isoformat()
     body = {
         "startDate": start, "endDate": end,
-        "dimensions": ["query"],
+        "dimensions": ["query", "page"],
         "dimensionFilterGroups": [{
             "filters": [{"dimension": "query", "operator": "equals", "expression": query}]
         }],
-        "rowLimit": 1,
+        "rowLimit": 25,
     }
     try:
         res = svc.searchanalytics().query(siteUrl=SITE, body=body).execute()
     except Exception as e:
         print(f"  GSC error query={query!r}: {e}", file=sys.stderr)
         return None
-    rows = res.get("rows", [])
-    if not rows:
-        return None
-    r = rows[0]
-    return {"position": float(r.get("position", 0.0)),
-            "clicks": int(r.get("clicks", 0)),
-            "impressions": int(r.get("impressions", 0))}
+    return _rows_to_metrics(res.get("rows", []))
 
 
 def _target_queries():
-    """追跡対象クエリ = enrich_queue + Lane C/B 上位(着手対象)。"""
+    """追跡対象クエリ = enrich_queue + Lane C/B 上位(着手対象)。
+
+    theme を上流 queue から持ち越す。従来は捨てていたため、下流の
+    feedback_loop が slug 経由で引き直そうとして全件 unknown になっていた。
+    """
     qs = {}
     if os.path.exists(ENRICH_QUEUE):
         try:
             for r in json.load(open(ENRICH_QUEUE, encoding="utf-8")):
                 if r.get("query"):
-                    qs[r["query"]] = {"slug": r.get("slug", ""), "potential": r.get("potential", 0)}
+                    qs[r["query"]] = {"slug": r.get("slug", ""),
+                                      "potential": r.get("potential", 0),
+                                      "theme": r.get("theme", "unknown")}
         except Exception:
             pass
     if os.path.exists(QUEUE_IN):
         try:
             q = json.load(open(QUEUE_IN, encoding="utf-8"))
             for r in (q.get("lane_C_rewrite", [])[:30] + q.get("lane_B_new", [])[:20]):
-                qs.setdefault(r["query"], {"slug": "", "potential": r.get("potential", 0)})
+                qs.setdefault(r["query"], {"slug": "",
+                                           "potential": r.get("potential", 0),
+                                           "theme": r.get("theme", "unknown")})
         except Exception:
             pass
     return qs
@@ -179,7 +201,10 @@ def do_baseline():
             base["queries"][query] = {
                 "baseline_pos": round(pos["position"], 2),
                 "baseline_clicks": pos["clicks"],
-                "slug": meta["slug"], "potential": meta["potential"],
+                # slug は GSC 逆引きを優先し、取れなければ queue 由来
+                "slug": pos.get("slug") or meta["slug"],
+                "potential": meta["potential"],
+                "theme": meta.get("theme", "unknown"),
             }
     json.dump(base, open(BASELINE, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"[tracker] baseline 固定: {len(base['queries'])} queries → {BASELINE}")

@@ -170,3 +170,77 @@ def test_last_progress_row_ignores_legacy_rows_without_clicks_abs(tmp_path):
 def test_last_progress_row_returns_none_when_file_missing(tmp_path):
     """progress が無ければ None。初回実行で落ちない。"""
     assert t._last_progress_row("何か", str(tmp_path / "nope.jsonl")) is None
+
+
+def _full_row(page_url, pos, imp, clicks=0):
+    """GSC query×page 応答の完全な行。"""
+    return {"keys": ["ojogang メンバー", page_url],
+            "position": pos, "impressions": imp, "clicks": clicks}
+
+
+# 実測7行の完全版。clicks は全行 0(ojogang の実測どおり)。
+FULL_ROWS = [
+    _full_row("https://www.kpopjournal.tokyo/swf3-osaka-ojo-gang-members/", 5.18, 92),
+    *(_full_row(f"https://www.kpopjournal.tokyo/swf3-osaka-ojo-gang-members/#kpop-h-{i}",
+                10.50, 2) for i in range(6)),
+]
+
+
+def test_rows_to_metrics_ojogang_fixture():
+    """実測7行 → clicks 0 / imp 104 / pos 5.79(加重) / slug 逆引き成功。"""
+    m = t._rows_to_metrics(FULL_ROWS)
+    assert m["clicks"] == 0
+    assert m["impressions"] == 104
+    assert round(m["position"], 2) == 5.79
+    assert m["slug"] == "swf3-osaka-ojo-gang-members"
+
+
+def test_rows_to_metrics_sums_clicks_across_fragments():
+    """clicks はアンカー分割を合算する。過小評価を防ぐ。"""
+    rows = [
+        _full_row("https://www.kpopjournal.tokyo/a/", 3.0, 10, clicks=4),
+        _full_row("https://www.kpopjournal.tokyo/a/#kpop-h-0", 3.0, 10, clicks=3),
+    ]
+    assert t._rows_to_metrics(rows)["clicks"] == 7
+
+
+def test_rows_to_metrics_empty_returns_none():
+    """圏外(空行)は None。従来どおりその週をスキップする。既存挙動を変えない。"""
+    assert t._rows_to_metrics([]) is None
+
+
+def test_target_queries_carries_theme(tmp_path, monkeypatch):
+    """enrich_queue と seo_opportunity_queue の双方から theme を meta に載せる。"""
+    eq = tmp_path / "enrich_queue.json"
+    eq.write_text(json.dumps([
+        {"query": "golden 歌手", "slug": "kpop-demon-hunters-golden-analysis",
+         "potential": 3797, "theme": "movie_anime"},
+    ], ensure_ascii=False), encoding="utf-8")
+
+    oq = tmp_path / "opportunity.json"
+    oq.write_text(json.dumps({
+        "lane_C_rewrite": [{"query": "ojogang メンバー", "potential": 521,
+                            "theme": "dance_show"}],
+        "lane_B_new": [{"query": "新規クエリ", "potential": 100, "theme": "artist"}],
+    }, ensure_ascii=False), encoding="utf-8")
+
+    monkeypatch.setattr(t, "ENRICH_QUEUE", str(eq))
+    monkeypatch.setattr(t, "QUEUE_IN", str(oq))
+
+    qs = t._target_queries()
+    assert qs["golden 歌手"]["theme"] == "movie_anime"
+    assert qs["ojogang メンバー"]["theme"] == "dance_show"
+    assert qs["新規クエリ"]["theme"] == "artist"
+
+
+def test_target_queries_theme_defaults_to_unknown_when_absent(tmp_path, monkeypatch):
+    """theme 欠落は実測ゼロだが、フォールバックは残す(落とさない)。"""
+    oq = tmp_path / "opportunity.json"
+    oq.write_text(json.dumps({
+        "lane_C_rewrite": [{"query": "theme無し", "potential": 1}],
+        "lane_B_new": [],
+    }, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(t, "ENRICH_QUEUE", str(tmp_path / "nope.json"))
+    monkeypatch.setattr(t, "QUEUE_IN", str(oq))
+
+    assert t._target_queries()["theme無し"]["theme"] == "unknown"
