@@ -52,6 +52,20 @@ def _slug_of(url):
     return parts.path.strip("/").split("/")[-1]
 
 
+def _weighted_position(rows):
+    """imp 加重平均 position。imp 合計 0 なら単純平均にフォールバック。
+
+    単純平均だと imp=2 のアンカー行が本文行と同じ重みで効き、順位が悪化して見える。
+    """
+    if not rows:
+        return 0.0
+    total_imp = sum(int(r.get("impressions", 0)) for r in rows)
+    if total_imp <= 0:
+        return sum(float(r.get("position", 0.0)) for r in rows) / len(rows)
+    return sum(float(r.get("position", 0.0)) * int(r.get("impressions", 0))
+               for r in rows) / total_imp
+
+
 def _query_position(svc, query, days=28):
     """直近 days のそのクエリの position/clicks(query 次元)。無ければ None。"""
     end = date.today().isoformat()
