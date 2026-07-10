@@ -71,3 +71,56 @@ def test_weighted_position_falls_back_on_zero_impressions():
 def test_weighted_position_empty_rows_returns_zero():
     """空行なら 0.0。呼び出し側は rows 非空を保証するが念のため。"""
     assert t._weighted_position([]) == 0.0
+
+
+def _row(page_url, imp):
+    """GSC query×page 応答の行を作る。keys = [query, page]。"""
+    return {"keys": ["ojogang メンバー", page_url], "impressions": imp}
+
+
+# 実測7行を GSC 応答形式で写したもの。全て同一 slug に集約され imp 104 になる。
+SLUG_ROWS = [
+    _row("https://www.kpopjournal.tokyo/swf3-osaka-ojo-gang-members/", 92),
+    *(_row(f"https://www.kpopjournal.tokyo/swf3-osaka-ojo-gang-members/#kpop-h-{i}", 2)
+      for i in range(6)),
+]
+
+
+def test_pick_slug_aggregates_fragments():
+    """フラグメント別行を同一 slug に集約して選ぶ。"""
+    assert t._pick_slug(SLUG_ROWS) == "swf3-osaka-ojo-gang-members"
+
+
+def test_pick_slug_prefers_highest_aggregate_impressions():
+    """集約 imp が最大の slug を選ぶ。行数ではなく imp 合計で決める。"""
+    rows = [
+        _row("https://www.kpopjournal.tokyo/loser/", 10),
+        _row("https://www.kpopjournal.tokyo/loser/#kpop-h-0", 10),
+        _row("https://www.kpopjournal.tokyo/winner/", 30),
+    ]
+    assert t._pick_slug(rows) == "winner"
+
+
+def test_pick_slug_tie_break_is_deterministic():
+    """imp 同数なら slug の辞書順で安定化。実行ごとに揺れると rollback 突合が壊れる。"""
+    rows = [
+        _row("https://www.kpopjournal.tokyo/zebra/", 50),
+        _row("https://www.kpopjournal.tokyo/alpha/", 50),
+    ]
+    assert t._pick_slug(rows) == "alpha"
+    # 入力順を反転しても同じ結果
+    assert t._pick_slug(list(reversed(rows))) == "alpha"
+
+
+def test_pick_slug_ignores_external_domains():
+    """外部ドメイン行は slug 候補にしない。"""
+    rows = [
+        _row("https://soompi.com/article/123", 999),
+        _row("https://www.kpopjournal.tokyo/mine/", 5),
+    ]
+    assert t._pick_slug(rows) == "mine"
+
+
+def test_pick_slug_returns_empty_when_no_internal_page():
+    """自サイト行が1つも無ければ空文字。theme は queue 由来なので生き残る。"""
+    assert t._pick_slug([_row("https://soompi.com/a/1", 10)]) == ""

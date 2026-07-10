@@ -66,6 +66,27 @@ def _weighted_position(rows):
                for r in rows) / total_imp
 
 
+def _pick_slug(rows):
+    """query×page 行から代表 slug を選ぶ。集約 imp 最大、tie は辞書順で決定的に。
+
+    GSC はフラグメント別に行を返すため、slug で集約してから比較する。
+    tie-break を入れないと実行ごとに slug が揺れ、rollback の突合が不安定になる。
+    """
+    agg = {}
+    for r in rows:
+        keys = r.get("keys", [])
+        if len(keys) < 2:
+            continue
+        slug = _slug_of(keys[1])
+        if not slug:
+            continue
+        agg[slug] = agg.get(slug, 0) + int(r.get("impressions", 0))
+    if not agg:
+        return ""
+    # imp 降順 → slug 昇順。max ではなく sorted で意図を明示する。
+    return sorted(agg.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+
+
 def _query_position(svc, query, days=28):
     """直近 days のそのクエリの position/clicks(query 次元)。無ければ None。"""
     end = date.today().isoformat()
