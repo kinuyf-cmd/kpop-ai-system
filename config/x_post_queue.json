@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-10 21:36",
-  "count": 106,
+  "updated": "2026-07-11 21:38",
+  "count": 128,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -955,6 +955,204 @@
       "artist": "뉴진스",
       "priority": "high",
       "queued_at": "2026-07-10T19:35:24.304836"
+    },
+    {
+      "title": "IU・イジョンソク、スヨン・チョンギョンホが別れ発表",
+      "url": "https://www.kpopjournal.tokyo/iu-lee-jong-suk-breakup-announcement-2/",
+      "post_id": 12167,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:31:02.510628"
+    },
+    {
+      "title": "NMIXX、台風影響で台湾公演日程変更",
+      "url": "https://www.kpopjournal.tokyo/nmixx-typhoon-taiwan-concert-change/",
+      "post_id": 12171,
+      "genre": "breaking",
+      "artist": "엔믹스",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:32:14.462378"
+    },
+    {
+      "title": "aespa WINTER、仁川空港で出国フォトタイム",
+      "url": "https://www.kpopjournal.tokyo/aespa-winter-incheon-airport-departure-photoshoot/",
+      "post_id": 12180,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:37:38.772367"
+    },
+    {
+      "title": "チョン・ヒョンム、ILLIT振付に30万ウォン投資",
+      "url": "https://www.kpopjournal.tokyo/chun-hyunmu-illit-choreography-investment/",
+      "post_id": 12184,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:38:53.288786"
+    },
+    {
+      "title": "IVEのアン・ユジン、40億ウォンアパート当選報道",
+      "url": "https://www.kpopjournal.tokyo/?p=12188",
+      "post_id": 12188,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:40:06.189754"
+    },
+    {
+      "title": "THE BOYZジュヨン、パリでオールブラックスタイル公開",
+      "url": "https://www.kpopjournal.tokyo/the-boyz-juyoung-paris-all-black-style/",
+      "post_id": 12194,
+      "genre": "breaking",
+      "artist": "더보이즈",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:43:07.856921"
+    },
+    {
+      "title": "ONF、高校生応援コンサートで温かい交流",
+      "url": "https://www.kpopjournal.tokyo/onf-highschool-concert-support/",
+      "post_id": 12199,
+      "genre": "breaking",
+      "artist": "온앤오프",
+      "priority": "high",
+      "queued_at": "2026-07-11T07:45:04.474542"
+    },
+    {
+      "title": "IU、イ・ジョンソクとの結別を発表",
+      "url": "https://www.kpopjournal.tokyo/iu-breakup-lee-jung-suk/",
+      "post_id": 12204,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-11T09:31:03.752408"
+    },
+    {
+      "title": "RIIZEのSungchan 空港遭遇で意見分かれる",
+      "url": "https://www.kpopjournal.tokyo/riize-sungchan-airport-encounter-opinions/",
+      "post_id": 12208,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-07-11T09:32:08.656743"
+    },
+    {
+      "title": "BTS JIN、カン・スンユンに連絡しチョコ贈呈",
+      "url": "https://www.kpopjournal.tokyo/bts-jin-kang-seung-yoon-choco-gift/",
+      "post_id": 12223,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-11T09:42:03.660261"
+    },
+    {
+      "title": "チョン・ヨンロク＆チェア・スキ・Cmnd急上昇",
+      "url": "https://www.kpopjournal.tokyo/chun-youngrok-cha-ski-cmnd-kyujoushou/",
+      "post_id": 12228,
+      "genre": "breaking",
+      "artist": "아이오아이",
+      "priority": "high",
+      "queued_at": "2026-07-11T09:44:49.610083"
+    },
+    {
+      "title": "イ・チャンミン、デビュー18周年の決意と歩み",
+      "url": "https://www.kpopjournal.tokyo/lee-chan-min-debut-anniversary-determination/",
+      "post_id": 12232,
+      "genre": "breaking",
+      "artist": "이창민",
+      "priority": "high",
+      "queued_at": "2026-07-11T09:47:08.786338"
+    },
+    {
+      "title": "少女時代 YURI 自然と共に過ごす生活公開",
+      "url": "https://www.kpopjournal.tokyo/yuri-girls-generation-nature-lifestyle/",
+      "post_id": 12237,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-07-11T11:31:53.977075"
+    },
+    {
+      "title": "ユンスイル、JTBC「アパート」再生手続き開始",
+      "url": "https://www.kpopjournal.tokyo/yunsuil-jtbc-apartment-resume/",
+      "post_id": 12251,
+      "genre": "breaking",
+      "artist": "로제",
+      "priority": "high",
+      "queued_at": "2026-07-11T13:37:23.791744"
+    },
+    {
+      "title": "キキ、7ヶ月ぶりカムバック目指し8月中旬",
+      "url": "https://www.kpopjournal.tokyo/kiki-comeback-august-mid/",
+      "post_id": 12255,
+      "genre": "breaking",
+      "artist": "키키",
+      "priority": "high",
+      "queued_at": "2026-07-11T13:38:48.129076"
+    },
+    {
+      "title": "NMIXX、高雄コンサートを台風影響で延期",
+      "url": "https://www.kpopjournal.tokyo/nmixx-kaohsiung-concert-delay-typhoon/",
+      "post_id": 12261,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-07-11T15:32:23.251101"
+    },
+    {
+      "title": "Heo Nam Jun、IUの新MVで再会決定",
+      "url": "https://www.kpopjournal.tokyo/heo-nam-jun-iu-new-mv-reunion/",
+      "post_id": 12267,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-07-11T15:34:52.992624"
+    },
+    {
+      "title": "イム・ヨンウン、青い照明の秘密の瞬間公開",
+      "url": "https://www.kpopjournal.tokyo/im-young-woon-blue-light-secret-moment/",
+      "post_id": 12277,
+      "genre": "breaking",
+      "artist": "임영웅",
+      "priority": "high",
+      "queued_at": "2026-07-11T15:38:13.528032"
+    },
+    {
+      "title": "IUとホ・ナムジュン、1年3ヶ月ぶり共演決定",
+      "url": "https://www.kpopjournal.tokyo/iu-ho-namjoon-1year3months-collaboration/",
+      "post_id": 12289,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-07-11T19:30:48.402208"
+    },
+    {
+      "title": "イ・ジョンフ、シーズン100安打も逆転負け",
+      "url": "https://www.kpopjournal.tokyo/lee-jung-hoo-season-100-hits-reverse-loss/",
+      "post_id": 12295,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-11T19:38:28.039508"
+    },
+    {
+      "title": "BABYMONSTER、音楽中心で「I LIKE IT」初披露",
+      "url": "https://www.kpopjournal.tokyo/babymonster-i-like-it-debut/",
+      "post_id": 12304,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-07-11T19:41:28.892672"
+    },
+    {
+      "title": "イ・チャンウォン「不朽」でBTSジンの秘訣語る",
+      "url": "https://www.kpopjournal.tokyo/lee-chan-won-bts-jin-secret/",
+      "post_id": 12312,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-11T21:36:55.195621"
     }
   ]
 }
