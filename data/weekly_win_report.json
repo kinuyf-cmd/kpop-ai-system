@@ -1,163 +1,196 @@
 {
-  "generated_at": "2026-07-06T07:00:04.250323",
+  "generated_at": "2026-07-13T07:00:03.777104",
   "wins": [
     {
-      "page": "/meidin-first-concert-free-entry/",
-      "clicks_7d": 200,
-      "clicks_prev": 53,
-      "imp": 921,
-      "pos": 4.3
-    },
-    {
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "clicks_7d": 144,
-      "clicks_prev": 76,
-      "imp": 1567,
-      "pos": 6.1
-    },
-    {
-      "page": "/ateez-bad-saiaku-problem/",
-      "clicks_7d": 35,
+      "page": "/txt-youngjoon-ice-cream-popup/",
+      "clicks_7d": 117,
       "clicks_prev": 0,
-      "imp": 126,
+      "imp": 1009,
+      "pos": 5.8
+    },
+    {
+      "page": "/swf3-osaka-ojo-gang-members/",
+      "clicks_7d": 34,
+      "clicks_prev": 8,
+      "imp": 1055,
       "pos": 6.4
     },
     {
-      "page": "/bts-relationship-map-2026/",
+      "page": "/itzy-ryujin-reborn-rookie-final-episode/",
+      "clicks_7d": 18,
+      "clicks_prev": 0,
+      "imp": 224,
+      "pos": 6.4
+    },
+    {
+      "page": "/agent-kim-reactivated-viewing-guide/",
+      "clicks_7d": 15,
+      "clicks_prev": 0,
+      "imp": 733,
+      "pos": 7.6
+    },
+    {
+      "page": "/seventeen-the8-smoking-club/",
       "clicks_7d": 20,
+      "clicks_prev": 7,
+      "imp": 48,
+      "pos": 3.8
+    },
+    {
+      "page": "/medicube-age-r-boosterpro-howto/",
+      "clicks_7d": 17,
+      "clicks_prev": 7,
+      "imp": 646,
+      "pos": 9.4
+    },
+    {
+      "page": "/olive-better-recommended-products/",
+      "clicks_7d": 9,
       "clicks_prev": 0,
-      "imp": 252,
-      "pos": 6.8
+      "imp": 102,
+      "pos": 9.6
     },
     {
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "clicks_7d": 39,
-      "clicks_prev": 23,
-      "imp": 2777,
-      "pos": 9.7
-    },
-    {
-      "page": "/tettsui-kyoshi-cast-chart/",
-      "clicks_7d": 11,
-      "clicks_prev": 0,
-      "imp": 822,
-      "pos": 7.9
-    },
-    {
-      "page": "/illits-minju-successful-diet-tips/",
-      "clicks_7d": 10,
-      "clicks_prev": 2,
-      "imp": 78,
-      "pos": 9.1
-    },
-    {
-      "page": "/seventeen-v8-free-listening-event/",
-      "clicks_7d": 8,
-      "clicks_prev": 0,
-      "imp": 124,
-      "pos": 8.3
-    },
-    {
-      "page": "/aespa-lemonade-newjeans-kankoku-mobigi/",
+      "page": "/ive-gaul-2026-tima-absence/",
       "clicks_7d": 7,
       "clicks_prev": 0,
-      "imp": 54,
-      "pos": 7.1
+      "imp": 24,
+      "pos": 7.0
     },
     {
-      "page": "/popup-20260701-7fa5b1d573/",
-      "clicks_7d": 7,
+      "page": "/myeongdong-kpop-shops-guide/",
+      "clicks_7d": 9,
+      "clicks_prev": 3,
+      "imp": 200,
+      "pos": 9.2
+    },
+    {
+      "page": "/itzy-yuna-swimsuit-hip-pad-rumors/",
+      "clicks_7d": 5,
       "clicks_prev": 0,
-      "imp": 58,
-      "pos": 6.9
+      "imp": 88,
+      "pos": 6.4
     }
   ],
   "losses": [
     {
-      "page": "/mamamoo-concert-40songs-setlist/",
-      "clicks_7d": 1,
-      "clicks_prev": 12
+      "page": "/kpop-demon-hunters-movie-review/",
+      "clicks_7d": 45,
+      "clicks_prev": 95
     },
     {
-      "page": "/aespa-winter-ponyo-adoption-history/",
+      "page": "/ateez-bad-saiaku-problem/",
+      "clicks_7d": 8,
+      "clicks_prev": 35
+    },
+    {
+      "page": "/seventeen-v8-free-listening-event/",
       "clicks_7d": 0,
-      "clicks_prev": 5
+      "clicks_prev": 8
     },
     {
-      "page": "/bts-bighit-music-job-recruitment/",
+      "page": "/swf3-rhtokyo-profile/",
+      "clicks_7d": 6,
+      "clicks_prev": 13
+    },
+    {
+      "page": "/illits-minju-successful-diet-tips/",
       "clicks_7d": 3,
+      "clicks_prev": 10
+    },
+    {
+      "page": "/popup-20260701-7fa5b1d573/",
+      "clicks_7d": 0,
       "clicks_prev": 7
     },
     {
-      "page": "/seoul-popup-20260621/",
-      "clicks_7d": 3,
+      "page": "/kpop-demon-hunters-inserted-songs/",
+      "clicks_7d": 0,
       "clicks_prev": 6
+    },
+    {
+      "page": "/bts-v-hotel-visit-request/",
+      "clicks_7d": 1,
+      "clicks_prev": 6
+    },
+    {
+      "page": "/aespa-lemonade-newjeans-kankoku-mobigi/",
+      "clicks_7d": 3,
+      "clicks_prev": 7
     }
   ],
   "lane_c_candidates": [
     {
       "query": "鉄槌教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 948,
-      "clicks": 6,
+      "imp": 1220,
+      "clicks": 7,
       "ctr": 0.6,
-      "pos": 10.3
-    },
-    {
-      "query": "鉄槌教師 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 626,
-      "clicks": 15,
-      "ctr": 2.4,
-      "pos": 10.4
-    },
-    {
-      "query": "デーモンハンターズ キャラクター",
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 398,
-      "clicks": 17,
-      "ctr": 4.3,
-      "pos": 9.1
+      "pos": 10.2
     },
     {
       "query": "鉄槌教師 相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 368,
-      "clicks": 1,
-      "ctr": 0.3,
-      "pos": 6.7
-    },
-    {
-      "query": "サジャボーイズ 声優",
-      "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 340,
-      "clicks": 14,
-      "ctr": 4.1,
-      "pos": 7.3
-    },
-    {
-      "query": "鉄槌 教師 日本 語 吹き替え 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 209,
-      "clicks": 2,
+      "imp": 941,
+      "clicks": 9,
       "ctr": 1.0,
-      "pos": 10.3
+      "pos": 6.1
+    },
+    {
+      "query": "鉄槌教師 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 939,
+      "clicks": 19,
+      "ctr": 2.0,
+      "pos": 10.1
+    },
+    {
+      "query": "デーモンハンターズ キャラクター",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 572,
+      "clicks": 22,
+      "ctr": 3.8,
+      "pos": 8.3
     },
     {
       "query": "デーモンハンターズ 声優",
       "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 169,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 9.2
+      "imp": 348,
+      "clicks": 6,
+      "ctr": 1.7,
+      "pos": 8.8
+    },
+    {
+      "query": "サジャボーイズ 声優",
+      "page": "/kpop-demon-hunters-movie-review/",
+      "imp": 347,
+      "clicks": 19,
+      "ctr": 5.5,
+      "pos": 6.2
     },
     {
       "query": "イジュンヨン",
       "page": "/ijunyoung-drama-success-before-enlistment/",
-      "imp": 168,
-      "clicks": 3,
-      "ctr": 1.8,
-      "pos": 10.3
+      "imp": 269,
+      "clicks": 4,
+      "ctr": 1.5,
+      "pos": 10.1
+    },
+    {
+      "query": "鉄槌 教師 日本 語 吹き替え 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 260,
+      "clicks": 2,
+      "ctr": 0.8,
+      "pos": 10.4
+    },
+    {
+      "query": "bts 仲良し相関図",
+      "page": "/bts-relationship-map-2026/",
+      "imp": 179,
+      "clicks": 6,
+      "ctr": 3.4,
+      "pos": 7.3
     }
   ]
 }

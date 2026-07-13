@@ -783,5 +783,19 @@
         "license": "CC BY 2.0"
       }
     ]
+  },
+  "lisa": {
+    "name": "LISA",
+    "files": [
+      "lisa_f91b2cab.jpg"
+    ],
+    "sources": [
+      {
+        "file": "lisa_f91b2cab.jpg",
+        "wikimedia_title": "File:Lisa Ritchie & Zacc West at Monday Monday at the Hotel Cafe 09 11 2017 -61 (37107421380).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Lisa_Ritchie_%26_Zacc_West_at_Monday_Monday_at_the_Hotel_Cafe_09_11_2017_-61_%2837107421380%29.jpg",
+        "license": "CC BY 2.0"
+      }
+    ]
   }
 }

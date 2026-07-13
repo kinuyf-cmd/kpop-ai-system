@@ -1,69 +1,77 @@
 {
-  "generated_at": "2026-07-06T07:00:04.250323",
+  "generated_at": "2026-07-13T07:00:03.777104",
   "candidates": [
     {
       "query": "鉄槌教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 948,
-      "clicks": 6,
+      "imp": 1220,
+      "clicks": 7,
       "ctr": 0.6,
-      "pos": 10.3
-    },
-    {
-      "query": "鉄槌教師 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 626,
-      "clicks": 15,
-      "ctr": 2.4,
-      "pos": 10.4
-    },
-    {
-      "query": "デーモンハンターズ キャラクター",
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 398,
-      "clicks": 17,
-      "ctr": 4.3,
-      "pos": 9.1
+      "pos": 10.2
     },
     {
       "query": "鉄槌教師 相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 368,
-      "clicks": 1,
-      "ctr": 0.3,
-      "pos": 6.7
-    },
-    {
-      "query": "サジャボーイズ 声優",
-      "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 340,
-      "clicks": 14,
-      "ctr": 4.1,
-      "pos": 7.3
-    },
-    {
-      "query": "鉄槌 教師 日本 語 吹き替え 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 209,
-      "clicks": 2,
+      "imp": 941,
+      "clicks": 9,
       "ctr": 1.0,
-      "pos": 10.3
+      "pos": 6.1
+    },
+    {
+      "query": "鉄槌教師 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 939,
+      "clicks": 19,
+      "ctr": 2.0,
+      "pos": 10.1
+    },
+    {
+      "query": "デーモンハンターズ キャラクター",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 572,
+      "clicks": 22,
+      "ctr": 3.8,
+      "pos": 8.3
     },
     {
       "query": "デーモンハンターズ 声優",
       "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 169,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 9.2
+      "imp": 348,
+      "clicks": 6,
+      "ctr": 1.7,
+      "pos": 8.8
+    },
+    {
+      "query": "サジャボーイズ 声優",
+      "page": "/kpop-demon-hunters-movie-review/",
+      "imp": 347,
+      "clicks": 19,
+      "ctr": 5.5,
+      "pos": 6.2
     },
     {
       "query": "イジュンヨン",
       "page": "/ijunyoung-drama-success-before-enlistment/",
-      "imp": 168,
-      "clicks": 3,
-      "ctr": 1.8,
-      "pos": 10.3
+      "imp": 269,
+      "clicks": 4,
+      "ctr": 1.5,
+      "pos": 10.1
+    },
+    {
+      "query": "鉄槌 教師 日本 語 吹き替え 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 260,
+      "clicks": 2,
+      "ctr": 0.8,
+      "pos": 10.4
+    },
+    {
+      "query": "bts 仲良し相関図",
+      "page": "/bts-relationship-map-2026/",
+      "imp": 179,
+      "clicks": 6,
+      "ctr": 3.4,
+      "pos": 7.3
     }
   ]
 }
