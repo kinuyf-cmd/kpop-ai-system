@@ -170,6 +170,47 @@ def _get_client() -> anthropic.Anthropic:
     return _client
 
 
+# 2026-07-15 (コスト削減): prompt cache 並走破綻の根治。
+# 速報パイプラインが複数記事を並列に pre_publish_gate へ通すため、先行呼び出しの
+# prompt cache write (system prefix ~12.5k tok) が完了する前に後続呼び出しが走り、
+# 実測で 68% が cold write (cache_read==0) になっていた。cache_create 12.5k tok を
+# 毎回書き直す = factcheck が全API費の 84% を占める主因。
+# API 区間 (client.messages.create) を単一プロセス跨ぎの file lock で逐次化し、
+# 先行呼び出しが cache write を終えてから後続が cache read hit する順序を保証する。
+# lock は API 区間だけを囲む (結果 cache hit 経路は lock 外 = 高速パス維持)。
+# 参照: breaking-detector-needs-single-instance-lock (flock 不在で並走した同型事例)。
+import fcntl
+import contextlib
+
+_API_LOCK_PATH = Path('/home/aiuser/kpop-ai-system/data/factcheck_v2_api.lock')
+
+
+@contextlib.contextmanager
+def _api_serialize_lock():
+    """factcheck API 呼出を単一インスタンスへ逐次化 (prompt cache 温存)。
+
+    flock 失敗 (権限/FS 非対応等) は握りつぶして逐次化なしで続行 — lock は
+    最適化であり、取得不能でも factcheck の正しさには影響しない。
+    """
+    fh = None
+    try:
+        _API_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+        fh = open(_API_LOCK_PATH, 'w')
+        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+    except OSError:
+        if fh is not None:
+            with contextlib.suppress(Exception):
+                fh.close()
+        fh = None
+    try:
+        yield
+    finally:
+        if fh is not None:
+            with contextlib.suppress(Exception):
+                fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+                fh.close()
+
+
 # Claude structured outputs はnumerical constraints (minimum/maximum)非サポート
 # verified_facts は呼び出し側で参照されておらず output token を圧迫していたため削除 (2026-05-12)
 _FACTCHECK_SCHEMA = {
@@ -414,19 +455,30 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
         # だが、これは元々小さい ~800 tok で corpus の cache 破綻に比べ無視できる)。
         user_content = user_prompt
 
-        response = client.messages.create(
-            model='claude-sonnet-4-6',
-            max_tokens=1500,
-            system=system_blocks,
-            tools=tools,
-            output_config={
-                "format": {
-                    "type": "json_schema",
-                    "schema": _FACTCHECK_SCHEMA,
+        # 2026-07-15: API 区間を単一インスタンスへ逐次化 (prompt cache 温存)。
+        # 並走呼び出しが先行の cache write を待ってから走ることで cache read hit する。
+        with _api_serialize_lock():
+            # double-checked locking: lock 待機中に先行呼び出しが同一 content の結果を
+            # cache へ書いていれば API を叩かず即返す (並走した同一記事の重複課金を遮断)。
+            _dc = _cache_get(ck)
+            if _dc is not None:
+                _dc = _strip_cta_noise(_dc)
+                _pid_cache_put(pid, _dc)
+                return _dc
+
+            response = client.messages.create(
+                model='claude-sonnet-4-6',
+                max_tokens=1500,
+                system=system_blocks,
+                tools=tools,
+                output_config={
+                    "format": {
+                        "type": "json_schema",
+                        "schema": _FACTCHECK_SCHEMA,
+                    },
                 },
-            },
-            messages=[{"role": "user", "content": user_content}],
-        )
+                messages=[{"role": "user", "content": user_content}],
+            )
         # 最初のtext blockがschema-validated JSON
         text = next((b.text for b in response.content if b.type == 'text'), '{}')
         try:
