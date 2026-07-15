@@ -46,8 +46,10 @@ PRICING = {
                           'cache_write_1h': 6.0, 'cache_read': 0.30},
     'claude-haiku-4-5':  {'input': 1.0, 'output': 5.0, 'cache_write_5m': 1.25,
                           'cache_write_1h': 2.0, 'cache_read': 0.10},
-    'claude-opus-4-7':   {'input': 15.0, 'output': 75.0, 'cache_write_5m': 18.75,
-                          'cache_write_1h': 30.0, 'cache_read': 1.50},
+    # 2026-07-15: Opus 4.7 単価修正。旧値 $15/$75 は誤り。正しくは $5/$25 (1M版・標準価格)。
+    # cache: write_5m=input×1.25, write_1h=input×2, read=input×0.1。
+    'claude-opus-4-7':   {'input': 5.0, 'output': 25.0, 'cache_write_5m': 6.25,
+                          'cache_write_1h': 10.0, 'cache_read': 0.50},
 }
 
 # 閾値 (env で上書き可能)
