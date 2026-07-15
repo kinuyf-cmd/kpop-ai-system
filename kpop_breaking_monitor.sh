@@ -14,7 +14,11 @@ TODAY_ISO=$(date '+%Y-%m-%d')
 HOUR=$(date '+%H' | sed 's/^0//')
 CACHE_DIR="$HOME/.kpop_trend_cache"
 LOG_FILE="$HOME/kpop_scheduler_logs/breaking_monitor_$(date '+%Y%m%d').log"
-WEBHOOK=$(cat ~/.kpop_discord_webhook 2>/dev/null | tr -d '[:space:]' || echo "")
+# 2026-07-15: config 一元管理へ寄せる。speed 速報は publishing_log チャンネルへ。
+# resolve 失敗時のみ従来の ~/.kpop_discord_webhook 直読みへフォールバック。
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEBHOOK=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" publishing_log 2>/dev/null || echo "")
+[ -z "$WEBHOOK" ] && WEBHOOK=$(cat ~/.kpop_discord_webhook 2>/dev/null | tr -d '[:space:]' || echo "")
 LOCK_FILE="/tmp/kpop_breaking.lock"
 
 mkdir -p "$CACHE_DIR" "$HOME/kpop_scheduler_logs"

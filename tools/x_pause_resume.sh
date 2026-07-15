@@ -43,8 +43,10 @@ if [ -f lib/resolve_discord_webhook.py ]; then
 import sys, json, urllib.request
 sys.path.insert(0, "/home/aiuser/kpop-ai-system")
 try:
-    from lib.resolve_discord_webhook import resolve_discord_webhook
-    url = resolve_discord_webhook()
+    # 2026-07-15: モジュールが公開するのは resolve(channel) のみ。
+    # 存在しない resolve_discord_webhook() を呼んでいたため通知が飛んでいなかった。
+    from lib.resolve_discord_webhook import resolve
+    url = resolve("urgent_errors")
 except Exception:
     url = None
 if url:

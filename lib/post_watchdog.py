@@ -76,11 +76,12 @@ def is_active_hours() -> bool:
 
 
 def get_discord_webhook(channel: str) -> str:
-    if not CONFIG.exists():
-        return ""
+    # 2026-07-15: 生 json.load では ${DISCORD_WEBHOOK_*} が未展開のまま返り
+    # 送信失敗していた (起動元が .env を export していない cron では無音化)。
+    # resolve_discord_webhook.resolve() (.env 自前ロード+expandvars+URL 検証) へ委譲。
     try:
-        d = json.loads(CONFIG.read_text())
-        return d.get(channel, "")
+        from lib.resolve_discord_webhook import resolve
+        return resolve(channel)
     except Exception:
         return ""
 

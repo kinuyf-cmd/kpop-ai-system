@@ -21,18 +21,8 @@ fi
 # macOS デスクトップ通知
 osascript -e "display notification \"${MESSAGE}\" with title \"${TITLE}\" subtitle \"$(date '+%H:%M')\"" 2>/dev/null
 
-# LINE Notify（~/.kpop_line_token にトークンを置けば有効）
-LINE_TOKEN_FILE=~/.kpop_line_token
-if [[ -f "$LINE_TOKEN_FILE" ]]; then
-  LINE_TOKEN=$(cat "$LINE_TOKEN_FILE" | tr -d '[:space:]')
-  if [[ -n "$LINE_TOKEN" ]]; then
-    BODY="${TITLE}"$'\n'"${ICON} ${MESSAGE}"
-    [[ -n "$URL" ]] && BODY="${BODY}"$'\n'"URL: ${URL}"
-    curl -s -X POST https://notify-api.line.me/api/notify \
-      -H "Authorization: Bearer ${LINE_TOKEN}" \
-      --data-urlencode "message=${BODY}" > /dev/null 2>&1
-  fi
-fi
+# 2026-07-15: LINE Notify (notify-api.line.me) はサービスが 2025年3月に終了済み。
+# 送信不能なデッドコードのため削除 (~/.kpop_line_token 参照ごと撤去)。
 
 # Discord Webhook（チャネル別振り分け対応）
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

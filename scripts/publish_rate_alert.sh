@@ -44,7 +44,9 @@ if [ "$RATE" -ge "$THRESHOLD" ]; then
 fi
 
 source lib/discord_channels.sh 2>/dev/null || true
-WEBHOOK=$(get_discord_webhook "alerts" 2>/dev/null || get_discord_webhook "daily_ceo_report" 2>/dev/null || echo "")
+# 2026-07-15: 未定義キー "alerts" (config に不在→daily_ceo にフォールバック) を廃し、
+# 公開率低下は緊急枠 urgent_errors へ直接送る。
+WEBHOOK=$(get_discord_webhook "urgent_errors" 2>/dev/null || echo "")
 
 if [ -z "$WEBHOOK" ]; then
   echo "WARN: webhook未設定で公開率${RATE}%(${SUCCESS}/${TOTAL})のアラートを送信できません" >&2

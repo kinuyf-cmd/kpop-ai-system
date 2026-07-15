@@ -31,17 +31,21 @@ ROUTER_LOG = LOGS_DIR / "discord_router.jsonl"
 JST = timezone(timedelta(hours=9))
 
 
+# 2026-07-15: ChannelType の値を config/discord_webhooks.json の実キーへ修正。
+# 旧値 (morning/seo/publish/error) は config に存在せず send_to_channel が常に
+# webhook_not_set でサイレント失敗していた。実キーに揃えることで既存の
+# 呼び出しインターフェースを保ったまま通知を復活させる。
 class ChannelType(Enum):
-    MORNING = "morning"
-    SEO = "seo"
-    PUBLISH = "publish"
-    ERROR = "error"
+    MORNING = "daily_ceo_report"
+    SEO = "seo_insights"
+    PUBLISH = "publishing_log"
+    ERROR = "urgent_errors"
 
     # 後方互換エイリアス（既存コードの段階移行用）
-    DAILY_REPORT = "morning"
-    ARTICLE = "publish"
-    ALERT = "error"
-    WEEKLY = "morning"
+    DAILY_REPORT = "daily_ceo_report"
+    ARTICLE = "publishing_log"
+    ALERT = "urgent_errors"
+    WEEKLY = "weekly_board_report"
 
 
 # チャネル別色
@@ -54,12 +58,27 @@ CHANNEL_COLORS = {
 
 
 def _load_webhooks() -> dict:
+    # 2026-07-15: 生 json.load では ${DISCORD_WEBHOOK_*} が未展開のまま返り
+    # 送信失敗していた。resolve_discord_webhook.resolve() (=.env 自前ロード+
+    # expandvars+URL 検証) で各チャンネルを実 URL へ解決する。
     if not CONFIG_PATH.exists():
         return {}
     try:
-        return json.loads(CONFIG_PATH.read_text())
+        from lib.resolve_discord_webhook import resolve
     except Exception:
         return {}
+    out = {}
+    try:
+        keys = json.loads(CONFIG_PATH.read_text()).keys()
+    except Exception:
+        return {}
+    for k in keys:
+        if k.startswith("_"):
+            continue
+        url = resolve(k)
+        if url:
+            out[k] = url
+    return out
 
 
 def _do_send(webhook_url: str, payload: dict) -> tuple[str, str]:

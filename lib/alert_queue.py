@@ -44,11 +44,13 @@ DISCORD_USER_AGENT = "DiscordBot (kpop-ai-monitor, 2.0)"
 # ─────────────────────────────────────────────────────────────
 
 def _get_webhook(channel: str) -> str:
-    if not CONFIG_PATH.exists():
-        return ""
+    # 2026-07-15: 生 json.load では ${DISCORD_WEBHOOK_*} が未展開のまま urlopen に
+    # 渡り network_error で送信失敗していた (discord_notifier の実送信/--retry が
+    # この経路)。resolve_discord_webhook.resolve() (.env 自前ロード+expandvars+
+    # URL 検証) へ委譲し、CRITICAL/WARNING 通知を復活させる。
     try:
-        d = json.loads(CONFIG_PATH.read_text())
-        return d.get(channel, "") or ""
+        from lib.resolve_discord_webhook import resolve
+        return resolve(channel)
     except Exception:
         return ""
 

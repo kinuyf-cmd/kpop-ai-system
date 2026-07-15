@@ -90,20 +90,16 @@ def load_webhooks() -> dict:
 
 def select_webhook(event: str, hooks: dict) -> str | None:
     """イベント種別から適切な webhook channel を選ぶ"""
-    # 優先順位: 専用 channel → orchestration channel → kpop_general → 任意の最初の有効 URL
-    candidates = []
-    if event.startswith("qa_"):
-        candidates.append("qa")
-    if event.startswith("red_"):
-        candidates.append("red_team")
-    if event.startswith("blue_"):
-        candidates.append("blue_team")
-    candidates.extend(["orchestration", "kpop_general", "default"])
+    # 2026-07-15: 旧候補キー (qa/red_team/blue_team/orchestration/kpop_general/default)
+    # は config/discord_webhooks.json に1つも存在せず、常にフォールバック依存だった。
+    # QA/RED/BLUE/orchestration の完了イベントは weekly_board_report へ集約 (RED/BLUE
+    # スキャンの通知先と同じ枠)。最終フォールバックは daily_ceo_report。
+    candidates = ["weekly_board_report", "daily_ceo_report"]
     for key in candidates:
         url = hooks.get(key)
         if url and url.startswith("http"):
             return url
-    # フォールバック: 最初の有効 URL
+    # 最終フォールバック: 最初の有効 URL
     for v in hooks.values():
         if isinstance(v, str) and v.startswith("http"):
             return v

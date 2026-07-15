@@ -129,6 +129,31 @@ def _save_alert_state(state: dict) -> None:
         pass
 
 
+# 2026-07-15: 死んだ discord_channel_router (キー morning/seo/publish/error は
+# config/discord_webhooks.json に不在 → 常に webhook_not_set) から、正規経路
+# resolve_discord_webhook.resolve() へ付け替え。UA 必須は
+# [[discord-notify-global-repair-20260602]] 準拠。
+def _send_discord_cost(channel: str, content: str) -> bool:
+    """cost guard 通知を正規経路で送信 (best-effort)。"""
+    try:
+        from urllib.request import Request, urlopen
+        from lib.resolve_discord_webhook import resolve, DISCORD_USER_AGENT
+        url = resolve(channel)
+        if not url.startswith('https://discord.com/api/webhooks/'):
+            log.warning(f'[cost_guard] webhook 解決失敗 ({channel}) → 通知skip')
+            return False
+        data = json.dumps({'content': content[:1900]}).encode('utf-8')
+        req = Request(url, data=data, headers={
+            'Content-Type': 'application/json',
+            'User-Agent': DISCORD_USER_AGENT,
+        })
+        urlopen(req, timeout=15)
+        return True
+    except Exception as e:
+        log.warning(f'[cost_guard] discord notify failed: {e}')
+        return False
+
+
 def _maybe_alert(kind: str, message: str) -> None:
     """同種アラートは 1h に 1 回まで Discord に通知"""
     state = _load_alert_state()
@@ -139,12 +164,8 @@ def _maybe_alert(kind: str, message: str) -> None:
     _save_alert_state(state)
     # ログには必ず出す
     log.warning(f'[anthropic_cost_guard] {kind}: {message}')
-    # Discord 通知 (best-effort, 失敗してもブロックしない)
-    try:
-        from lib.discord_channel_router import send_to_channel, ChannelType
-        send_to_channel(ChannelType.ERROR, f'⚠️ Anthropic cost guard\n{kind}: {message}')
-    except Exception:
-        pass
+    # Discord 通知 (best-effort, 失敗してもブロックしない)。コスト異常は緊急枠へ。
+    _send_discord_cost('urgent_errors', f'⚠️ Anthropic cost guard\n{kind}: {message}')
 
 
 def guard_before_call(caller: str) -> bool:
@@ -304,14 +325,10 @@ def send_daily_summary_to_discord(force: bool = False) -> bool:
         # 通常時で call なしの日は通知しない (低 SN ratio 回避)
         return False
     title, body = _format_summary_for_discord(s)
-    try:
-        from lib.discord_channel_router import send_to_channel, ChannelType
-        channel = ChannelType.ERROR if s['over_budget'] else ChannelType.MORNING
-        send_to_channel(channel, title, body)
-        return True
-    except Exception as e:
-        log.warning(f'discord notify failed: {e}')
-        return False
+    # 2026-07-15: 予算超過は urgent_errors、通常サマリは daily_ceo_report へ
+    # (旧 ERROR/MORNING チャンネルは死んだ router のキーで送信されていなかった)。
+    channel = 'urgent_errors' if s['over_budget'] else 'daily_ceo_report'
+    return _send_discord_cost(channel, f'**{title}**\n{body}')
 
 
 if __name__ == '__main__':
