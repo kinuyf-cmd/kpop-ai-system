@@ -11,7 +11,7 @@ URL/title照合では分からない「画像内の誰か」を判定する最�
         ...
 
 キャッシュ: 画像のSHA256をキーに結果を保存。同じ画像は再検証しない。
-コスト: 1画像あたり約$0.001 (Opus 4.7、画像input)
+コスト: 1画像あたり約$0.005 (Sonnet 5、画像input)
 """
 from __future__ import annotations
 import base64
@@ -174,8 +174,13 @@ def vision_validate(image_path: str, expected_artist: str,
         # K-pop識別精度のため Sonnet 4.6 採用 (Haikuはaespa↔TWICE誤認)
         # 2026-05-10: structured outputs (output_config.format) で JSON schema 強制
         response = client.messages.create(
-            model='claude-sonnet-4-6',
+            # 2026-07-15: Sonnet 4.6 → Sonnet 5 移行。実サムネ画像10件(正例5+誤認5)の
+            # 並列検証で判定挙動は 4.6 と完全同一 (両者8/10、aespa↔TWICE誤認も両者正しくNO)。
+            # コスト32%減・速度向上。thinking はJSON判定タスクで不要のため明示 disabled
+            # (Sonnet5はadaptiveデフォルトONでmax_tokensを圧迫)。
+            model='claude-sonnet-5',
             max_tokens=400,
+            thinking={'type': 'disabled'},
             system=[{
                 "type": "text",
                 "text": K_POP_AUDIT_PREFIX,
@@ -210,7 +215,7 @@ def vision_validate(image_path: str, expected_artist: str,
         # 2026-05-12 (Phase 6): cost ledger 記録
         try:
             from lib.anthropic_cost_guard import log_usage
-            log_usage('vision_gate', model='claude-sonnet-4-6', usage=response.usage)
+            log_usage('vision_gate', model='claude-sonnet-5', usage=response.usage)
         except Exception:
             pass
         # output_config.format で1個目のtext blockに valid JSON が保証される
