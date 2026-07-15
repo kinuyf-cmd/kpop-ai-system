@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-14T07:28:28.105742+00:00",
+  "generated_at": "2026-07-15T04:31:55.879353+00:00",
   "company": "K-POP Journal AI Company",
   "ceo": {
     "id": "mewtwo",
@@ -25,7 +25,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T06:01:37Z"
+          "last_run_time": "2026-04-15T06:01:46Z"
         },
         {
           "id": "metamon",
@@ -33,11 +33,11 @@
           "role": "SEOリライト・タイトル生成",
           "role_class": "CORE",
           "pipeline_position": "breaking=step2 / strategy=step9",
-          "success_rate": 0.989,
+          "success_rate": 0.971,
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T06:01:45Z"
+          "last_run_time": "2026-04-15T06:02:26Z"
         },
         {
           "id": "eevee",
@@ -45,11 +45,11 @@
           "role": "タイトル最終選定",
           "role_class": "CORE",
           "pipeline_position": "breaking=step2.5 / strategy=step10",
-          "success_rate": 0.989,
+          "success_rate": 0.99,
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:11:41Z"
+          "last_run_time": "2026-04-15T05:32:27Z"
         },
         {
           "id": "jirachi",
@@ -61,7 +61,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:05:43Z"
+          "last_run_time": "2026-04-15T05:33:17Z"
         },
         {
           "id": "arceus",
@@ -73,7 +73,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:16:03Z"
+          "last_run_time": "2026-04-15T04:33:54Z"
         },
         {
           "id": "butterfree",
@@ -81,11 +81,11 @@
           "role": "トレンド情報収集",
           "role_class": "CORE",
           "pipeline_position": "strategy=step1",
-          "success_rate": 0.833,
+          "success_rate": 0.822,
           "status": "要改善",
           "danger": "🟡 中",
           "rank": "🟡",
-          "last_run_time": "2026-04-14T03:01:16Z"
+          "last_run_time": "2026-04-15T03:01:30Z"
         },
         {
           "id": "lapras",
@@ -93,11 +93,11 @@
           "role": "SEOキーワード戦略",
           "role_class": "CORE",
           "pipeline_position": "strategy=step2",
-          "success_rate": 0.971,
+          "success_rate": 0.973,
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:02:24Z"
+          "last_run_time": "2026-04-15T03:02:29Z"
         },
         {
           "id": "mimikyu",
@@ -109,7 +109,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:04:32Z"
+          "last_run_time": "2026-04-15T03:04:43Z"
         },
         {
           "id": "venusaur",
@@ -121,7 +121,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:07:21Z"
+          "last_run_time": "2026-04-15T03:06:57Z"
         },
         {
           "id": "mewtwo",
@@ -133,7 +133,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:08:31Z"
+          "last_run_time": "2026-04-15T03:08:13Z"
         },
         {
           "id": "gengar",
@@ -145,7 +145,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:14:07Z"
+          "last_run_time": "2026-04-15T03:15:43Z"
         },
         {
           "id": "gardevoir_hook_critic",
@@ -153,11 +153,11 @@
           "role": "刺さり品質ゲート",
           "role_class": "CORE",
           "pipeline_position": "breaking=step3.5 / strategy=step13.5",
-          "success_rate": 0.216,
+          "success_rate": 0.2,
           "status": "要改善",
           "danger": "🔴 高",
           "rank": "🔴",
-          "last_run_time": "2026-04-14T03:15:26Z"
+          "last_run_time": "2026-04-15T05:34:13Z"
         },
         {
           "id": "zapdos",
@@ -169,7 +169,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-13T06:02:22Z"
+          "last_run_time": "2026-04-14T14:34:58Z"
         },
         {
           "id": "beautywriter",
@@ -210,7 +210,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:05:43Z"
+          "last_run_time": "2026-04-15T03:05:47Z"
         },
         {
           "id": "persian",
@@ -218,11 +218,11 @@
           "role": "SNS拡散・X投稿戦略",
           "role_class": "SUPPORT",
           "pipeline_position": "strategy=step15 / chart=step4",
-          "success_rate": 0.952,
+          "success_rate": 0.958,
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:16:38Z"
+          "last_run_time": "2026-04-14T14:36:38Z"
         },
         {
           "id": "カイリュー",
@@ -234,7 +234,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:15:20Z"
+          "last_run_time": "2026-04-14T11:47:47Z"
         },
         {
           "id": "porygon",
@@ -295,11 +295,11 @@
           "role": "WordPress API投稿",
           "role_class": "INFRA",
           "pipeline_position": "breaking=final / strategy=final",
-          "success_rate": 0.922,
+          "success_rate": 0.907,
           "status": "要改善",
           "danger": "🟡 中",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:16:12Z"
+          "last_run_time": "2026-04-14T14:36:23Z"
         },
         {
           "id": "x_post",
@@ -340,7 +340,7 @@
           "status": "稼働中",
           "danger": "🟢 低",
           "rank": "🟢",
-          "last_run_time": "2026-04-14T03:12:18Z"
+          "last_run_time": "2026-04-15T03:13:57Z"
         },
         {
           "id": "articuno",
@@ -393,7 +393,7 @@
       ]
     }
   },
-  "total_agents": 31,
+  "total_agents": 33,
   "active_agents": 17,
-  "critical_agents": 4
+  "critical_agents": 6
 }

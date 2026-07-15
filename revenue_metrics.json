@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-14T07:28:28.106045+00:00",
+  "generated_at": "2026-07-15T04:31:55.880120+00:00",
   "summary": {
-    "total_articles": 68,
-    "avg_revenue_score": 0.837,
-    "cta_rate": 0.735,
+    "total_articles": 70,
+    "avg_revenue_score": 0.835,
+    "cta_rate": 0.729,
     "thumbnail_rate": 0.971,
-    "avg_char_count": 4500,
+    "avg_char_count": 4469,
     "contaminated_title_count": 2,
     "contaminated_titles": [
       {
@@ -19,7 +19,7 @@
     ]
   },
   "kpi_targets": {
-    "daily_articles": 5,
+    "daily_articles": 20,
     "daily_revenue_jpy": 200,
     "daily_sessions": 500,
     "pipeline_uptime": 95,
@@ -28,8 +28,8 @@
   },
   "pipeline_analysis": {
     "strategy": {
-      "count": 19,
-      "avg_revenue_score": 0.902,
+      "count": 20,
+      "avg_revenue_score": 0.901,
       "cta_rate": 1.0
     },
     "speed": {
@@ -41,6 +41,11 @@
       "count": 1,
       "avg_revenue_score": 0.878,
       "cta_rate": 1.0
+    },
+    "post_to_wp": {
+      "count": 1,
+      "avg_revenue_score": 0.631,
+      "cta_rate": 0.0
     },
     "": {
       "count": 1,
@@ -56,11 +61,11 @@
     "avg_ctr_score": 0.774
   },
   "losing_patterns": {
-    "avg_chars": 4043,
-    "avg_h2": 6.7,
+    "avg_chars": 3796,
+    "avg_h2": 6.4,
     "cta_rate": 0.59,
     "thumb_rate": 0.88,
-    "avg_ctr_score": 0.703
+    "avg_ctr_score": 0.706
   },
   "top_articles": [
     {
@@ -246,24 +251,6 @@
   ],
   "bottom_articles": [
     {
-      "post_id": "2079",
-      "title": "Super Junior公演で安全柵崩落──観客3名負傷、K-POP安全問題が再燃",
-      "url": "https://www.kpopjournal.tokyo/super-junior3k-pop/",
-      "pipeline": "speed",
-      "date": "2026-04-08",
-      "revenue_score": 0.758,
-      "ctr_score": 0.85,
-      "cvr_score": 0.751,
-      "seo_score": 0.659,
-      "navigation_score": 0.751,
-      "freshness_score": 0.5,
-      "char_count": 1508,
-      "h2_count": 6,
-      "has_cta": true,
-      "has_thumbnail": true,
-      "is_contaminated": false
-    },
-    {
       "post_id": "1983",
       "title": "【速報】BIGBANG、6年越しの&#8221;約束&#8221;へ――コーチェラ2026にK-POP勢が集結",
       "url": "https://www.kpopjournal.tokyo/bigbang-coachella-2026-kpop-festival/",
@@ -296,6 +283,24 @@
       "char_count": 1341,
       "h2_count": 6,
       "has_cta": true,
+      "has_thumbnail": true,
+      "is_contaminated": false
+    },
+    {
+      "post_id": 1403,
+      "title": "OSAKA Ojo Gang とリーダーIBUKI、出演料めぐり係争 — 報道まとめ",
+      "url": "https://www.kpopjournal.tokyo/osaka-ojo-gang-%e3%81%a8%e3%83%aa%e3%83%bc%e3%83%80%e3%83%bcibuki%e3%80%81%e5%87%ba%e6%bc%94%e6%96%99%e3%82%81%e3%81%90%e3%82%8a%e4%bf%82%e4%ba%89-%e5%a0%b1%e9%81%93%e3%81%be%e3%81%a8/",
+      "pipeline": "post_to_wp",
+      "date": "2026-05-25",
+      "revenue_score": 0.631,
+      "ctr_score": 0.7,
+      "cvr_score": 0.19,
+      "seo_score": 0.646,
+      "navigation_score": 0.817,
+      "freshness_score": 0.5,
+      "char_count": 1903,
+      "h2_count": 4,
+      "has_cta": false,
       "has_thumbnail": true,
       "is_contaminated": false
     },

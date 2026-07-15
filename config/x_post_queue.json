@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-14 21:34",
-  "count": 194,
+  "updated": "2026-07-15 21:38",
+  "count": 215,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -1747,6 +1747,195 @@
       "artist": "BTS",
       "priority": "high",
       "queued_at": "2026-07-14T21:34:33.825446"
+    },
+    {
+      "title": "BTS JIN、マイワンピックでソロ1位獲得",
+      "url": "https://www.kpopjournal.tokyo/bts-jin-my-one-pick-solo-1/",
+      "post_id": 12775,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-07-15T07:35:44.080682"
+    },
+    {
+      "title": "TWICE、再契約前にチョンヨン・ツウィ・チェヨン脱退説浮上",
+      "url": "https://www.kpopjournal.tokyo/twice-chan-young-tzuyu-che-young-departure-rumors/",
+      "post_id": 12781,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-07-15T07:38:43.339377"
+    },
+    {
+      "title": "TAEYANG、BIGBANG 20周年ツアー「COSMOS」予告",
+      "url": "https://www.kpopjournal.tokyo/taeyang-bigbang-20th-anniversary-cosmos-tour/",
+      "post_id": 12785,
+      "genre": "breaking",
+      "artist": "태양",
+      "priority": "high",
+      "queued_at": "2026-07-15T07:40:11.736952"
+    },
+    {
+      "title": "イム・ヨンウン、14億ストリーミング突破と276週1位",
+      "url": "https://www.kpopjournal.tokyo/im-young-14-billion-streams-276-weeks-1st/",
+      "post_id": 12790,
+      "genre": "breaking",
+      "artist": "임영웅",
+      "priority": "high",
+      "queued_at": "2026-07-15T07:42:23.696080"
+    },
+    {
+      "title": "CORTIS、ビルボード200で82位に上昇中",
+      "url": "https://www.kpopjournal.tokyo/cortis-billboard-200-82nd-position/",
+      "post_id": 12801,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-07-15T09:34:19.935388"
+    },
+    {
+      "title": "ENHYPENのSunoo、メキシココンサート欠席",
+      "url": "https://www.kpopjournal.tokyo/?p=12807",
+      "post_id": 12807,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-07-15T11:30:45.960921"
+    },
+    {
+      "title": "ITZY、3回目ワールドツアーでマカオ・台北公演完売",
+      "url": "https://www.kpopjournal.tokyo/?p=12817",
+      "post_id": 12817,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-07-15T11:36:26.045779"
+    },
+    {
+      "title": "チャーリー・プース来韓公演、BTS推薦焼肉店楽しみ",
+      "url": "https://www.kpopjournal.tokyo/charlie-puth-korea-concert-bts-yakiniku/",
+      "post_id": 12821,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-15T11:37:38.419246"
+    },
+    {
+      "title": "HYOYEON、デビュー前に「ダンス練習やめたい",
+      "url": "https://www.kpopjournal.tokyo/hyoyeon-dance-practice-stop/",
+      "post_id": 12825,
+      "genre": "breaking",
+      "artist": "효연",
+      "priority": "high",
+      "queued_at": "2026-07-15T11:39:33.109629"
+    },
+    {
+      "title": "ウズ、初正規アルバム「Archive. 1」ツアー日常公開",
+      "url": "https://www.kpopjournal.tokyo/uz-archive-1-tour-daily/",
+      "post_id": 12831,
+      "genre": "breaking",
+      "artist": "우즈",
+      "priority": "high",
+      "queued_at": "2026-07-15T13:32:07.334635"
+    },
+    {
+      "title": "CORTISメンバー人種差別疑惑にインフルエンサー発言",
+      "url": "https://www.kpopjournal.tokyo/cortis-member-racism-influencer-comments/",
+      "post_id": 12840,
+      "genre": "breaking",
+      "artist": "CORTIS",
+      "priority": "high",
+      "queued_at": "2026-07-15T13:38:05.559157"
+    },
+    {
+      "title": "TWICEのツウィ 整形疑惑に反論動画公開",
+      "url": "https://www.kpopjournal.tokyo/twice-tsuui-seikei-daiyaku-hanron-video/",
+      "post_id": 12845,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-07-15T13:40:43.953438"
+    },
+    {
+      "title": "SeeYa、QWER、ILLIT、RESCENEが参加「2026 K World D",
+      "url": "https://www.kpopjournal.tokyo/seeya-qwer-illitt-rescene-2026-k-world-d/",
+      "post_id": 12849,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-07-15T13:41:54.742555"
+    },
+    {
+      "title": "CORTISのKeonho、手の怪我でツアー制限",
+      "url": "https://www.kpopjournal.tokyo/cortiss-keonho-hand-injury-tour-limitations/",
+      "post_id": 12867,
+      "genre": "breaking",
+      "artist": "CORTIS",
+      "priority": "high",
+      "queued_at": "2026-07-15T17:30:53.073008"
+    },
+    {
+      "title": "ファン・シネ、HWASA風ストリートルック公開",
+      "url": "https://www.kpopjournal.tokyo/fan-cine-hwasa-street-look/",
+      "post_id": 12877,
+      "genre": "breaking",
+      "artist": "화사",
+      "priority": "high",
+      "queued_at": "2026-07-15T17:42:05.646007"
+    },
+    {
+      "title": "TWICEナヨン、JYP退所の噂広まる",
+      "url": "https://www.kpopjournal.tokyo/twice-nayon-jyp-rumor/",
+      "post_id": 12885,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-07-15T19:32:37.005307"
+    },
+    {
+      "title": "BTSとBLACKPINK振付師集結 IDL 8月1日ソウル開催",
+      "url": "https://www.kpopjournal.tokyo/bts-blackpink-choreographers-idol-event-seoul/",
+      "post_id": 12891,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-15T19:35:47.891999"
+    },
+    {
+      "title": "ENHYPEN ソヌ、体調不良でメキシコ公演不参加",
+      "url": "https://www.kpopjournal.tokyo/?p=12895",
+      "post_id": 12895,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-07-15T19:36:59.156841"
+    },
+    {
+      "title": "ITZY、マカオと台北公演を完売",
+      "url": "https://www.kpopjournal.tokyo/itzy-macao-taipei-sold-out/",
+      "post_id": 12901,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-07-15T21:31:50.867851"
+    },
+    {
+      "title": "Stray Kidsバンチャン、FENDIコレクション登場",
+      "url": "https://www.kpopjournal.tokyo/stray-kids-bangchan-fendi-collection/",
+      "post_id": 12908,
+      "genre": "breaking",
+      "artist": "스트레이키즈",
+      "priority": "high",
+      "queued_at": "2026-07-15T21:37:26.747184"
+    },
+    {
+      "title": "NCT 127 ドヨン、全員再契約後の心境",
+      "url": "https://www.kpopjournal.tokyo/nct127-doyoung-contract-renewal-feelings/",
+      "post_id": 12912,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-07-15T21:38:47.755430"
     }
   ]
 }
