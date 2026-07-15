@@ -39,6 +39,11 @@ ALERT_STATE_PATH = Path('/home/aiuser/kpop-ai-system/data/anthropic_alert_state.
 PRICING = {
     'claude-sonnet-4-6': {'input': 3.0, 'output': 15.0, 'cache_write_5m': 3.75,
                           'cache_write_1h': 6.0, 'cache_read': 0.30},
+    # 2026-07-15: Sonnet 5 移行。導入価格は $2/$10 (~2026-08-31) だが、予算アラートは
+    # 保守側 (高め計上でアラートが早く鳴る) が安全なため正規価格 $3/$15 で計上。
+    # 正規化後も 4.6 と同額のためアラート閾値の再調整は不要。
+    'claude-sonnet-5':   {'input': 3.0, 'output': 15.0, 'cache_write_5m': 3.75,
+                          'cache_write_1h': 6.0, 'cache_read': 0.30},
     'claude-haiku-4-5':  {'input': 1.0, 'output': 5.0, 'cache_write_5m': 1.25,
                           'cache_write_1h': 2.0, 'cache_read': 0.10},
     'claude-opus-4-7':   {'input': 15.0, 'output': 75.0, 'cache_write_5m': 18.75,

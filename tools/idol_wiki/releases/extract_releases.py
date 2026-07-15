@@ -112,13 +112,15 @@ JSONのみ返す:
 {{"release": true/false, "release_title": "作品名(原語表記優先)", "release_type": "シングル|ミニアルバム(EP)|正規アルバム|デジタルシングル|タイトル曲 のいずれか", "release_year": "YYYY", "evidence": "タイトル中の根拠語句", "confidence": 0.0-1.0}}"""
     try:
         resp = client.messages.create(
-            model="claude-sonnet-4-6",
+            # 2026-07-15: Sonnet 5 移行。JSON抽出タスクで思考不要のため thinking 明示 disabled。
+            model="claude-sonnet-5",
             max_tokens=400,
+            thinking={"type": "disabled"},
             messages=[{"role": "user", "content": prompt}],
         )
         if log_usage:
             try:
-                log_usage("idol_wiki_release_extract", model="claude-sonnet-4-6", usage=resp.usage)
+                log_usage("idol_wiki_release_extract", model="claude-sonnet-5", usage=resp.usage)
             except Exception:
                 pass
         text = "".join(b.text for b in resp.content if hasattr(b, "text"))

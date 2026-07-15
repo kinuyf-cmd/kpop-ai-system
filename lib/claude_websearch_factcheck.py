@@ -80,8 +80,11 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
     )
     try:
         response = client.messages.create(
-            model='claude-sonnet-4-6',
+            # 2026-07-15: Sonnet 5 移行。JSON schema 厳守の校閲タスクで思考不要のため
+            # thinking を明示 disabled (adaptive ON だと max_tokens を圧迫)。
+            model='claude-sonnet-5',
             max_tokens=800,
+            thinking={'type': 'disabled'},
             system=[{
                 "type": "text",
                 "text": _SYSTEM_PROMPT,
@@ -129,7 +132,7 @@ def verify_with_claude_websearch(title: str, max_searches: int = 3) -> dict:
         # 2026-05-12 (Phase 6): cost ledger 記録
         try:
             from lib.anthropic_cost_guard import log_usage
-            log_usage('claude_websearch_factcheck', model='claude-sonnet-4-6', usage=response.usage)
+            log_usage('claude_websearch_factcheck', model='claude-sonnet-5', usage=response.usage)
         except Exception:
             pass
 

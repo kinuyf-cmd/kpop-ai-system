@@ -467,8 +467,13 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
                 return _dc
 
             response = client.messages.create(
-                model='claude-sonnet-4-6',
+                # 2026-07-15: Sonnet 4.6 → Sonnet 5 移行。実記事並列検証で誤り検出精度は
+                # 同等以上、input/output単価が安く速度も向上 (導入価格 ~2026-08-31)。
+                # thinking はデフォルトで adaptive ON になり max_tokens を圧迫するため、
+                # 思考不要なJSON抽出タスクとして明示 disabled。
+                model='claude-sonnet-5',
                 max_tokens=1500,
+                thinking={'type': 'disabled'},
                 system=system_blocks,
                 tools=tools,
                 output_config={
@@ -512,7 +517,7 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
         # 2026-05-12 (Phase 6): cost ledger に記録 (予算アラート/監視用)
         try:
             from lib.anthropic_cost_guard import log_usage
-            log_usage('factcheck_v2', model='claude-sonnet-4-6', usage=response.usage)
+            log_usage('factcheck_v2', model='claude-sonnet-5', usage=response.usage)
         except Exception:
             pass
 

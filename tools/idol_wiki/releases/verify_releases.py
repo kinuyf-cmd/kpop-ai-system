@@ -62,14 +62,17 @@ def _web_verify(artist: str, title: str, year: str) -> tuple[bool, str]:
             f"確実に裏が取れた場合のみ confirmed:true。曖昧・別作品・別年なら false。"
         )
         resp = client.messages.create(
-            model="claude-sonnet-4-6",
+            # 2026-07-15: Sonnet 5 移行。web_search裏取り+JSON判定タスクで思考不要のため
+            # thinking を明示 disabled。
+            model="claude-sonnet-5",
             max_tokens=500,
+            thinking={"type": "disabled"},
             tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 3}],
             messages=[{"role": "user", "content": prompt}],
         )
         if log_usage:
             try:
-                log_usage("idol_wiki_release_verify", model="claude-sonnet-4-6", usage=resp.usage)
+                log_usage("idol_wiki_release_verify", model="claude-sonnet-5", usage=resp.usage)
             except Exception:
                 pass
         text = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")

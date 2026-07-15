@@ -243,8 +243,11 @@ def generate_enrich_sections(title, theme, existing_h2, plain_body):
     )
     try:
         msg = client.messages.create(
-            model="claude-sonnet-4-6",
+            # 2026-07-15: Sonnet 5 移行。本文拡充はHTML断片生成タスクで、
+            # thinking を明示 disabled (adaptive ON だと max_tokens を圧迫)。
+            model="claude-sonnet-5",
             max_tokens=2500,
+            thinking={"type": "disabled"},
             messages=[{"role": "user", "content": prompt}],
         )
         html = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text").strip()

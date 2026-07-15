@@ -136,8 +136,11 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
     try:
         client = _get_client()
         response = client.messages.create(
-            model='claude-sonnet-4-6',
+            # 2026-07-15: Sonnet 5 移行。翻訳はJSON/HTML抽出タスクで思考不要のため
+            # thinking を明示 disabled (adaptive ON だと max_tokens を圧迫)。
+            model='claude-sonnet-5',
             max_tokens=2500,
+            thinking={'type': 'disabled'},
             system=[{
                 "type": "text",
                 "text": TRANSLATOR_SYSTEM,
@@ -154,7 +157,7 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
         )
         try:
             from lib.anthropic_cost_guard import log_usage
-            log_usage('translator_v2', model='claude-sonnet-4-6', usage=response.usage)
+            log_usage('translator_v2', model='claude-sonnet-5', usage=response.usage)
         except Exception:
             pass
 
