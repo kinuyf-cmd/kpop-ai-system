@@ -11,12 +11,12 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
 
-from lib.korean_translator import translate_ko_to_ja
+from lib.korean_translator import translate_ko_to_ja, apply_proper_noun_dict
 from lib.unified_publisher import unified_publish
 from lib.signal_deduplicator import deduplicate
 from pipeline.auto_event_article import is_processed, mark_processed
 from lib.source_reader import read_sources
-from lib.pre_publish_gate import find_duplicate_published
+from lib.pre_publish_gate import find_duplicate_published, KEYWORD_PATTERN
 
 SIGNALS_PATH = '/home/aiuser/kpop-ai-system/data/trend_signals.jsonl'
 BREAKING_LOG = '/home/aiuser/kpop-ai-system/logs/breaking_articles.jsonl'
@@ -177,7 +177,7 @@ def _is_duplicate_of_recent(candidate_title: str, recent_titles: list) -> bool:
              '無視', '扱い'}
 
     def _extract_kw(t: str) -> set:
-        kw = set(_re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', t))
+        kw = set(_re.findall(KEYWORD_PATTERN, t))
         kw = _normalize_keywords(kw)
         return kw - _stop
 
@@ -490,7 +490,7 @@ def _enrich_with_web_search(title, sigs):
     """
     import re as _re
     # タイトルからキーワード抽出（関連度フィルタ用）
-    _title_kw = set(_re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', title.lower()))
+    _title_kw = set(_re.findall(KEYWORD_PATTERN, title.lower()))
     _title_kw -= {'the', 'and', 'for', 'with', 'new', 'ガイド', '完全', '最新', '速報'}
 
     def _is_relevant(result_title, result_content):
@@ -651,7 +651,11 @@ def _pre_generation_gate(artist, sigs):
     best = max(sigs, key=lambda s: len(s.get('title', '')))
     # チェックA: 公開済み記事との重複(WP REST API 1回のみで軽い → 先に判定)
     _norm = _re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', best.get('title', '')).strip()
-    kw = _re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', f'{artist} {_norm}')
+    # 公開済み記事タイトルは日本語/英語表記なので、ハングル固有名詞(例:레드벨벳)は
+    # そのままでは WP 検索にヒットしない。辞書で正規名(Red Velvet)へ変換してから
+    # キーワード抽出する(2026-07-16 生成前 dedup ハングルすり抜け根治)。
+    _canon = apply_proper_noun_dict(f'{artist} {_norm}')[0]
+    kw = _re.findall(KEYWORD_PATTERN, _canon)
     kw = [k for k in kw if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
     dup = find_duplicate_published(kw)
     if dup:

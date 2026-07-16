@@ -22,6 +22,11 @@ from lib.full_audit_engine import (
 _JST = timezone(timedelta(hours=9))
 _LOG_PATH = '/home/aiuser/kpop-ai-system/logs/pre_publish_gate.jsonl'
 
+# 重複判定用キーワード抽出。ハングル(가-힣)を含めないと韓国語ソース/既存タイトルの
+# 固有名詞(例:레드벨벳)が抽出されず、生成前 dedup をすり抜ける(2026-07-16 修理)。
+# 生成前(新規側)と生成後(既存側)で同一パターンを使わないと overlap が成立しない。
+KEYWORD_PATTERN = r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}|[가-힣]{2,}'
+
 # BLOCKすべきissue type（壊滅レベルのみ）
 BLOCK_TYPES = frozenset({
     'content_empty',          # 本文 < 400字
@@ -234,9 +239,9 @@ def find_duplicate_published(keywords):
         for ep in existing:
             et = ep.get('title', {})
             et_text = et.get('rendered', '') if isinstance(et, dict) else str(et)
-            ex_kw = set(re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', et_text.lower()))
+            ex_kw = set(re.findall(KEYWORD_PATTERN, et_text.lower()))
             overlap = new_kw & ex_kw
-            proper_overlap = {w for w in overlap if re.match(r'[a-z]', w) or re.match(r'[ァ-ヶー]', w)}
+            proper_overlap = {w for w in overlap if re.match(r'[a-z]', w) or re.match(r'[ァ-ヶー]', w) or re.match(r'[가-힣]', w)}
             if len(proper_overlap) >= 2 or (len(overlap) >= 2 and len(overlap) / max(len(new_kw), 1) > 0.4):
                 return {'id': ep.get('id'), 'title': et_text}
     except Exception:
@@ -487,7 +492,7 @@ def pre_publish_gate(
     # 1g. 重複記事チェック (2026-05-06追加 / 2026-06-16 find_duplicate_published に集約)
     if status == 'publish' and title:
         _norm_title = re.sub(r'[【\[\(][^】\]\)]*[】\]\)]|！|!|？|\?', '', title).strip()
-        _keywords = re.findall(r'[A-Za-z]{2,}|[ァ-ヶー]{3,}|[一-龥]{2,}', _norm_title)
+        _keywords = re.findall(KEYWORD_PATTERN, _norm_title)
         _keywords = [k for k in _keywords if k not in ('ガイド', '完全', '最新', '徹底', '紹介', '解説', 'まとめ', '速報', '必見')]
         _dup = find_duplicate_published(_keywords)
         if _dup:

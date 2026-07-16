@@ -50,3 +50,17 @@ def test_returns_none_on_empty_keywords():
     with patch("urllib.request.urlopen", return_value=_fake_resp([])):
         dup = find_duplicate_published([])
     assert dup is None
+
+
+def test_returns_dup_when_hangul_proper_nouns_overlap():
+    """既存タイトルがハングル固有名詞を含む場合も重複検出できる。
+
+    速報ソースは韓国語タイトルが多く、既存記事側もハングル表記のことがある。
+    キーワード抽出正規表現がハングル(가-힣)を対象外にしていると、
+    ハングル固有名詞が overlap に載らず、生成前 dedup をすり抜ける
+    (公開率低下の実測根因)。"""
+    existing = [{"id": 8187, "title": {"rendered": "레드벨벳 컴백 확정"}}]
+    with patch("urllib.request.urlopen", return_value=_fake_resp(existing)):
+        dup = find_duplicate_published(["레드벨벳", "컴백"])
+    assert dup is not None
+    assert dup["id"] == 8187
