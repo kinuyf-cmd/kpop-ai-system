@@ -74,10 +74,33 @@ ARTICLES = {
         ("『鉄槌教師』のボン・グンデ(P.O)はオリジナルキャラクターですか?",
          "はい。ボン・グンデ(演:ピョ・ジフン=Block BのP.O)は、情報収集・技術を担うブレインで、ドラマ版で追加されたオリジナルキャラクターです。"),
     ],
+    # tettsui-kyoshi-dub-episodes(post 9190)。imp 7,956(サイト最大)/pos 9.1/CTR 1.6%、
+    # 「鉄槌教師 声優」が直近7d +239imp 急上昇(2026-07-16 GSC実測)。pos9-10は1ページ目の底で
+    # クリックが出ない帯のため、CTR改善より順位押し上げが要る → FAQPage schema で強化。
+    # この記事は可視FAQ(<div class="wp-block-group kpop-faq">)が本文に既存のため、
+    # JSONLD_ONLY に登録し JSON-LD のみ出力する(可視FAQを足すと重複になる)。
+    # 回答は本文の既存FAQ 4問の文言をそのまま転記(ハルシネ防止)。
+    9190: [
+        ("『鉄槌教師』の主人公イム・ハンリムの声優は誰ですか?",
+         "主人公イム・ハンリムの日本語吹き替えは、声優・歌手として活躍する北原沙弥香が担当しています。"),
+        ("ジュンヒョン役の吹き替え声優は?",
+         "ジュンヒョン役は鈴木崚汰が担当しています。"),
+        ("『鉄槌教師』に日本語吹き替え版はありますか?",
+         "あります。Netflixで日本語吹き替え版が配信されており、再生中に字幕・音声をワンタップで切り替えられます。"),
+        ("吹き替えのスタッフは誰ですか?",
+         "吹替翻訳を村富梨絵、日本語版演出を三井瑠美が担当しています。"),
+    ],
 }
+
+# 可視FAQが本文に既存の記事。JSON-LD のみ出力し、可視HTMLの二重掲載を防ぐ。
+JSONLD_ONLY = {9190}
 
 CSS_NOTE = ("<!-- Lane C push: FAQ block。可視FAQ + FAQPage JSON-LD。"
             "本文「関連記事」見出しの直前に挿入する。回答は本文記述に一致。 -->")
+
+JSONLD_ONLY_NOTE = ("<!-- Lane C push: FAQPage JSON-LD のみ。"
+                    "可視FAQは本文に既存のため追加しない(重複防止)。"
+                    "本文「関連記事」見出しの直前に挿入する。回答は本文の既存FAQに一致。 -->")
 
 
 def visible_faq(qas):
@@ -112,10 +135,15 @@ def faq_jsonld(qas):
 
 
 for pid, qas in ARTICLES.items():
-    block = f"{CSS_NOTE}\n{visible_faq(qas)}\n{faq_jsonld(qas)}\n"
+    if pid in JSONLD_ONLY:
+        block = f"{JSONLD_ONLY_NOTE}\n{faq_jsonld(qas)}\n"
+        kind = "JSON-LD only"
+    else:
+        block = f"{CSS_NOTE}\n{visible_faq(qas)}\n{faq_jsonld(qas)}\n"
+        kind = "visible + JSON-LD"
     path = OUT / f"post_{pid}_faq.html"
     path.write_text(block, encoding="utf-8")
-    print(f"wrote {path} ({len(qas)} Q&A, {len(block)} bytes)")
+    print(f"wrote {path} ({len(qas)} Q&A, {len(block)} bytes, {kind})")
 
 print("\n挿入位置: 各記事の「関連記事 / あわせて読みたい」見出しの直前。")
 print("反映: owner が kpop-wp-rw.sh post update <id> で本文に追記(直接渡し・stdin禁止)。")
