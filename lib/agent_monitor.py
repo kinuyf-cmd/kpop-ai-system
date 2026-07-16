@@ -18,6 +18,27 @@ LOGS = BASE / "logs"
 AGENTS_DIR = BASE / "agents"
 CONFIG = BASE / "config"
 
+# 監視ログの時鮮度窓(日)。更新の止まった凍結ログ(例: gardevoir_hook.jsonl は
+# 2026-04 で停止)を「現在の多発」として誤報し続けるのを防ぐため、集計は直近
+# FRESHNESS_DAYS 以内のレコードに限定する(2026-07-16 誤報アラート根治)。
+FRESHNESS_DAYS = 14
+
+
+def _is_recent(ts_str, days: int = FRESHNESS_DAYS) -> bool:
+    """ts_str(ISO8601, 末尾Z許容)が直近 days 日以内なら True。
+    ts が無い/壊れているレコードは、時鮮度を判定できないため False(=集計から除外)。
+    これにより凍結ログの ts 欠落行が誤って現在扱いされることを防ぐ。"""
+    if not ts_str:
+        return False
+    try:
+        s = str(ts_str).strip().replace("Z", "+00:00")
+        dt = datetime.fromisoformat(s)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return False
+    return dt >= datetime.now(timezone.utc) - timedelta(days=days)
+
 # ─────────────────────────────────────────────
 # エージェント完全定義テーブル（agents/定義書 + pipeline定義 + ログ実績 を統合）
 # ─────────────────────────────────────────────
@@ -262,6 +283,9 @@ def parse_gardevoir_jsonl() -> dict:
                 d = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            # 凍結ログ(更新停止)の古データを現在の多発として誤報しない
+            if not _is_recent(d.get("ts")):
+                continue
             v = d.get("verdict", "")
             s = d.get("score", 0)
             pl = d.get("pipeline", "")
@@ -318,9 +342,13 @@ def parse_audit_feedback() -> list[dict]:
             if not line:
                 continue
             try:
-                data.append(json.loads(line))
+                d = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            # 凍結ログ(更新停止)の古タイトル汚染を現在の多発として誤報しない
+            if not _is_recent(d.get("ts")):
+                continue
+            data.append(d)
     return data
 
 
