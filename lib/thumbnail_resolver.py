@@ -166,10 +166,19 @@ def smart_crop(image_path, target_w=1200, target_h=675):
     - 顔群を囲むbboxにマージン付与、全顔が入るようクロップ
     - 小画像(幅<600)はクロップせずリサイズのみ(拡大)
     - 16:9±0.05なら単純リサイズ
+    - cv2 未導入環境では PIL 版 aspect_preserve_resize(中央 crop)にフォールバック。
+      これがないと cv2 欠落時に縦長 og:image が横長化されず letterbox REJECT →
+      hallyu 経路は DALL-E 降格せず no_thumbnail BLOCK になる(2026-07-16)。
     """
     try:
-        import cv2
-        import numpy as np
+        try:
+            import cv2
+            import numpy as np
+        except ImportError:
+            # 顔検出はできないが、中央 crop で縦長→横長化して letterbox を回避する。
+            from lib.image_utils import aspect_preserve_resize
+            return aspect_preserve_resize(image_path, image_path,
+                                          target_w=target_w, target_h=target_h)
         img = cv2.imread(image_path)
         if img is None:
             return False
