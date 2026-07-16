@@ -1,22 +1,13 @@
 {
-  "generated_at": "2026-07-15T04:31:55.880120+00:00",
+  "generated_at": "2026-07-16T06:54:52.642888+00:00",
   "summary": {
     "total_articles": 70,
     "avg_revenue_score": 0.835,
     "cta_rate": 0.729,
     "thumbnail_rate": 0.971,
     "avg_char_count": 4469,
-    "contaminated_title_count": 2,
-    "contaminated_titles": [
-      {
-        "post_id": "",
-        "title": "ウェブフェッチはできませんが、記事の内部矛盾と論理的問題を詳しく分析します。"
-      },
-      {
-        "post_id": "2555",
-        "title": "K-POP ウェブフェッチはできませんが、記事の内部矛盾と論理的問題を詳しく分析します。"
-      }
-    ]
+    "contaminated_title_count": 0,
+    "contaminated_titles": []
   },
   "kpi_targets": {
     "daily_articles": 20,
@@ -384,7 +375,7 @@
       "CTA未設置記事（約27%）にCTAを追加する",
       "サムネイル未設置記事（約3%）を修正する",
       "タイトル崩壊記事を下書き化またはリライトする",
-      "サーナイトのフォーマットERROR（高頻度）を解消する"
+      "サーナイトのフォーマットERROR（低頻度）を解消する"
     ]
   }
 }

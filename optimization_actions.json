@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-15T04:31:55.881945+00:00",
-  "total_actions": 19,
-  "high_count": 10,
+  "generated_at": "2026-07-16T06:54:52.644419+00:00",
+  "total_actions": 18,
+  "high_count": 9,
   "medium_count": 8,
   "low_count": 1,
   "actions": [
@@ -60,15 +60,6 @@
       "expected_effect": "HARD_FAIL率低下・pipeline完走率向上"
     },
     {
-      "agent_id": "gardevoir_hook_critic",
-      "agent_name": "サーナイト",
-      "severity": "high",
-      "reason": "フォーマット不正によるERROR 22件（SCOREパース失敗）",
-      "action_type": "output_format_lock",
-      "suggested_fix": "SCORE:行を必ず「SCORE: [整数]」（1行・整数のみ）で出力させる。改行・分数・内訳は禁止。auto_directives.jsonへの注入で対応中。",
-      "expected_effect": "ERROR率の大幅減少・採点精度向上"
-    },
-    {
       "agent_id": "genre_block",
       "agent_name": "genre_block",
       "severity": "high",
@@ -99,7 +90,7 @@
       "agent_id": "butterfree",
       "agent_name": "バタフリー",
       "severity": "medium",
-      "reason": "最終実行から 2186時間経過（CORE担当なのに未実行）",
+      "reason": "最終実行から 2212時間経過（CORE担当なのに未実行）",
       "action_type": "cron_check",
       "suggested_fix": "cronスケジュール・pipeline定義を確認し、このエージェントが呼ばれているか検証する",
       "expected_effect": "担当ステップの定常実行再開"
@@ -108,7 +99,7 @@
       "agent_id": "gardevoir_hook_critic",
       "agent_name": "サーナイト",
       "severity": "medium",
-      "reason": "最終実行から 2183時間経過（CORE担当なのに未実行）",
+      "reason": "最終実行から 2209時間経過（CORE担当なのに未実行）",
       "action_type": "cron_check",
       "suggested_fix": "cronスケジュール・pipeline定義を確認し、このエージェントが呼ばれているか検証する",
       "expected_effect": "担当ステップの定常実行再開"
