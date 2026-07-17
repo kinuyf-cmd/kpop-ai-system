@@ -257,8 +257,12 @@ def get_adsense_credentials():
                     open_browser=False,
                     authorization_prompt_message=(
                         "\n手元PCで別ターミナルを開き次を実行(ポート転送):\n"
-                        f"    ssh -L {oob_port}:localhost:{oob_port} aiuser@<このVM>\n"
+                        # sshd は Port 2222(22は閉じている)。-p を書かないと Connection refused に
+                        # なり owner が詰まる(2026-07-17 実際に発生)。
+                        f"    ssh -L {oob_port}:localhost:{oob_port} -p 2222 aiuser@160.251.254.62\n"
                         "そのうえで以下のURLを手元ブラウザで開いて承認してください:\n\n    {url}\n"
+                        "\n※ 承認中に 'channel N: open failed: Connection refused' が出ても無害です"
+                        "(VM側は受信済み)。\n"
                     ),
                 )
         with open(ADSENSE_TOKEN_FILE, "w") as f:
