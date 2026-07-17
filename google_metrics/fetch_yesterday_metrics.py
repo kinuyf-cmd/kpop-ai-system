@@ -21,9 +21,19 @@ SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "service_account.json")
 ADSENSE_CLIENT_SECRET_FILE = os.path.join(BASE_DIR, "adsense_client_secret.json")
 ADSENSE_TOKEN_FILE = os.path.join(BASE_DIR, "adsense_token.json")
 
-yesterday = date.today() - timedelta(days=1)
-start_date = yesterday.isoformat()
-end_date = yesterday.isoformat()
+# GA4 のデータ確定を待ってから取得する(2026-07-17 修正)。
+# 旧実装は cron 8:30 に「昨日」を取りに行っていたが、GA4 のセッション系指標は確定に
+# 24〜48時間かかるため、未確定の途中値を掴んで保存していた。実害:
+#   engagedSessions が 25日分ほぼ全滅(rate 0〜2%)で保存されていた。同じ日付を後日
+#   取り直すと 50〜64% と正常値。「エンゲージほぼ0=読まれていない」は計測の嘘で、
+#   実際のサイトは健全だった(2026-07-17 実測で判明)。
+# → LAG_DAYS 日前を取得する。_append_history は同じ date の行を置換するので、
+#   遡って再実行すれば過去の誤った行も正しい値で上書きされる。
+LAG_DAYS = int(os.environ.get("METRICS_LAG_DAYS", "3"))
+target_day = date.today() - timedelta(days=LAG_DAYS)
+yesterday = target_day  # 後方互換(AdSense の startDate_* が参照)
+start_date = target_day.isoformat()
+end_date = target_day.isoformat()
 
 def get_ga4_data():
     creds = service_account.Credentials.from_service_account_file(
