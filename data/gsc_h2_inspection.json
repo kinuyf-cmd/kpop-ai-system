@@ -1,19 +1,19 @@
 {
  "site": "https://www.kpopjournal.tokyo/",
- "checked_at": "2026-05-25T17:22:53+0900",
+ "checked_at": "2026-07-17T16:53:21+0900",
  "results": [
   {
-   "url": "https://www.kpopjournal.tokyo/ads.txt",
-   "verdict": "NEUTRAL",
-   "coverageState": "URL is unknown to Google",
-   "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-   "indexingState": "INDEXING_STATE_UNSPECIFIED",
-   "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+   "url": "https://www.kpopjournal.tokyo/kpop-demon-hunters-golden-analysis/",
+   "verdict": "PASS",
+   "coverageState": "Submitted and indexed",
+   "robotsTxtState": "ALLOWED",
+   "indexingState": "INDEXING_ALLOWED",
+   "pageFetchState": "SUCCESSFUL",
    "warnings": [],
-   "pending_crawl": true
+   "pending_crawl": false
   }
  ],
  "warnings_total": 0,
- "indexed_pass": 0,
- "pending_crawl": 1
+ "indexed_pass": 1,
+ "pending_crawl": 0
 }
