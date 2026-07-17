@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from datetime import date, timedelta
 
 from google.oauth2 import service_account
@@ -225,6 +226,20 @@ def get_adsense_credentials():
                 # 黙ってスキップせず、同意フローで再取得できるよう死トークンを捨てる。
                 creds = None
         if not refreshed and not (creds and creds.valid):
+            # 対話フロー(ブラウザ承認)は人がいる時だけ。cron から入ると
+            # run_local_server がポートを掴んだまま承認を永久に待ち、プロセスが死なない。
+            # 実害(2026-07-17 発見): 7/10 8:30 のcron起動プロセスが **7日10時間** 生き続け、
+            # ポート8765を占有 → 以降の毎日のcronが「Address already in use」で失敗し続け、
+            # AdSense収益データが25日分ゼロになっていた(cronログに失敗90行)。
+            # → 非対話(cron/TTYなし)では即座に諦めてスキップさせる。人が手で実行したときだけ承認へ進む。
+            interactive = sys.stdin.isatty() or os.environ.get("ADSENSE_OAUTH_INTERACTIVE") == "1"
+            if not interactive:
+                raise RuntimeError(
+                    "AdSense の refresh_token が失効しており再認証(ブラウザ承認)が必要ですが、"
+                    "非対話実行のためスキップします。owner が手動で次を実行してください:\n"
+                    "  cd /home/aiuser/kpop-ai-system && "
+                    "venv_kpi/bin/python3 google_metrics/fetch_yesterday_metrics.py"
+                )
             flow = InstalledAppFlow.from_client_secrets_file(
                 ADSENSE_CLIENT_SECRET_FILE, scopes
             )
