@@ -9,9 +9,17 @@
 #      ([[wp-ro-db-query-header-literal-newline-trap]], 2026-07-02実際に発生)
 #
 # 使い方:
-#   tools/wp/safe_post_edit.sh fetch <slug> <out.html>
-#       本番の実レンダリングHTML(curl)から entry-content を抽出して保存。
-#       これが唯一信頼できる「正解ソース」。編集はこのファイルをベースに行う。
+#   tools/wp/safe_post_edit.sh fetch <post_id> <out.html>
+#       DB本文(post get --field=post_content)を汚染検査つきで保存。編集はこれをベースに行う。
+#
+#       ※ 2026-07-16 修正: 旧実装は「curl実レンダの entry-content が唯一の正解ソース」として
+#         いたが、これは誤りだった。実測で判明した2つの破綻:
+#           (a) 正規表現 `(.*?)</div>\s*<footer` が div のネストを扱えず、テーマ出力
+#               (nav/svg/目次/人気記事)まで巻き込む → 書き戻すと本文にテーマHTMLが焼き付く
+#           (b) テーマは本文の一部(例 <div class="kpj-summary"> 3行まとめ)を entry-content の
+#               *外* に描画する。curl では原理的に取得できず、書き戻すと当該ブロックが消失する
+#         → 正解ソースは DB本文。wp-ro の汚染(ヘッダ行/リテラル\n)は取得時に検査して弾く。
+#         curl は「書き込み後の検証」専用に用いる(実レンダを見る原則は維持)。
 #
 #   tools/wp/safe_post_edit.sh apply <post_id> <new_body.html>
 #       安全チェック → 現本文をtimestampバックアップ → 更新 → 実レンダリング検証
@@ -28,27 +36,37 @@ RW=/usr/local/sbin/kpop/kpop-wp-rw.sh
 
 cmd="${1:-}"
 
-extract_entry_content() {
-  # $1=html file → entry-content div の中身を stdout へ
+check_body_sanity() {
+  # $1=body file → wp-ro 出力汚染([[wp-ro-db-query-header-literal-newline-trap]])を検査。
+  # 汚染を検知したら異常終了し、汚染データが編集ベースになるのを防ぐ。
   python3 - "$1" <<'PY'
-import re, sys
-h = open(sys.argv[1], encoding='utf-8', errors='replace').read()
-m = re.search(r'<div class="entry-content[^>]*>(.*?)</div>\s*<footer', h, re.S)
-if not m:
-    sys.stderr.write("ERR: entry-content が見つからない\n"); sys.exit(1)
-print(m.group(1).strip())
+import sys
+s = open(sys.argv[1], encoding='utf-8', errors='replace').read()
+errors = []
+if len(s.strip()) < 200:
+    errors.append(f"本文が短すぎる ({len(s.strip())}字) — 取得失敗/非公開の疑い")
+if s.lstrip().startswith('post_content'):
+    errors.append("先頭に 'post_content' ヘッダ混入 — wp-ro出力汚染")
+if '\\n' in s:
+    errors.append(f"リテラル \\n が {s.count(chr(92)+'n')} 個混入 — wp-ro出力汚染")
+if not s.lstrip().startswith('<'):
+    errors.append("HTMLタグで始まっていない — 破損の疑い")
+if errors:
+    sys.stderr.write("ERR: 取得した本文が汚染されている:\n")
+    for e in errors: sys.stderr.write(f"   ✗ {e}\n")
+    sys.exit(1)
 PY
 }
 
 case "$cmd" in
   fetch)
-    slug="${2:?usage: fetch <slug> <out.html>}"; out="${3:?usage: fetch <slug> <out.html>}"
-    tmp=$(mktemp)
-    curl -sf -A "Mozilla/5.0" "$SITE/$slug/?nc=$(date +%s)" -o "$tmp"
-    extract_entry_content "$tmp" > "$out"
-    rm -f "$tmp"
+    post_id="${2:?usage: fetch <post_id> <out.html>}"; out="${3:?usage: fetch <post_id> <out.html>}"
+    sudo -n /usr/local/sbin/kpop/kpop-wp-ro post get "$post_id" --field=post_content > "$out"
+    check_body_sanity "$out" || { echo "[DENY] 汚染検知のため中止(このファイルは使わない)"; rm -f "$out"; exit 1; }
+    title=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro post get "$post_id" --field=post_title 2>/dev/null | tail -1)
     chars=$(wc -m < "$out")
-    echo "[OK] 正解ソース保存: $out (${chars}字, curl実レンダリング由来=汚染なし)"
+    echo "[OK] 正解ソース保存: $out (${chars}字, DB本文=汚染検査済)"
+    echo "     対象: ID=$post_id 「$title」"
     echo "     このファイルを編集して apply に渡すこと"
     ;;
 
@@ -86,18 +104,20 @@ PY
     echo "       5秒後に本番へ書き込みます (Ctrl-Cで中止)..."
     sleep 5
 
-    # ── 現本文をバックアップ(curl実レンダリング=汚染なしの正解を保存) ──
+    # ── 現本文をバックアップ(DB本文=そのまま書き戻せば原状復帰できる唯一の正解) ──
+    # 旧実装は curl+extract_entry_content で取っていたが、それは (a) テーマ出力を巻き込み
+    # (b) entry-content 外の本文ブロックを取りこぼすため、復旧に使えないバックアップだった。
     mkdir -p "$BACKUP_DIR"
     ts=$(date +%Y%m%d_%H%M%S)
     bak="$BACKUP_DIR/post${post_id}_${ts}.html"
-    tmp=$(mktemp)
-    if curl -sf -A "Mozilla/5.0" "$SITE/$slug/?nc=$(date +%s)" -o "$tmp"; then
-      extract_entry_content "$tmp" > "$bak" || cp "$tmp" "$bak"
-      echo "[OK] バックアップ: $bak"
+    sudo -n /usr/local/sbin/kpop/kpop-wp-ro post get "$post_id" --field=post_content > "$bak"
+    if check_body_sanity "$bak"; then
+      echo "[OK] バックアップ: $bak ($(wc -m < "$bak")字, DB本文)"
+      echo "     復旧するには: sudo -n $RW post update $post_id --post_content=\"\$(cat $bak)\""
     else
-      echo "[WARN] 現ページのcurl失敗(非公開記事?) — バックアップなしで続行"
+      echo "[DENY] 現本文の取得結果が汚染/異常 — 復旧不能なバックアップになるため中止"
+      rm -f "$bak"; exit 6
     fi
-    rm -f "$tmp"
 
     # ── 更新(コマンド置換で直接渡し=stdin '-' 禁止) ──
     NEWBODY="$(cat "$body_file")"
@@ -132,7 +152,7 @@ PY
 
   *)
     echo "usage:"
-    echo "  $0 fetch <slug> <out.html>       # 正解ソース取得(curl実レンダリング)"
+    echo "  $0 fetch <post_id> <out.html>    # 正解ソース取得(DB本文・汚染検査つき)"
     echo "  $0 apply <post_id> <body.html>   # 安全チェック→バックアップ→更新→検証→GSC"
     exit 2
     ;;
