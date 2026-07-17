@@ -15,9 +15,15 @@ docs/seo_content_strategy_v1.md §4 の実装。毎回の手動 GSC 分析を自
   - ビッグワード×強競合（聖地巡礼 等、順位が極端に低く新興ドメインに重い）
 
 使い方:
-  venv_kpi/bin/python3 lib/seo_opportunity_scanner.py            # 16ヶ月で分析
-  venv_kpi/bin/python3 lib/seo_opportunity_scanner.py --days 90  # 直近90日
+  venv_kpi/bin/python3 lib/seo_opportunity_scanner.py            # 直近90日で分析(既定)
+  venv_kpi/bin/python3 lib/seo_opportunity_scanner.py --days 480 # 16ヶ月(累積の全体像。着手判断には使わない)
   venv_kpi/bin/python3 lib/seo_opportunity_scanner.py --top 40   # 上位40件表示
+
+窓について(2026-07-16 既定を480→90に変更):
+  既定480日は「累積impの幻」を大機会として最上位に押し上げていた。実測例:
+  「暴君のシェフ 相関図」は480d窓で imp10,938/pos2.6 と出るが、28d/7d窓では **データなし**
+  (もう誰も検索していない)。過去の遺産を掘り起こして今の機会と誤認する。
+  → 着手判断は直近実測で行う。[[seo-opportunity-480d-vs-28d-mirage]]
 依存: google-api-python-client / service_account.json（venv_kpi に存在）
 """
 import argparse
@@ -119,6 +125,28 @@ def is_excluded(q):
     return None
 
 
+# 意図不一致の判定閾値。上位表示されているのにクリックが出ないクエリは
+# 「表示はされるがユーザーの求める答えではない」= 順位を上げても回収できない。
+INTENT_POS_MAX = 5.0    # これより上位なのに
+INTENT_CTR_MAX = 0.01   # CTR 1%未満なら意図不一致とみなす
+
+
+def is_intent_mismatch(pos, ctr, imp):
+    """上位なのにクリックされない = 検索意図の不一致(回収不能)。
+
+    実測の根拠(2026-07-16):
+      - kpop-demon-hunters-golden-analysis は「デーモンハンターズ」で pos2.1 だが CTR0.08%。
+        作品名クエリに曲の解説記事が出ていただけで、180日 imp20,428 に対しクリック46件。
+        Google が「答えではない」と判定し pos16 へ戻した = 正常な調整。押し上げても
+        中身のない imp が戻るだけだった。
+      - ブランド系「k-journal」も pos3.0/CTR0.9%。一方 pos1.0 の「kpop journal」は CTR33%、
+        「k-journal サイト」は CTR10% = 本当の指名検索は正常にクリックされている。
+    → imp が大きいほど potential が高く出る式(imp*0.20-clk)が、この種の幻を最上位に
+      押し上げてしまうため、候補化の前段で弾く。
+    """
+    return imp > 0 and pos <= INTENT_POS_MAX and ctr < INTENT_CTR_MAX
+
+
 def theme_is_covered(theme, slugs):
     """そのテーマの記事が既に存在するか（slug にテーマ語が含まれるか）。"""
     theme_slug_hint = {
@@ -141,7 +169,9 @@ def scan(days, top):
     rows = fetch_queries(days)
     slugs = existing_slugs()
     new_cands, rewrite_cands = [], []
-    excluded = {"brand": 0, "gossip": 0, "breaking": 0, "hard_competition": 0}
+    excluded = {"brand": 0, "gossip": 0, "breaking": 0, "hard_competition": 0,
+                "intent_mismatch": 0}
+    mismatch_samples = []
 
     for r in rows:
         q = r["keys"][0]
@@ -153,6 +183,13 @@ def scan(days, top):
             excluded[ex] += 1
             continue
         ctr = clk / imp if imp else 0
+        # 上位なのにクリックされない = 意図不一致。押し上げでは回収できないので候補にしない。
+        if is_intent_mismatch(pos, ctr, imp):
+            excluded["intent_mismatch"] += 1
+            mismatch_samples.append({"query": q, "imp": round(imp),
+                                     "position": round(pos, 1),
+                                     "ctr_pct": round(ctr * 100, 2)})
+            continue
         theme = classify(q)
         potential = round(imp * 0.20 - clk)
         rec = {"query": q, "imp": round(imp), "clicks": round(clk),
@@ -173,7 +210,8 @@ def scan(days, top):
         "generated_at": date.today().isoformat(),
         "window_days": days,
         "params": {"min_imp": MIN_IMP, "max_ctr": MAX_CTR,
-                   "pos_new": POS_NEW, "pos_rewrite": POS_REWRITE},
+                   "pos_new": POS_NEW, "pos_rewrite": POS_REWRITE,
+                   "intent_pos_max": INTENT_POS_MAX, "intent_ctr_max": INTENT_CTR_MAX},
         "totals": {"queries_scanned": len(rows),
                    "lane_B_new": len(new_cands),
                    "lane_C_rewrite": len(rewrite_cands),
@@ -181,6 +219,9 @@ def scan(days, top):
                    "existing_slugs": len(slugs)},
         "lane_B_new": new_cands,
         "lane_C_rewrite": rewrite_cands,
+        # 意図不一致で捨てたクエリ(黙って消すと「機会なし」と誤読されるため証跡を残す)
+        "excluded_intent_mismatch": sorted(mismatch_samples,
+                                           key=lambda x: -x["imp"])[:20],
     }
     with open(OUT_FILE, "w", encoding="utf-8") as f:
         json.dump(queue, f, ensure_ascii=False, indent=1)
@@ -188,7 +229,13 @@ def scan(days, top):
     # --- 標準出力サマリ ---
     print(f"GSC scan: {len(rows)} queries / window {days}d / existing_slugs {len(slugs)}")
     print(f"excluded: brand={excluded['brand']} gossip={excluded['gossip']} "
-          f"breaking={excluded['breaking']} hard_competition={excluded['hard_competition']}")
+          f"breaking={excluded['breaking']} hard_competition={excluded['hard_competition']} "
+          f"intent_mismatch={excluded['intent_mismatch']}")
+    if mismatch_samples:
+        print(f"  ※ 意図不一致で除外(pos<={INTENT_POS_MAX}なのにCTR<{INTENT_CTR_MAX*100:.0f}% "
+              f"= 上位でもクリックされない→押し上げでは回収不能):")
+        for s in sorted(mismatch_samples, key=lambda x: -x["imp"])[:5]:
+            print(f"     imp{s['imp']:>5} pos{s['position']:>5} ctr{s['ctr_pct']:>5.2f}%  {s['query']}")
     print(f"\n=== レーンB 新規記事候補 {len(new_cands)}件 / top{top} "
           f"(potential=上位化での追加click概算) ===")
     print(f"{'+clk':>6} {'imp':>6} {'clk':>5} {'pos':>5} {'theme':>11}  query")
@@ -205,7 +252,9 @@ def scan(days, top):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--days", type=int, default=480, help="GSC 取得期間（日）")
+    ap.add_argument("--days", type=int, default=90,
+                    help="GSC 取得期間（日）。既定90=直近の実機会。480等の長窓は累積impの幻を"
+                         "生むため着手判断には使わない(2026-07-16)")
     ap.add_argument("--top", type=int, default=30, help="表示件数")
     args = ap.parse_args()
     scan(args.days, args.top)
