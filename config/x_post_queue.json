@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-17 21:38",
-  "count": 259,
+  "updated": "2026-07-18 21:33",
+  "count": 275,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -2332,6 +2332,150 @@
       "artist": "로꼬",
       "priority": "high",
       "queued_at": "2026-07-17T21:38:45.110128"
+    },
+    {
+      "title": "Nmixxがプリンセス・アンと対面した日",
+      "url": "https://www.kpopjournal.tokyo/nmixx-princess-an-meeting/",
+      "post_id": 13201,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-07-18T07:31:48.833304"
+    },
+    {
+      "title": "エヴァン、デビューシングル制作のドキュメンタリー公開",
+      "url": "https://www.kpopjournal.tokyo/evan-debut-single-documentary/",
+      "post_id": 13207,
+      "genre": "breaking",
+      "artist": "에반",
+      "priority": "high",
+      "queued_at": "2026-07-18T07:34:40.645431"
+    },
+    {
+      "title": "BTSのV、パリで撮影したダンス動画公開",
+      "url": "https://www.kpopjournal.tokyo/bts-v-paris-dance-video/",
+      "post_id": 13211,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-18T09:30:50.122609"
+    },
+    {
+      "title": "ITZY LIA、男性心を溶かすハニースマイル",
+      "url": "https://www.kpopjournal.tokyo/itzy-lia-honey-smile-melt-hearts/",
+      "post_id": 13215,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-07-18T09:35:48.416886"
+    },
+    {
+      "title": "ILLITが日本のトップヒットメーカーと新曲制作",
+      "url": "https://www.kpopjournal.tokyo/illit-top-hit-maker-new-song/",
+      "post_id": 13225,
+      "genre": "breaking",
+      "artist": "ILLIT",
+      "priority": "high",
+      "queued_at": "2026-07-18T11:30:44.978166"
+    },
+    {
+      "title": "ディンディン「ユノ・ユンホと飛行機、2時間40分",
+      "url": "https://www.kpopjournal.tokyo/dindin-yunho-airplane-2hours40minutes/",
+      "post_id": 13231,
+      "genre": "breaking",
+      "artist": "동방신기",
+      "priority": "high",
+      "queued_at": "2026-07-18T11:37:30.638975"
+    },
+    {
+      "title": "CORTIS、初の単独ツアー開始と話題のファッション",
+      "url": "https://www.kpopjournal.tokyo/cortis-first-solo-tour-fashion/",
+      "post_id": 13239,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-07-18T13:33:00.466577"
+    },
+    {
+      "title": "BTS ジンにキスした50代女性、公判延期続く",
+      "url": "https://www.kpopjournal.tokyo/?p=13249",
+      "post_id": 13249,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-18T13:36:18.162018"
+    },
+    {
+      "title": "YUNA、\"BODY WAVE\"前にケバブ持ちセルカ公開",
+      "url": "https://www.kpopjournal.tokyo/yuna-body-wave-kebab-selfie/",
+      "post_id": 13256,
+      "genre": "breaking",
+      "artist": "유나",
+      "priority": "high",
+      "queued_at": "2026-07-18T15:34:03.244450"
+    },
+    {
+      "title": "fromis_9、10曲収録のアルバム「Glow ME」発表",
+      "url": "https://www.kpopjournal.tokyo/fromis9-glow-me-album-release/",
+      "post_id": 13260,
+      "genre": "breaking",
+      "artist": "프로미스나인",
+      "priority": "high",
+      "queued_at": "2026-07-18T17:30:56.388512"
+    },
+    {
+      "title": "エヴァン、デビュードキュメンタリー公開",
+      "url": "https://www.kpopjournal.tokyo/evan-debut-documentary-release/",
+      "post_id": 13264,
+      "genre": "breaking",
+      "artist": "에반",
+      "priority": "high",
+      "queued_at": "2026-07-18T17:33:28.683595"
+    },
+    {
+      "title": "TWS「音楽の日2026」で爽やか制服パフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/?p=13269",
+      "post_id": 13269,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-07-18T17:36:19.601720"
+    },
+    {
+      "title": "OURBIRTHDAY、7月22日にプレデビュー決定",
+      "url": "https://www.kpopjournal.tokyo/?p=13273",
+      "post_id": 13273,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-07-18T17:38:12.053845"
+    },
+    {
+      "title": "キム・ソユ、ラジオでアイドル仲間とポーズ",
+      "url": "https://www.kpopjournal.tokyo/kim-soyu-radio-idol-pose/",
+      "post_id": 13279,
+      "genre": "breaking",
+      "artist": "김소유",
+      "priority": "high",
+      "queued_at": "2026-07-18T17:42:18.335954"
+    },
+    {
+      "title": "Fromis_9のイ・チェヨンが3年前の電子タバコ騒動語る",
+      "url": "https://www.kpopjournal.tokyo/fromis9-lee-chaeyoung-vape-incident/",
+      "post_id": 13283,
+      "genre": "breaking",
+      "artist": "fromis_9",
+      "priority": "high",
+      "queued_at": "2026-07-18T19:30:48.448619"
+    },
+    {
+      "title": "MONSTA Xヒョンウォン、サッカー空間で近況報告",
+      "url": "https://www.kpopjournal.tokyo/monsta-x-hyunwon-soccer-update/",
+      "post_id": 13292,
+      "genre": "breaking",
+      "artist": "형원",
+      "priority": "high",
+      "queued_at": "2026-07-18T21:33:27.362976"
     }
   ]
 }
