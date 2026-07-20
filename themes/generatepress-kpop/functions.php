@@ -3163,28 +3163,69 @@ add_action( 'send_headers', function () {
 
 
 /**
- * Discover/E-E-A-T: Organization schema に所在国(日本)を明示する。
- * 住所は非公開のまま、addressCountry のみ付与する(owner方針 2026-07-20)。
- * AIOSEO フリー版の schema 設定には所在国欄が無いため、出力フィルタで補う。
+ * Discover/E-E-A-T: Organization schema の補正(owner方針 2026-07-20)。
+ *  (a) 所在国(日本)を明示する。住所は非公開のまま addressCountry='JP' のみ付与。
+ *      AIOSEO フリー版の schema 設定には所在国欄が無いため、出力フィルタで補う。
+ *  (b) 著者を Organization 名義にする。記事の投稿者は内部管理者アカウント
+ *      (kpopstg_admin)で、その著者アーカイブは内部名露出防止のため意図的に 404 化
+ *      している(下部 template_redirect (1))。しかし AIOSEO は著者を Person ノードとして
+ *      出力し、その url が 404 の /author/kpopstg_admin/ を指す = schema が実在しない
+ *      ページを主張する自己矛盾になる。編集部は組織名義で運用しているため、
+ *      Person 著者ノードを除去し、記事(BlogPosting 等)の author を #organization 参照に
+ *      付け替える。これで 404 参照が消え、内部名も露出せず、"編集部=組織"の信頼性も保てる。
  */
 add_filter( 'aioseo_schema_output', function ( $graph ) {
 	if ( ! is_array( $graph ) ) {
 		return $graph;
 	}
+
+	// 1パス目: Organization ノードの @id を掴み、所在国を付与する。
+	$org_id = '';
 	foreach ( $graph as &$node ) {
 		if ( ! is_array( $node ) ) {
 			continue;
 		}
-		$type = $node['@type'] ?? '';
+		$type   = $node['@type'] ?? '';
 		$is_org = ( $type === 'Organization' )
 			|| ( is_array( $type ) && in_array( 'Organization', $type, true ) );
-		if ( $is_org && empty( $node['address'] ) ) {
-			$node['address'] = array(
-				'@type'          => 'PostalAddress',
-				'addressCountry' => 'JP',
-			);
+		if ( $is_org ) {
+			if ( ! empty( $node['@id'] ) && '' === $org_id ) {
+				$org_id = $node['@id'];
+			}
+			if ( empty( $node['address'] ) ) {
+				$node['address'] = array(
+					'@type'          => 'PostalAddress',
+					'addressCountry' => 'JP',
+				);
+			}
 		}
 	}
 	unset( $node );
-	return $graph;
+
+	// Organization が特定できなければ著者の付け替えはしない(安全側)。
+	if ( '' === $org_id ) {
+		return $graph;
+	}
+
+	// 2パス目: author 参照を Organization に付け替え、Person 著者ノードを除去する。
+	$out = array();
+	foreach ( $graph as $node ) {
+		if ( ! is_array( $node ) ) {
+			$out[] = $node;
+			continue;
+		}
+		$type = $node['@type'] ?? '';
+		// Person(著者)ノードは graph から落とす。
+		$is_person = ( $type === 'Person' )
+			|| ( is_array( $type ) && in_array( 'Person', $type, true ) );
+		if ( $is_person ) {
+			continue;
+		}
+		// author を持つノードは Organization 参照へ差し替える。
+		if ( isset( $node['author'] ) ) {
+			$node['author'] = array( '@id' => $org_id );
+		}
+		$out[] = $node;
+	}
+	return $out;
 }, 20 );

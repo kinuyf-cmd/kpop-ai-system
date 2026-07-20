@@ -60,14 +60,24 @@ Discover露出の実体はここ。2026-02-05のDiscover専用コアアップデ
   子テーマ functions.php の `aioseo_schema_output` フィルタで Organizationノードにaddressを注入(構文チェック+本番デプロイ+実レンダ検証済)。
   検証: `curl -s <記事> | grep -o '"addressCountry":"JP"'`
 
-### B-3. 著者E-E-A-T(自動化で潰せる)
+### B-3. 著者E-E-A-T ✅ 完了(2026-07-20)
 
-現状(実測): 記事schemaの `author @id` = `.../author/#author` が**graph内に実体ノードを持たない宙吊り参照**。
-著者アーカイブ /author/kpop-publisher/ も404。
+**真因(実測で判明)**: 当初「author @idが宙吊り参照」と見ていたが、再実測すると Person ノードは実在していた。
+本当の問題は別で、**Person著者のurlが 404 の `/author/kpopstg_admin/` を指す自己矛盾**だった。
+- 記事の投稿者は user 1 = `kpopstg_admin`(administrator、内部管理者アカウント)
+- その著者アーカイブは**内部ログイン名の露出防止のため意図的に404化**されている
+  (functions.php下部 template_redirect (1): 未ログイン時 is_author() を set_404)。バグではなくセキュリティ対策
+- しかしAIOSEOは著者をPersonノードで出力し、そのurlが封じた404ページを主張 = schemaが実在しないページを指す
+- 著者ページのGSC露出は0件(被リンク無し)を実測確認済み
 
-- AIOSEO → Search Appearance → Author で著者情報出力を有効化+編集部プロフィール(略歴・編集方針ページURL)設定
-- ゴール: JSON-LD graphに Person(または明示的なOrganization著者)ノードが実体として出る
-- 検証: `curl -s <記事> | grep -o '"@type":"Person"'` が1件以上
+**採った解(owner承認=Organization名義)**: `aioseo_schema_output` フィルタ(B-2と同じ関数に統合)で
+Person著者ノードを除去し、BlogPosting/WebPageの author を `#organization` 参照に付け替え。
+- ✓ 404への参照が消える ✓ 内部名kpopstg_adminは非公開のまま ✓ 編集部=組織名義の信頼性は保つ
+- 全記事タイプ(独自/引用/ドラマ)で Person残存=なし・author=#organization解決 を実レンダ検証済
+- 検証: `curl -s <記事> | grep -o '"@type":"Person"'` が**0件**(=Person著者が出ていない)かつ author が #organization
+
+> 将来 実在の著者ページで人物E-E-A-Tを積みたくなったら別アプローチ: 公開用editorアカウント(kpop-publisher)を
+> 著者にし、その著者アーカイブだけ404対象から除外+略歴を置く。ただし全記事のpost_author付け替えを伴う。
 
 ### B-4. コンテンツ側(2026-02 アップデートの重点)
 
