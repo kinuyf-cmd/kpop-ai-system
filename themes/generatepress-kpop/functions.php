@@ -3161,3 +3161,30 @@ add_action( 'send_headers', function () {
 	header( 'Content-Security-Policy-Report-Only: ' . $csp );
 } );
 
+
+/**
+ * Discover/E-E-A-T: Organization schema に所在国(日本)を明示する。
+ * 住所は非公開のまま、addressCountry のみ付与する(owner方針 2026-07-20)。
+ * AIOSEO フリー版の schema 設定には所在国欄が無いため、出力フィルタで補う。
+ */
+add_filter( 'aioseo_schema_output', function ( $graph ) {
+	if ( ! is_array( $graph ) ) {
+		return $graph;
+	}
+	foreach ( $graph as &$node ) {
+		if ( ! is_array( $node ) ) {
+			continue;
+		}
+		$type = $node['@type'] ?? '';
+		$is_org = ( $type === 'Organization' )
+			|| ( is_array( $type ) && in_array( 'Organization', $type, true ) );
+		if ( $is_org && empty( $node['address'] ) ) {
+			$node['address'] = array(
+				'@type'          => 'PostalAddress',
+				'addressCountry' => 'JP',
+			);
+		}
+	}
+	unset( $node );
+	return $graph;
+}, 20 );
