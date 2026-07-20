@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-07-17",
+ "generated_at": "2026-07-20",
  "window_days": 90,
  "params": {
   "min_imp": 300,
@@ -16,9 +16,9 @@
   "intent_ctr_max": 0.01
  },
  "totals": {
-  "queries_scanned": 4598,
-  "lane_B_new": 5,
-  "lane_C_rewrite": 11,
+  "queries_scanned": 4651,
+  "lane_B_new": 7,
+  "lane_C_rewrite": 10,
   "excluded": {
    "brand": 5,
    "gossip": 1,
@@ -26,42 +26,62 @@
    "hard_competition": 0,
    "intent_mismatch": 0
   },
-  "existing_slugs": 1362
+  "existing_slugs": 1393
  },
  "lane_B_new": [
   {
    "query": "鉄槌教師 吹き替え 声優",
-   "imp": 1467,
-   "clicks": 13,
-   "position": 9.8,
+   "imp": 1532,
+   "clicks": 14,
+   "position": 9.7,
    "ctr_pct": 0.9,
    "theme": "other",
-   "potential": 280,
+   "potential": 292,
    "lane": "B_new"
   },
   {
    "query": "鉄槌教師 声優",
-   "imp": 1411,
-   "clicks": 29,
-   "position": 9.3,
-   "ctr_pct": 2.1,
+   "imp": 1582,
+   "clicks": 32,
+   "position": 9.2,
+   "ctr_pct": 2.0,
    "theme": "other",
-   "potential": 253,
+   "potential": 284,
+   "lane": "B_new"
+  },
+  {
+   "query": "twice 脱退",
+   "imp": 618,
+   "clicks": 1,
+   "position": 8.4,
+   "ctr_pct": 0.2,
+   "theme": "artist",
+   "potential": 123,
    "lane": "B_new"
   },
   {
    "query": "ルセラカムバ",
-   "imp": 418,
+   "imp": 361,
    "clicks": 0,
-   "position": 6.7,
+   "position": 6.6,
    "ctr_pct": 0.0,
    "theme": "other",
-   "potential": 84,
+   "potential": 72,
+   "lane": "B_new"
+  },
+  {
+   "query": "鉄槌教師 吹き替え",
+   "imp": 357,
+   "clicks": 5,
+   "position": 8.3,
+   "ctr_pct": 1.4,
+   "theme": "other",
+   "potential": 66,
    "lane": "B_new"
   },
   {
    "query": "イジュンヨン",
-   "imp": 334,
+   "imp": 335,
    "clicks": 5,
    "position": 10.1,
    "ctr_pct": 1.5,
@@ -71,104 +91,84 @@
   },
   {
    "query": "鉄槌 教師 吹き替え 声優",
-   "imp": 302,
+   "imp": 311,
    "clicks": 1,
    "position": 9.8,
    "ctr_pct": 0.3,
    "theme": "other",
-   "potential": 59,
+   "potential": 61,
    "lane": "B_new"
   }
  ],
  "lane_C_rewrite": [
   {
    "query": "ojogang メンバー",
-   "imp": 1434,
+   "imp": 1432,
    "clicks": 14,
    "position": 8.5,
    "ctr_pct": 1.0,
    "theme": "dance_show",
-   "potential": 273,
+   "potential": 272,
    "lane": "C_rewrite"
   },
   {
    "query": "鉄槌教師 相関図",
-   "imp": 1209,
-   "clicks": 11,
+   "imp": 1384,
+   "clicks": 12,
    "position": 6.1,
    "ctr_pct": 0.9,
    "theme": "kdrama",
-   "potential": 231,
+   "potential": 265,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ キャラクター",
-   "imp": 844,
+   "imp": 884,
    "clicks": 24,
    "position": 8.5,
-   "ctr_pct": 2.8,
+   "ctr_pct": 2.7,
    "theme": "movie_anime",
-   "potential": 145,
+   "potential": 153,
    "lane": "C_rewrite"
   },
   {
    "query": "サジャボーイズ 声優",
-   "imp": 540,
-   "clicks": 23,
-   "position": 6.7,
-   "ctr_pct": 4.3,
+   "imp": 558,
+   "clicks": 25,
+   "position": 6.6,
+   "ctr_pct": 4.5,
+   "theme": "movie_anime",
+   "potential": 87,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "デーモンハンターズ 声優",
+   "imp": 464,
+   "clicks": 8,
+   "position": 9.5,
+   "ctr_pct": 1.7,
    "theme": "movie_anime",
    "potential": 85,
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズ 声優",
-   "imp": 443,
-   "clicks": 6,
-   "position": 9.4,
-   "ctr_pct": 1.4,
-   "theme": "movie_anime",
-   "potential": 83,
-   "lane": "C_rewrite"
-  },
-  {
    "query": "ojo gang メンバー",
-   "imp": 435,
+   "imp": 439,
    "clicks": 4,
    "position": 9.5,
    "ctr_pct": 0.9,
    "theme": "dance_show",
-   "potential": 83,
+   "potential": 84,
    "lane": "C_rewrite"
   },
   {
    "query": "オジョギャング メンバー",
-   "imp": 400,
+   "imp": 403,
    "clicks": 5,
    "position": 8.4,
    "ctr_pct": 1.2,
    "theme": "dance_show",
-   "potential": 75,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "bts 仲良し 相関図",
-   "imp": 386,
-   "clicks": 15,
-   "position": 6.6,
-   "ctr_pct": 3.9,
-   "theme": "kdrama",
-   "potential": 62,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "bts 仲良し相関図",
-   "imp": 373,
-   "clicks": 14,
-   "position": 6.8,
-   "ctr_pct": 3.8,
-   "theme": "kdrama",
-   "potential": 61,
+   "potential": 76,
    "lane": "C_rewrite"
   },
   {
@@ -182,13 +182,23 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "bts 仲良し相関図",
+   "imp": 347,
+   "clicks": 14,
+   "position": 6.7,
+   "ctr_pct": 4.0,
+   "theme": "kdrama",
+   "potential": 55,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "デーモンハンターズ 名前",
-   "imp": 465,
-   "clicks": 61,
+   "imp": 447,
+   "clicks": 59,
    "position": 4.1,
-   "ctr_pct": 13.1,
+   "ctr_pct": 13.2,
    "theme": "movie_anime",
-   "potential": 32,
+   "potential": 30,
    "lane": "C_rewrite"
   }
  ],

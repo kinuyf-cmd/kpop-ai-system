@@ -1,77 +1,133 @@
 {
-  "generated_at": "2026-07-13T07:00:03.777104",
+  "generated_at": "2026-07-20T07:00:04.722013",
   "candidates": [
+    {
+      "query": "鉄槌教師 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 1582,
+      "clicks": 31,
+      "ctr": 2.0,
+      "pos": 9.2
+    },
     {
       "query": "鉄槌教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 1220,
-      "clicks": 7,
-      "ctr": 0.6,
-      "pos": 10.2
+      "imp": 1531,
+      "clicks": 13,
+      "ctr": 0.8,
+      "pos": 9.7
     },
     {
       "query": "鉄槌教師 相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 941,
-      "clicks": 9,
-      "ctr": 1.0,
+      "imp": 1384,
+      "clicks": 12,
+      "ctr": 0.9,
       "pos": 6.1
-    },
-    {
-      "query": "鉄槌教師 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 939,
-      "clicks": 19,
-      "ctr": 2.0,
-      "pos": 10.1
     },
     {
       "query": "デーモンハンターズ キャラクター",
       "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 572,
+      "imp": 677,
       "clicks": 22,
-      "ctr": 3.8,
-      "pos": 8.3
+      "ctr": 3.2,
+      "pos": 7.9
+    },
+    {
+      "query": "twice 脱退",
+      "page": "/twice-chan-young-tzuyu-che-young-departure-rumors/",
+      "imp": 618,
+      "clicks": 1,
+      "ctr": 0.2,
+      "pos": 8.4
     },
     {
       "query": "デーモンハンターズ 声優",
       "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 348,
-      "clicks": 6,
-      "ctr": 1.7,
-      "pos": 8.8
+      "imp": 453,
+      "clicks": 8,
+      "ctr": 1.8,
+      "pos": 9.0
     },
     {
-      "query": "サジャボーイズ 声優",
-      "page": "/kpop-demon-hunters-movie-review/",
-      "imp": 347,
-      "clicks": 19,
-      "ctr": 5.5,
-      "pos": 6.2
+      "query": "鉄槌教師 吹き替え",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 357,
+      "clicks": 5,
+      "ctr": 1.4,
+      "pos": 8.3
     },
     {
       "query": "イジュンヨン",
       "page": "/ijunyoung-drama-success-before-enlistment/",
-      "imp": 269,
-      "clicks": 4,
-      "ctr": 1.5,
+      "imp": 311,
+      "clicks": 5,
+      "ctr": 1.6,
       "pos": 10.1
     },
     {
-      "query": "鉄槌 教師 日本 語 吹き替え 声優",
+      "query": "鉄槌 教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 260,
-      "clicks": 2,
-      "ctr": 0.8,
-      "pos": 10.4
+      "imp": 311,
+      "clicks": 1,
+      "ctr": 0.3,
+      "pos": 9.8
+    },
+    {
+      "query": "madein 神戸",
+      "page": "/meidin-first-concert-free-entry/",
+      "imp": 296,
+      "clicks": 52,
+      "ctr": 17.6,
+      "pos": 6.8
     },
     {
       "query": "bts 仲良し相関図",
       "page": "/bts-relationship-map-2026/",
-      "imp": 179,
-      "clicks": 6,
+      "imp": 295,
+      "clicks": 10,
       "ctr": 3.4,
-      "pos": 7.3
+      "pos": 6.7
+    },
+    {
+      "query": "鉄槌 教師 日本 語 吹き替え 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 266,
+      "clicks": 2,
+      "ctr": 0.8,
+      "pos": 10.3
+    },
+    {
+      "query": "鉄槌教師声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 207,
+      "clicks": 6,
+      "ctr": 2.9,
+      "pos": 8.6
+    },
+    {
+      "query": "エージェントキム 吹き替え",
+      "page": "/agent-kim-reactivated-viewing-guide/",
+      "imp": 201,
+      "clicks": 6,
+      "ctr": 3.0,
+      "pos": 7.4
+    },
+    {
+      "query": "エージェント キム 日本 語 吹き替え",
+      "page": "/agent-kim-reactivated-viewing-guide/",
+      "imp": 174,
+      "clicks": 11,
+      "ctr": 6.3,
+      "pos": 6.2
+    },
+    {
+      "query": "デーモン ハンターズ メンバー",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 169,
+      "clicks": 8,
+      "ctr": 4.7,
+      "pos": 6.6
     }
   ]
 }

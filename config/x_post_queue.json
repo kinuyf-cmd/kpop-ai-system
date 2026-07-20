@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-19 21:37",
-  "count": 288,
+  "updated": "2026-07-20 21:34",
+  "count": 312,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -2593,6 +2593,222 @@
       "artist": "에스파",
       "priority": "high",
       "queued_at": "2026-07-19T21:37:02.164001"
+    },
+    {
+      "title": "BTS、初のFIFAワールドカップハーフタイムショー出演",
+      "url": "https://www.kpopjournal.tokyo/?p=13394",
+      "post_id": 13394,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-20T07:00:42.652155"
+    },
+    {
+      "title": "BLACKPINKのリサがフレデリック・アルノーと注目のカップルアイテム",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-frederic-arnaud-couple-items/",
+      "post_id": 13403,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-07-20T07:30:43.183814"
+    },
+    {
+      "title": "CORTIS、初のワールドツアーでフィードバック反映",
+      "url": "https://www.kpopjournal.tokyo/cortis-world-tour-feedback/",
+      "post_id": 13410,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-07-20T07:36:06.204229"
+    },
+    {
+      "title": "ITZYのRYUJIN、魅惑的な赤リップ披露",
+      "url": "https://www.kpopjournal.tokyo/itzy-ryujin-red-lipstick/",
+      "post_id": 13416,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-07-20T07:38:23.710690"
+    },
+    {
+      "title": "ビビ、スキンシップ不足カップルに意見",
+      "url": "https://www.kpopjournal.tokyo/bibi-skinship-lack-couples-opinion/",
+      "post_id": 13421,
+      "genre": "breaking",
+      "artist": "비비",
+      "priority": "high",
+      "queued_at": "2026-07-20T07:40:06.369959"
+    },
+    {
+      "title": "ITZYリュジン、公演中の行動を謝罪",
+      "url": "https://www.kpopjournal.tokyo/itzy-ryujin-apology-performance/",
+      "post_id": 13427,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-07-20T09:37:00.072196"
+    },
+    {
+      "title": "東方神起ユノ・ユンホ初ソロコンサート開催",
+      "url": "https://www.kpopjournal.tokyo/tohoshinki-yunho-solo-concert/",
+      "post_id": 13432,
+      "genre": "breaking",
+      "artist": "동방신기",
+      "priority": "high",
+      "queued_at": "2026-07-20T09:40:01.245070"
+    },
+    {
+      "title": "aespaカリナ、短いスカート姿で話題に",
+      "url": "https://www.kpopjournal.tokyo/aespa-karina-short-skirt/",
+      "post_id": 13443,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-07-20T11:34:10.564786"
+    },
+    {
+      "title": "CORTIS、仁川ツアー開幕公演で大合唱",
+      "url": "https://www.kpopjournal.tokyo/cortis-incheon-tour-opening-performance/",
+      "post_id": 13451,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-07-20T13:33:16.895122"
+    },
+    {
+      "title": "スルギ、サーフィンコンセプトでRed Velvetカムバック",
+      "url": "https://www.kpopjournal.tokyo/seulgi-red-velvet-surf-concept/",
+      "post_id": 13457,
+      "genre": "breaking",
+      "artist": "레드벨벳",
+      "priority": "high",
+      "queued_at": "2026-07-20T13:35:39.723423"
+    },
+    {
+      "title": "IU、悪質な噂発信者を追及し裁判所要請",
+      "url": "https://www.kpopjournal.tokyo/?p=13462",
+      "post_id": 13462,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-20T13:37:53.466850"
+    },
+    {
+      "title": "CRAVITY、キャリビアンで爽やかパフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/cravity-refreshing-performance-caribbean/",
+      "post_id": 13475,
+      "genre": "breaking",
+      "artist": "크래비티",
+      "priority": "high",
+      "queued_at": "2026-07-20T13:45:02.399538"
+    },
+    {
+      "title": "ILLITのウォンヒ、空港ファッションが話題",
+      "url": "https://www.kpopjournal.tokyo/illits-wonhi-airport-fashion/",
+      "post_id": 13479,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-07-20T13:46:12.918623"
+    },
+    {
+      "title": "シャキーラ「Dai Dai」が5億ビュー目前、BTSも追撃中",
+      "url": "https://www.kpopjournal.tokyo/shakira-dai-dai-5-bts/",
+      "post_id": 13488,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-20T15:32:39.743667"
+    },
+    {
+      "title": "オン・ソンウ、デビュー後初の悪役挑戦",
+      "url": "https://www.kpopjournal.tokyo/on-sung-woo-debut-villain-challenge/",
+      "post_id": 13497,
+      "genre": "breaking",
+      "artist": "옹성우",
+      "priority": "high",
+      "queued_at": "2026-07-20T15:36:27.683437"
+    },
+    {
+      "title": "少女時代 YURI 128億ビルオーナーの話題",
+      "url": "https://www.kpopjournal.tokyo/yuri-128billion-building-owner/",
+      "post_id": 13509,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-07-20T17:34:32.527069"
+    },
+    {
+      "title": "SEVENTEEN V8、初ミニアルバム活動成功裏に終了",
+      "url": "https://www.kpopjournal.tokyo/seventeen-v8-mini-album-success/",
+      "post_id": 13517,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-07-20T17:37:21.462137"
+    },
+    {
+      "title": "オ・ユジン、新曲「여우야 뭐HANNI」MVティーザー公開",
+      "url": "https://www.kpopjournal.tokyo/o-yujin-new-song-hanni-mv-teaser/",
+      "post_id": 13523,
+      "genre": "breaking",
+      "artist": "오유진",
+      "priority": "high",
+      "queued_at": "2026-07-20T17:40:38.307900"
+    },
+    {
+      "title": "IU、健康理由でアルバム・コンサート計画変更",
+      "url": "https://www.kpopjournal.tokyo/iu-health-album-concert-change/",
+      "post_id": 13527,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-07-20T19:00:48.702186"
+    },
+    {
+      "title": "IU、アメリカ法廷で国籍ルーマーに対抗",
+      "url": "https://www.kpopjournal.tokyo/iu-america-court-nationality-rumor/",
+      "post_id": 13531,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-20T19:02:08.539390"
+    },
+    {
+      "title": "U19男子ハンドボール、ヨルダン選手権出場確定",
+      "url": "https://www.kpopjournal.tokyo/u19-handball-jordan-championship-confirmed/",
+      "post_id": 13536,
+      "genre": "breaking",
+      "artist": "우즈",
+      "priority": "high",
+      "queued_at": "2026-07-20T19:06:30.899670"
+    },
+    {
+      "title": "IU、耳管開放症悪化で全予定延期決定",
+      "url": "https://www.kpopjournal.tokyo/iu-eikan-kaihoushou-enkai-2023/",
+      "post_id": 13542,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-07-20T19:36:40.269006"
+    },
+    {
+      "title": "真世恋、成長と新目標語るインタビュー",
+      "url": "https://www.kpopjournal.tokyo/masayo-koi-interview-growth-goals/",
+      "post_id": 13550,
+      "genre": "breaking",
+      "artist": "윤아",
+      "priority": "high",
+      "queued_at": "2026-07-20T21:31:57.617678"
+    },
+    {
+      "title": "82メイジャー、初ファンコンサートでRed VelvetとTWICEカバー",
+      "url": "https://www.kpopjournal.tokyo/82major-red-velvet-twice-cover/",
+      "post_id": 13555,
+      "genre": "breaking",
+      "artist": "레드벨벳",
+      "priority": "high",
+      "queued_at": "2026-07-20T21:34:35.604584"
     }
   ]
 }

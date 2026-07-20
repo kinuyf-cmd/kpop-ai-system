@@ -423,9 +423,16 @@ fi
 
 # ─── [7] X投稿チェック＆再試行 ─────────────────────────────────────────────
 alog "--- [7] X投稿チェック ---"
+# X自動投稿の長期停止中(x_scheduled_poster cronがコメントアウト)は再試行しない
+# (シャドウバン対応の全停止をpost_audit経由の直接投稿がすり抜ける事故の防止)
+if ! crontab -l 2>/dev/null | grep -E '^[^#]' | grep -q 'x_scheduled_poster'; then
+  alog "ℹ️ X自動投稿は停止中(cron無効) → X投稿チェックをスキップ"
+  X_SUCCESS="__X_PAUSED__"
+else
 # x_post.logはTITLEとURLで記録されているので両方で確認
 X_SUCCESS=$(grep -A5 "TITLE: ${TITLE}" "$SCRIPT_DIR/logs/x_post.log" 2>/dev/null | grep "フック投稿成功" | tail -1 || \
             grep "フック投稿成功" "$SCRIPT_DIR/logs/x_post.log" 2>/dev/null | tail -1 || echo "")
+fi
 
 if [[ -z "$X_SUCCESS" ]]; then
   alog "⚠️ X投稿が未成功 → 自動再試行"
@@ -462,7 +469,7 @@ print('\n'.join(lines[:8]))
       fi
     fi
   fi
-else
+elif [[ "$X_SUCCESS" != "__X_PAUSED__" ]]; then
   alog "✅ X投稿OK: $(echo "$X_SUCCESS" | grep -oP 'https://x\.com/\S+' | head -1)"
 fi
 
