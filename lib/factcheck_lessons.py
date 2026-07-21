@@ -48,11 +48,38 @@ def append_lessons(post_id: int, title: str, result: dict) -> None:
             }, ensure_ascii=False) + '\n')
 
 
+def _neg_ts(ts: str) -> float:
+    """ts を「新しいほど小さい」数値に変換 (昇順ソートで新着優先にするため)。
+
+    パース不能な ts は最も古い扱い (+inf) にして末尾へ送る。
+    """
+    try:
+        return -datetime.fromisoformat(ts).timestamp()
+    except (TypeError, ValueError):
+        return float('inf')
+
+
 def get_recent_lessons(days: int = 30, max_count: int = MAX_LESSONS_IN_PROMPT) -> list[dict]:
-    """最近 N日の教訓を取得 (factcheck prompt用)"""
+    """最近 N日の教訓を取得 (factcheck prompt用)。
+
+    2026-07-21 (コスト修理): 「当日ぶん」を除外した日次スナップショットを返す。
+
+    旧実装は ts 降順で最新 max_count 件を返していた。lessons は 1日 100-180 件
+    追加されるため、prompt に載る 12 件が数分で総入れ替えになり、この文字列を
+    含む system prefix (prefix+corpus+lessons ≒12.5k tok) の prompt cache が
+    呼び出しの度に invalidate されていた。実測 cache_read/write=0.17、
+    cold write が factcheck API 費の 93% を占めた。
+
+    当日ぶんを除外することで同一日内では母集合が不変になり、返り値がバイト同一
+    になる (= cache hit)。翌日には前日ぶんが取り込まれるので学習は止まらない。
+    """
     if not LESSONS_PATH.exists():
         return []
-    cutoff = datetime.now() - timedelta(days=days)
+    now = datetime.now()
+    cutoff = now - timedelta(days=days)
+    # 当日 00:00 以降に追加されたぶんは「まだ確定していない」として除外し、
+    # 同一日内で母集合が変化しないようにする (prompt cache 安定化)。
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     lessons = []
     try:
         with open(LESSONS_PATH, encoding='utf-8') as f:
@@ -60,14 +87,23 @@ def get_recent_lessons(days: int = 30, max_count: int = MAX_LESSONS_IN_PROMPT) -
                 try:
                     d = json.loads(line)
                     ts = datetime.fromisoformat(d.get('ts', ''))
-                    if ts >= cutoff:
+                    if cutoff <= ts < today_start:
                         lessons.append(d)
                 except (json.JSONDecodeError, ValueError):
                     continue
     except OSError:
         return []
-    # 最新を優先 + critical優先
-    lessons.sort(key=lambda x: (x['severity'] != 'critical', x['ts']), reverse=True)
+    # critical 優先 + 新しい順。
+    # 注 (2026-07-21): 旧実装は `key=(severity!='critical', ts), reverse=True` で、
+    # reverse が第1キーにも効くため critical(False) が末尾に回り、critical 優先が
+    # 反転していた。severity は昇順・ts は降順と向きが違うので reverse は使わず、
+    # ts は文字列の補数化ではなく個別キーで表現する。
+    # ts 同着でも順序が揺れないよう title を tiebreak に入れ、同一入力に対して
+    # 決定的な並びを保証する (prompt cache 安定性のため)。
+    lessons.sort(key=lambda x: (x.get('title', ''),))
+    lessons.sort(
+        key=lambda x: (x['severity'] != 'critical', _neg_ts(x.get('ts', ''))),
+    )
     return lessons[:max_count]
 
 

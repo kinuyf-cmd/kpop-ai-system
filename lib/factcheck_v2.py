@@ -374,7 +374,14 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
 
     # 2026-05-12 (Phase 2): lessons は system cached block 側に移動 (cache_read 0.1x で再利用)。
     # 旧実装は user_prompt 末尾に注入していたため毎回 input token として課金されていた。
-    # lessons の追加は低頻度なので 1h cache TTL 内では同じ内容を返し cache hit する。
+    #
+    # 2026-07-21 (コスト修理): 「lessons の追加は低頻度」という当初の前提が誤りだった。
+    # 実測では 1日 100-180 件追加され、最新12件が数分で総入れ替えになるため、
+    # cache breakpoint を持つ system prefix が呼び出しの度に invalidate されていた
+    # (cache_read/write が 7/07 の 1.22 -> 7/17 に 0.17 へ単調悪化、cold write が
+    #  factcheck API 費の 93%)。get_recent_lessons 側で「当日ぶんを除外した日次
+    # スナップショット」にして同一日内でバイト同一を保証することで修理済み。
+    # ここでの前提: get_recent_lessons() は同一日内で決定的な文字列を返すこと。
     try:
         from lib.factcheck_lessons import get_recent_lessons, format_lessons_for_prompt
         lessons = get_recent_lessons(days=30, max_count=12)
