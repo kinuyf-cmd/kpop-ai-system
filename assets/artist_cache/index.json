@@ -797,5 +797,47 @@
         "license": "CC BY 2.0"
       }
     ]
+  },
+  "tws": {
+    "name": "TWS",
+    "files": [
+      "tws_fc04dfd6.jpg"
+    ],
+    "sources": [
+      {
+        "file": "tws_fc04dfd6.jpg",
+        "wikimedia_title": "File:TWS at Music Bank 20240202.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/TWS_at_Music_Bank_20240202.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "katseye": {
+    "name": "KATSEYE",
+    "files": [
+      "katseye_8000ba87.jpg"
+    ],
+    "sources": [
+      {
+        "file": "katseye_8000ba87.jpg",
+        "wikimedia_title": "File:2025-12-13 Katseye Beautiful Chaos Tour 02 (cropped).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/2025-12-13_Katseye_Beautiful_Chaos_Tour_02_%28cropped%29.jpg",
+        "license": "CC BY 4.0"
+      }
+    ]
+  },
+  "the_boyz": {
+    "name": "THE BOYZ",
+    "files": [
+      "the_boyz_a36e86d2.png"
+    ],
+    "sources": [
+      {
+        "file": "the_boyz_a36e86d2.png",
+        "wikimedia_title": "File:The Boyz 2018.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/The_Boyz_2018.png",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
