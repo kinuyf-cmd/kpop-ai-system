@@ -55,9 +55,12 @@ PY
 )
 
 # メトリクスファイルを読み込み
+# 2026-07-21: リポジトリ内 google_metrics/metrics_yesterday.json は 2026-04-02 で
+#   凍結された古いコピー(cron の実書き込み先は ~/google_metrics/)。ここだけが
+#   凍結コピーを読んでおり、週次レビューが3.5ヶ月前のデータで動いていた。
 METRICS=""
-if [ -f "$SCRIPT_DIR/google_metrics/metrics_yesterday.json" ]; then
-  METRICS=$(cat "$SCRIPT_DIR/google_metrics/metrics_yesterday.json")
+if [ -f "$HOME/google_metrics/metrics_yesterday.json" ]; then
+  METRICS=$(cat "$HOME/google_metrics/metrics_yesterday.json")
 fi
 
 PORYGON_REPORT=$(claude --agent porygon -p "

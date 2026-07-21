@@ -65,9 +65,19 @@ def is_processed(url):
 
 
 def mark_processed(record):
+    # 2026-07-21: 複数プロセスが同時追記して1行が混線し JSON が壊れる事故が発生
+    #   (2026-07-19 の行で breaking_news_detector の2実行が衝突)。
+    #   'a' モードは書き込み単位の原子性を保証しないため flock で排他する。
     os.makedirs(os.path.dirname(PROCESSED), exist_ok=True)
+    line = json.dumps(record, ensure_ascii=False) + '\n'
     with open(PROCESSED, 'a', encoding='utf-8') as f:
-        f.write(json.dumps(record, ensure_ascii=False) + '\n')
+        try:
+            import fcntl
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        except (ImportError, OSError):
+            pass  # 非対応環境では従来どおり(ベストエフォート)
+        f.write(line)
+        f.flush()
 
 
 def generate_article_content(sigs, translated_body):

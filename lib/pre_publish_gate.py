@@ -687,8 +687,32 @@ def pre_publish_gate(
     # - 信頼ソースURLありなら use_web_search=False で Web Search tool スキップ
     #   (検索しても同じ結論を返すため品質維持)
     # - KPJ_TEST_MODE 環境変数 (conftest.py 設定) でも skip
+    #
+    # 2026-07-21 (コスト削減): ここまでの安価な検査(本文長/サムネ/letterbox/meta/
+    #   slug/ハングル残留 等)で既に BLOCK が確定している記事は、factcheck の結果に
+    #   関わらず公開されない。にもかかわらず早期 return が無く factcheck(1コール
+    #   約9円)を必ず呼んでいたため、7月実測で 813件/月 が丸損だった。
+    #   verdict 決定(section 4)と同じ基準で「BLOCK 確定済みか」を先に判定して skip する。
+    #   - draft は section 4 で block→warn に格下げされるので BLOCK 確定にはならない
+    #   - content_short は kind 別に severity が変わるため同じ調整を適用してから判定
     _test_mode = os.environ.get('KPJ_TEST_MODE') == '1'
-    if status == 'publish' and kind not in ('popup',) and not skip_llm_factcheck and not _test_mode:
+    _already_blocked = False
+    if status != 'draft':
+        for _i in issues:
+            _sev = _i.get('severity')
+            if _i.get('type') == 'content_short':
+                _sev = 'warn' if kind in ('breaking', 'popup') else 'block'
+            if _sev == 'block':
+                _already_blocked = True
+                break
+    if _already_blocked:
+        issues.append({
+            'type': 'llm_factcheck_skipped_blocked',
+            'severity': 'info',
+            'detail': 'BLOCK確定済みのためLLM factcheckをskip (コスト削減)',
+        })
+    if (status == 'publish' and kind not in ('popup',) and not skip_llm_factcheck
+            and not _test_mode and not _already_blocked):
         try:
             from lib.factcheck_v2 import proofread_post_v2
             from lib.source_domains import is_trusted_source
