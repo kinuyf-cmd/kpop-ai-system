@@ -1171,7 +1171,6 @@
     {
       "id": "red-velvet",
       "name_en": "Red Velvet",
-      "name_ko": "",
       "name_ja": "Red Velvet",
       "slug": "red-velvet-profile",
       "type": "group",
@@ -1215,7 +1214,6 @@
     {
       "id": "monsta-x",
       "name_en": "MONSTA X",
-      "name_ko": "",
       "name_ja": "MONSTA X",
       "slug": "monsta-x-profile",
       "type": "group",
@@ -1265,7 +1263,6 @@
     {
       "id": "mamamoo",
       "name_en": "MAMAMOO",
-      "name_ko": "",
       "name_ja": "MAMAMOO",
       "slug": "mamamoo-profile",
       "type": "group",
@@ -1303,7 +1300,6 @@
     {
       "id": "ateez",
       "name_en": "ATEEZ",
-      "name_ko": "",
       "name_ja": "ATEEZ",
       "slug": "ateez-profile",
       "type": "group",
@@ -1361,6 +1357,76 @@
           "role": "メインボーカル"
         }
       ]
+    },
+    {
+      "id": "i-o-i",
+      "name_en": "I.O.I",
+      "type": "group"
+    },
+    {
+      "id": "tws",
+      "name_en": "TWS",
+      "type": "group"
+    },
+    {
+      "id": "boynextdoor",
+      "name_en": "BOYNEXTDOOR",
+      "type": "group"
+    },
+    {
+      "id": "super-junior",
+      "name_en": "SUPER JUNIOR",
+      "type": "group"
+    },
+    {
+      "id": "fifty-fifty",
+      "name_en": "FIFTY FIFTY",
+      "type": "group"
+    },
+    {
+      "id": "katseye",
+      "name_en": "KATSEYE",
+      "type": "group"
+    },
+    {
+      "id": "hwasa",
+      "name_en": "HWASA",
+      "type": "solo"
+    },
+    {
+      "id": "cravity",
+      "name_en": "CRAVITY",
+      "type": "group"
+    },
+    {
+      "id": "billlie",
+      "name_en": "Billlie",
+      "type": "group"
+    },
+    {
+      "id": "g-i-dle",
+      "name_en": "(G)I-DLE",
+      "type": "group"
+    },
+    {
+      "id": "g-dragon",
+      "name_en": "G-Dragon",
+      "type": "solo"
+    },
+    {
+      "id": "p1harmony",
+      "name_en": "P1Harmony",
+      "type": "group"
+    },
+    {
+      "id": "the-boyz",
+      "name_en": "THE BOYZ",
+      "type": "group"
+    },
+    {
+      "id": "yoona",
+      "name_en": "YOONA",
+      "type": "solo"
     }
   ]
 }

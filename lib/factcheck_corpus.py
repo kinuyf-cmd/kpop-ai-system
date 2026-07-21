@@ -44,7 +44,10 @@ def _format_artist(a: dict) -> str:
     name_ko = a.get('name_ko', '')
     name_ja = a.get('name_ja', '')
     typ = a.get('type', 'group')
-    agency = a.get('agency', '不明')
+    # 2026-07-21: 未検証の agency を「不明」と書かない。corpus は factcheck が
+    # 「確定データ」として読むため、裏取りしていない項目は行ごと省略する
+    # (「不明」と書くと確定情報の中に無意味な行が混ざる)。
+    agency = a.get('agency', '')
     debut = a.get('debut_date', '')
 
     header = f"## {name_en}"
@@ -55,7 +58,8 @@ def _format_artist(a: dict) -> str:
     lines.append(header)
 
     lines.append(f"- 種別: {typ}")
-    lines.append(f"- 所属事務所: {agency}")
+    if agency:
+        lines.append(f"- 所属事務所: {agency}")
     if debut:
         lines.append(f"- デビュー日: {debut}")
 
