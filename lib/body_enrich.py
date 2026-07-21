@@ -250,6 +250,12 @@ def generate_enrich_sections(title, theme, existing_h2, plain_body):
             thinking={"type": "disabled"},
             messages=[{"role": "user", "content": prompt}],
         )
+        # 2026-07-21: cost_ledger 計上漏れを修理 (週次 cron で稼働している)。
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('body_enrich', model='claude-sonnet-5', usage=msg.usage)
+        except Exception:
+            pass
         html = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text").strip()
     except Exception as e:
         print(f"  [enrich] 生成失敗: {e}", file=sys.stderr)

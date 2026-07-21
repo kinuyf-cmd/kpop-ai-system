@@ -343,6 +343,16 @@ def _load_official_accounts() -> dict:
 
 _YT_QUOTA_EXHAUSTED_UNTIL = None  # quota超過時に日付を記録しAPIスキップ
 
+_WARNED_KEYS: set = set()
+
+
+def _warn_once(key: str, message: str) -> None:
+    """同一プロセス内で同じ警告を1回だけ stderr に出す (cronログ肥大の防止)。"""
+    if key in _WARNED_KEYS:
+        return
+    _WARNED_KEYS.add(key)
+    sys.stderr.write(message + "\n")
+
 
 def _fetch_youtube_videos(channel_id: str, order: str = "date", max_results: int = 3) -> list:
     """YouTube Data API v3 で公式チャネルから動画リストを取得
@@ -590,6 +600,15 @@ def resolve_unsplash(query: str) -> dict | None:
     """Get a stock photo from Unsplash API (requires UNSPLASH_ACCESS_KEY)."""
     api_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
     if not api_key:
+        # 2026-07-21: キー欠落を可観測化。Unsplash は DALL-E の 1 つ手前の砦だが、
+        # キー未設定だと黙って None を返すため「実写を探した上で諦めた」のか
+        # 「そもそも探していない」のか区別できず、全件が DALL-E に直行していた
+        # (実測: 全期間 1,808 件中 unsplash 由来 0 件、AI 生成 41%)。
+        _warn_once(
+            "unsplash_key_missing",
+            "[resolver] UNSPLASH_ACCESS_KEY 未設定 → ストック写真を試行せず "
+            "DALL-E にフォールバックしています (コスト増要因)",
+        )
         return None
 
     search_terms = f"kpop {query}" if query else "kpop concert"

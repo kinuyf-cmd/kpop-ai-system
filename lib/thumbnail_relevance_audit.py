@@ -114,6 +114,14 @@ def _audit_one(post_id: int, title: str) -> dict:
                 ],
             }],
         )
+        # 2026-07-21: cost_ledger 計上漏れを修理。日次 cron で稼働しているのに
+        # 台帳に 1 件も出ておらず、コスト分析で存在ごと見落とされていた。
+        try:
+            from lib.anthropic_cost_guard import log_usage
+            log_usage('thumbnail_relevance_audit',
+                      model='claude-haiku-4-5-20251001', usage=resp.usage)
+        except Exception:
+            pass
         txt = ''.join(b.text for b in resp.content if getattr(b, 'type', '') == 'text')
         m = re.search(r'\{[^}]*"verdict"[^}]*\}', txt, re.DOTALL)
         if m:

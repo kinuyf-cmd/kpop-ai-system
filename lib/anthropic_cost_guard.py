@@ -201,11 +201,30 @@ def guard_before_call(caller: str) -> bool:
     return True
 
 
+def _resolve_pricing(model: str) -> dict:
+    """モデルIDから単価表を引く。日付サフィックス付きIDにも対応。
+
+    2026-07-21: PRICING のキーは 'claude-haiku-4-5' だが、呼び出し側は
+    'claude-haiku-4-5-20251001' のような日付サフィックス付きIDを渡す。
+    完全一致 dict.get では未ヒットとなり default の Sonnet 単価
+    ($3/$15) にフォールバックし、Haiku ($1/$5) の計上額が約3倍に
+    膨らんでいた。最長前方一致で吸収する。
+    """
+    if model in PRICING:
+        return PRICING[model]
+    # 'claude-haiku-4-5-20251001' -> 'claude-haiku-4-5' のように最長一致で解決
+    candidates = [k for k in PRICING if model.startswith(k)]
+    if candidates:
+        return PRICING[max(candidates, key=len)]
+    # 未知モデルは保守側 (高め) に倒し、予算アラートが早く鳴るようにする
+    return PRICING['claude-sonnet-4-6']
+
+
 def _calc_cost(model: str, usage_dict: dict) -> float:
     """usage dict から USD 計算"""
     if not isinstance(usage_dict, dict):
         return 0.0
-    p = PRICING.get(model, PRICING['claude-sonnet-4-6'])
+    p = _resolve_pricing(model)
     inp = usage_dict.get('input', usage_dict.get('input_tokens', 0))
     out = usage_dict.get('output', usage_dict.get('output_tokens', 0))
     cw5 = usage_dict.get('cache_create_5m', 0)
