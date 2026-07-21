@@ -31,6 +31,15 @@ ADSENSE_TOKEN_FILE = os.path.join(BASE_DIR, "adsense_token.json")
 # → LAG_DAYS 日前を取得する。_append_history は同じ date の行を置換するので、
 #   遡って再実行すれば過去の誤った行も正しい値で上書きされる。
 LAG_DAYS = int(os.environ.get("METRICS_LAG_DAYS", "3"))
+
+# GA4 ランディングページの取得上限(2026-07-21 追加)。
+#   実測で1日あたり約430ページに流入があるため既定 2000 で全件入る想定。
+#   GA4 API の 1リクエスト上限は 250,000 行なので余裕がある。
+GA4_LANDING_PAGE_LIMIT = int(os.environ.get("GA4_LANDING_PAGE_LIMIT", "2000"))
+
+# GSC の行取得上限(2026-07-21 追加)。API 上限は 25,000 行/リクエスト。
+GSC_ROW_LIMIT = int(os.environ.get("GSC_ROW_LIMIT", "2000"))
+
 target_day = date.today() - timedelta(days=LAG_DAYS)
 yesterday = target_day  # 後方互換(AdSense の startDate_* が参照)
 start_date = target_day.isoformat()
@@ -43,6 +52,11 @@ def get_ga4_data():
     )
     client = BetaAnalyticsDataClient(credentials=creds)
 
+    # 2026-07-21: limit=10 固定だったため「上位10件が流入の何%か」を全体シェアと
+    #   誤読する事故が起きた(実測では429ページが流入を持ち上位10件は34%でしかない)。
+    #   全件取得に変更するが、top_landing_pages を増やすと daily_brief_v2 /
+    #   kpi_dashboard の「top_pages 合算」が不連続に跳ねて時系列が壊れるため、
+    #   既存キーは先頭10件のまま据え置き、全件は all_landing_pages に分けて持つ。
     req = RunReportRequest(
         property=f"properties/{GA4_PROPERTY_ID}",
         dimensions=[Dimension(name="landingPagePlusQueryString")],
@@ -54,14 +68,14 @@ def get_ga4_data():
             Metric(name="averageSessionDuration"),
         ],
         date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
-        limit=10,
+        limit=GA4_LANDING_PAGE_LIMIT,
     )
 
     res = client.run_report(req)
 
-    top_pages = []
+    all_pages = []
     for row in res.rows:
-        top_pages.append({
+        all_pages.append({
             "page": row.dimension_values[0].value,
             "sessions": row.metric_values[0].value,
             "users": row.metric_values[1].value,
@@ -69,6 +83,10 @@ def get_ga4_data():
             "engaged_sessions": row.metric_values[3].value,
             "avg_session_duration": row.metric_values[4].value,
         })
+
+    # 既存消費側(kpop_master_scheduler.sh / score_articles.py / measure_initial_
+    # performance.py)との後方互換のため top_landing_pages は従来どおり上位10件。
+    top_pages = all_pages[:10]
 
     summary_req = RunReportRequest(
         property=f"properties/{GA4_PROPERTY_ID}",
@@ -114,6 +132,10 @@ def get_ga4_data():
             "avg_session_duration": summary_row.metric_values[4].value,
         },
         "top_landing_pages": top_pages,
+        # 2026-07-21: 全ランディングページ。top_landing_pages(上位10件)を
+        # 分母にした比率は全体シェアではないため、記事別分析にはこちらを使う。
+        "all_landing_pages": all_pages,
+        "landing_page_count": len(all_pages),
         "traffic_sources": traffic_sources,
         "x_sessions": x_sessions,
     }
@@ -151,18 +173,23 @@ def get_gsc_data():
     ]
 
     for r in ranges:
+        # 2026-07-21: rowLimit=10 固定を撤廃(GA4 側と同じ「上位10件を全体と誤読」
+        #   の罠を防ぐ)。ただし top_queries / top_pages は daily_brief_v2 と
+        #   kpi_dashboard が合算して「サイト全体のGSC指標」として使っており、件数を
+        #   増やすと値が不連続に跳ねて前日比が壊れる。既存キーは先頭10件で据え置き、
+        #   全件は all_queries / all_pages に分けて持つ。
         body_queries = {
             "startDate": r["start"],
             "endDate": r["end"],
             "dimensions": ["query"],
-            "rowLimit": 10
+            "rowLimit": GSC_ROW_LIMIT
         }
 
         body_pages = {
             "startDate": r["start"],
             "endDate": r["end"],
             "dimensions": ["page"],
-            "rowLimit": 10
+            "rowLimit": GSC_ROW_LIMIT
         }
 
         q_res = run_gsc_query(service, body_queries)
@@ -172,9 +199,9 @@ def get_gsc_data():
         p_rows = p_res.get("rows", []) if isinstance(p_res, dict) else []
 
         if q_rows or p_rows:
-            top_queries = []
+            all_queries = []
             for row in q_rows:
-                top_queries.append({
+                all_queries.append({
                     "query": row["keys"][0],
                     "clicks": row.get("clicks", 0),
                     "impressions": row.get("impressions", 0),
@@ -182,9 +209,9 @@ def get_gsc_data():
                     "position": row.get("position", 0),
                 })
 
-            top_pages = []
+            all_pages_gsc = []
             for row in p_rows:
-                top_pages.append({
+                all_pages_gsc.append({
                     "page": row["keys"][0],
                     "clicks": row.get("clicks", 0),
                     "impressions": row.get("impressions", 0),
@@ -192,12 +219,21 @@ def get_gsc_data():
                     "position": row.get("position", 0),
                 })
 
+            # 既存消費側との後方互換のため上位10件で据え置き(合算値の連続性を維持)
+            top_queries = all_queries[:10]
+            top_pages = all_pages_gsc[:10]
+
             return {
                 "period_label": r["label"],
                 "start_date": r["start"],
                 "end_date": r["end"],
                 "top_queries": top_queries,
-                "top_pages": top_pages
+                "top_pages": top_pages,
+                # 2026-07-21: 全件。比率を出すときは必ずこちらを分母にする。
+                "all_queries": all_queries,
+                "all_pages": all_pages_gsc,
+                "query_count": len(all_queries),
+                "page_count": len(all_pages_gsc),
             }
 
     return {
@@ -205,7 +241,11 @@ def get_gsc_data():
         "start_date": None,
         "end_date": None,
         "top_queries": [],
-        "top_pages": []
+        "top_pages": [],
+        "all_queries": [],
+        "all_pages": [],
+        "query_count": 0,
+        "page_count": 0,
     }
 
 def get_adsense_credentials():
@@ -363,11 +403,24 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
+    # 2026-07-21: all_* (全ランディングページ/全クエリ) はスナップショットにのみ持たせ、
+    #   履歴には入れない。_append_history は全行をメモリに読んで書き直す実装のため、
+    #   1日67KB(429ページ)を積むと年24MBに肥大し日次 cron が重くなる。履歴の用途は
+    #   時系列トレンドで、全件明細は当日分があれば足りる。件数だけは残して
+    #   「上位10件が全体の何%か」を後から検算できるようにする。
+    _hist = json.loads(json.dumps(result, ensure_ascii=False))
+    for _sec, _keys in (("ga4", ("all_landing_pages",)),
+                        ("gsc", ("all_queries", "all_pages"))):
+        _d = _hist.get(_sec)
+        if isinstance(_d, dict):
+            for _k in _keys:
+                _d.pop(_k, None)
+
     # 2026-06-22: metrics_yesterday.json は毎回上書きで日次履歴が残らず、
     #   PV/検索のトレンドが追えない盲点だった(GSCは別途API直叩きで追えるが
     #   GA4 PV は履歴ゼロ)。同じ result を date キーで dedup しつつ
     #   metrics_history.jsonl に追記し、トレンド追跡を可能にする。
-    _append_history(result)
+    _append_history(_hist)
 
     # 1つでも取れていれば 0、全滅なら 1(cron ログで気づける)
     ok = any(x is not None for x in (ga4, gsc, adsense))
