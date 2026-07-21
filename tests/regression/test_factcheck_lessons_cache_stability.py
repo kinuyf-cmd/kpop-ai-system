@@ -123,6 +123,39 @@ def test_critical_lessons_are_prioritised(tmp_path, monkeypatch):
     assert sevs[:3] == ['critical'] * 3, f'critical が優先されていない: {sevs}'
 
 
+def test_lessons_are_deduplicated_by_article(tmp_path, monkeypatch):
+    """1記事が複数枠を占有せず、学習事例の多様性が確保されること。
+
+    実測 (2026-07-21): 12枠のうち同一記事が 4枠/3枠 を占め、実質 6記事分しか
+    学習できていなかった。critical は1記事から複数出るため記事単位で絞る。
+    """
+    import lib.factcheck_lessons as fl
+    import json as _json
+
+    path = tmp_path / 'lessons.jsonl'
+    now = datetime.now()
+    with open(path, 'w', encoding='utf-8') as f:
+        # 新しい2記事から 5件ずつ critical (これだけで10枠を食う)
+        for art in range(2):
+            for i in range(5):
+                f.write(_json.dumps(
+                    _mk(now - timedelta(days=1, minutes=i),
+                        'critical', f'記事{art}', f'記事{art}の指摘{i}'),
+                    ensure_ascii=False) + '\n')
+        # やや古い別記事からは1件ずつ (絞れば入れる)
+        for art in range(2, 10):
+            f.write(_json.dumps(
+                _mk(now - timedelta(days=2), 'critical', f'記事{art}', f'記事{art}の指摘'),
+                ensure_ascii=False) + '\n')
+    monkeypatch.setattr(fl, 'LESSONS_PATH', path)
+
+    got = get_recent_lessons(max_count=6)
+    titles = [l['title'] for l in got]
+    assert len(set(titles)) == len(titles), (
+        f'同一記事が複数枠を占有している: {titles}'
+    )
+
+
 def test_lessons_respects_max_count(tmp_path, monkeypatch):
     """prompt 膨張防止の上限が効いていること。"""
     import lib.factcheck_lessons as fl

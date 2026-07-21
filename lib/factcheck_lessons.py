@@ -104,7 +104,30 @@ def get_recent_lessons(days: int = 30, max_count: int = MAX_LESSONS_IN_PROMPT) -
     lessons.sort(
         key=lambda x: (x['severity'] != 'critical', _neg_ts(x.get('ts', ''))),
     )
-    return lessons[:max_count]
+    # 1記事1件に絞って学習事例の多様性を確保する。
+    # 2026-07-21 実測: critical は1記事から複数出るため、絞らないと 12枠のうち
+    # 4枠/3枠を同一記事が占有し、実質6記事分しか学習できていなかった。
+    picked: list[dict] = []
+    seen_titles: set = set()
+    for l in lessons:
+        t = l.get('title', '')
+        if t in seen_titles:
+            continue
+        seen_titles.add(t)
+        picked.append(l)
+        if len(picked) >= max_count:
+            break
+    # 記事数が max_count に満たない場合は、残り枠を同一記事の別指摘で埋める
+    # (せっかくの枠を空けるより多く学習させる方がよい)。
+    if len(picked) < max_count:
+        picked_ids = {id(x) for x in picked}
+        for l in lessons:
+            if id(l) in picked_ids:
+                continue
+            picked.append(l)
+            if len(picked) >= max_count:
+                break
+    return picked
 
 
 def format_lessons_for_prompt(lessons: list[dict]) -> str:
