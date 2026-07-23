@@ -839,5 +839,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "fifty_fifty": {
+    "name": "FIFTY FIFTY",
+    "files": [
+      "fifty_fifty_a0c1ec08.png"
+    ],
+    "sources": [
+      {
+        "file": "fifty_fifty_a0c1ec08.png",
+        "wikimedia_title": "File:221125 피프티 피프티 FIFTY FIFTY at Music Bank.png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/221125_%ED%94%BC%ED%94%84%ED%8B%B0_%ED%94%BC%ED%94%84%ED%8B%B0_FIFTY_FIFTY_at_Music_Bank.png",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
