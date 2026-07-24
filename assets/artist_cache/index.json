@@ -853,5 +853,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "super_junior": {
+    "name": "SUPER JUNIOR",
+    "files": [
+      "super_junior_aa69fdaa.jpg"
+    ],
+    "sources": [
+      {
+        "file": "super_junior_aa69fdaa.jpg",
+        "wikimedia_title": "File:KCON 2015 Super Junior DSC02998 (20357930851).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/KCON_2015_Super_Junior_DSC02998_%2820357930851%29.jpg",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
   }
 }
