@@ -867,5 +867,19 @@
         "license": "CC BY-SA 2.0"
       }
     ]
+  },
+  "i_o_i": {
+    "name": "I.O.I",
+    "files": [
+      "i_o_i_f1e2a3f7.png"
+    ],
+    "sources": [
+      {
+        "file": "i_o_i_f1e2a3f7.png",
+        "wikimedia_title": "File:I.O.I Seongnam Park 160616 (1).png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/I.O.I_Seongnam_Park_160616_%281%29.png",
+        "license": "CC BY 4.0"
+      }
+    ]
   }
 }
