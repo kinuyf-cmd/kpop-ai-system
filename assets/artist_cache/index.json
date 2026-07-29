@@ -881,5 +881,19 @@
         "license": "CC BY 4.0"
       }
     ]
+  },
+  "billlie": {
+    "name": "Billlie",
+    "files": [
+      "billlie_32bbd42c.jpg"
+    ],
+    "sources": [
+      {
+        "file": "billlie_32bbd42c.jpg",
+        "wikimedia_title": "File:Billlie (빌리) 220902.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Billlie_%28%EB%B9%8C%EB%A6%AC%29_220902.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
