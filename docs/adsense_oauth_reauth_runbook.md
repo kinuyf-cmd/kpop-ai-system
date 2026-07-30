@@ -168,3 +168,32 @@ venv_kpi/bin/python3 google_metrics/fetch_yesterday_metrics.py
 GA4 / GSC は service account の別認証なので**影響なし**。
 
 関連メモリ: `adsense-token-invalid-grant`
+
+---
+
+## 2026-07-31 実施記録（クライアント作り直し）
+
+| 項目 | 値 |
+|---|---|
+| 旧 client_id | `869886094667-7ka5frh...`（2026-04-04 作成 / 7日失効していた） |
+| 新 client_id | `869886094667-rkrcs6r...`（2026-07-31 作成） |
+| プロジェクト | `petfortune`（変更なし。他の GA4/GSC/インデックス申請も同じ） |
+| 結果 | `AdSense=OK` / 実データ取得（ESTIMATED_EARNINGS 44 等）/ errors 空 |
+| 旧クライアント | `adsense_client_secret.json.bak-20260731` に保全 |
+
+**判定日: 2026-08-08（再認証 + 8日）**
+この日に `AdSense=OK` なら「本番化前の古いクライアントが原因」という仮説が実証され根治完了。
+また `invalid_grant` なら上の「クライアントを作り直しても8日目に失効する場合」へ進む。
+
+### 未対応（owner 作業）
+- **client_secret のローテーション**: 新クライアントのシークレットが
+  チャットに平文で露出したため、以下で差し替えることを推奨。
+  1. https://console.cloud.google.com/auth/clients?project=petfortune で
+     該当クライアントを開く
+  2. 「クライアント シークレットを追加」→ 新しいシークレットを発行
+  3. ダウンロードした JSON を **scp で** 配置（チャットに貼らない）
+  4. `rm -f adsense_token.json` してから再認証
+  5. 動作確認後、Console で古いシークレットを削除
+  ※ 緊急性は低い（デスクトップアプリのシークレットは Google の設計上
+     「機密ではない」扱いで、単体では悪用できず、承認には本人のブラウザ操作が必要）。
+     ただし公開の場に出た以上、次の保守機会に差し替えるのが望ましい。

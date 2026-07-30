@@ -8,6 +8,9 @@ x_debug_fail.png
 google_metrics/service_account.json
 google_metrics/adsense_client_secret.json
 google_metrics/adsense_token.json
+# OAuth クライアント差し替え時のバックアップも client_secret を含む(2026-07-31)
+google_metrics/adsense_client_secret.json.bak-*
+google_metrics/*client_secret*.json
 google_metrics/x_login.json
 google_metrics/x_debug/
 reports/
