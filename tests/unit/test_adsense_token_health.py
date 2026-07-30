@@ -1,9 +1,13 @@
 """AdSense OAuth トークン失効の監視テスト。
 
 背景（2026-07-31 実測）:
-  refresh_token が7日周期で失効していた（7/17 再認証 → 7/21 まで取得OK →
-  7/22 から invalid_grant）。OAuth 同意画面の公開ステータスが「テスト」の
-  場合の Google 側挙動。
+  refresh_token が7日で失効していた。実行日(fetched_at)ベースで
+  7/17 再認証 → 7/24 まで取得OK → 7/25 から invalid_grant（= 8日目に失効）。
+
+  同意画面は本番環境であることを owner が確認済のため「テストだから7日失効」
+  ではない。真因は OAuth クライアント自体が本番化より前(2026-04-04)に
+  作られたもので、7日失効の扱いが継続していること。
+  → クライアントの作り直しが必要（docs/adsense_oauth_reauth_runbook.md）。
 
   従来は metrics 取得時に WARN が出るだけで health_check の項目になく、
   収益データが7日以上欠測しても気付けなかった。
@@ -115,11 +119,29 @@ def test_does_not_perform_network_refresh(fake_base, monkeypatch):
     assert results[0][0] == "WARN"
 
 
-def test_runbook_exists_and_documents_publishing_status():
-    """runbook が本丸（公開ステータスを本番にする）を明記していること。"""
+def test_runbook_exists_and_documents_client_recreation():
+    """runbook が本丸（OAuth クライアントの作り直し）を明記していること。
+
+    同意画面は本番環境と確認済なので、「公開ステータスを本番に」は打ち手にならない。
+    """
     p = ROOT / "docs" / "adsense_oauth_reauth_runbook.md"
     assert p.exists(), "runbook が無い"
     text = p.read_text(encoding="utf-8")
-    assert "本番" in text
+    assert "クライアントを作り直す" in text, "本丸の打ち手が書かれていない"
+    assert "adsense_token.json" in text, "古いトークン削除の指示が要る"
     assert "-p 2222" in text, "ssh のポート指定が抜けると owner が詰まる"
     assert "service account" in text.lower()
+
+
+def test_runbook_warns_about_fetched_at_vs_date():
+    """date で数えると1日ずれる罠を runbook が明記していること（実際に誤読した）。"""
+    text = (ROOT / "docs" / "adsense_oauth_reauth_runbook.md").read_text(encoding="utf-8")
+    assert "fetched_at" in text
+    assert "対象日" in text
+
+
+def test_runbook_has_fallback_when_recreation_fails():
+    """クライアント作り直しでも直らない場合の次手が書かれていること。"""
+    text = (ROOT / "docs" / "adsense_oauth_reauth_runbook.md").read_text(encoding="utf-8")
+    assert "テストユーザー" in text
+    assert "myaccount.google.com/permissions" in text
