@@ -154,6 +154,38 @@ def check_configs(results):
             results.append(("WARN", key, f"必須config欠落: {path.name} ({label})"))
 
 
+def check_adsense_token(results, digest):
+    """AdSense OAuth トークンの生存を監視する。
+
+    2026-07-31 実測: refresh_token が7日周期で失効していた(7/17再認証 → 7/22からNG)。
+    これは OAuth 同意画面の公開ステータスが「テスト」の場合の挙動。
+    従来は metrics 取得時に WARN が出るだけで放置され、収益データが
+    7日以上欠測しても気付けなかったため、health_check の項目として明示する。
+
+    注: ここでは実際に refresh を試さない。同一 client_id × アカウントの
+    refresh_token には発行数上限(~100)があり、無用なフロー実行は自己失効を
+    誘発する。ローカルの token 更新時刻だけで判定する。
+    復旧手順は docs/adsense_oauth_reauth_runbook.md。
+    """
+    token_path = BASE / "google_metrics" / "adsense_token.json"
+    if not token_path.exists():
+        results.append(("WARN", "adsense_token",
+                        "adsense_token.json が存在しない → runbook で再認証が必要"))
+        return
+    age_h = (datetime.datetime.now().timestamp() - token_path.stat().st_mtime) / 3600
+    digest["adsense_token_age_h"] = round(age_h, 1)
+    # 正常なら cron(毎朝8:30)が refresh して mtime を更新する。
+    # 48h 以上更新されていない = refresh に失敗し続けている。
+    if age_h >= 48:
+        results.append(("WARN", "adsense_token",
+                        f"AdSenseトークンが{age_h/24:.1f}日間更新されていない"
+                        f"(refresh_token失効の疑い)。"
+                        f"復旧: docs/adsense_oauth_reauth_runbook.md"))
+    else:
+        results.append(("PASS", "adsense_token",
+                        f"AdSenseトークン: {age_h:.1f}h前に更新"))
+
+
 def check_gsc_drop(results, digest):
     if not SA.exists():
         results.append(("WARN", "gsc", "service_account.json が無くGSCチェック不可"))
@@ -264,6 +296,7 @@ def main():
     check_configs(results)
     check_meta_null(results, digest)
     check_gsc_drop(results, digest)
+    check_adsense_token(results, digest)
 
     acks = load_acks()
     active = [(lv, k, m) for lv, k, m in results if lv != "PASS" and k not in acks]
