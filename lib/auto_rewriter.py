@@ -30,6 +30,7 @@ import re
 import subprocess
 import urllib.request
 import urllib.error
+import urllib.parse
 import base64
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -75,6 +76,33 @@ def load_json(path):
             return json.load(f)
         except Exception:
             return {}
+
+
+def load_gsc_tracking(path):
+    """gsc_tracking.json を post_id -> entry の dict で返す。
+
+    audit_72h.py は list[entry] 形式で書き出す（entry は index_status を持ち
+    indexed キーは持たない）。呼び出し側は dict アクセスと gsc["indexed"] を
+    前提にしているため、ここで形式を吸収し indexed を導出する。
+    """
+    raw = load_json(path)
+    if isinstance(raw, dict):
+        # {"entries": [...]} 形式、または既に post_id キーの dict
+        raw = raw.get("entries", raw)
+    if not isinstance(raw, list):
+        return raw if isinstance(raw, dict) else {}
+
+    out = {}
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        pid = str(entry.get("post_id", entry.get("id", "")))
+        if not pid:
+            continue
+        e = dict(entry)
+        e["indexed"] = (entry.get("index_status") == "indexed")
+        out[pid] = e
+    return out
 
 
 def append_jsonl(path, record):
@@ -153,6 +181,33 @@ def wp_request(method, path, data=None):
         return None, f"API_FAIL:HTTP {e.code} {body_text}"
     except Exception as e:
         return None, f"API_FAIL:{e}"
+
+
+def resolve_post_id(item):
+    """キューアイテムから post_id を解決する。
+
+    seo_lane_c_bridge は post_id=None で投入し slug/url のみを持たせるため、
+    ここで WP REST の slug 検索にフォールバックする。解決できなければ None。
+    """
+    pid = item.get("post_id")
+    if pid:
+        return str(pid)
+
+    slug = item.get("slug", "")
+    if not slug:
+        url = item.get("url", "")
+        slug = url.rstrip("/").rsplit("/", 1)[-1] if url else ""
+    if not slug:
+        return None
+
+    resp, err = wp_request("GET", f"/posts?slug={urllib.parse.quote(slug)}&status=publish")
+    if err or not resp:
+        print(f"    ⚠️ post_id解決失敗 slug={slug}: {err}")
+        return None
+    if isinstance(resp, list) and resp:
+        return str(resp[0].get("id"))
+    print(f"    ⚠️ post_id解決失敗 slug={slug}: 該当記事なし")
+    return None
 
 
 # ── 安全チェック ─────────────────────────────────────────────────────────────────
@@ -363,7 +418,7 @@ def post_to_x(hook_text, url, is_reply=False, reply_to_id=None):
 
 def process_item(item, gsc_data, action_hist):
     """1件のキューアイテムを処理。戻り値: action_record dict"""
-    post_id  = str(item.get("post_id", ""))
+    post_id  = resolve_post_id(item)
     priority = item.get("priority", "P2")
     rank     = item.get("rank", "IMPROVE")
     title    = item.get("title", "")
@@ -390,6 +445,13 @@ def process_item(item, gsc_data, action_hist):
         "after_score": None,
         "improvement_delta": None,
     }
+
+    # post_id が解決できない記事は WP 更新先を特定できないため必ずスキップ
+    if not post_id:
+        action["skipped"] = True
+        action["skip_reason"] = f"post_id未解決 (slug={item.get('slug','')})"
+        print(f"  SKIP {action['skip_reason']}")
+        return action
 
     # 安全チェック
     ok, reason = safety_check(post_id, rank, gsc_data, action_hist)
@@ -461,7 +523,7 @@ def process_item(item, gsc_data, action_hist):
 
 def run(dry_run=False):
     queue  = load_jsonl(QUEUE_FILE)
-    gsc    = load_json(GSC_FILE)
+    gsc    = load_gsc_tracking(GSC_FILE)
     hist   = load_action_history()
 
     if not queue:

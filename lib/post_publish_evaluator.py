@@ -53,6 +53,32 @@ def load_json(path):
             return {}
 
 
+def load_gsc_tracking(path):
+    """gsc_tracking.json を post_id -> entry の dict で返す。
+
+    audit_72h.py は list[entry] 形式で書き出す（entry は index_status を持ち
+    indexed キーは持たない）。rank_post は dict アクセスと gsc["indexed"] を
+    前提にしているため、ここで形式を吸収し indexed を導出する。
+    """
+    raw = load_json(path)
+    if isinstance(raw, dict):
+        raw = raw.get("entries", raw)
+    if not isinstance(raw, list):
+        return raw if isinstance(raw, dict) else {}
+
+    out = {}
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        pid = str(entry.get("post_id", entry.get("id", "")))
+        if not pid:
+            continue
+        e = dict(entry)
+        e["indexed"] = (entry.get("index_status") == "indexed")
+        out[pid] = e
+    return out
+
+
 def load_existing_evals():
     """既存評価をpost_id -> list[eval]で返す"""
     evals = {}
@@ -199,7 +225,7 @@ def should_evaluate(post, existing_evals):
 
 def run(post_id_filter=None):
     posts = load_jsonl(KPI_POSTS)
-    gsc_raw = load_json(GSC_TRACKING)
+    gsc_raw = load_gsc_tracking(GSC_TRACKING)
     x_records = load_jsonl(X_RESULTS)
     existing_evals = load_existing_evals()
 

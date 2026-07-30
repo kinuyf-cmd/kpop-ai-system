@@ -152,8 +152,23 @@ def fetch_page_for_query(svc, query, days=90):
     rows = res.get("rows", [])
     if not rows:
         return None
+    # GSC は目次アンカー(#kpop-h-N)を別行で返す。本体行と imp/pos が同値のため
+    # そのまま max を取るとアンカー URL を掴み、後段の WP 更新先が壊れる。
+    # クリックが載るのは本体行だけなので、フラグメントは落として集約する。
+    merged = {}
+    for r in rows:
+        page = r["keys"][0].split("#", 1)[0]
+        m = merged.get(page)
+        if m is None:
+            merged[page] = dict(r, keys=[page])
+            continue
+        m["clicks"] = m.get("clicks", 0) + r.get("clicks", 0)
+        m["impressions"] = max(m.get("impressions", 0), r.get("impressions", 0))
+        m["position"] = min(m.get("position", 999), r.get("position", 999))
+        m["ctr"] = (m["clicks"] / m["impressions"]) if m["impressions"] else 0.0
+
     # impression 最大の page
-    top = max(rows, key=lambda r: r.get("impressions", 0))
+    top = max(merged.values(), key=lambda r: r.get("impressions", 0))
     return {
         "url": top["keys"][0],
         "clicks": int(top.get("clicks", 0)),

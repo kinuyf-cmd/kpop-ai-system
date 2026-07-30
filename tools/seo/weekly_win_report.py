@@ -33,10 +33,47 @@ OUT_JSON = BASE / "data" / "weekly_win_report.json"
 LANE_C_QUEUE = BASE / "data" / "lane_c_candidates.json"
 
 
+def _strip_fragment(url):
+    """GSC の page 次元から #kpop-h-N 等のフラグメントを除去する。
+
+    テーマの目次 JS が h2/h3 に id を振るため、Google は同一 SERP 枠を
+    本体 URL + アンカー URL の複数行に分割して返す。imp/pos は本体行と
+    同値、クリックは本体行のみに計上されるため、そのまま扱うと
+    「imp は大きいが CTR 0%」の幽霊ページが勝ち負け判定と Lane C 候補に
+    混入する。
+    """
+    return url.split("#", 1)[0] if url else url
+
+
+def _merge_by_page(rows):
+    """フラグメント違いの行を本体 URL に集約する。
+
+    imp/pos は重複計上なので最大値（＝本体行の値）を採り、clicks のみ合算する。
+    """
+    merged = {}
+    for r in rows:
+        page = _strip_fragment(r["keys"][0])
+        m = merged.get(page)
+        if m is None:
+            merged[page] = {
+                "keys": [page],
+                "clicks": r["clicks"],
+                "impressions": r["impressions"],
+                "position": r["position"],
+                "ctr": r.get("ctr", 0.0),
+            }
+            continue
+        m["clicks"] += r["clicks"]
+        m["impressions"] = max(m["impressions"], r["impressions"])
+        m["position"] = min(m["position"], r["position"])
+        m["ctr"] = (m["clicks"] / m["impressions"]) if m["impressions"] else 0.0
+    return merged
+
+
 def build():
     svc = _svc()
-    cur = {r["keys"][0]: r for r in _query(svc, ["page"], 7, 0, 500)}
-    prev = {r["keys"][0]: r for r in _query(svc, ["page"], 7, 7, 500)}
+    cur = _merge_by_page(_query(svc, ["page"], 7, 0, 500))
+    prev = _merge_by_page(_query(svc, ["page"], 7, 7, 500))
 
     wins, losses = [], []
     for page, r in cur.items():
@@ -53,11 +90,25 @@ def build():
 
     # Lane C候補: 28d窓 query×page で pos6-14 × imp>=150
     qp = _query(svc, ["query", "page"], 28, 0, 1000)
+    # (query, 本体URL) 単位に集約してからフィルタする。アンカー行をそのまま
+    # 残すと同一枠が候補に重複し、CTR 0% の幽霊候補が上位を占める。
+    qp_merged = {}
+    for r in qp:
+        key = (r["keys"][0], _strip_fragment(r["keys"][1]))
+        m = qp_merged.get(key)
+        if m is None:
+            qp_merged[key] = dict(r, keys=[key[0], key[1]])
+            continue
+        m["clicks"] += r["clicks"]
+        m["impressions"] = max(m["impressions"], r["impressions"])
+        m["position"] = min(m["position"], r["position"])
+        m["ctr"] = (m["clicks"] / m["impressions"]) if m["impressions"] else 0.0
+
     lane_c = sorted([
         {"query": r["keys"][0], "page": r["keys"][1].replace(SITE, "/"),
          "imp": r["impressions"], "clicks": r["clicks"],
          "ctr": round(r["ctr"] * 100, 1), "pos": round(r["position"], 1)}
-        for r in qp if 6 <= r["position"] <= 14 and r["impressions"] >= 150
+        for r in qp_merged.values() if 6 <= r["position"] <= 14 and r["impressions"] >= 150
     ], key=lambda x: -x["imp"])[:20]
 
     return {"generated_at": datetime.datetime.now().isoformat(),
