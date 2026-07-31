@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-30 21:37",
-  "count": 514,
+  "updated": "2026-07-31 21:39",
+  "count": 532,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -4627,6 +4627,168 @@
       "artist": "ITZY",
       "priority": "high",
       "queued_at": "2026-07-30T21:37:06.439667"
+    },
+    {
+      "title": "NCT 127、7thフルアルバム「BLINGY」8月24日リリース",
+      "url": "https://www.kpopjournal.tokyo/nct127-blingy-album-release/",
+      "post_id": 14907,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-07-31T07:31:22.572401"
+    },
+    {
+      "title": "ビビ、理想のタイプをヤン・セヒョンから変更",
+      "url": "https://www.kpopjournal.tokyo/bibi-ideal-type-change-yan-sehyun/",
+      "post_id": 14911,
+      "genre": "breaking",
+      "artist": "비비",
+      "priority": "high",
+      "queued_at": "2026-07-31T07:32:57.522345"
+    },
+    {
+      "title": "WithmuuがHYBE「BTS THE CITY」に参加",
+      "url": "https://www.kpopjournal.tokyo/withmuu-hybe-bts-the-city/",
+      "post_id": 14915,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-31T07:34:05.361849"
+    },
+    {
+      "title": "ATEEZ ILLIT NHK「Venue101」8月1日出演",
+      "url": "https://www.kpopjournal.tokyo/ateez-illits-nhk-venue101-august-1/",
+      "post_id": 14921,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-07-31T07:36:19.059472"
+    },
+    {
+      "title": "BABYMONSTER、新曲「MOON」ビジュアルポスター公開",
+      "url": "https://www.kpopjournal.tokyo/babymonster-moon-visual-poster/",
+      "post_id": 14933,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-07-31T11:32:09.988141"
+    },
+    {
+      "title": "BOYNEXTDOOR、今日から釜山で熱い3日間",
+      "url": "https://www.kpopjournal.tokyo/?p=14937",
+      "post_id": 14937,
+      "genre": "breaking",
+      "artist": "보이넥스트도어",
+      "priority": "high",
+      "queued_at": "2026-07-31T11:33:21.437557"
+    },
+    {
+      "title": "NouerA、ファン参加型MV公開と交流イベント",
+      "url": "https://www.kpopjournal.tokyo/?p=14941",
+      "post_id": 14941,
+      "genre": "breaking",
+      "artist": "누에라",
+      "priority": "high",
+      "queued_at": "2026-07-31T11:34:38.928377"
+    },
+    {
+      "title": "YURI、19年のSMを離脱…少女時代活動継続",
+      "url": "https://www.kpopjournal.tokyo/yuri-sm-rip-19years-girls-generation/",
+      "post_id": 14945,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-07-31T13:31:17.364580"
+    },
+    {
+      "title": "ITZYユナ、健康問題でファンイベント欠席",
+      "url": "https://www.kpopjournal.tokyo/itzy-yuna-health-issue-fan-event/",
+      "post_id": 14952,
+      "genre": "breaking",
+      "artist": "ITZY",
+      "priority": "high",
+      "queued_at": "2026-07-31T13:34:59.547706"
+    },
+    {
+      "title": "IVE レイ＆幾田りら「人気歌謡」公演でコラボ決定",
+      "url": "https://www.kpopjournal.tokyo/ive-rei-ikuta-collaboration-popular-music-show/",
+      "post_id": 14958,
+      "genre": "breaking",
+      "artist": "IVE",
+      "priority": "high",
+      "queued_at": "2026-07-31T13:37:15.260160"
+    },
+    {
+      "title": "TWS、8月6日フジテレビ「STAR」出演決定",
+      "url": "https://www.kpopjournal.tokyo/?p=14962",
+      "post_id": 14962,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-07-31T13:38:24.488165"
+    },
+    {
+      "title": "CORTIS、新曲「MOTION」発表と信頼構築",
+      "url": "https://www.kpopjournal.tokyo/cortis-new-song-motion-trust-building/",
+      "post_id": 14966,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-07-31T15:31:12.257879"
+    },
+    {
+      "title": "NMIXX、ベストアルバム「N=MIXX」12月デビュー",
+      "url": "https://www.kpopjournal.tokyo/nmixx-best-album-nmixx-debut-december/",
+      "post_id": 14972,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-07-31T15:33:48.186813"
+    },
+    {
+      "title": "aespa GISELLE 「LOLLAPALOOZA 2026」出発",
+      "url": "https://www.kpopjournal.tokyo/?p=14990",
+      "post_id": 14990,
+      "genre": "breaking",
+      "artist": "에스파",
+      "priority": "high",
+      "queued_at": "2026-07-31T19:00:49.760371"
+    },
+    {
+      "title": "BTS JIN、ハンナム・ザ・ヒル物件売却で82億ウォン利益",
+      "url": "https://www.kpopjournal.tokyo/bts-jin-hannam-hill-property-sale-profit-82-billion/",
+      "post_id": 14994,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-07-31T19:02:06.197312"
+    },
+    {
+      "title": "RIIZE、TWS、Hearts2Hearts「めざましライブ」独占生配信",
+      "url": "https://www.kpopjournal.tokyo/riize-tws-hearts2hearts-mezamashi-live/",
+      "post_id": 15002,
+      "genre": "breaking",
+      "artist": "RIIZE",
+      "priority": "high",
+      "queued_at": "2026-07-31T19:36:33.321010"
+    },
+    {
+      "title": "fromis_9が「Music Bank」で「Vitamin ME」2度目の勝利",
+      "url": "https://www.kpopjournal.tokyo/fromis9-vitamin-me-win/",
+      "post_id": 15009,
+      "genre": "breaking",
+      "artist": "fromis_9",
+      "priority": "high",
+      "queued_at": "2026-07-31T21:32:03.499062"
+    },
+    {
+      "title": "STAYCユン、新人女性芸人賞受賞の涙",
+      "url": "https://www.kpopjournal.tokyo/stayc-yoon-newcomer-award-tears/",
+      "post_id": 15014,
+      "genre": "breaking",
+      "artist": "스테이씨",
+      "priority": "high",
+      "queued_at": "2026-07-31T21:37:03.463145"
     }
   ]
 }
