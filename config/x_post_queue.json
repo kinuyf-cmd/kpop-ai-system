@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-31 21:39",
-  "count": 532,
+  "updated": "2026-08-01 21:36",
+  "count": 545,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -4789,6 +4789,123 @@
       "artist": "스테이씨",
       "priority": "high",
       "queued_at": "2026-07-31T21:37:03.463145"
+    },
+    {
+      "title": "aespa、KARD、Young Kの最新リリース発表",
+      "url": "https://www.kpopjournal.tokyo/aespa-kard-young-k-saisyu-rireesu-happyou/",
+      "post_id": 15030,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-08-01T07:39:19.390926"
+    },
+    {
+      "title": "CORTIS、米ビルボード「21 Under 21」選出",
+      "url": "https://www.kpopjournal.tokyo/?p=15041",
+      "post_id": 15041,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-01T09:33:13.518718"
+    },
+    {
+      "title": "IU、健康回復後10日ぶり公式登場",
+      "url": "https://www.kpopjournal.tokyo/iu-health-recovery-official-appearance/",
+      "post_id": 15045,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-08-01T09:35:47.437124"
+    },
+    {
+      "title": "TXT ヒュニンカイ「視線を引きつける雰囲気",
+      "url": "https://www.kpopjournal.tokyo/?p=15049",
+      "post_id": 15049,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-08-01T09:36:54.984649"
+    },
+    {
+      "title": "BIGHIT MUSIC 0.21%上昇、SMとの距離縮小",
+      "url": "https://www.kpopjournal.tokyo/bighit-music-021-up-sm-distance-shrink/",
+      "post_id": 15054,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-01T09:38:56.886285"
+    },
+    {
+      "title": "キム・ウォンフン、青龍シリズアワード最優秀賞受賞",
+      "url": "https://www.kpopjournal.tokyo/kim-won-hun-blue-dragon-award-winner/",
+      "post_id": 15061,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-08-01T11:36:03.865660"
+    },
+    {
+      "title": "IVEのアン・ユジン、OST人気賞受賞",
+      "url": "https://www.kpopjournal.tokyo/ive-anujin-ost-popularity-award/",
+      "post_id": 15065,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-08-01T11:37:14.660491"
+    },
+    {
+      "title": "BLACKPINKが国立博物館と10周年商品発売",
+      "url": "https://www.kpopjournal.tokyo/blackpink-10th-anniversary-products-national-museum/",
+      "post_id": 15071,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-08-01T13:31:09.342220"
+    },
+    {
+      "title": "BLACKPINK JENNIE、足甲の「天使タトゥー」公開",
+      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-ankle-tattoo-angel/",
+      "post_id": 15075,
+      "genre": "breaking",
+      "artist": "블랙핑크",
+      "priority": "high",
+      "queued_at": "2026-08-01T13:32:20.611440"
+    },
+    {
+      "title": "TXT ヨンジュン「今日もいい感じ〜」フォトエンHD",
+      "url": "https://www.kpopjournal.tokyo/?p=15085",
+      "post_id": 15085,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-08-01T13:35:43.459830"
+    },
+    {
+      "title": "ソン・ダンビ、宿泊施設が協賛だった真相",
+      "url": "https://www.kpopjournal.tokyo/?p=15106",
+      "post_id": 15106,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-08-01T19:36:04.813126"
+    },
+    {
+      "title": "fromis_9、「ビタミンミ」で音楽番組2冠達成",
+      "url": "https://www.kpopjournal.tokyo/?p=15110",
+      "post_id": 15110,
+      "genre": "breaking",
+      "artist": "프로미스나인",
+      "priority": "high",
+      "queued_at": "2026-08-01T19:37:20.909197"
+    },
+    {
+      "title": "tripleS moon、日本オリジナル「Dream Dress」配信開始",
+      "url": "https://www.kpopjournal.tokyo/triples-moon-dream-dress-release/",
+      "post_id": 15116,
+      "genre": "breaking",
+      "artist": "tripleS",
+      "priority": "high",
+      "queued_at": "2026-08-01T21:36:07.906697"
     }
   ]
 }

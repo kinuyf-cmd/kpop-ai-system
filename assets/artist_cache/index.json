@@ -895,5 +895,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "yoona": {
+    "name": "YOONA",
+    "files": [
+      "yoona_2b5ffe6b.jpg"
+    ],
+    "sources": [
+      {
+        "file": "yoona_2b5ffe6b.jpg",
+        "wikimedia_title": "File:20240719 YOONA 3rd Blue Dragon Series Awards.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/20240719_YOONA_3rd_Blue_Dragon_Series_Awards.jpg",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
