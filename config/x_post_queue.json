@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-01 21:36",
-  "count": 545,
+  "updated": "2026-08-02 21:32",
+  "count": 553,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -4906,6 +4906,78 @@
       "artist": "tripleS",
       "priority": "high",
       "queued_at": "2026-08-01T21:36:07.906697"
+    },
+    {
+      "title": "TWICEのジヒョがWaterbomb高雄ヘッドライナーに",
+      "url": "https://www.kpopjournal.tokyo/twice-jihyo-waterbomb-kaohsiung-headliner/",
+      "post_id": 15122,
+      "genre": "breaking",
+      "artist": "TWICE",
+      "priority": "high",
+      "queued_at": "2026-08-02T07:35:36.127216"
+    },
+    {
+      "title": "少女時代のスヨン、料理対決で称賛受ける",
+      "url": "https://www.kpopjournal.tokyo/soshified-suyoung-cooking-challenge/",
+      "post_id": 15133,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-08-02T09:35:59.142341"
+    },
+    {
+      "title": "BLACKPINKのRosé「APT.」が26億回再生達成",
+      "url": "https://www.kpopjournal.tokyo/?p=15138",
+      "post_id": 15138,
+      "genre": "breaking",
+      "artist": "ROSÉ",
+      "priority": "high",
+      "queued_at": "2026-08-02T11:31:17.214937"
+    },
+    {
+      "title": "CORTIS、Lollapaloozaで5万人魅了した公演",
+      "url": "https://www.kpopjournal.tokyo/cortis-lollapalooza-5/",
+      "post_id": 15150,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-02T15:35:44.920351"
+    },
+    {
+      "title": "イ・ソンヨル、レザージャケットで近況報告",
+      "url": "https://www.kpopjournal.tokyo/lee-seong-yeol-leather-jacket-update/",
+      "post_id": 15154,
+      "genre": "breaking",
+      "artist": "이성열",
+      "priority": "high",
+      "queued_at": "2026-08-02T15:36:50.516663"
+    },
+    {
+      "title": "TAEMIN、落ち着いた舞台裏ビジュアル公開",
+      "url": "https://www.kpopjournal.tokyo/taemin-stage-behind-visuals/",
+      "post_id": 15160,
+      "genre": "breaking",
+      "artist": "태민",
+      "priority": "high",
+      "queued_at": "2026-08-02T17:32:09.386030"
+    },
+    {
+      "title": "イ・セヨン、1億ウォン整形後の大胆コスプレ",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260802-173258/",
+      "post_id": 15164,
+      "genre": "breaking",
+      "artist": "이세영",
+      "priority": "high",
+      "queued_at": "2026-08-02T17:33:19.180600"
+    },
+    {
+      "title": "キム・ヒジェ、新曲発表後の近況公開",
+      "url": "https://www.kpopjournal.tokyo/kim-hije-new-song-update/",
+      "post_id": 15171,
+      "genre": "breaking",
+      "artist": "김희재",
+      "priority": "high",
+      "queued_at": "2026-08-02T21:32:16.906415"
     }
   ]
 }
