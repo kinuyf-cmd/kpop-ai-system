@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-07-27",
+ "generated_at": "2026-08-03",
  "window_days": 90,
  "params": {
   "min_imp": 300,
@@ -16,208 +16,201 @@
   "intent_ctr_max": 0.01
  },
  "totals": {
-  "queries_scanned": 4867,
-  "lane_B_new": 7,
-  "lane_C_rewrite": 11,
+  "queries_scanned": 4904,
+  "lane_B_new": 9,
+  "lane_C_rewrite": 9,
   "excluded": {
    "brand": 5,
-   "gossip": 1,
+   "gossip": 0,
    "breaking": 0,
    "hard_competition": 0,
-   "intent_mismatch": 1
+   "intent_mismatch": 0
   },
-  "existing_slugs": 1510
+  "existing_slugs": 1602
  },
  "lane_B_new": [
   {
    "query": "鉄槌教師 声優",
-   "imp": 2153,
-   "clicks": 37,
-   "position": 9.0,
+   "imp": 2589,
+   "clicks": 44,
+   "position": 8.9,
    "ctr_pct": 1.7,
    "theme": "other",
-   "potential": 394,
+   "potential": 474,
    "lane": "B_new"
   },
   {
    "query": "鉄槌教師 吹き替え 声優",
-   "imp": 1704,
-   "clicks": 17,
+   "imp": 1854,
+   "clicks": 20,
    "position": 9.5,
-   "ctr_pct": 1.0,
+   "ctr_pct": 1.1,
    "theme": "other",
-   "potential": 324,
+   "potential": 351,
    "lane": "B_new"
   },
   {
    "query": "twice 脱退",
-   "imp": 759,
+   "imp": 764,
    "clicks": 1,
-   "position": 8.6,
+   "position": 8.8,
    "ctr_pct": 0.1,
    "theme": "artist",
-   "potential": 151,
+   "potential": 152,
    "lane": "B_new"
   },
   {
    "query": "鉄槌教師 吹き替え",
-   "imp": 520,
+   "imp": 621,
    "clicks": 7,
-   "position": 7.8,
-   "ctr_pct": 1.3,
+   "position": 7.9,
+   "ctr_pct": 1.1,
    "theme": "other",
-   "potential": 97,
-   "lane": "B_new"
-  },
-  {
-   "query": "鉄槌 教師 吹き替え 声優",
-   "imp": 330,
-   "clicks": 1,
-   "position": 9.7,
-   "ctr_pct": 0.3,
-   "theme": "other",
-   "potential": 65,
-   "lane": "B_new"
-  },
-  {
-   "query": "イジュンヨン",
-   "imp": 346,
-   "clicks": 5,
-   "position": 10.1,
-   "ctr_pct": 1.4,
-   "theme": "other",
-   "potential": 64,
+   "potential": 117,
    "lane": "B_new"
   },
   {
    "query": "エージェントキム 吹き替え",
-   "imp": 374,
-   "clicks": 12,
-   "position": 6.7,
-   "ctr_pct": 3.2,
+   "imp": 520,
+   "clicks": 14,
+   "position": 6.2,
+   "ctr_pct": 2.7,
    "theme": "other",
-   "potential": 63,
+   "potential": 90,
+   "lane": "B_new"
+  },
+  {
+   "query": "イジュンヨン",
+   "imp": 354,
+   "clicks": 5,
+   "position": 10.1,
+   "ctr_pct": 1.4,
+   "theme": "other",
+   "potential": 66,
+   "lane": "B_new"
+  },
+  {
+   "query": "鉄槌 教師 吹き替え 声優",
+   "imp": 333,
+   "clicks": 1,
+   "position": 9.7,
+   "ctr_pct": 0.3,
+   "theme": "other",
+   "potential": 66,
+   "lane": "B_new"
+  },
+  {
+   "query": "エージェントキム 日本語吹き替え",
+   "imp": 335,
+   "clicks": 11,
+   "position": 6.3,
+   "ctr_pct": 3.3,
+   "theme": "other",
+   "potential": 56,
+   "lane": "B_new"
+  },
+  {
+   "query": "madein 無料ライブ",
+   "imp": 346,
+   "clicks": 28,
+   "position": 5.9,
+   "ctr_pct": 8.1,
+   "theme": "other",
+   "potential": 41,
    "lane": "B_new"
   }
  ],
  "lane_C_rewrite": [
   {
    "query": "鉄槌教師 相関図",
-   "imp": 2113,
-   "clicks": 18,
-   "position": 5.9,
-   "ctr_pct": 0.9,
+   "imp": 2581,
+   "clicks": 20,
+   "position": 6.0,
+   "ctr_pct": 0.8,
    "theme": "kdrama",
-   "potential": 405,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "ojogang メンバー",
-   "imp": 1430,
-   "clicks": 15,
-   "position": 8.5,
-   "ctr_pct": 1.0,
-   "theme": "dance_show",
-   "potential": 271,
+   "potential": 496,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ キャラクター",
-   "imp": 997,
-   "clicks": 32,
+   "imp": 1107,
+   "clicks": 36,
    "position": 7.9,
-   "ctr_pct": 3.2,
+   "ctr_pct": 3.3,
    "theme": "movie_anime",
-   "potential": 167,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "デーモンハンターズ 声優",
-   "imp": 531,
-   "clicks": 8,
-   "position": 9.6,
-   "ctr_pct": 1.5,
-   "theme": "movie_anime",
-   "potential": 98,
+   "potential": 185,
    "lane": "C_rewrite"
   },
   {
    "query": "サジャボーイズ 声優",
-   "imp": 612,
-   "clicks": 30,
-   "position": 6.4,
-   "ctr_pct": 4.9,
+   "imp": 670,
+   "clicks": 34,
+   "position": 6.2,
+   "ctr_pct": 5.1,
    "theme": "movie_anime",
-   "potential": 92,
+   "potential": 100,
    "lane": "C_rewrite"
   },
   {
-   "query": "ojo gang メンバー",
-   "imp": 431,
-   "clicks": 5,
-   "position": 9.4,
-   "ctr_pct": 1.2,
-   "theme": "dance_show",
-   "potential": 81,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "オジョギャング メンバー",
-   "imp": 414,
-   "clicks": 5,
-   "position": 8.4,
-   "ctr_pct": 1.2,
-   "theme": "dance_show",
-   "potential": 78,
+   "query": "デーモンハンターズ 声優",
+   "imp": 537,
+   "clicks": 8,
+   "position": 9.6,
+   "ctr_pct": 1.5,
+   "theme": "movie_anime",
+   "potential": 99,
    "lane": "C_rewrite"
   },
   {
    "query": "bts 仲良し相関図",
-   "imp": 429,
-   "clicks": 12,
-   "position": 6.0,
-   "ctr_pct": 2.8,
+   "imp": 550,
+   "clicks": 15,
+   "position": 5.7,
+   "ctr_pct": 2.7,
    "theme": "kdrama",
-   "potential": 74,
+   "potential": 95,
    "lane": "C_rewrite"
   },
   {
-   "query": "オジョギャング裁判",
-   "imp": 323,
-   "clicks": 5,
-   "position": 9.5,
-   "ctr_pct": 1.5,
+   "query": "ojogang メンバー",
+   "imp": 415,
+   "clicks": 10,
+   "position": 7.5,
+   "ctr_pct": 2.4,
    "theme": "dance_show",
-   "potential": 60,
+   "potential": 73,
+   "lane": "C_rewrite"
+  },
+  {
+   "query": "鉄槌教師 キャスト 声優",
+   "imp": 321,
+   "clicks": 0,
+   "position": 7.9,
+   "ctr_pct": 0.0,
+   "theme": "kdrama",
+   "potential": 64,
    "lane": "C_rewrite"
   },
   {
    "query": "鉄槌 教師 キャスト 相関 図",
-   "imp": 321,
+   "imp": 327,
    "clicks": 4,
    "position": 4.7,
    "ctr_pct": 1.2,
    "theme": "kdrama",
-   "potential": 60,
+   "potential": 61,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ 名前",
-   "imp": 435,
-   "clicks": 57,
-   "position": 4.0,
-   "ctr_pct": 13.1,
+   "imp": 407,
+   "clicks": 50,
+   "position": 3.9,
+   "ctr_pct": 12.3,
    "theme": "movie_anime",
-   "potential": 30,
+   "potential": 31,
    "lane": "C_rewrite"
   }
  ],
- "excluded_intent_mismatch": [
-  {
-   "query": "けージャーナル",
-   "imp": 381,
-   "position": 2.3,
-   "ctr_pct": 0.52
-  }
- ]
+ "excluded_intent_mismatch": []
 }
