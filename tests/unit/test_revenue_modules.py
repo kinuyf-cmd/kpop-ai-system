@@ -125,6 +125,87 @@ class TestGenreClassifier:
         assert len(gc.category_matrix()) > 0
 
 
+class TestTerminatedProgramsExcluded:
+    """提携終了した A8 案件が CTA 選定に混ざらない。
+
+    2026-08-03: DHOLIC/NUGU/カラパラ007 の終了後もリンクが残り、
+    A8 で無効クリックが発生した。status/end_date による除外を恒久ガードとする。
+    """
+
+    TERMINATED = ("dholic_fashion", "nugu_fashion", "karapara007")
+
+    def test_master_marks_terminated_programs(self):
+        from lib.revenue import genre_classifier as gc
+        raw = gc.load_a8_master_raw()
+        for key in self.TERMINATED:
+            assert raw["programs"][key].get("status") == "terminated", key
+
+    def test_load_a8_master_filters_terminated(self):
+        from lib.revenue import genre_classifier as gc
+        progs = gc.load_a8_master().get("programs", {})
+        for key in self.TERMINATED:
+            assert key not in progs, f"{key} が除外されていない"
+        assert len(progs) > 0, "全件除外は誤り"
+
+    def test_programs_by_category_excludes_terminated(self):
+        from lib.revenue import genre_classifier as gc
+        keys = {p["key"] for p in gc.programs_by_category("korean_fashion")}
+        assert keys, "稼働案件が残っているはず"
+        assert not keys & set(self.TERMINATED)
+
+    def test_category_matrix_excludes_terminated(self):
+        from lib.revenue import genre_classifier as gc
+        allkeys = {k for v in gc.category_matrix().values() for k in v}
+        assert not allkeys & set(self.TERMINATED)
+
+    def test_is_active_helper(self):
+        from lib.revenue import genre_classifier as gc
+        assert gc.is_active_program({}) is True
+        assert gc.is_active_program({"status": "active"}) is True
+        assert gc.is_active_program({"status": "terminated"}) is False
+        # end_date 経過も終了扱い
+        assert gc.is_active_program({"end_date": "2020-01-01"}) is False
+        assert gc.is_active_program({"end_date": "2999-12-31"}) is True
+
+    def test_affiliate_manager_blocks_terminated(self):
+        import lib.affiliate_manager as am
+        for key in self.TERMINATED:
+            assert am.build_a8_link(key) is None, key
+
+    def _injector(self):
+        import importlib.util
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[2]
+        spec = importlib.util.spec_from_file_location(
+            "npi", root / "cta" / "new_post_injector.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_banner_loader_excludes_terminated(self):
+        m = self._injector()
+        assert "dholic" not in m.load_banners()
+        assert len(m.load_banners()) > 0
+
+    def test_banner_html_empty_for_terminated(self):
+        """終了案件を明示指定しても HTML を組まない(KeyError も出さない)。"""
+        m = self._injector()
+        banners = dict(m.load_banners())
+        banners["dholic"] = {"name": "DHOLIC", "status": "terminated",
+                             "button_text": "x"}  # sizes キー自体が無い
+        for pos in ("position_top", "position_middle", "position_bottom"):
+            assert m.build_hybrid_html("dholic", pos, banners,
+                                       m.load_templates()) == ""
+
+    def test_banner_html_still_works_for_active(self):
+        m = self._injector()
+        banners = m.load_banners()
+        key = next(k for k, v in banners.items() if v.get("sizes"))
+        out = m.build_hybrid_html(key, "position_middle", banners,
+                                  m.load_templates())
+        assert isinstance(out, str)
+
+
 class TestNoHardcodedSecrets:
     """機密(client_id 実値 / token)がコードに直書きされていない。"""
 

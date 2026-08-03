@@ -65,8 +65,15 @@ STRONGEST_MARKER = 'kpj-strongest-phase30'
 
 
 def load_banners() -> dict:
+    """バナー素材。提携終了した案件は除外して返す。
+
+    終了案件を貼り続けると A8 で無効クリック扱いになり収益ゼロ + 死んだ導線に
+    なる(2026-08-03 DHOLIC 他で発生)。判定は genre_classifier に一本化。
+    """
+    from lib.revenue.genre_classifier import is_active_program
     with open(settings.a8_banners_path()) as f:
-        return json.load(f)["programs"]
+        programs = json.load(f)["programs"]
+    return {k: v for k, v in programs.items() if is_active_program(v)}
 
 
 def load_templates() -> dict:
@@ -184,7 +191,7 @@ def build_hybrid_html(program_key: str, position: str, banners: dict,
     click_base = settings.a8_click_base_url()
 
     if position == "position_top":
-        sizes = program["sizes"]
+        sizes = program.get("sizes") or {}
         has_728 = "728x90" in sizes
         has_320 = "320x50" in sizes
         if has_728 and has_320:
@@ -212,7 +219,7 @@ def build_hybrid_html(program_key: str, position: str, banners: dict,
         return html
 
     elif position == "position_middle":
-        sizes = program["sizes"]
+        sizes = program.get("sizes") or {}
         if "300x250" not in sizes:
             return ""
         size_data = sizes["300x250"]
@@ -231,7 +238,7 @@ def build_hybrid_html(program_key: str, position: str, banners: dict,
         return html
 
     elif position == "position_bottom":
-        sizes_main = program["sizes"]
+        sizes_main = program.get("sizes") or {}
         if "300x250" not in sizes_main:
             return ""
         main_300 = sizes_main["300x250"]

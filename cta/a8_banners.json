@@ -89,18 +89,9 @@
       "micro_copy": "韓国系ファッション / 推しと同じコーデ",
       "button_text": "新作をチェック",
       "size_limitation": "no_728x90",
-      "sizes": {
-        "300x250": {
-          "a8mat": "457NRV+3PYKNU+3GIS+BZ8OX",
-          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+BZ8OX\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www24.a8.net/svt/bgt?aid=250620187225&wid=002&eno=01&mid=s00000016138002012000&mc=1\"></a>",
-          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www10.a8.net/0.gif?a8mat=457NRV+3PYKNU+3GIS+BZ8OX\" alt=\"\">"
-        },
-        "320x50": {
-          "a8mat": "457NRV+3PYKNU+3GIS+C7DWH",
-          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+3PYKNU+3GIS+C7DWH\" rel=\"nofollow\"><img border=\"0\" width=\"320\" height=\"50\" alt=\"\" src=\"https://www20.a8.net/svt/bgt?aid=250620187225&wid=002&eno=01&mid=s00000016138002050000&mc=1\"></a>",
-          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www11.a8.net/0.gif?a8mat=457NRV+3PYKNU+3GIS+C7DWH\" alt=\"\">"
-        }
-      }
+      "status": "terminated",
+      "end_date": "2026-06-30",
+      "note": "A8提携終了のため無効化 (無効クリック発生: 2026-08-03対応)"
     },
     "olens_poplens": {
       "name": "OLENS/POPLENS",

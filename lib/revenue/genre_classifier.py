@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
@@ -28,12 +29,41 @@ A8_CATEGORIES = [
 ]
 
 
-def load_a8_master() -> dict:
+def is_active_program(prog: dict) -> bool:
+    """提携が有効な案件か。status=terminated / end_date 経過 を終了とみなす。
+
+    終了案件のリンクを踏ませると A8 で無効クリック扱いになり、収益ゼロのうえ
+    読者は死んだ導線に飛ばされる(2026-08-03 に DHOLIC/NUGU/カラパラ007 で発生)。
+    status も end_date も無い案件は「稼働中」とみなす(既存案件の後方互換)。
+    """
+    if str(prog.get("status", "")).lower() in ("terminated", "ended", "suspended"):
+        return False
+    end = str(prog.get("end_date", "")).strip()
+    if end:
+        try:
+            if date.fromisoformat(end) < date.today():
+                return False
+        except ValueError:
+            pass  # 解釈できない日付は判定材料にしない
+    return True
+
+
+def load_a8_master_raw() -> dict:
+    """フィルタ前のマスター(終了案件も含む)。監査・棚卸し用。"""
     try:
         with open(settings.a8_master_path(), encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return {"programs": {}, "_metadata": {"categories": A8_CATEGORIES}}
+
+
+def load_a8_master() -> dict:
+    """CTA 選定に使うマスター。終了案件は必ず除外される。"""
+    data = load_a8_master_raw()
+    progs = data.get("programs", {})
+    data = dict(data)
+    data["programs"] = {k: v for k, v in progs.items() if is_active_program(v)}
+    return data
 
 
 def load_genre_map() -> tuple[dict, dict]:
