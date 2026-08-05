@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-04 21:36",
-  "count": 586,
+  "updated": "2026-08-05 19:31",
+  "count": 594,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -5275,6 +5275,78 @@
       "artist": "화사",
       "priority": "high",
       "queued_at": "2026-08-04T21:36:26.351497"
+    },
+    {
+      "title": "NOWZ、デジタルシングル「Achilles」リリース",
+      "url": "https://www.kpopjournal.tokyo/nowz-achilles-digital-single-release/",
+      "post_id": 15672,
+      "genre": "breaking",
+      "artist": "나우즈",
+      "priority": "high",
+      "queued_at": "2026-08-05T07:38:19.004602"
+    },
+    {
+      "title": "G-DRAGON悪質コメント投稿者に罰金700万ウォン",
+      "url": "https://www.kpopjournal.tokyo/g-dragon-bad-comments-fine-7000000-won/",
+      "post_id": 15676,
+      "genre": "breaking",
+      "artist": "지드래곤",
+      "priority": "high",
+      "queued_at": "2026-08-05T09:31:29.824573"
+    },
+    {
+      "title": "BABYMONSTER「MOON」パフォーマンスビデオ公開",
+      "url": "https://www.kpopjournal.tokyo/babymonster-moon-performance-video/",
+      "post_id": 15681,
+      "genre": "breaking",
+      "artist": "베이비몬스터",
+      "priority": "high",
+      "queued_at": "2026-08-05T09:36:48.524170"
+    },
+    {
+      "title": "ROSÉ、ハンバーガー半分残し体型の理由",
+      "url": "https://www.kpopjournal.tokyo/rose-hamburger-half-left-reason/",
+      "post_id": 15687,
+      "genre": "breaking",
+      "artist": "로제",
+      "priority": "high",
+      "queued_at": "2026-08-05T09:39:46.014821"
+    },
+    {
+      "title": "ILLIT、日本でシングル2集初週7万枚突破",
+      "url": "https://www.kpopjournal.tokyo/illit-single-2nd-week-70000-sales/",
+      "post_id": 15695,
+      "genre": "breaking",
+      "artist": "아일릿",
+      "priority": "high",
+      "queued_at": "2026-08-05T11:36:05.777298"
+    },
+    {
+      "title": "CORTISマーティン、著作権分配方法を公開",
+      "url": "https://www.kpopjournal.tokyo/cortis-martin-copyright-distribution/",
+      "post_id": 15721,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-05T17:33:13.383588"
+    },
+    {
+      "title": "ENHYPEN、北米南米ツアー成功裏に終了",
+      "url": "https://www.kpopjournal.tokyo/enhypen-north-south-america-tour-success/",
+      "post_id": 15726,
+      "genre": "breaking",
+      "artist": "ENHYPEN",
+      "priority": "high",
+      "queued_at": "2026-08-05T17:39:01.075346"
+    },
+    {
+      "title": "IVE、オークランドで「SHOW WHAT I AM」公演",
+      "url": "https://www.kpopjournal.tokyo/ive-show-what-i-am-oakland/",
+      "post_id": 15736,
+      "genre": "breaking",
+      "artist": "IVE",
+      "priority": "high",
+      "queued_at": "2026-08-05T19:31:22.340479"
     }
   ]
 }
