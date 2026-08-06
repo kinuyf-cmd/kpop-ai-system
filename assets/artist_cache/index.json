@@ -909,5 +909,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "wheein": {
+    "name": "WHEEIN",
+    "files": [
+      "wheein_bb2c4fee.jpg"
+    ],
+    "sources": [
+      {
+        "file": "wheein_bb2c4fee.jpg",
+        "wikimedia_title": "File:20240514 Wheein Tilburg concert 33.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/20240514_Wheein_Tilburg_concert_33.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
   }
 }
