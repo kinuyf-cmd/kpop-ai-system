@@ -923,5 +923,19 @@
         "license": "CC BY-SA 4.0"
       }
     ]
+  },
+  "boynextdoor": {
+    "name": "BOYNEXTDOOR",
+    "files": [
+      "boynextdoor_010ef381.jpg"
+    ],
+    "sources": [
+      {
+        "file": "boynextdoor_010ef381.jpg",
+        "wikimedia_title": "File:BoyNextDoor Knock On Vol.1 Tour (20250325).jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/BoyNextDoor_Knock_On_Vol.1_Tour_%2820250325%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC0"
+      }
+    ]
   }
 }

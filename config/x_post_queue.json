@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-06 21:38",
-  "count": 607,
+  "updated": "2026-08-07 21:35",
+  "count": 624,
   "queue": [
     {
       "title": "ATEEZのユンホが長年の彼女と別れ確認",
@@ -5464,6 +5464,159 @@
       "artist": "블랙핑크",
       "priority": "high",
       "queued_at": "2026-08-06T21:38:41.560250"
+    },
+    {
+      "title": "BTSジミンの業績、論争の中で反発受ける",
+      "url": "https://www.kpopjournal.tokyo/bts-jimin-gyouseki-ronsou-hanpatsu/",
+      "post_id": 15857,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-08-07T07:30:48.439569"
+    },
+    {
+      "title": "BIGBANG、「PREQUEL EXHIBITION」チケット販売開始",
+      "url": "https://www.kpopjournal.tokyo/bigbang-prequel-exhibition-ticket-sale/",
+      "post_id": 15873,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-08-07T11:31:49.573618"
+    },
+    {
+      "title": "シン・ドンヨプ、大学路公演軽視発言謝罪",
+      "url": "https://www.kpopjournal.tokyo/shin-dongyup-daigaku-kouen-shazai/",
+      "post_id": 15877,
+      "genre": "breaking",
+      "artist": "신동엽",
+      "priority": "high",
+      "queued_at": "2026-08-07T11:32:55.142004"
+    },
+    {
+      "title": "ENHYPEN、北南米ツアー「BLOOD SAGA」成功",
+      "url": "https://www.kpopjournal.tokyo/enhypen-blood-saga-north-south-america-tour/",
+      "post_id": 15887,
+      "genre": "breaking",
+      "artist": "엔하이픈",
+      "priority": "high",
+      "queued_at": "2026-08-07T11:41:08.875494"
+    },
+    {
+      "title": "エリック・ナム、今日「Someday」でカムバック",
+      "url": "https://www.kpopjournal.tokyo/?p=15895",
+      "post_id": 15895,
+      "genre": "breaking",
+      "artist": "에릭남",
+      "priority": "high",
+      "queued_at": "2026-08-07T13:31:21.420909"
+    },
+    {
+      "title": "SEVENTEEN ドギョム×スングァン、T1応援曲発表",
+      "url": "https://www.kpopjournal.tokyo/seventeen-dokyum-sungkwan-t1-support-song/",
+      "post_id": 15912,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-08-07T15:33:16.548902"
+    },
+    {
+      "title": "チャン・ユンジョン、引退の悩みを語る",
+      "url": "https://www.kpopjournal.tokyo/chang-yunjeong-retirement-issues/",
+      "post_id": 15933,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-08-07T17:36:49.594730"
+    },
+    {
+      "title": "BTS、ニューヨーク全域を盛り上げたイベント成功",
+      "url": "https://www.kpopjournal.tokyo/bts-new-york-event-success/",
+      "post_id": 15943,
+      "genre": "breaking",
+      "artist": "방탄소년단",
+      "priority": "high",
+      "queued_at": "2026-08-07T17:40:59.455462"
+    },
+    {
+      "title": "CORTIS、デビュー1周年ポップアップ開催決定",
+      "url": "https://www.kpopjournal.tokyo/cortis-debut-anniversary-popup-event/",
+      "post_id": 15947,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-07T17:42:23.271148"
+    },
+    {
+      "title": "BLACKPINKに対するYGの暗黙の批判と反発",
+      "url": "https://www.kpopjournal.tokyo/blackpink-yg-criticism-response/",
+      "post_id": 15955,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-08-07T19:30:48.583690"
+    },
+    {
+      "title": "2NE1＆NCT テン日本スペシャルライブ再決定",
+      "url": "https://www.kpopjournal.tokyo/2ne1-nct-ten-japan-special-live/",
+      "post_id": 15959,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-08-07T19:35:32.454962"
+    },
+    {
+      "title": "IU、元恋人チャン・ギハの曲使用で反響",
+      "url": "https://www.kpopjournal.tokyo/?p=15969",
+      "post_id": 15969,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-08-07T19:38:00.279569"
+    },
+    {
+      "title": "ZB1キム・ギュビン＆TWSドフン「音楽中心」MC卒業",
+      "url": "https://www.kpopjournal.tokyo/zb1-kim-gyubin-tws-dohun-mc-graduation/",
+      "post_id": 15973,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-08-07T19:39:01.880673"
+    },
+    {
+      "title": "イ・チャンウォン、BLACKPINKジスと共演し4位祝賀",
+      "url": "https://www.kpopjournal.tokyo/?p=15977",
+      "post_id": 15977,
+      "genre": "breaking",
+      "artist": "블랙핑크",
+      "priority": "high",
+      "queued_at": "2026-08-07T19:39:59.853670"
+    },
+    {
+      "title": "MONSTA X、9月4日新ミニアルバム「The Phase」発表",
+      "url": "https://www.kpopjournal.tokyo/?p=15984",
+      "post_id": 15984,
+      "genre": "breaking",
+      "artist": "monsta x",
+      "priority": "high",
+      "queued_at": "2026-08-07T21:30:57.075228"
+    },
+    {
+      "title": "BTSのRMが「GRAMMYs」について言及",
+      "url": "https://www.kpopjournal.tokyo/bts-rm-grammys-mention/",
+      "post_id": 15989,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-08-07T21:32:28.806381"
+    },
+    {
+      "title": "高ソヨン、立秋に合わせた爽やかビジュアル",
+      "url": "https://www.kpopjournal.tokyo/takosoyon-refreshing-visuals-autumn/",
+      "post_id": 15994,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-08-07T21:35:54.547391"
     }
   ]
 }
