@@ -937,5 +937,19 @@
         "license": "CC0"
       }
     ]
+  },
+  "mark": {
+    "name": "Mark",
+    "files": [
+      "mark_836274f7.jpg"
+    ],
+    "sources": [
+      {
+        "file": "mark_836274f7.jpg",
+        "wikimedia_title": "File:RIAN archive 918393 Moscow Circus on Vernadsky Prospekt stages concert to mark International Children's Day.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RIAN_archive_918393_Moscow_Circus_on_Vernadsky_Prospekt_stages_concert_to_mark_International_Children%27s_Day.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
   }
 }
