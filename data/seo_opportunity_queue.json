@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-03",
+ "generated_at": "2026-08-10",
  "window_days": 90,
  "params": {
   "min_imp": 300,
@@ -16,9 +16,9 @@
   "intent_ctr_max": 0.01
  },
  "totals": {
-  "queries_scanned": 4904,
-  "lane_B_new": 9,
-  "lane_C_rewrite": 9,
+  "queries_scanned": 4896,
+  "lane_B_new": 10,
+  "lane_C_rewrite": 8,
   "excluded": {
    "brand": 5,
    "gossip": 0,
@@ -26,32 +26,32 @@
    "hard_competition": 0,
    "intent_mismatch": 0
   },
-  "existing_slugs": 1602
+  "existing_slugs": 1688
  },
  "lane_B_new": [
   {
    "query": "鉄槌教師 声優",
-   "imp": 2589,
-   "clicks": 44,
-   "position": 8.9,
+   "imp": 2712,
+   "clicks": 46,
+   "position": 9.0,
    "ctr_pct": 1.7,
    "theme": "other",
-   "potential": 474,
+   "potential": 496,
    "lane": "B_new"
   },
   {
    "query": "鉄槌教師 吹き替え 声優",
-   "imp": 1854,
-   "clicks": 20,
+   "imp": 1931,
+   "clicks": 21,
    "position": 9.5,
    "ctr_pct": 1.1,
    "theme": "other",
-   "potential": 351,
+   "potential": 365,
    "lane": "B_new"
   },
   {
    "query": "twice 脱退",
-   "imp": 764,
+   "imp": 766,
    "clicks": 1,
    "position": 8.8,
    "ctr_pct": 0.1,
@@ -60,23 +60,33 @@
    "lane": "B_new"
   },
   {
+   "query": "エージェントキム 吹き替え",
+   "imp": 663,
+   "clicks": 15,
+   "position": 6.6,
+   "ctr_pct": 2.3,
+   "theme": "other",
+   "potential": 118,
+   "lane": "B_new"
+  },
+  {
    "query": "鉄槌教師 吹き替え",
-   "imp": 621,
+   "imp": 622,
    "clicks": 7,
-   "position": 7.9,
+   "position": 8.0,
    "ctr_pct": 1.1,
    "theme": "other",
    "potential": 117,
    "lane": "B_new"
   },
   {
-   "query": "エージェントキム 吹き替え",
-   "imp": 520,
-   "clicks": 14,
-   "position": 6.2,
-   "ctr_pct": 2.7,
+   "query": "エージェントキム 日本語吹き替え",
+   "imp": 435,
+   "clicks": 13,
+   "position": 6.6,
+   "ctr_pct": 3.0,
    "theme": "other",
-   "potential": 90,
+   "potential": 74,
    "lane": "B_new"
   },
   {
@@ -91,7 +101,7 @@
   },
   {
    "query": "鉄槌 教師 吹き替え 声優",
-   "imp": 333,
+   "imp": 335,
    "clicks": 1,
    "position": 9.7,
    "ctr_pct": 0.3,
@@ -100,95 +110,85 @@
    "lane": "B_new"
   },
   {
-   "query": "エージェントキム 日本語吹き替え",
-   "imp": 335,
-   "clicks": 11,
-   "position": 6.3,
-   "ctr_pct": 3.3,
+   "query": "madein 無料ライブ",
+   "imp": 372,
+   "clicks": 28,
+   "position": 6.1,
+   "ctr_pct": 7.5,
    "theme": "other",
-   "potential": 56,
+   "potential": 46,
    "lane": "B_new"
   },
   {
-   "query": "madein 無料ライブ",
-   "imp": 346,
-   "clicks": 28,
-   "position": 5.9,
-   "ctr_pct": 8.1,
-   "theme": "other",
-   "potential": 41,
+   "query": "bts テテ 事故",
+   "imp": 303,
+   "clicks": 34,
+   "position": 5.1,
+   "ctr_pct": 11.2,
+   "theme": "artist",
+   "potential": 27,
    "lane": "B_new"
   }
  ],
  "lane_C_rewrite": [
   {
    "query": "鉄槌教師 相関図",
-   "imp": 2581,
-   "clicks": 20,
+   "imp": 2633,
+   "clicks": 22,
    "position": 6.0,
    "ctr_pct": 0.8,
    "theme": "kdrama",
-   "potential": 496,
+   "potential": 505,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ キャラクター",
-   "imp": 1107,
-   "clicks": 36,
+   "imp": 1163,
+   "clicks": 37,
    "position": 7.9,
-   "ctr_pct": 3.3,
+   "ctr_pct": 3.2,
    "theme": "movie_anime",
-   "potential": 185,
+   "potential": 196,
    "lane": "C_rewrite"
   },
   {
    "query": "サジャボーイズ 声優",
-   "imp": 670,
+   "imp": 703,
    "clicks": 34,
-   "position": 6.2,
-   "ctr_pct": 5.1,
+   "position": 6.1,
+   "ctr_pct": 4.8,
    "theme": "movie_anime",
-   "potential": 100,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "デーモンハンターズ 声優",
-   "imp": 537,
-   "clicks": 8,
-   "position": 9.6,
-   "ctr_pct": 1.5,
-   "theme": "movie_anime",
-   "potential": 99,
+   "potential": 107,
    "lane": "C_rewrite"
   },
   {
    "query": "bts 仲良し相関図",
-   "imp": 550,
+   "imp": 608,
    "clicks": 15,
-   "position": 5.7,
-   "ctr_pct": 2.7,
+   "position": 5.8,
+   "ctr_pct": 2.5,
    "theme": "kdrama",
-   "potential": 95,
+   "potential": 107,
    "lane": "C_rewrite"
   },
   {
-   "query": "ojogang メンバー",
-   "imp": 415,
-   "clicks": 10,
-   "position": 7.5,
-   "ctr_pct": 2.4,
-   "theme": "dance_show",
-   "potential": 73,
+   "query": "デーモンハンターズ 声優",
+   "imp": 571,
+   "clicks": 8,
+   "position": 9.6,
+   "ctr_pct": 1.4,
+   "theme": "movie_anime",
+   "potential": 106,
    "lane": "C_rewrite"
   },
   {
    "query": "鉄槌教師 キャスト 声優",
-   "imp": 321,
-   "clicks": 0,
+   "imp": 367,
+   "clicks": 1,
    "position": 7.9,
-   "ctr_pct": 0.0,
+   "ctr_pct": 0.3,
    "theme": "kdrama",
-   "potential": 64,
+   "potential": 72,
    "lane": "C_rewrite"
   },
   {
@@ -203,12 +203,12 @@
   },
   {
    "query": "デーモンハンターズ 名前",
-   "imp": 407,
+   "imp": 390,
    "clicks": 50,
-   "position": 3.9,
-   "ctr_pct": 12.3,
+   "position": 3.8,
+   "ctr_pct": 12.8,
    "theme": "movie_anime",
-   "potential": 31,
+   "potential": 28,
    "lane": "C_rewrite"
   }
  ],

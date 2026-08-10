@@ -113,8 +113,10 @@ class TestPostAuditShell:
 
 
 # ─── C-4: 3ペルソナ・ゲートのユニットテスト ──────────────────────────────
+# skill はプロジェクト配下 .claude/skills/ が正本(旧: ~/.claude/skills/)
 SKILL_FILE = (
-    Path.home() / ".claude" / "skills" / "kpop-original-article" / "SKILL.md"
+    Path(__file__).resolve().parents[2]
+    / ".claude" / "skills" / "kpop-original-article" / "SKILL.md"
 )
 
 

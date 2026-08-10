@@ -29,6 +29,11 @@ TITLE="${3:-}"
 RUN_ID="${4:-}"
 ARCHIVE_DIR="${HOME}/kpop_archives/${RUN_ID}"
 LOG_FILE="$SCRIPT_DIR/logs/post_audit.log"
+# TEST MODE のログは本番監査ログに混ぜない(QAダミー記事 ID=99999 の
+# CRITICAL 行が日次エラー集計で実記事の問題と誤認されるため)
+if [[ "${KPOP_AUDIT_TEST_MODE:-0}" == "1" ]]; then
+  LOG_FILE="${KPOP_AUDIT_TEST_LOG_FILE:-$SCRIPT_DIR/logs/post_audit_test.log}"
+fi
 
 mkdir -p "$(dirname "$LOG_FILE")"
 

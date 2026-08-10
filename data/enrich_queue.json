@@ -27,10 +27,10 @@
   "query": "エージェントキム 吹き替え",
   "url": "https://www.kpopjournal.tokyo/agent-kim-reactivated-viewing-guide/",
   "slug": "agent-kim-reactivated-viewing-guide",
-  "position": 6.24,
-  "impressions": 520,
-  "clicks": 14,
-  "potential": 90,
+  "position": 6.65,
+  "impressions": 663,
+  "clicks": 15,
+  "potential": 118,
   "theme": "other",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
@@ -43,6 +43,18 @@
   "impressions": 361,
   "clicks": 0,
   "potential": 72,
+  "theme": "other",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ },
+ {
+  "query": "madein 無料ライブ",
+  "url": "https://www.kpopjournal.tokyo/meidin-first-concert-free-entry/",
+  "slug": "meidin-first-concert-free-entry",
+  "position": 6.08,
+  "impressions": 372,
+  "clicks": 28,
+  "potential": 46,
   "theme": "other",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
