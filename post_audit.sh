@@ -227,14 +227,17 @@ print(out[:130])
   # wp_aioseo_posts へ直接書き込み（RESTのmeta経由は黙殺されるため使えない）
   #   post_id は非UNIQUEインデックスのため ON DUPLICATE KEY は使えず、
   #   行の有無を見てUPDATE/INSERTを分岐する（重複行の生成を防ぐ）
-  _ESC_DESC=${AUTO_DESC//\'/\'\'}
+  # 記事本文は外部ソース由来のため、クォートのエスケープだけでは安全でない。
+  #   sql_mode に NO_BACKSLASH_ESCAPES が無く、本文が \' で終わると
+  #   '' 置換をすり抜けて文字列を閉じられる（SQLインジェクション）。
+  # 値はbase64で渡しMySQL側でFROM_BASE64して復号する（構文に一切影響しない）。
+  _B64_DESC=$(printf '%s' "$AUTO_DESC" | base64 -w0)
   _ROW_EXISTS=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro db query \
     "SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id=${POST_ID}" 2>/dev/null | sed -n '2p' | tr -dc '0-9')
   if [[ "${_ROW_EXISTS:-0}" -gt 0 ]]; then
-    _DESC_SQL="UPDATE wp_aioseo_posts SET description='${_ESC_DESC}', updated=NOW() WHERE post_id=${POST_ID}"
+    _DESC_SQL="UPDATE wp_aioseo_posts SET description=CONVERT(FROM_BASE64('${_B64_DESC}') USING utf8mb4), updated=NOW() WHERE post_id=${POST_ID}"
   else
-    _DESC_SQL="INSERT INTO wp_aioseo_posts (post_id,description,og_object_type,og_image_type,twitter_card,robots_default,created,updated)
-               VALUES (${POST_ID},'${_ESC_DESC}','default','default','default',1,NOW(),NOW())"
+    _DESC_SQL="INSERT INTO wp_aioseo_posts (post_id,description,og_object_type,og_image_type,twitter_card,robots_default,created,updated) VALUES (${POST_ID},CONVERT(FROM_BASE64('${_B64_DESC}') USING utf8mb4),'default','default','default',1,NOW(),NOW())"
   fi
   if sudo -n /usr/local/sbin/kpop/kpop-wp-rw.sh db query "$_DESC_SQL" >/dev/null 2>&1 \
      && [[ "$(aioseo_desc_len "$POST_ID")" -ge 50 ]]; then
