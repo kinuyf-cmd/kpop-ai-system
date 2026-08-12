@@ -49,3 +49,6 @@ node_modules/
 package-lock.json
 package.json
 logs/breaking_news_detector.lock
+
+# DBバックアップ(実データ・巨大)はgit管理しない
+data/backup_aioseo_desc_*.tsv
