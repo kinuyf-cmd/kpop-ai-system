@@ -1,0 +1,48 @@
+{
+  "_comment": "先回りクラスタ記事の効果測定対象。tools/seo/preemptive_cluster_tracker.py が週次で参照する。新しい先回り記事を公開したらここに追記すること。target_date = 配信日/公開日/公演初日(検索需要が立ち上がる日)。",
+  "_last_updated": "2026-08-12",
+  "clusters": [
+    {
+      "slug": "koi-wa-ame-moyou-cast-guide",
+      "title": "恋は飴模様(第1弾・実証済)",
+      "target_date": "2026-08-07",
+      "note": "配信当日に11→108セッション、初日で5-6位。この型の原型"
+    },
+    {
+      "slug": "tws-japan-tour-2026-guide",
+      "title": "TWS日本ツアー(第4弾)",
+      "target_date": "2026-08-28",
+      "note": "公演系の初弾。福岡→神戸→横浜 全8公演"
+    },
+    {
+      "slug": "cortis-japan-tour-2026-guide",
+      "title": "CORTIS日本公演(第6弾)",
+      "target_date": "2026-09-04",
+      "note": "cortis単体で自社1位。開演時刻/価格は未発表段階で先行"
+    },
+    {
+      "slug": "treasure-the-stage-2026-japan-guide",
+      "title": "TREASURE有明(第5弾)",
+      "target_date": "2026-09-05",
+      "note": "全17公演のファイナル。5日は昼夜2公演"
+    },
+    {
+      "slug": "first-ride-movie-cast-guide",
+      "title": "ファーストライド(第3弾)",
+      "target_date": "2026-09-25",
+      "note": "映画。カン・ハヌル×チャウヌ。映像作品型の再現性判定"
+    },
+    {
+      "slug": "kuru-alba-oishii-baito-cast-guide",
+      "title": "クルアルバ(第2弾)",
+      "target_date": "2026-10-09",
+      "note": "Netflix配信。全8話"
+    },
+    {
+      "slug": "mama-awards-2026-osaka-guide",
+      "title": "MAMA AWARDS(既存強化)",
+      "target_date": "2026-11-20",
+      "note": "出演者発表(10月頃)が実質の需要ピーク。1P目押し上げの検証対象"
+    }
+  ]
+}

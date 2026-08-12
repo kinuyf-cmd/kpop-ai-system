@@ -30,9 +30,11 @@
     "circlechart"
   ],
   "trusted_japan_media": [
+    "avexnet",
     "billboard-japan",
     "cinemacafe",
     "cinematoday",
+    "cortis-official",
     "danmee",
     "eiga",
     "eplus",
@@ -45,7 +47,9 @@
     "pia",
     "prtimes",
     "tickebo",
+    "treasure-official",
     "tws-official",
+    "ygex",
     "yna"
   ],
   "trusted_global_media": [
