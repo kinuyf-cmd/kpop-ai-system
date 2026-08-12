@@ -271,6 +271,41 @@ def unified_publish(
     # 4. 信頼度注意書き
     conf_note = CONFIDENCE_NOTES.get(confidence, '')
 
+    # 4.9. 事前 BLOCK 判定 (2026-08-12 コスト削減)
+    # サムネ解決は vision_gate (Claude vision) を候補ごとに呼ぶため 1記事あたり約5回課金される。
+    # ところが実測(8月)では処理記事の約80%が gate で BLOCK され公開に至らず、
+    # その BLOCK 理由の 84% は「本文が短い/重複/AI言及」= **サムネを見なくても判定できる**もの
+    # だった。従来はサムネ解決(6節)→gate(6.4節)の順だったため、捨てる記事のサムネ検証に
+    # 月2,200円相当を払っていた。ここで本文だけの軽量判定を先に行い、確実に BLOCK される
+    # 記事はサムネ解決前に打ち切る。
+    #   - featured_media は渡さない = サムネ由来の issue は出ない(誤打ち切りを防ぐ)
+    #   - skip_llm_factcheck=True = ここでは LLM を呼ばない(factcheck は 6.4 の1回だけ)
+    #   - 判定に失敗したら握り潰して通常フローへ(FAIL OPEN、公開を止めない)
+    try:
+        from lib.pre_publish_gate import pre_publish_gate as _pre_gate
+        _pre_r = _pre_gate(
+            title=title_final, body_html=content,
+            post_type='post', kind=kind,
+            source_url=source_url, source_signals=source_signals,
+            slug=slug, featured_media=None,
+            categories=None, excerpt=meta_desc,
+            status='publish', skip_llm_factcheck=True,
+        )
+        # この時点ではサムネ未解決なので、サムネ起因の BLOCK 理由は必ず出る。
+        # それらを除外し、「本文だけで確定する BLOCK」が残った場合のみ打ち切る。
+        # (除外を忘れると全記事が no_thumbnail で打ち切られ公開が全停止する)
+        _THUMB_MARKERS = ('thumbnail', 'サムネ', 'letterbox', 'featured', 'アイキャッチ')
+        _pre_reasons = [b for b in _pre_r.get('block_reasons', [])
+                        if not any(m in str(b).lower() or m in str(b) for m in _THUMB_MARKERS)]
+        if _pre_r.get('verdict') == 'BLOCK' and _pre_reasons:
+            log.append(f"pre-thumb gate BLOCK (サムネ解決前に打ち切り): {_pre_reasons[:2]}")
+            # 既存の gate BLOCK(6.4節)と同じ形式で返す。呼び出し元は success のみ見るが、
+            # ログ/監査が 'Gate BLOCK' 文字列を拾うため接頭辞を揃える。
+            return {'success': False,
+                    'error': f'Gate BLOCK: {_pre_reasons}', 'log': log}
+    except Exception as _e_pre:
+        log.append(f"pre-thumb gate skip: {_e_pre}")
+
     # 5. サムネ解決 — artistが未指定でもタイトルから自動検出
     # 2026-05-07: タイトルの「主語」のみ採用 (本文/タイトル末尾に共起する別アーティストの誤採用を防止)
     #   例: "カン・ドンウォン、BTSのダンスチャレンジ希望" → 主語=カン・ドンウォン、BTSはサムネに不採用
