@@ -2872,6 +2872,62 @@ function kpj_revenue_head_tags() {
 add_action('wp_head', 'kpj_revenue_head_tags', 20);
 
 /**
+ * アフィリエイトリンクのクリックを GA4 イベントとして記録する (2026-08-12 新設)。
+ *
+ * 背景: CTA を公開1,742本中1,467本に設置していたが、クリック計測が一切存在せず
+ * 「どの案件がどの記事で押されているか」が不明だった。計測が無いと改善の当たりが
+ * 付けられないため、まず観測できる状態にする。
+ *
+ * 送るイベント: affiliate_click
+ *   asp       … a8 / amazon / rakuten / other(リンク先ドメインから判定)
+ *   link_url  … 遷移先(先頭120文字)
+ *   page_path … クリックされた記事のパス
+ *   link_text … リンクの表示文言(先頭60文字。バナー画像なら alt)
+ *
+ * gtag が無い環境では何もしない(GA4未設定時に JS エラーを出さない)。
+ */
+function kpj_affiliate_click_tracking() {
+    if ( is_admin() ) { return; }
+    ?>
+<script>
+(function () {
+  if (typeof window.gtag !== 'function') { return; }
+  var MAP = [
+    ['px.a8.net', 'a8'], ['a8.net', 'a8'],
+    ['amazon.co.jp', 'amazon'], ['amzn.to', 'amazon'], ['amzn.asia', 'amazon'],
+    ['rakuten.co.jp', 'rakuten'], ['hb.afl.rakuten', 'rakuten']
+  ];
+  function aspOf(href) {
+    for (var i = 0; i < MAP.length; i++) {
+      if (href.indexOf(MAP[i][0]) !== -1) { return MAP[i][1]; }
+    }
+    return null;
+  }
+  document.addEventListener('click', function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+    if (!a) { return; }
+    var href = a.getAttribute('href') || '';
+    var asp = aspOf(href);
+    if (!asp) { return; }
+    var label = (a.textContent || '').trim();
+    if (!label) {
+      var img = a.querySelector('img');
+      label = img ? (img.getAttribute('alt') || 'banner') : 'link';
+    }
+    window.gtag('event', 'affiliate_click', {
+      asp: asp,
+      link_url: href.substring(0, 120),
+      page_path: window.location.pathname,
+      link_text: label.substring(0, 60)
+    });
+  }, true); // capture: 遷移で失われる前に拾う
+})();
+</script>
+    <?php
+}
+add_action( 'wp_footer', 'kpj_affiliate_click_tracking', 20 );
+
+/**
  * 2026-05-30: TEC カレンダーの popup / 誕生日 表示を正規化するフィルタ群。
  * (A)〜(E) のレンダリング時フィルタは DB を変更しない非破壊処理。
  * occurrence の根本的な単日化は別途 tools/popup_singleday.php(owner 実行・
