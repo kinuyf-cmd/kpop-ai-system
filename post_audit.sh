@@ -87,9 +87,7 @@ print(1 if 'href=' in content else 0)    # 3: HAS_HREF
 print(d['featured_media'])               # 4: FEAT_MEDIA
 print(json.dumps(d['categories']))       # 5: CAT_IDS_JSON
 print(json.dumps(d['tags']))             # 6: TAG_IDS_JSON
-meta = d.get('meta', {})
-desc = meta.get('_aioseo_description', '')
-print(len(desc))                         # 7: META_DESC_LEN
+print(0)                                 # 7: META_DESC_LEN（後段でDBから再取得。AIOSEOはpost metaに保存しない）
 print(d['status'])                       # 8: STATUS
 # 9: CITE_LAYER 判定（categories_slug から記事レイヤを決定）
 #   Layer1=主要メディア引用 / Layer2=リリース引用 / Layer3=独自記事
@@ -115,6 +113,27 @@ META_DESC_LEN=$(sed -n '7p' "$_TMP_INFO")
 STATUS=$(sed -n '8p' "$_TMP_INFO")
 CITE_LAYER=$(sed -n '9p' "$_TMP_INFO")
 rm -f "$_TMP_INFO"
+
+# ─── AIOSEOメタ説明はpost metaでなく wp_aioseo_posts に保存される ─────────
+#   REST の meta._aioseo_description は register_meta されておらず常に空。
+#   読み書きともDB経由でないと成立しない（誤検知・書き込み黙殺の真因）。
+aioseo_desc_len() {
+  sudo -n /usr/local/sbin/kpop/kpop-wp-ro db query \
+    "SELECT COALESCE(CHAR_LENGTH(description),0) FROM wp_aioseo_posts WHERE post_id=${1}" 2>/dev/null \
+    | sed -n '2p' | tr -dc '0-9'
+}
+_DB_DESC_LEN=$(aioseo_desc_len "$POST_ID")
+META_DESC_LEN=${_DB_DESC_LEN:-0}
+
+# タイトルは引数($3)省略時に空になるため、APIの値で補完する
+if [[ -z "$TITLE" ]]; then
+  TITLE=$(echo "$POST_JSON" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+t = d.get('title', {})
+print(t.get('raw') or t.get('rendered') or '')
+" 2>/dev/null || echo "")
+fi
 
 alog "本文文字数=$CONTENT_LEN / h2=$H2_COUNT / カテゴリ=$CAT_IDS / タグ=$TAG_IDS / メタ説明=${META_DESC_LEN}文字"
 
@@ -169,29 +188,74 @@ fi
 alog "--- [3] SEOメタ説明チェック ---"
 if [[ "${META_DESC_LEN:-0}" -lt 50 ]]; then
   alog "⚠️ メタ説明が空または短い → 自動生成して設定"
-  # 本文冒頭から120文字を抽出してメタ説明を生成
-  AUTO_DESC=$(echo "$POST_JSON" | python3 -c "
-import sys, json, re
+  # 本文からメタ説明を生成（キャプション・定型見出し等のノイズを除去し文境界で整形）
+  AUTO_DESC=$(echo "$POST_JSON" | KPOP_POST_TITLE="$TITLE" python3 -c "
+import sys, json, re, os
 d = json.load(sys.stdin)
 content = d['content']['raw']
-text = re.sub(r'<[^>]+>', '', content).strip()
-# 最初の段落を取得
-first = ' '.join(text.split()[:60])
-print(first[:120])
+# 図表キャプション・スクリプト等はメタ説明に不要なので要素ごと落とす
+content = re.sub(r'(?is)<(figcaption|script|style|table)[^>]*>.*?</\1>', ' ', content)
+text = re.sub(r'<[^>]+>', ' ', content)
+text = re.sub(r'&[a-z]+;|&#\d+;', ' ', text)
+text = re.sub(r'\s+', ' ', text).strip()
+# 先頭に来がちな定型ラベルを除去
+for _ in range(6):
+    new = re.sub(r'^\s*(画像[:：][^。]{0,30}?より|出典[:：][^。]{0,40}|参考[:：][^。]{0,40}|この記事の\d*行?まとめ|目次|まとめ|関連記事)\s*', '', text)
+    if new == text:
+        break
+    text = new
+text = text.strip()
+title = os.environ.get('KPOP_POST_TITLE', '').strip()
+# 文単位で積み上げ、110-130字に収める
+out = ''
+for s in re.split(r'(?<=[。！？])', text):
+    s = s.strip()
+    if not s:
+        continue
+    if len(out) + len(s) > 130:
+        break
+    out += s
+    if len(out) >= 110:
+        break
+if len(out) < 50:
+    out = (text[:127] + '…') if len(text) > 127 else text
+if len(out) < 50:
+    out = title
+print(out[:130])
 " 2>/dev/null || echo "$TITLE")
 
-  curl -s -X POST "https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/${POST_ID}" \
-    -u "$WP_USER:$WP_PASS" \
-    -H "Content-Type: application/json" \
-    -d "{\"meta\":{\"_aioseo_description\":\"${AUTO_DESC}\"}}" > /dev/null 2>&1 && \
-    alog "✅ メタ説明を自動設定: ${AUTO_DESC:0:50}..." && \
+  # wp_aioseo_posts へ直接書き込み（RESTのmeta経由は黙殺されるため使えない）
+  #   post_id は非UNIQUEインデックスのため ON DUPLICATE KEY は使えず、
+  #   行の有無を見てUPDATE/INSERTを分岐する（重複行の生成を防ぐ）
+  _ESC_DESC=${AUTO_DESC//\'/\'\'}
+  _ROW_EXISTS=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro db query \
+    "SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id=${POST_ID}" 2>/dev/null | sed -n '2p' | tr -dc '0-9')
+  if [[ "${_ROW_EXISTS:-0}" -gt 0 ]]; then
+    _DESC_SQL="UPDATE wp_aioseo_posts SET description='${_ESC_DESC}', updated=NOW() WHERE post_id=${POST_ID}"
+  else
+    _DESC_SQL="INSERT INTO wp_aioseo_posts (post_id,description,og_object_type,og_image_type,twitter_card,robots_default,created,updated)
+               VALUES (${POST_ID},'${_ESC_DESC}','default','default','default',1,NOW(),NOW())"
+  fi
+  if sudo -n /usr/local/sbin/kpop/kpop-wp-rw.sh db query "$_DESC_SQL" >/dev/null 2>&1 \
+     && [[ "$(aioseo_desc_len "$POST_ID")" -ge 50 ]]; then
+    alog "✅ メタ説明を自動設定: ${AUTO_DESC:0:50}..."
     FIXES+=("メタ説明を自動生成して設定")
+  else
+    alog "⚠️ メタ説明の自動設定に失敗（要手動設定）"
+    ISSUES+=("メタ説明の自動設定に失敗")
+  fi
 else
   # [3b] 本文冒頭の流用チェック（120字以上でも非独立型は警告）
-  IS_COPIED=$(echo "$POST_JSON" | python3 -c "
-import sys, json, re
+  _CUR_DESC=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro db query \
+    "SELECT TO_BASE64(description) FROM wp_aioseo_posts WHERE post_id=${POST_ID}" 2>/dev/null \
+    | sed -n '2p' | tr -d ' \\n')
+  IS_COPIED=$(echo "$POST_JSON" | KPOP_CUR_DESC_B64="$_CUR_DESC" python3 -c "
+import sys, json, re, os, base64
 d = json.load(sys.stdin)
-meta = d.get('meta',{}).get('_aioseo_description','')
+try:
+    meta = base64.b64decode(os.environ.get('KPOP_CUR_DESC_B64','')).decode('utf-8','replace')
+except Exception:
+    meta = ''
 content = d.get('content',{}).get('raw','')
 text = re.sub(r'<[^>]+>','',content).strip()
 # メタ説明が本文冒頭30字と一致する場合は「流用」と判定
