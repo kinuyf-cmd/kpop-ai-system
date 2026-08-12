@@ -47,15 +47,17 @@ SCHEDULE_LOG = BASE / 'logs' / 'x_scheduled.log'
 #   ペナルティ緩和。よって量を絞りすぎず6件に。当面は評判回復を優先し、
 #   回復確認後に段階的に増やす(まず量と間隔で bot シグネチャを除去)。
 # 旧設定(参考): DAILY_POST_CAP=10 / SLOTS 7:2,8,12,13,17,18,19,20,21 各1
-DAILY_POST_CAP = 6            # 1日の総投稿上限(会話+記事の合計)
-# 時間帯ごとの最大投稿数。合計=6。記事4(朝昼夕)+会話2(夜ゴールデン)を
-# 大きく離して配置し、機械的な連投パターンを避ける。
+# 2026-08-12 Phase1(シャドウバン解除後の段階再開): 5週間全停止→診断3点セット健全を
+#   確認して再開。真因「量×外部リンク×無反応」のうちリンクを完全に断つため、
+#   会話型text-onlyのみ・cap=3 で運用。imp回復確認後に Phase2(記事誘導は
+#   URLリプライでなくプロフィール誘導化)へ。可視性悪化時は x_auto_repause_guard が自動停止。
+# Phase1前の設定(参考): DAILY_POST_CAP=6 / SLOTS 8,12,17(記事)+19,21(会話) 各1
+DAILY_POST_CAP = 3            # 1日の総投稿上限(Phase1: 会話型のみ)
+# 時間帯ごとの最大投稿数。合計=3。昼+夜ゴールデン2枠を離して配置。
 SLOTS = {
-    8:  1,   # 08:xx 通勤(記事)
-    12: 1,   # 12:xx 昼(記事)
-    17: 1,   # 17:xx 夕(記事)
-    19: 1,   # 19:xx ゴールデン(会話主)
-    21: 1,   # 21:xx ゴールデン(会話主)
+    12: 1,   # 12:xx 昼(会話)
+    19: 1,   # 19:xx ゴールデン(会話)
+    21: 1,   # 21:xx ゴールデン(会話)
 }
 DEFAULT_SLOT_SIZE = 0  # 上記以外の時間帯は投稿しない(上限厳守)
 MIN_INTERVAL_MIN = 5   # 同一時間帯内の最低間隔(分)
@@ -96,8 +98,10 @@ def _next_ab_variant() -> str:
 #   'article'      = queue から記事誘導(post_hook_and_reply / thread)
 #   'mix'          = 記事主。本回が mix なら記事、ただし会話cron(7/17/21)が別途会話を担う
 # 2026-06-22: SLOTS削減に合わせて役割時間帯も {8,12,17}=記事 / {19,21}=会話 に整合。
-CONVERSATION_HOURS = {19, 21}       # ゴールデン=会話主
-ARTICLE_HOURS = {8, 12, 17}         # 通勤・昼・夕=記事主
+# 2026-08-12 Phase1: 全スロット会話型・記事帯ゼロ(URL投稿を完全停止)。
+#   Phase2移行時は ARTICLE_HOURS を復活させること(Phase1前: {8,12,17})。
+CONVERSATION_HOURS = {12, 19, 21}   # Phase1: 全枠会話
+ARTICLE_HOURS = set()               # Phase1: 記事誘導は投稿しない
 def slot_role(hour: int) -> str:
     if hour in CONVERSATION_HOURS:
         return 'conversation'
@@ -377,11 +381,13 @@ def _post_conversation(dry_run: bool = False) -> dict:
         print(f"  [conversation] 投稿失敗: {err}")
         return {'success': False, 'error': err}
     print(f"  [conversation] ✓ {tid}: {post['text'][:40]}")
-    # x_posts.jsonl に記録(レート制限カウント用、mode=hook 扱い)
+    # x_posts.jsonl に記録(レート制限カウント用、mode=hook 扱い)。
+    # tweet_id は x_auto_repause_guard の可視性実測が要るため必須(2026-08-12)。
     try:
         with POSTS_LOG.open('a', encoding='utf-8') as f:
             f.write(json.dumps({'ts': datetime.now().isoformat(), 'mode': 'hook',
-                                'status': 'ok', 'text': post['text'],
+                                'status': 'ok', 'tweet_id': str(tid),
+                                'text': post['text'],
                                 'kind': 'conversation'}, ensure_ascii=False) + '\n')
     except OSError:
         pass
