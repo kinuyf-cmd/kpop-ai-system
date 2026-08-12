@@ -1,6 +1,15 @@
 {
   "_comment": "先回りクラスタ記事の効果測定対象。tools/seo/preemptive_cluster_tracker.py が週次で参照する。新しい先回り記事を公開したらここに追記すること。target_date = 配信日/公開日/公演初日(検索需要が立ち上がる日)。",
   "_last_updated": "2026-08-12",
+  "_candidate_note": "候補の自動抽出は断念した(2026-08-12)。TECの未来イベントは871件中866件が誕生日で、公演/配信は5件しか登録されていないため、DBから候補を機械抽出しても候補ゼロになる。公演・映画・配信の発見は web 調査で行うこと。選定基準は『日付が確定』『自社がその語で既に順位を持つ(GSCで確認)』『未カバー』の3点。",
+  "_candidates_pending": [
+    {"name": "BOYNEXTDOOR 宮城セキスイハイムスーパーアリーナ", "target_date": "2026-09-19", "note": "自社は boynextdoor 釜山 で3.9位。会場記事は未整備"},
+    {"name": "ONEW (SHINee) 東京体育館", "target_date": "2026-09-22", "note": "自社需要ゼロ。優先度低"},
+    {"name": "SUPER JUNIOR-D&E 東京体育館", "target_date": "2026-09-27", "note": "自社需要ほぼゼロ。優先度低"},
+    {"name": "映画『ハイファイブ!』", "target_date": "2026-10-16", "note": "イ・ジェイン/ユ・アイン/GOT7ジニョン。未カバー"},
+    {"name": "映画『BOSS／ボス』", "target_date": "2026-10-23", "note": "既存4件は偶然一致の可能性、要目視"},
+    {"name": "映画『世界で最後の愛しい娘!』", "target_date": "2026-11-13", "note": "未カバー。キャスト未確認"}
+  ],
   "clusters": [
     {
       "slug": "koi-wa-ame-moyou-cast-guide",
