@@ -1,0 +1,14 @@
+- generic [ref=f2e2]:
+  - separator [ref=f2e3]
+  - iframe [ref=f2e8]:
+    - generic [ref=f3e2]:
+      - generic [ref=f3e3]:
+        - checkbox "I'm not a robot" [ref=f3e7]
+        - generic [ref=f3e9]: I'm not a robot
+      - generic [ref=f3e12]: reCAPTCHA
+  - separator [ref=f2e9]
+  - generic [ref=f2e10]:
+    - text: このページについて お使いのコンピュータ ネットワークから通常と異なるトラフィックが検出されました。このページは、リクエストがロボットではなく実際のユーザーによって送信されたことを確かめるものです。
+    - link "このページが表示された理由" [ref=f2e11] [cursor=pointer]:
+      - /url: "#"
+    - generic [ref=f2e12]: "IP アドレス: 2400:8500:2002:3327:160:251:254:62時間: 2026-08-13T05:18:09ZURL: https://www.google.com/search?q=%E6%81%8B%E3%81%AF%E9%9B%A8%E6%A8%A1%E6%A7%98+%E7%9B%B8%E9%96%A2%E5%9B%B3&hl=ja&gl=jp&sei=kFN9aralIaze1e8Po4HtqQ8"

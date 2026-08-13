@@ -1,8 +1,8 @@
 {
   "_metadata": {
     "version": "v1",
-    "updated_at": "2026-04-26",
-    "total_programs": 38,
+    "updated_at": "2026-08-13",
+    "total_programs": 39,
     "categories": [
       "kpop_goods",
       "korean_cosme",
@@ -640,6 +640,26 @@
         "アニメコラボ記事"
       ],
       "a8mat": "457NRV+6J69I2+41ZK+5YRHE"
+    },
+    "skyperfectv_kihon": {
+      "pid": "s00000019447001",
+      "name": "スカパー!新規加入(基本プラン)",
+      "advertiser": "スカパーＪＳＡＴ株式会社",
+      "categories": [
+        "vod",
+        "broadcast"
+      ],
+      "tier": 2,
+      "estimated_reward": "3620円/件",
+      "ctr": 1.0,
+      "best_for": [
+        "韓流番組の視聴方法",
+        "KNTV放送番組",
+        "ファンミ/コンサート生中継"
+      ],
+      "a8mat": "457NRV+ABIJ16+461Y+6CP0Y",
+      "is_active_program": true,
+      "note": "素材ID:067(テキスト)。Wチャンス応募期間 2026-08-01〜10-31。遷移先=promo.skyperfectv.co.jp/cp/af/af2/kihon.html"
     }
   }
 }

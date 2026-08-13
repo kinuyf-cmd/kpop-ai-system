@@ -1,178 +1,7 @@
 {
-  "updated": "2026-08-12 21:35",
-  "count": 39,
+  "updated": "2026-08-13 21:36",
+  "count": 36,
   "queue": [
-    {
-      "title": "キム・ヘユン、2026年演技の幅広さを展開",
-      "url": "https://www.kpopjournal.tokyo/kim-hyun-2026-acting-range/",
-      "post_id": 16385,
-      "genre": "breaking",
-      "artist": "김혜윤",
-      "priority": "high",
-      "queued_at": "2026-08-11T07:37:36.943451"
-    },
-    {
-      "title": "ITZY YUNA、クロップティーで魅せた黄金ライン",
-      "url": "https://www.kpopjournal.tokyo/itzy-yuna-crop-top-golden-line/",
-      "post_id": 16395,
-      "genre": "breaking",
-      "artist": "있지",
-      "priority": "high",
-      "queued_at": "2026-08-11T09:36:06.137950"
-    },
-    {
-      "title": "『オデュッセイ』グローバル興行収入11億ドル突破",
-      "url": "https://www.kpopjournal.tokyo/odysseus-global-box-office-1-billion/",
-      "post_id": 16401,
-      "genre": "breaking",
-      "artist": "라이즈",
-      "priority": "high",
-      "queued_at": "2026-08-11T09:37:42.600810"
-    },
-    {
-      "title": "ダグチ・マヤ 韓国で2連続優勝の快挙",
-      "url": "https://www.kpopjournal.tokyo/daguchi-maya-kankoku-renzoku-yushou/",
-      "post_id": 16405,
-      "genre": "breaking",
-      "artist": "뉴진스",
-      "priority": "high",
-      "queued_at": "2026-08-11T09:38:44.436388"
-    },
-    {
-      "title": "Billlie、2026安山サマーフェスタでパフォーマンス",
-      "url": "https://www.kpopjournal.tokyo/billlie-2026-ansan-summer-festa-performance/",
-      "post_id": 16409,
-      "genre": "breaking",
-      "artist": "빌리",
-      "priority": "high",
-      "queued_at": "2026-08-11T09:39:41.691869"
-    },
-    {
-      "title": "RIIZE元彬、彫刻のような手の挨拶",
-      "url": "https://www.kpopjournal.tokyo/?p=16426",
-      "post_id": 16426,
-      "genre": "breaking",
-      "artist": "라이즈",
-      "priority": "high",
-      "queued_at": "2026-08-11T13:30:44.158496"
-    },
-    {
-      "title": "ATEEZのSAN、西川貴教と「HOT LIMIT」ダンス挑戦",
-      "url": "https://www.kpopjournal.tokyo/?p=16431",
-      "post_id": 16431,
-      "genre": "breaking",
-      "artist": "ATEEZ",
-      "priority": "high",
-      "queued_at": "2026-08-11T13:35:43.761752"
-    },
-    {
-      "title": "BOYNEXTDOOR、8月17日TBS「CDTVライブ!ライブ!」出演",
-      "url": "https://www.kpopjournal.tokyo/boynextdoor-cdtv-live-august17/",
-      "post_id": 16435,
-      "genre": "breaking",
-      "artist": "BOYNEXTDOOR",
-      "priority": "high",
-      "queued_at": "2026-08-11T13:36:40.963171"
-    },
-    {
-      "title": "BIGBANG、20年の歴史凝縮したワールドツアートレーラー公開",
-      "url": "https://www.kpopjournal.tokyo/bigbang-world-tour-trailer-20years/",
-      "post_id": 16439,
-      "genre": "breaking",
-      "artist": "빅뱅",
-      "priority": "high",
-      "queued_at": "2026-08-11T13:37:37.888867"
-    },
-    {
-      "title": "BLACKPINK LISA、10周年後の休暇を公開",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-10th-anniversary-vacation/",
-      "post_id": 16443,
-      "genre": "breaking",
-      "artist": "블랙핑크",
-      "priority": "high",
-      "queued_at": "2026-08-11T15:30:41.376359"
-    },
-    {
-      "title": "ILLIT「Cherish (My Love)」Spotifyで2億回突破",
-      "url": "https://www.kpopjournal.tokyo/illit-cherish-my-love-2million-streams/",
-      "post_id": 16449,
-      "genre": "breaking",
-      "artist": "아일릿",
-      "priority": "high",
-      "queued_at": "2026-08-11T15:36:11.513096"
-    },
-    {
-      "title": "BTSのV、コンサートで劇的な身体変化",
-      "url": "https://www.kpopjournal.tokyo/bts-v-concert-body-transformation/",
-      "post_id": 16456,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-08-11T17:30:39.496129"
-    },
-    {
-      "title": "HWASA、イ・ヒョリとイ・サンスンと映画館で手をつなぐ",
-      "url": "https://www.kpopjournal.tokyo/hwasa-lee-hyori-lee-sansung-hand-holding/",
-      "post_id": 16464,
-      "genre": "breaking",
-      "artist": "화사",
-      "priority": "high",
-      "queued_at": "2026-08-11T17:36:47.066008"
-    },
-    {
-      "title": "シム・ヒョンタクの息子ハル、CORTIS着用",
-      "url": "https://www.kpopjournal.tokyo/sim-hyontak-son-haru-cortis-wear/",
-      "post_id": 16468,
-      "genre": "breaking",
-      "artist": "코르티스",
-      "priority": "high",
-      "queued_at": "2026-08-11T17:37:45.433205"
-    },
-    {
-      "title": "中島健人とTXTボムギュ再会、誕生日仲間",
-      "url": "https://www.kpopjournal.tokyo/nakajima-kento-txt-bomgyu-birthday-friends/",
-      "post_id": 16473,
-      "genre": "breaking",
-      "artist": "TXT",
-      "priority": "high",
-      "queued_at": "2026-08-11T17:39:02.228564"
-    },
-    {
-      "title": "サムエア、金浦～沙川線最大50%割引セール",
-      "url": "https://www.kpopjournal.tokyo/sameair-gimpo-sakawa-discount-sale/",
-      "post_id": 16478,
-      "genre": "breaking",
-      "artist": "섬에어",
-      "priority": "high",
-      "queued_at": "2026-08-11T17:40:22.792126"
-    },
-    {
-      "title": "カン・ミンギョン、引き締まった体型披露",
-      "url": "https://www.kpopjournal.tokyo/kang-min-kyoung-tight-body-reveal/",
-      "post_id": 16482,
-      "genre": "breaking",
-      "artist": "빌리",
-      "priority": "high",
-      "queued_at": "2026-08-11T19:30:50.743115"
-    },
-    {
-      "title": "NCT 127、新曲「Piñata」トラックビデオ公開",
-      "url": "https://www.kpopjournal.tokyo/?p=16487",
-      "post_id": 16487,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-08-11T19:35:48.102512"
-    },
-    {
-      "title": "チョ・ヒョナ、新シングル「7」タイトル曲発表",
-      "url": "https://www.kpopjournal.tokyo/cho-hyuna-new-single-7-title-song/",
-      "post_id": 16496,
-      "genre": "breaking",
-      "artist": "조현아",
-      "priority": "high",
-      "queued_at": "2026-08-11T19:38:27.527157"
-    },
     {
       "title": "ジン・ヘソン、過去「チュムシンチュムワン」1位回顧",
       "url": "https://www.kpopjournal.tokyo/jin-haesung-chumshinchumwan-1st-place-recall/",
@@ -352,6 +181,150 @@
       "artist": "ILLIT",
       "priority": "high",
       "queued_at": "2026-08-12T21:35:52.844387"
+    },
+    {
+      "title": "BTSメンバーがツアー中のジムルーチン語る",
+      "url": "https://www.kpopjournal.tokyo/bts-gym-routine-tour/",
+      "post_id": 16662,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-08-13T07:36:32.160035"
+    },
+    {
+      "title": "キキ、IVEの妹グループ脱却し1位獲得",
+      "url": "https://www.kpopjournal.tokyo/kiki-ive-sister-group-1st-place/",
+      "post_id": 16666,
+      "genre": "breaking",
+      "artist": "아이브",
+      "priority": "high",
+      "queued_at": "2026-08-13T07:37:44.956091"
+    },
+    {
+      "title": "G-DRAGON、37歳でも変わらぬ少年美披露",
+      "url": "https://www.kpopjournal.tokyo/?p=16670",
+      "post_id": 16670,
+      "genre": "breaking",
+      "artist": "지드래곤",
+      "priority": "high",
+      "queued_at": "2026-08-13T07:39:28.279108"
+    },
+    {
+      "title": "ROSÉ、涙拭う姿にファン驚愕の声",
+      "url": "https://www.kpopjournal.tokyo/?p=16674",
+      "post_id": 16674,
+      "genre": "breaking",
+      "artist": "로제",
+      "priority": "high",
+      "queued_at": "2026-08-13T07:41:04.516963"
+    },
+    {
+      "title": "HYBEのボーイズグループがNewJeans応援し驚き",
+      "url": "https://www.kpopjournal.tokyo/hybe-boys-group-supports-newjeans/",
+      "post_id": 16681,
+      "genre": "breaking",
+      "artist": "NewJeans",
+      "priority": "high",
+      "queued_at": "2026-08-13T09:30:47.321255"
+    },
+    {
+      "title": "少女時代 チェ・スヨン 初の悪役挑戦",
+      "url": "https://www.kpopjournal.tokyo/girls-generation-choi-suyoung-first-villain-challenge/",
+      "post_id": 16686,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-08-13T09:36:13.053294"
+    },
+    {
+      "title": "BIGBANG、デビュー20周年記念新シングル発表",
+      "url": "https://www.kpopjournal.tokyo/bigbang-20th-anniversary-new-single/",
+      "post_id": 16690,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-08-13T09:37:22.750617"
+    },
+    {
+      "title": "BOYNEXTDOOR、18日に新曲「Boom Boom Boom」リリース",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-boom-boom-boom-release/",
+      "post_id": 16698,
+      "genre": "breaking",
+      "artist": "보이넥스트도어",
+      "priority": "high",
+      "queued_at": "2026-08-13T11:30:58.528629"
+    },
+    {
+      "title": "権恩妃・ATEEZ・ソンミ・MONSTA X、トルコ音楽フェス参加",
+      "url": "https://www.kpopjournal.tokyo/koneunbi-ateez-songmi-monsta-x-turkey-music-festival/",
+      "post_id": 16702,
+      "genre": "breaking",
+      "artist": "에이티즈",
+      "priority": "high",
+      "queued_at": "2026-08-13T11:32:15.020968"
+    },
+    {
+      "title": "TWS、日本ビルボード「Hot 100」で1位獲得",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260813-113411/",
+      "post_id": 16710,
+      "genre": "breaking",
+      "artist": "TWS",
+      "priority": "high",
+      "queued_at": "2026-08-13T11:34:30.333524"
+    },
+    {
+      "title": "LG、KBOの失策でゴールデンタイム逃す",
+      "url": "https://www.kpopjournal.tokyo/lg-kbo-error-golden-time/",
+      "post_id": 16717,
+      "genre": "breaking",
+      "artist": "있지",
+      "priority": "high",
+      "queued_at": "2026-08-13T13:32:01.967272"
+    },
+    {
+      "title": "NCT 127、米『アメリカズ・ゴット・タレント』出演決定",
+      "url": "https://www.kpopjournal.tokyo/nct127-americas-got-talent/",
+      "post_id": 16735,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-08-13T13:38:55.001377"
+    },
+    {
+      "title": "BTSのVとJUNGKOOK、サセンファンに苦悩",
+      "url": "https://www.kpopjournal.tokyo/bts-v-jungkook-sasen-fan-suffering/",
+      "post_id": 16744,
+      "genre": "breaking",
+      "artist": "BTS",
+      "priority": "high",
+      "queued_at": "2026-08-13T15:31:33.321948"
+    },
+    {
+      "title": "TXTヒュニンカイ「帽子下の強烈な視線",
+      "url": "https://www.kpopjournal.tokyo/?p=16752",
+      "post_id": 16752,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-08-13T15:36:10.851025"
+    },
+    {
+      "title": "MAMAMOO SOLAR、ニューヨークでの強烈な眼差し",
+      "url": "https://www.kpopjournal.tokyo/mamamoo-solar-new-york-intense-gaze/",
+      "post_id": 16757,
+      "genre": "breaking",
+      "artist": "솔라",
+      "priority": "high",
+      "queued_at": "2026-08-13T15:38:47.388100"
+    },
+    {
+      "title": "チョ・ヒョナ、5世代ガールグループに言及",
+      "url": "https://www.kpopjournal.tokyo/cho-hyuna-5th-gen-girl-group/",
+      "post_id": 16788,
+      "genre": "breaking",
+      "artist": "조현아",
+      "priority": "high",
+      "queued_at": "2026-08-13T21:36:54.229678"
     }
   ]
 }
