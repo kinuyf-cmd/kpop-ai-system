@@ -4,24 +4,29 @@
 #   AIOSEO は wp_aioseo_posts.description に保存(NULL=自動生成fallback=generic定型文の原因)。
 #   descriptions.json(slug→新description、本文lead由来・検証済)を読み、行があればUPDATE、
 #   無ければ最小INSERT。SQLインジェクション回避のため値はPython側で安全エスケープしSQL生成。
-#   owner 実行: sudo -u www-data bash tools/seo/fix_generic_meta.sh        # dry-run
-#               sudo -u www-data bash tools/seo/fix_generic_meta.sh --apply
+#   owner 実行: bash tools/seo/fix_generic_meta.sh                                  # dry-run
+#               ONLY_SLUG=myeongdong-kpop-shops-guide bash tools/seo/fix_generic_meta.sh
+#               ONLY_SLUG=myeongdong-kpop-shops-guide bash tools/seo/fix_generic_meta.sh --apply
 set -uo pipefail
-WP="wp --path=/var/www/wp_stg"
+WP_RO="sudo -n /usr/local/sbin/kpop/kpop-wp-ro"
+WP_RW="sudo -n /usr/local/sbin/kpop/kpop-wp-rw.sh"
 DIR="$(cd "$(dirname "$0")" && pwd)/meta_fix"
 JSON="$DIR/descriptions.json"
 APPLY="${1:-}"
+ONLY_SLUG="${ONLY_SLUG:-}"
+BK_DIR="${HOME:-/home/aiuser}/.kpop_recovery/aioseo_meta_backups"
 [ -f "$JSON" ] || { echo "[FATAL] $JSON が無い"; exit 1; }
 
 echo "================ generic meta 改善 ($([ "$APPLY" = "--apply" ] && echo APPLY || echo DRY-RUN)) ================"
 # slug一覧をPythonで取り出してループ
 python3 -c "import json;print('\n'.join(json.load(open('$JSON')).keys()))" | while IFS= read -r slug; do
   [ -z "$slug" ] && continue
-  pid="$($WP post list --post_type=post --name="$slug" --field=ID 2>/dev/null | head -1)"
+  [ -n "$ONLY_SLUG" ] && [ "$slug" != "$ONLY_SLUG" ] && continue
+  pid="$($WP_RO post list --post_type=post --name="$slug" --field=ID 2>/dev/null | head -1)"
   if [ -z "$pid" ]; then echo "  [skip] slug未検出: $slug"; continue; fi
   # 新description と SQL(エスケープ済)をPythonで生成
   # 既存行の有無を確認(post_id は UNIQUE でないため ON DUPLICATE は使わず、行数で UPDATE/INSERT を分岐)
-  rowcnt="$($WP db query "SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id=$pid" --skip-column-names 2>/dev/null)"
+  rowcnt="$($WP_RO db query "SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id=$pid" --skip-column-names 2>/dev/null)"
   read -r newlen sql < <(python3 - "$JSON" "$slug" "$pid" "$rowcnt" <<'PYEOF'
 import json,sys
 j,slug,pid,cnt=sys.argv[1],sys.argv[2],int(sys.argv[3]),int(sys.argv[4])
@@ -37,7 +42,11 @@ print(len(d), sql)
 PYEOF
 )
   if [ "$APPLY" = "--apply" ]; then
-    if $WP db query "$sql" 2>/dev/null; then echo "  [set] $slug (pid=$pid, ${newlen}字, rows=$rowcnt)"; else echo "  [FAIL] $slug"; fi
+    mkdir -p "$BK_DIR"
+    bk="$BK_DIR/${slug}_$(date +%Y%m%d_%H%M%S).tsv"
+    $WP_RO db query "SELECT post_id, description, updated FROM wp_aioseo_posts WHERE post_id=$pid" > "$bk" 2>/dev/null || true
+    echo "  [backup] $bk"
+    if $WP_RW db query "$sql" 2>/dev/null; then echo "  [set] $slug (pid=$pid, ${newlen}字, rows=$rowcnt)"; else echo "  [FAIL] $slug"; fi
   else
     echo "  [would-set] $slug (pid=$pid, ${newlen}字, 既存行=$rowcnt → $([ "$rowcnt" -ge 1 ] && echo UPDATE || echo INSERT))"
   fi
@@ -47,8 +56,10 @@ echo ""
 echo "================ 検証 ================"
 python3 -c "import json;print('\n'.join(json.load(open('$JSON')).keys()))" | while IFS= read -r slug; do
   [ -z "$slug" ] && continue
-  pid="$($WP post list --post_type=post --name="$slug" --field=ID 2>/dev/null | head -1)"
-  cur="$($WP db query "SELECT IFNULL(LEFT(description,40),'(NULL)') FROM wp_aioseo_posts WHERE post_id=$pid" --skip-column-names 2>/dev/null)"
+  [ -n "$ONLY_SLUG" ] && [ "$slug" != "$ONLY_SLUG" ] && continue
+  pid="$($WP_RO post list --post_type=post --name="$slug" --field=ID 2>/dev/null | head -1)"
+  if [ -z "$pid" ]; then echo "  $slug → (slug未検出)"; continue; fi
+  cur="$($WP_RO db query "SELECT IFNULL(LEFT(description,40),'(NULL)') FROM wp_aioseo_posts WHERE post_id=$pid" --skip-column-names 2>/dev/null)"
   echo "  $slug → $cur"
 done
 [ "$APPLY" != "--apply" ] && echo "  ※ dry-run。実行は --apply を付けて再実行。"

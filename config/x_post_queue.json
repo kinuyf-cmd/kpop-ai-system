@@ -1,169 +1,7 @@
 {
-  "updated": "2026-08-13 21:36",
-  "count": 36,
+  "updated": "2026-08-14 21:17",
+  "count": 22,
   "queue": [
-    {
-      "title": "ジン・ヘソン、過去「チュムシンチュムワン」1位回顧",
-      "url": "https://www.kpopjournal.tokyo/jin-haesung-chumshinchumwan-1st-place-recall/",
-      "post_id": 16500,
-      "genre": "breaking",
-      "artist": "진해성",
-      "priority": "high",
-      "queued_at": "2026-08-11T21:30:58.443417"
-    },
-    {
-      "title": "LGツインズ カラスコの10イニングパーフェクト途切れる",
-      "url": "https://www.kpopjournal.tokyo/lg-twins-carrasco-perfect-game-10-innings/",
-      "post_id": 16505,
-      "genre": "breaking",
-      "artist": "카라",
-      "priority": "high",
-      "queued_at": "2026-08-11T21:36:40.439550"
-    },
-    {
-      "title": "VERIVERYが新曲「CONFETTI」カムバック日発表",
-      "url": "https://www.kpopjournal.tokyo/?p=16515",
-      "post_id": 16515,
-      "genre": "breaking",
-      "artist": "VERIVERY",
-      "priority": "high",
-      "queued_at": "2026-08-12T07:00:35.095452"
-    },
-    {
-      "title": "NCT 127がマーク・リーに影を投げかけ反響",
-      "url": "https://www.kpopjournal.tokyo/nct127-mark-lee-shadow-reaction/",
-      "post_id": 16520,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-08-12T07:31:30.214232"
-    },
-    {
-      "title": "ATEEZ・iKON出演K-POPフェス、開催4日前に問題発生",
-      "url": "https://www.kpopjournal.tokyo/ateez-ikon-kpop-fes-problem-4days-before/",
-      "post_id": 16531,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-08-12T07:34:35.589534"
-    },
-    {
-      "title": "フィフティフィフティ、日本初単独ファンコンサート成功",
-      "url": "https://www.kpopjournal.tokyo/fiftyfifty-fan-concert-success/",
-      "post_id": 16541,
-      "genre": "breaking",
-      "artist": "피프티피프티",
-      "priority": "high",
-      "queued_at": "2026-08-12T09:32:40.989032"
-    },
-    {
-      "title": "BIGBANG、G-DRAGONの魅力と新曲「BIG」リリース",
-      "url": "https://www.kpopjournal.tokyo/bigbang-gdragon-miryoku-shin-kkyoku-big/",
-      "post_id": 16545,
-      "genre": "breaking",
-      "artist": "지드래곤",
-      "priority": "high",
-      "queued_at": "2026-08-12T09:33:40.243277"
-    },
-    {
-      "title": "&TEAM、9月8日カムバック「TAME ME」公開",
-      "url": "https://www.kpopjournal.tokyo/team-tame-me-comeback-september/",
-      "post_id": 16549,
-      "genre": "breaking",
-      "artist": "앤팀",
-      "priority": "high",
-      "queued_at": "2026-08-12T11:30:48.523527"
-    },
-    {
-      "title": "イアン・ゲイリー選手、マカチェフに勝てない理由",
-      "url": "https://www.kpopjournal.tokyo/ian-gary-makachev-win-reason/",
-      "post_id": 16554,
-      "genre": "breaking",
-      "artist": "있지",
-      "priority": "high",
-      "queued_at": "2026-08-12T11:32:07.149782"
-    },
-    {
-      "title": "ENHYPEN、6年の「バンパイア物語」進化中",
-      "url": "https://www.kpopjournal.tokyo/enhypen-vampire-story-evolution/",
-      "post_id": 16558,
-      "genre": "breaking",
-      "artist": "엔하이픈",
-      "priority": "high",
-      "queued_at": "2026-08-12T11:33:14.749295"
-    },
-    {
-      "title": "BTS Vが最新放送で聴力障害を告白",
-      "url": "https://www.kpopjournal.tokyo/bts-v-speech-hearing-disability/",
-      "post_id": 16570,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-08-12T13:31:46.128504"
-    },
-    {
-      "title": "NCT 127、新曲「ピニャータ」で描く解決者の物語",
-      "url": "https://www.kpopjournal.tokyo/nct127-pinyata-solution-story/",
-      "post_id": 16574,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-08-12T13:32:58.183187"
-    },
-    {
-      "title": "NewJeansハニのビザ情報流出疑惑で捜査開始",
-      "url": "https://www.kpopjournal.tokyo/newjeans-hani-visa-information-leak-investigation/",
-      "post_id": 16579,
-      "genre": "breaking",
-      "artist": "NewJeans",
-      "priority": "high",
-      "queued_at": "2026-08-12T13:34:35.988228"
-    },
-    {
-      "title": "ATEEZ、ポーランドフェス出演キャンセル決定",
-      "url": "https://www.kpopjournal.tokyo/ateez-poland-festival-cancellation/",
-      "post_id": 16603,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-08-12T17:31:04.702193"
-    },
-    {
-      "title": "キム・ジェジュン、シングル「THE WAVE」でカムバック",
-      "url": "https://www.kpopjournal.tokyo/kim-jaejoong-the-wave-comeback/",
-      "post_id": 16620,
-      "genre": "breaking",
-      "artist": "김재중",
-      "priority": "high",
-      "queued_at": "2026-08-12T17:39:01.959386"
-    },
-    {
-      "title": "BLACKPINKのジェニー新動画に厳しい反発",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-new-video-criticism/",
-      "post_id": 16628,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-08-12T19:31:15.040143"
-    },
-    {
-      "title": "WJSNソラ、結婚相談所訪問でBランク評価",
-      "url": "https://www.kpopjournal.tokyo/wjsn-sora-kekkon-soudan-b-rank-evaluation/",
-      "post_id": 16636,
-      "genre": "breaking",
-      "artist": "우주소녀",
-      "priority": "high",
-      "queued_at": "2026-08-12T19:37:23.977706"
-    },
-    {
-      "title": "BTSのV、聴力低下を2年半ぶり告白",
-      "url": "https://www.kpopjournal.tokyo/?p=16640",
-      "post_id": 16640,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-08-12T19:38:30.173457"
-    },
     {
       "title": "Red Velvet「Show Champion」で「Surfin’ Boy」1位獲",
       "url": "https://www.kpopjournal.tokyo/red-velvet-surfin-boy-show-champion-1st-place/",
@@ -325,6 +163,42 @@
       "artist": "조현아",
       "priority": "high",
       "queued_at": "2026-08-13T21:36:54.229678"
+    },
+    {
+      "title": "ATEEZホンジュン、肋骨骨折と診断される",
+      "url": "https://www.kpopjournal.tokyo/ateez-hongjoong-rib-fracture/",
+      "post_id": 16800,
+      "genre": "breaking",
+      "artist": "ATEEZ",
+      "priority": "high",
+      "queued_at": "2026-08-14T09:30:52.122205"
+    },
+    {
+      "title": "TXTが2026年グローバルシチズンフェスヘッドライナー",
+      "url": "https://www.kpopjournal.tokyo/?p=16804",
+      "post_id": 16804,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-08-14T09:32:04.431282"
+    },
+    {
+      "title": "ビッグオーシャン、9月9日に「LOVE SIGN」リリース",
+      "url": "https://www.kpopjournal.tokyo/big-ocean-love-sign-release-september-9/",
+      "post_id": 16811,
+      "genre": "breaking",
+      "artist": "빅오션",
+      "priority": "high",
+      "queued_at": "2026-08-14T09:35:25.305648"
+    },
+    {
+      "title": "BIGBANG、宇宙航空庁初代広報大使に任命",
+      "url": "https://www.kpopjournal.tokyo/bigbang-space-agency-ambassador/",
+      "post_id": 16828,
+      "genre": "breaking",
+      "artist": "빅뱅",
+      "priority": "high",
+      "queued_at": "2026-08-14T11:31:42.853198"
     }
   ]
 }

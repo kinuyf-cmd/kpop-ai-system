@@ -1,0 +1,179 @@
+{
+  "generated_at": "2026-08-14",
+  "strategy": "English articles are out of scope. Target Japanese-language users searching from overseas, especially Korea mobile users.",
+  "baseline": {
+    "window": "2026-05-14..2026-08-11",
+    "overseas_focus": {
+      "kor": {
+        "clicks": 116,
+        "impressions": 2673,
+        "ctr_pct": 4.34,
+        "position": 11.3
+      },
+      "twn": {
+        "clicks": 15,
+        "impressions": 145,
+        "ctr_pct": 10.34,
+        "position": 14.8
+      },
+      "sgp": {
+        "clicks": 12,
+        "impressions": 205,
+        "ctr_pct": 5.85,
+        "position": 13.9
+      },
+      "hkg": {
+        "clicks": 8,
+        "impressions": 185,
+        "ctr_pct": 4.32,
+        "position": 21.2
+      }
+    }
+  },
+  "first_step": {
+    "slug": "myeongdong-kpop-shops-guide",
+    "post_id": 1492,
+    "url": "https://www.kpopjournal.tokyo/myeongdong-kpop-shops-guide/",
+    "reason": "Korea shows 256 impressions but only 1 click over 90d. The page ranks around page one, but the current meta description begins with internal navigation text.",
+    "original_title": "明洞(ミョンドン)のK-POPショップ完全ガイド｜グッズ店の探し方・回り方・行き方 - KPOP JOURNAL",
+    "current_title": "明洞(명동)K-POPショップ完全ガイド｜アイドルグッズ店の探し方・回り方・行き方 - KPOP JOURNAL",
+    "recommended_title": "明洞(명동)K-POPショップ完全ガイド｜アイドルグッズ店の探し方・回り方・行き方",
+    "recommended_description": "明洞(명동)でK-POPショップやアイドルグッズ店を探す人向けに、店の種類・回り方・明洞駅からの行き方・弘大への移動まで整理した現地推し活ガイドです。",
+    "applied": {
+      "meta_description": "2026-08-14",
+      "post_title": "2026-08-14",
+      "content_quick_answer": "2026-08-14",
+      "heading_html_fix": "2026-08-14",
+      "gsc_index_request": true
+    },
+    "target_queries": [
+      "明洞 kpopショップ",
+      "明洞 アイドルグッズ",
+      "明洞 K-POPショップ",
+      "명동 KPOP 굿즈",
+      "明洞 グッズ店"
+    ],
+    "content_patch_brief": [
+      "Add a first-view quick answer block for people already in Myeongdong.",
+      "Add H2 or FAQ coverage for official goods, photocards, albums, and non-official souvenir items.",
+      "Add Korean place notation naturally: 明洞(명동), 乙支路入口(을지로입구), 弘大(홍대).",
+      "Avoid listing volatile opening hours as facts unless verified from official or map sources near publication time."
+    ],
+    "owner_run_dry_run": "ONLY_SLUG=myeongdong-kpop-shops-guide bash tools/seo/fix_generic_meta.sh",
+    "owner_run_apply": "ONLY_SLUG=myeongdong-kpop-shops-guide bash tools/seo/fix_generic_meta.sh --apply"
+  },
+  "second_step": {
+    "slug": "hongdae-late-night-food-map",
+    "post_id": 1321,
+    "url": "https://www.kpopjournal.tokyo/hongdae-late-night-food-map/",
+    "reason": "This is the strongest Korea-local Japanese search pattern found in the 90d country/query review: 弘大/ホンデ + 24時間/深夜/ごはん.",
+    "original_title": "弘大(ホンデ)の深夜・24時間グルメガイド｜夜遅くでも食べられるエリアと探し方",
+    "current_title": "弘大(홍대・ホンデ)深夜ごはん・24時間グルメガイド｜ライブ後の食事と帰り方",
+    "recommended_description": "弘大(홍대・ホンデ)で深夜ごはんや24時間営業の店を探す人向けに、ライブ後に使いやすいエリア・ジャンル・弘大入口駅からの帰り方まで整理しました。",
+    "applied": {
+      "meta_description": "2026-08-14",
+      "post_title": "2026-08-14",
+      "content_quick_answer": "2026-08-14",
+      "heading_html_fix": "2026-08-14",
+      "internal_link_to_myeongdong_kpop_shops": "2026-08-14",
+      "gsc_index_request": true
+    },
+    "target_queries": [
+      "弘大 深夜 ごはん",
+      "ホンデ 24時間営業 ごはん",
+      "弘大 24時間 グルメ",
+      "홍대 심야 식당",
+      "홍대입구역 深夜"
+    ]
+  },
+  "third_step": {
+    "slug": "olive-better-recommended-products",
+    "post_id": 9204,
+    "url": "https://www.kpopjournal.tokyo/olive-better-recommended-products/",
+    "reason": "Korea query オリーブベター おすすめ already has stable clicks and strong position; the page needed a clearer first-view answer for purchase intent.",
+    "original_title": "OLIVE BETTER おすすめ商品&お土産ガイド｜何を買う?人気アイテムまとめ【韓国】",
+    "current_title": "OLIVE BETTERおすすめ商品・お土産ガイド｜韓国で何を買う?江南店前に確認",
+    "recommended_description": "OLIVE BETTER(オリーブベター)で何を買うか迷う人向けに、おすすめ商品カテゴリ、お土産向きアイテム、推し活遠征での選び方、江南店へ行く前の確認ポイントを整理しました。",
+    "applied": {
+      "meta_description": "2026-08-14",
+      "post_title": "2026-08-14",
+      "content_quick_answer": "2026-08-14",
+      "internal_link_to_gangnam_store": "2026-08-14",
+      "gsc_index_request": true
+    },
+    "target_queries": [
+      "オリーブベター おすすめ",
+      "OLIVE BETTER おすすめ",
+      "オリーブベター お土産",
+      "OLIVE BETTER 何買う",
+      "オリーブベター 江南"
+    ]
+  },
+  "fourth_step": {
+    "slug": "olive-better-gangnam-store",
+    "post_id": 9203,
+    "url": "https://www.kpopjournal.tokyo/olive-better-gangnam-store/",
+    "reason": "Korea impressions exist with page-one-ish position but low CTR; the page needed clearer local access wording around 江南駅/강남역 and a fixed H2 structure.",
+    "original_title": "OLIVE BETTER 江南駅店ガイド｜場所・アクセス・光化門店との違い【韓国ソウル】",
+    "current_title": "OLIVE BETTER江南駅店ガイド｜江南(강남)駅アクセス・光化門店との違い",
+    "recommended_description": "OLIVE BETTER江南駅店へ行く人向けに、江南駅(강남역)3〜4番出口側からのアクセス、光化門店との違い、買い物前に見るポイントを整理しました。",
+    "applied": {
+      "meta_description": "2026-08-14",
+      "post_title": "2026-08-14",
+      "content_quick_answer": "2026-08-14",
+      "heading_html_fix": "2026-08-14",
+      "internal_link_to_recommended_products": "2026-08-14",
+      "gsc_index_request": true
+    },
+    "target_queries": [
+      "オリーブベター 江南",
+      "OLIVE BETTER 江南",
+      "江南 オリーブベター",
+      "강남역 OLIVE BETTER",
+      "オリーブベター 光化門 江南 違い"
+    ]
+  },
+  "fifth_step": {
+    "slug": "olive-better-seoul-guide",
+    "post_id": 9201,
+    "url": "https://www.kpopjournal.tokyo/olive-better-seoul-guide/",
+    "reason": "Use the complete guide as the OLIVE BETTER hub after improving the product and Gangnam child pages. The old meta description began with an English-version link and the location H2 was malformed.",
+    "original_title": "OLIVE BETTER(オリーブベター)完全ガイド｜店舗の場所・アクセス・おすすめ商品まとめ【韓国ソウル】",
+    "current_title": "OLIVE BETTER完全ガイド｜光化門・江南(강남)店舗アクセスとおすすめ商品",
+    "recommended_description": "OLIVE BETTER(オリーブベター)の全体像を知りたい人向けに、光化門店・江南駅店の場所、アクセス、おすすめ商品、お土産の選び方をまとめました。",
+    "applied": {
+      "meta_description": "2026-08-14",
+      "post_title": "2026-08-14",
+      "content_quick_answer": "2026-08-14",
+      "heading_html_fix": "2026-08-14",
+      "first_view_english_link_removed": "2026-08-14",
+      "hub_links_to_child_pages": "2026-08-14",
+      "gsc_index_request": true
+    },
+    "target_queries": [
+      "OLIVE BETTER",
+      "オリーブベター",
+      "オリーブベター 場所",
+      "OLIVE BETTER 江南",
+      "オリーブベター おすすめ"
+    ]
+  },
+  "next_targets": [
+    {
+      "slug": "monitoring",
+      "reason": "The first overseas Japanese SEO batch has been applied to the Korea-local travel and OLIVE BETTER cluster.",
+      "action": "After 7-14 days, compare Korea mobile CTR and query/page deltas for the updated URLs."
+    }
+  ],
+  "kpi_90d_targets": {
+    "kor_clicks": 300,
+    "kor_impressions": 6000,
+    "kor_mobile_ctr_pct": 6.0,
+    "page_one_queries": [
+      "弘大 深夜 ごはん",
+      "明洞 kpopショップ",
+      "聖水 ポップアップ",
+      "江南 オリーブベター"
+    ]
+  }
+}
