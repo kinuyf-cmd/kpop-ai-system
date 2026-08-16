@@ -52,10 +52,17 @@ SCHEDULE_LOG = BASE / 'logs' / 'x_scheduled.log'
 #   会話型text-onlyのみ・cap=3 で運用。imp回復確認後に Phase2(記事誘導は
 #   URLリプライでなくプロフィール誘導化)へ。可視性悪化時は x_auto_repause_guard が自動停止。
 # Phase1前の設定(参考): DAILY_POST_CAP=6 / SLOTS 8,12,17(記事)+19,21(会話) 各1
-DAILY_POST_CAP = 3            # 1日の総投稿上限(Phase1: 会話型のみ)
-# 時間帯ごとの最大投稿数。合計=3。昼+夜ゴールデン2枠を離して配置。
+# 2026-08-16 Phase2移行: tools/x_phase2_report.py が GO 判定(n=8 / 平均imp 84.4 /
+#   中央値 69.5 / GATE=平均8・中央値6)。バン期の崩壊水準6.0を10倍超で上回り、
+#   可視性は回復と判断。ただし再発トリガーだった外部リンクは戻さない:
+#   記事誘導は「URLゼロ・本文フックのみ(プロフィール誘導)」で復活させる
+#   (POST_ARTICLE_URL=False)。cap は 3→4 の +1 のみ、記事帯も 12時の1枠のみ。
+#   一気に旧設定(cap6/記事3枠)へ戻すと量×リンクの bot シグネチャが再構成される。
+DAILY_POST_CAP = 4            # 1日の総投稿上限(Phase2: 会話3 + 記事1)
+# 時間帯ごとの最大投稿数。合計=4。昼に記事帯、夜ゴールデン2枠は会話を維持。
 SLOTS = {
-    12: 1,   # 12:xx 昼(会話)
+    12: 1,   # 12:xx 昼(記事・URLなし)
+    17: 1,   # 17:xx 夕(会話)
     19: 1,   # 19:xx ゴールデン(会話)
     21: 1,   # 21:xx ゴールデン(会話)
 }
@@ -100,8 +107,16 @@ def _next_ab_variant() -> str:
 # 2026-06-22: SLOTS削減に合わせて役割時間帯も {8,12,17}=記事 / {19,21}=会話 に整合。
 # 2026-08-12 Phase1: 全スロット会話型・記事帯ゼロ(URL投稿を完全停止)。
 #   Phase2移行時は ARTICLE_HOURS を復活させること(Phase1前: {8,12,17})。
-CONVERSATION_HOURS = {12, 19, 21}   # Phase1: 全枠会話
-ARTICLE_HOURS = set()               # Phase1: 記事誘導は投稿しない
+# 2026-08-16 Phase2: 記事帯を 12時の1枠だけ復活(Phase1前の{8,12,17}のうち1つ)。
+#   会話は 17/19/21 の3枠。POST_ARTICLE_URL=False によりこの記事帯も URL を
+#   一切含まない(本文フックのみ+プロフィール誘導)ため、リンク比率は 0% のまま。
+CONVERSATION_HOURS = {17, 19, 21}   # Phase2: 夕+ゴールデン2枠は会話
+ARTICLE_HOURS = {12}                # Phase2: 昼1枠のみ記事誘導(URLなし)
+
+# 2026-08-16: Phase2 の記事誘導は URL を投げない。True に戻すと本文リンク/URL
+# リプライが復活するが、それがシャドウバン再発の主トリガーだった
+# (x-shadowban-state-and-history)。戻すのは Phase3 で、再度 imp 実測を確認してから。
+POST_ARTICLE_URL = False
 def slot_role(hour: int) -> str:
     if hour in CONVERSATION_HOURS:
         return 'conversation'
@@ -406,7 +421,12 @@ def process_queue(dry_run: bool = False) -> dict:
     queue = _drop_stale(raw_queue)
     if len(queue) < len(raw_queue):
         save_queue(queue)  # stale drop を永続化
-    if not queue:
+    # 2026-08-16 修理: 会話起点(text-only)はキューを使わないため、キューが空でも
+    # 投稿できなければならない。従来はここで無条件 return しており、キューが空に
+    # なった瞬間に会話帯の投稿ごと死んでいた(8/16 12:17 の会話投稿が実際に消失。
+    # Phase1中はキューに残骸が数件あったため偶然生き延びていただけ)。
+    # 会話帯かどうかは時刻で決まるので、判定前に return してはいけない。
+    if not queue and slot_role(datetime.now().hour) != 'conversation':
         print("[scheduler] キュー空")
         return {'processed': 0, 'remaining': 0}
 
@@ -511,7 +531,15 @@ def process_queue(dry_run: bool = False) -> dict:
         # M10 AB (2026-05-28 / 偏り修正 2026-06-05): variant を「実投稿件数が少ない方」へ
         # 割当(A=ペルソナ/B=PopCrave)。旧 post_id%2 は記事IDの偶奇偏りで A:B=16:36 に崩れた。
         variant = _next_ab_variant()
-        if entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
+        # 2026-08-16 Phase2: POST_ARTICLE_URL=False の間は URL を渡さない。
+        # post_hook_and_reply は url='' なら Step2 の URL リプライを打たず、
+        # フック単発(URLゼロ)で終わる。post_thread は末尾に URL を出す設計のため
+        # Phase2 では high priority でも使わず、単発に統一する。
+        if not POST_ARTICLE_URL:
+            from lib.x_poster import post_hook_and_reply
+            result = post_hook_and_reply(title, '', post_id=post_id, genre=genre,
+                                         artist=artist, variant=variant)
+        elif entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
             from lib.x_poster import post_thread
             result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
         else:
