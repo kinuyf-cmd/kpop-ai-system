@@ -51,11 +51,32 @@ def apply_proper_noun_dict(text: str) -> tuple[str, int]:
 
 
 def _count_today():
-    if not os.path.exists(LOG):
-        return 0
+    """本日の翻訳回数。v1(OpenAI)とv2(Claude)の両方を数える。
+
+    2026-08-16 修理: v2 は logs/translation_v2.jsonl に書くのに、ここは v1 の
+    logs/translation.jsonl しか見ていなかった。DAILY_LIMIT の判定は v2 側でも
+    この関数を使う(translator_v2.py が import している)ため、TRANSLATOR_V2=1
+    の間は **いくら翻訳しても used=0 のままで上限500が一切効かない**状態だった
+    (実測: v2で22件翻訳した日に used=0)。両方を合算する。
+    """
     today = datetime.date.today().isoformat()
-    return sum(1 for line in open(LOG, encoding='utf-8')
-               if line.strip() and json.loads(line).get('date') == today)
+    total = 0
+    for path in (LOG, '/home/aiuser/kpop-ai-system/logs/translation_v2.jsonl'):
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding='utf-8') as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        if json.loads(line).get('date') == today:
+                            total += 1
+                    except json.JSONDecodeError:
+                        continue
+        except OSError:
+            continue
+    return total
 
 
 THRESHOLD_PATH = '/home/aiuser/kpop-ai-system/data/translation_threshold.json'
