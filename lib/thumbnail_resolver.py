@@ -505,6 +505,38 @@ def _canonical_artist(subject: str, title: str = '') -> str:
     return subject or ''
 
 
+def _photo_candidates(subjects: list, title: str = '') -> list:
+    """本人写真を引くためのアーティスト名候補を、確度の高い順に返す。
+
+    2026-08-16 真因修理: 従来は subjects[0] だけを _canonical_artist に渡していたが、
+    上流の抽出は韓国人名を中黒で割り、姓を先頭に置く
+    (「チャン・ウォニョン」→ subjects=['チャン','ウォニョン'])。
+    姓だけでは artist_master / official_accounts / member_to_group のどれにも当たらず、
+    実在アイドルの記事が丸ごと DALL-E に落ちていた
+    (7月以降の DALL-E 行き実測: ファン35件・チャン24件・チョン8件が姓の断片)。
+
+    対策は「姓を捨てる」ではなく「候補を全部試す」。名(subjects[1]以降)は
+    member_to_group でグループへ解決できることが多い(ウォニョン→IVE)。
+    フルネームも候補に入れる(辞書にフルネーム登録がある場合に効く)。
+    """
+    cands = []
+
+    def _add(v):
+        v = (v or '').strip()
+        if v and v not in cands:
+            cands.append(v)
+
+    # ①中黒フルネームがタイトルにあれば最優先(最も情報量が多い)
+    if title and len(subjects) >= 2:
+        full = f"{subjects[0]}・{subjects[1]}"
+        if full in title:
+            _add(full)
+    # ②検出順(subjects[0]=姓のことがあるが、グループ名の場合はこれが正解)
+    for s in subjects:
+        _add(s)
+    return cands
+
+
 def _resolver_canonical(name: str) -> str:
     """artist_resolver(Idol Wiki 名前解決)で canonical 英名を引く。無ければ ''。"""
     try:
@@ -597,13 +629,15 @@ def resolve_thumbnail(source_url, title, body, post_id, output_dir='/tmp'):
 
         classification = classify(title, body or '')
         subjects = classification.get('subjects', [])
-        raw_artist = subjects[0] if subjects else ''
         # 真因修理(2026-06-16): classify の日本語ニックネーム/空を canonical 英名へ
         # 正規化してから本人写真取得に渡す(未正規化だと artist_master/Wikimedia 照合に
         # 通らず本人写真が取れなかった)。
-        artist = _canonical_artist(raw_artist, title)
-
-        if artist:
+        # 2026-08-16: subjects[0] 固定をやめ、候補を確度順に試す(姓の断片で
+        # 打ち切られて DALL-E に落ちていたため。詳細は _photo_candidates)。
+        for raw_artist in _photo_candidates(subjects, title) or ['']:
+            artist = _canonical_artist(raw_artist, title)
+            if not artist:
+                continue
             if artist != raw_artist:
                 print(f"  アーティスト正規化: {raw_artist!r} → {artist!r}")
             print(f"  アーティスト検出: {artist} → 本人写真を優先取得")
