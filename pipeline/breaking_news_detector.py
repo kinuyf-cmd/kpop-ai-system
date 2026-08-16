@@ -110,6 +110,16 @@ def _recent_breaking_titles(hours: int = 3) -> list:
                     d = json.loads(line)
                 except Exception:
                     continue
+                # 2026-08-16 真因修理: このログには _log_breaking_skip が
+                # status="skipped"(=公開されなかった記事)も追記する。status を
+                # 見ずに全件を「publish済み」として扱うと自己増殖デッドロックになる:
+                #   1件skip → ログに残る → 次回それを publish済みと誤認して他候補を
+                #   dedup skip → そのskipも記録 → 雪だるま式に全件skip。
+                # 実際 8/14 11:40 を最後に公開が完全停止し、2日間 "速報記事化: 0件" が
+                # 109回続いた(直近3hのログ8件が全て status=skipped だった)。
+                # publish 済みだけを重複判定の材料にする。
+                if d.get('status') == 'skipped':
+                    continue
                 ts_str = d.get('ts', '')
                 if not ts_str:
                     continue

@@ -79,6 +79,47 @@ def build_description(content, title):
     return out[:130]
 
 
+def set_description_for_post(pid) -> dict:
+    """1記事のメタ説明を wp_aioseo_posts に書き、DB実値で検証して返す。
+
+    2026-08-16: 公開直後にも同じ経路を使えるよう main() から切り出した。
+    unified_publisher の REST(`meta._aioseo_description`)経由は AIOSEO が
+    register_meta しないため黙って破棄され、しかも HTTP 200 が返るので
+    「成功」に見えてしまう([[aioseo-desc-write-traps]] 罠1)。書き込みは必ず
+    このDB経路を通し、戻り値でなく**DBから読み直した実値**で成否を判定する。
+    """
+    pid = int(pid)
+    content = fetch_b64(f"SELECT TO_BASE64(post_content) FROM wp_posts WHERE ID={pid}")
+    title = fetch_b64(f"SELECT TO_BASE64(post_title) FROM wp_posts WHERE ID={pid}")
+    desc = build_description(content, title)
+    if len(desc) < 50:
+        return {"ok": False, "reason": f"生成失敗(短すぎ len={len(desc)})", "post_id": pid}
+
+    # post_id は非UNIQUE のため行の有無で分岐(UPSERTは発火せず重複行を作る。罠2)
+    exists = db_query(
+        f"SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id={pid}"
+    ).splitlines()[1].strip()
+    # 値は base64 で渡し MySQL 側で復号する(クォート置換だけでは \' で閉じられる。罠3)
+    b64 = base64.b64encode(desc.encode("utf-8")).decode("ascii")
+    val = f"CONVERT(FROM_BASE64('{b64}') USING utf8mb4)"
+    if exists != "0":
+        q = (f"UPDATE wp_aioseo_posts SET description={val}, updated=NOW() "
+             f"WHERE post_id={pid}")
+    else:
+        q = ("INSERT INTO wp_aioseo_posts (post_id,description,og_object_type,"
+             "og_image_type,twitter_card,robots_default,created,updated) VALUES "
+             f"({pid},{val},'default','default','default',1,NOW(),NOW())")
+    db_query(q, write=True)
+
+    # 書き込み後にDB実値を読み直して検証(HTTPやreturncodeを成功判定に使わない)
+    actual = fetch_b64(
+        f"SELECT TO_BASE64(COALESCE(description,'')) FROM wp_aioseo_posts WHERE post_id={pid}"
+    )
+    if len(actual) < 50:
+        return {"ok": False, "reason": f"書込後のDB実値が短い(len={len(actual)})", "post_id": pid}
+    return {"ok": True, "length": len(actual), "post_id": pid}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)

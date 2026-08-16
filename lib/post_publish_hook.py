@@ -265,7 +265,34 @@ def run_post_publish(post_id, post_type='post'):
         print(f"  [hook] factcheck err: {e}")
 
     # 4b. LLMファクトチェック (深いチェック — 捏造検出)
-    if result.get('status') != 'draft':  # 既にdraft化されていなければ実行
+    # 2026-08-16: publish 直前の pre_publish_gate が既に factcheck_v2(Claude+web search)
+    # を実行して合否を出しているため、ここでの再 LLM 呼出は上の 3節が
+    # skip_llm_factcheck=True で避けているのと同じ「純粋なロス」だった。
+    # しかも proofread_post は OpenAI 版で、残高ゼロ(429)になった 8/14 以降は
+    # 例外→「品質保証不能」で**合格済みの記事まで全件 draft 化**していた
+    # (post 16858 は公開前 factcheck_v2 で score=95 の合格判定を受けた4秒後に
+    #  429 で draft 化された)。公開前に判定済みならここは省く。
+    _fc_v2_done = False
+    try:
+        import json as _fcj
+        from pathlib import Path as _fcp
+        _fcl = _fcp('/home/aiuser/kpop-ai-system/logs/factcheck_v2.jsonl')
+        if _fcl.exists():
+            _t = (title or '').strip()
+            for _line in reversed(_fcl.read_text(errors='ignore').splitlines()[-200:]):
+                try:
+                    _d = _fcj.loads(_line)
+                except Exception:
+                    continue
+                if _t and str(_d.get('title', '')).strip() == _t:
+                    _fc_v2_done = True
+                    print(f"  [hook] LLM factcheck skip: 公開前 factcheck_v2 実施済 "
+                          f"(score={_d.get('score', '?')})")
+                    break
+    except Exception:
+        _fc_v2_done = False
+
+    if result.get('status') != 'draft' and not _fc_v2_done:
         try:
             from pipeline.llm_proofreader import proofread_post
             pr = proofread_post(post)

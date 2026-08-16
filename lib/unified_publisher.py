@@ -284,7 +284,12 @@ def unified_publish(
     try:
         from lib.pre_publish_gate import pre_publish_gate as _pre_gate
         _pre_r = _pre_gate(
-            title=title_final, body_html=content,
+            # 2026-08-16: ここは `content` 定義前(定義は後段6節)で、この事前ゲートは
+            # 導入以来毎回 NameError を FAIL OPEN で握り潰し**一度も機能していなかった**
+            # (公開ログ全件に "pre-thumb gate skip: cannot access local variable
+            # 'content'" が出ていた)。狙いだったサムネ検証費の削減効果はゼロ。
+            # この時点の本文は引数の body_html が正しい。
+            title=title_final, body_html=body_html,
             post_type='post', kind=kind,
             source_url=source_url, source_signals=source_signals,
             slug=slug, featured_media=None,
@@ -806,27 +811,22 @@ def unified_publish(
                 pass
 
     # 9c. 公開後セルフ検証: meta_description が実際に設定されたか確認 (2026-05-06追加)
-    if post_id and meta_desc:
+    # 2026-08-16 真因修理: 従来はここで REST の meta._aioseo_description を読み書き
+    # していたが、AIOSEO は description を register_meta しないため
+    #   ・読むと常に空 → 毎回 self-heal 分岐に入る
+    #   ・書くと WordPress が未登録キーとして黙って破棄、しかも HTTP 200
+    # となり、実際には1件も設定されないまま「再送信OK」を出し続けていた
+    # ([[aioseo-desc-write-traps]] 罠1)。実測で直近3日の公開10件中9件が欠落。
+    # 正は wp_aioseo_posts テーブルなので、backfill と同じDB経路に統一する。
+    if post_id:
         try:
-            _verify_url = f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=meta"
-            _verify_req = urllib.request.Request(
-                _verify_url, headers={'Authorization': f'Basic {AUTH}'})
-            with urllib.request.urlopen(_verify_req, timeout=10) as _vr:
-                _post_meta = json.loads(_vr.read()).get('meta', {})
-            _aioseo = _post_meta.get('_aioseo_description', '')
-            if not _aioseo or len(_aioseo) < 40:
-                # meta未設定 → 再送信
-                _fix_data = json.dumps({'meta': {'_aioseo_description': meta_desc}}).encode()
-                _fix_req = urllib.request.Request(
-                    f"https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}",
-                    data=_fix_data,
-                    headers={'Authorization': f'Basic {AUTH}', 'Content-Type': 'application/json'},
-                    method='POST',
-                )
-                urllib.request.urlopen(_fix_req, timeout=15)
-                log.append(f"meta_desc self-heal: 再送信OK ({len(meta_desc)}字)")
+            sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from tools.backfill_aioseo_description import set_description_for_post
+            _r = set_description_for_post(post_id)
+            if _r.get('ok'):
+                log.append(f"meta_desc verified(DB): {_r.get('length')}字")
             else:
-                log.append(f"meta_desc verified: {len(_aioseo)}字")
+                log.append(f"⚠️ meta_desc NG: {_r.get('reason')}")
         except Exception as _me:
             log.append(f"meta_desc verify skip: {_me}")
 
