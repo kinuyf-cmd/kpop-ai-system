@@ -270,11 +270,23 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
     else:  # conversation — 記事に紐づかない純粋なつぶやき
         # トピックの手掛かりが無ければ、そのライター自身の推し/関心から1つ選んで種にする。
         # (種が無いと直近の avoid 例を話題と誤認して全員同じ話になる事故を防ぐ)
-        topic = artist or context.get("theme", "")
+        # 2026-08-16 修理: 従来は `topic = artist or theme` で、artist があると
+        # theme(具体的な出来事)が捨てられていた。結果ヒントが「頭にあるのは
+        # 『TWICE』のこと」だけになり、LLM は書くべき中身を知らないまま
+        # 「なんか〜な気がする」「どうなってんだろう」と曖昧語で埋めるしかなかった
+        # (owner指摘「ペルソナ型も的外れ」の直接原因)。両方を渡す。
+        fact = (context.get("theme") or "").strip()
+        topic = artist or fact
         if not topic:
             seeds = list(w.get("topics", [])) or list(w.get("oshi", []))
             topic = random.choice(seeds) if seeds else ""
-        hint = f"今ちょうど頭にあるのは「{topic}」のこと。" if topic else ""
+        if artist and fact:
+            hint = (f"今ちょうど頭にあるのは「{artist}」の話で、きっかけはこの出来事:"
+                    f"「{fact}」。この出来事に触れた独り言にすること。")
+        elif topic:
+            hint = f"今ちょうど頭にあるのは「{topic}」のこと。"
+        else:
+            hint = ""
         user = (
             f"{name} が、いま日常でふともらした K-POP まわりの独り言を一言。"
             f"{hint}"
@@ -282,6 +294,10 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
             "ぼやき・思いつきでいい。ニュースの要約や紹介ではない。"
             "直前の投稿リストはあくまで『被らせない為』の参照で、その話題を続ける必要はない。"
             "事実を断定しない。きれいにまとめない。"
+            # 2026-08-16: 中身のない一般論を禁止(実測でこの型が8/8を占めた)
+            "\n禁止: 「なんか〜な気がする」「どうなってるんだろう」「謎すぎ」のような、"
+            "対象を差し替えても成立してしまう空虚な感想。何について言っているのかが"
+            "読み手に伝わる、具体的な一点に触れること。"
             "\nつぶやき(1行のみ、オチ無しでよい):"
         )
     return system, user

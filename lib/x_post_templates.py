@@ -624,6 +624,24 @@ def build_hashtags(artist: str, genre: str) -> str:
     tags = []
 
     # 1. アーティスト名タグ最優先 (ファンが検索する)
+    # 2026-08-16: artist がハングルのまま渡ることがある(速報の artist は韓国語ソース
+    # 由来。実測でキュー7件中3件が 에이핑크/휘인/김중연)。そのままだと #에이핑크 という
+    # 日本のファンが検索しないタグになるか、抽出失敗でアーティストタグが消える。
+    # 実測ではタグ2個の投稿(中央値74)が1個(61)を上回るため、取りこぼしは損失。
+    # 正規化辞書で英名へ寄せてからタグ化する(引けなければ従来どおり素通し)。
+    artist = (artist or "").strip()
+    if re.search(r'[가-힣]', artist):
+        try:
+            import sys as _sys
+            _sys.path.insert(0, '/home/aiuser/kpop-ai-system/lib')
+            from thumbnail_source_resolver import normalize_artist_name as _norm
+            _n = _norm(artist)
+            if _n and not re.search(r'[가-힣]', _n):
+                artist = _n
+            else:
+                artist = ""  # 同定できないハングルはタグにしない(検索されない)
+        except Exception:
+            artist = ""
     artist_tag = artist.replace(" ", "")
     _invalid = {"K-POP", "K-POPアイドル", "韓国K", "K-P", ""}
     has_artist_tag = (artist_tag and len(artist_tag) >= 2
@@ -654,10 +672,11 @@ def build_hashtags(artist: str, genre: str) -> str:
         extra = available[_random_idx(len(available))]
         tags.append(extra)
 
-    # ブランドタグ #KPOPJOURNAL は最後、ジャンルが news/breaking のみ付与
-    # (毎回付けると検索されない汚染タグになるため)
-    if genre in ("news", "breaking", "chart", "comeback") and "#KPOPJOURNAL" not in tags:
-        tags.append("#KPOPJOURNAL")
+    # ブランドタグ #KPOPJOURNAL は付けない(2026-08-16)。
+    # 自社タグは検索需要がほぼ無いのに3枠のうち1つを占有し、実際に検索される
+    # アーティスト名タグ/ジャンルタグを押し出していた。Phase1実測では
+    # タグ2個の投稿(imp中央値74)が1個(61)・0個(47)を上回っており、
+    # 「枠を実タグで埋める」方が効く。ブランド想起はプロフィール/署名で担う。
 
     seen = set()
     tags = [t for t in tags if not (t in seen or seen.add(t))]

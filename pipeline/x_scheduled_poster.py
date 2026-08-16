@@ -169,6 +169,14 @@ def save_queue(queue: list):
     QUEUE_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
+_BREAKING_GENRES = {'breaking', 'news', 'comeback', 'chart', 'controversy'}
+
+
+def _neg_ts(ts: str):
+    """新しい順ソート用キー(昇順ソートで新しいものが先に来るよう反転)。"""
+    return tuple(-ord(c) for c in (ts or ''))
+
+
 def enqueue(title: str, url: str, post_id: int = None, genre: str = '',
             artist: str = '', priority: str = 'normal'):
     """投稿をキューに追加（x_poster.pyから呼ばれる）"""
@@ -188,6 +196,25 @@ def enqueue(title: str, url: str, post_id: int = None, genre: str = '',
         'queued_at': datetime.now().isoformat(),
     }
     queue.append(entry)
+
+    # 2026-08-16: キュー上限。投入量と消化能力が全く釣り合っておらず、
+    # 実測で **822件が48h失効でdrop / 記事投稿は196件**(8割が捨てられていた)。
+    # Phase2 では記事帯が1日1枠なので、13件積んでも11件以上は必ず捨てられる。
+    # 捨てるなら「古いものから溢れさせる」のではなく「新しい方を残す」のが正しい:
+    # 速報は鮮度が価値で、48h前の記事を投稿しても読者には古いニュースだから。
+    # priority=high を優先し、その中で新しい順に QUEUE_MAX_SIZE 件だけ残す。
+    # 速報以外(作品ガイド・ハブ記事など)は鮮度で腐らず、48h失効させる意味も薄いので
+    # 速報より先に残す。速報同士は「新しい方が価値がある」ので新しい順。
+    if len(queue) > QUEUE_MAX_SIZE:
+        def _rank(e):
+            is_breaking = (e.get('genre') in _BREAKING_GENRES)
+            # 0=非速報(寿命が長い) / 1=速報high / 2=速報normal
+            if not is_breaking:
+                return 0
+            return 1 if e.get('priority') == 'high' else 2
+        queue.sort(key=lambda e: (_rank(e), _neg_ts(e.get('queued_at', ''))))
+        queue = queue[:QUEUE_MAX_SIZE]
+
     save_queue(queue)
     return True
 
@@ -264,6 +291,11 @@ def _current_slot_limit() -> int:
 
 
 QUEUE_MAX_AGE_HOURS = 48  # 48h超のqueue itemsは古ニュース扱いでdrop
+# 2026-08-16: キュー上限。Phase2 は記事帯が1日1枠で、48h で失効するため
+# 実際に消化できるのは高々2件。それ以上積んでも必ず捨てられる(実測 822件drop /
+# 投稿196件)。積み上げても投稿されないものを抱えるより、常に「直近の鮮度が高い
+# 数件」だけを持つ。記事帯を増やす場合はここも一緒に上げること。
+QUEUE_MAX_SIZE = int(os.environ.get('X_QUEUE_MAX_SIZE', '4'))
 
 
 def _drop_stale(queue: list) -> list:

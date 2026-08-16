@@ -1,33 +1,33 @@
 {
-  "updated": "2026-08-16 15:51",
+  "updated": "2026-08-16 22:18",
   "count": 3,
   "queue": [
     {
-      "title": "パク・チョロン、Apink広州公演の舞台裏で抱擁写真を公開",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260816-154805/",
-      "post_id": 16862,
-      "genre": "breaking",
-      "artist": "에이핑크",
-      "priority": "high",
-      "queued_at": "2026-08-16T15:48:33.108645"
+      "title": "パク・ウンビン×ヤン・セジョン『恋は命がけ』配信日",
+      "url": "https://www.kpopjournal.tokyo/koi-wa-inochigake-cast-guide/",
+      "post_id": 16874,
+      "genre": "kdrama",
+      "artist": "パク・ウンビン",
+      "priority": "normal",
+      "queued_at": "2026-08-16T17:00:19.997563"
     },
     {
-      "title": "BLACKPINKのJENNIE、Cosmopolitan 2026年秋号カバーで魅",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-cosmopolitan-2026/",
-      "post_id": 16866,
+      "title": "キム・ジェファン、KCON LA 2026で近況報告",
+      "url": "https://www.kpopjournal.tokyo/kim-jae-hwan-kcon-la-2026-update/",
+      "post_id": 16923,
       "genre": "breaking",
-      "artist": "BLACKPINK",
+      "artist": "워너원",
       "priority": "high",
-      "queued_at": "2026-08-16T15:50:15.048027"
+      "queued_at": "2026-08-16T21:36:32.508576"
     },
     {
-      "title": "NMIXXのヘウォン、グループが次のカムバックを準備中であることを確認",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260816-155112/",
-      "post_id": 16870,
+      "title": "NewJeansハニの個人情報流出疑惑と反発",
+      "url": "https://www.kpopjournal.tokyo/newjeans-hani-personal-info-leak/",
+      "post_id": 16918,
       "genre": "breaking",
-      "artist": "NMIXX",
+      "artist": "NewJeans",
       "priority": "high",
-      "queued_at": "2026-08-16T15:51:30.456218"
+      "queued_at": "2026-08-16T21:30:55.075773"
     }
   ]
 }

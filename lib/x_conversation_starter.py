@@ -156,6 +156,48 @@ def _weighted_artist(directives: dict) -> str:
     return random.choice(pool)
 
 
+# 2026-08-16: 会話つぶやきの種にしないトピック語。事実関係が確定していない、
+# あるいは被害・係争が絡む話題を「ファンの独り言」として流すと、憶測の拡散や
+# 二次加害になる。記事として扱うことは妨げないが、X の軽い投稿には載せない。
+_SENSITIVE_TOPIC_WORDS = (
+    '盗作', '剽窃', '流出', '訴訟', '告訴', '起訴', '逮捕', '書類送検',
+    '暴行', 'ハラスメント', 'いじめ', '学暴', '薬物', '飲酒運転',
+    '死去', '訃報', '事故死', '自殺', '熱愛否定', '離婚', '不倫',
+    '論争', '物議', '炎上', '批判殺到', '謝罪', '契約解除', '専属契約紛争',
+)
+
+
+def _pick_theme_for(artist: str, themes: list) -> str:
+    """投稿対象アーティストに関係する focus_theme を1件選び、事実部分だけを返す。
+
+    2026-08-16 追加。LLM に「何について書くか」を渡さないと、どのアーティストにも
+    当てはまる空虚なつぶやきしか生成されない(実測: Phase1の8投稿すべて)。
+    topic は「<artist>速報の深掘り: <実際の見出し>」形式なので、コロン以降の
+    見出し部分=具体的事実だけを取り出す。該当が無ければ空文字(=話題を渡さない)。
+    """
+    if not artist or not themes:
+        return ""
+    key = str(artist).replace(" ", "").lower()
+    cands = []
+    for t in themes:
+        topic = (t.get("topic", "") if isinstance(t, dict) else str(t)).strip()
+        if not topic:
+            continue
+        # 2026-08-16: 係争・被害・訴訟系は「個人の独り言」として軽く触れると
+        # 加害・誤情報の拡散になりうるため、つぶやきの種にしない。
+        # (実際に「盗作指摘」「個人情報流出」を種にした生成が確認された)
+        if any(w in topic for w in _SENSITIVE_TOPIC_WORDS):
+            continue
+        if key and key in topic.replace(" ", "").lower():
+            # 「〜速報の深掘り: 見出し」→ 見出しだけ
+            fact = topic.split(":", 1)[1].strip() if ":" in topic else topic
+            if fact:
+                cands.append(fact)
+    if not cands:
+        return ""
+    return random.choice(cands)[:120]
+
+
 def _persona_generate(artist: str, directives: dict) -> dict | None:
     """X_PERSONA_LLM=1 のとき LLM ペルソナで純つぶやきを生成 (URLなし)。
     成功時は generate() と同形の dict、失敗時は None (呼出側でテンプレ退避)。
@@ -167,12 +209,20 @@ def _persona_generate(artist: str, directives: dict) -> dict | None:
     except ImportError:
         return None
     # focus_themes をきっかけ語として渡す(時事連動)
+    # 2026-08-16 真因修理: 要素は {'topic': ..., 'hint': ...} なのに .get("theme") を
+    # 読んでおり、**theme_text が空白80文字**になっていた。つまり LLM には artist 名しか
+    # 届いておらず、具体的事実ゼロで書かせていたため「なんか〜な気がする」「どうなってん
+    # だろう」といった、どのアーティストにも当てはまる空虚な投稿しか出てこなかった
+    # (Phase1の8投稿すべてがこの型。owner指摘「ペルソナ型も的外れ」の正体)。
+    # 加えて全290件を連結して80字で切っていたため、仮にキーが正しくても先頭数件の
+    # 断片しか渡らない。**投稿対象アーティストに関係するテーマだけ**を選んで渡す。
     themes = directives.get("focus_themes", [])
-    theme_text = " ".join(
-        (t.get("theme", "") if isinstance(t, dict) else str(t)) for t in themes
-    )[:80]
+    theme_text = _pick_theme_for(artist, themes)
+    payload = {"artist": artist}
+    if theme_text:
+        payload["theme"] = theme_text
     out = generate_persona_post(
-        {"artist": artist, "theme": theme_text},
+        payload,
         kind="conversation", genre="default",
     )
     if not out.get("used_llm") or not out.get("text"):

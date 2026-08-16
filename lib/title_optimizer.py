@@ -18,6 +18,19 @@ def _safe_truncate_title(title: str, max_len: int = MAX_TITLE) -> str:
         idx = cut.rfind(delim)
         if idx >= max_len - 8:
             return cut[:idx + len(delim)] if delim in ('】', '」', '』', ')', '）') else cut[:idx]
+    # 2026-08-16: 区切り文字が見つからないと語の途中で切れる
+    # (実例: 「…Cosmopolitan 2026年秋号カバーで魅」= 「魅了」の途中)。
+    # 日本語は助詞・動詞語幹で終わると明確に不自然なので、末尾から数文字だけ
+    # 削って文節境界らしい位置に寄せる。8字も遡ると情報が落ちるため最大4字。
+    _DANGLING = 'でをにへとがはのやもか、'
+    for back in range(0, 5):
+        end = max_len - back
+        if end <= 0:
+            break
+        tail = cut[end - 1]
+        # 助詞で終わる/ひらがな1字で終わる場合はそこを落として続ける
+        if tail in _DANGLING:
+            return cut[:end - 1]
     return cut
 
 
@@ -48,7 +61,13 @@ def optimize_title(raw_title: str, body: str = '') -> str:
         "4. 助詞最小限、体言止め推奨\n"
         "5. 【】は原題にある場合のみ保持\n"
         "6. 誇張禁止、事実のみ\n"
-        "7. 出力はタイトル1行のみ"
+        "7. 出力はタイトル1行のみ\n"
+        # 2026-08-16: 42字上限に収めようとして語の途中で終わる見出しが出ていた
+        # (実例「…Cosmopolitan 2026年秋号カバーで魅」=「魅了」の途中、
+        #  「…「Surfin' Boy」1位獲」=「獲得」の途中)。8月公開分で4件発生。
+        "8. **必ず文として完結させる**。上限に収まらないときは語を削って短くする。"
+        "単語・熟語の途中で終わる見出しは禁止(例:「〜で魅」「〜1位獲」「〜を発」)。"
+        "収まらない情報は捨ててよい"
     )
     user = f"原題: {raw_title}"
     if body:
