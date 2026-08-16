@@ -1,51 +1,33 @@
 {
-  "updated": "2026-08-15 21:17",
-  "count": 5,
+  "updated": "2026-08-16 15:51",
+  "count": 3,
   "queue": [
     {
-      "title": "チョ・ヒョナ、5世代ガールグループに言及",
-      "url": "https://www.kpopjournal.tokyo/cho-hyuna-5th-gen-girl-group/",
-      "post_id": 16788,
+      "title": "パク・チョロン、Apink広州公演の舞台裏で抱擁写真を公開",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260816-154805/",
+      "post_id": 16862,
       "genre": "breaking",
-      "artist": "조현아",
+      "artist": "에이핑크",
       "priority": "high",
-      "queued_at": "2026-08-13T21:36:54.229678"
+      "queued_at": "2026-08-16T15:48:33.108645"
     },
     {
-      "title": "ATEEZホンジュン、肋骨骨折と診断される",
-      "url": "https://www.kpopjournal.tokyo/ateez-hongjoong-rib-fracture/",
-      "post_id": 16800,
+      "title": "BLACKPINKのJENNIE、Cosmopolitan 2026年秋号カバーで魅",
+      "url": "https://www.kpopjournal.tokyo/blackpink-jennie-cosmopolitan-2026/",
+      "post_id": 16866,
       "genre": "breaking",
-      "artist": "ATEEZ",
+      "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-08-14T09:30:52.122205"
+      "queued_at": "2026-08-16T15:50:15.048027"
     },
     {
-      "title": "TXTが2026年グローバルシチズンフェスヘッドライナー",
-      "url": "https://www.kpopjournal.tokyo/?p=16804",
-      "post_id": 16804,
+      "title": "NMIXXのヘウォン、グループが次のカムバックを準備中であることを確認",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260816-155112/",
+      "post_id": 16870,
       "genre": "breaking",
-      "artist": "TXT",
+      "artist": "NMIXX",
       "priority": "high",
-      "queued_at": "2026-08-14T09:32:04.431282"
-    },
-    {
-      "title": "ビッグオーシャン、9月9日に「LOVE SIGN」リリース",
-      "url": "https://www.kpopjournal.tokyo/big-ocean-love-sign-release-september-9/",
-      "post_id": 16811,
-      "genre": "breaking",
-      "artist": "빅오션",
-      "priority": "high",
-      "queued_at": "2026-08-14T09:35:25.305648"
-    },
-    {
-      "title": "BIGBANG、宇宙航空庁初代広報大使に任命",
-      "url": "https://www.kpopjournal.tokyo/bigbang-space-agency-ambassador/",
-      "post_id": 16828,
-      "genre": "breaking",
-      "artist": "빅뱅",
-      "priority": "high",
-      "queued_at": "2026-08-14T11:31:42.853198"
+      "queued_at": "2026-08-16T15:51:30.456218"
     }
   ]
 }
