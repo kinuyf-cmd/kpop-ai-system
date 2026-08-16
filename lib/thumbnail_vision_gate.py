@@ -141,7 +141,15 @@ def vision_validate(image_path: str, expected_artist: str,
         "ステップ4: 期待アーティストと整合するか判定 (人数差を最重要視)\n\n"
         "## 判定ルール\n"
         "- 期待アーティスト本人 or 所属メンバー確実 → YES\n"
-        "- 別アーティスト/抽象アート/関係ない人物 → NO\n"
+        "- 別アーティスト/関係ない人物が写っている → NO\n"
+        "  (誤った人物を本人として提示してしまうため、これは決定的に不可)\n"
+        "- **人物が写っていない画像 (会場/看板/物品/ポスター/チャート図/風景など) → NEUTRAL**\n"
+        "  出典元記事のog画像は記事内容に即しているため、本人が写っていないだけの画像は\n"
+        "  「誤った人物を出す」害がない。NO ではなく NEUTRAL とすること。\n"
+        "  例: 「台北ドームの看板」「コンサート会場の設備」「BTS THE CITYのスーツケース」\n"
+        "- 期待アーティストが K-pop 覚え書きに無い場合、**人物が写っていても断定できないだけなら\n"
+        "  NEUTRAL** とする (俳優・トロット歌手・ソロ活動など覚え書きの範囲外は日常的にある)。\n"
+        "  明確に別人と分かる場合 (性別不一致・人数が大きく異なる等) のみ NO。\n"
         "- 公式ロゴ (SMTOWN, YG OFFICIAL, ADOR, JYP等) で所属事務所が確認できる場合は重要な手がかり\n"
         "  例: SMTOWN ロゴ → SM所属artist (aespa/Red Velvet/NCT等) でなければ NO\n"
         "  例: YG OFFICIAL → YG所属 (BLACKPINK/TREASURE/BABYMONSTER等) でなければ NO\n"
@@ -152,7 +160,8 @@ def vision_validate(image_path: str, expected_artist: str,
         "- K-pop知識で特定できない曖昧な画像は、見た目で判断 (公式ロゴあり=寄りYES)\n\n"
         "## 出力形式\n"
         '必ず以下のJSON1行で返答 (前後のテキストなし):\n'
-        '{"people_count": <integer>, "verdict": "YES" or "NO", "reason": "判定理由 (200字以内、まず people_count とその根拠を述べる)"}\n'
+        '{"people_count": <integer>, "verdict": "YES" or "NO" or "NEUTRAL", '
+        '"reason": "判定理由 (200字以内、まず people_count とその根拠を述べる)"}\n'
     )
     prompt_specific = (
         f"\n## 今回の判定タスク\n"
@@ -194,7 +203,7 @@ def vision_validate(image_path: str, expected_artist: str,
                         "type": "object",
                         "properties": {
                             "people_count": {"type": "integer"},
-                            "verdict": {"type": "string", "enum": ["YES", "NO"]},
+                            "verdict": {"type": "string", "enum": ["YES", "NO", "NEUTRAL"]},
                             "reason": {"type": "string"},
                         },
                         "required": ["people_count", "verdict", "reason"],
@@ -223,11 +232,16 @@ def vision_validate(image_path: str, expected_artist: str,
         try:
             parsed = json.loads(text)
             verdict = (parsed.get('verdict') or '').upper()
-            ok = verdict == 'YES'
+            # 2026-08-16 (owner方針「サムネは基本的に出典元のog画像を使う」):
+            # NO は「別人が写っている」= 誤った人物を本人として出す害があるので落とす。
+            # NEUTRAL は「人物が写っていない/断定できないだけ」= その害がないので通す。
+            # 従来は両者を同じ NO に潰しており、会場の看板・物品・チャート図といった
+            # 記事内容に即した og 画像まで落として DALL-E/別写真に降格させていた。
+            ok = verdict in ('YES', 'NEUTRAL')
             people_count = parsed.get('people_count')
             reason = parsed.get('reason', '')[:200]
             if people_count is not None:
-                reason = f'count={people_count} | {reason}'
+                reason = f'{verdict} count={people_count} | {reason}'
         except json.JSONDecodeError:
             ok = False
             reason = f'schema parse err: {text[:100]}'
