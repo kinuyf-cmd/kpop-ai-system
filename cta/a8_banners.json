@@ -3,8 +3,8 @@
     "version": "v1",
     "created_at": "2026-05-06",
     "source": "Notion 358bd75e-9d39-817c-8f02-c7ce13392997",
-    "total_programs": 13,
-    "total_banners": 29,
+    "total_programs": 14,
+    "total_banners": 27,
     "note": "A8素材HTML改変禁止 (規約)"
   },
   "programs": {
@@ -272,6 +272,33 @@
           "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=4B1THU+6NXQCA+5TN8+60WN5\" alt=\"\">"
         }
       }
+    },
+    "amazon_prime_video": {
+      "name": "Amazon Prime Video",
+      "program_id": "s00000026427001",
+      "category": "vod",
+      "tier": "S",
+      "micro_copy": "見放題作品を今すぐ / 30日間無料体験",
+      "button_text": "Prime Videoで観る",
+      "size_limitation": null,
+      "sizes": {
+        "300x250": {
+          "a8mat": "457NRV+AABNTM+5NWU+5ZEMP",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5ZEMP\" rel=\"nofollow\"><img border=\"0\" width=\"300\" height=\"250\" alt=\"\" src=\"https://www27.a8.net/svt/bgt?aid=250620187622&wid=002&eno=01&mid=s00000026427001005000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www17.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5ZEMP\" alt=\"\">"
+        },
+        "640x100": {
+          "a8mat": "457NRV+AABNTM+5NWU+5ZU29",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5ZU29\" rel=\"nofollow\"><img border=\"0\" width=\"640\" height=\"100\" alt=\"\" src=\"https://www23.a8.net/svt/bgt?aid=250620187622&wid=002&eno=01&mid=s00000026427001007000&mc=1\"></a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www13.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5ZU29\" alt=\"\">"
+        },
+        "text": {
+          "a8mat": "457NRV+AABNTM+5NWU+5YJRM",
+          "html": "<a href=\"https://px.a8.net/svt/ejp?a8mat=457NRV+AABNTM+5NWU+5YJRM\" rel=\"nofollow\">映画、TV番組、ライブTV、スポーツを観る【Amazon Prime Video】</a>",
+          "tracking_pixel": "<img border=\"0\" width=\"1\" height=\"1\" src=\"https://www12.a8.net/0.gif?a8mat=457NRV+AABNTM+5NWU+5YJRM\" alt=\"\">"
+        }
+      },
+      "note": "2026-08-16追加。VOD案件(報酬1500-2000円/件)。リンク生死をcurlで実証済(302→primevideojapan.sjv.io→amazon.co.jp/gp/video 200)。"
     }
   }
 }

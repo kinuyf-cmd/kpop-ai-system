@@ -146,7 +146,7 @@
         "キャスト"
       ],
       "position_top": {
-        "main": null,
+        "main": "amazon_prime_video",
         "fallback": null
       },
       "position_middle": {
@@ -154,11 +154,11 @@
         "fallback": null
       },
       "position_bottom": {
-        "main": null,
+        "main": "amazon_prime_video",
         "sub": null
       },
       "_pending_vod": {
-        "_note": "A8でVOD案件を提携したらここに入れる。判定は既にvideo_streamingへ寄せてある(2026-08-12)。",
+        "_note": "2026-08-16: Amazon Prime Video(既提携・報酬1500-2000円/件)を投入した。U-NEXT等は申請中で、承認されたらここの推奨順に従って差し替え/併用する。",
         "_recommended": [
           {
             "service": "U-NEXT",
@@ -253,18 +253,18 @@
     }
   },
   "hybrid_defaults": {
-    "_note": "マトリクスに該当しない場合のデフォルト案件 (a8_banners.json内のキーのみ使用)",
+    "_note": "マトリクスに該当しない場合のデフォルト案件 (a8_banners.json内のキーのみ使用)。2026-08-16: global_wifi から amazon_prime_video に差し替え。⚠️ ただし**本番の注入経路は lib/cta_injector → lib/genre_classifier → genre_rules** であり、この hybrid_* 系統(cta/new_post_injector + lib/revenue/genre_classifier)は現在使われていない。実際に効くのは genre_rules の方なので、案件を変えるときは必ず両方を確認すること。",
     "position_top": {
-      "main": "global_wifi",
-      "fallback": "voyageesim"
+      "main": "amazon_prime_video",
+      "fallback": null
     },
     "position_middle": {
-      "main": "matilda",
-      "fallback": "codibook"
+      "main": null,
+      "fallback": null
     },
     "position_bottom": {
-      "main": "global_wifi",
-      "sub": "voyageesim"
+      "main": "amazon_prime_video",
+      "sub": null
     }
   },
   "genre_rules": {
@@ -313,12 +313,14 @@
         "ワールドツアー"
       ],
       "cta_programs": [
+        "amazon_prime_video",
         "airtori_domestic",
         "airtori_hotel",
         "airtori_plus",
         "ikkyu_hotel"
       ],
-      "cta_max": 3
+      "cta_max": 3,
+      "_note_20260816": "先頭を amazon_prime_video に変更。event_concert は実記事の28%を占め、実本文に入ったA8リンクの最多(490記事)がエアトリだったが、GA4実測では 5日間PV3,284に対し affiliate_click 3件・航空券経由0件。読者の96%は 人物/作品情報を読みに来ており(旅行需要0.6%)、公演記事でも先に出すべきは配信視聴導線。航空券/ホテルは遠征需要が実在しうるため削除せず後順に残す。"
     },
     "popup": {
       "keywords": [
