@@ -19,10 +19,10 @@ from pathlib import Path
 
 import pytest
 
-# Ensure /tmp/wp_stg.txt exists for module import
-_creds = Path("/tmp/wp_stg.txt")
-if not _creds.exists():
-    _creds.write_text("DB_HOST=localhost\nDB_NAME=test\nDB_USER=test\nDB_PASS=test\n")
+# popup_event_to_post は 2026-08-17 に /tmp/wp_stg.txt 依存を廃止したため不要。
+# このダミー生成は実害を出した(2026-07-10 → popup記事化が38日間全停止)。
+# テストが本番の実行環境に副作用を残してはいけない。詳細は
+# tests/unit/test_popup_event_to_post.py の同箇所コメント。
 
 from lib.popup_event_fetcher import matches_kpop, classify
 from lib.popup_event_to_post import slugify, esc_sql
@@ -157,11 +157,19 @@ class TestIncident7_Utf8mb4Connection:
     """
 
     def test_run_mysql_uses_utf8mb4(self):
+        # 2026-08-17: run_mysql は mysql 直叩き(--default-character-set=utf8mb4)から
+        # sudo ラッパー(kpop-wp-rw.sh)経由に変更した。/tmp/wp_stg.txt の資格情報が
+        # 消える/キー名が食い違う問題で38日間 popup が全停止したため。
+        # utf8mb4 はラッパー側で保証されており、実測で絵文字・日本語とも
+        # 往復して壊れないことを確認済み(SELECT '🎤絵文字テスト💜' が無傷で返る)。
+        # よって検査対象を「文字列 utf8mb4 の有無」から「資格情報を直接扱わず
+        # ラッパー経由であること」に変更する。
         src = ROOT / "lib" / "popup_event_to_post.py"
         if not src.exists():
             pytest.skip("popup_event_to_post.py not present")
         text = src.read_text(encoding="utf-8", errors="replace")
-        assert "utf8mb4" in text, "run_mysql lacks utf8mb4 charset specification"
+        assert "kpop-wp-rw.sh" in text, "run_mysql should go through the sudo wrapper"
+        assert 'DB["WP_DB_USER"]' not in text, "run_mysql must not read raw DB creds"
 
 
 class TestIncident_SqlInjectionPrevention:

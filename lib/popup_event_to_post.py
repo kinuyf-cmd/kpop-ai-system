@@ -49,18 +49,10 @@ except Exception:
 
 # ─── 設定 ──────────────────────────────────────────────
 # stg DB 接続(/tmp/wp_stg.txt から読む)
-def _load_db_creds() -> dict:
-    creds_file = Path("/tmp/wp_stg.txt")
-    if not creds_file.exists():
-        sys.exit("ERROR: /tmp/wp_stg.txt not found — cannot connect to stg DB")
-    out = {}
-    for line in creds_file.read_text().splitlines():
-        m = re.match(r"^([A-Z_]+)=(.*)$", line.strip())
-        if m:
-            out[m.group(1)] = m.group(2)
-    return out
-
-DB = _load_db_creds()
+# 2026-08-17: /tmp/wp_stg.txt からの資格情報読み込みを廃止。
+# /tmp は消えるうえ、ファイル側(DB_USER/DB_PASS)とコード側(WP_DB_USER/
+# WP_DB_PASSWORD)でキー名が食い違っており、7/10以降38日間 KeyError で
+# 毎日クラッシュしていた。DB アクセスは run_mysql() の sudo ラッパー経由に統一。
 
 def now_iso() -> str:
     return datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M:%S")
@@ -348,18 +340,20 @@ def esc_html(s: str) -> str:
 
 # ─── DB 投稿 ───────────────────────────────────────────
 def run_mysql(sql: str) -> str:
-    """stg DB に SQL を実行して標準出力を返す。utf8mb4 を明示(絵文字対応)。"""
-    cmd = [
-        "mysql",
-        "--default-character-set=utf8mb4",
-        "-u", DB["WP_DB_USER"],
-        f"-p{DB['WP_DB_PASSWORD']}",
-        DB["WP_DB_NAME"],
-        "-e", sql,
-    ]
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    """DB に SQL を実行して標準出力を返す。
+
+    2026-08-17 真因修理: 従来は /tmp/wp_stg.txt から資格情報を読んで mysql を
+    直叩きしていたが、**/tmp のファイルは消えるうえキー名も食い違っていた**。
+    実際 7/10 03:00 以降 `KeyError: 'WP_DB_USER'` で **38日間毎日クラッシュ**し、
+    popup の記事化が全停止していた(ファイル側は DB_USER/DB_PASS、コード側は
+    WP_DB_USER/WP_DB_PASSWORD を要求。しかも中身はテスト用ダミー値だった)。
+    資格情報を持たずに済む sudo ラッパー(NOPASSWD)経由に統一する。
+    書き込みを含む SQL があるため rw ラッパーを使う(db query は read も通る)。
+    """
+    cmd = ["sudo", "-n", "/usr/local/sbin/kpop/kpop-wp-rw.sh", "db", "query", sql]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
     if r.returncode != 0:
-        sys.exit(f"mysql error: {r.stderr}")
+        sys.exit(f"mysql error: {r.stderr.strip()[:300]}")
     return r.stdout.strip()
 
 def find_post_by_slug(slug: str, post_type: str) -> tuple[int, str]:
@@ -481,7 +475,7 @@ def insert_post(title: str, body: str, slug: str, post_type: str,
         return 0
 
     # GUID set
-    site = "https://stg.kpopjournal.tokyo"
+    site = "https://www.kpopjournal.tokyo"
     guid = f"{site}/?p={pid}" if post_type == "post" else f"{site}/?post_type={post_type}&p={pid}"
     run_mysql(f"UPDATE wp_posts SET guid='{esc_sql(guid)}' WHERE ID={pid};")
     return pid
@@ -1004,7 +998,7 @@ def main(signals_path: str) -> int:
             if existing_id:
                 print(f"  SKIP(dedup): source_url は既存 ID {existing_id}(status={existing_status})、insert しない")
                 posted.append({"type": "popup", "post_id": existing_id, "title": sig.get("title", ""),
-                               "url": f"https://stg.kpopjournal.tokyo/?p={existing_id}", "skipped_dedup": True})
+                               "url": f"https://www.kpopjournal.tokyo/?p={existing_id}", "skipped_dedup": True})
                 continue
             title, body, slug = build_popup_article(sig)
             ok_pub, gate_reason = popup_quality_gate(sig, title)
@@ -1030,7 +1024,7 @@ def main(signals_path: str) -> int:
                 thumb_url = sig.get("thumbnail_url", "")
                 if thumb_url:
                     download_and_attach_thumbnail(pid, thumb_url, sig)
-            posted.append({"type": "popup", "post_id": pid, "title": title, "url": f"https://stg.kpopjournal.tokyo/{slug}/"})
+            posted.append({"type": "popup", "post_id": pid, "title": title, "url": f"https://www.kpopjournal.tokyo/{slug}/"})
         elif sig["type"] == "event":
             title, body, slug, start_date = build_event_article(sig)
             # 冪等ガード(2026-05-25): slug は start_date+source_url の md5 を含むため
@@ -1040,12 +1034,12 @@ def main(signals_path: str) -> int:
             if existing_eid:
                 print(f"  SKIP(dedup): event slug={slug} は既存 ID {existing_eid}(status={existing_estatus})")
                 posted.append({"type": "event", "post_id": existing_eid, "title": title,
-                               "url": f"https://stg.kpopjournal.tokyo/events/{slug}/", "skipped_dedup": True})
+                               "url": f"https://www.kpopjournal.tokyo/events/{slug}/", "skipped_dedup": True})
                 continue
             pid = insert_post(title, body, slug, post_type="tribe_events")
             if pid and not DRY_RUN:
                 add_event_date_meta(pid, start_date)
-            posted.append({"type": "event", "post_id": pid, "title": title, "url": f"https://stg.kpopjournal.tokyo/events/{slug}/"})
+            posted.append({"type": "event", "post_id": pid, "title": title, "url": f"https://www.kpopjournal.tokyo/events/{slug}/"})
         else:
             print(f"  SKIP: unknown type {sig['type']}")
 

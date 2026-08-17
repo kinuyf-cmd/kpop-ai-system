@@ -9,10 +9,9 @@ import os
 import sys
 from pathlib import Path
 
-# /tmp/wp_stg.txt が無い環境でも import できるよう先にダミー作成(他テスト踏襲)
-_creds = Path("/tmp/wp_stg.txt")
-if not _creds.exists():
-    _creds.write_text("DB_HOST=localhost\nDB_NAME=test\nDB_USER=test\nDB_PASS=test\n")
+# popup_event_to_post は 2026-08-17 に /tmp/wp_stg.txt 依存を廃止したため不要。
+# このダミー生成は実害を出した(2026-07-10 → popup記事化が38日間全停止)。
+# テストが本番の実行環境に副作用を残してはいけない。
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 

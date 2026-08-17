@@ -6,10 +6,14 @@ import os
 import sys
 from pathlib import Path
 
-# /tmp/wp_stg.txt が無い環境でも import できるように先にダミーを作る
-_creds = Path("/tmp/wp_stg.txt")
-if not _creds.exists():
-    _creds.write_text("DB_HOST=localhost\nDB_NAME=test\nDB_USER=test\nDB_PASS=test\n")
+# popup_event_to_post は 2026-08-17 に /tmp/wp_stg.txt 依存を廃止したため、
+# ここでダミーを作る必要はなくなった。
+# ⚠️ このダミー生成は実害を出した: 2026-07-10 03:00 にテストが空の /tmp に
+# ダミー(DB_USER=test 等)を書き、1時間後の popup cron がそれを本番の資格情報として
+# 読み込み KeyError で異常終了。ファイルが残り続けたため **38日間 popup の記事化が
+# 全停止**した。テストが本番の実行環境に副作用を残してはいけない。
+# 他スクリプト(kpop_backup_weekly.sh 等)がまだこのパスを見るため、
+# **テスト側から作成しない**。
 
 from unittest import mock
 
