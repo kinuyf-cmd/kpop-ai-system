@@ -239,6 +239,12 @@ _PR_TONE_PATTERNS = (
     r"目が離せ(?:ない|ません)",
     r"今後の(?:活躍|展開)に(?:期待|注目)",
     r"(?:活躍|成功)を(?:続けて|拡大)",
+    # 2026-08-17 第2波: 称賛語もメディア発表文の印。個人の続きに見えない。
+    r"大(?:成功|盛況|好評)",
+    r"(?:感動|圧巻|素晴らし)",
+    r"盛り上がりを見せ",
+    r"熱狂的な",
+    r"絆を深め",
 )
 
 
@@ -294,6 +300,12 @@ def extract_payoff(body: str, fact: str = "", artist: str = "") -> str:
             "\n- 本文に無い事実は絶対に書かない"
             "\n- 60〜110字。煽らない。『詳しくは記事で』のような案内文は書かない"
             "\n- 出力は本文のみ。URL・ハッシュタグ・絵文字は付けない"
+            # 2026-08-17: 実測で「大成功!」「盛り上がりを見せています」といった
+            # 広報文が返り続けた。個人アカウントの続きとして読める文にする。
+            "\n\n【禁止 — これが出ると個人の投稿に見えない】"
+            "\n- 『大成功』『大盛況』『感動』『圧巻』『素晴らしい』などの称賛語"
+            "\n- 『注目が集まります』『期待大』『目が離せない』などの締め"
+            "\n- 感嘆符(!)を使わない。淡々と事実の内訳だけを書く"
         )
         user = (
             f"話題: {fact}\n\n記事本文(この中の情報だけ使う):\n{t[:2500]}\n\n"
@@ -303,7 +315,7 @@ def extract_payoff(body: str, fact: str = "", artist: str = "") -> str:
         for _ in range(3):
             out = (_call_llm(system, user, "editorial") or "").strip()
             out = re.sub(r"https?://\S+", "", out).strip()
-            if not (20 <= len(out) <= 160):
+            if not (20 <= len(out) <= 180):
                 continue
             # 広報口調は個人アカウントの投稿として不自然(実測で出た)
             if is_pr_tone(out):
@@ -350,40 +362,28 @@ def build_hook(artist: str, fact: str, article: dict, body_text: str = "") -> st
     記事タイトルの丸写しは bot 感が強く実測でも伸びなかったため、LLM で組む。
     """
     body = str(body_text or "")
+    # 2026-08-17: 当初は専用プロンプトで _call_llm を直叩きしたが、実測で毎回
+    # 「大成功！」「感動」「期待大！」といった広報文になり、しかも指示した字数
+    # (60〜130字)を守らず 150〜176字で返してガードに全部落ちた(=英語見出しの
+    # フォールバックしか出なかった)。会話型で AI 感を抑えられているペルソナ経路
+    # (_POST_FORMS・_is_ai_ish・捏造ガードが効く)に統一する。
     try:
-        from lib.x_persona_voice import _call_llm, _numbers_consistent, _is_ai_ish
-        system = (
-            "あなたは K-POP をよく見ている個人アカウントの中の人です。"
-            "X に、いま話題の出来事について投稿します。自己リプライに『続き』を置くので、"
-            "本文はその手前で止めます。"
-            "\n【本文の作り方】"
-            "\n- 出来事の要点は本文でちゃんと伝える(出し渋らない。本文だけでも読む価値を持たせる)"
-            "\n- そのうえで、最後の具体(数字の内訳・条件・理由・他との比較)には触れず、"
-            "『そこが気になる』と思わせる一点を残して切る"
-            "\n- 『続きはリプで』『詳しくは記事で』のような案内文は絶対に書かない。"
-            "案内せずに、内容の途中で自然に止める"
-            "\n- 煽り(衝撃の/ヤバい)・engagement bait(どう思う?)・宣伝口調は禁止"
-            "\n- 記事本文に書かれていない事実・数字は書かない"
-            "\n- 60〜130字。2〜3行。URL・ハッシュタグ・絵文字・署名は付けない"
-            "\n- 出力は本文のみ"
-        )
-        user = (
-            f"話題: {fact}\n\n"
-            + (f"記事本文(この中の情報だけ使う):\n{body[:2000]}\n\n" if body else "")
-            + "X投稿の本文(続きはリプに置くので途中で止める):"
-        )
+        from lib.x_persona_voice import generate_persona_post
         for _ in range(3):
-            cand = (_call_llm(system, user, "editorial") or "").strip()
-            cand = re.sub(r"https?://\S+", "", cand).strip()
-            cand = re.sub(r"\n*#\S+.*$", "", cand).strip()
-            if not (30 <= len(cand) <= 160):
+            out = generate_persona_post(
+                {"artist": artist, "theme": fact, "tone": "plain"},
+                kind="conversation", genre="default",
+            )
+            text = (out.get("text") or "").strip()
+            if not text:
                 continue
-            if _is_ai_ish(cand) or is_pr_tone(cand):
+            # ハッシュタグ行は落とす(リプ側で記事に誘導するので本文は素のまま)
+            text = re.sub(r"\n+#.*$", "", text).strip()
+            if not text or "http" in text:
                 continue
-            # 本文にない数字を出していないか(記事本文と出来事の両方を許容元にする)
-            if body and not _numbers_consistent(cand, body + " " + str(fact)):
+            if is_pr_tone(text):
                 continue
-            return cand
+            return text
     except Exception:
         pass
     # フォールバック: 出来事をそのまま短く提示する(URLは付けない)

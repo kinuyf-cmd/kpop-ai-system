@@ -403,6 +403,58 @@ def _ts_to_int(ts: str) -> int:
         return 0
 
 
+def _post_traffic(dry_run: bool = False) -> dict:
+    """トレンド連動のサイト流入投稿(2026-08-17, owner決定)。
+
+    本文 = URL なしのフックで、内容の途中で止める。
+    自己リプ = 本文の続き(記事本文から抜いた具体)+ URL。
+    「リプに URL だけ」ではなく続きを置くのは、本文を見た人が続きを読みたくなる
+    ようにするため(owner指摘)。記事側に続きとして渡せる中身が無い場合は
+    そもそも投稿しない(飛んだ読者を裏切らないため)。
+    """
+    try:
+        from lib.x_traffic_picker import pick_traffic_post, remember_used
+    except ImportError as e:
+        print(f"  [traffic] import失敗: {e}")
+        return {'success': False, 'reason': f'import失敗: {e}'}
+    post = pick_traffic_post()
+    if not post:
+        return {'success': False, 'reason': 'トレンドに関連する中身のある記事が無い'}
+    if dry_run:
+        print(f"  [traffic] DRY 本文: {post['hook'][:60]}")
+        print(f"  [traffic] DRY リプ: {post['reply'][:60]}")
+        return {'success': True, 'dry_run': True}
+    from google_metrics.post_to_x import post_tweet, validate_credentials
+    creds, errors = validate_credentials()
+    if creds is None:
+        return {'success': False, 'reason': '; '.join(errors)}
+    tid, err = post_tweet(post['hook'], creds=creds)
+    if not tid:
+        print(f"  [traffic] 本文投稿失敗: {err}")
+        return {'success': False, 'reason': err}
+    print(f"  [traffic] ✓ hook={tid}: {post['hook'][:40]}")
+    # 自己リプ(続き+URL)。本文が通ってからリプを打つ。
+    rid, rerr = post_tweet(post['reply'], creds=creds, reply_to=tid)
+    if not rid:
+        # 本文は出ているので失敗扱いにはしない(導線だけ欠ける)
+        print(f"  [traffic] リプ失敗(本文のみ残る): {rerr}")
+    else:
+        print(f"  [traffic] ✓ reply={rid}")
+    remember_used(post['post_id'])
+    try:
+        with POSTS_LOG.open('a', encoding='utf-8') as f:
+            f.write(json.dumps({'ts': datetime.now().isoformat(), 'mode': 'hook',
+                                'status': 'ok', 'tweet_id': str(tid),
+                                'reply_id': str(rid or ''),
+                                'text': post['hook'],
+                                'artist': post.get('artist', ''),
+                                'post_id': post.get('post_id'),
+                                'kind': 'traffic'}, ensure_ascii=False) + '\n')
+    except OSError:
+        pass
+    return {'success': True, 'tweet_id': tid, 'reply_id': rid}
+
+
 def _post_conversation(dry_run: bool = False) -> dict:
     """会話起点 text-only 投稿(施策2/1)。x_conversation_starter で生成し、
     URLなしで投稿。成功したら engagement watch を登録(施策1 が +10/30/60分で返信収集)。"""
@@ -412,6 +464,11 @@ def _post_conversation(dry_run: bool = False) -> dict:
         print(f"  [conversation] import失敗: {e}")
         return {'success': False, 'error': str(e)}
     post = generate(None, None)        # ランダムテンプレ×アーティスト(directives重み付けは生成側)
+    # 2026-08-17: 話題(事実)が無い回は投稿を見送る。事実ゼロで生成させると
+    # 「なんか〜な気がする」型の空虚な投稿になり ER 0% だった(実測)。
+    if post.get('skip'):
+        print(f"  [conversation] 見送り: {post.get('skip_reason')} (artist={post.get('artist')})")
+        return {'success': False, 'skipped': True, 'error': post.get('skip_reason', 'skip')}
     issues = validate(post)
     if issues:
         print(f"  [conversation] バリデーションNG: {issues}")
@@ -513,6 +570,19 @@ def process_queue(dry_run: bool = False) -> dict:
             # 会話投稿後は間隔を空けるため、本回は記事を出さず次回に回す
             print(f"[scheduler] 会話1件投稿 / 記事は次回(間隔確保)/ 残キュー: {len(queue)}件")
             return {'processed': 1, 'remaining': len(queue)}
+
+    # 2026-08-17: 記事帯はまずトレンド連動の流入投稿を試す(owner決定)。
+    # 本文=URLなしのフック(途中で止める)/ 自己リプ=続き+URL。
+    # キュー順の記事は「いま話題でない」ものが出て読まれないため、こちらを優先する。
+    # 出せる話題+関連記事が無ければ従来のキュー経路にそのまま落ちる。
+    if role == 'article':
+        traffic = _post_traffic(dry_run=dry_run)
+        if traffic.get('success'):
+            save_queue(queue)
+            print(f"[scheduler] 流入投稿1件(トレンド連動)/ 残キュー: {len(queue)}件")
+            return {'processed': 1, 'remaining': len(queue)}
+        if traffic.get('reason'):
+            print(f"[scheduler] 流入投稿なし({traffic['reason']}) — キュー経路へ")
 
     # 選定スコアで並べ、同一アーティスト連投を避けて選ぶ
     queue = _sort_queue(queue)
