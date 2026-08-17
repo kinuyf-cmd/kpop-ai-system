@@ -118,6 +118,12 @@ DEFAULT_ARTIST_POOL = [
     "BTS", "BLACKPINK", "NewJeans", "TWICE", "SEVENTEEN", "Stray Kids",
     "IVE", "aespa", "LE SSERAFIM", "ILLIT", "RIIZE", "BABYMONSTER",
     "NCT", "ENHYPEN", "ATEEZ",
+    # 2026-08-17 追加: trend_signals に実際に頻出しているのにプールから漏れており、
+    # 話題があっても選ばれなかった。候補が狭いと同じ2〜3組を毎回扱うことになり、
+    # 同じ事実を言い換えるだけの投稿が続く(実測で10本中7本が同一2組)。
+    "TXT", "ITZY", "NMIXX", "Red Velvet", "KATSEYE", "BOYNEXTDOOR",
+    "ZEROBASEONE", "TREASURE", "P1Harmony", "CORTIS", "KiiiKiii",
+    "WayV", "Xdinary Heroes", "RESCENE", "WOODZ", "AKMU",
 ]
 
 
@@ -144,6 +150,36 @@ def _load_directives() -> dict:
         return {}
 
 
+def _recent_artists(n: int = 4) -> set[str]:
+    """直近 n 件の投稿で扱ったアーティスト名。連投を避けるために使う。"""
+    log = ROOT / "logs" / "x_posts.jsonl"
+    if not log.exists():
+        return set()
+    out: list[str] = []
+    try:
+        lines = log.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return set()
+    for line in reversed(lines):
+        try:
+            d = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if d.get("status") != "ok" or d.get("kind") != "conversation":
+            continue
+        a = (d.get("artist") or "").strip()
+        if not a:
+            # 古いログには artist が無い。本文から拾って補う。
+            text = d.get("text", "")
+            a = next((p for p in DEFAULT_ARTIST_POOL
+                      if p.replace(" ", "").lower() in text.replace(" ", "").lower()), "")
+        if a:
+            out.append(a)
+        if len(out) >= n:
+            break
+    return set(out)
+
+
 def _weighted_artist(directives: dict) -> str:
     """いま実際に話題になっているアーティストを選ぶ。
 
@@ -159,8 +195,13 @@ def _weighted_artist(directives: dict) -> str:
     except Exception:
         hot = []
     if hot:
-        # 勢い上位に寄せつつ、毎回同じ1組にならないよう上位帯から選ぶ
-        return random.choice(hot[:5])
+        # 2026-08-17: 直近に投稿したアーティストは外す。上位帯からランダムに
+        # 引くだけだと同じ相手が続き、実測で生成8本中4本が同一グループになった。
+        recent = _recent_artists()
+        fresh = [a for a in hot if a not in recent]
+        # 上位6組に絞ると候補が固定され、同じ話題を言い換えるだけの投稿が続く
+        # (実測: 生成10本中7本が同一2組)。話題があるアーティスト全体から選ぶ。
+        return random.choice(fresh or hot)
     themes = directives.get("focus_themes", [])
     theme_text = " ".join(
         (t.get("theme", "") if isinstance(t, dict) else str(t)) for t in themes

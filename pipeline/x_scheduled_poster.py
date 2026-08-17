@@ -435,6 +435,9 @@ def _post_conversation(dry_run: bool = False) -> dict:
             f.write(json.dumps({'ts': datetime.now().isoformat(), 'mode': 'hook',
                                 'status': 'ok', 'tweet_id': str(tid),
                                 'text': post['text'],
+                                # 2026-08-17: 直近と同じアーティストを続けて選ばない
+                                # ための材料(実測で生成8本中4本が同一グループだった)
+                                'artist': post.get('artist', ''),
                                 'kind': 'conversation'}, ensure_ascii=False) + '\n')
     except OSError:
         pass
