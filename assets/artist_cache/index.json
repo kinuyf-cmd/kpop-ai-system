@@ -951,5 +951,19 @@
         "license": "CC BY-SA 3.0"
       }
     ]
+  },
+  "jennie": {
+    "name": "JENNIE",
+    "files": [
+      "jennie_48018a00.jpg"
+    ],
+    "sources": [
+      {
+        "file": "jennie_48018a00.jpg",
+        "wikimedia_title": "File:Peter Gabriel Back To Front-Tour Jennie Abrahamson+Linnea Olsson 29042014.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Peter_Gabriel_Back_To_Front-Tour_Jennie_Abrahamson%2BLinnea_Olsson_29042014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
   }
 }

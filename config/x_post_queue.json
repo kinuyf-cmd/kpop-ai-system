@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-16 22:18",
-  "count": 3,
+  "updated": "2026-08-17 21:35",
+  "count": 4,
   "queue": [
     {
       "title": "パク・ウンビン×ヤン・セジョン『恋は命がけ』配信日",
@@ -12,22 +12,31 @@
       "queued_at": "2026-08-16T17:00:19.997563"
     },
     {
-      "title": "キム・ジェファン、KCON LA 2026で近況報告",
-      "url": "https://www.kpopjournal.tokyo/kim-jae-hwan-kcon-la-2026-update/",
-      "post_id": 16923,
+      "title": "アン・ボヒョン、デビュー前の日雇い生活",
+      "url": "https://www.kpopjournal.tokyo/an-bohyeon-debut-temp-life/",
+      "post_id": 17110,
       "genre": "breaking",
-      "artist": "워너원",
+      "artist": "안보현",
       "priority": "high",
-      "queued_at": "2026-08-16T21:36:32.508576"
+      "queued_at": "2026-08-17T21:35:21.695399"
     },
     {
-      "title": "NewJeansハニの個人情報流出疑惑と反発",
-      "url": "https://www.kpopjournal.tokyo/newjeans-hani-personal-info-leak/",
-      "post_id": 16918,
+      "title": "ジン・ヘソン、明るい衣装で舞台映像際立つ",
+      "url": "https://www.kpopjournal.tokyo/jin-hyoseong-stage-performance-bright-costume/",
+      "post_id": 17106,
       "genre": "breaking",
-      "artist": "NewJeans",
+      "artist": "화사",
       "priority": "high",
-      "queued_at": "2026-08-16T21:30:55.075773"
+      "queued_at": "2026-08-17T21:33:38.765379"
+    },
+    {
+      "title": "IVEアン・ユジン、「宇宙餅屋」で10時間勤務の活躍",
+      "url": "https://www.kpopjournal.tokyo/ive-ahn-yujin-uchu-mochiya-10jikan/",
+      "post_id": 17101,
+      "genre": "breaking",
+      "artist": "IVE",
+      "priority": "high",
+      "queued_at": "2026-08-17T21:31:28.675313"
     }
   ]
 }

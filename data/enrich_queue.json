@@ -12,6 +12,18 @@
   "route": "enrich"
  },
  {
+  "query": "エージェントキム 吹き替え",
+  "url": "https://www.kpopjournal.tokyo/agent-kim-reactivated-viewing-guide/",
+  "slug": "agent-kim-reactivated-viewing-guide",
+  "position": 6.91,
+  "impressions": 775,
+  "clicks": 15,
+  "potential": 140,
+  "theme": "other",
+  "source": "seo_lane_c_bridge",
+  "route": "enrich"
+ },
+ {
   "query": "ショウタロウのデザート",
   "url": "https://www.kpopjournal.tokyo/riize-shotaro-dessert-mc-2025/",
   "slug": "riize-shotaro-dessert-mc-2025",
@@ -19,18 +31,6 @@
   "impressions": 1,
   "clicks": 0,
   "potential": 128,
-  "theme": "other",
-  "source": "seo_lane_c_bridge",
-  "route": "enrich"
- },
- {
-  "query": "エージェントキム 吹き替え",
-  "url": "https://www.kpopjournal.tokyo/agent-kim-reactivated-viewing-guide/",
-  "slug": "agent-kim-reactivated-viewing-guide",
-  "position": 6.65,
-  "impressions": 663,
-  "clicks": 15,
-  "potential": 118,
   "theme": "other",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
@@ -51,10 +51,10 @@
   "query": "madein 無料ライブ",
   "url": "https://www.kpopjournal.tokyo/meidin-first-concert-free-entry/",
   "slug": "meidin-first-concert-free-entry",
-  "position": 6.08,
-  "impressions": 372,
+  "position": 6.12,
+  "impressions": 376,
   "clicks": 28,
-  "potential": 46,
+  "potential": 47,
   "theme": "other",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
