@@ -116,6 +116,10 @@ def log(msg):
 # **連続して0件が続くこと**を異常とする。
 COLLECT_HEALTH = '/home/aiuser/kpop-ai-system/logs/collector_health.jsonl'
 ZERO_ALERT_THRESHOLD = 5   # これ以上連続0件なら壊れていると判断
+# 健全性ログの保持行数。判定に必要なのは直近だけなので、無限に増やさない。
+# 12コレクタ×日8回=96行/日。放置すると x_scanwatch.log(30MB・369,244行が
+# 2パターンの繰り返し)と同じゴミになる(2026-08-18に実際に発見・削除した)。
+HEALTH_LOG_MAX = 2000
 
 
 def record_collect_result(source_id, count):
@@ -128,6 +132,30 @@ def record_collect_result(source_id, count):
             f.write(json.dumps({'ts': datetime.now().isoformat(),
                                 'source_id': source_id,
                                 'count': int(count)}, ensure_ascii=False) + '\n')
+    except OSError:
+        return
+    _trim_health_log()
+
+
+def _trim_health_log():
+    """保持行数を超えたら古い行から捨てる。末尾を残すので連続0件の判定は保たれる。
+
+    毎回ファイル全体を読み直すのは無駄なので、サイズが目安を超えたときだけ走らせる。
+    1行は実測70〜79バイト(source_id の長さで変わる)。取りこぼさないよう
+    下限側の70で見積もる — 大きめに見積もると発火せず上限を超えてしまう。
+    """
+    try:
+        if os.path.getsize(COLLECT_HEALTH) < HEALTH_LOG_MAX * 70:
+            return
+    except OSError:
+        return
+    try:
+        with open(COLLECT_HEALTH, encoding='utf-8') as f:
+            lines = f.read().splitlines()
+        if len(lines) <= HEALTH_LOG_MAX:
+            return
+        with open(COLLECT_HEALTH, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines[-HEALTH_LOG_MAX:]) + '\n')
     except OSError:
         pass
 

@@ -100,3 +100,26 @@ def test_48hシグナルゼロは記録が浅くても疑いとして出す(tmp_
     rows = {c["source_id"]: c for c in r["collectors"]}
     assert rows["wowkorea"]["suspect_dead"] is True
     assert rows["osen"]["suspect_dead"] is False
+
+
+def test_健全性ログは無限に増えない(tmp_path, monkeypatch):
+    """判定に必要なのは直近だけ。無限に増えると x_scanwatch.log(30MB・
+    369,244行が2パターンの繰り返し)と同じゴミになる。"""
+    import lib.collectors.korean_base as kb
+    p = tmp_path / "h.jsonl"
+    monkeypatch.setattr(kb, "COLLECT_HEALTH", p)
+    for i in range(kb.HEALTH_LOG_MAX + 200):
+        kb.record_collect_result("osen", i % 3)
+    lines = p.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) <= kb.HEALTH_LOG_MAX
+
+
+def test_間引いても連続0件の判定は保たれる(tmp_path, monkeypatch):
+    import lib.collectors.korean_base as kb
+    p = tmp_path / "h.jsonl"
+    monkeypatch.setattr(kb, "COLLECT_HEALTH", p)
+    for _ in range(kb.HEALTH_LOG_MAX + 50):
+        kb.record_collect_result("osen", 5)
+    for _ in range(4):
+        kb.record_collect_result("osen", 0)
+    assert kb.consecutive_zero_count("osen") == 4
