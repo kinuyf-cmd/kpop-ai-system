@@ -145,8 +145,22 @@ def _load_directives() -> dict:
 
 
 def _weighted_artist(directives: dict) -> str:
-    """focus_themes に登場するアーティスト名を優先して artist を選ぶ(時事連動)。
-    該当が無ければ DEFAULT_ARTIST_POOL からランダム。"""
+    """いま実際に話題になっているアーティストを選ぶ。
+
+    2026-08-17 修理: 従来は focus_themes(期限切れ258/295件)を頼りにするか、
+    DEFAULT_ARTIST_POOL からランダムに引いていた。話題の無いアーティストを引くと
+    LLM に渡す事実が無くなり、「なんか〜な気がする」型の空虚な投稿になる
+    (Phase1の19投稿で ER 0.12%)。**話題がある側から選ぶ**のが正しい向き。
+    trend_signals(30分毎更新)に生きた話題があるアーティストを勢い順に優先する。
+    """
+    try:
+        from lib.x_trend_topics import trending_artists
+        hot = trending_artists()
+    except Exception:
+        hot = []
+    if hot:
+        # 勢い上位に寄せつつ、毎回同じ1組にならないよう上位帯から選ぶ
+        return random.choice(hot[:5])
     themes = directives.get("focus_themes", [])
     theme_text = " ".join(
         (t.get("theme", "") if isinstance(t, dict) else str(t)) for t in themes
@@ -198,6 +212,43 @@ def _pick_theme_for(artist: str, themes: list) -> str:
     return random.choice(cands)[:120]
 
 
+# 使用済み話題の記録。同じ出来事を何度もつぶやくと使い回し感が出るため、
+# 一度種にした URL は一定期間再選択しない。
+USED_TOPICS_FILE = LOG_DIR / "x_used_topics.jsonl"
+USED_TOPICS_WINDOW_H = 72
+
+
+def _recent_topic_urls() -> set[str]:
+    """直近 USED_TOPICS_WINDOW_H 時間に種として使った話題の URL。"""
+    if not USED_TOPICS_FILE.exists():
+        return set()
+    cutoff = datetime.now(timezone(timedelta(hours=9))) - timedelta(hours=USED_TOPICS_WINDOW_H)
+    out = set()
+    try:
+        lines = USED_TOPICS_FILE.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return set()
+    for line in lines:
+        try:
+            d = json.loads(line)
+            if datetime.fromisoformat(d["ts"]) >= cutoff:
+                out.add(d.get("url", ""))
+        except (json.JSONDecodeError, KeyError, ValueError):
+            continue
+    return out
+
+
+def _remember_topic_url(url: str) -> None:
+    if not url:
+        return
+    LOG_DIR.mkdir(exist_ok=True)
+    try:
+        with USED_TOPICS_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"ts": now_iso(), "url": url}, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
 def _persona_generate(artist: str, directives: dict) -> dict | None:
     """X_PERSONA_LLM=1 のとき LLM ペルソナで純つぶやきを生成 (URLなし)。
     成功時は generate() と同形の dict、失敗時は None (呼出側でテンプレ退避)。
@@ -216,11 +267,36 @@ def _persona_generate(artist: str, directives: dict) -> dict | None:
     # (Phase1の8投稿すべてがこの型。owner指摘「ペルソナ型も的外れ」の正体)。
     # 加えて全290件を連結して80字で切っていたため、仮にキーが正しくても先頭数件の
     # 断片しか渡らない。**投稿対象アーティストに関係するテーマだけ**を選んで渡す。
-    themes = directives.get("focus_themes", [])
-    theme_text = _pick_theme_for(artist, themes)
-    payload = {"artist": artist}
-    if theme_text:
-        payload["theme"] = theme_text
+    # 2026-08-17 修理: 一次ソースを trend_signals(30分毎更新の生きた話題)にする。
+    # focus_themes は295件中258件が期限切れで、しかも _pick_theme_for は
+    # expires_at を見ていないため3ヶ月前の話題を「今の話題」として掴んでいた。
+    theme_text = ""
+    tone = "plain"
+    topic_url = ""
+    try:
+        from lib.x_trend_topics import pick_trend_topic
+        hot = pick_trend_topic(artist, used_urls=_recent_topic_urls())
+        if hot:
+            theme_text = hot["fact"]
+            # 噂・疑惑・移籍・体調などは扱ってよいが、断定させない口調に切り替える
+            tone = hot.get("tone", "plain")
+            # 使用済み記録は「実際に投稿できたとき」だけ付ける。ここで記録すると
+            # 生成失敗・dry-run・検証実行でも話題を消費し、実際には一度も投稿して
+            # いない話題が枯れて no_fresh_topic の空振りが続く。
+            topic_url = hot["url"]
+    except Exception:
+        pass
+    # 2026-08-17: focus_themes へのフォールバックは廃止した。topic 文字列が
+    # 「Stray Kids速報の深掘り: RESCENE、Love Attackで1位」のように別グループの
+    # 見出しと結合して壊れており、実際に RESCENE の受賞を Stray Kids の功績として
+    # 投稿する誤情報を生んでいた(生成6本中2本)。壊れた種を使うくらいなら投稿しない。
+    # 事実の裏付けが無いなら書かせない。実測(2026-08-17)のとおり、事実ゼロで
+    # 生成させると対象を差し替えても成立する空虚な感想しか出てこず ER 0% になる。
+    # None を返すと呼出側はテンプレへ退避するが、テンプレも同様に中身が無いため
+    # generate() 側で投稿自体を見送る(skip_no_topic)。
+    if not theme_text:
+        return None
+    payload = {"artist": artist, "theme": theme_text, "tone": tone}
     out = generate_persona_post(
         payload,
         kind="conversation", genre="default",
@@ -238,6 +314,8 @@ def _persona_generate(artist: str, directives: dict) -> dict | None:
         "in_range": 20 <= len(text) <= 200,
         "has_url": bool(re.search(r"https?://", text)),
         "hashtag_count": len(re.findall(r"#\S+", text)),
+        # 実際に投稿できたときだけ「使用済み」にするため、呼出側へ渡す
+        "topic_url": topic_url,
     }
 
 
@@ -252,6 +330,23 @@ def generate(template_id: str | None, artist: str | None) -> dict:
         persona = _persona_generate(artist, directives)
         if persona is not None:
             return persona
+        # 2026-08-17: ここに落ちるのは「いま話題が無い」場合。従来はテンプレ
+        # (C-1〜C-8)へ退避していたが、テンプレは {artist} 差し替えの一般論で
+        # 中身が無く、実測で ER 0% だった型そのもの。無理に投稿せず見送る。
+        # 空振りを投稿しないことで、フォロワーのTLを浪費せず信頼も減らさない。
+        return {
+            "template_id": "SKIP",
+            "category": "skip",
+            "title": "話題なしのため見送り",
+            "artist": artist,
+            "text": "",
+            "char_count": 0,
+            "in_range": False,
+            "has_url": False,
+            "hashtag_count": 0,
+            "skip": True,
+            "skip_reason": "no_fresh_topic",
+        }
     if not template_id:
         template_id = random.choice(list(TEMPLATES.keys()))
     if template_id not in TEMPLATES:
@@ -450,6 +545,12 @@ def main() -> int:
         return 0
 
     post = generate(args.id, args.artist)
+    if post.get("skip"):
+        # 話題が無い回は投稿しない(空虚な投稿でTLとimpを浪費しない)。
+        # cron が異常終了と誤認しないよう exit 0 で終える。
+        log_event(post, "skip_no_topic", f"artist={post.get('artist')}")
+        print(f"⏭ 直近に {post.get('artist')} の話題が無いため見送り (no_fresh_topic)")
+        return 0
     issues = validate(post)
     post["issues"] = issues
     post["valid"] = len(issues) == 0
@@ -478,6 +579,8 @@ def main() -> int:
         # エラー可視化: 連続失敗で Discord 通知。成功したら sentinel 解除(次の連続で再通知可)。
         if action == "post_live":
             _ALERT_SENTINEL.unlink(missing_ok=True)
+            # 投稿できた話題だけを使用済みにする(生成失敗やdry-runで消費しない)
+            _remember_topic_url(post.get("topic_url", ""))
             # 施策1-b: 投稿成功なら返信収集ウィンドウを登録(著者返信+75を取りに行く)
             if tweet_id:
                 register_watch(tweet_id, post["text"])

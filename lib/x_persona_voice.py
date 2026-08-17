@@ -177,6 +177,16 @@ def _has_forbidden(text: str) -> bool:
     return any(kw in text for kw in FORBIDDEN)
 
 
+# 韓国語ソースの見出しをそのまま種にすると、人名や曲名がハングルのまま本文に
+# 残ることがある(実測: 「NCT 런쥔が…「위로와 힐링」について語った」)。
+# 読者は日本語話者なので、残っていたら生成し直す。
+_HANGUL = re.compile(r'[가-힣ᄀ-ᇿ]')
+
+
+def _has_hangul(text: str) -> bool:
+    return bool(_HANGUL.search(str(text or '')))
+
+
 def _too_similar(text: str, recent: list[str]) -> bool:
     """直近本文と先頭 PREFIX_MATCH_LEN 字が一致したら使い回しとみなす。"""
     head = text[:PREFIX_MATCH_LEN]
@@ -281,8 +291,52 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
             seeds = list(w.get("topics", [])) or list(w.get("oshi", []))
             topic = random.choice(seeds) if seeds else ""
         if artist and fact:
+            # 2026-08-17: 渡した事実を「必ず具体的に書かせる」。実測で、事実を
+            # 渡しても「〜って、なんかすごい気がする」と抽象化して逃げる生成が
+            # 残っていた。数字・固有名は落とさせない(反応が付いた投稿は例外なく
+            # 数字か固有の出来事を含んでいた)。
             hint = (f"今ちょうど頭にあるのは「{artist}」の話で、きっかけはこの出来事:"
-                    f"「{fact}」。この出来事に触れた独り言にすること。")
+                    f"「{fact}」。この出来事に触れた独り言にすること。"
+                    "出来事の具体(数字・作品名・何が起きたか)を必ず一つは書くこと。"
+                    "ぼかして『すごい』『やばい』だけで済ませない。"
+                    # 2026-08-17: 実測で「Takes 2nd Win(2回目の1位)」を「2位獲得」と
+                    # 書き換える誤りが出た。数字と順位の意味は原文のまま扱わせる。
+                    "\n重要: 出来事に書かれた数字・順位・回数は、意味を変えずにそのまま扱うこと。"
+                    # 例示に固有の語(旧: 「2nd Win」)を使うと、それ自体が出来事と
+                    # 無関係に投稿本文へ紛れ込む事故が実測で出た。一般形で説明する。
+                    "英語の「Nth Win」は『N回目の1位』の意味で、『N位』ではない。"
+                    # 2026-08-17: 実測で「LALISAのMVが1億回再生突破」のような、出来事に
+                    # 一切書かれていない記録を創作する生成が出た。曲名・数字・記録は
+                    # 出来事に書かれているものしか使えない、と明示で縛る。
+                    "\n絶対禁止: 出来事に書かれていない曲名・数字・記録・再生回数・順位を出すこと。"
+                    "自分の記憶から補ってはいけない。書かれている範囲だけで書く。"
+                    "他の曲や過去の実績に言及したくなっても、出来事に無ければ書かない。")
+            # 2026-08-17: 噂・疑惑・移籍・体調などは扱ってよいが、断定させない。
+            # ニュースを扱う以上こうした話題は避けられないが、独り言の体裁で
+            # 言い切ると噂の拡散・決めつけになる。伝聞であることを口調で示す。
+            if str(context.get("tone") or "") == "hedged":
+                hint += (
+                    "\nこの話題は未確定・デリケートな内容を含む。次を厳守すること:"
+                    "\n- 報道・発表を受けての受け止めとして書き、事実として断定しない"
+                    "(『〜らしい』『と報じられてる』『という話が出てる』のように伝聞で書く)"
+                    "\n- 原因・背景・今後を勝手に推測しない。決めつけない"
+                    "\n- 面白がらない。茶化さない。他者や事務所を非難しない"
+                    "\n- 当事者が読んでも失礼にならない範囲にとどめる"
+                )
+            # 捏造禁止は最後に置く。hedge の指示より後ろに置かないと、伝聞口調へ
+            # 寄せる過程で「原文に無い曲名・記録」を補う生成が実測で復活した。
+            hint += ("\n【最優先】出来事に書かれていない固有名詞・曲名・数字・記録は"
+                     "一切書かないこと。これは他のどの指示よりも優先する。"
+                     # 2026-08-17: 「300 Million Streams」を「300万回再生」と書く
+                     # 誤変換が実測で出た(正しくは3億)。英語の桁は間違えやすいので明示。
+                     "\n英語の数値を日本語にするときの桁に注意: million=100万、"
+                     "billion=10億。『300 million』は『3億』、『1.9 billion』は『19億』。"
+                     "『1.9 billion』のように英語のまま書かず、必ず日本語の桁に直すこと。"
+                     "桁に自信が持てないときは、数字に触れず出来事だけを書くこと。"
+                     # 出来事が韓国語ソースだと人名・曲名がハングルのまま残る。
+                     "\n出来事が韓国語で書かれていても、本文は必ず日本語で書くこと。"
+                     "人名・曲名も日本語(またはアルファベット)表記に直し、"
+                     "ハングルをそのまま残さない。")
         elif topic:
             hint = f"今ちょうど頭にあるのは「{topic}」のこと。"
         else:
@@ -293,7 +347,18 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
             "自分の推しや関心ごとについての、独り言・疑問・あるある・どうでもいい報告・"
             "ぼやき・思いつきでいい。ニュースの要約や紹介ではない。"
             "直前の投稿リストはあくまで『被らせない為』の参照で、その話題を続ける必要はない。"
-            "事実を断定しない。きれいにまとめない。"
+            # 2026-08-17: 「事実を断定しない」は、渡した出来事まで曖昧にさせる副作用が
+            # あった。断定を避けるべきなのは**自分の解釈・憶測**であって、出来事そのもの
+            # ではない。出来事は与えられたとおり書き、感想の側を言い切らない。
+            "出来事そのものは与えられたとおり書いてよい。断定を避けるのは自分の解釈の側。"
+            "きれいにまとめない。"
+            # 2026-08-17: 反応(返信)を生む引っかかりを1つ残す。実測で ER が付いた
+            # 投稿は、読み手が「自分もそう思う/いや違う」と言いたくなる一点を持っていた。
+            # ただし「どう思う?」等の露骨な engagement bait は system 側で禁止済みなので、
+            # あくまで独り言の中に自然な余白として置く。
+            "\n読んだ人が思わず口を挟みたくなる余白を一つ残すこと。"
+            "例: 自分だけの偏った感想、意外だった点、他と比べたときの引っかかり。"
+            "ただし質問形で締めたり『みんなはどう?』と呼びかけたりはしない。"
             # 2026-08-16: 中身のない一般論を禁止(実測でこの型が8/8を占めた)
             "\n禁止: 「なんか〜な気がする」「どうなってるんだろう」「謎すぎ」のような、"
             "対象を差し替えても成立してしまう空虚な感想。何について言っているのかが"
@@ -301,6 +366,95 @@ def _build_prompt(kind: str, context: dict, writer_key: str,
             "\nつぶやき(1行のみ、オチ無しでよい):"
         )
     return system, user
+
+
+# ─── 数値の整合チェック(捏造・桁違いの検出) ──────────────────────────────
+# プロンプトで「原文に無い数字を書くな」と指示しても、実測で以下が残った:
+#   「300 Million Streams」→「300万回再生」(正: 3億) / 「1.9 Billion」→「1.9億」(正: 19億)
+# 桁違いは最も分かりやすい誤情報なので、生成後にコードで検査して弾く。
+
+# 日付・時刻として書かれた数値は検査から外す(誤情報になりにくく表記ゆれも大きい)。
+# 「2年半」のような経過年数は日付ではないので除外しない — 出来事に無ければ創作。
+_DATE_LIKE = re.compile(r'\d+\s*(?:月\d+\s*日|月|日|時|分|年代|/|:)')
+
+
+def _fact_number_set(fact: str) -> set[float]:
+    """出来事に現れる数値を、日本語表記に換算した集合として返す。
+
+    「300 Million」なら 3億(=300000000)と、素の 300 の両方を許容する。
+    どちらの言い回しで書かれても弾かないため。
+    """
+    out: set[float] = set()
+    text = str(fact or '')
+    for m in re.finditer(r'(\d+(?:\.\d+)?)\s*(million|billion|thousand)?', text, re.IGNORECASE):
+        try:
+            n = float(m.group(1))
+        except ValueError:
+            continue
+        out.add(n)
+        unit = (m.group(2) or '').lower()
+        if unit == 'million':
+            out.add(n * 1_000_000)
+        elif unit == 'billion':
+            out.add(n * 1_000_000_000)
+        elif unit == 'thousand':
+            out.add(n * 1_000)
+    return out
+
+
+def _body_numbers(text: str) -> list[float]:
+    """本文中の数値を、単位(万/億)を掛けた実数として返す。日付類は除く。"""
+    out = []
+    body = _DATE_LIKE.sub(' ', str(text or ''))
+    for m in re.finditer(r'(\d+(?:\.\d+)?)\s*(億|万)?', body):
+        raw = m.group(1)
+        try:
+            n = float(raw)
+        except ValueError:
+            continue
+        unit = m.group(2) or ''
+        if unit == '億':
+            out.append(n * 100_000_000)
+        elif unit == '万':
+            out.append(n * 10_000)
+        else:
+            out.append(n)
+    return out
+
+
+def _numbers_consistent(text: str, fact: str) -> bool:
+    """本文の数値がすべて出来事の数値で説明できるか。
+
+    出来事に無い数字を出した場合(捏造)と、桁を取り違えた場合の両方を弾く。
+    出来事が空なら検査しない(呼出側が事実を渡していないケース)。
+    """
+    if not str(fact or '').strip():
+        return True
+    allowed = _fact_number_set(fact)
+    for n in _body_numbers(text):
+        if not any(abs(n - a) < max(1e-6, abs(a) * 1e-9) for a in allowed):
+            return False
+    return True
+
+
+def _norm_title(s: str) -> str:
+    """作品名比較用の正規化(記号・空白を落として小文字化)。"""
+    return re.sub(r"[\s'’\"“”,.\-!?&:]", '', str(s or '')).lower()
+
+
+def _titles_consistent(text: str, fact: str) -> bool:
+    """本文が挙げる曲名・番組名が、出来事に出てくるものだけかを検査する。
+
+    実測(2026-08-17)で、退所報道の独り言に「『Next Level』の頃が懐かしい」と
+    出来事に無い別曲を差し込む生成が出た。読者には事実の一部に見えるため弾く。
+    """
+    if not str(fact or '').strip():
+        return True
+    fact_norm = _norm_title(fact)
+    for m in re.finditer(r'[「『"“]([^」』"”]{2,60})[」』"”]', str(text or '')):
+        if _norm_title(m.group(1)) not in fact_norm:
+            return False
+    return True
 
 
 def _has_otaku_overlap(text: str, recent: list[str]) -> bool:
@@ -390,7 +544,12 @@ def generate_persona_post(context: dict, *, kind: str = "conversation",
         cand = _call_llm(system, user, writer_key)
         if not cand:
             break  # キー無/API 失敗 → フォールバック
-        if _has_forbidden(cand) or _too_similar(cand, recent):
+        if _has_forbidden(cand) or _too_similar(cand, recent) or _has_hangul(cand):
+            continue
+        # 2026-08-17: 出来事に無い数字・桁違いの数字は誤情報として最も目立つ。
+        # プロンプト指示だけでは実測で漏れたため、ここで検査して作り直させる。
+        _fact = str(context.get("theme") or "")
+        if not _numbers_consistent(cand, _fact) or not _titles_consistent(cand, _fact):
             continue
         # オタク語の連発は最終試行では許容(無限ループ回避)
         if attempt < 2 and _has_otaku_overlap(cand, recent):
