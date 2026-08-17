@@ -111,3 +111,65 @@ def test_鉤括弧が無い見出しでも短く整える():
                                 is_drama=True)
     topics = [t["topic"] for t in themes]
     assert all(len(t) <= 30 for t in topics), topics
+
+
+# ─── テーマの膨張防止 (2026-08-18) ──────────────────────────────────
+from lib.article_angles import cap_angle_themes, ANGLE_THEME_CAP  # noqa: E402
+
+
+def test_角度テーマに上限がある():
+    """速報は日15本出ており、1本あたり6〜7角度を注入すると14日で約1,300件になる。
+    消費は日2本なので大半が死蔵し、focus_themes(X投稿側も読む)が肥大する。"""
+    assert 20 <= ANGLE_THEME_CAP <= 200
+
+
+def test_上限超過分は古いものから捨てる():
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    themes = []
+    for i in range(ANGLE_THEME_CAP + 20):
+        themes.append({
+            "topic": f"作品{i}の主題歌・OST", "source": "angle:ost",
+            "added_at": (now - timedelta(days=i)).strftime("%Y-%m-%d"),
+            "expires_at": (now + timedelta(days=100)).strftime("%Y-%m-%d"),
+            "hint": "", "category_suggest": "音楽", "buzz_score": 8.0,
+        })
+    got = cap_angle_themes(themes)
+    assert len(got) == ANGLE_THEME_CAP
+    # 新しいものが残る
+    assert any(t["topic"] == "作品0の主題歌・OST" for t in got)
+    assert not any(t["topic"] == f"作品{ANGLE_THEME_CAP + 19}の主題歌・OST" for t in got)
+
+
+def test_角度の多様性を保って間引く():
+    """探索が目的なので、間引きで1角度に偏らせない。"""
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    themes = []
+    # ost を大量、location を少量
+    for i in range(ANGLE_THEME_CAP):
+        themes.append({"topic": f"A{i}の主題歌・OST", "source": "angle:ost",
+                       "added_at": (now - timedelta(days=i)).strftime("%Y-%m-%d"),
+                       "expires_at": "2099-01-01", "hint": "",
+                       "category_suggest": "音楽", "buzz_score": 8.0})
+    for i in range(3):
+        themes.append({"topic": f"B{i}のロケ地・聖地巡礼", "source": "angle:location",
+                       "added_at": (now - timedelta(days=90)).strftime("%Y-%m-%d"),
+                       "expires_at": "2099-01-01", "hint": "",
+                       "category_suggest": "旅行", "buzz_score": 8.0})
+    got = cap_angle_themes(themes)
+    srcs = {t["source"] for t in got}
+    assert "angle:location" in srcs, "古くても希少な角度は残すべき"
+
+
+def test_期限切れは上限計算の前に落とす():
+    themes = [
+        {"topic": "古い", "source": "angle:ost", "added_at": "2026-01-01",
+         "expires_at": "2026-01-02", "hint": "", "category_suggest": "音楽",
+         "buzz_score": 8.0},
+        {"topic": "新しい", "source": "angle:ost", "added_at": "2026-08-18",
+         "expires_at": "2099-01-01", "hint": "", "category_suggest": "音楽",
+         "buzz_score": 8.0},
+    ]
+    got = cap_angle_themes(themes)
+    assert [t["topic"] for t in got] == ["新しい"]

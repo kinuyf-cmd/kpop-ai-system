@@ -433,7 +433,13 @@ def _inject_angle_themes(artist, ja_title):
         added = [t for t in themes if t.get('topic') not in existing]
         if not added:
             return
-        d['focus_themes'] = focus + added
+        # 角度テーマは上限まで間引く。速報は日15本出ており、放置すると
+        # 14日で約1,300件になって死蔵し、focus_themes(X投稿側も読む)が肥大する。
+        from lib.article_angles import cap_angle_themes
+        angle_all = [t for t in focus + added
+                     if str(t.get('source', '')).startswith('angle:')]
+        others = [t for t in focus if not str(t.get('source', '')).startswith('angle:')]
+        d['focus_themes'] = others + cap_angle_themes(angle_all)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(d, f, ensure_ascii=False, indent=2)
         print(f"  角度テーマ注入: {len(added)}件 ({ja_title[:24]})")

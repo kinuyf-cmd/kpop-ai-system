@@ -123,6 +123,15 @@ def pick_theme(path: Path | str = DIRECTIVES,
     return themes[0]
 
 
+def _quota_exhausted() -> bool:
+    """検索APIが上限到達中か。環境要因のskipを記録から除くために使う。"""
+    try:
+        from lib.web_factcheck import _tavily_quota_exhausted
+        return bool(_tavily_quota_exhausted())
+    except Exception:
+        return False
+
+
 def _search_facts(topic: str) -> list[dict]:
     """テーマについて Web 検索し、根拠になりそうな結果を返す。
 
@@ -204,9 +213,15 @@ def run(dry_run: bool = False) -> dict:
 
     facts = _search_facts(theme["topic"])
     if not facts:
-        print("  裏付けが取れないため見送り(検索結果なし/クォータ切れ)")
-        record(theme, "skip", reason="no_facts")
-        return {"published": 0, "reason": "no_facts"}
+        # クォータ切れは「このテーマがダメ」ではなく環境要因なので記録しない。
+        # 記録すると復帰までの日数×実行回数だけ同じ行が溜まってノイズになる
+        # (2026-08-18 時点で Tavily は 9/1 まで上限到達中)。
+        quota = _quota_exhausted()
+        msg = "クォータ切れ(環境要因)" if quota else "検索結果なし"
+        print(f"  裏付けが取れないため見送り: {msg}")
+        if not quota:
+            record(theme, "skip", reason="no_facts")
+        return {"published": 0, "reason": "quota" if quota else "no_facts"}
 
     title, body = _build_body(theme, facts)
     if not title or not body:

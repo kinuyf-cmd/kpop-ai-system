@@ -127,6 +127,43 @@ ANGLES = [
 ]
 
 
+# 角度テーマの保持上限。速報は日15本出ており、1本あたり6〜7角度を注入すると
+# 14日で約1,300件になる。消費は日2本(DAILY_CAP)なので大半が死蔵するうえ、
+# focus_themes は X 投稿側(lib/x_conversation_starter)も読むため肥大が波及する。
+# 過去に focus_themes が295件溜まって期限切れ258件を掴んだ事故もある
+# ([[x-conversation-topic-supply-not-prompt]])。
+ANGLE_THEME_CAP = 60
+
+
+def cap_angle_themes(themes: list[dict]) -> list[dict]:
+    """角度テーマを上限まで間引く。期限切れを落としてから、新しい順に残す。
+
+    ただし探索が目的なので **角度の多様性を保つ**。単純な新しい順だと、
+    たまたま多く注入された角度(OST等)が全枠を埋め、希少な角度
+    (ロケ地は放映14日後にしか出ない)が消える。角度ごとに均等枠を配ってから、
+    余った枠を新しい順で埋める。
+    """
+    today = datetime.now().strftime("%Y-%m-%d")
+    alive = [t for t in themes if (t.get("expires_at") or "9999") >= today]
+    if len(alive) <= ANGLE_THEME_CAP:
+        return alive
+    by_angle: dict[str, list[dict]] = {}
+    for t in alive:
+        by_angle.setdefault(str(t.get("source", "")), []).append(t)
+    for v in by_angle.values():
+        v.sort(key=lambda t: t.get("added_at", ""), reverse=True)
+    # 角度ごとに均等枠(最低1件)を配る
+    per = max(1, ANGLE_THEME_CAP // max(1, len(by_angle)))
+    kept, leftovers = [], []
+    for v in by_angle.values():
+        kept.extend(v[:per])
+        leftovers.extend(v[per:])
+    leftovers.sort(key=lambda t: t.get("added_at", ""), reverse=True)
+    kept.extend(leftovers[:max(0, ANGLE_THEME_CAP - len(kept))])
+    kept.sort(key=lambda t: t.get("added_at", ""), reverse=True)
+    return kept[:ANGLE_THEME_CAP]
+
+
 def _clean_title(title: str) -> str:
     """テーマ名に使うため、見出しから**作品名だけ**を抜く。
 
