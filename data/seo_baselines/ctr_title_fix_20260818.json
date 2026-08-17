@@ -52,8 +52,44 @@
       "title_before": "(AIOSEO未設定=WP投稿タイトル78字。「吹き替え」が49文字目)",
       "title_after": "『エージェント・キム』字幕・吹き替えの確認方法|Netflix視聴ガイド",
       "caveat": "本文は吹き替えの有無を明言していない(一次情報で確認できず)。『確認方法』という本文どおりの表現に留めた。吹き替え対応が確認でき次第、本文追記が必要"
+    },
+    {
+      "post_id": 9190,
+      "slug": "tettsui-kyoshi-dub-episodes",
+      "before_28d": {
+        "page_imp": 4890,
+        "page_clicks": 65,
+        "ctr": 1.33,
+        "pos": 8.7,
+        "demand_split": {
+          "声優/吹き替え系_imp": 3725,
+          "何話/話数系_imp": 1
+        }
+      },
+      "title_before": "(AIOSEO未設定=WP投稿タイトル62字)韓国ドラマ『鉄槌教師』は何話まで?吹き替え声優・原作との違いを解説(Netflix視聴ガイド)",
+      "title_after": "『鉄槌教師』吹き替え声優一覧|キャスト別の担当と原作との違い",
+      "rationale": "需要はimp3725が声優/吹き替え。対して『何話』系はimp1。タイトルの一等地を需要ゼロの語が占めていた。本文に声優名22件の裏付けあり"
+    },
+    {
+      "post_id": 1340,
+      "slug": "kpop-demon-hunters-movie-review",
+      "before_28d": {
+        "query": "サジャボーイズ 声優",
+        "imp": 1175,
+        "clicks": 11,
+        "ctr": 0.94,
+        "pos": 4.4,
+        "note": "同義クエリはpos2.0前後でCTR4-6%と正常。順位差が主因だが『サジャボーイズ』が先頭32字外だったため前出し"
+      },
+      "title_before": "(AIOSEO未設定=WP投稿タイトル65字)【KPOPデーモンハンターズ】日本語吹き替え声優一覧｜HUNTR/X・サジャボーイズの日本語キャスト",
+      "title_after": "【デーモンハンターズ】サジャボーイズ声優一覧|HUNTR/Xの日本語吹き替えも"
     }
   ],
   "verify_after": "2026-09-01",
-  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py"
+  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py",
+  "scan": {
+    "aioseo_title_null_published_posts": 1816,
+    "of_which_title_over_46chars": 106,
+    "note": "AIOSEO titleがNULLだとWP投稿タイトルがそのまま使われる。32字以下が1446件で大半は安全。46字以上106件のうちimp100+を点検し、需要とタイトル先頭の不一致が大きい2件(9190/1340)を修正した"
+  }
 }
