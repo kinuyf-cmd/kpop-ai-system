@@ -394,9 +394,60 @@ def _titles_too_similar(t1: str, t2: str) -> bool:
     return len(common) >= 3
 
 
+def _is_drama_title(ja_title: str) -> bool:
+    """ドラマ・映画作品の話題か(ロケ地・OSTなど作品向け角度を出す判定用)。"""
+    import re
+    t = str(ja_title or '')
+    if re.search(r'[『「][^』」]{2,30}[』」]', t):
+        return True
+    return any(k in t for k in ('ドラマ', '映画', 'Netflix', '配信', '主演', '出演'))
+
+
+def _inject_angle_themes(artist, ja_title):
+    """多角度の記事テーマを注入する(2026-08-18, owner方針の探索フェーズ)。
+
+    従来は followup(速報の深掘り)1本だけを注入しており、実測で
+    focus_themes 295件が**全て**同じ角度になっていた。切り口別のCTRには
+    大きな差がある(OST 8.33% / 相関図 1.59% / 声優 1.78%)のに、
+    どれが効くか試せていなかった。角度を出し分けてデータを取る。
+
+    消費は pipeline/angle_article_generator.py が担う。
+    """
+    try:
+        from lib.article_angles import build_angle_themes
+        themes = build_angle_themes(
+            title=ja_title, artist=artist or '',
+            is_drama=_is_drama_title(ja_title),
+            # 速報時点=公開直後なので days_since_release=0。
+            # ロケ地(聖地巡礼)は放映後に効くため、ここでは出ない設計
+            # (後日 tools/seo/ から改めて投入する)
+            days_since_release=0,
+        )
+        if not themes:
+            return
+        path = os.path.join('/home/aiuser/kpop-ai-system', 'config/auto_directives.json')
+        with open(path, encoding='utf-8') as f:
+            d = json.load(f)
+        focus = d.get('focus_themes', [])
+        existing = {t.get('topic') for t in focus}
+        added = [t for t in themes if t.get('topic') not in existing]
+        if not added:
+            return
+        d['focus_themes'] = focus + added
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(d, f, ensure_ascii=False, indent=2)
+        print(f"  角度テーマ注入: {len(added)}件 ({ja_title[:24]})")
+    except Exception as e:  # noqa: BLE001
+        print(f"  angle inject err: {e}")
+
+
 def _inject_followup_theme(artist, ja_title, en_title):
     """速報記事のフォローアップテーマをauto_directivesに注入
-    24-72h後にfeature_article_generatorが深掘り記事を自動生成する"""
+
+    2026-08-18 注記: このテーマを消費する feature_article_generator は
+    **存在しなかった**(コメント上の想定だけ)。そのため295件が滞留していた。
+    現在は pipeline/angle_article_generator.py が angle: 由来のテーマを消費する。
+    breaking_followup 側は引き続き滞留するので、使うなら消費側の実装が要る。"""
     directives_path = os.path.join('/home/aiuser/kpop-ai-system', 'config/auto_directives.json')
     try:
         with open(directives_path, encoding='utf-8') as f:
@@ -810,6 +861,9 @@ def publish_breaking(artist, sigs, typ):
 
         # 速報→深掘り連鎖: auto_directivesにフォローアップテーマを注入
         _inject_followup_theme(artist, r.get('title', ''), best.get('title', ''))
+        # 探索フェーズ(2026-08-18): 多角度テーマも注入する。
+        # 消費は pipeline/angle_article_generator.py
+        _inject_angle_themes(artist, r.get('title', ''))
 
         # 統一ポストパブリッシュフック (enricher+audit+factcheck+カテゴリ修正)
         try:
