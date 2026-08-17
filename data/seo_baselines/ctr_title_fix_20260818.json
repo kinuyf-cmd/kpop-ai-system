@@ -1,0 +1,59 @@
+{
+  "applied_at": "2026-08-18",
+  "hypothesis": "検索語がタイトル先頭付近に無いとCTRが沈む(モバイルで顕著)",
+  "evidence": {
+    "band_baseline_pos5_7_ctr": 5.2,
+    "reference_normal": {
+      "query": "鉄槌教師 相関図",
+      "pos": 5.4,
+      "ctr": 3.33,
+      "note": "検索語がtitle先頭=正常"
+    },
+    "device_split": {
+      "query": "恋は雨模様 相関図",
+      "MOBILE": {
+        "ctr": 0.6,
+        "pos": 5.8,
+        "imp": 4488
+      },
+      "TABLET": {
+        "ctr": 5.66,
+        "pos": 5.8,
+        "imp": 53
+      }
+    }
+  },
+  "changes": [
+    {
+      "post_id": 13501,
+      "slug": "koi-wa-ame-moyou-cast-guide",
+      "before_28d": {
+        "query": "恋は雨模様 相関図",
+        "imp": 4736,
+        "clicks": 31,
+        "ctr": 0.65,
+        "pos": 5.8
+      },
+      "title_before": "『恋は飴模様』(恋は雨模様)キャスト・相関図・配信日まとめ|チョン・ヘイン×ハヨン主演",
+      "title_after": "『恋は飴模様』(恋は雨模様)相関図|キャスト関係をひと目で図解",
+      "rationale": "ownerの選択: 正式名を先頭に保ちブランドを守りつつ「相関図」を前出し"
+    },
+    {
+      "post_id": 11677,
+      "slug": "agent-kim-reactivated-viewing-guide",
+      "before_28d": {
+        "query": "エージェントキム 吹き替え",
+        "imp": 566,
+        "clicks": 8,
+        "ctr": 1.41,
+        "pos": 6.8,
+        "related_total_imp": 1297
+      },
+      "title_before": "(AIOSEO未設定=WP投稿タイトル78字。「吹き替え」が49文字目)",
+      "title_after": "『エージェント・キム』字幕・吹き替えの確認方法|Netflix視聴ガイド",
+      "caveat": "本文は吹き替えの有無を明言していない(一次情報で確認できず)。『確認方法』という本文どおりの表現に留めた。吹き替え対応が確認でき次第、本文追記が必要"
+    }
+  ],
+  "verify_after": "2026-09-01",
+  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py"
+}
