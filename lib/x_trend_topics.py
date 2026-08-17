@@ -183,6 +183,13 @@ def _clean_title(title: str) -> str:
 # (「6 Twice's Jeongyeon leaves JYP…」)や隣の記事(「…collab Most Read K-pop」)が
 # 混入し、80字で切断されている。誰の出来事か特定できないため除外する。
 # 上流(lib/collectors/)の収集を直せば、このリストから外してよい。
+# 2026-08-17: 収集側は根治済(lib/collectors/koreaherald_collector.py。
+# 見出しを <p class="news_title"> から1件ずつ取るよう修正し、0件→25件で
+# 連結・切断が解消)。ただし trend_signals.jsonl には修正前に書かれた
+# 壊れた行が残っており、実測で 13件中11件が下流ガードをすり抜ける
+# (「6 Twice's Jeongyeon leaves JYP…」「…collab Most Read K-pop」等)。
+# 鮮度窓(DEFAULT_WINDOW_H=48h)から古い行が抜けきるまで除外を維持し、
+# それ以降にこのタプルを空にすること。
 UNRELIABLE_SOURCES = ("koreaherald",)
 
 
