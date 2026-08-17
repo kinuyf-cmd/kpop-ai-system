@@ -13,6 +13,16 @@ KPOP_KW = [
 ]
 URGENT_KW = ['breaking', 'confirmed', 'exclusive', 'wins', 'dating', 'married', 'arrested']
 
+# 2026-08-17 調査結果(修理せず保留と判断):
+#   コレクタ健全性チェックで0件死を検知。原因を切り分けたところ、fetch も
+#   正規表現マッチ(17件)も成功しているが、**Naver検索が意図した媒体を返していない**。
+#   取れるのは stardailynews / 톱스타뉴스 のトロット歌手投票記事(しかも3ヶ月前)で、
+#   starnews の記事ではない。K-POPキーワードに一致しないため結果0件になる。
+#   → 検索クエリ経由という設計自体が破綻しており、パターン修正では直らない。
+#   直すなら starnews を直接叩く実装が必要(Next.jsでスクレイピング困難というのが
+#   検索経由にした元の理由)。他12コレクタで直近48hに362シグナル確保できており
+#   ネタは足りているため、労力対効果で保留する。
+#   再開するなら: RSS/APIの有無を先に確認すること。HTMLスクレイピングは同じ轍。
 SECTIONS = [
     # StarNewsはNext.jsでスクレイピング困難 → Naver検索経由
     ('starnews', 'https://search.naver.com/search.naver?where=news&query=%EC%8A%A4%ED%83%80%EB%89%B4%EC%8A%A4+%EC%BC%80%EC%9D%B4%ED%8C%9D'),
@@ -56,7 +66,7 @@ def collect():
                     'urgency': 'high' if urgent else 'normal',
                     'raw_data': {'all_keywords': matched},
                 })
-    save_signals(signals[:30])
+    save_signals(signals[:30], source_id='starnews')
     log(f"StarNews: {len(signals[:30])}")
     return len(signals[:30])
 

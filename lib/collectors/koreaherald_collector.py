@@ -88,7 +88,7 @@ def collect():
             'urgency': 'normal',
             'raw_data': {'all_keywords': matched},
         })
-    save_signals(signals[:20])
+    save_signals(signals[:20], source_id='koreaherald')
     log(f"KoreaHerald: {len(signals[:20])}")
     return len(signals[:20])
 

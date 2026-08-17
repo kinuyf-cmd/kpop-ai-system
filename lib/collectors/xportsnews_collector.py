@@ -39,7 +39,7 @@ def collect():
                 break
         if len(signals) >= 20:
             break
-    save_signals(signals)
+    save_signals(signals, source_id='xportsnews')
     log(f"Xports News: {len(signals)}")
     return len(signals)
 

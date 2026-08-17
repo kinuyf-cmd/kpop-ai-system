@@ -106,6 +106,53 @@ def log(msg):
     print(f"[{datetime.now().isoformat()}] {msg}")
 
 
+# ─── コレクタの「無言で0件死」検知 (2026-08-17) ─────────────────────────────
+# koreaherald がサイト構造変更で正規表現に1件もマッチせず、**0件のまま無言で
+# 死んでいた**(38日どころか気付いた時点で何日続いていたか不明)。0件でもログに
+# 何も出さないため誰も気付けなかった。点検すると同じ状態が更に2件あった
+# (wowkorea / starnews)。偶然見つけただけで、仕組みが無ければ次も気付けない。
+#
+# 判定: 「今回0件」は異常とは言えない(深夜で新着なし・全部重複など正常な0件がある)。
+# **連続して0件が続くこと**を異常とする。
+COLLECT_HEALTH = '/home/aiuser/kpop-ai-system/logs/collector_health.jsonl'
+ZERO_ALERT_THRESHOLD = 5   # これ以上連続0件なら壊れていると判断
+
+
+def record_collect_result(source_id, count):
+    """コレクタ1回の収集件数を記録する。save_signals から自動で呼ばれる。"""
+    if not source_id:
+        return
+    try:
+        os.makedirs(os.path.dirname(COLLECT_HEALTH), exist_ok=True)
+        with open(COLLECT_HEALTH, 'a', encoding='utf-8') as f:
+            f.write(json.dumps({'ts': datetime.now().isoformat(),
+                                'source_id': source_id,
+                                'count': int(count)}, ensure_ascii=False) + '\n')
+    except OSError:
+        pass
+
+
+def consecutive_zero_count(source_id):
+    """そのコレクタが直近何回連続で0件だったか。1件でも取れた時点でリセット。"""
+    try:
+        with open(COLLECT_HEALTH, encoding='utf-8') as f:
+            lines = f.read().splitlines()
+    except (FileNotFoundError, OSError):
+        return 0
+    n = 0
+    for line in reversed(lines):
+        try:
+            d = json.loads(line)
+        except (json.JSONDecodeError, ValueError):
+            continue      # 壊れた行はスキップ(記録の破損で検知を止めない)
+        if d.get('source_id') != source_id:
+            continue
+        if int(d.get('count', 0) or 0) > 0:
+            break         # 成功でリセット
+        n += 1
+    return n
+
+
 # 2026-05-15: Mozilla/5.0 (Linux) KPOPJournal/1.0 を bot 識別する韓国 media が
 # 増え、starnews / mnet で 403 を観測。10+ collector が共通利用するため、
 # 実 Chrome UA に統一して 403 を回収する (Accept-Language は維持)。
@@ -255,7 +302,12 @@ def trigger_breaking_if_urgent(new_signals):
         log(f"trigger fail: {e}")
 
 
-def save_signals(signals):
+def save_signals(signals, source_id=None):
+    """収集結果を trend_signals.jsonl に追記する。
+
+    source_id は健全性記録用。省略時は signals から拾う(0件だと拾えないため、
+    **0件になりうるコレクタは明示的に渡すこと**。渡さないと無言死を検知できない)。
+    """
     # 直近24hの既存URLで重複除去（同じ記事の再収集を防止）
     existing_urls = set()
     try:
@@ -281,6 +333,17 @@ def save_signals(signals):
         log(f"saved {len(new_signals)} signals (skipped {skipped} dups)")
     else:
         log(f"saved {len(new_signals)} signals")
+
+    # 健全性記録: 収集**候補**の件数(重複除去前)で判定する。重複除去後の0件は
+    # 「同じ記事を再取得しただけ」で正常だが、除去前が0件なら抽出が壊れている。
+    sid = source_id or (signals[0].get('source_id') if signals else None)
+    if sid:
+        record_collect_result(sid, len(signals))
+        zeros = consecutive_zero_count(sid)
+        if zeros >= ZERO_ALERT_THRESHOLD:
+            log(f"⚠️ {sid}: {zeros}回連続で0件 — 抽出が壊れている可能性"
+                f"(HTML構造変更/403等)。tools/check_collector_health.py を確認")
+
     trigger_breaking_if_urgent(new_signals)
 
 

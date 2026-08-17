@@ -54,7 +54,7 @@ def collect():
                 'urgency': 'high' if urgent else 'normal',
                 'raw_data': {'all_keywords': matched},
             })
-    save_signals(signals[:30])
+    save_signals(signals[:30], source_id='allkpop')
     log(f"allkpop: {len(signals[:30])}")
     return len(signals[:30])
 

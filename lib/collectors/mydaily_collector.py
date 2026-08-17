@@ -41,7 +41,7 @@ def collect():
             if count >= 20:
                 break
 
-    save_signals(signals)
+    save_signals(signals, source_id='mydaily_ent')
     log(f"MyDaily total: {len(signals)}")
     return len(signals)
 

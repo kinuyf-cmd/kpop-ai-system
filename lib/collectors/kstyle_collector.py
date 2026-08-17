@@ -73,7 +73,7 @@ def collect():
         })
         if len(signals) >= 20:
             break
-    save_signals(signals)
+    save_signals(signals, source_id='kstyle')
     log(f"Kstyle: {len(signals)}")
     return len(signals)
 

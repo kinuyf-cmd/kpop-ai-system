@@ -31,7 +31,7 @@ def collect():
         signals.append(make_signal('topstarnews', title, url, kw, is_urgent(title)))
         if len(signals) >= 20:
             break
-    save_signals(signals)
+    save_signals(signals, source_id='topstarnews')
     log(f"TopStarNews: {len(signals)}")
     return len(signals)
 

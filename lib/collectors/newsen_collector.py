@@ -38,7 +38,7 @@ def collect():
         if len(signals) >= 30:
             break
 
-    save_signals(signals)
+    save_signals(signals, source_id='newsen')
     urgent_cnt = sum(1 for s in signals if s['urgency'] == 'high')
     log(f"Newsen: {len(signals)} signals ({urgent_cnt} urgent)")
     return len(signals)

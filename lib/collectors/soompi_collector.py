@@ -55,7 +55,7 @@ def collect():
         })
         if len(signals) >= 30:
             break
-    save_signals(signals)
+    save_signals(signals, source_id='soompi')
     log(f"Soompi: {len(signals)}")
     return len(signals)
 
