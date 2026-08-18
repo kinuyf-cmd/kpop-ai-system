@@ -2,66 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "aespa",
-   "title": "aespa MY-J presents aespa JAPAN FANMEETING 2026 “MY CLASSMaeTE” | ticket board",
-   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15598",
-   "source_media": "チケットボード",
-   "start_date": "2026-07-18",
-   "venue": "【1部】京王アリーナTOKYO",
-   "_source_id": "tickebo"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "RIIZE",
-   "title": "RIIZE RIIZE JAPAN FANMEETING 2026 RPG - RIIZE PLAYING GAME - | ticket board",
-   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15601",
-   "source_media": "チケットボード",
-   "start_date": "2026-07-10",
-   "venue": "マリンメッセ福岡B館",
-   "_source_id": "tickebo"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "NMIXX",
-   "title": "NMIXX NMIXX 1ST WORLD TOUR <EPISODE 1: ZERO FRONTIER> IN JAPAN | ticket board",
-   "source_url": "https://ticket.tickebo.jp/show/event.html?info=15627",
-   "source_media": "チケットボード",
-   "start_date": "2026-08-08",
-   "venue": "KEIO ARENA TOKYO",
-   "_source_id": "tickebo"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "LE SSERAFIM",
-   "title": "LE SSERAFIM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-07-25",
-   "venue": "大阪城ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "『2026 &TEAM CONCERT TOUR ’BLAZE THE WAY’ in JAPAN』ライブビューイング",
-   "source_url": "https://l-tike.com/cinema/mevent/?mid=786013",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-07-26",
-   "venue": "ローソン・ユナイテッドシネマ札幌",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "iKON",
-   "title": "iKON",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=341153",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-01",
-   "venue": "神戸ワールド記念ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
@@ -69,56 +9,6 @@
    "start_date": "2026-08-21",
    "venue": "Kアリーナ横浜",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "BABYMONSTER",
-   "title": "BABYMONSTER",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669211",
-   "source_media": "ぴあ",
-   "start_date": "2026-08-11",
-   "venue": "LaLa arena TOKYO-BAY",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "FNC",
-   "title": "FNC BAND KINGDOM 2026",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667975",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-11",
-   "venue": "ぴあアリーナMM",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "キム・ジョンヒョン",
-   "title": "2026 キム・ジョンヒョン ファンミーティング",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667352",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-18",
-   "venue": "きゅりあん(品川区立総合区民会館) 大ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "CHOO",
-   "title": "CHOO YOUNG WOO",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668787",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-20",
-   "venue": "LINE CUBE SHIBUYA",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "LUCY",
-   "title": "LUCY",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668839",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-24",
-   "venue": "KT Zepp Yokohama",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -132,103 +22,33 @@
   },
   {
    "type": "event",
-   "artist_keyword": "ILLIT",
-   "title": "ILLIT",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
+   "artist_keyword": "LE SSERAFIM",
+   "title": "LE SSERAFIM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
    "source_media": "ローソンチケット",
-   "start_date": "2026-07-18",
-   "venue": "GLION ARENA KOBE",
+   "start_date": "2026-08-18",
+   "venue": "宮城・セキスイハイム スーパーアリーナ",
    "_source_id": "ltike"
   },
   {
    "type": "event",
-   "artist_keyword": "KANG",
-   "title": "KANG HA NEUL",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667424",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-25",
-   "venue": "KT Zepp Yokohama",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ソ・イングク",
-   "title": "ソ・イングク",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669471",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-09",
-   "venue": "SGC HALL ARIAKE",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "AND2BLE",
-   "title": "AND2BLE",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668727",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-11",
-   "venue": "GLION ARENA KOBE",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "パク・ソンフン",
-   "title": "2026 パク・ソンフン　ファンミーティング",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668976",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-26",
-   "venue": "KT Zepp Yokohama",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "IVE",
-   "title": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668801",
-   "source_media": "ぴあ",
-   "start_date": "2026-07-31",
-   "venue": "Zepp Haneda",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "SUPER JUNIOR",
-   "title": "2026 SUPER JUNIOR 83z  FAN-CON TOUR  [1983] IN JAPAN ライブ・ビューイング",
-   "source_url": "https://l-tike.com/cinema/mevent/?mid=785781",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "『BOYNEXTDOOR TOUR ’KNOCK ON Vol.2’ IN JAPAN』ライブビューイング",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=788735",
    "source_media": "ローソンチケット",
-   "start_date": "2026-08-02",
+   "start_date": "2026-08-29",
    "venue": "札幌シネマフロンティア",
    "_source_id": "ltike"
   },
   {
    "type": "event",
-   "artist_keyword": "JAEJOONG",
-   "title": "JAEJOONG",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=413733",
+   "artist_keyword": "SUPER JUNIOR",
+   "title": "SUPER JUNIOR-RYEOWOOK",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=384797",
    "source_media": "ローソンチケット",
-   "start_date": "2026-07-12",
-   "venue": "Zepp Osaka Bayside",
+   "start_date": "2026-08-19",
+   "venue": "LINE CUBE SHIBUYA",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "&TEAM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-07-25",
-   "venue": "LaLa arena TOKYO-BAY",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "IVE",
-   "title": "岩田屋本店 天神開業90周年「THE FACT MUSIC AWARDS EXHIBITION - VISION FESTA(DIVE IN",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2667709",
-   "source_media": "ぴあ",
-   "start_date": "2026-08-02",
-   "venue": "岩田屋本店 本館7階 大催事場",
-   "_source_id": "pia"
   }
  ]
 }
