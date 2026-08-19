@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-08-19",
+  "post_id": 13501,
+  "slug": "koi-wa-ame-moyou-cast-guide",
+  "hypothesis": "「相関図」クエリの検索意図に対し、図のノードが主演2人のみで情報量が不足していた。競合が登場人物を網羅した相関図を出したことでCTRが崩壊した",
+  "evidence": {
+    "break_date": "2026-08-08",
+    "query": "恋は雨模様 相関図",
+    "before_0806_0807": {"imp": 203, "clicks": 9, "ctr": 4.43, "pos": 5.5},
+    "after_0809_0816": {"imp": 3905, "clicks": 19, "ctr": 0.49, "pos": 5.4},
+    "note": "順位ほぼ同一(5.5→5.4)・同一クエリでCTRが1/9。新規クエリ流入は全体の4.7%のみで、imp水増し説は否定された",
+    "page_had_chart": true,
+    "chart_nodes_before": 2,
+    "correction": "当初『図が0枚』と報告したがこれは誤り。<img>を数えたための誤判定で、実際はHTML+CSSの相関図が存在していた。真の欠陥はノード数不足"
+  },
+  "change": {
+    "chart_nodes_before": 2,
+    "chart_nodes_after": 9,
+    "added_characters": [
+      {"role": "ペク・サンギル", "actor": "ホ・ソンテ", "group": "敵役"},
+      {"role": "コ・ヨンホン", "actor": "キム・ヨンオク", "group": "飴村"},
+      {"role": "ホン・ドヨプ", "actor": "チョン・ベス", "group": "飴村"},
+      {"role": "ト・ジョンファ", "actor": "ソ・ジョンヨン", "group": "飴村"},
+      {"role": "アン・ギジュン", "actor": "イ・ジェウォン", "group": "同級生"},
+      {"role": "ミン・スジ", "actor": "チェ・ユジュ", "group": "同級生"}
+    ],
+    "added_relations": ["ペク・サンギル→テハ(過去の組織)", "ペク・サンギル⇔ウンセ(汚職捜査)", "ギジュン→スジ(恋人)", "スジ⋯テハ(高校時代の好意)"],
+    "body_bytes": {"before": 13553, "after": 16801},
+    "backup": "data/backup_post13501_body_20260819_183828.html"
+  },
+  "sources": [
+    "https://navicon.jp/news/97842/",
+    "https://www.wowkorea.jp/news/read/531473.html",
+    "ko.wikipedia / namu.wiki (手がかりのみ・日本語2ソースで裏取り済)"
+  ],
+  "confounder": {
+    "warning": "2026-08-18にタイトル修正(ctr_title_fix_20260818.json)を適用済。9/1の判定は『タイトル+相関図拡張』の合算効果になり、単独効果は切り分け不能。ownerが機会損失を避けるためBを選択した結果",
+    "related_baseline": "data/seo_baselines/ctr_title_fix_20260818.json"
+  },
+  "verify_after": "2026-09-01",
+  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py",
+  "verify_target": "「恋は雨模様 相関図」CTR 0.49% → pos5帯ベースライン5.20%に向けた回復。最低でも2%超で成功と判定",
+  "gsc_submitted": true
+}

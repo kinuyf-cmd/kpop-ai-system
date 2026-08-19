@@ -1,0 +1,51 @@
+{
+  "applied_at": "2026-08-19",
+  "scope": "idol_artist CPT 124件(公開済)全件のAIOSEO title設定",
+  "hypothesis": "Idol Wikiは本文1,782字と中身は充実しているのに、titleが『グループ名 - KPOP JOURNAL』のテーマ既定のみで、日本語名も検索語(メンバー/プロフィール)も含まれていなかった。そのため日本語検索で拾えずpos45.9に沈んでいた",
+  "evidence_before": {
+    "window": "2026-07-20..2026-08-16 (28d)",
+    "pages": 106,
+    "impressions": 2342,
+    "clicks": 8,
+    "ctr_pct": 0.34,
+    "weighted_position": 45.9,
+    "aioseo_title_empty": "124/124 (全件未設定)",
+    "sample_queries": [
+      {"q": "aespa メンバー", "imp": 10, "clk": 0, "pos": 56.9},
+      {"q": "exo メンバー", "imp": 5, "clk": 0, "pos": 53.8},
+      {"q": "bigbang メンバー", "imp": 4, "clk": 0, "pos": 64.5},
+      {"q": "golden child members", "imp": 4, "clk": 0, "pos": 87.0}
+    ],
+    "note": "流入クエリの大半が英字/ローマ字。日本語名がtitleに無いため日本語検索面を取れていなかった"
+  },
+  "change": {
+    "pattern": "{英字名}({日本語名}){メンバー|プロフィール}・経歴・代表曲まとめ",
+    "solo_uses": "プロフィール (group_type='solo' の場合)",
+    "source_of_ja_name": "ACF meta_key=name_ja (124件全てに存在)",
+    "max_title_chars": 40,
+    "dup_suppression": "日本語名が英字名と実質同一の場合は括弧併記しない",
+    "manual_corrections": [
+      {"id": 77, "field": "name_ja", "acf_value": "ループ", "used": "今月の少女", "reason": "ACFの日本語名が誤り。公式日本語名は『今月の少女』(ja.wikipedia/複数メディアで確認)"},
+      {"id": 127, "note": "40字超のため『代表曲』を省略"},
+      {"id": 270, "note": "40字超のため『代表曲』を省略"},
+      {"id": 284, "note": "40字超のため『代表曲』を省略"},
+      {"id": 301, "note": "41字のため中黒を詰め『ブラウンアイドガールズ』表記に短縮"}
+    ],
+    "verified_ok": "ITZY=イッチ は公式日本語表記のため変更せず(JAPAN OFFICIAL SITE表記)"
+  },
+  "verification": {
+    "db_empty_title_after": 0,
+    "db_total": 124,
+    "rendered_check": "本番HTMLの<title>で6件サンプル確認済(aespa/bigbang/newjeans/loona/girls-generation/jang-won-young)",
+    "apostrophe_safe": "Girls' Generation / Girl's Day がDB・レンダリング両方で正常",
+    "backup": "data/backup_aioseo_idol_title_20260819_190140.tsv"
+  },
+  "gsc_submitted": {"count": 124, "ok": 124, "err": 0},
+  "known_remaining_issue": {
+    "acf_name_ja_quality": "LOONA以外にもname_jaに不正確な値がある可能性。今回は確証が取れたLOONAのみ補正した。全124件の日本語名監査は未実施",
+    "note": "titleだけでpos45.9が一桁まで上がるとは限らない。順位要因(被リンク/内部リンク/権威性)は別途"
+  },
+  "verify_after": "2026-09-09",
+  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py",
+  "verify_target": "/artists/ 106ページの加重pos 45.9 → 20台、clicks 8 → 50+"
+}

@@ -22,16 +22,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "LE SSERAFIM",
-   "title": "LE SSERAFIM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-18",
-   "venue": "宮城・セキスイハイム スーパーアリーナ",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "『BOYNEXTDOOR TOUR ’KNOCK ON Vol.2’ IN JAPAN』ライブビューイング",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=788735",
@@ -48,6 +38,16 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-08-19",
    "venue": "LINE CUBE SHIBUYA",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LE SSERAFIM",
+   "title": "LE SSERAFIM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-08-19",
+   "venue": "宮城・セキスイハイム スーパーアリーナ",
    "_source_id": "ltike"
   }
  ]

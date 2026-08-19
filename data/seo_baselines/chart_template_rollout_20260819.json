@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-08-19",
+  "theme": "施策② 相関図テンプレの横展開",
+  "key_finding": {
+    "statement": "相関図クエリは順位で完全な断層がある。pos1-2ならCTR37%、pos5-6ならCTR0.6%。そして順位は本文の厚みにきれいに比例していた",
+    "measured": [
+      {"page": "/kpop-demon-hunters-cast-characters/", "chars": 9198, "img": 8, "nodes": 11, "pos": 1.2, "ctr": 36.96},
+      {"page": "/tettsui-kyoshi-cast-chart/", "chars": 5088, "img": 6, "nodes": 7, "pos": 5.7, "ctr": 0.85},
+      {"page": "/bts-relationship-map-2026/", "chars": 3992, "img": 3, "nodes": 0, "pos": 5.7, "ctr": 1.68}
+    ],
+    "implication": "「タイトルに相関図を入れる」ではなく「本文の網羅性で順位を取る」が勝ち筋。勝っているのは1本だけで、それは本文が倍以上厚い",
+    "market_size": {"queries": 32, "imp": 9176, "clicks": 200, "ctr": 2.18, "window": "28d"}
+  },
+  "change": {
+    "post_id": 9917,
+    "slug": "bts-relationship-map-2026",
+    "problem": "「相関図」と名乗りながら図が0枚(img 0 / kpj-node 0)。飴模様(13501)と完全に同型",
+    "action": "本文に既にあった関係性記述だけを使い、HTML+CSSの相関図を8ノードで新設。憶測・未確認情報は一切追加していない",
+    "nodes_after": 8,
+    "layers": ["中心=RM(リーダー)", "95ライン=Jimin/V", "94ライン+ラップライン=j-hope/SUGA", "最年長最年少=Jin/Jung Kook"],
+    "body_bytes": {"before": 9432, "after": 14678},
+    "backup": "data/backup_post9917_body_20260819_*.html",
+    "source_of_content": "同記事の既存本文(公の場で本人が語った内容に限定する既存の編集方針を踏襲)"
+  },
+  "verification": {
+    "db_length_after": 14678,
+    "tag_balance": "div/style/p/span/h2/h3 すべて開閉一致",
+    "splice_safety": "挿入位置以外はバイト単位で完全一致を検証",
+    "rendered": "本番HTMLでkpj-node 9件描画確認・エスケープタグ露出なし",
+    "gsc_submitted": true
+  },
+  "not_actioned": {
+    "post_id": 9189,
+    "slug": "tettsui-kyoshi-cast-chart",
+    "reason": "既に図7ノード+FAQ schema完備。本文4,325字で勝ちページ9,198字との差は本文量そのもの。図の追加では解決せず、一次情報の取材による本文拡充が必要なため今回は着手しない",
+    "next_step": "登場人物の追加取材 → 本文9,000字級への拡充"
+  },
+  "verify_after": "2026-09-09",
+  "verify_cmd": "venv_kpi/bin/python3 tools/seo/gsc_snapshot.py",
+  "verify_target": "「bts 仲良し相関図」pos5.7 → 3以内、CTR1.68% → 5%超"
+}
