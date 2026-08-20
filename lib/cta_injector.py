@@ -203,10 +203,19 @@ def inject_cta_into_content(title, content, force_genre=None):
         return content
 
     # 挿入位置: 2つ目のh2の直前、なければ1つ目のh2後の段落後、なければ中間
+    #
+    # 2026-08-20 修正: 以前は下の h2_matches の .start() をそのまま挿入位置に
+    #   使っていたが、この正規表現は `</h2>` から始まるため .start() は
+    #   「閉じタグの直前」= *見出しの内側* を指していた。結果 CTA が
+    #   <h2>見出し … </h2> の中に差し込まれ、h2 が広告と本文を丸ごと
+    #   飲み込む破損が公開済み43記事で発生した(imp 21,996 分が10〜69位に沈んだ)。
+    #   見出しの直前に入れたいので、次の `<h2` の開始位置を別途探して使う。
     h2_matches = list(re.finditer(r'</h2>\s*(<p[^>]*>.*?</p>\s*){2,}', content, re.DOTALL))
 
     if len(h2_matches) >= 2:
-        insert_pos = h2_matches[1].start()
+        # マッチ内の段落群が終わった位置以降で、次の見出しの「開始」を探す
+        next_h2 = re.compile(r'<h2\b').search(content, h2_matches[1].start())
+        insert_pos = next_h2.start() if next_h2 else h2_matches[1].end()
         new_content = content[:insert_pos] + cta_block + content[insert_pos:]
     elif h2_matches:
         insert_pos = h2_matches[0].end()

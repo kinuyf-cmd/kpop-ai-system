@@ -166,5 +166,42 @@ urllib.request.urlopen(urllib.request.Request(wh,
   fi
 fi
 
+# ─── [4] 本文HTML構造の破損チェック(2026-08-20 追加) ─────────────────────
+# CTA注入が h2 の内側に入り、見出しが広告と本文を飲み込む破損が43記事で発生した
+# (imp 21,996 分が順位10〜69位に沈んだ)。注入コードは修正済みだが、
+# 別経路での再混入を早期に捕まえるため本番DBを毎日検査する。
+log "--- [4] 本文HTML構造の破損チェック ---"
+BROKEN_H2=$(sudo -n /usr/local/sbin/kpop/kpop-wp-ro db query \
+  "SELECT COUNT(*) FROM wp_posts WHERE post_status='publish' AND post_type='post' AND post_content REGEXP '<h2>[^<]*</p>'" \
+  2>/dev/null | tail -n +2 | tr -dc '0-9')
+BROKEN_H2=${BROKEN_H2:-}
+if [[ -z "$BROKEN_H2" ]]; then
+  log "⚠️ 破損チェック実行不可(DB参照に失敗)"
+elif [[ "$BROKEN_H2" -gt 0 ]]; then
+  log "🚨 h2内CTA破損が ${BROKEN_H2} 件検出された(CTA注入経路を確認すること)"
+  BROKEN_WH=$(python3 -c "
+import json, sys
+sys.path.insert(0, '$SCRIPT_DIR')
+from lib.discord_notifier import _expand_webhook
+print(_expand_webhook(json.load(open('$SCRIPT_DIR/config/discord_webhooks.json')).get('urgent_errors','')))
+" 2>/dev/null)
+  if [[ -n "$BROKEN_WH" ]]; then
+    BR_MSG="🚨 **本文HTML破損** — h2の内側にCTAが入った記事 ${BROKEN_H2} 件
+lib/cta_injector.py の挿入位置を確認してください。
+検出SQL: post_content REGEXP '<h2>[^<]*</p>'"
+    AUDIT_MSG="$BR_MSG" AUDIT_WH="$BROKEN_WH" python3 -c "
+import json, urllib.request, os
+msg = os.environ['AUDIT_MSG']; wh = os.environ['AUDIT_WH']
+urllib.request.urlopen(urllib.request.Request(wh,
+    data=json.dumps({'content': msg[:1900]}).encode(),
+    headers={'Content-Type':'application/json',
+             'User-Agent':'Mozilla/5.0 (compatible; KpopJournalBot/1.0)'},
+    method='POST'), timeout=15)
+" 2>>"$LOG_FILE" || log "破損通知の送信に失敗"
+  fi
+else
+  log "✅ h2内CTA破損なし"
+fi
+
 log "===== 日次監査 完了 ====="
 exit 0
