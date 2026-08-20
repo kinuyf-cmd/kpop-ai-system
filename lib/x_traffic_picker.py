@@ -353,6 +353,55 @@ def build_reply(artist: str, fact: str, article: dict, hook: str = "",
     return f"{payoff}\n{url}".strip()
 
 
+# ── 型A(引っ張る型)の構成検査 ───────────────────────────────────────────
+# owner指定(2026-08-20):
+#   本文    : 感想(1文) → 起(+承転)。結は書かない
+#   リプライ: 結 + URL
+# 結を本文に出すとリプ(URL側)を読む理由が消える。逆に感想だけだと
+# 「中身のない出し渋り」になり、飛んだ読者を裏切る(Direct直帰65%の既往)。
+# 既存メモリ「抽象指示は効かない/効かない文体はコードで担保」に従い検査する。
+
+# 感想=書き手の主観が出ている印。断定的な事実文にはまず出ない語。
+# 2026-08-20: 実生成6本で検証して調整。「どんな〜なんだろう」「想像がつかない」
+#   のような、書き手の心の動きが出ている言い回しを感想として拾えていなかった。
+_IMPRESSION_HINTS = (
+    "と思", "気がする", "感じ", "なんか", "地味に", "意外と", "けっこう", "結構",
+    "びっくり", "驚", "知らなかった", "初めて知", "らしくて", "いいな", "好き",
+    "気になる", "うれし", "嬉し", "さすが", "そうなんだ", "らしい",
+    # 想像・期待・戸惑いも書き手の主観(実測で最頻)
+    "だろう", "だろ", "かな", "つかない", "楽しみ", "期待", "想像",
+    "どうなる", "わからない", "分からない", "しちゃう", "みたい",
+    "意外な", "意外だ", "大事だ",
+)
+
+# 結=「なぜそうなのか/だからどうなるのか」を言い切ってしまっている印。
+# これが本文にあると、リプで渡すものが残らない。
+# 2026-08-20: 「が判明」を入れていたが、これは出来事(theme)そのものの提示であって
+#   「結」ではない。実生成の大半を誤って弾いたため外した。ここで弾きたいのは
+#   「なぜそうなのか/だからどうなるのか」を本文で言い切ってしまう形だけ。
+_CONCLUSION_HINTS = (
+    "だから", "そのため", "理由は", "原因は", "という理由", "なぜなら",
+    "つまり", "要するに", "結論", "ということになる",
+)
+
+
+def check_hook_structure_type_a(text: str) -> dict:
+    """本文が型A(感想→起、結は伏せる)の形になっているか判定する。"""
+    t = re.sub(r"\s+", " ", str(text or "")).strip()
+    if not t:
+        return {"ok": False, "issue": "本文が空"}
+    if re.search(r"https?://", t):
+        return {"ok": False, "issue": "本文にURLがある(型AはリプにURLを置く)"}
+    if len(t) < 30:
+        return {"ok": False, "issue": f"短すぎて起が無い({len(t)}字/30字以上)"}
+    if not any(h in t for h in _IMPRESSION_HINTS):
+        return {"ok": False, "issue": "感想が無い(事実の提示だけになっている)"}
+    for h in _CONCLUSION_HINTS:
+        if h in t:
+            return {"ok": False, "issue": f"結を本文に書いている(『{h}』)"}
+    return {"ok": True, "issue": ""}
+
+
 def build_hook(artist: str, fact: str, article: dict, body_text: str = "") -> str:
     """本文(URLなし)のフックを作る。
 
@@ -384,10 +433,16 @@ def build_hook(artist: str, fact: str, article: dict, body_text: str = "") -> st
                 continue
             if is_pr_tone(text):
                 continue
+            # 型A(感想→起、結は伏せる)を満たすものだけ通す。
+            # プロンプトに構成を書いても守られない実績があるため、ここで検査する。
+            if not check_hook_structure_type_a(text)["ok"]:
+                continue
             return text
     except Exception:
         pass
-    # フォールバック: 出来事をそのまま短く提示する(URLは付けない)
+    # フォールバック: 出来事をそのまま短く提示する(URLは付けない)。
+    # ここは感想が乗らないので型Aは満たさない。pick 側で型Aを必須にする場合は
+    # check_hook_structure_type_a() で弾かれる想定。
     return str(fact or article.get("title", ""))[:100]
 
 
