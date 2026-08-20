@@ -21,6 +21,36 @@ LOGS = SCRIPT_DIR / "logs"
 WP_BASE = "https://www.kpopjournal.tokyo/wp-json/wp/v2"
 JST = timezone(timedelta(hours=9))
 
+# ── サムネイル解像度の下限（2026-08-20 追加） ────────────────────────────────
+# Google のモバイル検索 / Discover で大きなサムネイル表示になる要件が幅1200px。
+# これを下回ると画像付きのリッチな表示にならず、順位が取れていてもクリックされない。
+# 実害: 「鉄槌教師 声優一覧」(imp 15,460)が 299x168px / 5.2KB のまま公開されていた。
+# imp>=300 の50記事中22本が該当し、同じ pos6-10 帯で層別しても
+# CTR は 4.13%(1200px未満) vs 8.50%(1200px以上)と約2倍の差があった。
+MIN_THUMBNAIL_WIDTH = 1200
+
+
+def check_resolution(width, height) -> dict:
+    """サムネイルの寸法が要件を満たすか判定する。
+
+    width/height が 0 や None(取得失敗)の場合も「不合格」にする。
+    取得できなかったものを黙って通すと、壊れたサムネイルが監査をすり抜けるため。
+    """
+    try:
+        w = int(width or 0)
+        h = int(height or 0)
+    except (TypeError, ValueError):
+        w = h = 0
+
+    if w <= 0 or h <= 0:
+        return {"ok": False, "width": w, "height": h,
+                "issue": f"サムネイルの寸法を取得できない(幅{MIN_THUMBNAIL_WIDTH}px以上が必要)"}
+    if w < MIN_THUMBNAIL_WIDTH:
+        return {"ok": False, "width": w, "height": h,
+                "issue": f"サムネイル幅が不足({w}x{h}px / {MIN_THUMBNAIL_WIDTH}px以上が必要)"}
+    return {"ok": True, "width": w, "height": h, "issue": ""}
+
+
 # ── アーティスト名リスト（検出用） ────────────────────────────────────────────
 KNOWN_ARTISTS = [
     "BTS", "TOP", "T.O.P", "TWICE", "BLACKPINK", "IVE", "ILLIT", "aespa",
@@ -206,6 +236,25 @@ def _analyze_copy(copy_text: str, article_title: str = "") -> dict:
     }
 
 
+def _probe_image_size(url: str):
+    """画像URLから (width, height) を返す。取得できなければ (0, 0)。
+
+    Pillow が無い環境でも監査全体が落ちないよう、失敗は (0,0) に丸める
+    ((0,0) は check_resolution 側で不合格として扱われる)。
+    """
+    if not url:
+        return (0, 0)
+    try:
+        import io
+        from PIL import Image
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = resp.read()
+        return Image.open(io.BytesIO(data)).size
+    except Exception:
+        return (0, 0)
+
+
 def audit_post_thumbnail(post_id: int) -> dict:
     """1記事のサムネイル監査結果を返す"""
     result = {
@@ -221,6 +270,9 @@ def audit_post_thumbnail(post_id: int) -> dict:
         "title_mismatch": False,
         "suggested_copy": "",
         "source": "registry",
+        "thumbnail_width": 0,
+        "thumbnail_height": 0,
+        "resolution_ok": None,
     }
 
     # 既知問題レジストリから先に読む（API呼び出しなし）
@@ -268,6 +320,18 @@ def audit_post_thumbnail(post_id: int) -> dict:
             analysis = _analyze_copy(result["thumbnail_copy"], result["article_title"])
             if not result["issues"]:  # レジストリに問題がなければ分析結果を使用
                 result.update(analysis)
+
+    # 解像度チェック(2026-08-20 追加)。ここを検査していなかったため
+    # 299x168px のサムネイルが imp 15,460 の記事に付いたまま残っていた。
+    if result["thumbnail_url"]:
+        w, h = _probe_image_size(result["thumbnail_url"])
+        res = check_resolution(w, h)
+        result["thumbnail_width"] = res["width"]
+        result["thumbnail_height"] = res["height"]
+        result["resolution_ok"] = res["ok"]
+        if not res["ok"]:
+            result["issues"] = list(result["issues"]) + [res["issue"]]
+            result["design_score"] = min(result.get("design_score", 100), 50)
 
     return result
 

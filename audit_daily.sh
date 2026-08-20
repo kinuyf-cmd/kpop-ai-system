@@ -203,5 +203,25 @@ else
   log "✅ h2内CTA破損なし"
 fi
 
+# ─── [5] アイキャッチ解像度チェック(2026-08-20 追加) ─────────────────────
+# Google のモバイル検索/Discover で大きなサムネイル表示になる要件は幅1200px。
+# 下回ると順位が取れていてもクリックされない。発見時 imp>=300 の50記事中
+# 22本(imp計 75,973)が該当し、「鉄槌教師 声優」(imp 15,460)は 299x168px だった。
+log "--- [5] アイキャッチ解像度チェック ---"
+THUMB_OUT="${LOG_DIR}/daily_${DATE}_thumbres.json"
+if python3 "$SCRIPT_DIR/lib/thumbnail_resolution_scan.py" --json > "$THUMB_OUT" 2>>"$LOG_FILE"; then
+  THUMB_BAD=$(python3 -c "
+import json
+print(json.load(open('$THUMB_OUT')).get('below_min', 0))
+" 2>/dev/null || echo "")
+  if [[ -n "$THUMB_BAD" && "$THUMB_BAD" -gt 0 ]]; then
+    log "⚠️ 幅1200px未満のアイキャッチ ${THUMB_BAD} 件 (詳細: ${THUMB_OUT##*/})"
+  else
+    log "✅ アイキャッチ解像度は全件OK"
+  fi
+else
+  log "⚠️ 解像度スキャン実行失敗"
+fi
+
 log "===== 日次監査 完了 ====="
 exit 0
