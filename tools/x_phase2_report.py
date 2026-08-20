@@ -129,6 +129,10 @@ def main() -> int:
         return 0
 
     data = _metrics([p for p, _ in posts])
+    # 既存メモリ「Phase3ゲートはimpでなくエンゲージ率」に従い、imp と並べて
+    # エンゲージ率も記録する(2026-08-20)。判定条件自体は変えていない。
+    from lib.x_engagement import summarize_engagement
+    rec["engagement"] = summarize_engagement(data)
     imps = sorted(int(m.get("impression_count", 0)) for m in data.values())
     if not imps:
         rec.update({"verdict": "WAIT", "reason": "no_metrics", "n": len(posts)})

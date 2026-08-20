@@ -55,3 +55,30 @@ def test_url_in_body_is_rejected():
         "すごいなと思った。先行がもう埋まってるらしい。https://example.com/a")
     assert r["ok"] is False
     assert "URL" in r["issue"]
+
+
+# ── 実ログ由来の回帰ケース(2026-08-20) ──────────────────────────────
+# tools/x_type_a_report.py で直近20本を判定して洗い出したもの。
+# 推測ではなく実際に出た投稿なので、ここが壊れたら判定精度が落ちたと分かる。
+
+def test_real_log_impression_forms_are_accepted():
+    """実ログで「感想があるのに×」だった言い回しを取りこぼさない。"""
+    for t in [
+        "NCT 127が10周年を迎えるって、もうそんなに経ったんだなぁ。"
+        "「Nice 127」ってどんな内容になるのか、ワクワクする…。",
+        "TWICEの「FANCY」700万回再生、やっぱりこの曲のキャッチーさは"
+        "いつ聞いてもすごいよね。",
+    ]:
+        assert check_hook_structure_type_a(t)["ok"] is True, t
+
+
+def test_real_log_article_copy_is_rejected():
+    """記事本文の平叙コピー(感想なし)は型Aとして弾く。
+
+    「URLもフックも無い、記事本文の平叙文コピー」は実際に流入ゼロだった型。
+    """
+    t = ("JTBCのドラマ「アパート」が2026年08月15日の最終回で自己最高視聴率7.7%を記録し、"
+         "全チャンネル同時間帯で1位を獲得した。")
+    r = check_hook_structure_type_a(t)
+    assert r["ok"] is False
+    assert "感想" in r["issue"]
