@@ -32,13 +32,33 @@
   },
   {
    "type": "event",
-   "artist_keyword": "SUPER JUNIOR",
-   "title": "SUPER JUNIOR-RYEOWOOK",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=384797",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-19",
-   "venue": "LINE CUBE SHIBUYA",
-   "_source_id": "ltike"
+   "artist_keyword": "WEZAG",
+   "title": "WEZAG",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670467",
+   "source_media": "ぴあ",
+   "start_date": "2026-08-22",
+   "venue": "SHIBUYA PLEASURE PLEASURE",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "チェ・ユリ",
+   "title": "チェ・ユリ",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670296",
+   "source_media": "ぴあ",
+   "start_date": "2026-08-30",
+   "venue": "浜離宮朝日ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "B1A4",
+   "title": "B1A4",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670263",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-06",
+   "venue": "COOL JAPAN PARK OSAKA WWホール",
+   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -46,8 +66,8 @@
    "title": "LE SSERAFIM",
    "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
    "source_media": "ローソンチケット",
-   "start_date": "2026-08-19",
-   "venue": "宮城・セキスイハイム スーパーアリーナ",
+   "start_date": "2026-09-02",
+   "venue": "マリンメッセ福岡A館",
    "_source_id": "ltike"
   }
  ]
