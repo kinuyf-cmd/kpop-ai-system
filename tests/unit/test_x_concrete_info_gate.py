@@ -182,3 +182,29 @@ class TestPastReportPatternsAreBroadEnough:
     def test_future_event_still_passes(self):
         t = "アンコール公演は7月10日から12日、KSPO DOME。チケットは事前予約が必須です"
         assert has_concrete_info(t)["ok"]
+
+
+class TestStaleDatesAreRejected:
+    """『本日(8/20)』を8/21に投稿すると誤情報になる(実生成で発覚)。
+
+    ネタ元の見出しに載った日付をそのまま引き継ぐため起きる。今日でない日を
+    「本日/今日」と呼んでいる本文は、具体として通してはいけない。
+    """
+
+    def test_yesterday_called_today_is_rejected(self):
+        t = ("NCT DREAM、メンバー全員がSMと再契約を締結したのに、"
+             "SEVENTEENのバーノンが本日（8/20）入隊って、なんか時代の変わり目を感じるなぁ…")
+        assert not has_concrete_info(t, today="2026-08-21")["ok"]
+
+    def test_today_called_today_passes(self):
+        t = "バーノンが本日（8/21）入隊って、なんか時代の変わり目を感じるなぁ…"
+        assert has_concrete_info(t, today="2026-08-21")["ok"]
+
+    def test_future_date_without_today_word_passes(self):
+        t = "ファンミは8/23に生中継されます。日本語字幕付きで見られるかが分かれ目ですね"
+        assert has_concrete_info(t, today="2026-08-21")["ok"]
+
+    def test_past_date_without_today_word_is_untouched_by_this_rule(self):
+        """このルールは『本日/今日』と併記された日付だけを見る。"""
+        t = "先行受付は8/25まで。事前予約がないと入れません"
+        assert has_concrete_info(t, today="2026-08-21")["ok"]

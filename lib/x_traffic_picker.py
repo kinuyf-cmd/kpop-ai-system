@@ -424,7 +424,7 @@ _CONCRETE_PATTERNS = (
 )
 
 
-def has_concrete_info(text: str) -> dict:
+def has_concrete_info(text: str, today: str = "") -> dict:
     """本文に「読者が行動を変えられる具体」があるかを判定する。
 
     型A(check_hook_structure_type_a)は構文だけを見るため、
@@ -451,6 +451,20 @@ def has_concrete_info(text: str) -> dict:
         r"を?(披露|達成|完売|出席|参加|登場|受賞|開催|実施|発表|公開)(し(た|、|。)|"
         r"を?達成。|を?達成した)|"
         r"(話題に|好評|注目を集め))", t))
+    # 2026-08-21: ネタ元の見出しの日付をそのまま引き継ぎ、昨日の日付を
+    # 「本日(8/20)」と書いて投稿する事故が dry-run で出た(投稿日は8/21)。
+    # 「本日/今日」と併記された日付が今日でなければ、それは誤情報なので通さない。
+    m = re.search(r"(?:本日|今日|きょう)\s*[（(]?\s*(\d{1,2})\s*[/月]\s*(\d{1,2})", t)
+    if m:
+        now = _today(today)
+        try:
+            if (int(m.group(1)), int(m.group(2))) != (now.month, now.day):
+                return {"ok": False,
+                        "issue": f"『本日』の日付が今日でない({m.group(1)}/{m.group(2)})",
+                        "signals": []}
+        except ValueError:
+            pass
+
     found = []
     for pat, label in _CONCRETE_PATTERNS:
         if not re.search(pat, t):

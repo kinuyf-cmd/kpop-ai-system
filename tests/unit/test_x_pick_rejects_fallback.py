@@ -18,10 +18,18 @@ HEADLINE_DUMP = (
 )
 
 
-def test_headline_dump_passes_concrete_but_fails_type_a():
-    """具体だけでは足りないことを示す(このケースの再現)。"""
-    assert has_concrete_info(HEADLINE_DUMP)["ok"]
+def test_headline_dump_fails_type_a():
+    """見出し丸写しは感想が無いので型Aを満たさない(これが一次の防波堤)。"""
     assert not check_hook_structure_type_a(HEADLINE_DUMP)["ok"]
+
+
+def test_headline_dump_also_fails_concrete_after_stale_date_rule():
+    """2026-08-21 追加の鮮度ルールで、具体ゲート側でも落ちるようになった。
+
+    この丸写しは「本日（8/20）」を含み、投稿日と一致しないため誤情報になる。
+    当初は具体ゲートを通っていた(型Aだけが防いでいた)が、いまは二重に落ちる。
+    """
+    assert not has_concrete_info(HEADLINE_DUMP, today="2026-08-21")["ok"]
 
 
 def test_both_gates_reject_headline_dump():
