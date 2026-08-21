@@ -7,20 +7,24 @@
 #   確認: sudo bash setup_og_default.sh
 #   適用: sudo APPLY=1 bash setup_og_default.sh
 set -uo pipefail
-WP="sudo -u www-data wp --path=/var/www/wp_stg"
+# 実行系: 既定は無人実行可のラッパー(sudo -n)。owner 対話 sudo 時は WP_CMD で上書き可。
+WP="${WP_CMD:-sudo -n /usr/local/sbin/kpop/kpop-wp-rw.sh}"
 DIR="$(cd "$(dirname "$0")" && pwd)/assets/brand"
 BK=/home/aiuser/.kpop_recovery
 APPLY="${APPLY:-0}"
 echo "=== og:image 既定設定: $([ "$APPLY" = 1 ] && echo APPLY || echo DRY-RUN) ==="
 
-# OG画像 import / 既存再利用
-OG_ID=$($WP post list --post_type=attachment --s='KPOP JOURNAL OG Default' --field=ID 2>/dev/null | head -1 || true)
+# OG画像: OG_ATTACHMENT_ID / OG_IMAGE_FILE で明示指定可(既定は従来の検索→import)
+OG_ID="${OG_ATTACHMENT_ID:-}"
+OG_FILE="${OG_IMAGE_FILE:-og-default.png}"
+OG_TITLE="${OG_IMAGE_TITLE:-KPOP JOURNAL OG Default}"
+[ -z "$OG_ID" ] && OG_ID=$($WP post list --post_type=attachment --s="$OG_TITLE" --field=ID 2>/dev/null | head -1 || true)
 if [ -z "$OG_ID" ]; then
   if [ "$APPLY" = 1 ]; then
-    OG_ID=$($WP media import "$DIR/og-default.png" --title="KPOP JOURNAL OG Default" --porcelain 2>/dev/null)
+    OG_ID=$($WP media import "$DIR/$OG_FILE" --title="$OG_TITLE" --porcelain 2>/dev/null)
     echo "  OG画像 import -> ID=$OG_ID"
   else
-    OG_ID=""; echo "  (DRY-RUN: og-default.png を import 予定)"
+    OG_ID=""; echo "  (DRY-RUN: $OG_FILE を import 予定)"
   fi
 else
   echo "  既存 OG画像 attachment ID=$OG_ID を再利用"

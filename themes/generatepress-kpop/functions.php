@@ -1632,6 +1632,26 @@ function kpop_home_sidebar_events() {
 }
 add_action( 'generate_after_right_sidebar_content', 'kpop_home_sidebar_events' );
 
+/* --- ブランド既定 OG 画像 URL(2026-08-21 バナー刷新)---
+ * AIOSEO の既定 og:image(social.facebook.general.defaultImagePosts)を正とし、
+ * 取得できないときのみハードコードにフォールバックする。
+ * 差し替えは setup_og_default.sh の再実行で本関数にも波及する。 */
+if ( ! function_exists( 'kpop_og_default_image_url' ) ) :
+function kpop_og_default_image_url() {
+	static $cached = null;
+	if ( null !== $cached ) { return $cached; }
+	$fallback = home_url( '/wp-content/uploads/2026/08/og-default-20260821.jpg' );
+	$opt = get_option( 'aioseo_options' );
+	if ( is_string( $opt ) ) { $opt = json_decode( $opt, true ); }
+	$url = '';
+	if ( is_array( $opt ) && ! empty( $opt['social']['facebook']['general']['defaultImagePosts'] ) ) {
+		$url = $opt['social']['facebook']['general']['defaultImagePosts'];
+	}
+	$cached = ( is_string( $url ) && '' !== $url ) ? $url : $fallback;
+	return $cached;
+}
+endif;
+
 /* --- Event 構造化データ(JSON-LD)の補完(2026-05-26 GSC重大エラー対応)---
  * GSC が tribe_events の Event JSON-LD で「location 欠落(重大)」「organizer/offers/image
  * 欠落(推奨)」を検出。原因: 収集パイプラインは会場名を本文の開催概要box
@@ -1688,7 +1708,7 @@ function kpop_augment_event_json_ld( $data, $args, $type ) {
 		if ( empty( $obj->image ) && $pid ) {
 			$img = get_the_post_thumbnail_url( $pid, 'full' );
 			if ( ! $img ) {
-				$img = home_url( '/wp-content/uploads/2026/05/og-default.png' );
+				$img = kpop_og_default_image_url();
 			}
 			$obj->image = array( $img );
 		}
