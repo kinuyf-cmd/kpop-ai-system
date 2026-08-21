@@ -80,7 +80,7 @@ def main() -> int:
         ids = [str(p.get("tweet_id")) for p in posts if p.get("tweet_id")]
         if ids:
             try:
-                from post_to_x import get_public_metrics
+                from google_metrics.post_to_x import get_public_metrics
                 for i in range(0, len(ids), 100):
                     metrics.update(get_public_metrics(ids[i:i + 100]) or {})
             except Exception as e:
