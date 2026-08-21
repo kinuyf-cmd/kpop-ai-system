@@ -432,6 +432,19 @@ def validate(post: dict) -> list[str]:
         t = (term or "").strip()
         if len(t) >= 3 and t in post["text"]:
             issues.append(f"stop_doing 語を含む: {t[:20]}")
+    # 2026-08-21 具体ゲート(既定OFF・段階導入):
+    #   実測で自動投稿 平均imp 109.5 に対し、日時/会場/条件を含む投稿は 991.2 だった。
+    #   ただし会話型のネタ元は具体を 1/24 しか含まないため、いま必須化すると
+    #   投稿がほぼ止まる。まず流入投稿側(x_traffic_picker)で効果を測り、
+    #   ネタ元を具体つきに増やしてから X_REQUIRE_CONCRETE=1 に切り替える。
+    if os.environ.get("X_REQUIRE_CONCRETE") == "1":
+        try:
+            from lib.x_traffic_picker import has_concrete_info
+            chk = has_concrete_info(post.get("text", ""))
+            if not chk["ok"]:
+                issues.append(f"具体が無い: {chk['issue']}")
+        except ImportError:
+            pass
     return issues
 
 

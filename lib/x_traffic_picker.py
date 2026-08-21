@@ -26,8 +26,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import html
 import re
 import sys
+from datetime import date, datetime
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -390,6 +392,213 @@ _CONCLUSION_HINTS = (
 )
 
 
+# 2026-08-21: 「読者が行動を変えられる具体」の検出パターン。
+#   実測(Phase1以降38本)で自動 平均imp 109.5 に対し手動 991.2 と9倍差がつき、
+#   伸びた手動投稿はいずれも 日時/時刻/場所/価格/可否条件 を含んでいた。
+#   型A(構文)を満たしても中身が「〜楽しみ」だけの投稿は伸びない。
+_CONCRETE_PATTERNS = (
+    # 日付: 8/23, 8月23日, 明日, 今日中
+    (r"\d{1,2}\s*[/月]\s*\d{1,2}\s*日?", "日付"),
+    (r"(今日|明日|明後日|今夜|週末|今週|来週)", "時期"),
+    # 時刻: 14:05, 14時05分, 21時〜
+    (r"\d{1,2}\s*[:：]\s*\d{2}", "時刻"),
+    (r"\d{1,2}\s*時(\d{1,2}分|半)?\s*[〜~から]", "時刻"),
+    # 価格
+    (r"[0-9０-９,，]+\s*円", "価格"),
+    # 場所・会場(固有の開催地を示す語)
+    (r"(会場|開催地|ホール|アリーナ|ドーム|スタジアム|劇場|MARINE|MOUNTAIN)", "場所"),
+    # 可否・制約条件: 〜のみ/〜不可/〜必須/〜限定/事前予約/先行受付。
+    # 2026-08-21: 当初 "要\s*\S" と "付き" を入れていたが、「必要すぎる」「思い付き」
+    # のような日常語を条件と誤検知して空虚な本文を通した(実生成で判明)。
+    # 制度・運用を指す語だけに絞る。
+    (r"(限定|不可|必須|同伴|抽選|整理券|事前(予約|申込|登録)|先行(販売|受付|抽選)|"
+     r"[^\s]{2,12}のみ|要(予約|登録|申込|整理券))", "条件"),
+    (r"(できません|できない|見られません|買えません|入れません|間に合わ)", "可否"),
+    # 機会損失: 〜を逃すと / 〜しないと
+    (r"(逃すと|逃せば|しないと|でないと|過ぎると|until|まで(に|は))", "期限"),
+)
+
+
+def has_concrete_info(text: str) -> dict:
+    """本文に「読者が行動を変えられる具体」があるかを判定する。
+
+    型A(check_hook_structure_type_a)は構文だけを見るため、
+    「〜って、どうなるんだろう…楽しみ」のような情報量ゼロの本文を通してしまう。
+    実測ではそれが伸びない主因だったので、中身の側をここで検査する。
+
+    通す条件: 日時・時刻・場所・価格・可否条件・期限 のいずれかを1つ以上含む。
+    単なる数量(「4部門」「700万回」)は行動を変えないため具体とみなさない。
+    """
+    t = re.sub(r"\s+", " ", str(text or "")).strip()
+    if not t:
+        return {"ok": False, "issue": "本文が空", "signals": []}
+    # 過去の出来事の報告は「行動を変える具体」ではない。
+    # 実測誤検知: 「2026年08月15日の最終回で…7.7%を記録した」は日付を含むが
+    # 読者にできることが何も無い。完了形で締めているものは日付を具体と数えない。
+    is_past_report = bool(re.search(
+        r"(を?記録した|を?獲得した|公開した|を?公開。|発表した|明らかにした|"
+        r"となった|었|했)", t))
+    found = []
+    for pat, label in _CONCRETE_PATTERNS:
+        if not re.search(pat, t):
+            continue
+        if is_past_report and label in ("日付", "時期", "時刻"):
+            continue
+        if label not in found:
+            found.append(label)
+    # 「時期」だけ(今日/週末など)は単独では行動を変えられない。
+    # 伸びた実例は「今日を逃すと現地では見られません」のように、必ず
+    # 時刻・場所・可否・期限とセットだった。単独なら具体とみなさない。
+    if found == ["時期"]:
+        return {"ok": False,
+                "issue": "時期語だけで具体が無い(『今日』等は単独では行動を変えない)",
+                "signals": []}
+    if not found:
+        return {"ok": False,
+                "issue": "具体が無い(日時/場所/価格/条件のいずれも書かれていない)",
+                "signals": []}
+    return {"ok": True, "issue": "", "signals": found}
+
+
+def extract_concrete_facts(body: str) -> dict:
+    """記事本文から会場・会期・営業時間・価格を抜き出す。
+
+    2026-08-21: trend_signals の見出しは具体を 1/24 しか含まないため、
+    具体ゲートだけでは自動投稿が止まる。自社記事の本文(特にポップアップ/
+    イベント)には会場・会期・営業時間が揃っているので、そこから拾って
+    本文に載せる。抜けなければ空 dict(=その話題は会話型に回さない)。
+    """
+    t = re.sub(r"[ \t\u3000]+", " ", str(body or ""))
+    if not t.strip():
+        return {}
+    out: dict = {}
+
+    def _grab(label_pat, value_pat, key, limit=1):
+        vals = []
+        for m in re.finditer(label_pat + r"\s*[:：]?\s*(" + value_pat + ")", t):
+            v = m.group(1).strip(" 　·・")
+            if v and v not in vals:
+                vals.append(v)
+            if len(vals) >= limit:
+                break
+        if vals:
+            out[key] = vals
+
+    # 会場: 「会場 「○○」」を優先し、鉤括弧が無ければ行末までを拾う。
+    # 「開催地・期間・営業時間などの詳細は…」のような説明文に引っかからないよう、
+    # ラベル直後が助詞(・/の/は)で続くものは会場名ではないとみなす。
+    _grab(r"(?:会場|開催地|場所)(?![・のはをがでも])", r"「[^」]{2,40}」", "venue")
+    if "venue" not in out:
+        _grab(r"(?:会場|開催地|場所)(?![・のはをがでも])", r"[^\n:：]{2,40}?(?=\s|$)", "venue")
+    # 国名/地方名だけの会場は「どこへ行けばいいか」が分からず具体にならない。
+    # 実データ誤抽出: 「会場 韓国」。散文の途中で拾った断片も同様に落とす。
+    if "venue" in out:
+        vs = [v for v in out["venue"]
+              if v.strip("「」") not in _TOO_BROAD_VENUES
+              and not v.endswith(("。", "です", "ます", "でした"))]
+        if vs:
+            out["venue"] = vs
+        else:
+            out.pop("venue")
+    # 会期: 「開催期間 2026年7月4日（土）～8月16日（日）」
+    _grab(r"(?:開催期間|会期|期間)", r"[0-9０-９][^\n]{4,50}", "period")
+    # 営業時間: 「営業時間 11:00～20:00」
+    _grab(r"(?:営業時間|開場|開演|時間)", r"\d{1,2}[:：]\d{2}[^\n]{0,20}", "hours")
+    # 価格
+    _grab(r"(?:料金|価格|チケット|入場)", r"[^\n]{0,12}[0-9０-９,，]+\s*円[^\n]{0,10}", "price")
+    return out
+
+
+# 会場としては広すぎて行動につながらない値(実データ誤抽出より)
+_TOO_BROAD_VENUES = {"韓国", "日本", "ソウル", "東京", "大阪", "全国", "海外", "現地"}
+
+# 具体を本文に足すときのラベル(短く保つ。X は本文が長いと読まれない)
+_MAX_HOOK_CHARS = 190
+
+_CONCRETE_ORDER = (("venue", ""), ("period", ""), ("hours", ""), ("price", ""))
+
+
+def concrete_line(facts: dict) -> str:
+    """extract_concrete_facts() の結果を本文に足せる1行にする。"""
+    if not facts:
+        return ""
+    parts = []
+    for key, _ in _CONCRETE_ORDER:
+        for v in facts.get(key, []):
+            v = re.sub(r"\s+", " ", v).strip()
+            if v:
+                parts.append(v)
+            break
+    line = " / ".join(parts)
+    return line[:80]
+
+
+def _parse_period(period: str) -> tuple:
+    """会期文字列から (開始日, 終了日) を date で返す。読めなければ (None, None)。
+
+    実データの表記ゆれ: 「2026年8月19日（水）～8月30日（日）」「2026/08/08〜2026/08/20」
+    終了側は年が省略されることが多いので、開始の年を引き継ぐ。
+    """
+    t = re.sub(r"[（(][^）)]*[）)]", "", str(period or ""))
+    t = t.replace("〜", "~").replace("～", "~").replace("－", "~").replace("-", "~")
+    parts = [p.strip() for p in t.split("~") if p.strip()]
+    if not parts:
+        return (None, None)
+
+    def _d(sv, year=None):
+        m = re.search(r"(\d{4})\s*[年/.]\s*(\d{1,2})\s*[月/.]\s*(\d{1,2})", sv)
+        if m:
+            y, mo, da = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        else:
+            m = re.search(r"(\d{1,2})\s*[月/.]\s*(\d{1,2})", sv)
+            if not m or year is None:
+                return None
+            y, mo, da = year, int(m.group(1)), int(m.group(2))
+        try:
+            return date(y, mo, da)
+        except ValueError:
+            return None
+
+    start = _d(parts[0])
+    if start is None:
+        return (None, None)
+    end = _d(parts[1], start.year) if len(parts) > 1 else start
+    # 「12月28日~1月5日」のような年またぎ
+    if end and end < start:
+        try:
+            end = date(end.year + 1, end.month, end.day)
+        except ValueError:
+            pass
+    return (start, end or start)
+
+
+def _today(today: str = "") -> "date":
+    if today:
+        y, m, d = (int(x) for x in str(today).split("-"))
+        return date(y, m, d)
+    return datetime.now().date()
+
+
+def is_currently_open(period: str, today: str = "") -> bool:
+    """会期が「いま行ける」状態かを返す。"""
+    start, end = _parse_period(period)
+    if not start:
+        return False
+    now = _today(today)
+    return start <= now <= end
+
+
+def upcoming_window(period: str, today: str = "", days: int = 7) -> bool:
+    """まだ始まっていないが days 日以内に始まるか。"""
+    start, end = _parse_period(period)
+    if not start:
+        return False
+    now = _today(today)
+    if start <= now:
+        return False
+    return (start - now).days <= days
+
+
 def check_hook_structure_type_a(text: str) -> dict:
     """本文が型A(感想→起、結は伏せる)の形になっているか判定する。"""
     t = re.sub(r"\s+", " ", str(text or "")).strip()
@@ -442,13 +651,111 @@ def build_hook(artist: str, fact: str, article: dict, body_text: str = "") -> st
             # プロンプトに構成を書いても守られない実績があるため、ここで検査する。
             if not check_hook_structure_type_a(text)["ok"]:
                 continue
+            # 2026-08-21: 型A(構文)を満たしても「〜楽しみ」だけの本文は伸びない。
+            # 実測で伸びた投稿はいずれも日時/会場/条件を含んでいたので、
+            # 本文に具体が無ければ記事から抜いて1行足す。足せないなら出さない。
+            if not has_concrete_info(text)["ok"]:
+                line = concrete_line(extract_concrete_facts(body))
+                if not line:
+                    continue
+                text = f"{text}\n\n{line}"
+                if len(text) > _MAX_HOOK_CHARS:
+                    continue
             return text
     except Exception:
         pass
     # フォールバック: 出来事をそのまま短く提示する(URLは付けない)。
+    # ここは感想も具体も乗らないため、pick_traffic_post() 側の
+    # has_concrete_info() で落ちる想定(黙って薄い投稿を出さない)。
     # ここは感想が乗らないので型Aは満たさない。pick 側で型Aを必須にする場合は
     # check_hook_structure_type_a() で弾かれる想定。
     return str(fact or article.get("title", ""))[:100]
+
+
+def _is_reachable_venue(body: str) -> bool:
+    """日本の読者が実際に行ける開催かを判定する。
+
+    pops-in 由来のポップアップは会場が「韓国 중구」のように国名+ハングルで
+    入る。ハングルを含む、または明示的に韓国と書かれた会場は出さない。
+    """
+    t = str(body or "")
+    m = re.search(r"会場\s*([^\n]{0,40})", t)
+    venue = m.group(1) if m else ""
+    if re.search(r"[\uac00-\ud7a3]", venue):
+        return False
+    if re.search(r"(韓国|ソウル|Seoul|Korea)", venue):
+        return False
+    return True
+
+
+def search_event_articles(limit: int = 30) -> list[dict]:
+    """会場・会期を持つ記事(ポップアップ/イベント)を新しい順に返す。
+
+    2026-08-21: トレンド連動でマッチするのはニュース記事で、会場・会期の
+    構造化情報を持たない(実測 6/6 で具体抽出ゼロ)。具体ゲートを通す投稿を
+    出すには、会期情報を持つこちら側をネタ元にする。
+    """
+    out = []
+    for kw in ("ポップアップ", "POP-UP"):
+        try:
+            q = urllib.parse.urlencode({
+                "search": kw, "per_page": limit, "status": "publish",
+                "orderby": "date", "order": "desc",
+                "_fields": "id,title,link,featured_media",
+            })
+            req = urllib.request.Request(f"{WP_SEARCH}?{q}",
+                                         headers={"User-Agent": "KpopJournal-Bot/2.0"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read())
+        except Exception:
+            continue
+        for d in data:
+            if not d.get("featured_media"):
+                continue
+            pid = d.get("id")
+            if any(o["post_id"] == pid for o in out):
+                continue
+            title = (d.get("title") or {}).get("rendered", "")
+            title = html.unescape(re.sub(r"<[^>]+>", "", title)).strip()
+            if not title or not d.get("link"):
+                continue
+            out.append({"post_id": pid, "title": title, "url": d["link"]})
+    return out
+
+
+def pick_event_post(today: str = "") -> dict | None:
+    """開催中(または直近で始まる)イベント記事から投稿を1件組み立てる。
+
+    ニュース側と違い、この経路は会場・会期という具体が確実に取れるので
+    具体ゲートを通せる。会期が終わっているものは出さない(行けない情報を
+    流すと読者を裏切る)。
+    """
+    used = _recent_used_ids()
+    for art in search_event_articles():
+        if art["post_id"] in used:
+            continue
+        body = fetch_body(art["post_id"])
+        # 2026-08-21: 実データのポップアップは大半が韓国開催(会場「韓国 중구」)。
+        # 日本の読者は行けないので、行動を変える具体にならない。国内開催に絞る。
+        if not _is_reachable_venue(body):
+            continue
+        facts = extract_concrete_facts(body)
+        period = (facts.get("period") or [""])[0]
+        if not (is_currently_open(period, today=today)
+                or upcoming_window(period, today=today, days=7)):
+            continue
+        line = concrete_line(facts)
+        if not line:
+            continue
+        opening = "開催中" if is_currently_open(period, today=today) else "まもなく開催"
+        hook = f"{art['title']}\n\n{line}"
+        if not has_concrete_info(hook)["ok"]:
+            continue
+        return {"hook": hook, "reply": f"{opening}。詳細はこちら\n{art['url']}",
+                "url": art["url"], "post_id": art["post_id"],
+                "artist": art.get("artist", ""), "fact": art["title"],
+                "title": art["title"], "kind": "event"}
+    return None
 
 
 def pick_traffic_post() -> dict | None:
@@ -473,6 +780,14 @@ def pick_traffic_post() -> dict | None:
             continue
         hook = build_hook(artist, topic["fact"], art, body_text=body)
         if not hook:
+            continue
+        # 2026-08-21 二重ゲート。片方だけでは漏れる:
+        #   型Aのみ  → 「〜楽しみ」だけの情報量ゼロが通る(伸びない)
+        #   具体のみ → build_hook のフォールバック(見出し丸写し)が、見出しに
+        #              日付があると通ってしまう(bot臭く、実測でも伸びない)
+        if not check_hook_structure_type_a(hook)["ok"]:
+            continue
+        if not has_concrete_info(hook)["ok"]:
             continue
         reply = build_reply(artist, topic["fact"], art, hook=hook, body=body)
         # リプが URL 単体なら「続き」になっていないので出さない

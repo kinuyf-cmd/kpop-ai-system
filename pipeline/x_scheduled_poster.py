@@ -413,13 +413,21 @@ def _post_traffic(dry_run: bool = False) -> dict:
     そもそも投稿しない(飛んだ読者を裏切らないため)。
     """
     try:
-        from lib.x_traffic_picker import pick_traffic_post, remember_used
+        from lib.x_traffic_picker import (pick_traffic_post, pick_event_post,
+                                          remember_used)
     except ImportError as e:
         print(f"  [traffic] import失敗: {e}")
         return {'success': False, 'reason': f'import失敗: {e}'}
     post = pick_traffic_post()
     if not post:
-        return {'success': False, 'reason': 'トレンドに関連する中身のある記事が無い'}
+        # 2026-08-21: トレンド連動はニュース記事しか当たらず、会場・会期の具体を
+        # 持たないため具体ゲートで落ちる(実測 6/6)。具体を確実に持つイベント記事
+        # (開催中/直近の国内ポップアップ)へフォールバックする。
+        post = pick_event_post()
+        if post:
+            print(f"  [traffic] トレンド空振り→イベント記事に切替: {post['title'][:40]}")
+    if not post:
+        return {'success': False, 'reason': 'トレンド・イベントとも具体のある記事が無い'}
     if dry_run:
         print(f"  [traffic] DRY 本文: {post['hook'][:60]}")
         print(f"  [traffic] DRY リプ: {post['reply'][:60]}")
