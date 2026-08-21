@@ -129,3 +129,56 @@ class TestBareTimeWordIsNotEnough:
 
     def test_time_word_with_deadline_passes(self):
         assert has_concrete_info("先行受付は今日までです。逃すと一般販売を待つことになります")["ok"]
+
+
+class TestNegativePotentialIsNotAvailability:
+    """『理解できない』のような心情表現は可否条件ではない(実生成での誤検知)。
+
+    可否として拾いたいのは「入れません」「買えません」のように、読者の行動が
+    制約される場合だけ。主語が自分の感情/理解であるものは具体にならない。
+    """
+
+    def test_cannot_understand_is_not_availability(self):
+        t = ("Red Velvetのウェンディ、身体や容姿に対する悪質な投稿もあって、"
+             "ほんとにひどいよね…何でそんなことするのか全然理解できない。")
+        assert not has_concrete_info(t)["ok"], has_concrete_info(t)
+
+    def test_cannot_wait_is_not_availability(self):
+        assert not has_concrete_info("新曲が楽しみで待ちきれない、もう我慢できない気持ち")["ok"]
+
+    def test_real_unavailability_passes(self):
+        assert has_concrete_info("当日券はありません。事前予約がないと入れません")["ok"]
+
+    def test_cannot_see_at_venue_passes(self):
+        t = "ベビモンは大阪に出ないから、今日を逃すと現地では見られません"
+        assert has_concrete_info(t)["ok"]
+
+
+class TestPastReportPatternsAreBroadEnough:
+    """過去の出来事の報告は、語尾が多様でも日付を具体と数えない。
+
+    旧投稿(型A導入前)を通してしまう実例から採取。現行経路では出ないが、
+    生成が揺れたときの再発源になるので塞いでおく。
+    """
+
+    def test_showcased(self):
+        t = "正勝煥が2026年5月31日に「ビューティフル・ミント・ライフ2026」で新曲を披露し、観客との距離を縮めた"
+        assert not has_concrete_info(t)["ok"]
+
+    def test_achieved_soldout(self):
+        t = ("TWICEの6thワールドツアーのソウルアンコール公演が、2026年7月10日から12日に"
+             "KSPO DOMEで全席完売を達成。国内外のファンの高い関心が示された")
+        assert not has_concrete_info(t)["ok"]
+
+    def test_attended_event(self):
+        t = "IVEのLeeseoが2026年5月29日にソウルで行われたイベントに参加し、美しさを披露"
+        assert not has_concrete_info(t)["ok"]
+
+    def test_future_release_still_passes(self):
+        """未来の予定は通す(告知として行動を変えられる)。"""
+        t = "新曲は6月22日午後1時にリリース予定。配信開始と同時に聴けます"
+        assert has_concrete_info(t)["ok"]
+
+    def test_future_event_still_passes(self):
+        t = "アンコール公演は7月10日から12日、KSPO DOME。チケットは事前予約が必須です"
+        assert has_concrete_info(t)["ok"]
