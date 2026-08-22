@@ -2,16 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-21",
-   "venue": "Kアリーナ横浜",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "TWS",
    "title": "TWS",
    "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
@@ -79,6 +69,26 @@
    "start_date": "2026-09-03",
    "venue": "品川プリンスホテル ステラボール",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HAN SEUNG WOO",
+   "title": "HAN SEUNG WOO SOUND & MOMENT : Scene #Tokyo",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670381",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-05",
+   "venue": "東京カルチャーカルチャー",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-08-22",
+   "venue": "Kアリーナ横浜",
+   "_source_id": "ltike"
   }
  ]
 }

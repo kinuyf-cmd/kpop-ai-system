@@ -597,5 +597,44 @@
       }
     ],
     "cached_at": "2026-08-21T04:02:33.293096"
+  },
+  "b2670381": {
+    "event_bundle_cd": "b2670381",
+    "title": "HAN SEUNG WOO SOUND & MOMENT : Scene #Tokyo",
+    "description": "HAN SEUNG WOO SOUND & MOMENT : Scene #Tokyo(東京カルチャーカルチャー)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202608/202608100073_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-09-05",
+        "venue": "東京カルチャーカルチャー",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-08-22T04:03:00.416633"
+  },
+  "b2667884": {
+    "event_bundle_cd": "b2667884",
+    "title": "TREASURE",
+    "description": "TREASURE(有明アリーナ Ｋアリーナ横浜 サンドーム福井 ＩＧアリーナ 大阪城ホール ＧＬＩＯＮ　ＡＲＥＮＡ　ＫＯＢＥ マリンメッセ福岡Ａ館)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-07-18",
+        "venue": "Kアリーナ横浜",
+        "prefecture": "神奈川県",
+        "date_end": "2026-07-20"
+      },
+      {
+        "date": "2026-07-25",
+        "venue": "GLION ARENA KOBE",
+        "prefecture": "兵庫県"
+      },
+      {
+        "date": "2026-09-05",
+        "venue": "有明アリーナ",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-08-22T04:03:02.002933"
   }
 }
