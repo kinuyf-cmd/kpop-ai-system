@@ -15,6 +15,7 @@ import io
 import json
 import subprocess
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -43,6 +44,18 @@ def fetch_rows():
     return rows
 
 
+def build_image_url(rel_path):
+    """uploads 配下の相対パスから画像URLを組み立てる。
+
+    2026-08-23: 日本語ファイル名(「名称未設定のデザイン.jpg」等)をそのまま
+    urlopen に渡すと取得に失敗し、14件が 0x0(=取得失敗)と報告されていた。
+    「取得できない」と「本当に1200px未満」が混ざって実寸法が分からなくなるため、
+    パス部分だけを percent-encode する(/ は残す。既にエンコード済みの %XX は
+    二重エンコードしない)。
+    """
+    return UPLOADS + urllib.parse.quote(str(rel_path), safe="/%")
+
+
 def probe(url):
     try:
         from PIL import Image
@@ -66,7 +79,7 @@ def main():
 
     bad = []
     for name, f in rows:
-        w, h = probe(UPLOADS + f)
+        w, h = probe(build_image_url(f))
         res = check_resolution(w, h)
         if not res["ok"]:
             bad.append({"slug": name, "file": f, "width": w, "height": h,
