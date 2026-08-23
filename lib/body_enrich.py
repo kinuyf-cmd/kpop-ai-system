@@ -406,16 +406,62 @@ def process_one(item, dry_run=False):
     return "updated"
 
 
+# 2026-08-23: 同じ記事が毎週 factcheck_block され、そのたびに factcheck の
+# API コスト(月4,212円=最大項目)だけがかかっていた。3回弾かれた記事は諦める。
+MAX_FACTCHECK_BLOCKS = 3
+
+
+def _load_history() -> list:
+    """logs/body_enrich.jsonl を読む。壊れていても止めない。"""
+    try:
+        with open(ENRICH_LOG, encoding="utf-8") as f:
+            out = []
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    out.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+            return out
+    except OSError:
+        return []
+
+
+def blocked_too_often(slug: str, history: list) -> bool:
+    """factcheck で連続 MAX_FACTCHECK_BLOCKS 回弾かれた記事か。
+
+    一度でも updated になっていれば、そこでカウントをリセットする
+    (中身が変わって通るようになった記事を永久除外しないため)。
+    """
+    n = 0
+    for r in history:
+        if r.get("slug") != slug:
+            continue
+        res = r.get("result")
+        if res == "factcheck_block":
+            n += 1
+        elif res in ("updated", "dry_run_ok"):
+            n = 0
+    return n >= MAX_FACTCHECK_BLOCKS
+
+
 def run(limit=3, dry_run=False):
     queue = _load_queue()
     if not queue:
         print("[enrich] enrich_queue が空。bridge を先に実行してください。")
         return 0
+    history = _load_history()
     processed, done, dropped = 0, [], []
     for item in queue:
         if processed >= limit:
             break
         slug = item.get("slug", "?")
+        if blocked_too_often(slug, history):
+            print(f"[enrich] skip {slug}: factcheck で{MAX_FACTCHECK_BLOCKS}回弾かれたため除外")
+            dropped.append(item.get("url"))
+            continue
         print(f"[enrich] processing {slug} (pos{item.get('position')} pot+{item.get('potential')})")
         result = process_one(item, dry_run=dry_run)
         processed += 1
