@@ -108,6 +108,19 @@ if sudo -n "$RW" option update kpop_soompi_chart "$(cat "$JSON")" >>"$LOG" 2>&1;
   TITLE="$(python3 -c "import json;print(json.load(open('$JSON'))['title'])" 2>/dev/null || echo '?')"
   TOP1="$(python3 -c "import json;d=json.load(open('$JSON'))['items'][0];print(d['rank'],d['song'],'-',d['artist'])" 2>/dev/null || echo '?')"
   log "✅ option更新成功: $TITLE ($N件) / 1位: $TOP1"
+
+  # ⑤ owner依頼(2026-08-23): 更新のたびに週次まとめ記事を作る。
+  #    冪等(同じ週の記事があれば更新)。失敗してもチャート表示自体は成功済みなので止めない。
+  if python3 tools/chart/publish_chart_article.py >>"$LOG" 2>&1; then
+    SLUG="$(python3 -c "import sys,json;sys.path.insert(0,'.');from lib.chart_article import build_slug;print(build_slug(json.load(open('$JSON'))))" 2>/dev/null || true)"
+    log "チャート記事を投稿/更新: ${SLUG:-?}"
+    if [ -n "$SLUG" ]; then
+      venv_kpi/bin/python3 lib/gsc_indexing.py --url "https://www.kpopjournal.tokyo/$SLUG/" >>"$LOG" 2>&1 \
+        && log "GSC申請済: $SLUG" || log "[warn] GSC申請失敗: $SLUG"
+    fi
+  else
+    log "[warn] チャート記事の投稿に失敗(チャート表示自体は更新済み)"
+  fi
   # ⑤ 新しい週を取り込んだ時のみ Discord 通知(publishing_log)
   HOOK="$(python3 lib/resolve_discord_webhook.py publishing_log 2>/dev/null || true)"
   if [ -n "$HOOK" ]; then
