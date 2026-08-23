@@ -271,6 +271,69 @@ def call_claude(prompt, max_tokens=300):
 
 # ── コンテンツ生成 ───────────────────────────────────────────────────────────────
 
+# 2026-08-23 事故対応: LLM が「できません/教えてください」と返した文が
+# そのまま本番タイトルになり公開された(post 13501)。応答は必ず検証する。
+_LLM_CHATTER = (
+    "できません", "教えてください", "申し訳", "情報が不足", "以下のよう",
+    "空欄", "不明です", "わかりません", "分かりません", "提供してください",
+    "していただけ", "しましょうか", "でしょうか?", "改善案", "案1", "案2",
+)
+
+
+def _db_title(post_id) -> str:
+    """DB から記事タイトルを引く(参照専用ラッパー経由)。"""
+    if not post_id:
+        return ""
+    try:
+        import base64 as _b64
+        out = subprocess.run(
+            ["sudo", "-n", "/usr/local/sbin/kpop/kpop-wp-ro", "db", "query",
+             f"SELECT TO_BASE64(post_title) FROM wp_posts WHERE ID={int(post_id)}"],
+            capture_output=True, text=True, timeout=60).stdout.splitlines()
+        if len(out) < 2:
+            return ""
+        raw = "".join(out[1:]).replace("\\n", "")
+        raw = re.sub(r"[^A-Za-z0-9+/=]", "", raw)
+        return _b64.b64decode(raw).decode("utf-8", "replace").strip()
+    except Exception:
+        return ""
+
+
+def resolve_title(item: dict, post_id) -> str:
+    """キューに title が無ければ DB から補完する。
+
+    2026-08-23: item["title"] が空のまま LLM に投げ、「特定できません」という
+    応答が本番タイトルになった。空を空のまま流さない。
+    """
+    t = str((item or {}).get("title") or "").strip()
+    return t or _db_title(post_id)
+
+
+def is_valid_new_title(new_title: str, original_title: str) -> bool:
+    """LLM が返した新タイトルを本番に出してよいか判定する。
+
+    落とすもの:
+      - LLM の会話文(「〜できません」「元タイトルを教えてください」等)
+      - 空・短すぎ・長すぎ
+      - 元と同一
+      - そもそも元タイトルが空(=改善対象を特定できないので触らない)
+    """
+    t = str(new_title or "").strip()
+    o = str(original_title or "").strip()
+    if not o:
+        return False
+    if not t or t == o:
+        return False
+    if not (10 <= len(t) <= 60):
+        return False
+    if any(w in t for w in _LLM_CHATTER):
+        return False
+    # 句点で終わる説明文はタイトルではない
+    if t.endswith(("。", "です", "ます")):
+        return False
+    return True
+
+
 def generate_new_title(original_title, category, pattern_hint=""):
     """勝ちパターンに基づく新タイトル生成"""
     hint = pattern_hint or "数字・固有名詞・感情語・対比構造を含む"
@@ -286,11 +349,19 @@ def generate_new_title(original_title, category, pattern_hint=""):
 - スラッグ(URL)は変更しない前提なので、SEO的に過激すぎる変更は避ける
 - 改善後のタイトルのみ出力（説明不要）"""
 
+    if not str(original_title or "").strip():
+        # 元タイトルが空なら LLM に投げても「特定できません」しか返らない。
+        # 実際にその応答が本番タイトルになった(2026-08-23)。呼ぶ前に止める。
+        print("    [skip] 元タイトルが空のためタイトル生成しない")
+        return None
     result = call_claude(prompt)
-    if result:
-        # 最初の行のみ取得
-        return result.split("\n")[0].strip()[:50]
-    return None
+    if not result:
+        return None
+    cand = result.split("\n")[0].strip()[:60]
+    if not is_valid_new_title(cand, original_title):
+        print(f"    [reject] 不正なタイトル応答: {cand[:40]!r}")
+        return None
+    return cand
 
 
 def generate_meta_desc(title, category):
@@ -421,7 +492,7 @@ def process_item(item, gsc_data, action_hist):
     post_id  = resolve_post_id(item)
     priority = item.get("priority", "P2")
     rank     = item.get("rank", "IMPROVE")
-    title    = item.get("title", "")
+    title    = resolve_title(item, post_id)
     url      = item.get("url", "")
     category = item.get("category", "")
 
