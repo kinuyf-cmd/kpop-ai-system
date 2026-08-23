@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -120,6 +121,45 @@ def probe_home_render():
         return None
 
 
+# 2026-08-23: ルートパーティション100%で PHP-FPM が書き込めず本番が502になった。
+# ディスクは静かに埋まり、埋まった瞬間にサイトが落ちる。90%で警告する。
+DISK_WARN_PCT = 90
+
+
+def _disk_used_pct():
+    try:
+        st = os.statvfs("/")
+        total = st.f_blocks * st.f_frsize
+        free = st.f_bavail * st.f_frsize
+        if not total:
+            return None
+        return round((total - free) / total * 100, 1)
+    except Exception:
+        return None
+
+
+def evaluate_disk(used_pct=None) -> dict:
+    """ディスク使用率を判定する。取得不能は ok にしない。"""
+    if used_pct is None:
+        return {"name": "ディスク空き", "ok": False, "level": "unknown",
+                "age_days": None, "message": "ディスク使用率を取得できなかった"}
+    if used_pct >= DISK_WARN_PCT:
+        return {"name": "ディスク空き", "ok": False, "level": "stale",
+                "age_days": used_pct,
+                "message": f"ディスク使用率 {used_pct}% (警告{DISK_WARN_PCT}%)"
+                           f" — 満杯になるとPHP-FPMが落ちて502になる"}
+    return {"name": "ディスク空き", "ok": True, "level": "ok", "age_days": used_pct,
+            "message": f"ディスク使用率 {used_pct}%"}
+
+
+def probe_disk():
+    """0.0=正常 / 999.0=逼迫。evaluate() の枠に合わせるための変換。"""
+    p = _disk_used_pct()
+    if p is None:
+        return None
+    return 0.0 if p < DISK_WARN_PCT else 999.0
+
+
 CHECKS = [
     {"key": "soompi_chart", "label": "ミュージックチャート",
      # 週次更新なので「1週スキップ」で気づけるよう7.5日。2026-08-23の実事故は
@@ -138,6 +178,9 @@ CHECKS = [
     {"key": "idol_wiki", "label": "Idol Wiki 更新",
      "max_age_days": 14, "probe": probe_idol_wiki,
      "hint": "idol_wiki_release_daily.sh"},
+    {"key": "disk_free", "label": "ディスク空き",
+     "max_age_days": 1, "probe": probe_disk,
+     "hint": "df -h / で確認。満杯だとPHP-FPMが書けず本番が502になる"},
     {"key": "home_render", "label": "本番トップの表示",
      "max_age_days": 1, "probe": probe_home_render,
      "hint": "200が返らない/極端に小さい"},
@@ -151,7 +194,10 @@ def run() -> list[dict]:
             age = c["probe"]()
         except Exception:
             age = None
-        r = evaluate(c["label"], age, c["max_age_days"])
+        if c["key"] == "disk_free":
+            r = evaluate_disk(_disk_used_pct())
+        else:
+            r = evaluate(c["label"], age, c["max_age_days"])
         r["key"] = c["key"]
         r["hint"] = c["hint"]
         out.append(r)

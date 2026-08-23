@@ -63,3 +63,28 @@ class TestThresholdCatchesRealIncident:
     def test_normal_weekly_cycle_is_ok(self):
         """正常な週次更新(最大7日+取得ラグ)は鳴らさない。"""
         assert evaluate("chart", 7.0, self._chart_threshold())["ok"]
+
+
+class TestDiskCheck:
+    """2026-08-23: ルートパーティション100%でPHP-FPMが死に、本番が502になった。
+    ディスクは「静かに埋まって突然サイトを落とす」ので点検に含める。
+    """
+
+    def test_disk_check_registered(self):
+        assert any(c["key"] == "disk_free" for c in CHECKS)
+
+    def test_full_disk_is_detected(self):
+        from lib.staleness_audit import evaluate_disk
+        assert not evaluate_disk(used_pct=100)["ok"]
+
+    def test_near_full_is_detected(self):
+        from lib.staleness_audit import evaluate_disk
+        assert not evaluate_disk(used_pct=93)["ok"]
+
+    def test_healthy_disk_is_ok(self):
+        from lib.staleness_audit import evaluate_disk
+        assert evaluate_disk(used_pct=70)["ok"]
+
+    def test_unknown_is_not_silently_ok(self):
+        from lib.staleness_audit import evaluate_disk
+        assert not evaluate_disk(used_pct=None)["ok"]
