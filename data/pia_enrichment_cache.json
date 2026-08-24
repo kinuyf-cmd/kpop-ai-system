@@ -332,12 +332,20 @@
       {
         "date": "2026-07-08",
         "venue": "GLION ARENA KOBE",
-        "prefecture": "兵庫県"
+        "prefecture": "兵庫県",
+        "date_end": "2026-07-09"
       },
       {
-        "date": "2026-08-16",
-        "venue": "IGアリーナ",
-        "prefecture": "愛知県"
+        "date": "2026-07-28",
+        "venue": "マリンメッセ福岡A館",
+        "prefecture": "福岡県",
+        "date_end": "2026-07-29"
+      },
+      {
+        "date": "2026-08-11",
+        "venue": "LaLa arena TOKYO-BAY",
+        "prefecture": "千葉県",
+        "date_end": "2026-08-12"
       },
       {
         "date": "2026-09-22",
@@ -346,7 +354,7 @@
         "date_end": "2026-09-23"
       }
     ],
-    "cached_at": "2026-07-02T04:02:14.109677"
+    "cached_at": "2026-08-24T04:02:08.831620"
   },
   "b2668175": {
     "event_bundle_cd": "b2668175",
@@ -636,5 +644,19 @@
       }
     ],
     "cached_at": "2026-08-22T04:03:02.002933"
+  },
+  "b2669145": {
+    "event_bundle_cd": "b2669145",
+    "title": "JAURIM",
+    "description": "韓国を代表するロックバンド、JAURIM(紫雨林)が8/29(土)Veats Shibuyaにて来日公演を開催！",
+    "image": "https://image.pia.jp/images/202606/202606170027_ex.png",
+    "performances": [
+      {
+        "date": "2026-08-29",
+        "venue": "Veats Shibuya",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-08-24T04:02:10.383284"
   }
 }

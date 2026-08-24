@@ -1,125 +1,133 @@
 {
-  "generated_at": "2026-08-17T07:00:03.606197",
+  "generated_at": "2026-08-24T07:00:03.603071",
   "candidates": [
-    {
-      "query": "鉄槌教師 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 1150,
-      "clicks": 14,
-      "ctr": 1.2,
-      "pos": 8.8
-    },
     {
       "query": "恋は飴模様 相関図",
       "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 845,
+      "imp": 1054,
       "clicks": 17,
-      "ctr": 2.0,
-      "pos": 6.2
+      "ctr": 1.6,
+      "pos": 6.5
+    },
+    {
+      "query": "鉄槌教師 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 853,
+      "clicks": 10,
+      "ctr": 1.2,
+      "pos": 10.0
     },
     {
       "query": "kジャーナル",
       "page": "/about/",
-      "imp": 784,
+      "imp": 703,
       "clicks": 1,
       "ctr": 0.1,
-      "pos": 7.1
+      "pos": 7.8
     },
     {
       "query": "デーモンハンターズ キャラクター",
       "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 589,
-      "clicks": 23,
-      "ctr": 3.9,
-      "pos": 7.3
+      "imp": 682,
+      "clicks": 24,
+      "ctr": 3.5,
+      "pos": 7.7
     },
     {
-      "query": "エージェントキム 吹き替え",
-      "page": "/agent-kim-reactivated-viewing-guide/",
-      "imp": 574,
-      "clicks": 9,
-      "ctr": 1.6,
-      "pos": 6.7
+      "query": "鉄槌教師 相関図",
+      "page": "/tettsui-kyoshi-cast-chart/",
+      "imp": 650,
+      "clicks": 8,
+      "ctr": 1.2,
+      "pos": 6.5
     },
     {
       "query": "鉄槌教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 465,
-      "clicks": 9,
-      "ctr": 1.9,
-      "pos": 9.0
+      "imp": 583,
+      "clicks": 8,
+      "ctr": 1.4,
+      "pos": 9.9
+    },
+    {
+      "query": "エージェントキム 吹き替え",
+      "page": "/agent-kim-reactivated-viewing-guide/",
+      "imp": 523,
+      "clicks": 3,
+      "ctr": 0.6,
+      "pos": 7.2
     },
     {
       "query": "エージェントキム 日本語吹き替え",
       "page": "/agent-kim-reactivated-viewing-guide/",
-      "imp": 449,
-      "clicks": 10,
-      "ctr": 2.2,
-      "pos": 7.0
-    },
-    {
-      "query": "鉄槌教師 吹き替え",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 266,
-      "clicks": 2,
-      "ctr": 0.8,
-      "pos": 7.5
-    },
-    {
-      "query": "the love lab 日本",
-      "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 195,
-      "clicks": 9,
-      "ctr": 4.6,
-      "pos": 7.6
+      "imp": 411,
+      "clicks": 6,
+      "ctr": 1.5,
+      "pos": 6.8
     },
     {
       "query": "恋は飴模様相関図",
       "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 183,
-      "clicks": 4,
-      "ctr": 2.2,
-      "pos": 6.3
-    },
-    {
-      "query": "恋は飴模様 キャスト",
-      "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 170,
-      "clicks": 4,
+      "imp": 250,
+      "clicks": 6,
       "ctr": 2.4,
-      "pos": 11.2
-    },
-    {
-      "query": "btsメンバー 年齢 2026",
-      "page": "/bts-relationship-map-2026/",
-      "imp": 168,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 6.8
+      "pos": 6.9
     },
     {
       "query": "鉄槌教師 キャスト 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 168,
-      "clicks": 1,
-      "ctr": 0.6,
-      "pos": 7.9
+      "imp": 231,
+      "clicks": 2,
+      "ctr": 0.9,
+      "pos": 8.2
     },
     {
-      "query": "メイディン 神戸",
-      "page": "/meidin-first-concert-free-entry/",
-      "imp": 166,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 8.8
+      "query": "鉄槌教師 日本語声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 220,
+      "clicks": 1,
+      "ctr": 0.5,
+      "pos": 8.9
+    },
+    {
+      "query": "the love lab 日本",
+      "page": "/netflix-renai-jikkenshitsu-guide/",
+      "imp": 218,
+      "clicks": 9,
+      "ctr": 4.1,
+      "pos": 7.5
+    },
+    {
+      "query": "鉄槌教師 キャスト 相関図",
+      "page": "/tettsui-kyoshi-cast-chart/",
+      "imp": 189,
+      "clicks": 2,
+      "ctr": 1.1,
+      "pos": 8.2
     },
     {
       "query": "the love lab 日本 配信",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 161,
+      "imp": 187,
       "clicks": 14,
-      "ctr": 8.7,
-      "pos": 8.2
+      "ctr": 7.5,
+      "pos": 8.1
+    },
+    {
+      "query": "btsメンバー 年齢 2026",
+      "page": "/bts-relationship-map-2026/",
+      "imp": 178,
+      "clicks": 5,
+      "ctr": 2.8,
+      "pos": 7.5
+    },
+    {
+      "query": "デーモンハンターズ メンバー",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 151,
+      "clicks": 6,
+      "ctr": 4.0,
+      "pos": 8.5
     }
   ]
 }

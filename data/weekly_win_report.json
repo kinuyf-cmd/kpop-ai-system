@@ -1,220 +1,232 @@
 {
-  "generated_at": "2026-08-17T07:00:03.606197",
+  "generated_at": "2026-08-24T07:00:03.603071",
   "wins": [
     {
-      "page": "/netflix-renai-jikkenshitsu-guide/",
-      "clicks_7d": 56,
-      "clicks_prev": 28,
-      "imp": 817,
-      "pos": 6.9
+      "page": "/kpop-article-20260816-154241/",
+      "clicks_7d": 256,
+      "clicks_prev": 0,
+      "imp": 1030,
+      "pos": 3.3
     },
     {
       "page": "/kpop-demon-hunters-movie-review/",
-      "clicks_7d": 25,
-      "clicks_prev": 8,
-      "imp": 606,
+      "clicks_7d": 70,
+      "clicks_prev": 25,
+      "imp": 960,
+      "pos": 6.9
+    },
+    {
+      "page": "/bts-j-hope-krist-brown-controversy/",
+      "clicks_7d": 16,
+      "clicks_prev": 0,
+      "imp": 125,
+      "pos": 13.4
+    },
+    {
+      "page": "/chris-brown-bts-rm-jhope-response/",
+      "clicks_7d": 15,
+      "clicks_prev": 0,
+      "imp": 238,
+      "pos": 13.2
+    },
+    {
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "clicks_7d": 21,
+      "clicks_prev": 14,
+      "imp": 1962,
+      "pos": 9.3
+    },
+    {
+      "page": "/seventeen-the8-smoking-club/",
+      "clicks_7d": 9,
+      "clicks_prev": 2,
+      "imp": 34,
+      "pos": 5.0
+    },
+    {
+      "page": "/mama-awards-2026-osaka-guide/",
+      "clicks_7d": 8,
+      "clicks_prev": 1,
+      "imp": 181,
+      "pos": 8.9
+    },
+    {
+      "page": "/ourbirthday-debut-squeezy/",
+      "clicks_7d": 7,
+      "clicks_prev": 0,
+      "imp": 36,
+      "pos": 4.5
+    },
+    {
+      "page": "/tws-summersonic-2026-16000-people/",
+      "clicks_7d": 7,
+      "clicks_prev": 0,
+      "imp": 64,
       "pos": 7.6
     },
     {
-      "page": "/summer-sonic-2026-day-guide/",
-      "clicks_7d": 14,
-      "clicks_prev": 0,
-      "imp": 365,
-      "pos": 9.0
-    },
-    {
-      "page": "/le-sserafim-summer-sonic-2026/",
-      "clicks_7d": 13,
-      "clicks_prev": 0,
-      "imp": 145,
-      "pos": 7.1
-    },
-    {
-      "page": "/swf3-bumsup-members-analysis/",
-      "clicks_7d": 7,
-      "clicks_prev": 2,
-      "imp": 44,
-      "pos": 17.6
-    },
-    {
-      "page": "/hongdae-late-night-food-map/",
+      "page": "/tettsui-kyoshi-cast-chart/",
       "clicks_7d": 8,
-      "clicks_prev": 4,
-      "imp": 72,
-      "pos": 7.8
-    },
-    {
-      "page": "/bigbang-prequel-exhibition-ticket-sale/",
-      "clicks_7d": 6,
       "clicks_prev": 2,
-      "imp": 55,
-      "pos": 6.7
-    },
-    {
-      "page": "/ateez-bad-saiaku-problem/",
-      "clicks_7d": 8,
-      "clicks_prev": 5,
-      "imp": 64,
-      "pos": 11.0
+      "imp": 258,
+      "pos": 7.9
     }
   ],
   "losses": [
     {
-      "page": "/bts-v-traffic-accident-rumor/",
-      "clicks_7d": 13,
-      "clicks_prev": 127
+      "page": "/koi-wa-ame-moyou-cast-guide/",
+      "clicks_7d": 20,
+      "clicks_prev": 69
     },
     {
-      "page": "/",
-      "clicks_7d": 12,
-      "clicks_prev": 25
-    },
-    {
-      "page": "/katseye-sofia-schedule-absence/",
-      "clicks_7d": 1,
-      "clicks_prev": 9
-    },
-    {
-      "page": "/royal-family-supa3-intro/",
+      "page": "/hongdae-late-night-food-map/",
       "clicks_7d": 2,
-      "clicks_prev": 7
+      "clicks_prev": 8
     },
     {
-      "page": "/treasure-debut-6th-anniversary-photobook/",
-      "clicks_7d": 0,
-      "clicks_prev": 5
-    },
-    {
-      "page": "/illits-wonhi-love-confession/",
+      "page": "/ateez-bad-saiaku-problem/",
       "clicks_7d": 4,
       "clicks_prev": 8
     },
     {
-      "page": "/olive-better-recommended-products/",
-      "clicks_7d": 1,
-      "clicks_prev": 5
+      "page": "/straykids-ost-genie-skz-it-tape-2025/",
+      "clicks_7d": 2,
+      "clicks_prev": 6
+    },
+    {
+      "page": "/bigbang-prequel-exhibition-ticket-sale/",
+      "clicks_7d": 3,
+      "clicks_prev": 6
     }
   ],
   "lane_c_candidates": [
     {
-      "query": "鉄槌教師 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 1150,
-      "clicks": 14,
-      "ctr": 1.2,
-      "pos": 8.8
-    },
-    {
       "query": "恋は飴模様 相関図",
       "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 845,
+      "imp": 1054,
       "clicks": 17,
-      "ctr": 2.0,
-      "pos": 6.2
+      "ctr": 1.6,
+      "pos": 6.5
+    },
+    {
+      "query": "鉄槌教師 声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 853,
+      "clicks": 10,
+      "ctr": 1.2,
+      "pos": 10.0
     },
     {
       "query": "kジャーナル",
       "page": "/about/",
-      "imp": 784,
+      "imp": 703,
       "clicks": 1,
       "ctr": 0.1,
-      "pos": 7.1
+      "pos": 7.8
     },
     {
       "query": "デーモンハンターズ キャラクター",
       "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 589,
-      "clicks": 23,
-      "ctr": 3.9,
-      "pos": 7.3
+      "imp": 682,
+      "clicks": 24,
+      "ctr": 3.5,
+      "pos": 7.7
     },
     {
-      "query": "エージェントキム 吹き替え",
-      "page": "/agent-kim-reactivated-viewing-guide/",
-      "imp": 574,
-      "clicks": 9,
-      "ctr": 1.6,
-      "pos": 6.7
+      "query": "鉄槌教師 相関図",
+      "page": "/tettsui-kyoshi-cast-chart/",
+      "imp": 650,
+      "clicks": 8,
+      "ctr": 1.2,
+      "pos": 6.5
     },
     {
       "query": "鉄槌教師 吹き替え 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 465,
-      "clicks": 9,
-      "ctr": 1.9,
-      "pos": 9.0
+      "imp": 583,
+      "clicks": 8,
+      "ctr": 1.4,
+      "pos": 9.9
+    },
+    {
+      "query": "エージェントキム 吹き替え",
+      "page": "/agent-kim-reactivated-viewing-guide/",
+      "imp": 523,
+      "clicks": 3,
+      "ctr": 0.6,
+      "pos": 7.2
     },
     {
       "query": "エージェントキム 日本語吹き替え",
       "page": "/agent-kim-reactivated-viewing-guide/",
-      "imp": 449,
-      "clicks": 10,
-      "ctr": 2.2,
-      "pos": 7.0
-    },
-    {
-      "query": "鉄槌教師 吹き替え",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 266,
-      "clicks": 2,
-      "ctr": 0.8,
-      "pos": 7.5
-    },
-    {
-      "query": "the love lab 日本",
-      "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 195,
-      "clicks": 9,
-      "ctr": 4.6,
-      "pos": 7.6
+      "imp": 411,
+      "clicks": 6,
+      "ctr": 1.5,
+      "pos": 6.8
     },
     {
       "query": "恋は飴模様相関図",
       "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 183,
-      "clicks": 4,
-      "ctr": 2.2,
-      "pos": 6.3
-    },
-    {
-      "query": "恋は飴模様 キャスト",
-      "page": "/koi-wa-ame-moyou-cast-guide/",
-      "imp": 170,
-      "clicks": 4,
+      "imp": 250,
+      "clicks": 6,
       "ctr": 2.4,
-      "pos": 11.2
-    },
-    {
-      "query": "btsメンバー 年齢 2026",
-      "page": "/bts-relationship-map-2026/",
-      "imp": 168,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 6.8
+      "pos": 6.9
     },
     {
       "query": "鉄槌教師 キャスト 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 168,
-      "clicks": 1,
-      "ctr": 0.6,
-      "pos": 7.9
+      "imp": 231,
+      "clicks": 2,
+      "ctr": 0.9,
+      "pos": 8.2
     },
     {
-      "query": "メイディン 神戸",
-      "page": "/meidin-first-concert-free-entry/",
-      "imp": 166,
-      "clicks": 5,
-      "ctr": 3.0,
-      "pos": 8.8
+      "query": "鉄槌教師 日本語声優",
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "imp": 220,
+      "clicks": 1,
+      "ctr": 0.5,
+      "pos": 8.9
+    },
+    {
+      "query": "the love lab 日本",
+      "page": "/netflix-renai-jikkenshitsu-guide/",
+      "imp": 218,
+      "clicks": 9,
+      "ctr": 4.1,
+      "pos": 7.5
+    },
+    {
+      "query": "鉄槌教師 キャスト 相関図",
+      "page": "/tettsui-kyoshi-cast-chart/",
+      "imp": 189,
+      "clicks": 2,
+      "ctr": 1.1,
+      "pos": 8.2
     },
     {
       "query": "the love lab 日本 配信",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 161,
+      "imp": 187,
       "clicks": 14,
-      "ctr": 8.7,
-      "pos": 8.2
+      "ctr": 7.5,
+      "pos": 8.1
+    },
+    {
+      "query": "btsメンバー 年齢 2026",
+      "page": "/bts-relationship-map-2026/",
+      "imp": 178,
+      "clicks": 5,
+      "ctr": 2.8,
+      "pos": 7.5
+    },
+    {
+      "query": "デーモンハンターズ メンバー",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 151,
+      "clicks": 6,
+      "ctr": 4.0,
+      "pos": 8.5
     }
   ]
 }
