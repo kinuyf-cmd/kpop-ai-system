@@ -1,42 +1,33 @@
 {
-  "updated": "2026-08-25 21:36",
-  "count": 4,
+  "updated": "2026-08-26 21:17",
+  "count": 3,
   "queue": [
     {
-      "title": "G-DRAGONの甥イドン君、BIGBANGコンサート訪問",
-      "url": "https://www.kpopjournal.tokyo/g-dragon-idon-bigbang-concert-visit/",
-      "post_id": 18367,
+      "title": "ハーツウェーブ、ミニ2集トラックリスト公開",
+      "url": "https://www.kpopjournal.tokyo/?p=18505",
+      "post_id": 18505,
       "genre": "breaking",
-      "artist": "지드래곤",
+      "artist": "라이즈",
       "priority": "high",
-      "queued_at": "2026-08-25T21:36:01.562649"
+      "queued_at": "2026-08-26T19:37:50.374827"
     },
     {
-      "title": "ブリアン・サラゴサ、バイエルンからエスパニョールへ移籍",
-      "url": "https://www.kpopjournal.tokyo/brian-saragosa-bayern-espanyol-transfer/",
-      "post_id": 18363,
+      "title": "CORTISが城水洞でポップアップイベント出席",
+      "url": "https://www.kpopjournal.tokyo/cortis-pop-up-event-shiro-mizudo/",
+      "post_id": 18501,
       "genre": "breaking",
-      "artist": "에스파",
+      "artist": "코르티스",
       "priority": "high",
-      "queued_at": "2026-08-25T21:33:11.369993"
+      "queued_at": "2026-08-26T19:35:54.545670"
     },
     {
-      "title": "ソン・ガン、BTS Vと軍隊で親友に",
-      "url": "https://www.kpopjournal.tokyo/song-gang-bts-v-friendship-military/",
-      "post_id": 18359,
+      "title": "ホン・ミンギ元恋人、睡眠薬過剰摂取で搬送",
+      "url": "https://www.kpopjournal.tokyo/?p=18496",
+      "post_id": 18496,
       "genre": "breaking",
-      "artist": "BTS",
+      "artist": "IVE",
       "priority": "high",
-      "queued_at": "2026-08-25T21:31:35.091822"
-    },
-    {
-      "title": "TREASUREハルト、際立つビジュアル公開",
-      "url": "https://www.kpopjournal.tokyo/?p=18348",
-      "post_id": 18348,
-      "genre": "breaking",
-      "artist": "트레저",
-      "priority": "high",
-      "queued_at": "2026-08-25T19:34:06.447551"
+      "queued_at": "2026-08-26T19:31:29.642047"
     }
   ]
 }
