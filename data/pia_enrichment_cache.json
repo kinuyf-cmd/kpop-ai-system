@@ -551,7 +551,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-08-20T04:01:23.087189"
+    "cached_at": "2026-08-27T04:02:11.225695"
   },
   "b2669803": {
     "event_bundle_cd": "b2669803",
@@ -559,7 +559,7 @@
     "description": "Lee Jiham JAPAN CONCERT 2026(ＦＣ　ＬＩＶＥ　ＳＨＩＮＪＵＫＵ)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/images/202607/202607140024_ex.png",
     "performances": [],
-    "cached_at": "2026-08-20T04:01:24.202159"
+    "cached_at": "2026-08-27T04:02:12.626911"
   },
   "b2668733": {
     "event_bundle_cd": "b2668733",
@@ -567,7 +567,7 @@
     "description": "LE SSERAFIM(宮城・セキスイハイムスーパーアリーナ（グランディ・２１） Ｋアリーナ横浜 静岡　エコパアリーナ マリンメッセ福岡Ａ館)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/images/202605/202605280035_ex.jpg",
     "performances": [],
-    "cached_at": "2026-08-20T04:01:25.654048"
+    "cached_at": "2026-08-27T04:02:14.022414"
   },
   "b2670086": {
     "event_bundle_cd": "b2670086",
@@ -575,7 +575,7 @@
     "description": "BAE173 FAN-CON IN JAPAN 2026(ＴＩＡＴ　ＳＫＹ　ＨＡＬＬ アゼリア大正)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/images/202607/202607230062_ex.png",
     "performances": [],
-    "cached_at": "2026-08-20T04:01:26.779684"
+    "cached_at": "2026-08-27T04:02:15.180978"
   },
   "b2670263": {
     "event_bundle_cd": "b2670263",
@@ -587,9 +587,15 @@
         "date": "2026-09-06",
         "venue": "COOL JAPAN PARK OSAKA WWホール",
         "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-09-12",
+        "venue": "THEATER MILANO-Za",
+        "prefecture": "東京都",
+        "date_end": "2026-09-13"
       }
     ],
-    "cached_at": "2026-08-20T04:01:27.890573"
+    "cached_at": "2026-08-27T04:02:16.402931"
   },
   "b2670321": {
     "event_bundle_cd": "b2670321",
