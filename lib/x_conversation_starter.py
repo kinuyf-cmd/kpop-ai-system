@@ -180,6 +180,24 @@ def _recent_artists(n: int = 4) -> set[str]:
     return set(out)
 
 
+def _trending_artists_safe() -> list:
+    """trending_artists() を例外安全に呼ぶ(テストで差し替え可能にする)。"""
+    try:
+        from lib.x_trend_topics import trending_artists
+        return trending_artists()
+    except Exception:
+        return []
+
+
+def _artist_has_topic(artist: str) -> bool:
+    """そのアーティストに、いま書ける話題があるか。"""
+    try:
+        from lib.x_trend_topics import pick_trend_topic
+        return bool(pick_trend_topic(artist, used_urls=_recent_topic_urls()))
+    except Exception:
+        return False
+
+
 def _weighted_artist(directives: dict) -> str:
     """いま実際に話題になっているアーティストを選ぶ。
 
@@ -189,11 +207,7 @@ def _weighted_artist(directives: dict) -> str:
     (Phase1の19投稿で ER 0.12%)。**話題がある側から選ぶ**のが正しい向き。
     trend_signals(30分毎更新)に生きた話題があるアーティストを勢い順に優先する。
     """
-    try:
-        from lib.x_trend_topics import trending_artists
-        hot = trending_artists()
-    except Exception:
-        hot = []
+    hot = _trending_artists_safe()
     if hot:
         # 2026-08-17: 直近に投稿したアーティストは外す。上位帯からランダムに
         # 引くだけだと同じ相手が続き、実測で生成8本中4本が同一グループになった。
@@ -208,7 +222,12 @@ def _weighted_artist(directives: dict) -> str:
     )
     hits = [a for a in DEFAULT_ARTIST_POOL if a in theme_text]
     pool = hits if hits else DEFAULT_ARTIST_POOL
-    return random.choice(pool)
+    # 2026-08-28: ここで話題の有無を見ずに引くと、候補0件のアーティスト
+    #   (実測では ATEEZ)を掴んで no_fresh_topic の空振りになる。本番ログで
+    #   ATEEZ の skip が4回。skip は投稿機会の損失なので、フォールバックでも
+    #   「話題がある側」から選ぶ。全員話題なしなら従来どおり引いて呼出側に委ねる。
+    with_topic = [a for a in pool if _artist_has_topic(a)]
+    return random.choice(with_topic or pool)
 
 
 # 2026-08-16: 会話つぶやきの種にしないトピック語。事実関係が確定していない、
@@ -288,6 +307,16 @@ def _remember_topic_url(url: str) -> None:
             f.write(json.dumps({"ts": now_iso(), "url": url}, ensure_ascii=False) + "\n")
     except OSError:
         pass
+
+
+def mark_topic_used(url: str) -> None:
+    """投稿できた話題を使用済みにする(本番パイプラインからの公開API)。
+
+    2026-08-28: 記録は __main__ 経路にしか無く、本番(x_scheduled_poster)は
+    generate() を直接呼ぶため x_used_topics.jsonl が生成されていなかった。
+    used_urls が常に空になり、同じ話題を再選出しうる状態だった。
+    """
+    _remember_topic_url(url)
 
 
 def _persona_generate(artist: str, directives: dict) -> dict | None:

@@ -493,6 +493,13 @@ def _post_conversation(dry_run: bool = False) -> dict:
         print(f"  [conversation] 投稿失敗: {err}")
         return {'success': False, 'error': err}
     print(f"  [conversation] ✓ {tid}: {post['text'][:40]}")
+    # 2026-08-28: 投稿できた話題を使用済みに記録する。従来はCLI経路にしか
+    #   記録が無く、本番は generate() 直呼びのため used_urls が常に空だった。
+    try:
+        from lib.x_conversation_starter import mark_topic_used
+        mark_topic_used(post.get('topic_url', ''))
+    except Exception:
+        pass
     # x_posts.jsonl に記録(レート制限カウント用、mode=hook 扱い)。
     # tweet_id は x_auto_repause_guard の可視性実測が要るため必須(2026-08-12)。
     try:
