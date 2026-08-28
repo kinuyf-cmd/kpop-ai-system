@@ -200,14 +200,41 @@ def get_article_index(force_refresh: bool = False) -> list[dict]:
 
 # ── キーワードマッチング ──────────────────────────────────────────────────────
 
+# ASCII の短い名前(IVE/EXO/NCT/ROSE/LISA 等)は、単語境界を見ずに部分一致させると
+# "olive"/"live"/"drive"/"exotic"/"roses" 等に誤爆する。2026-08-28 の実測で
+# 70記事/102リンクの誤リンク(全て IVE 由来)を検出したため、ASCII 名には
+# 単語境界を課す。日本語(かな/漢字/ハングル)には語境界の概念が無いので従来どおり。
+_ASCII_NAME = re.compile(r"^[A-Za-z0-9_() .-]+$")
+_BOUNDARY_CACHE: dict[str, "re.Pattern[str]"] = {}
+
+
+def _kw_pattern(keyword: str) -> "re.Pattern[str]":
+    """キーワード照合用の正規表現を返す(ASCII名のみ単語境界つき)。"""
+    pat = _BOUNDARY_CACHE.get(keyword)
+    if pat is None:
+        body = re.escape(keyword)
+        if _ASCII_NAME.match(keyword):
+            # 英数字が直前/直後に続く場合は一致させない(語中一致の排除)。
+            # \b は "(G)I-DLE" のような記号終わりで機能しないため look-around を使う。
+            body = r"(?<![A-Za-z0-9])" + body + r"(?![A-Za-z0-9])"
+        pat = re.compile(body, re.IGNORECASE)
+        _BOUNDARY_CACHE[keyword] = pat
+    return pat
+
+
+def _keyword_in(keyword: str, text: str) -> bool:
+    """keyword が text に(誤爆なく)出現するか。"""
+    return bool(_kw_pattern(keyword).search(text))
+
+
 def _extract_keywords_from_text(text: str) -> list[str]:
     """テキストからアーティスト名・ジャンルキーワードを抽出する。"""
     found: list[str] = []
     for name in ARTIST_NAMES:
-        if re.search(re.escape(name), text, re.IGNORECASE):
+        if _keyword_in(name, text):
             found.append(name)
     for kw in GENRE_KEYWORDS:
-        if kw in text:
+        if _keyword_in(kw, text):
             found.append(kw)
     return found
 
@@ -217,7 +244,7 @@ def _title_matches_keywords(article_title: str, keywords: list[str]) -> bool:
     if len(article_title) < MIN_TITLE_LEN:
         return False
     for kw in keywords:
-        if re.search(re.escape(kw), article_title, re.IGNORECASE):
+        if _keyword_in(kw, article_title):
             return True
     return False
 
@@ -252,7 +279,7 @@ def _score_relevance(
     # 2. アーティスト/ジャンルキーワード一致（重み: 40）
     kw_matches = sum(
         1 for kw in new_keywords
-        if re.search(re.escape(kw), candidate_title, re.IGNORECASE)
+        if _keyword_in(kw, candidate_title)
     )
     score += min(kw_matches * 13, 40)
 
@@ -349,7 +376,7 @@ def _insert_inline_links(html_body: str, related: list[dict]) -> str:
             # リンク先記事のキーワードが段落に含まれるかチェック
             link_keywords = _extract_keywords_from_text(link["title"])
             if any(
-                kw.lower() in plain.lower() or re.search(re.escape(kw), plain, re.IGNORECASE)
+                _keyword_in(kw, plain)
                 for kw in link_keywords
                 if kw
             ):

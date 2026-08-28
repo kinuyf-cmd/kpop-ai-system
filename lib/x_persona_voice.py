@@ -584,6 +584,39 @@ def _is_ai_ish(text: str) -> bool:
     return any(re.search(p, t) for p in _AI_PATTERNS)
 
 
+# 具体情報の検出。2026-08-28実測(Phase1以降21投稿)で、曖昧な感想型は
+# 平均imp248/eng1.44、情報型は平均imp465/eng1.75 と約2倍の差があった。
+# エンゲージ上位5件は全て「読者が得をする具体情報」で、疑問符の有無とは無相関
+# (上位5件中4件が疑問符なし)。[[x-concrete-info-gate]] と同じ結論。
+_CONCRETE_PATTERNS = (
+    r'\d{1,2}\s*[/月]\s*\d{1,2}',      # 8/23, 8月23日
+    r'\d{1,2}\s*[:：]\s*\d{2}',          # 14:05
+    r'\d{1,2}\s*時',                       # 19時
+    r'\d+\s*(?:%|％)',                     # 7.7%
+    r'\d+\s*(?:人|名|万|億|円|位|周年|公演|都市|話|集)',
+    r'\d{4}\s*年',                         # 2026年
+    r'[「『][^」』]{2,}[」』]',              # 作品名・曲名の明示
+    r'(?:発表|公開|発売|開催|配信|リリース|決定|中継|開始)(?:さ?れ|し)?(?:ます|た|る)',
+)
+
+# 中身のない感想の型。これ単体では弾かず、具体情報が無い場合の判定に使う。
+_VAGUE_PATTERNS = (
+    r'気がする', r'なんか', r'どうなってん', r'どうなってる',
+    r'んだろう', r'かな[ぁあ]', r'だな[ぁあ]', r'好きすぎ', r'ヤバい',
+)
+
+
+def _lacks_concrete_info(text: str) -> bool:
+    """読者が得をする具体情報(日時/数値/作品名/確定した出来事)が無いか。
+
+    具体情報があれば False(通す)。無くて、かつ曖昧な感想の型に当てはまれば True(弾く)。
+    """
+    t = str(text or '')
+    if any(re.search(p, t) for p in _CONCRETE_PATTERNS):
+        return False
+    return any(re.search(p, t) for p in _VAGUE_PATTERNS)
+
+
 def _has_otaku_overlap(text: str, recent: list[str]) -> bool:
     """text にオタク語が含まれ、かつ直近ログにも同じ語が出ているなら True(連発防止)。"""
     recent_blob = " ".join(recent)
@@ -680,6 +713,11 @@ def generate_persona_post(context: dict, *, kind: str = "conversation",
             continue
         # オタク語の連発・AI感の定型は最終試行では許容(無限ループ回避)
         if attempt < 2 and (_has_otaku_overlap(cand, recent) or _is_ai_ish(cand)):
+            continue
+        # 2026-08-28: 具体情報のない「なんか〜な気がする」型を弾く。実測で
+        #   曖昧型 平均imp248/eng1.44 vs 情報型 平均imp465/eng1.75。
+        #   最終試行では許容(供給が枯れる方が損。skip率は既に約50%)。
+        if attempt < 2 and _lacks_concrete_info(cand):
             continue
         # 2026-08-20: 問いを求める form のときは疑問符必須。実測でエンゲージ率0.7%
         #   (17投稿の疑問符0%)。プロンプトの bait 禁止をモデルが「疑問符禁止」と
