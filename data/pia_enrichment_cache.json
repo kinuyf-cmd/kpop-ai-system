@@ -664,5 +664,24 @@
       }
     ],
     "cached_at": "2026-08-24T04:02:10.383284"
+  },
+  "b2669874": {
+    "event_bundle_cd": "b2669874",
+    "title": "MYNAME GUNWOO",
+    "description": "MYNAME GUNWOO(Ｊ－ＳＱＵＡＲＥ　ＳＨＩＮＡＧＡＷＡ ＴＩＡＴ　ＳＫＹ　ＨＡＬＬ 伽琉駝門カフェ Ｙｏｇｉｂｏ　ＨＯＬＹ　ＭＯＵＮＴＡＩＮ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-12",
+        "venue": "Yogibo HOLY MOUNTAIN",
+        "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-09-19",
+        "venue": "TIAT SKY HALL",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-08-28T04:02:06.885269"
   }
 }

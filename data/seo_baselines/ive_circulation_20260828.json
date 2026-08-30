@@ -1,0 +1,33 @@
+{
+  "date": "2026-08-28",
+  "theme": "IVEガウルTIMA記事を入口とした回遊強化",
+  "issue": "記事自体はpos2-3×CTR36〜68%で改善余地なし。だが内部リンク2本が直近7dで流入ゼロの死んだ記事を指しており、最大の入口(直近1週で1,413clk)から送客できていなかった",
+  "baseline_before": {
+    "window": "2026-08-19..2026-08-25 web",
+    "entry_article": {"slug": "ive-gaul-2026-tima-absence", "daily_clicks": {"2026-08-23": 799, "2026-08-24": 427, "2026-08-25": 187}, "ctr": 0.36, "pos": 3.1},
+    "link_targets_before": {
+      "ive-2026-reading-korea-campaign": "流入ゼロ",
+      "ive-wonyoung-miu-miu-beauty-ambassador": "流入ゼロ"
+    },
+    "yujin_article": {"slug": "kpop-article-20260816-154241", "clicks_7d": 25, "imp_7d": 1063, "pos": 6.5, "inbound_from_gaul": false}
+  },
+  "demand_analysis": {
+    "split": "TIMA系と継続系(休止/休み/いない)を分離した結果、両者とも同比率で減衰(186→139→68imp)。継続需要が独立して残っているわけではない",
+    "conclusion": "イベント日ピークの減衰型。記事改善ではなく、減衰する流入をサイト内に残す回遊が正しい打ち手"
+  },
+  "actions": [
+    "ガウル記事: 脈絡なく置かれた死んだリンク2本を除去し、kpj-related-nav 回遊ブロックに集約(4本、実力順)",
+    "ユジン負傷記事(サイト第3位の集客記事)にも回遊ブロックを追加しガウル記事へ相互リンク",
+    "CSSはテーマを触らず記事内 scoped style で同梱(style.css上書き事故の回避)"
+  ],
+  "verification": {
+    "rendered_ok": true,
+    "mutual_link": true,
+    "cta_h2_corruption": false,
+    "affiliate_links_intact": true,
+    "gsc_submitted": ["ive-gaul-2026-tima-absence", "kpop-article-20260816-154241"]
+  },
+  "remeasure_after": "2026-09-04",
+  "success_criteria": "GA4でガウル記事の直帰率低下・1セッションあたりPV増加を確認。GSCでは測れないためGA4(venv_kpi, LAG_DAYS=3)で見る",
+  "note": "olive-better-recommended-products が『olive』文字列一致でIVE記事に誤挿入されていた形跡あり。内部リンク注入の語句マッチ精度は別途要調査"
+}

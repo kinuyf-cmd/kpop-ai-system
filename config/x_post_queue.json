@@ -1,42 +1,24 @@
 {
-  "updated": "2026-08-27 21:37",
-  "count": 4,
+  "updated": "2026-08-30 21:17",
+  "count": 2,
   "queue": [
     {
-      "title": "WJSNソラ、ガールグループの痩せすぎ心配",
-      "url": "https://www.kpopjournal.tokyo/wjsn-sora-girl-group-thin-concerns/",
-      "post_id": 18629,
+      "title": "IVE、「I AM」MVが4億ビュー突破の記録",
+      "url": "https://www.kpopjournal.tokyo/ive-i-am-mv-4-million-views-2/",
+      "post_id": 18853,
       "genre": "breaking",
-      "artist": "우주소녀",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-08-27T21:37:23.765108"
+      "queued_at": "2026-08-30T19:30:55.839104"
     },
     {
-      "title": "ITZYチェリョン、11月にソロデビュー決定",
-      "url": "https://www.kpopjournal.tokyo/?p=18625",
-      "post_id": 18625,
+      "title": "ファン・イニョプ、夜景セルカで近況報告",
+      "url": "https://www.kpopjournal.tokyo/fan-inyeop-night-view-update/",
+      "post_id": 18849,
       "genre": "breaking",
-      "artist": "ITZY",
+      "artist": "황인엽",
       "priority": "high",
-      "queued_at": "2026-08-27T21:30:58.524825"
-    },
-    {
-      "title": "TEMPESTハンビン、初ソロ音楽番組デビュー",
-      "url": "https://www.kpopjournal.tokyo/hanbin-tempest-solo-debut/",
-      "post_id": 18621,
-      "genre": "breaking",
-      "artist": "템페스트",
-      "priority": "high",
-      "queued_at": "2026-08-27T19:38:48.500745"
-    },
-    {
-      "title": "ILLIT、妖精のような姿を披露",
-      "url": "https://www.kpopjournal.tokyo/?p=18617",
-      "post_id": 18617,
-      "genre": "breaking",
-      "artist": "아일릿",
-      "priority": "high",
-      "queued_at": "2026-08-27T19:37:22.643487"
+      "queued_at": "2026-08-30T17:36:24.649453"
     }
   ]
 }

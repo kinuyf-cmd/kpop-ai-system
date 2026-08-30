@@ -1,0 +1,32 @@
+{
+  "date": "2026-08-28",
+  "post_id": 17607,
+  "url": "https://www.kpopjournal.tokyo/nosurubi-exposure-criticism-response/",
+  "issue": "検索需要は人物特定(『ノスルビ』単体1260imp)だが、記事は速報型。一次ソース冒頭の識別情報『Disney+《運命戦争49》で顔を知られた』が翻訳時に脱落していた",
+  "baseline_before": {
+    "window": "2026-08-05..2026-08-25 web",
+    "query_nosurubi": {"imp": 1260, "clicks": 5, "ctr": 0.0040, "pos": 9.2},
+    "page_total": {"imp": 1592, "clicks": 9, "ctr": 0.0057, "pos": 8.9},
+    "demand_daily": {"2026-08-24": 576, "2026-08-25": 1020, "note": "8/24からゼロ立ち上がり"}
+  },
+  "actions": [
+    "リード文と3行まとめに脱落していた『Disney+《運命戦争49》で顔を知られた』を復元",
+    "プロフィール節+基本プロフィール表を追加(一次ソース裏取り済み項目のみ)",
+    "FAQ 4問追加(とは/年齢/出演番組/MZ巫女の意味) — 実クエリ対応",
+    "post_title を人物軸に変更(検索語先頭維持)",
+    "AIOSEO title(NULL→設定)/description(破損→修正)",
+    "factcheck指摘2件を解消: JENNIE所属補足、『タイの巫女』に文脈注記"
+  ],
+  "sensitivity_note": "実在人物の身体・整形に関する話題を含むため、豊胸手術の記述は拡張せず既存のまま一節に留め、人物ハブの主軸は出演作・肩書に置いた",
+  "verification": {
+    "rendered_title_ok": true,
+    "rendered_desc_ok": true,
+    "profile_table_rendered": true,
+    "faq_rendered": true,
+    "cta_h2_corruption": false,
+    "affiliate_links_intact": true,
+    "gsc_submitted": "2026-08-28T18:33:32+09:00"
+  },
+  "remeasure_after": "2026-09-02",
+  "success_criteria": "pos 8.9 → 5以下、かつ imp が減衰していなければCTR改善を確認。imp減衰なら速報型と判断し深追いしない"
+}

@@ -1,0 +1,22 @@
+{
+  "date": "2026-08-28",
+  "theme": "内部リンク注入の部分文字列誤マッチを根治",
+  "root_cause": "lib/internal_links.py が re.search(re.escape(name), text, re.IGNORECASE) で単語境界を見ずに照合していた。IVE が olive/live/drive/five/exclusive 等に一致。過去のGummy/MOMOLAND事故は名前追加の対症療法で、根本欠陥が残っていた",
+  "false_match_matrix": {"IVE": ["olive","live","alive","five","drive","give","exclusive","creative","native"], "ROSE": ["roses","prose"], "EXO": ["exotic"], "NCT": ["nctv"], "tour": ["tours","tourism","detour"], "chart": ["charts","charter"]},
+  "fix": {
+    "file": "lib/internal_links.py",
+    "approach": "_kw_pattern/_keyword_in を新設。ASCII名のみ look-around で単語境界を課し、日本語(かな/漢字/ハングル)は従来どおり部分一致。\\b は (G)I-DLE のような記号終わりで機能しないため look-around を採用",
+    "call_sites_unified": ["_extract_keywords_from_text", "_title_matches_keywords", "_score_relevance", "_insert_inline_links(段落照合)"],
+    "note": "段落照合には kw.lower() in plain.lower() という素の部分文字列マッチが併記されており境界を迂回していた。これも統一"
+  },
+  "tests": {"file": "tests/test_internal_links_word_boundary.py", "cases": 18, "result": "18 passed", "regression": "749 passed / 164 skipped, 失敗ゼロ"},
+  "cleanup": {
+    "detected_raw": 102,
+    "confirmed_removed": 33,
+    "articles": 18,
+    "method": "注入は2段階(候補スコアリング/段落照合)。両段階で『旧ロジックなら成立・新ロジックでは不成立』を判定。さらに辞書外の正当な関連(VERIVERY同士/ALPHA DRIVE ONE同士/BLACKPINK同士/BTS同士/Stray Kids同士)を固有名トークン照合と目視で12件除外",
+    "top_targets": {"olive-better-*": 17, "ive-*": 13}
+  },
+  "verification": {"removal_confirmed": "33/33", "cta_sources_affiliate_intact": true, "backup": "scratchpad/backup/<id>.html"},
+  "lesson": "判定条件を推測で組むと数字が102→42→16と揺れる。注入コードの実際の経路(2段階)を読んでから判定を組むべきだった"
+}

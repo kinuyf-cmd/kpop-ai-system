@@ -89,6 +89,36 @@
    "start_date": "2026-08-29",
    "venue": "SAGAアリーナ",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MYNAME",
+   "title": "MYNAME GUNWOO",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669874",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-12",
+   "venue": "Yogibo HOLY MOUNTAIN",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BABYMONSTER",
+   "title": "BABYMONSTER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=726934",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-22",
+   "venue": "京セラドーム大阪",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SUPER JUNIOR",
+   "title": "SUPER JUNIOR-D&E",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=355515",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-26",
+   "venue": "東京体育館 メインアリーナ",
+   "_source_id": "ltike"
   }
  ]
 }
