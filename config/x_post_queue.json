@@ -1,24 +1,42 @@
 {
-  "updated": "2026-08-30 21:17",
-  "count": 2,
+  "updated": "2026-08-31 21:38",
+  "count": 4,
   "queue": [
     {
-      "title": "IVE、「I AM」MVが4億ビュー突破の記録",
-      "url": "https://www.kpopjournal.tokyo/ive-i-am-mv-4-million-views-2/",
-      "post_id": 18853,
+      "title": "キム・スヨン、BIGBANG20周年祝い冗談交え",
+      "url": "https://www.kpopjournal.tokyo/kim-suyon-bigbang-20th-anniversary-joke/",
+      "post_id": 19047,
       "genre": "breaking",
-      "artist": "아이브",
+      "artist": "지드래곤",
       "priority": "high",
-      "queued_at": "2026-08-30T19:30:55.839104"
+      "queued_at": "2026-08-31T21:38:59.654946"
     },
     {
-      "title": "ファン・イニョプ、夜景セルカで近況報告",
-      "url": "https://www.kpopjournal.tokyo/fan-inyeop-night-view-update/",
-      "post_id": 18849,
+      "title": "MONSTA X ションウら和やかに帰国する姿",
+      "url": "https://www.kpopjournal.tokyo/?p=19043",
+      "post_id": 19043,
       "genre": "breaking",
-      "artist": "황인엽",
+      "artist": "몬스타엑스",
       "priority": "high",
-      "queued_at": "2026-08-30T17:36:24.649453"
+      "queued_at": "2026-08-31T21:37:28.014364"
+    },
+    {
+      "title": "CORTIS ソンヒョン 大田球場で始球式務める",
+      "url": "https://www.kpopjournal.tokyo/?p=19034",
+      "post_id": 19034,
+      "genre": "breaking",
+      "artist": "코르티스",
+      "priority": "high",
+      "queued_at": "2026-08-31T19:38:02.102610"
+    },
+    {
+      "title": "少女時代YURI、SM退社日「高い出費」明かす",
+      "url": "https://www.kpopjournal.tokyo/yuri-snsd-sm-retirement-expenses/",
+      "post_id": 19029,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-08-31T19:36:06.255735"
     }
   ]
 }

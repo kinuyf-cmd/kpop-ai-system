@@ -2,36 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "TWS",
-   "title": "TWS",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-28",
-   "venue": "福岡国際センター",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "『BOYNEXTDOOR TOUR ’KNOCK ON Vol.2’ IN JAPAN』ライブビューイング",
-   "source_url": "https://l-tike.com/cinema/mevent/?mid=788735",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-29",
-   "venue": "札幌シネマフロンティア",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "チェ・ユリ",
-   "title": "チェ・ユリ",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670296",
-   "source_media": "ぴあ",
-   "start_date": "2026-08-30",
-   "venue": "浜離宮朝日ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "B1A4",
    "title": "B1A4",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670263",
@@ -72,26 +42,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JAURIM",
-   "title": "JAURIM",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669145",
-   "source_media": "ぴあ",
-   "start_date": "2026-08-29",
-   "venue": "Veats Shibuya",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-08-29",
-   "venue": "SAGAアリーナ",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "MYNAME",
    "title": "MYNAME GUNWOO",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669874",
@@ -118,6 +68,46 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-09-26",
    "venue": "東京体育館 メインアリーナ",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Hi-Fi",
+   "title": "Hi-Fi Un!corn",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670319",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-03",
+   "venue": "名古屋クラブクアトロ",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ENHYPEN",
+   "title": "ENHYPEN",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=668314",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-12-01",
+   "venue": "東京ドーム",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-09",
+   "venue": "大阪城ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TWS",
+   "title": "TWS",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-04",
+   "venue": "神戸ワールド記念ホール",
    "_source_id": "ltike"
   }
  ]

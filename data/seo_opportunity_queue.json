@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-24",
+ "generated_at": "2026-08-31",
  "window_days": 90,
  "params": {
   "min_imp": 300,
@@ -16,62 +16,82 @@
   "intent_ctr_max": 0.01
  },
  "totals": {
-  "queries_scanned": 5300,
-  "lane_B_new": 14,
-  "lane_C_rewrite": 12,
+  "queries_scanned": 5716,
+  "lane_B_new": 16,
+  "lane_C_rewrite": 10,
   "excluded": {
    "brand": 5,
    "gossip": 0,
    "breaking": 0,
    "hard_competition": 0,
-   "intent_mismatch": 0
+   "intent_mismatch": 5
   },
-  "existing_slugs": 1987
+  "existing_slugs": 2123
  },
  "lane_B_new": [
   {
    "query": "鉄槌教師 声優",
-   "imp": 3008,
-   "clicks": 47,
-   "position": 9.2,
-   "ctr_pct": 1.6,
+   "imp": 3333,
+   "clicks": 50,
+   "position": 9.4,
+   "ctr_pct": 1.5,
    "theme": "other",
-   "potential": 555,
+   "potential": 617,
    "lane": "B_new"
   },
   {
    "query": "鉄槌教師 吹き替え 声優",
-   "imp": 2287,
-   "clicks": 25,
+   "imp": 2406,
+   "clicks": 26,
    "position": 9.6,
    "ctr_pct": 1.1,
    "theme": "other",
-   "potential": 432,
+   "potential": 455,
+   "lane": "B_new"
+  },
+  {
+   "query": "ノスルビ",
+   "imp": 1278,
+   "clicks": 5,
+   "position": 9.3,
+   "ctr_pct": 0.4,
+   "theme": "other",
+   "potential": 251,
    "lane": "B_new"
   },
   {
    "query": "エージェントキム 吹き替え",
-   "imp": 897,
-   "clicks": 15,
-   "position": 7.0,
-   "ctr_pct": 1.7,
+   "imp": 1048,
+   "clicks": 19,
+   "position": 6.7,
+   "ctr_pct": 1.8,
    "theme": "other",
-   "potential": 164,
+   "potential": 191,
    "lane": "B_new"
   },
   {
    "query": "twice 脱退",
-   "imp": 766,
+   "imp": 767,
    "clicks": 1,
-   "position": 8.8,
+   "position": 8.9,
    "ctr_pct": 0.1,
    "theme": "artist",
    "potential": 152,
    "lane": "B_new"
   },
   {
+   "query": "エージェントキム 日本語吹き替え",
+   "imp": 724,
+   "clicks": 15,
+   "position": 6.6,
+   "ctr_pct": 2.1,
+   "theme": "other",
+   "potential": 130,
+   "lane": "B_new"
+  },
+  {
    "query": "鉄槌教師 吹き替え",
-   "imp": 646,
+   "imp": 647,
    "clicks": 7,
    "position": 8.1,
    "ctr_pct": 1.1,
@@ -80,18 +100,38 @@
    "lane": "B_new"
   },
   {
-   "query": "エージェントキム 日本語吹き替え",
-   "imp": 617,
-   "clicks": 15,
-   "position": 6.8,
-   "ctr_pct": 2.4,
+   "query": "btsメンバー 年齢 2026",
+   "imp": 437,
+   "clicks": 10,
+   "position": 7.6,
+   "ctr_pct": 2.3,
+   "theme": "artist",
+   "potential": 77,
+   "lane": "B_new"
+  },
+  {
+   "query": "鉄槌教師 日本語声優",
+   "imp": 360,
+   "clicks": 4,
+   "position": 8.8,
+   "ctr_pct": 1.1,
    "theme": "other",
-   "potential": 108,
+   "potential": 68,
+   "lane": "B_new"
+  },
+  {
+   "query": "鉄槌教師声優",
+   "imp": 369,
+   "clicks": 7,
+   "position": 9.0,
+   "ctr_pct": 1.9,
+   "theme": "other",
+   "potential": 67,
    "lane": "B_new"
   },
   {
    "query": "鉄槌 教師 吹き替え 声優",
-   "imp": 340,
+   "imp": 341,
    "clicks": 1,
    "position": 9.7,
    "ctr_pct": 0.3,
@@ -107,36 +147,6 @@
    "ctr_pct": 1.4,
    "theme": "other",
    "potential": 66,
-   "lane": "B_new"
-  },
-  {
-   "query": "btsメンバー 年齢 2026",
-   "imp": 367,
-   "clicks": 10,
-   "position": 7.7,
-   "ctr_pct": 2.7,
-   "theme": "artist",
-   "potential": 63,
-   "lane": "B_new"
-  },
-  {
-   "query": "鉄槌教師声優",
-   "imp": 332,
-   "clicks": 7,
-   "position": 8.9,
-   "ctr_pct": 2.1,
-   "theme": "other",
-   "potential": 59,
-   "lane": "B_new"
-  },
-  {
-   "query": "鉄槌教師 日本語声優",
-   "imp": 308,
-   "clicks": 3,
-   "position": 8.8,
-   "ctr_pct": 1.0,
-   "theme": "other",
-   "potential": 59,
    "lane": "B_new"
   },
   {
@@ -161,79 +171,79 @@
   },
   {
    "query": "bts テテ 事故",
-   "imp": 333,
-   "clicks": 35,
+   "imp": 334,
+   "clicks": 36,
    "position": 5.4,
-   "ctr_pct": 10.5,
+   "ctr_pct": 10.8,
    "theme": "artist",
-   "potential": 32,
+   "potential": 31,
+   "lane": "B_new"
+  },
+  {
+   "query": "ive ユジン怪我",
+   "imp": 317,
+   "clicks": 32,
+   "position": 6.0,
+   "ctr_pct": 10.1,
+   "theme": "artist",
+   "potential": 31,
    "lane": "B_new"
   }
  ],
  "lane_C_rewrite": [
   {
-   "query": "恋は雨模様 相関図",
-   "imp": 6012,
-   "clicks": 35,
-   "position": 5.1,
-   "ctr_pct": 0.6,
-   "theme": "kdrama",
-   "potential": 1167,
-   "lane": "C_rewrite"
-  },
-  {
    "query": "鉄槌教師 相関図",
-   "imp": 2763,
-   "clicks": 26,
-   "position": 6.0,
+   "imp": 2906,
+   "clicks": 27,
+   "position": 6.1,
    "ctr_pct": 0.9,
    "theme": "kdrama",
-   "potential": 527,
+   "potential": 554,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ キャラクター",
-   "imp": 1613,
-   "clicks": 56,
-   "position": 7.8,
-   "ctr_pct": 3.5,
+   "imp": 1844,
+   "clicks": 67,
+   "position": 7.6,
+   "ctr_pct": 3.6,
    "theme": "movie_anime",
-   "potential": 267,
+   "potential": 302,
    "lane": "C_rewrite"
   },
   {
    "query": "恋は飴模様 相関図",
-   "imp": 1054,
-   "clicks": 17,
-   "position": 6.5,
+   "imp": 1145,
+   "clicks": 18,
+   "position": 6.2,
    "ctr_pct": 1.6,
    "theme": "kdrama",
-   "potential": 194,
+   "potential": 211,
    "lane": "C_rewrite"
   },
   {
    "query": "bts 仲良し相関図",
-   "imp": 761,
-   "clicks": 18,
-   "position": 6.0,
-   "ctr_pct": 2.4,
+   "imp": 872,
+   "clicks": 23,
+   "position": 5.7,
+   "ctr_pct": 2.6,
    "theme": "kdrama",
-   "potential": 134,
+   "potential": 151,
    "lane": "C_rewrite"
   },
   {
-   "query": "サジャボーイズ 声優",
-   "imp": 835,
-   "clicks": 41,
-   "position": 5.9,
-   "ctr_pct": 4.9,
-   "theme": "movie_anime",
+   "query": "恋は飴もよう 相関図",
+   "imp": 687,
+   "clicks": 11,
+   "position": 4.0,
+   "ctr_pct": 1.6,
+   "theme": "kdrama",
    "potential": 126,
    "lane": "C_rewrite"
   },
   {
    "query": "デーモンハンターズ 声優",
-   "imp": 675,
+   "imp": 676,
    "clicks": 9,
    "position": 9.5,
    "ctr_pct": 1.3,
@@ -242,33 +252,23 @@
    "lane": "C_rewrite"
   },
   {
+   "query": "サジャボーイズ 声優",
+   "imp": 788,
+   "clicks": 43,
+   "position": 5.6,
+   "ctr_pct": 5.5,
+   "theme": "movie_anime",
+   "potential": 115,
+   "lane": "C_rewrite"
+  },
+  {
    "query": "鉄槌教師 キャスト 声優",
-   "imp": 511,
+   "imp": 538,
    "clicks": 2,
-   "position": 8.0,
+   "position": 8.1,
    "ctr_pct": 0.4,
    "theme": "kdrama",
-   "potential": 100,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "恋は飴もよう 相関図",
-   "imp": 497,
-   "clicks": 10,
-   "position": 4.8,
-   "ctr_pct": 2.0,
-   "theme": "kdrama",
-   "potential": 89,
-   "lane": "C_rewrite"
-  },
-  {
-   "query": "恋は雨模様相関図",
-   "imp": 384,
-   "clicks": 3,
-   "position": 5.0,
-   "ctr_pct": 0.8,
-   "theme": "kdrama",
-   "potential": 74,
+   "potential": 106,
    "lane": "C_rewrite"
   },
   {
@@ -282,15 +282,46 @@
    "lane": "C_rewrite"
   },
   {
-   "query": "デーモンハンターズ 名前",
-   "imp": 390,
-   "clicks": 47,
-   "position": 3.5,
-   "ctr_pct": 12.1,
-   "theme": "movie_anime",
-   "potential": 31,
+   "query": "鉄槌教師 キャスト 吹き替え",
+   "imp": 301,
+   "clicks": 5,
+   "position": 9.2,
+   "ctr_pct": 1.7,
+   "theme": "kdrama",
+   "potential": 55,
    "lane": "C_rewrite"
   }
  ],
- "excluded_intent_mismatch": []
+ "excluded_intent_mismatch": [
+  {
+   "query": "恋は雨模様 相関図",
+   "imp": 6779,
+   "position": 4.7,
+   "ctr_pct": 0.53
+  },
+  {
+   "query": "恋は雨模様相関図",
+   "imp": 601,
+   "position": 3.6,
+   "ctr_pct": 0.67
+  },
+  {
+   "query": "恋 は 雨 模様 相関 図",
+   "imp": 592,
+   "position": 1.1,
+   "ctr_pct": 0.17
+  },
+  {
+   "query": "ウォンヒ 幼少期",
+   "imp": 517,
+   "position": 2.3,
+   "ctr_pct": 0.97
+  },
+  {
+   "query": "恋 は 飴 模様 相関 図",
+   "imp": 438,
+   "position": 2.0,
+   "ctr_pct": 0.23
+  }
+ ]
 }
