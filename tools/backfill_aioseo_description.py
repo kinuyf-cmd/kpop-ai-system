@@ -79,7 +79,7 @@ def build_description(content, title):
     return out[:130]
 
 
-def set_description_for_post(pid) -> dict:
+def set_description_for_post(pid, desc: str | None = None) -> dict:
     """1記事のメタ説明を wp_aioseo_posts に書き、DB実値で検証して返す。
 
     2026-08-16: 公開直後にも同じ経路を使えるよう main() から切り出した。
@@ -89,9 +89,13 @@ def set_description_for_post(pid) -> dict:
     このDB経路を通し、戻り値でなく**DBから読み直した実値**で成否を判定する。
     """
     pid = int(pid)
-    content = fetch_b64(f"SELECT TO_BASE64(post_content) FROM wp_posts WHERE ID={pid}")
-    title = fetch_b64(f"SELECT TO_BASE64(post_title) FROM wp_posts WHERE ID={pid}")
-    desc = build_description(content, title)
+    if desc is None:
+        # desc 未指定なら本文から生成する。呼び出し側が用途特化の文面を
+        # 持っている場合(チャート記事など本文が順位表で自動生成に向かない)は
+        # それを渡してもらう。
+        content = fetch_b64(f"SELECT TO_BASE64(post_content) FROM wp_posts WHERE ID={pid}")
+        title = fetch_b64(f"SELECT TO_BASE64(post_title) FROM wp_posts WHERE ID={pid}")
+        desc = build_description(content, title)
     if len(desc) < 50:
         return {"ok": False, "reason": f"生成失敗(短すぎ len={len(desc)})", "post_id": pid}
 

@@ -23,7 +23,8 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(BASE))
 
-from lib.chart_article import build_article, build_title, build_slug  # noqa: E402
+from lib.chart_article import (build_article, build_title, build_slug,  # noqa: E402
+                               build_meta_description)
 
 CHART = BASE / "data" / "soompi_chart_top10.json"
 PREV = BASE / "data" / "soompi_chart_prev.json"
@@ -73,10 +74,12 @@ def main() -> int:
 
     title = build_title(chart)
     slug = build_slug(chart)
+    meta_desc = build_meta_description(chart)
     body = build_article(chart, prev=prev)
 
     if a.dry_run:
         print(f"title: {title}\nslug : {slug}\nprev : {'あり' if prev else 'なし'}")
+        print(f"meta : {meta_desc}")
         print(f"body : {len(body)}B")
         return 0
 
@@ -100,6 +103,16 @@ def main() -> int:
     Path(tmp).unlink(missing_ok=True)
     if rc != 0 or not pid:
         return 1
+
+    # AIOSEO メタ説明。2026-08-31 まで チャート経路だけ設定が無く、
+    # 毎週2本が恒常的にメタ欠落していた。REST は黙って破棄されるので
+    # 必ず DB 経路で書き、DB実値で検証する([[aioseo-desc-write-traps]])。
+    try:
+        from tools.backfill_aioseo_description import set_description_for_post
+        r = set_description_for_post(pid, desc=meta_desc)
+        print(f"[meta] {'ok' if r.get('ok') else 'NG'}: {r}")
+    except Exception as e:
+        print(f"[meta] 失敗: {type(e).__name__}: {str(e)[:80]}")
 
     # アイキャッチ(1200x630)。幅1200px未満はモバイルCTRが半減するため毎回生成する
     try:

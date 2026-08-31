@@ -39,6 +39,7 @@ BASE = Path(__file__).resolve().parent.parent.parent
 if str(BASE) not in sys.path:
     sys.path.insert(0, str(BASE))
 from lib.disk_guard import check_disk, free_gb  # noqa: E402
+from lib.jsonl_integrity import find_broken  # noqa: E402
 LOG_OUT = BASE / "logs" / "health_check.jsonl"
 ACK_FILE = BASE / "config" / "health_check_ack.json"
 SA = BASE / "google_metrics" / "service_account.json"
@@ -158,6 +159,22 @@ def check_disk_space(results, digest):
     results.append((level, "disk_space", msg))
 
 
+def check_jsonl_integrity(results, digest):
+    """jsonl の破損を検知する。2026-08-29 のディスク満杯で追記が切れ、
+    次レコードが同じ行に連結する破損が 8 ファイルで発生していた。
+    読み手は try/except で握るため**1行黙って欠落**し、誰も気付けない
+    ([[disk-full-silent-collector-loss]])。"""
+    broken = find_broken()
+    digest["jsonl_broken_files"] = len(broken)
+    if not broken:
+        results.append(("PASS", "jsonl_integrity", "jsonl 破損: なし"))
+        return
+    head = ", ".join(f"{p.name}({n}行)" for p, n in broken[:3])
+    more = f" 他{len(broken)-3}件" if len(broken) > 3 else ""
+    results.append(("WARN", "jsonl_integrity",
+                    f"jsonl 破損 {len(broken)}ファイル: {head}{more} — 追記中断の疑い(dedup/台帳が黙って欠落)"))
+
+
 def check_configs(results):
     for key, path, label in REQUIRED_CONFIGS:
         if path.exists():
@@ -184,6 +201,23 @@ def check_adsense_token(results, digest):
         results.append(("WARN", "adsense_token",
                         "adsense_token.json が存在しない → runbook で再認証が必要"))
         return
+    # 2026-08-29: ディスク満杯で書き込みが切れ token が **0バイト**になった。
+    # mtime は更新されるので鮮度判定だけでは PASS になり、3日欠測に気付けなかった。
+    # 中身の妥当性まで見る([[disk-full-silent-collector-loss]])。
+    try:
+        raw = token_path.read_text(encoding="utf-8").strip()
+        if not raw:
+            results.append(("FAIL", "adsense_token",
+                            "adsense_token.json が空(0バイト) — 書き込み中断の疑い。"
+                            "AdSense収益が欠測中。復旧: docs/adsense_oauth_reauth_runbook.md"))
+            return
+        json.loads(raw)
+    except (OSError, ValueError):
+        results.append(("FAIL", "adsense_token",
+                        "adsense_token.json が壊れている(JSON不正) — "
+                        "AdSense収益が欠測中。復旧: docs/adsense_oauth_reauth_runbook.md"))
+        return
+
     age_h = (datetime.datetime.now().timestamp() - token_path.stat().st_mtime) / 3600
     digest["adsense_token_age_h"] = round(age_h, 1)
     # 正常なら cron(毎朝8:30)が refresh して mtime を更新する。
@@ -307,6 +341,7 @@ def main():
     check_publish_quality(results, digest)
     check_configs(results)
     check_disk_space(results, digest)
+    check_jsonl_integrity(results, digest)
     check_meta_null(results, digest)
     check_gsc_drop(results, digest)
     check_adsense_token(results, digest)

@@ -145,3 +145,44 @@ def test_runbook_has_fallback_when_recreation_fails():
     text = (ROOT / "docs" / "adsense_oauth_reauth_runbook.md").read_text(encoding="utf-8")
     assert "テストユーザー" in text
     assert "myaccount.google.com/permissions" in text
+
+
+# ── 2026-08-31 追加: 空ファイル検知 ──────────────────────────────
+# 2026-08-29 のディスク満杯で adsense_token.json が **0バイト**になり、
+# 以降 AdSense が JSONDecodeError で取得不能になった(収益3日欠測)。
+# 当時の判定は mtime だけを見ていたため、書き込みで mtime は更新されており
+# 「48h以内=PASS」と鳴らなかった。**中身の妥当性まで見ないと検知できない**。
+def test_0バイトのトークンをFAILとして検知する(tmp_path, monkeypatch):
+    import sys
+    ROOT = Path(__file__).resolve().parent.parent.parent
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    import importlib
+    m = importlib.import_module("tools.health.daily_health_check")
+
+    tok = tmp_path / "adsense_token.json"
+    tok.write_text("")            # 満杯で切れた状態を再現(mtimeは今)
+    monkeypatch.setattr(m, "BASE", tmp_path.parent)
+    (tmp_path.parent / "google_metrics").mkdir(exist_ok=True)
+    real = tmp_path.parent / "google_metrics" / "adsense_token.json"
+    real.write_text("")
+
+    results = []
+    m.check_adsense_token(results, {})
+    levels = {k: lv for lv, k, _ in results}
+    assert levels.get("adsense_token") == "FAIL", "空トークンが検知されていない"
+
+
+def test_壊れたJSONのトークンも検知する(tmp_path, monkeypatch):
+    import sys, importlib
+    ROOT = Path(__file__).resolve().parent.parent.parent
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    m = importlib.import_module("tools.health.daily_health_check")
+    (tmp_path / "google_metrics").mkdir(exist_ok=True)
+    (tmp_path / "google_metrics" / "adsense_token.json").write_text('{"refresh')
+    monkeypatch.setattr(m, "BASE", tmp_path)
+    results = []
+    m.check_adsense_token(results, {})
+    levels = {k: lv for lv, k, _ in results}
+    assert levels.get("adsense_token") == "FAIL"

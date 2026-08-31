@@ -47,6 +47,31 @@ def build_title(chart: dict) -> str:
     return t[:60]
 
 
+def build_meta_description(chart: dict) -> str:
+    """AIOSEO の meta description。
+
+    2026-08-31: チャート経路にはメタ設定が無く、毎週2本が恒常的に欠落していた
+    (他経路は unified_publisher が excerpt=meta_desc を渡している)。
+    検索語「K-POPチャート」は**前方**に置く
+    ([[ctr-search-term-must-be-early-in-title]])。
+    """
+    w = _parse_week(chart.get("title", ""))
+    items = chart.get("items") or []
+    top = items[0] if items else {}
+    head = f"{w[1]}月第{w[2]}週" if w else "最新週"
+    names = "・".join(
+        str(i.get("artist", "")) for i in items[1:4] if i.get("artist"))
+
+    d = f"K-POPチャート{head}の最新ランキング。"
+    if top.get("artist") and top.get("song"):
+        d += f"1位は{top['artist']}「{top['song']}」。"
+    if names:
+        d += f"{names}などTOP10の順位と前週からの変動を一覧で紹介します。"
+    else:
+        d += "TOP10の順位と前週からの変動を一覧で紹介します。"
+    return d[:120]
+
+
 def build_slug(chart: dict) -> str:
     w = _parse_week(chart.get("title", ""))
     if not w:
