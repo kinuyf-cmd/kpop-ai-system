@@ -44,7 +44,7 @@ def test_limitで件数を絞れる(monkeypatch):
     monkeypatch.setattr(T, "blocked_ids", lambda: [1, 2, 3, 4, 5])
     monkeypatch.setattr(T, "regenerate", lambda pid: seen.append(pid) or 1)
     monkeypatch.setattr(T, "set_publish", lambda pid: None)
-    T.run(apply=True, limit=2)
+    T.run(apply=True, limit=2, retries=1)
     assert seen == [1, 2]
 
 
@@ -54,7 +54,7 @@ def test_除外IDはスキップする(monkeypatch):
     monkeypatch.setattr(T, "blocked_ids", lambda: [1, 2, 3])
     monkeypatch.setattr(T, "regenerate", lambda pid: seen.append(pid) or 1)
     monkeypatch.setattr(T, "set_publish", lambda pid: None)
-    T.run(apply=True, limit=0, exclude={2})
+    T.run(apply=True, limit=0, exclude={2}, retries=1)
     assert seen == [1, 3]
 
 
@@ -67,3 +67,30 @@ def test_公開済みと同名のdraftは対象から外す(monkeypatch):
     monkeypatch.setattr(T, "_raw_blocked_draft_ids", lambda: [1, 2, 3])
     monkeypatch.setattr(T, "_dup_title_ids", lambda ids: {2})
     assert T.blocked_ids() == [1, 3]
+
+
+def test_再生成失敗はリトライする(monkeypatch):
+    """gate拒否は DALL-E 出力のばらつきによる一時的失敗で、
+    実測(2026-08-31)では同じ記事を再実行すると成功した。
+    1回で諦めると回収できる記事を落とす。"""
+    attempts = {"n": 0}
+
+    def flaky(pid):
+        attempts["n"] += 1
+        return 0 if attempts["n"] >= 2 else 1
+
+    published = []
+    monkeypatch.setattr(T, "blocked_ids", lambda: [42])
+    monkeypatch.setattr(T, "regenerate", flaky)
+    monkeypatch.setattr(T, "set_publish", lambda pid: published.append(pid))
+    T.run(apply=True, limit=0, retries=2)
+    assert published == [42]
+
+
+def test_リトライを使い切ったら諦めてdraftのまま(monkeypatch):
+    published = []
+    monkeypatch.setattr(T, "blocked_ids", lambda: [42])
+    monkeypatch.setattr(T, "regenerate", lambda pid: 1)
+    monkeypatch.setattr(T, "set_publish", lambda pid: published.append(pid))
+    T.run(apply=True, limit=0, retries=2)
+    assert published == []

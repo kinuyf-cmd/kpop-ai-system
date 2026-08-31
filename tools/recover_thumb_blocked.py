@@ -89,7 +89,7 @@ def set_publish(pid) -> None:
                    capture_output=True, text=True, timeout=60)
 
 
-def run(apply: bool = False, limit: int = 0, exclude=None) -> int:
+def run(apply: bool = False, limit: int = 0, exclude=None, retries: int = 2) -> int:
     exclude = set(exclude or ())
     ids = [i for i in blocked_ids() if i not in exclude]
     if limit:
@@ -99,7 +99,13 @@ def run(apply: bool = False, limit: int = 0, exclude=None) -> int:
         return 0
     ok = 0
     for pid in ids:
-        rc = regenerate(pid)
+        # gate拒否は DALL-E 出力のばらつきによる一時的失敗で、実測では
+        # 同じ記事を再実行すると通る。1回で諦めると回収できる記事を落とす。
+        rc = 1
+        for _ in range(max(1, retries)):
+            rc = regenerate(pid)
+            if rc == 0:
+                break
         if rc == 0:
             set_publish(pid)
             ok += 1
@@ -115,9 +121,10 @@ def main():
     ap.add_argument("--apply", action="store_true", help="実際に再生成・公開する")
     ap.add_argument("--limit", type=int, default=0, help="処理件数の上限")
     ap.add_argument("--exclude", default="", help="除外する post_id(カンマ区切り)")
+    ap.add_argument("--retries", type=int, default=2, help="1記事あたりの試行回数")
     a = ap.parse_args()
     ex = {int(x) for x in a.exclude.split(",") if x.strip().isdigit()}
-    return run(apply=a.apply, limit=a.limit, exclude=ex)
+    return run(apply=a.apply, limit=a.limit, exclude=ex, retries=a.retries)
 
 
 if __name__ == "__main__":
