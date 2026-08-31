@@ -19,6 +19,8 @@ import importlib
 
 sys.path.insert(0, "/home/aiuser/kpop-ai-system")
 
+from lib.disk_guard import check_disk
+
 # 実績ある RSS collector(全て korean_base 依存・追加キー不要)。
 # soompi は既存 cron でも回るが、collect-all に含めても dedup されるので無害。
 COLLECTORS = [
@@ -32,6 +34,12 @@ COLLECTORS = [
 def main(stagger: float = 0.0) -> int:
     """全 collector を順に実行。stagger 秒だけ各 collector の間隔を空ける
     (同一時刻に全 RSS feed を叩かないための時間ずらし。既定0=連続)。"""
+    # 2026-08-29: ディスク満杯で 8/14 collector が落ち、収集欠損に誰も気付かなかった。
+    # 実行前に残量を見て、割っていたら記録に残す([[disk-full-silent-collector-loss]])。
+    disk_level, disk_msg = check_disk()
+    if disk_level != "PASS":
+        print(f"  [disk] {disk_level}: {disk_msg}")
+
     total = 0
     ok = 0
     for i, name in enumerate(COLLECTORS):

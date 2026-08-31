@@ -36,6 +36,9 @@ import urllib.request
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent.parent
+if str(BASE) not in sys.path:
+    sys.path.insert(0, str(BASE))
+from lib.disk_guard import check_disk, free_gb  # noqa: E402
 LOG_OUT = BASE / "logs" / "health_check.jsonl"
 ACK_FILE = BASE / "config" / "health_check_ack.json"
 SA = BASE / "google_metrics" / "service_account.json"
@@ -144,6 +147,15 @@ def check_publish_quality(results, digest):
     results.append(("PASS", "quality",
                     f"昨日({y})公開{len(rows)}件: og={src['og']} 本人={src['artist_photo']} "
                     f"dalle={src['dalle']} 他={src['other']} / GateWARN={gate_warns}件"))
+
+
+def check_disk_space(results, digest):
+    """ディスク残量。2026-08-29 に満杯で collect-all 8/14 が落ち、
+    その日の記事収集が欠損した。落ちた事実がログに埋もれて誰も気付かなかったので、
+    ここで先に鳴らす([[disk-full-silent-collector-loss]])。"""
+    level, msg = check_disk()
+    digest["disk_free_gb"] = round(free_gb(), 1)
+    results.append((level, "disk_space", msg))
 
 
 def check_configs(results):
@@ -294,6 +306,7 @@ def main():
     check_freshness(results)
     check_publish_quality(results, digest)
     check_configs(results)
+    check_disk_space(results, digest)
     check_meta_null(results, digest)
     check_gsc_drop(results, digest)
     check_adsense_token(results, digest)
