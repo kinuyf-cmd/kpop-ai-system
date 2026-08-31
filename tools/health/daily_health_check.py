@@ -379,8 +379,13 @@ def main():
             lines.append(f"\n昨日: 公開{d.get('published')}件 "
                          f"dalle率{d.get('dalle_ratio', 0)*100:.0f}% "
                          f"GSC7d {d.get('gsc_7d_clicks', '?')}clk")
-        notify_discord("\n".join(lines))
-        print("→ Discord通知送信")
+        # 戻り値を見る。無視すると送信できていなくても成功に見え、
+        # 通知が死んでいること自体に気付けない
+        # ([[discord-notify-global-repair-20260602]] の全系統失効の実績あり)。
+        if notify_discord("\n".join(lines)):
+            print("→ Discord通知送信")
+        else:
+            print("→ ⚠️ Discord通知の送信に失敗(異常は上記のとおり未通知)")
     sys.exit(1 if any(lv == "FAIL" for lv, k, m in active) else 0)
 
 
