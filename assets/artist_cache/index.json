@@ -965,5 +965,33 @@
         "license": "CC BY-SA 4.0"
       }
     ]
+  },
+  "leeseo": {
+    "name": "Leeseo",
+    "files": [
+      "leeseo_39791ed6.jpg"
+    ],
+    "sources": [
+      {
+        "file": "leeseo_39791ed6.jpg",
+        "wikimedia_title": "File:20260807 Leeseo IVE in Seattle.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/20260807_Leeseo_IVE_in_Seattle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY 4.0"
+      }
+    ]
+  },
+  "gaeul": {
+    "name": "Gaeul",
+    "files": [
+      "gaeul_ca517ea3.jpg"
+    ],
+    "sources": [
+      {
+        "file": "gaeul_ca517ea3.jpg",
+        "wikimedia_title": "File:IVE's Gaeul In January 2023.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b1/IVE%27s_Gaeul_In_January_2023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }
