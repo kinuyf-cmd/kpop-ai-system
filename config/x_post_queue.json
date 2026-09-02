@@ -1,42 +1,33 @@
 {
-  "updated": "2026-09-01 21:38",
-  "count": 4,
+  "updated": "2026-09-02 21:35",
+  "count": 3,
   "queue": [
     {
-      "title": "STAYC ジェイ、余裕あるカフェでの姿…グローバルツアーを控えたヒーリングの時間",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260901-213800/",
-      "post_id": 19207,
-      "genre": "breaking",
-      "artist": "스테이씨",
-      "priority": "high",
-      "queued_at": "2026-09-01T21:38:27.897538"
-    },
-    {
-      "title": "ホ・チャンミ、LAの街で見せたビビッドな日常…ミス・トロット4以降の余裕を満喫",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260901-213526/",
-      "post_id": 19201,
-      "genre": "breaking",
-      "artist": "비비",
-      "priority": "high",
-      "queued_at": "2026-09-01T21:35:52.044566"
-    },
-    {
-      "title": "ある俳優の最近のInstagram投稿がBLACKPINK・Lisaとの熱愛説と結び",
-      "url": "https://www.kpopjournal.tokyo/instagram-blackpink-lisa/",
-      "post_id": 19188,
+      "title": "BLACKPINK ジス、新曲「CLICK」予告イメージ公開",
+      "url": "https://www.kpopjournal.tokyo/?p=19265",
+      "post_id": 19265,
       "genre": "breaking",
       "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-09-01T19:30:51.081459"
+      "queued_at": "2026-09-02T13:35:50.118689"
     },
     {
-      "title": "少女時代の義兄」ピョン・ヨハン、HYOYEONと会う…TIFFANYに続き「レベルア",
-      "url": "https://www.kpopjournal.tokyo/kpop-article-20260901-173537/",
-      "post_id": 19177,
+      "title": "EXOコンサート、「不正予売」大量摘発…「強制予売取り消し・座席再オープン」[公式]",
+      "url": "https://www.kpopjournal.tokyo/kpop-article-20260902-213043/",
+      "post_id": 19301,
       "genre": "breaking",
-      "artist": "소녀시대",
+      "artist": "엑소",
       "priority": "high",
-      "queued_at": "2026-09-01T17:36:02.229567"
+      "queued_at": "2026-09-02T21:31:10.359413"
+    },
+    {
+      "title": "RIIZE ソンチャン「かっこいい破れたデニムファッション」[フォト＆HD]",
+      "url": "https://www.kpopjournal.tokyo/?p=19305",
+      "post_id": 19305,
+      "genre": "breaking",
+      "artist": "라이즈",
+      "priority": "high",
+      "queued_at": "2026-09-02T21:35:51.146504"
     }
   ]
 }
