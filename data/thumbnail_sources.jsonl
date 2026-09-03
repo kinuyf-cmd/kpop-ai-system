@@ -2767,3 +2767,7 @@
 {"post_id": "", "source": "ai_prompt", "source_url": "", "license": "AI-generated (to be created)", "attribution": "AI-generated documentary style", "fetched_at": "2026-09-02T08:39:39.829849+00:00"}
 {"post_id": "", "source": "ai_prompt", "source_url": "", "license": "AI-generated (to be created)", "attribution": "AI-generated documentary style", "fetched_at": "2026-09-02T10:36:37.417984+00:00"}
 {"post_id": "", "source": "ai_prompt", "source_url": "", "license": "AI-generated (to be created)", "attribution": "AI-generated documentary style", "fetched_at": "2026-09-02T10:36:39.261038+00:00"}
+{"post_id": "", "source": "youtube_official", "source_url": "https://www.youtube.com/watch?v=ioNng23DkIM", "license": "YouTube embed (fair use for editorial thumbnail)", "attribution": "YouTube: BLACKPINK", "fetched_at": "2026-09-02T22:30:43.545625+00:00"}
+{"post_id": "", "source": "youtube_official", "source_url": "https://www.youtube.com/watch?v=F0B7HDiY-10", "license": "YouTube embed (fair use for editorial thumbnail)", "attribution": "YouTube: IVE", "fetched_at": "2026-09-02T22:38:20.111738+00:00"}
+{"post_id": "", "source": "youtube_official", "source_url": "https://www.youtube.com/watch?v=XsX3ATc3FbA", "license": "YouTube embed (fair use for editorial thumbnail)", "attribution": "YouTube: BTS (BANGTANTV)", "fetched_at": "2026-09-03T00:32:05.517660+00:00"}
+{"post_id": "", "source": "fallback_cache", "source_url": "", "license": "Cached (original license applies)", "attribution": "Cached image for RIIZE", "fetched_at": "2026-09-03T02:30:44.049692+00:00"}

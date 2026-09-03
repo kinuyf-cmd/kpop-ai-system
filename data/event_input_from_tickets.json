@@ -12,16 +12,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "LE SSERAFIM",
-   "title": "LE SSERAFIM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-02",
-   "venue": "マリンメッセ福岡A館",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "SHOW×MUSICAL『ドリームハイ』プレミアムライブ",
    "title": "SHOW×MUSICAL『ドリームハイ』プレミアムライブ",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670321",
@@ -109,6 +99,26 @@
    "start_date": "2026-09-04",
    "venue": "神戸ワールド記念ホール",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NA",
+   "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670836",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-22",
+   "venue": "横浜BUNTAI",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ハ・ジウォン",
+   "title": "2026 ハ・ジウォン ファンミーティング",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668979",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-22",
+   "venue": "日本教育会館 一ツ橋ホール",
+   "_source_id": "pia"
   }
  ]
 }

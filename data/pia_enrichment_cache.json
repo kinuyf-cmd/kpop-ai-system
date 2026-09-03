@@ -575,7 +575,7 @@
     "description": "BAE173 FAN-CON IN JAPAN 2026(ＴＩＡＴ　ＳＫＹ　ＨＡＬＬ アゼリア大正)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/images/202607/202607230062_ex.png",
     "performances": [],
-    "cached_at": "2026-08-27T04:02:15.180978"
+    "cached_at": "2026-09-03T04:02:32.677028"
   },
   "b2670263": {
     "event_bundle_cd": "b2670263",
@@ -595,7 +595,7 @@
         "date_end": "2026-09-13"
       }
     ],
-    "cached_at": "2026-08-27T04:02:16.402931"
+    "cached_at": "2026-09-03T04:02:33.841437"
   },
   "b2670321": {
     "event_bundle_cd": "b2670321",
@@ -697,5 +697,41 @@
       }
     ],
     "cached_at": "2026-08-31T04:03:13.506955"
+  },
+  "b2670835": {
+    "event_bundle_cd": "b2670835",
+    "title": "2026 THE FACT MUSIC AWARDS",
+    "description": "2026 THE FACT MUSIC AWARDS(釜山アシアード主競技場)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609020094_ex.jpg",
+    "performances": [],
+    "cached_at": "2026-09-03T04:02:34.939680"
+  },
+  "b2670836": {
+    "event_bundle_cd": "b2670836",
+    "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
+    "description": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love(横浜ＢＵＮＴＡＩ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-22",
+        "venue": "横浜BUNTAI",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-09-03T04:02:36.205122"
+  },
+  "b2668979": {
+    "event_bundle_cd": "b2668979",
+    "title": "2026 ハ・ジウォン ファンミーティング",
+    "description": "9/22(火・祝)日本教育会館 一ツ橋ホールにて、「2026 HAJIWON FANMEETING - Stay With Me -」開催！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-22",
+        "venue": "日本教育会館 一ツ橋ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-03T04:02:37.305024"
   }
 }
