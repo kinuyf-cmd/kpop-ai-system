@@ -72,16 +72,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "TWS",
-   "title": "TWS",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-04",
-   "venue": "神戸ワールド記念ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NA",
    "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670836",
@@ -119,6 +109,56 @@
    "start_date": "2026-09-23",
    "venue": "KT Zepp Yokohama",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Ji",
+   "title": "Ji Chang Wook",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670555",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-02",
+   "venue": "大阪国際会議場 メインホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JISUNG",
+   "title": "2026 JISUNG FANMEETING IN JAPAN : OUR SCENE",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670401",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-19",
+   "venue": "寝屋川市立市民会館 大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "&TEAM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-05",
+   "venue": "ベルーナドーム",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TWS",
+   "title": "TWS",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-05",
+   "venue": "神戸ワールド記念ホール",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NCT",
+   "title": "NCT 127 5TH TOUR ’NEO CITY: SEOUL - THE REDLINE’ in CINEMAS",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=792926",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-20",
+   "venue": "札幌シネマフロンティア",
+   "_source_id": "ltike"
   }
  ]
 }
