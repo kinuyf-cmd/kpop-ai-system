@@ -2,26 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "B1A4",
-   "title": "B1A4",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670263",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-06",
-   "venue": "COOL JAPAN PARK OSAKA WWホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "HAN SEUNG WOO",
-   "title": "HAN SEUNG WOO SOUND & MOMENT : Scene #Tokyo",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670381",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-05",
-   "venue": "東京カルチャーカルチャー",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "MYNAME",
    "title": "MYNAME GUNWOO",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669874",
@@ -132,13 +112,23 @@
   },
   {
    "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "&TEAM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
+   "artist_keyword": "NCT",
+   "title": "NCT 127 5TH TOUR ’NEO CITY: SEOUL - THE REDLINE’ in CINEMAS",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=792926",
    "source_media": "ローソンチケット",
-   "start_date": "2026-09-05",
-   "venue": "ベルーナドーム",
+   "start_date": "2026-09-20",
+   "venue": "札幌シネマフロンティア",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "JUNNY",
+   "title": "JUNNY",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670079",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-27",
+   "venue": "大塚FUTURE:",
+   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -146,18 +136,8 @@
    "title": "TWS",
    "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
    "source_media": "ローソンチケット",
-   "start_date": "2026-09-05",
-   "venue": "神戸ワールド記念ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "NCT",
-   "title": "NCT 127 5TH TOUR ’NEO CITY: SEOUL - THE REDLINE’ in CINEMAS",
-   "source_url": "https://l-tike.com/cinema/mevent/?mid=792926",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-20",
-   "venue": "札幌シネマフロンティア",
+   "start_date": "2026-09-12",
+   "venue": "Kアリーナ横浜",
    "_source_id": "ltike"
   }
  ]

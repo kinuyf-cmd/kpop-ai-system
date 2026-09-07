@@ -801,5 +801,38 @@
       }
     ],
     "cached_at": "2026-09-05T04:02:44.663277"
+  },
+  "b2670480": {
+    "event_bundle_cd": "b2670480",
+    "title": "FTISLAND",
+    "description": "FTISLAND(東京ガーデンシアター Ｎｉｔｅｒｒａ日本特殊陶業市民会館　フォレストホール 神戸国際会館こくさいホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-06",
+        "venue": "Niterra日本特殊陶業市民会館 フォレストホール",
+        "prefecture": "愛知県"
+      },
+      {
+        "date": "2026-09-19",
+        "venue": "神戸国際会館こくさいホール",
+        "prefecture": "兵庫県"
+      }
+    ],
+    "cached_at": "2026-09-07T04:02:09.604077"
+  },
+  "b2670079": {
+    "event_bundle_cd": "b2670079",
+    "title": "JUNNY",
+    "description": "韓国発R&Bシンガー・JUNNY、9/27(日)大塚FUTURE:にて初来日公演開催！",
+    "image": "https://image.pia.jp/images/202607/202607280009_ex.png",
+    "performances": [
+      {
+        "date": "2026-09-27",
+        "venue": "大塚FUTURE:",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-07T04:02:10.733124"
   }
 }
