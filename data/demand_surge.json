@@ -1,0 +1,29 @@
+{
+  "window": [
+    "2026-09-01",
+    "2026-09-07"
+  ],
+  "generated_at": "2026-09-10",
+  "rows": [
+    {
+      "query": "cortis メンバー",
+      "imp": 864,
+      "prev_imp": 9,
+      "delta": 855,
+      "clicks": 1,
+      "ctr_pct": 0.12,
+      "position": 9.8,
+      "ratio": 96.0
+    },
+    {
+      "query": "cortisメンバー",
+      "imp": 99,
+      "prev_imp": 2,
+      "delta": 97,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 10.8,
+      "ratio": 49.5
+    }
+  ]
+}

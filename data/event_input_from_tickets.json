@@ -42,16 +42,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-09",
-   "venue": "大阪城ホール",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NA",
    "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670836",
@@ -148,6 +138,26 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-12-23",
    "venue": "LaLa arena TOKYO-BAY",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KIM",
+   "title": "2026 KIM JAE WON WORLD TOUR FANMEETING<THE MOMENT WE MET-Episode 2:Pro",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670794",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-20",
+   "venue": "LINE CUBE SHIBUYA",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-10",
+   "venue": "大阪城ホール",
    "_source_id": "ltike"
   }
  ]

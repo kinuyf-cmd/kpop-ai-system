@@ -1,5 +1,42 @@
 {
-  "updated": "2026-09-09 21:17",
-  "count": 0,
-  "queue": []
+  "updated": "2026-09-10 22:04",
+  "count": 4,
+  "queue": [
+    {
+      "title": "BLACKPINKリサ、EP「PRESS PLAY」日本盤CDを10月23日発売",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-ep-press-play-japan-release/",
+      "post_id": 19532,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-09-10T22:04:58.294514"
+    },
+    {
+      "title": "EVNNE、10月カムバックと新ツアー発表",
+      "url": "https://www.kpopjournal.tokyo/evnne-october-comeback-new-tour/",
+      "post_id": 19528,
+      "genre": "breaking",
+      "artist": "EVNNE",
+      "priority": "high",
+      "queued_at": "2026-09-10T22:02:00.042645"
+    },
+    {
+      "title": "シン・セギョン、三成洞の高級住居購入報道",
+      "url": "https://www.kpopjournal.tokyo/shin-segyon-samseong-dong-luxury-residence/",
+      "post_id": 19517,
+      "genre": "breaking",
+      "artist": "소녀시대",
+      "priority": "high",
+      "queued_at": "2026-09-10T21:33:18.299976"
+    },
+    {
+      "title": "イ・ジェリョン、ナンシー・ランら飲酒運転摘発",
+      "url": "https://www.kpopjournal.tokyo/lee-jaeryeong-drunk-driving-arrest/",
+      "post_id": 19512,
+      "genre": "breaking",
+      "artist": "르세라핌",
+      "priority": "high",
+      "queued_at": "2026-09-10T21:31:24.139906"
+    }
+  ]
 }
