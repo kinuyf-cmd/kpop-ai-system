@@ -216,6 +216,25 @@ def _check_shop_article_without_details(title, body_html):
     }]
 
 
+# 2026-09-10: factcheck の LLM が「問題なし」を空配列でなく ["OK"]/["なし"] 等で
+# 返すことがあり、それを1件の critical として数えると正常な記事が BLOCK される。
+# body_enrich では実測で factcheck_block 13件中3件がこれによる誤ブロックだった。
+# 公開を止めるゲートでも同じ値が来るため、ここでも吸収する。
+_NON_ISSUE_TOKENS = {"ok", "none", "なし", "問題なし", "no issue", "no issues",
+                     "特になし", "n/a", "-"}
+
+
+def _real_issues(items):
+    """「問題なし」を意味するだけの値を除いた、実際の指摘だけを返す。"""
+    out = []
+    for it in items or []:
+        t = str(it).strip()
+        if not t or t.strip("。.").lower() in _NON_ISSUE_TOKENS:
+            continue
+        out.append(it)
+    return out
+
+
 def find_duplicate_published(keywords):
     """公開済み記事に同テーマ(キーワード重複)があれば {'id','title'} を返す。無ければ None。
 
@@ -743,13 +762,13 @@ def pre_publish_gate(
                 pr = None
 
         if pr:
-            for c in pr.get('critical', []):
+            for c in _real_issues(pr.get('critical', [])):
                 issues.append({
                     'type': 'llm_factcheck_critical',
                     'severity': 'block',
                     'detail': str(c)[:100],
                 })
-            for h in pr.get('high', []):
+            for h in _real_issues(pr.get('high', [])):
                 issues.append({
                     'type': 'llm_factcheck_high',
                     'severity': 'warn',  # highはWARN（BLOCKは壊滅レベルのcriticalのみ）
@@ -818,7 +837,10 @@ def pre_publish_gate(
                 'verdict': verdict,
                 'block_count': len(block_issues),
                 'warn_count': len(warn_issues),
-                'issues': [{'type': i['type'], 'severity': i['severity']} for i in issues],
+                # detail を捨てていたため「何が BLOCK 理由だったか」を後から
+                # 検証できなかった(2026-09-10)。長さを切って必ず残す。
+                'issues': [{'type': i['type'], 'severity': i['severity'],
+                            'detail': str(i.get('detail', ''))[:120]} for i in issues],
             }, ensure_ascii=False) + '\n')
     except Exception:
         pass

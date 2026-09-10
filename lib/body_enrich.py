@@ -267,6 +267,25 @@ def generate_enrich_sections(title, theme, existing_h2, plain_body):
     return html, wanted
 
 
+# 2026-09-10: factcheck の LLM が「問題なし」を空配列でなく ["OK"] 等で返すことがあり、
+# それを1件の指摘として数えて誤ブロックしていた。実測で factcheck_block 13件中3件が
+# これに該当し、最大の機会 tettsui-kyoshi-cast-chart(pot+593) が7週間着手不能だった。
+# プロンプトで矯正しきれない出力はコード側で吸収する。
+_NON_ISSUE_TOKENS = {"ok", "none", "なし", "問題なし", "no issue", "no issues",
+                     "特になし", "n/a", "-", "問題なし。"}
+
+
+def _real_issues(items):
+    """「問題なし」を意味するだけの値を除いた、実際の指摘だけを返す。"""
+    out = []
+    for it in items or []:
+        s = str(it).strip()
+        if not s or s.strip("。.").lower() in _NON_ISSUE_TOKENS:
+            continue
+        out.append(it)
+    return out
+
+
 def factcheck_passes(post_id, title, full_html):
     """追記後の全文を factcheck_v2 に通し critical 0 なら合格。"""
     try:
@@ -280,7 +299,7 @@ def factcheck_passes(post_id, title, full_html):
     except Exception as e:
         print(f"  [enrich] factcheck 実行失敗、安全側でスキップ: {e}", file=sys.stderr)
         return False, {"error": str(e)}
-    critical = res.get("critical", [])
+    critical = _real_issues(res.get("critical", []))
     return (len(critical) == 0), res
 
 
