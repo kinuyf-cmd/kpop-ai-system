@@ -305,8 +305,19 @@ def get_adsense_credentials():
                         "(VM側は受信済み)。\n"
                     ),
                 )
-        with open(ADSENSE_TOKEN_FILE, "w") as f:
-            f.write(creds.to_json())
+        # 2026-09-10: open(...,"w") は開いた瞬間に中身を空にするため、
+        # to_json() の失敗・ディスク満杯・プロセス中断で「有効だったトークンが
+        # 0バイトになって消える」事故が起きた(8/29〜9/10 の12日間 AdSense 欠測)。
+        # 一時ファイルへ書き切ってから os.replace で原子的に差し替える。
+        _payload = creds.to_json()
+        if not _payload or not _payload.strip():
+            raise RuntimeError("creds.to_json() が空 — token を上書きしない")
+        _tmp = ADSENSE_TOKEN_FILE + ".tmp"
+        with open(_tmp, "w") as f:
+            f.write(_payload)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(_tmp, ADSENSE_TOKEN_FILE)
 
     return creds
 
