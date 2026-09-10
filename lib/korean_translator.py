@@ -112,7 +112,19 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
     if os.environ.get('TRANSLATOR_V2') == '1':
         try:
             from lib.translator_v2 import translate_ko_to_ja_v2
-            return translate_ko_to_ja_v2(text, context=context)
+            _r = translate_ko_to_ja_v2(text, context=context)
+            if _r.get('success'):
+                return _r
+            # 2026-09-10: v2 が例外でなく success=False を返す経路(API err 400 等)は
+            # 従来 v1 に落ちず即 skip となり、速報公開が7日間全停止した。
+            # 品質検査由来の失敗(hangul_residue / 人名swap)は v1 でも直らないので
+            # そのまま返し、API/一過性障害のみ v1 へフォールバックする。
+            _reason = str(_r.get('reason', ''))
+            _transient = _reason.startswith('API err') or _reason.startswith('Claude rate limit') \
+                or _reason.startswith('err: ')
+            if not _transient:
+                return _r
+            print(f"  [translation] v2 transient fail → v1 fallback: {_reason[:120]}")
         except Exception as e:
             print(f"  [translation] v2 fallback to v1: {e}")
     key = os.getenv('OPENAI_API_KEY')

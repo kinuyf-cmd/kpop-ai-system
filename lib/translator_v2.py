@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 import os
 import json
+import time
 import re
 import datetime
 from pathlib import Path
@@ -133,7 +134,9 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
             return {'success': False, 'translated': text_pre, 'reason': 'cost_guard_skip'}
     except ImportError:
         pass
-    try:
+    _last_err = None
+    for _attempt in range(3):
+      try:
         client = _get_client()
         response = client.messages.create(
             # 2026-07-15: Sonnet 5 移行。翻訳はJSON/HTML抽出タスクで思考不要のため
@@ -243,12 +246,32 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
             'reason': '',
         }
 
-    except anthropic.RateLimitError:
-        return {'success': False, 'translated': text_pre, 'reason': 'Claude rate limit'}
-    except anthropic.APIStatusError as e:
-        return {'success': False, 'translated': text_pre, 'reason': f'API err {e.status_code}'}
-    except Exception as e:
-        return {'success': False, 'translated': text_pre, 'reason': f'err: {type(e).__name__}: {str(e)[:100]}'}
+      except anthropic.RateLimitError:
+        _last_err = {'success': False, 'translated': text_pre, 'reason': 'Claude rate limit'}
+        time.sleep(2 * (_attempt + 1))
+        continue
+      except anthropic.APIStatusError as e:
+        # 2026-09-10: status_code だけでは 400 の真因(入力長/schema/パラメータ)が
+        # 特定できず公開が7日間全停止したため、API が返す本文を必ず reason に含める。
+        _detail = ''
+        try:
+            _detail = json.dumps(e.body, ensure_ascii=False)[:300] if e.body else str(e)[:300]
+        except Exception:
+            _detail = str(e)[:300]
+        _last_err = {'success': False, 'translated': text_pre,
+                     'reason': f'API err {e.status_code}: {_detail}'}
+        # 5xx / 429 は一過性。400 系も瞬間的な上流不調で出ることが実測されたため
+        # 1度だけ再試行し、それでも駄目なら諦める(無限リトライでコストを焼かない)。
+        if e.status_code >= 500 or e.status_code in (408, 409, 429) or _attempt == 0:
+            time.sleep(2 * (_attempt + 1))
+            continue
+        return _last_err
+      except Exception as e:
+        _last_err = {'success': False, 'translated': text_pre,
+                     'reason': f'err: {type(e).__name__}: {str(e)[:100]}'}
+        time.sleep(2 * (_attempt + 1))
+        continue
+    return _last_err or {'success': False, 'translated': text_pre, 'reason': 'unknown translate failure'}
 
 
 if __name__ == '__main__':
