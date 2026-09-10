@@ -95,15 +95,64 @@ def strip_cta_blocks_from_html(html: str) -> str:
     return out
 
 
+# 2026-09-10: 韓国語のローマ字表記は日本語カタカナと一対一に対応しないため、
+# LLM が英語ソース(HanCinema等)のローマ字を根拠に「日本語表記が誤り」と
+# critical を出す誤検知が起きる。実例: 『鉄槌教師』の女優を「チン・ギジュ」と
+# 書いた記事に対し `Jin Ki-joo` を根拠に「ジンが正しい」と指摘 —
+# 日本語版Wikipedia/オリコンでは「チン・ギジュ」が正しく、記事の方が正しかった。
+# これで pot+593 の最大機会が着手不能になっていた。
+#
+# プロンプトにも禁止を明記したが([[verify-rendered-output-not-just-code]] の教訓で
+# プロンプトだけに頼らない)、コード側でも落とす。
+# 条件は厳密に: 「ローマ字(英字)を引き合いに出して」かつ「カナ表記の姓名を否定」
+# している指摘だけ。単なる人名間違い(別人物の混同等)は残す。
+_ROMAJI_NAME_NOISE_RE = re.compile(
+    r'(?=.*[A-Za-z]{2,}[- ][A-Za-z]{2,})'      # Jin Ki-joo のようなローマ字表記を含み
+    r'(?=.*(?:姓|読み|カタカナ|カナ表記))'        # 「姓/読み」= 表記そのものの話で
+    r'(?=.*(?:であるべき|が正しい|誤記|ではなく))',  # 正誤を主張している
+    re.S)
+
+# これらが含まれるなら「表記ゆれ」ではなく実体のある誤り(別人物の混同・
+# グループ違い・存在しない人物)なので、絶対に落とさない。
+# 2026-09-10 実測: 初版の正規表現が緩く、
+#   ・IVE Leeseo と俳優イ・ソジンの混同
+#   ・朴珉貴 と 박규리(Park Gyu-ri) の漢字表記誤り
+#   ・タイトル LE SSERAFIM / 本文 RESCENE のグループ完全不一致
+# という正当な critical 3件まで除去してしまった。
+_REAL_NAME_ERROR_RE = re.compile(
+    r'別人|別のグループ|別グループ|混同|誤認|存在しない|一致しない|無関係|'
+    r'実在|漢字表記|タイトルと本文|主語が'
+)
+
+
+def _is_romaji_name_noise(text: str) -> bool:
+    """ローマ字を根拠に日本語カナ表記の姓を否定するだけの指摘か(=誤検知)。
+
+    「表記の揺れ」以上の実体(別人物・グループ違い等)があるものは残す。
+    """
+    t = str(text)
+    if _REAL_NAME_ERROR_RE.search(t):
+        return False
+    if not _ROMAJI_NAME_NOISE_RE.search(t):
+        return False
+    # カタカナの人名(・区切り)が話題に出ていることを要件にする。
+    return bool(re.search(r'[ァ-ヶー]{2,}・[ァ-ヶー]{2,}', t))
+
+
 def _strip_cta_noise(result: dict) -> dict:
-    """result内のcritical/high/mediumからCTA注入起因のnoiseを除去して返す。"""
+    """result内のcritical/high/mediumからCTA注入起因のnoiseを除去して返す。
+
+    2026-09-10: ローマ字根拠の表記ゆれ誤検知も同時に除去する。
+    """
     if not isinstance(result, dict):
         return result
     out = dict(result)
     for level in ('critical', 'high', 'medium'):
         items = out.get(level) or []
         if items:
-            out[level] = [x for x in items if not _CTA_NOISE_RE.search(str(x))]
+            out[level] = [x for x in items
+                          if not _CTA_NOISE_RE.search(str(x))
+                          and not _is_romaji_name_noise(x)]
     return out
 
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
@@ -140,7 +189,17 @@ KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです�
 ## 絶対に問題として報告してはいけないもの (LLM proofreader 誤検知 memory rule)
 - 2026年以降の日付は正常 (現在は2026年)
 - 曜日と日付の整合性チェック (暦計算は不正確)
-- K-POPアーティスト名の英語/韓国語/日本語表記揺れ
+- **人名(K-POPアーティスト・俳優・スタッフを問わず)の英語/韓国語/日本語表記揺れ**。
+  韓国語のローマ字表記は日本語カタカナと一対一に対応しない(例: 진기주 の公式ローマ字は
+  Jin Ki-joo だが、日本語の定着表記は「チン・ギジュ」で正しい)。
+  **英語ソース(HanCinema/Soompi等)のローマ字を根拠に「日本語表記が誤り」と指摘してはならない。**
+  日本語表記の正誤は日本語圏の出典(日本語版Wikipedia/オリコン/公式日本語サイト)でのみ判断し、
+  それらで確認できない場合は指摘しない
+- **英語ソース(HanCinema等)にしか根拠がない「役割・設定の食い違い」**。
+  日本語圏の公式サイト/オリコン等に記載がある内容を、英語ソースの記述だけを根拠に
+  「矛盾がある疑い」として critical にしてはならない。日本語ソースで確認できないときのみ
+  medium で指摘する(実例: 『鉄槌教師』でナ・ファジンを特戦司出身と書いた記事は
+  オリコンの記載通りで正しかったが、HanCinema を根拠に critical にして公開が止まった)
 - カムバック/ファンミ/アンコール等のK-POPファン用語
 - 「TWICE・ITZY・Stray Kids」のようなグループ列挙は「TWICEはX人」と主張していないので、メンバー数誤りとして報告してはならない
 - 「JYP所属のTWICE」のような所属関係の記述は事実関係でメンバー数とは無関係
