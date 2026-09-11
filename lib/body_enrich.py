@@ -23,6 +23,7 @@ import os
 import sys
 import json
 import re
+import html as html_mod
 import argparse
 from datetime import datetime, timezone
 
@@ -286,6 +287,49 @@ def _real_issues(items):
     return out
 
 
+# `Q.` プレフィックス付き / 無しの両形式に対応する。
+# body_enrich が生成するのは「Q. 質問」形式だが、別経路(lane_c_faq_blocks 等)で
+# 作られた FAQ は `<h3>質問?</h3>` のようにプレフィックスが無い(2026-09-11 実測)。
+# 質問・回答はタグを跨がない。`[^<]` で括ることで、`.+?` が </h3> を越えて
+# 複数の Q&A を1つに飲み込む事故を防ぐ(2026-09-11 実測で発生)。
+# また「見どころのポイント」のような非FAQ見出しを拾わないよう、
+# 質問は `Q.` プレフィックス付きか疑問符で終わるものに限る。
+_FAQ_QA_RE = re.compile(
+    r'<h3[^>]*>\s*(?:Q[.．:：]\s*)?(?P<q>[^<]{3,120}?[?？])\s*</h3>\s*'
+    r'<p[^>]*>(?P<a>.{10,600}?)</p>',
+    re.S | re.I)
+
+
+def _plain(text):
+    """タグを除いた素のテキスト(内部リンクが混ざるため)。"""
+    return html_mod.unescape(re.sub(r'<[^>]+>', '', text)).strip()
+
+
+def _append_faq_jsonld(sections_html, existing_content):
+    """追記分に FAQ があれば FAQPage JSON-LD を付ける。
+
+    既に本文へ FAQPage がある記事には付けない(重複 schema を避ける)。
+    """
+    if 'FAQPage' in (existing_content or '') or 'FAQPage' in sections_html:
+        return sections_html
+    qas = [(_plain(m.group('q')), _plain(m.group('a')))
+           for m in _FAQ_QA_RE.finditer(sections_html)]
+    qas = [(q, a) for q, a in qas if q and a]
+    if not qas:
+        return sections_html
+    data = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in qas
+        ],
+    }
+    return (sections_html.rstrip() + '\n<script type="application/ld+json">\n'
+            + json.dumps(data, ensure_ascii=False, indent=2) + '\n</script>')
+
+
 def factcheck_passes(post_id, title, full_html):
     """追記後の全文を factcheck_v2 に通し critical 0 なら合格。"""
     try:
@@ -365,6 +409,11 @@ def process_one(item, dry_run=False):
         print(f"  [enrich] internal_links 失敗(続行): {e}", file=sys.stderr)
 
     # 追記のみ(既存本文は不変)
+    # FAQ を追記したのに FAQPage schema が無いと、リッチリザルトの機会を丸ごと落とす。
+    # 2026-09-11 実測: FAQ を持つ37記事のうち schema があるのは14記事のみだった。
+    # ([[lane-c-faq-schema-push]] の通り pos5-7 停滞の主因は FAQPage 不在)
+    sections_html = _append_faq_jsonld(sections_html, content)
+
     new_full = content.rstrip() + "\n\n" + sections_html
 
     # factcheck ゲート(追記後の全文)
