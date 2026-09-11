@@ -233,8 +233,15 @@ def safety_check(post_id, rank, gsc_data, action_hist):
     if rank == "WIN":
         return False, "WIN記事は変更禁止"
 
-    # 最大2回
-    if len(prev_actions) >= MAX_REWRITES_PER_POST:
+    # 最大2回。ただし「何も変更できなかった実行」は回数に数えない。
+    # 2026-09-10: 実測で全38アクション中37件が無変更(title/meta/thumbすべてFalse)
+    # だったにもかかわらず上限カウントされ、全対象記事が永久に
+    # 「リライト上限到達」でブロックされていた(実効リライトは1回のみ)。
+    # 空振りを上限に数えると、一度も改善できないまま自分自身を締め出す。
+    effective = [a for a in prev_actions
+                 if a.get("title_changed") or a.get("meta_changed")
+                 or a.get("thumb_changed")]
+    if len(effective) >= MAX_REWRITES_PER_POST:
         return False, f"リライト上限({MAX_REWRITES_PER_POST}回)到達"
 
     # 24h以内の連続リライト禁止
@@ -435,6 +442,32 @@ def generate_x_hook(title, url, category):
 
 # ── WP更新 ──────────────────────────────────────────────────────────────────────
 
+def resolve_post_id(item):
+    """queue の item から post_id を解決する。
+
+    2026-09-10: seo_lane_c_bridge が `post_id: None` で積んでおり
+    (「auto_rewriter は url/slug でも解決可」というコメントだが実装が無かった)、
+    上限ブロックが外れた途端 `post_id=None` で全件空回りしていた。
+    slug から WP REST で引く。
+    """
+    pid = item.get("post_id")
+    if pid:
+        return str(pid)
+    slug = item.get("slug") or ""
+    if not slug:
+        # url しか無い場合は末尾セグメントを slug とみなす
+        url = (item.get("url") or "").split("?")[0].rstrip("/")
+        slug = url.rsplit("/", 1)[-1] if url else ""
+    if not slug:
+        return None
+    resp, err = wp_request("GET", f"/posts?slug={urllib.parse.quote(slug)}&_fields=id")
+    if err or not resp:
+        return None
+    if isinstance(resp, list) and resp and resp[0].get("id"):
+        return str(resp[0]["id"])
+    return None
+
+
 def update_wp_post(post_id, updates):
     """
     updates: dict with optional keys: title, excerpt
@@ -572,6 +605,11 @@ def process_item(item, gsc_data, action_hist):
         wp_ok, wp_err = update_wp_post(post_id, wp_updates)
         action["wp_update_ok"] = wp_ok
         action["wp_error"] = wp_err if not wp_ok else None
+    else:
+        # 変更点が無いのは「失敗」ではない。初期値 False のままだと
+        # ログ上 WP更新成功=0 が続き、失敗と誤読される(2026-09-10)。
+        action["wp_update_ok"] = None
+        action["wp_error"] = "no_change"
         if not wp_ok:
             print(f"    ⚠️ WP更新失敗: {wp_err}")
         else:
@@ -614,7 +652,10 @@ def run(dry_run=False):
 
     actions = []
     for item in sorted_queue:
-        post_id = str(item.get("post_id", ""))
+        post_id = resolve_post_id(item)
+        if not post_id:
+            print(f"  SKIP (post_id未解決) slug={item.get('slug','')}")
+            continue
 
         # WIN記事はスキップ
         ev = latest_evals.get(post_id, {})
