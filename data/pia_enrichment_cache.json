@@ -581,7 +581,7 @@
     "event_bundle_cd": "b2670263",
     "title": "B1A4",
     "description": "B1A4(ＴＨＥＡＴＥＲ　ＭＩＬＡＮＯ－Ｚａ ＣＯＯＬ　ＪＡＰＡＮ　ＰＡＲＫ　ＯＳＡＫＡ　ＷＷホール)をチケットぴあで今すぐチェック！",
-    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "image": "https://image.pia.jp/images/202609/202609030089_ex.jpg",
     "performances": [
       {
         "date": "2026-09-06",
@@ -595,7 +595,7 @@
         "date_end": "2026-09-13"
       }
     ],
-    "cached_at": "2026-09-03T04:02:33.841437"
+    "cached_at": "2026-09-11T04:01:59.576381"
   },
   "b2670321": {
     "event_bundle_cd": "b2670321",
@@ -706,16 +706,16 @@
   "b2670835": {
     "event_bundle_cd": "b2670835",
     "title": "2026 THE FACT MUSIC AWARDS",
-    "description": "2026 THE FACT MUSIC AWARDS(釜山アシアード主競技場)をチケットぴあで今すぐチェック！",
+    "description": "第9回となる今年は、9/19(土)に韓国・釜山アシアード主競技場にて開催！RIIZE、ATEEZ、TREASUREらが出演！",
     "image": "https://image.pia.jp/images/202609/202609020094_ex.jpg",
     "performances": [],
-    "cached_at": "2026-09-03T04:02:34.939680"
+    "cached_at": "2026-09-11T04:02:01.046033"
   },
   "b2670836": {
     "event_bundle_cd": "b2670836",
     "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
-    "description": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love(横浜ＢＵＮＴＡＩ)をチケットぴあで今すぐチェック！",
-    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "description": "ドラマ『私の夫と結婚して』『初恋DOGs』などに出演の韓国俳優ナ・イヌが来日！9/22(火・祝)横浜BUNTAIにてファンミーティング開催！",
+    "image": "https://image.pia.jp/images/202609/202609040041_ex.png",
     "performances": [
       {
         "date": "2026-09-22",
@@ -723,7 +723,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-09-03T04:02:36.205122"
+    "cached_at": "2026-09-11T04:02:03.421649"
   },
   "b2668979": {
     "event_bundle_cd": "b2668979",
@@ -737,7 +737,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-03T04:02:37.305024"
+    "cached_at": "2026-09-11T04:02:04.561057"
   },
   "b2670627": {
     "event_bundle_cd": "b2670627",
@@ -848,5 +848,33 @@
       }
     ],
     "cached_at": "2026-09-10T04:02:02.075906"
+  },
+  "b2670859": {
+    "event_bundle_cd": "b2670859",
+    "title": "YOUNG POSSE",
+    "description": "YOUNG POSSE(渋谷ストリームホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609090051_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-09-22",
+        "venue": "渋谷ストリームホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-11T04:02:02.320295"
+  },
+  "b2670992": {
+    "event_bundle_cd": "b2670992",
+    "title": "Garden Music Concert vol.2 ～ Three Blooms, One Moment ～",
+    "description": "Garden Music Concert vol.2 ～ Three Blooms, One Moment ～(ＴＡＣＨＩＫＡＷＡ　ＳＴＡＧＥ　ＧＡＲＤＥＮ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-26",
+        "venue": "TACHIKAWA STAGE GARDEN",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-11T04:02:05.834010"
   }
 }

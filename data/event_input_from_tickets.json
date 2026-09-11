@@ -152,12 +152,42 @@
   },
   {
    "type": "event",
+   "artist_keyword": "YOUNG",
+   "title": "YOUNG POSSE",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670859",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-22",
+   "venue": "渋谷ストリームホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Garden",
+   "title": "Garden Music Concert vol.2 ～ Three Blooms, One Moment ～",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670992",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-26",
+   "venue": "TACHIKAWA STAGE GARDEN",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
    "source_media": "ローソンチケット",
-   "start_date": "2026-09-10",
-   "venue": "大阪城ホール",
+   "start_date": "2026-09-19",
+   "venue": "宮城・セキスイハイム スーパーアリーナ",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NCT",
+   "title": "NCT 127",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=482316",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-10-24",
+   "venue": "ベルーナドーム",
    "_source_id": "ltike"
   }
  ]
