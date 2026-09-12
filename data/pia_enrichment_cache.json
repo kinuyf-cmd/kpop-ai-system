@@ -685,9 +685,14 @@
         "date": "2026-09-19",
         "venue": "TIAT SKY HALL",
         "prefecture": "東京都"
+      },
+      {
+        "date": "2026-09-21",
+        "venue": "J-SQUARE SHINAGAWA",
+        "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-04T04:02:51.395448"
+    "cached_at": "2026-09-12T04:02:24.022433"
   },
   "b2670319": {
     "event_bundle_cd": "b2670319",
@@ -751,7 +756,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-04T04:02:52.770150"
+    "cached_at": "2026-09-12T04:02:26.337931"
   },
   "b2670407": {
     "event_bundle_cd": "b2670407",
@@ -876,5 +881,20 @@
       }
     ],
     "cached_at": "2026-09-11T04:02:05.834010"
+  },
+  "b2671039": {
+    "event_bundle_cd": "b2671039",
+    "title": "INFINITE",
+    "description": "INFINITE(京王アリーナＴＯＫＹＯ　メインアリーナ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202608/202608190059_ex.png",
+    "performances": [
+      {
+        "date": "2026-09-22",
+        "venue": "京王アリーナTOKYO メインアリーナ",
+        "prefecture": "東京都",
+        "date_end": "2026-09-23"
+      }
+    ],
+    "cached_at": "2026-09-12T04:02:25.200569"
   }
 }

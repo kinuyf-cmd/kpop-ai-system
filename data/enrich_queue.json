@@ -1,36 +1,12 @@
 [
  {
-  "query": "鉄槌教師 相関図",
-  "url": "https://www.kpopjournal.tokyo/tettsui-kyoshi-cast-chart/",
-  "slug": "tettsui-kyoshi-cast-chart",
-  "position": 6.16,
-  "impressions": 3201,
-  "clicks": 29,
-  "potential": 593,
-  "theme": "kdrama",
-  "source": "seo_lane_c_bridge",
-  "route": "enrich"
- },
- {
   "query": "ノスルビ",
   "url": "https://www.kpopjournal.tokyo/nosurubi-exposure-criticism-response/",
   "slug": "nosurubi-exposure-criticism-response",
   "position": 9.26,
-  "impressions": 1314,
+  "impressions": 1315,
   "clicks": 5,
   "potential": 253,
-  "theme": "other",
-  "source": "seo_lane_c_bridge",
-  "route": "enrich"
- },
- {
-  "query": "エージェントキム 吹き替え",
-  "url": "https://www.kpopjournal.tokyo/agent-kim-reactivated-viewing-guide/",
-  "slug": "agent-kim-reactivated-viewing-guide",
-  "position": 6.3,
-  "impressions": 1216,
-  "clicks": 24,
-  "potential": 209,
   "theme": "other",
   "source": "seo_lane_c_bridge",
   "route": "enrich"
