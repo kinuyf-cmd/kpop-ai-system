@@ -791,7 +791,7 @@
         "date_end": "2026-10-18"
       }
     ],
-    "cached_at": "2026-09-05T04:02:43.467512"
+    "cached_at": "2026-09-13T04:01:58.450411"
   },
   "b2670401": {
     "event_bundle_cd": "b2670401",
@@ -896,5 +896,33 @@
       }
     ],
     "cached_at": "2026-09-12T04:02:25.200569"
+  },
+  "b2671041": {
+    "event_bundle_cd": "b2671041",
+    "title": "2026 YOUNGHOON&HYUNJAE FANMEETING ＜NINE TO FIVE＞ in Japan",
+    "description": "2026 YOUNGHOON&HYUNJAE FANMEETING ＜NINE TO FIVE＞ in Japan(ＳＧＣ　ＨＡＬＬ　ＡＲＩＡＫＥ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-21",
+        "venue": "SGC HALL ARIAKE",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-13T04:01:59.662408"
+  },
+  "b2670826": {
+    "event_bundle_cd": "b2670826",
+    "title": "JUNG HAEIN",
+    "description": "JUNG HAEIN(東京ガーデンシアター)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-09-22",
+        "venue": "東京ガーデンシアター",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-13T04:02:01.244618"
   }
 }
