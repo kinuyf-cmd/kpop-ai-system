@@ -199,16 +199,6 @@
    "start_date": "2026-09-22",
    "venue": "東京ガーデンシアター",
    "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "TWS",
-   "title": "TWS",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=745681",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-13",
-   "venue": "Kアリーナ横浜",
-   "_source_id": "ltike"
   }
  ]
 }
