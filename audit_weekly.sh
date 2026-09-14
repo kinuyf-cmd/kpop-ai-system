@@ -96,6 +96,7 @@ print(json.dumps(report, ensure_ascii=False, indent=2))
 PY
 ROBOTS_OK=0
 ROBOTS_NEW_BAN=()
+QUALITY_ALERTS=()   # 速報品質skip率など robots.txt と無関係の警告
 for m in Soompi Newsen PRTIMES AllKpop KoreaHerald; do
   N=$(python3 -c "
 import json
@@ -205,7 +206,7 @@ BRK_ALERT=""
 if [[ "${BRK_QRATE:-0}" -ge 40 ]] 2>/dev/null; then
   BRK_ALERT="速報の品質skip率 ${BRK_QRATE}% (>=40%, dup除く) — 翻訳経路の取りこぼし疑い"
   log "  ⚠️ ${BRK_ALERT}"
-  ROBOTS_NEW_BAN+=("$BRK_ALERT")
+  QUALITY_ALERTS+=("$BRK_ALERT")
 fi
 
 # ─── [5] Discord 通知(weekly_board_report)──────────────────────────────
@@ -248,13 +249,23 @@ except Exception as e:
 fi
 
 # ─── [6] 新規 AI bot Disallow 検出時は urgent_errors にも通知 ───────────
-if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 ]] && [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
-  log "--- [6] CRITICAL: AI bot Disallow 検出 → urgent_errors 通知 ---"
+if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 || ${#QUALITY_ALERTS[@]} -gt 0 ]] && [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
+  log "--- [6] CRITICAL 検出 → urgent_errors 通知 ---"
   URGENT_WH=$(python3 "$SCRIPT_DIR/lib/resolve_discord_webhook.py" urgent_errors 2>/dev/null)
   if [[ -n "$URGENT_WH" ]]; then
-    URG_MSG="🚨 **週次監査 CRITICAL** — 採用媒体で AI bot Disallow を検出
+    URG_MSG="🚨 **週次監査 CRITICAL**"
+    if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 ]]; then
+      URG_MSG="${URG_MSG}
+**採用媒体で AI bot Disallow を検出**
 $(printf '  - %s\n' "${ROBOTS_NEW_BAN[@]}")
 → 当該媒体の採用継続可否をオーナーが判断してください。"
+    fi
+    if [[ ${#QUALITY_ALERTS[@]} -gt 0 ]]; then
+      URG_MSG="${URG_MSG}
+**生成パイプライン品質の警告**
+$(printf '  - %s\n' "${QUALITY_ALERTS[@]}")
+→ 翻訳/生成経路のログを確認してください。"
+    fi
     AUDIT_MSG="$URG_MSG" AUDIT_WH="$URGENT_WH" python3 -c "
 import json, urllib.request, os
 urllib.request.urlopen(urllib.request.Request(os.environ['AUDIT_WH'],

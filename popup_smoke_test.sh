@@ -33,7 +33,12 @@ SIGNAL_DIR="${HOME}/.kpop_recovery/popup_event_signals"
 LOG_DIR="${HOME}/.kpop_recovery/popup_event_logs"
 SMOKE_LOG="${LOG_DIR}/smoke_${DATE}.log"
 STG_BASE="https://stg.kpopjournal.tokyo"
-CREDS="/tmp/wp_stg.txt"
+# 資格情報は永続パスを優先し、旧 /tmp を後方互換で参照する。
+# /tmp は OS/テストに消されるため、消えると mysql_q が空を返し
+# 「ACF欠落」「category未紐付け」「HTTP 401」の3点が全件誤検知になる
+# ([[popup-halt-tmp-creds-from-tests-20260817]] と同型の再発)。
+CREDS="${KPOP_WP_CREDS:-${HOME}/.kpop_recovery/wp_stg.txt}"
+[[ -f "$CREDS" ]] || CREDS="/tmp/wp_stg.txt"
 
 SIG_FILE="${1:-${SIGNAL_DIR}/${DATE}.json}"
 RESULTS_FILE="${2:-${SIGNAL_DIR}/posted_${DATE}.json}"
@@ -51,6 +56,8 @@ slog "signals=${SIG_FILE} results=${RESULTS_FILE} src_log=${SRC_LOG}"
 # ─── DB ヘルパ(ACF / category 検証用) ─────────────────
 mysql_q() {
   # $1 = SQL。資格情報が無い環境では空を返す(検証は HTTP のみへフォールバック)。
+  # 注意: 空返しは「DB検証불能」であって「値が空」ではない。呼び出し側は
+  # CREDS_OK=0 のとき ACF/category を FAIL 判定してはならない(誤検知の元)。
   [[ -f "$CREDS" ]] || { echo ""; return 0; }
   local U P DB
   U=$(grep -oE '^WP_DB_USER=.*'     "$CREDS" | cut -d= -f2-)
@@ -73,6 +80,14 @@ http_code() {
   # shellcheck disable=SC2086
   curl -sL $auth -o /dev/null -w "%{http_code}" --max-time 25 "$url" 2>/dev/null || echo "000"
 }
+
+# ─── 0. 資格情報の存在確認(欠落を「検証不能」として明示)───────────
+CREDS_OK=1
+if [[ ! -f "$CREDS" ]]; then
+  CREDS_OK=0
+  fail "資格情報 ${CREDS} が存在しない — DB検証(ACF/category)と BASIC認証つき HTTP 検証が実行不能"
+  slog "  → ACF/category/HTTP の判定はスキップします(欠落を記事側の不備として報告しない)"
+fi
 
 # ─── 1. シグナル数 ─────────────────────────────────────
 if [[ -s "$SIG_FILE" ]]; then
@@ -119,14 +134,17 @@ if [[ -s "$RESULTS_FILE" ]]; then
 
     # HTTP 200 確認(?p=ID → pretty permalink へ追従)
     CODE=$(http_code "${STG_BASE}/?p=${PID}")
-    if [[ "$CODE" != "200" ]]; then
+    if [[ "$CODE" == "401" && "$CREDS_OK" == "0" ]]; then
+      # BASIC認証の資格情報が無いだけ。記事側の不備ではないので FAIL にしない。
+      slog "post ${PID} (${PTYPE}) HTTP 401(BASIC認証情報なし・判定スキップ)"
+    elif [[ "$CODE" != "200" ]]; then
       fail "post ${PID} (${PTYPE}) HTTP=${CODE}(200 以外)"
     else
       slog "post ${PID} (${PTYPE}) HTTP 200 OK"
     fi
 
     # popup 固有: popup_source_url ACF + category=popup
-    if [[ "$PTYPE" == "popup" ]]; then
+    if [[ "$PTYPE" == "popup" && "$CREDS_OK" == "1" ]]; then
       SRC_URL=$(mysql_q "SELECT meta_value FROM wp_postmeta WHERE post_id=${PID} AND meta_key='popup_source_url' LIMIT 1;")
       if [[ -z "$SRC_URL" ]]; then
         fail "post ${PID} popup_source_url ACF が空(citation-rules §8 違反)"
