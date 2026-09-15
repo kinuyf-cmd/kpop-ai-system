@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-09-05",
-    "2026-09-11"
+    "2026-09-06",
+    "2026-09-12"
   ],
-  "generated_at": "2026-09-14",
+  "generated_at": "2026-09-15",
   "rows": [
     {
       "query": "cortis メンバー",
-      "imp": 866,
-      "prev_imp": 18,
-      "delta": 848,
+      "imp": 875,
+      "prev_imp": 19,
+      "delta": 856,
       "clicks": 1,
-      "ctr_pct": 0.12,
+      "ctr_pct": 0.11,
       "position": 9.7,
-      "ratio": 48.1
+      "ratio": 46.1
     },
     {
       "query": "cortisメンバー",
-      "imp": 96,
+      "imp": 99,
       "prev_imp": 7,
-      "delta": 89,
+      "delta": 92,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 10.6,
-      "ratio": 13.7
+      "ratio": 14.1
     }
   ]
 }

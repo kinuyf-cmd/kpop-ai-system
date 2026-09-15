@@ -1,42 +1,24 @@
 {
-  "updated": "2026-09-14 21:35",
-  "count": 4,
+  "updated": "2026-09-15 21:17",
+  "count": 2,
   "queue": [
     {
-      "title": "BABYMONSTER パリタ、マカオ公演後帰国の姿公開",
-      "url": "https://www.kpopjournal.tokyo/?p=20049",
-      "post_id": 20049,
-      "genre": "breaking",
-      "artist": "베이비몬스터",
-      "priority": "high",
-      "queued_at": "2026-09-14T21:35:42.722587"
-    },
-    {
-      "title": "&TEAM、ソウル聖水洞で新譜記念イベント開催",
-      "url": "https://www.kpopjournal.tokyo/team-new-album-event-seoul/",
-      "post_id": 20045,
-      "genre": "breaking",
-      "artist": "앤팀",
-      "priority": "high",
-      "queued_at": "2026-09-14T21:34:27.655349"
-    },
-    {
-      "title": "IU、金英玉・羅文姫へ特別配慮を実施",
-      "url": "https://www.kpopjournal.tokyo/iu-special-consideration-kim-young-ok-ra-won-hui/",
-      "post_id": 20039,
+      "title": "金九羅、抱川に40万坪の土地所有を告白",
+      "url": "https://www.kpopjournal.tokyo/kin-kyu-ra-40-man-tsubo-tochi-houkokushita/",
+      "post_id": 20133,
       "genre": "breaking",
       "artist": "아이유",
       "priority": "high",
-      "queued_at": "2026-09-14T21:31:29.996551"
+      "queued_at": "2026-09-15T17:33:30.254281"
     },
     {
-      "title": "MONSTA X「MAGIC」活動終了の感想と振り返り",
-      "url": "https://www.kpopjournal.tokyo/monsta-x-magic-katsudou-kansou/",
-      "post_id": 20028,
+      "title": "hrtzz.wav、IVE「ELEVEN」をバンド再解釈",
+      "url": "https://www.kpopjournal.tokyo/hrtzz-ive-eleven-band-interpretation/",
+      "post_id": 20113,
       "genre": "breaking",
-      "artist": "몬스타엑스",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-09-14T19:34:05.914569"
+      "queued_at": "2026-09-15T13:34:25.183718"
     }
   ]
 }
