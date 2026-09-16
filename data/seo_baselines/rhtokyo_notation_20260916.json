@@ -1,0 +1,124 @@
+{
+  "applied_at": "2026-09-16",
+  "hypothesis": "検索側が使う連結表記(RIEHATA東京 / riehata tokyo)がtitle・descriptionに一度も無く、pos3-5帯にいながらCTRが帯ベースラインの1/5に沈んでいる",
+  "evidence": {
+    "band_baseline_28d": {
+      "pos1-3": 5.76,
+      "pos3-5": 6.13,
+      "pos5-7": 3.23,
+      "pos7-9": 2.64,
+      "pos9-11": 0.73,
+      "pos11-15": 0.67,
+      "note": "28d・imp>=50のクエリで集計。CORTIS/ノスルビ判断の基準にも使用"
+    },
+    "demand_is_continuous": {
+      "note": "日次分解で継続需要を確認済み。08-31以降 imp8〜47が毎日途切れず、pos3.7〜6.8で安定",
+      "window_28d": {
+        "imp": 766,
+        "clicks": 20
+      }
+    },
+    "notation_gap": {
+      "page_had": [
+        "RHTokyo(55回)",
+        "RIEHATA(43回)",
+        "RH東京(12回)"
+      ],
+      "page_lacked": [
+        "RIEHATA東京",
+        "riehata tokyo"
+      ],
+      "lost_imp_on_lacking_form": 179
+    }
+  },
+  "changes": [
+    {
+      "post_id": 1333,
+      "slug": "swf3-rhtokyo-profile",
+      "before_28d_queries": [
+        {
+          "query": "rhtokyo",
+          "imp": 126,
+          "clicks": 4,
+          "ctr": 3.17,
+          "pos": 3.9
+        },
+        {
+          "query": "riehata tokyo メンバー",
+          "imp": 88,
+          "clicks": 1,
+          "ctr": 1.14,
+          "pos": 3.5
+        },
+        {
+          "query": "riehata東京 メンバー",
+          "imp": 53,
+          "clicks": 0,
+          "ctr": 0.0,
+          "pos": 4.5
+        },
+        {
+          "query": "rhtokyo メンバー",
+          "imp": 44,
+          "clicks": 1,
+          "ctr": 2.27,
+          "pos": 2.3
+        },
+        {
+          "query": "riehata 東京 メンバー",
+          "imp": 38,
+          "clicks": 1,
+          "ctr": 2.63,
+          "pos": 4.1
+        },
+        {
+          "query": "rh東京",
+          "imp": 36,
+          "clicks": 0,
+          "ctr": 0.0,
+          "pos": 4.8
+        }
+      ],
+      "page_before_28d": {
+        "imp": 766,
+        "clicks": 20,
+        "pos_28d_avg": 13.5,
+        "note": "pos13.5は初期の低順位に引きずられた28d平均。直近2週はpos4〜5で既に1ページ目"
+      },
+      "title_before": "【スウパ3】RHTokyo(RH東京)メンバー完全プロフィール｜RIEHATA率いるクルーの名前・年齢一覧",
+      "title_after": "RHTokyo(RIEHATA東京)メンバー一覧｜スウパ3日本代表クルーの名前・年齢・読み方プロフィール",
+      "desc_before": "スウパ3(SWF3)日本代表クルーRHTokyo(RH東京)のメンバー完全プロフィール。世界的振付師RIEHATA率いる8人組の名前・読み方・年齢を一覧で整理。番組での活躍やクルーの特徴もまとめています。",
+      "desc_after": "RHTokyo(RIEHATA東京/riehata tokyo)メンバー一覧。スウパ3日本代表クルーとして振付師RIEHATAが率いる8人組の名前・読み方・年齢をプロフィールで整理。番組での活躍や見どころもまとめています。",
+      "rationale": "RIEHATA東京を前半に新規投入し、メンバーを大幅に前方へ。【スウパ3】の冠を外して先頭を検索語に明け渡した。RH東京は失うがRIEHATA東京が部分一致で上位互換",
+      "caveat": "AIOSEO titleはNULLのまま(WP投稿タイトル継承の挙動を維持)。descriptionのみwp_aioseo_postsを更新"
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "target": "/artists/cortis/",
+      "reason": "7d imp826のうち795が09-07の単日スパイク。翌日6impに戻り平常時は1日数imp。schemaも本文も既に充足しており打ち手が無い",
+      "lesson": "gsc-7d-window-and-fragment-artifacts: 移動合計は日次分解してから語れ"
+    },
+    {
+      "target": "ノスルビ",
+      "reason": "28d imp1747の91%が08-24〜25の2日間に集中。平常時は1日数imp",
+      "lesson": "同上。imp総量だけで機会と判断しない"
+    }
+  ],
+  "verification": {
+    "db_value_match": true,
+    "aioseo_row_count": 1,
+    "rendered_html_ok": true,
+    "gsc_submitted": "URL_UPDATED",
+    "indexnow_status": 200
+  },
+  "measure_after": "2026-09-30",
+  "measure_how": "tools/seo/gsc_snapshot.py と併せ、page=/swf3-rhtokyo-profile/ の28d clicks/CTRを before(imp766/clk20) と比較。クエリ別では riehata tokyo メンバー・riehata東京 メンバー のCTRがpos3-5帯ベースライン6.13%にどこまで近づいたかで判定",
+  "related_memories": [
+    "seo-title-notation-variants",
+    "ctr-search-term-must-be-early-in-title",
+    "ctr-diagnosis-by-position-band-baseline",
+    "gsc-7d-window-and-fragment-artifacts",
+    "aioseo-desc-write-traps"
+  ]
+}

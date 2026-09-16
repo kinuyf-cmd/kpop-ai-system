@@ -1,24 +1,42 @@
 {
-  "updated": "2026-09-15 21:17",
-  "count": 2,
+  "updated": "2026-09-16 21:35",
+  "count": 4,
   "queue": [
     {
-      "title": "金九羅、抱川に40万坪の土地所有を告白",
-      "url": "https://www.kpopjournal.tokyo/kin-kyu-ra-40-man-tsubo-tochi-houkokushita/",
-      "post_id": 20133,
+      "title": "エリック・ナム、ニューヨークでの癒やしの近況",
+      "url": "https://www.kpopjournal.tokyo/eric-nam-new-york-healing-update/",
+      "post_id": 20262,
+      "genre": "breaking",
+      "artist": "에릭남",
+      "priority": "high",
+      "queued_at": "2026-09-16T19:31:38.020738"
+    },
+    {
+      "title": "IU、チリ人俳優との親密な写真公開",
+      "url": "https://www.kpopjournal.tokyo/iu-chilean-actor-intimate-photos/",
+      "post_id": 20249,
       "genre": "breaking",
       "artist": "아이유",
       "priority": "high",
-      "queued_at": "2026-09-15T17:33:30.254281"
+      "queued_at": "2026-09-16T17:38:17.765730"
     },
     {
-      "title": "hrtzz.wav、IVE「ELEVEN」をバンド再解釈",
-      "url": "https://www.kpopjournal.tokyo/hrtzz-ive-eleven-band-interpretation/",
-      "post_id": 20113,
+      "title": "aespaのニンニン、衝撃のタトゥー公開",
+      "url": "https://www.kpopjournal.tokyo/aespa-ninnyun-tattoo-reveal/",
+      "post_id": 20241,
       "genre": "breaking",
-      "artist": "아이브",
+      "artist": "aespa",
       "priority": "high",
-      "queued_at": "2026-09-15T13:34:25.183718"
+      "queued_at": "2026-09-16T17:32:29.119987"
+    },
+    {
+      "title": "EXO SUHO、映画『打鴨:ベルゼブブの歌』試写会出席",
+      "url": "https://www.kpopjournal.tokyo/exo-suho-movie-daka-bellzebub-song-preview/",
+      "post_id": 20271,
+      "genre": "breaking",
+      "artist": "엑소",
+      "priority": "high",
+      "queued_at": "2026-09-16T21:35:44.620431"
     }
   ]
 }
