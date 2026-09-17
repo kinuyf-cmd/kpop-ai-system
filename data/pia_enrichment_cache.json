@@ -821,10 +821,16 @@
       {
         "date": "2026-09-19",
         "venue": "神戸国際会館こくさいホール",
-        "prefecture": "兵庫県"
+        "prefecture": "兵庫県",
+        "date_end": "2026-09-20"
+      },
+      {
+        "date": "2026-09-26",
+        "venue": "東京ガーデンシアター",
+        "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-07T04:02:09.604077"
+    "cached_at": "2026-09-17T04:02:12.202117"
   },
   "b2670079": {
     "event_bundle_cd": "b2670079",
@@ -838,7 +844,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-07T04:02:10.733124"
+    "cached_at": "2026-09-17T04:02:13.480625"
   },
   "b2670794": {
     "event_bundle_cd": "b2670794",
@@ -852,7 +858,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-10T04:02:02.075906"
+    "cached_at": "2026-09-17T04:02:10.451159"
   },
   "b2670859": {
     "event_bundle_cd": "b2670859",
@@ -924,5 +930,32 @@
       }
     ],
     "cached_at": "2026-09-13T04:02:01.244618"
+  },
+  "b2669914": {
+    "event_bundle_cd": "b2669914",
+    "title": "PLAVE",
+    "description": "PLAVE(ぴあアリーナＭＭ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [],
+    "cached_at": "2026-09-17T04:02:14.571671"
+  },
+  "b2668788": {
+    "event_bundle_cd": "b2668788",
+    "title": "2026 KIM JI WOONG FANMEETING ‘TAKE1:Unique Story'",
+    "description": "ZEROBASEONEのキム・ジウンが来日、自身初のファンミ―ティング開催！",
+    "image": "https://image.pia.jp/images/202608/202608260045_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-07-26",
+        "venue": "国立代々木競技場 第二体育館",
+        "prefecture": "東京都"
+      },
+      {
+        "date": "2026-09-27",
+        "venue": "大和大学 大和アリーナ",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-09-17T04:02:16.056132"
   }
 }

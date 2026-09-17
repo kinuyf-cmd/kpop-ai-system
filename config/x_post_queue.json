@@ -1,42 +1,42 @@
 {
-  "updated": "2026-09-16 21:35",
+  "updated": "2026-09-17 21:37",
   "count": 4,
   "queue": [
     {
-      "title": "エリック・ナム、ニューヨークでの癒やしの近況",
-      "url": "https://www.kpopjournal.tokyo/eric-nam-new-york-healing-update/",
-      "post_id": 20262,
+      "title": "キム・ソヒ、悪条件突破しデビューゴール",
+      "url": "https://www.kpopjournal.tokyo/kim-sohee-debut-goal-breakthrough/",
+      "post_id": 20411,
       "genre": "breaking",
-      "artist": "에릭남",
+      "artist": "김소희",
       "priority": "high",
-      "queued_at": "2026-09-16T19:31:38.020738"
+      "queued_at": "2026-09-17T21:37:25.444053"
     },
     {
-      "title": "IU、チリ人俳優との親密な写真公開",
-      "url": "https://www.kpopjournal.tokyo/iu-chilean-actor-intimate-photos/",
-      "post_id": 20249,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-09-16T17:38:17.765730"
-    },
-    {
-      "title": "aespaのニンニン、衝撃のタトゥー公開",
-      "url": "https://www.kpopjournal.tokyo/aespa-ninnyun-tattoo-reveal/",
-      "post_id": 20241,
+      "title": "aespaのウィンター、コンサート映像で体型批判",
+      "url": "https://www.kpopjournal.tokyo/aespa-winter-concert-body-criticism/",
+      "post_id": 20407,
       "genre": "breaking",
       "artist": "aespa",
       "priority": "high",
-      "queued_at": "2026-09-16T17:32:29.119987"
+      "queued_at": "2026-09-17T21:35:52.067386"
     },
     {
-      "title": "EXO SUHO、映画『打鴨:ベルゼブブの歌』試写会出席",
-      "url": "https://www.kpopjournal.tokyo/exo-suho-movie-daka-bellzebub-song-preview/",
-      "post_id": 20271,
+      "title": "李在明大統領、BTS公演チケット転売業者検挙",
+      "url": "https://www.kpopjournal.tokyo/lee-jae-myung-bts-ticket-resale-arrest/",
+      "post_id": 20402,
       "genre": "breaking",
-      "artist": "엑소",
+      "artist": "방탄소년단",
       "priority": "high",
-      "queued_at": "2026-09-16T21:35:44.620431"
+      "queued_at": "2026-09-17T21:33:58.627592"
+    },
+    {
+      "title": "CORTIS宿舎無断侵入事件、被疑者2人起訴猶予",
+      "url": "https://www.kpopjournal.tokyo/cortis-shukusha-mudan-shinnyu-jiken-2nin-kyosu-yuyu/",
+      "post_id": 20398,
+      "genre": "breaking",
+      "artist": "CORTIS",
+      "priority": "high",
+      "queued_at": "2026-09-17T21:32:42.179001"
     }
   ]
 }
