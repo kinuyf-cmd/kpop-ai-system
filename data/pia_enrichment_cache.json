@@ -728,7 +728,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-09-11T04:02:03.421649"
+    "cached_at": "2026-09-18T04:02:11.733434"
   },
   "b2668979": {
     "event_bundle_cd": "b2668979",
@@ -742,7 +742,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-11T04:02:04.561057"
+    "cached_at": "2026-09-18T04:02:13.283296"
   },
   "b2670627": {
     "event_bundle_cd": "b2670627",
@@ -957,5 +957,13 @@
       }
     ],
     "cached_at": "2026-09-17T04:02:16.056132"
+  },
+  "b2669777": {
+    "event_bundle_cd": "b2669777",
+    "title": "Xnterstellar Music Festival 2026",
+    "description": "10/3(土)～4(日)の2日間にわたり、韓国・仁川パラダイスシティに日韓のアーティストが一挙集結！10/3(土)はAdo、FTISLANDら、10/4(日)はAぇ! group、Hi-Fi Un!cornらが出演！",
+    "image": "https://image.pia.jp/images/202607/202607290052_ex.png",
+    "performances": [],
+    "cached_at": "2026-09-18T04:02:14.361024"
   }
 }
