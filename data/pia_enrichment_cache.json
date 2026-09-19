@@ -761,7 +761,7 @@
   "b2670407": {
     "event_bundle_cd": "b2670407",
     "title": "2026 ONG SEONGWU FANMEETING ＜Let's go-ONG!＞ in Yokohama",
-    "description": "9/23(水・祝) 神奈川・KT Zepp Yokohamaにて、日本ファンミーティング「2026 ONG SEONGWU FANMEETING",
+    "description": "9/23(水・祝) 神奈川・KT Zepp Yokohamaにて、日本ファンミーティング「2026 ONG SEONGWU FANMEETING ＜Let's go-ONG!＞ in Yokohama」開催！",
     "image": "https://image.pia.jp/images/202608/202608250032_ex.jpg",
     "performances": [
       {
@@ -770,7 +770,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-09-04T04:02:53.860180"
+    "cached_at": "2026-09-19T04:02:06.877494"
   },
   "b2670555": {
     "event_bundle_cd": "b2670555",
@@ -886,7 +886,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-11T04:02:05.834010"
+    "cached_at": "2026-09-19T04:02:08.282888"
   },
   "b2671039": {
     "event_bundle_cd": "b2671039",
@@ -965,5 +965,35 @@
     "image": "https://image.pia.jp/images/202607/202607290052_ex.png",
     "performances": [],
     "cached_at": "2026-09-18T04:02:14.361024"
+  },
+  "b2669885": {
+    "event_bundle_cd": "b2669885",
+    "title": "SUPER JUNIOR-D&E",
+    "description": "SUPER JUNIORのドンヘとウニョクからなるダンス&ヴォーカルユニットが来日！9/26(土)・27(日)東京体育館 にて、『SUPER JUNIOR-D&E 2026 JAPAN FAN PARTY [ArcaDE]』開催！",
+    "image": "https://image.pia.jp/images/202608/202608040081_ex.png",
+    "performances": [
+      {
+        "date": "2026-09-26",
+        "venue": "東京体育館",
+        "prefecture": "東京都",
+        "date_end": "2026-09-27"
+      }
+    ],
+    "cached_at": "2026-09-19T04:02:10.457867"
+  },
+  "b2669949": {
+    "event_bundle_cd": "b2669949",
+    "title": "2026 ONF FANMEETING IN JAPAN : Autumn Picnic",
+    "description": "2026 ONF FANMEETING IN JAPAN : Autumn Picnic(府中の森芸術劇場　どりーむホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202608/202608030018_ex.png",
+    "performances": [
+      {
+        "date": "2026-09-26",
+        "venue": "府中の森芸術劇場 どりーむホール",
+        "prefecture": "東京都",
+        "date_end": "2026-09-27"
+      }
+    ],
+    "cached_at": "2026-09-19T04:02:11.756864"
   }
 }

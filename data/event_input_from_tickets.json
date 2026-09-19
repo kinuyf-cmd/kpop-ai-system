@@ -199,6 +199,16 @@
    "start_date": "2026-09-22",
    "venue": "東京ガーデンシアター",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ONF",
+   "title": "2026 ONF FANMEETING IN JAPAN : Autumn Picnic",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669949",
+   "source_media": "ぴあ",
+   "start_date": "2026-09-26",
+   "venue": "府中の森芸術劇場 どりーむホール",
+   "_source_id": "pia"
   }
  ]
 }
