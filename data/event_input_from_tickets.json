@@ -82,16 +82,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JISUNG",
-   "title": "2026 JISUNG FANMEETING IN JAPAN : OUR SCENE",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670401",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-19",
-   "venue": "寝屋川市立市民会館 大ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NCT",
    "title": "NCT 127 5TH TOUR ’NEO CITY: SEOUL - THE REDLINE’ in CINEMAS",
    "source_url": "https://l-tike.com/cinema/mevent/?mid=792926",
@@ -152,16 +142,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-19",
-   "venue": "宮城・セキスイハイム スーパーアリーナ",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NCT",
    "title": "NCT 127",
    "source_url": "https://l-tike.com/concert/mevent/?mid=482316",
@@ -209,6 +189,16 @@
    "start_date": "2026-09-26",
    "venue": "府中の森芸術劇場 どりーむホール",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-20",
+   "venue": "宮城・セキスイハイム スーパーアリーナ",
+   "_source_id": "ltike"
   }
  ]
 }

@@ -1,33 +1,42 @@
 {
-  "updated": "2026-09-19 21:17",
-  "count": 3,
+  "updated": "2026-09-20 21:33",
+  "count": 4,
   "queue": [
     {
-      "title": "ILLITミンジュ、授賞式でハート型ポーズ",
-      "url": "https://www.kpopjournal.tokyo/?p=20598",
-      "post_id": 20598,
+      "title": "ジン・ヘソン「Weeeklyコンサート」盛況終了",
+      "url": "https://www.kpopjournal.tokyo/jin-hyeseong-weekly-concert-success/",
+      "post_id": 20681,
       "genre": "breaking",
-      "artist": "아일릿",
+      "artist": "위클리",
       "priority": "high",
-      "queued_at": "2026-09-19T19:32:44.005451"
+      "queued_at": "2026-09-20T15:40:04.575988"
     },
     {
-      "title": "パク・ジニョン、宗教団体疑惑に反論",
-      "url": "https://www.kpopjournal.tokyo/park-jinyoung-religion-controversy/",
-      "post_id": 20594,
+      "title": "NCT WISH、香港で2万人とファンミ完遂",
+      "url": "https://www.kpopjournal.tokyo/nct-wish-hongkong-fanmeeting-20000/",
+      "post_id": 20677,
       "genre": "breaking",
-      "artist": "있지",
+      "artist": "NCT",
       "priority": "high",
-      "queued_at": "2026-09-19T19:31:29.315638"
+      "queued_at": "2026-09-20T15:38:41.037049"
     },
     {
-      "title": "チョンハ、救急搬送から回復し19日参加",
-      "url": "https://www.kpopjournal.tokyo/?p=20579",
-      "post_id": 20579,
+      "title": "BABYMONSTERアサ、香港出国前の手あいさつ",
+      "url": "https://www.kpopjournal.tokyo/?p=20673",
+      "post_id": 20673,
       "genre": "breaking",
-      "artist": "청하",
+      "artist": "베이비몬스터",
       "priority": "high",
-      "queued_at": "2026-09-19T15:32:22.360575"
+      "queued_at": "2026-09-20T15:37:21.649584"
+    },
+    {
+      "title": "BIBI、コ・ギョンピョのタメ口提案に驚き",
+      "url": "https://www.kpopjournal.tokyo/bibi-ko-gyungpyo-tameguchi-proposal/",
+      "post_id": 20709,
+      "genre": "breaking",
+      "artist": "비비",
+      "priority": "high",
+      "queued_at": "2026-09-20T21:33:04.064267"
     }
   ]
 }
