@@ -1,8 +1,29 @@
 {
   "window": [
-    "2026-09-11",
-    "2026-09-17"
+    "2026-09-12",
+    "2026-09-18"
   ],
-  "generated_at": "2026-09-20",
-  "rows": []
+  "generated_at": "2026-09-21",
+  "rows": [
+    {
+      "query": "kickflip キャラクター",
+      "imp": 86,
+      "prev_imp": 0,
+      "delta": 86,
+      "clicks": 6,
+      "ctr_pct": 6.98,
+      "position": 5.4,
+      "ratio": null
+    },
+    {
+      "query": "キックフリップ キャラクター",
+      "imp": 80,
+      "prev_imp": 0,
+      "delta": 80,
+      "clicks": 11,
+      "ctr_pct": 13.75,
+      "position": 5.3,
+      "ratio": null
+    }
+  ]
 }

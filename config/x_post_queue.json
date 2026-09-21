@@ -1,42 +1,42 @@
 {
-  "updated": "2026-09-20 21:33",
+  "updated": "2026-09-21 21:31",
   "count": 4,
   "queue": [
     {
-      "title": "ジン・ヘソン「Weeeklyコンサート」盛況終了",
-      "url": "https://www.kpopjournal.tokyo/jin-hyeseong-weekly-concert-success/",
-      "post_id": 20681,
-      "genre": "breaking",
-      "artist": "위클리",
-      "priority": "high",
-      "queued_at": "2026-09-20T15:40:04.575988"
-    },
-    {
-      "title": "NCT WISH、香港で2万人とファンミ完遂",
-      "url": "https://www.kpopjournal.tokyo/nct-wish-hongkong-fanmeeting-20000/",
-      "post_id": 20677,
+      "title": "NCT中本悠太、念願の蒙古タンメン中本訪問",
+      "url": "https://www.kpopjournal.tokyo/nct-nakamoto-yuta-mongolian-tanmen-visit/",
+      "post_id": 20843,
       "genre": "breaking",
       "artist": "NCT",
       "priority": "high",
-      "queued_at": "2026-09-20T15:38:41.037049"
+      "queued_at": "2026-09-21T19:38:25.810105"
     },
     {
-      "title": "BABYMONSTERアサ、香港出国前の手あいさつ",
-      "url": "https://www.kpopjournal.tokyo/?p=20673",
-      "post_id": 20673,
+      "title": "&TEAM ウィジュ・タキ、異なる個性の魅力",
+      "url": "https://www.kpopjournal.tokyo/team-wiju-taki-unique-personalities/",
+      "post_id": 20839,
       "genre": "breaking",
-      "artist": "베이비몬스터",
+      "artist": "앤팀",
       "priority": "high",
-      "queued_at": "2026-09-20T15:37:21.649584"
+      "queued_at": "2026-09-21T19:37:05.089123"
     },
     {
-      "title": "BIBI、コ・ギョンピョのタメ口提案に驚き",
-      "url": "https://www.kpopjournal.tokyo/bibi-ko-gyungpyo-tameguchi-proposal/",
-      "post_id": 20709,
+      "title": "イ・ハイ、Dok2との大胆なラブスタグラム公開",
+      "url": "https://www.kpopjournal.tokyo/leehi-dok2-love-instagram/",
+      "post_id": 20834,
       "genre": "breaking",
-      "artist": "비비",
+      "artist": "이하이",
       "priority": "high",
-      "queued_at": "2026-09-20T21:33:04.064267"
+      "queued_at": "2026-09-21T19:31:13.669050"
+    },
+    {
+      "title": "BLACKPINK、ソロ曲の低迷で「没落」論争拡大",
+      "url": "https://www.kpopjournal.tokyo/blackpink-solo-song-decline-controversy/",
+      "post_id": 20852,
+      "genre": "breaking",
+      "artist": "BLACKPINK",
+      "priority": "high",
+      "queued_at": "2026-09-21T21:31:35.394836"
     }
   ]
 }

@@ -82,16 +82,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "NCT",
-   "title": "NCT 127 5TH TOUR ’NEO CITY: SEOUL - THE REDLINE’ in CINEMAS",
-   "source_url": "https://l-tike.com/cinema/mevent/?mid=792926",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-20",
-   "venue": "札幌シネマフロンティア",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "JUNNY",
    "title": "JUNNY",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670079",
@@ -109,16 +99,6 @@
    "start_date": "2026-12-23",
    "venue": "LaLa arena TOKYO-BAY",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "KIM",
-   "title": "2026 KIM JAE WON WORLD TOUR FANMEETING<THE MOMENT WE MET-Episode 2:Pro",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670794",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-20",
-   "venue": "LINE CUBE SHIBUYA",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -196,8 +176,8 @@
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
    "source_media": "ローソンチケット",
-   "start_date": "2026-09-20",
-   "venue": "宮城・セキスイハイム スーパーアリーナ",
+   "start_date": "2026-09-25",
+   "venue": "長野ビッグハット",
    "_source_id": "ltike"
   }
  ]
