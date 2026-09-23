@@ -2,16 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "BABYMONSTER",
-   "title": "BABYMONSTER",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=726934",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-22",
-   "venue": "京セラドーム大阪",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "SUPER JUNIOR",
    "title": "SUPER JUNIOR-D&E",
    "source_url": "https://l-tike.com/concert/mevent/?mid=355515",
@@ -29,36 +19,6 @@
    "start_date": "2026-12-01",
    "venue": "東京ドーム",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "NA",
-   "title": "NA INWOO FANMEETING IN JAPAN 2026 LOVER：Falling in Love",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670836",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "横浜BUNTAI",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ハ・ジウォン",
-   "title": "2026 ハ・ジウォン ファンミーティング",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2668979",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "日本教育会館 一ツ橋ホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ONEW",
-   "title": "ONEW",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670627",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "東京体育館",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -102,16 +62,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "YOUNG",
-   "title": "YOUNG POSSE",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670859",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "渋谷ストリームホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "Garden",
    "title": "Garden Music Concert vol.2 ～ Three Blooms, One Moment ～",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670992",
@@ -129,26 +79,6 @@
    "start_date": "2026-10-24",
    "venue": "ベルーナドーム",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "INFINITE",
-   "title": "INFINITE",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671039",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "京王アリーナTOKYO メインアリーナ",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "JUNG",
-   "title": "JUNG HAEIN",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670826",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-22",
-   "venue": "東京ガーデンシアター",
-   "_source_id": "pia"
   },
   {
    "type": "event",

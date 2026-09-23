@@ -1,42 +1,33 @@
 {
-  "updated": "2026-09-22 21:37",
-  "count": 4,
+  "updated": "2026-09-23 21:36",
+  "count": 3,
   "queue": [
     {
-      "title": "少女時代YOONA、ミディアムボブで優雅な空港ファッション",
-      "url": "https://www.kpopjournal.tokyo/?p=20955",
-      "post_id": 20955,
+      "title": "少女時代スヨン、バーガンディルックで近況報告",
+      "url": "https://www.kpopjournal.tokyo/snsd-suyoung-burgundy-look-update/",
+      "post_id": 21058,
       "genre": "breaking",
       "artist": "소녀시대",
       "priority": "high",
-      "queued_at": "2026-09-22T21:37:15.690307"
+      "queued_at": "2026-09-23T21:31:58.867666"
     },
     {
-      "title": "YOONA「ミラノでのファッション披露",
-      "url": "https://www.kpopjournal.tokyo/?p=20951",
-      "post_id": 20951,
+      "title": "ENHYPEN NI-KI浮気発言にファン反発",
+      "url": "https://www.kpopjournal.tokyo/enhypen-niki-uwaki-hatsugen-fan-hanpatsu/",
+      "post_id": 21049,
       "genre": "breaking",
-      "artist": "윤아",
+      "artist": "ENHYPEN",
       "priority": "high",
-      "queued_at": "2026-09-22T21:35:52.334577"
+      "queued_at": "2026-09-23T19:32:00.208137"
     },
     {
-      "title": "WJSNスビン、秋夕控え韓服姿を公開",
-      "url": "https://www.kpopjournal.tokyo/wjsn-subin-hanbok-autumn-festival/",
-      "post_id": 20947,
+      "title": "PLAVE、「V+ 音楽中心」初ゲスト出演決定",
+      "url": "https://www.kpopjournal.tokyo/plave-v-plus-ongaku-chushin-shin-guest/",
+      "post_id": 21027,
       "genre": "breaking",
-      "artist": "우주소녀",
+      "artist": "플레이브",
       "priority": "high",
-      "queued_at": "2026-09-22T21:31:33.222611"
-    },
-    {
-      "title": "P1Harmony Keeho、ITZYユナの投稿に「いいね",
-      "url": "https://www.kpopjournal.tokyo/p1harmony-keeho-itzy-yuna-good-post/",
-      "post_id": 20936,
-      "genre": "breaking",
-      "artist": "ITZY",
-      "priority": "high",
-      "queued_at": "2026-09-22T19:41:33.120127"
+      "queued_at": "2026-09-23T15:38:05.390410"
     }
   ]
 }
