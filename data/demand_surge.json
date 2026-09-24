@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-09-14",
-    "2026-09-20"
+    "2026-09-15",
+    "2026-09-21"
   ],
-  "generated_at": "2026-09-23",
+  "generated_at": "2026-09-24",
   "rows": [
     {
       "query": "kickflip キャラクター",
       "imp": 97,
-      "prev_imp": 0,
-      "delta": 97,
-      "clicks": 6,
-      "ctr_pct": 6.19,
-      "position": 5.2,
-      "ratio": null
+      "prev_imp": 9,
+      "delta": 88,
+      "clicks": 4,
+      "ctr_pct": 4.12,
+      "position": 5.3,
+      "ratio": 10.8
     },
     {
       "query": "キックフリップ キャラクター",
-      "imp": 84,
-      "prev_imp": 0,
-      "delta": 84,
-      "clicks": 11,
-      "ctr_pct": 13.1,
-      "position": 5.3,
-      "ratio": null
+      "imp": 81,
+      "prev_imp": 12,
+      "delta": 69,
+      "clicks": 9,
+      "ctr_pct": 11.11,
+      "position": 5.7,
+      "ratio": 6.8
     }
   ]
 }

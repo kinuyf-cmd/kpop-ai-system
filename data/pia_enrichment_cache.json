@@ -995,5 +995,19 @@
       }
     ],
     "cached_at": "2026-09-19T04:02:11.756864"
+  },
+  "b2670516": {
+    "event_bundle_cd": "b2670516",
+    "title": "2026 ソ・ジソブ イベント",
+    "description": "2026 ソ・ジソブ イベント(ＲａｉＢｏＣ　Ｈａｌｌ（さいたま市民会館おおみや）　大ホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-10-04",
+        "venue": "RaiBoC Hall(さいたま市民会館おおみや) 大ホール",
+        "prefecture": "埼玉県"
+      }
+    ],
+    "cached_at": "2026-09-24T04:02:00.264834"
   }
 }
