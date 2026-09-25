@@ -500,16 +500,21 @@
   "b2668801": {
     "event_bundle_cd": "b2668801",
     "title": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN",
-    "description": "xikers ＜2nd FANMEETING：roadymap to univerxity＞ IN JAPAN(Ｚｅｐｐ　Ｈａｎｅｄａ（ＴＯＫＹＯ）)をチケットぴあで今すぐチェック！",
-    "image": "https://image.pia.jp/images/202606/202606050044_ex.png",
+    "description": "韓国出身の10人組ボーイズグループ、xikers(サイカース)がファンミーティングを開催！昨年のワールドツアー以来となる単独公演をお見逃しなく。",
+    "image": "https://image.pia.jp/images/202608/202608250080_ex.jpg",
     "performances": [
       {
         "date": "2026-07-31",
         "venue": "Zepp Haneda",
         "prefecture": "東京都"
+      },
+      {
+        "date": "2026-10-04",
+        "venue": "Zepp Osaka Bayside",
+        "prefecture": "大阪府"
       }
     ],
-    "cached_at": "2026-07-05T04:02:08.023853"
+    "cached_at": "2026-09-25T04:02:12.528003"
   },
   "b2667709": {
     "event_bundle_cd": "b2667709",
@@ -827,10 +832,11 @@
       {
         "date": "2026-09-26",
         "venue": "東京ガーデンシアター",
-        "prefecture": "東京都"
+        "prefecture": "東京都",
+        "date_end": "2026-09-27"
       }
     ],
-    "cached_at": "2026-09-17T04:02:12.202117"
+    "cached_at": "2026-09-25T04:02:07.449409"
   },
   "b2670079": {
     "event_bundle_cd": "b2670079",
@@ -844,7 +850,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-17T04:02:13.480625"
+    "cached_at": "2026-09-25T04:02:08.673476"
   },
   "b2670794": {
     "event_bundle_cd": "b2670794",
@@ -937,7 +943,7 @@
     "description": "PLAVE(ぴあアリーナＭＭ)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
     "performances": [],
-    "cached_at": "2026-09-17T04:02:14.571671"
+    "cached_at": "2026-09-25T04:02:09.798007"
   },
   "b2668788": {
     "event_bundle_cd": "b2668788",
@@ -956,7 +962,7 @@
         "prefecture": "大阪府"
       }
     ],
-    "cached_at": "2026-09-17T04:02:16.056132"
+    "cached_at": "2026-09-25T04:02:11.299417"
   },
   "b2669777": {
     "event_bundle_cd": "b2669777",

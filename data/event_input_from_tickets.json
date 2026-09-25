@@ -99,6 +99,16 @@
    "start_date": "2026-10-04",
    "venue": "RaiBoC Hall(さいたま市民会館おおみや) 大ホール",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "NMIXX",
+   "title": "NMIXX",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=751210",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-11-07",
+   "venue": "国立代々木競技場 第一体育館",
+   "_source_id": "ltike"
   }
  ]
 }

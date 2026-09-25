@@ -1,29 +1,19 @@
 {
   "window": [
-    "2026-09-15",
-    "2026-09-21"
+    "2026-09-16",
+    "2026-09-22"
   ],
-  "generated_at": "2026-09-24",
+  "generated_at": "2026-09-25",
   "rows": [
     {
-      "query": "kickflip キャラクター",
-      "imp": 97,
-      "prev_imp": 9,
-      "delta": 88,
-      "clicks": 4,
-      "ctr_pct": 4.12,
-      "position": 5.3,
-      "ratio": 10.8
-    },
-    {
-      "query": "キックフリップ キャラクター",
-      "imp": 81,
-      "prev_imp": 12,
-      "delta": 69,
-      "clicks": 9,
-      "ctr_pct": 11.11,
-      "position": 5.7,
-      "ratio": 6.8
+      "query": "鉄槌教師 声優",
+      "imp": 138,
+      "prev_imp": 36,
+      "delta": 102,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 11.5,
+      "ratio": 3.8
     }
   ]
 }
