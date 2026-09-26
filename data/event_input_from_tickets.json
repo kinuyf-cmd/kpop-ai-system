@@ -82,16 +82,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-25",
-   "venue": "長野ビッグハット",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ソ・ジソブ",
    "title": "2026 ソ・ジソブ イベント",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670516",
@@ -108,6 +98,46 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-11-07",
    "venue": "国立代々木競技場 第一体育館",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "キム・キュジョン",
+   "title": "キム・キュジョン",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670833",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-10",
+   "venue": "I’M A SHOW",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "QWER",
+   "title": "QWER",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670998",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-15",
+   "venue": "GORILLA HALL OSAKA",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LE SSERAFIM",
+   "title": "LE SSERAFIM",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-12-19",
+   "venue": "京セラドーム大阪",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-09-26",
+   "venue": "長野ビッグハット",
    "_source_id": "ltike"
   }
  ]

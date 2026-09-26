@@ -970,7 +970,7 @@
     "description": "10/3(土)～4(日)の2日間にわたり、韓国・仁川パラダイスシティに日韓のアーティストが一挙集結！10/3(土)はAdo、FTISLANDら、10/4(日)はAぇ! group、Hi-Fi Un!cornらが出演！",
     "image": "https://image.pia.jp/images/202607/202607290052_ex.png",
     "performances": [],
-    "cached_at": "2026-09-18T04:02:14.361024"
+    "cached_at": "2026-09-26T04:02:31.519699"
   },
   "b2669885": {
     "event_bundle_cd": "b2669885",
@@ -1015,5 +1015,38 @@
       }
     ],
     "cached_at": "2026-09-24T04:02:00.264834"
+  },
+  "b2670833": {
+    "event_bundle_cd": "b2670833",
+    "title": "キム・キュジョン",
+    "description": "キム・キュジョン(Ｉ’Ｍ　Ａ　ＳＨＯＷ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609020066_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-10",
+        "venue": "I’M A SHOW",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-26T04:02:33.265172"
+  },
+  "b2670998": {
+    "event_bundle_cd": "b2670998",
+    "title": "QWER",
+    "description": "QWER(Ｓｐｏｔｉｆｙ　Ｏ－ＥＡＳＴ ＧＯＲＩＬＬＡ　ＨＡＬＬ　ＯＳＡＫＡ ＵＮＩＴＥＤＬＡＢ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-10-15",
+        "venue": "GORILLA HALL OSAKA",
+        "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-10-17",
+        "venue": "Spotify O-EAST",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-26T04:02:34.719357"
   }
 }
