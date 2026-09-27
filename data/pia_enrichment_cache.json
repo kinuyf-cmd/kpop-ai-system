@@ -1048,5 +1048,24 @@
       }
     ],
     "cached_at": "2026-09-26T04:02:34.719357"
+  },
+  "b2670565": {
+    "event_bundle_cd": "b2670565",
+    "title": "PENTAGON",
+    "description": "PENTAGON(Ｚｅｐｐ　ＤｉｖｅｒＣｉｔｙ（ＴＯＫＹＯ） Ｚｅｐｐ　Ｎａｍｂａ（ＯＳＡＫＡ）)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202608/202608140046_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-01",
+        "venue": "Zepp Namba",
+        "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-10-03",
+        "venue": "Zepp DiverCity",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-09-27T04:02:07.489841"
   }
 }

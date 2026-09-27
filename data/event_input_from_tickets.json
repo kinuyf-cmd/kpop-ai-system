@@ -2,16 +2,6 @@
  "signals": [
   {
    "type": "event",
-   "artist_keyword": "SUPER JUNIOR",
-   "title": "SUPER JUNIOR-D&E",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=355515",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-09-26",
-   "venue": "東京体育館 メインアリーナ",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ENHYPEN",
    "title": "ENHYPEN",
    "source_url": "https://l-tike.com/concert/mevent/?mid=668314",
@@ -52,16 +42,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "Garden",
-   "title": "Garden Music Concert vol.2 ～ Three Blooms, One Moment ～",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670992",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-26",
-   "venue": "TACHIKAWA STAGE GARDEN",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NCT",
    "title": "NCT 127",
    "source_url": "https://l-tike.com/concert/mevent/?mid=482316",
@@ -69,16 +49,6 @@
    "start_date": "2026-10-24",
    "venue": "ベルーナドーム",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "ONF",
-   "title": "2026 ONF FANMEETING IN JAPAN : Autumn Picnic",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2669949",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-26",
-   "venue": "府中の森芸術劇場 どりーむホール",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -132,12 +102,22 @@
   },
   {
    "type": "event",
+   "artist_keyword": "PENTAGON",
+   "title": "PENTAGON",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670565",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-01",
+   "venue": "Zepp Namba",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
    "source_media": "ローソンチケット",
-   "start_date": "2026-09-26",
-   "venue": "長野ビッグハット",
+   "start_date": "2026-10-10",
+   "venue": "LaLa arena TOKYO-BAY",
    "_source_id": "ltike"
   }
  ]
