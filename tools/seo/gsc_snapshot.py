@@ -12,6 +12,13 @@
   4. 1ページ目押し上げ候補(pos11-20 × imp>=300)
   5. 急上昇クエリ(7d imp>=100 で前7d比1.5倍+)
 
+3-5 の候補には2つのガードを掛ける(2026-09-28、同じ誤読を2度踏んだため):
+  - 単日スパイク除外: 窓内の最大単日imp / 合計imp > SPIKE_SHARE は本表から外し
+    「除外(単日スパイク)」に回す。/artists/cortis/ imp1409 の 918 が 09-07 の単日だった
+    ([[gsc-7d-window-and-fragment-artifacts]])。
+  - 対策済みの印: AIOSEO title 設定済 / 本文の FAQPage・TVSeries を DB から引いて表示。
+    推奨前に「もう打った手か」を見るため(kpop-wp-ro の SELECT のみ。失敗時は印なしで続行)。
+
 使い方:
   venv_kpi/bin/python3 tools/seo/gsc_snapshot.py            # 人間向けテキスト
   venv_kpi/bin/python3 tools/seo/gsc_snapshot.py --json     # 機械可読(他ツール連携用)
@@ -22,6 +29,8 @@ GSC APIはservice_account読み取り専用。書き込み・課金は一切な�
 import argparse
 import datetime
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,6 +38,93 @@ BASE = Path(__file__).resolve().parent.parent.parent
 SA = BASE / "google_metrics" / "service_account.json"
 SITE = "https://www.kpopjournal.tokyo/"
 GSC_LAG_DAYS = 3  # GSCデータは通常2-3日遅延
+SPIKE_SHARE = 0.5  # 最大単日imp/合計imp がこれを超えたらスパイク扱い
+RO = "/usr/local/sbin/kpop/kpop-wp-ro"
+_SLUG_RE = re.compile(r"^[a-z0-9%_-]+$")
+
+
+def spike_share(daily) -> float:
+    total = sum(daily)
+    return max(daily) / total if total else 0
+
+
+def split_spikes(items, key, daily_map):
+    """items を (定常, スパイク) に分ける。日次が取れない候補は定常側に残す。"""
+    kept, spikes = [], []
+    for r in items:
+        daily = daily_map.get(r[key])
+        share = spike_share(daily) if daily else 0
+        if share > SPIKE_SHARE:
+            spikes.append({**r, "spike_share": round(share, 2)})
+        else:
+            kept.append(r)
+    return kept, spikes
+
+
+def slug_from_page(page: str):
+    path = page.replace(SITE, "/").split("#")[0].strip("/")
+    slug = path.rsplit("/", 1)[-1] if path else ""
+    return slug if _SLUG_RE.match(slug) else None
+
+
+def parse_treatment(out: str) -> dict:
+    res = {}
+    for line in out.splitlines()[1:]:
+        f = line.split("\t")
+        if len(f) < 6:
+            continue
+        name, title_set, updated, faq, tv = f[0], f[1], f[2], f[3], f[4]
+        res[name] = {
+            "title_set": title_set == "1",
+            "updated": None if updated in ("NULL", "") else updated[:10],
+            "schema": [n for n, v in (("FAQPage", faq), ("TVSeries", tv)) if v not in ("0", "NULL")],
+        }
+    return res
+
+
+def treatment_label(t) -> str:
+    if not t or not (t["title_set"] or t["schema"]):
+        return ""
+    parts = (["title"] if t["title_set"] else []) + t["schema"]
+    date = f" {t['updated'][5:]}" if t["updated"] else ""
+    return f"[対策済 {'+'.join(parts)}{date}]"
+
+
+def _treatments(slugs) -> dict:
+    slugs = sorted({s for s in slugs if s})
+    if not slugs:
+        return {}
+    in_list = ",".join(f"'{s}'" for s in slugs)
+    sql = ("SELECT p.post_name, MAX(a.title IS NOT NULL AND a.title<>'') title_set, MAX(a.updated) updated, "
+           "LOCATE('FAQPage',p.post_content) faq, LOCATE('TVSeries',p.post_content) tvseries, "
+           "LOCATE('ld+json',p.post_content) ldjson FROM wp_posts p "
+           "LEFT JOIN wp_aioseo_posts a ON a.post_id=p.ID "
+           f"WHERE p.post_status='publish' AND p.post_name IN ({in_list}) GROUP BY p.ID")
+    try:
+        r = subprocess.run(["sudo", "-n", RO, "db", "query", sql],
+                           capture_output=True, text=True, timeout=60)
+    except Exception:
+        return {}
+    return parse_treatment(r.stdout) if r.returncode == 0 else {}
+
+
+def _daily(svc, dim, value, days):
+    """候補1件の窓内日次imp と、query の場合は最多impページを返す。"""
+    s, e = _range(days)
+    dims = ["date", "page"] if dim == "query" else ["date"]
+    body = {"startDate": s, "endDate": e, "dimensions": dims, "rowLimit": 5000,
+            "dimensionFilterGroups": [{"filters": [
+                {"dimension": dim, "operator": "equals",
+                 "expression": value if dim == "query" else SITE + value.lstrip("/")}]}]}
+    rows = svc.searchanalytics().query(siteUrl=SITE, body=body).execute().get("rows", [])
+    by_date, by_page = {}, {}
+    for r in rows:
+        by_date[r["keys"][0]] = by_date.get(r["keys"][0], 0) + r["impressions"]
+        if dim == "query":
+            pg = r["keys"][1].replace(SITE, "/").split("#")[0]
+            by_page[pg] = by_page.get(pg, 0) + r["impressions"]
+    top = max(by_page, key=by_page.get) if by_page else None
+    return list(by_date.values()), top
 
 
 def _svc():
@@ -106,6 +202,25 @@ def snapshot(days: int = 28) -> dict:
             rising.append({"query": k, "imp": r["impressions"], "delta": r["impressions"] - p,
                            "clicks": r["clicks"], "pos": round(r["position"], 1)})
     out["rising_queries"] = sorted(rising, key=lambda x: -x["delta"])[:12]
+
+    # ガード: 単日スパイク除外 + 対策済みの印
+    out["spikes"] = []
+    slugs = []
+    for sec, key, win in (("ctr_opportunities", "query", days),
+                          ("page2_candidates", "page", days),
+                          ("rising_queries", "query", 7)):
+        daily_map = {}
+        for r in out[sec]:
+            daily, top = _daily(svc, key, r[key], win)
+            daily_map[r[key]] = daily
+            r["page_for_query"] = top if key == "query" else r["page"]
+            slugs.append(slug_from_page(r["page_for_query"] or ""))
+        out[sec], spk = split_spikes(out[sec], key, daily_map)
+        out["spikes"] += [{**x, "section": sec} for x in spk]
+    tr = _treatments(slugs)
+    for sec in ("ctr_opportunities", "page2_candidates", "rising_queries", "spikes"):
+        for r in out[sec]:
+            r["treatment"] = tr.get(slug_from_page(r.get("page_for_query") or ""))
     return out
 
 
@@ -131,19 +246,26 @@ def render(o: dict) -> str:
         L.append(f"  {r['clicks']:4.0f}clk imp{r['imp']:5.0f} pos{r['pos']:4.1f}  {r['page'][:58]}")
     L.append("\n─── CTR機会 (pos≤10 × imp≥200 × ctr<3%) ───")
     for r in o["ctr_opportunities"] or []:
-        L.append(f"  imp{r['imp']:5.0f} ctr{r['ctr']:4.1f}% pos{r['pos']:4.1f}  {r['query']}")
+        L.append(f"  imp{r['imp']:5.0f} ctr{r['ctr']:4.1f}% pos{r['pos']:4.1f}  {r['query']} "
+                 f"{treatment_label(r.get('treatment'))}".rstrip())
     if not o["ctr_opportunities"]:
         L.append("  (該当なし)")
     L.append("\n─── 1ページ目押し上げ候補 (pos11-20 × imp≥300) ───")
     for r in o["page2_candidates"] or []:
-        L.append(f"  imp{r['imp']:5.0f} clk{r['clicks']:3.0f} pos{r['pos']:4.1f}  {r['page'][:55]}")
+        L.append(f"  imp{r['imp']:5.0f} clk{r['clicks']:3.0f} pos{r['pos']:4.1f}  {r['page'][:55]} "
+                 f"{treatment_label(r.get('treatment'))}".rstrip())
     if not o["page2_candidates"]:
         L.append("  (該当なし)")
     L.append("\n─── 急上昇クエリ (7d imp≥100, 前週比1.5倍+) ───")
     for r in o["rising_queries"] or []:
-        L.append(f"  imp{r['imp']:5.0f}(+{r['delta']:.0f}) clk{r['clicks']:3.0f} pos{r['pos']:4.1f}  {r['query']}")
+        L.append(f"  imp{r['imp']:5.0f}(+{r['delta']:.0f}) clk{r['clicks']:3.0f} pos{r['pos']:4.1f}  {r['query']} "
+                 f"{treatment_label(r.get('treatment'))}".rstrip())
     if not o["rising_queries"]:
         L.append("  (該当なし)")
+    if o.get("spikes"):
+        L.append(f"\n─── 除外(単日スパイク: 最大単日imp/合計 > {SPIKE_SHARE:.0%}) — 追う価値なし ───")
+        for r in o["spikes"]:
+            L.append(f"  imp{r['imp']:5.0f} 単日{r['spike_share']:.0%}  {r.get('query') or r.get('page')}")
     return "\n".join(L)
 
 
