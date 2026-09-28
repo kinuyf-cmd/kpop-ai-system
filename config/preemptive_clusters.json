@@ -1,6 +1,6 @@
 {
   "_comment": "先回りクラスタ記事の効果測定対象。tools/seo/preemptive_cluster_tracker.py が週次で参照する。新しい先回り記事を公開したらここに追記すること。target_date = 配信日/公開日/公演初日(検索需要が立ち上がる日)。",
-  "_last_updated": "2026-08-12",
+  "_last_updated": "2026-09-28",
   "_candidate_note": "候補の自動抽出は断念した(2026-08-12)。TECの未来イベントは871件中866件が誕生日で、公演/配信は5件しか登録されていないため、DBから候補を機械抽出しても候補ゼロになる。公演・映画・配信の発見は web 調査で行うこと。選定基準は『日付が確定』『自社がその語で既に順位を持つ(GSCで確認)』『未カバー』の3点。",
   "_candidates_pending": [
     {"name": "BOYNEXTDOOR 宮城セキスイハイムスーパーアリーナ", "target_date": "2026-09-19", "note": "自社は boynextdoor 釜山 で3.9位。会場記事は未整備"},
@@ -44,7 +44,7 @@
     {
       "slug": "kuru-alba-oishii-baito-cast-guide",
       "title": "クルアルバ(第2弾)",
-      "target_date": "2026-10-09",
+      "target_date": "2026-10-30",
       "note": "Netflix配信。全8話"
     },
     {
@@ -52,6 +52,12 @@
       "title": "MAMA AWARDS(既存強化)",
       "target_date": "2026-11-20",
       "note": "出演者発表(10月頃)が実質の需要ピーク。1P目押し上げの検証対象"
+    },
+    {
+      "slug": "doctor-x-white-mafia-korean-remake-guide",
+      "title": "韓国版ドクターX(第7弾)",
+      "target_date": "2026-10-09",
+      "note": "Netflix独占・韓国SBSと同日配信。全12話(金土)。公開9/28=11日前で推奨の2-3週より短い"
     }
   ]
 }

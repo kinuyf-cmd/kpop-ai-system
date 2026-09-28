@@ -1,33 +1,42 @@
 {
-  "updated": "2026-09-27 21:30",
-  "count": 3,
+  "updated": "2026-09-28 21:36",
+  "count": 4,
   "queue": [
     {
-      "title": "ENHYPEN、秋夕に韓服姿を公開",
-      "url": "https://www.kpopjournal.tokyo/?p=21382",
-      "post_id": 21382,
-      "genre": "breaking",
-      "artist": "ENHYPEN",
-      "priority": "high",
-      "queued_at": "2026-09-27T13:32:53.800497"
+      "title": "キム・ジウォン主演『ドクターX ～白衣のマフィア～』配信日",
+      "url": "https://www.kpopjournal.tokyo/doctor-x-white-mafia-korean-remake-guide/",
+      "post_id": 21550,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-09-28T18:11:15.717301"
     },
     {
-      "title": "JIMIN、香港で秋夕連休の写真公開",
-      "url": "https://www.kpopjournal.tokyo/jimin-hongkong-chuseok-photos/",
-      "post_id": 21378,
+      "title": "ヒョリン、射撃場で見せた筋肉話題に",
+      "url": "https://www.kpopjournal.tokyo/hyolyn-muscle-shooting-range/",
+      "post_id": 21566,
       "genre": "breaking",
-      "artist": "제시",
+      "artist": "효린",
       "priority": "high",
-      "queued_at": "2026-09-27T13:31:42.902711"
+      "queued_at": "2026-09-28T21:36:53.021302"
     },
     {
-      "title": "IVE、新EP「Looks Can Kill」10月26日リリース",
-      "url": "https://www.kpopjournal.tokyo/?p=21423",
-      "post_id": 21423,
+      "title": "Jay Park、6年ぶりにUFC選手と再会し肩組む",
+      "url": "https://www.kpopjournal.tokyo/jay-park-ufc-senshu-saikai/",
+      "post_id": 21558,
       "genre": "breaking",
-      "artist": "IVE",
+      "artist": "윤아",
       "priority": "high",
-      "queued_at": "2026-09-27T21:30:57.183466"
+      "queued_at": "2026-09-28T19:36:09.780628"
+    },
+    {
+      "title": "NMIXX SULLYOON「睡眠は時間の無駄」発言",
+      "url": "https://www.kpopjournal.tokyo/nmixx-sullyoon-sleep-waste-time/",
+      "post_id": 21537,
+      "genre": "breaking",
+      "artist": "NMIXX",
+      "priority": "high",
+      "queued_at": "2026-09-28T17:39:10.394950"
     }
   ]
 }

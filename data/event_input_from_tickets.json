@@ -22,16 +22,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "JUNNY",
-   "title": "JUNNY",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670079",
-   "source_media": "ぴあ",
-   "start_date": "2026-09-27",
-   "venue": "大塚FUTURE:",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ILLIT",
    "title": "ILLIT",
    "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
