@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28 21:36",
+  "updated": "2026-09-29 21:32",
   "count": 4,
   "queue": [
     {
@@ -12,31 +12,31 @@
       "queued_at": "2026-09-28T18:11:15.717301"
     },
     {
-      "title": "ヒョリン、射撃場で見せた筋肉話題に",
-      "url": "https://www.kpopjournal.tokyo/hyolyn-muscle-shooting-range/",
-      "post_id": 21566,
+      "title": "オ・ヨンス、息子とBIGBANGコンサート参加",
+      "url": "https://www.kpopjournal.tokyo/o-yonsu-bigbang-concert-son/",
+      "post_id": 21665,
       "genre": "breaking",
-      "artist": "효린",
+      "artist": "빅뱅",
       "priority": "high",
-      "queued_at": "2026-09-28T21:36:53.021302"
+      "queued_at": "2026-09-29T21:32:46.547013"
     },
     {
-      "title": "Jay Park、6年ぶりにUFC選手と再会し肩組む",
-      "url": "https://www.kpopjournal.tokyo/jay-park-ufc-senshu-saikai/",
-      "post_id": 21558,
+      "title": "UNCHILD、カムバック延期と解散説に事務所が説明",
+      "url": "https://www.kpopjournal.tokyo/unchild-comeback-delay-disband-rumors/",
+      "post_id": 21661,
       "genre": "breaking",
-      "artist": "윤아",
+      "artist": "STAYC",
       "priority": "high",
-      "queued_at": "2026-09-28T19:36:09.780628"
+      "queued_at": "2026-09-29T21:31:28.853527"
     },
     {
-      "title": "NMIXX SULLYOON「睡眠は時間の無駄」発言",
-      "url": "https://www.kpopjournal.tokyo/nmixx-sullyoon-sleep-waste-time/",
-      "post_id": 21537,
+      "title": "ZEROBASEONE初ユニット「EMP」作詞・作曲・プロデュース",
+      "url": "https://www.kpopjournal.tokyo/zerobaseone-emp-first-unit-production/",
+      "post_id": 21655,
       "genre": "breaking",
-      "artist": "NMIXX",
+      "artist": "제로베이스원",
       "priority": "high",
-      "queued_at": "2026-09-28T17:39:10.394950"
+      "queued_at": "2026-09-29T19:35:06.920949"
     }
   ]
 }
