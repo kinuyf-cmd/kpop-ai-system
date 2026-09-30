@@ -1,42 +1,42 @@
 {
-  "updated": "2026-09-29 21:32",
+  "updated": "2026-09-30 21:32",
   "count": 4,
   "queue": [
     {
-      "title": "キム・ジウォン主演『ドクターX ～白衣のマフィア～』配信日",
-      "url": "https://www.kpopjournal.tokyo/doctor-x-white-mafia-korean-remake-guide/",
-      "post_id": 21550,
-      "genre": "feature",
-      "artist": "",
-      "priority": "normal",
-      "queued_at": "2026-09-28T18:11:15.717301"
+      "title": "IU、耳管開放症で国内公演を断念",
+      "url": "https://www.kpopjournal.tokyo/iu-ear-pressure-syndrome-concert-cancellation/",
+      "post_id": 21767,
+      "genre": "breaking",
+      "artist": "아이유",
+      "priority": "high",
+      "queued_at": "2026-09-30T21:32:48.893007"
     },
     {
-      "title": "オ・ヨンス、息子とBIGBANGコンサート参加",
-      "url": "https://www.kpopjournal.tokyo/o-yonsu-bigbang-concert-son/",
-      "post_id": 21665,
+      "title": "ペ・ソンジェ、48歳で父親に…新しい命を迎える準備中",
+      "url": "https://www.kpopjournal.tokyo/pe-songjae-father-48-new-baby-preparation/",
+      "post_id": 21763,
       "genre": "breaking",
-      "artist": "빅뱅",
+      "artist": "에이티즈",
       "priority": "high",
-      "queued_at": "2026-09-29T21:32:46.547013"
+      "queued_at": "2026-09-30T21:31:30.766109"
     },
     {
-      "title": "UNCHILD、カムバック延期と解散説に事務所が説明",
-      "url": "https://www.kpopjournal.tokyo/unchild-comeback-delay-disband-rumors/",
-      "post_id": 21661,
+      "title": "KATSEYEダニエラが恋人とマノンを揶揄",
+      "url": "https://www.kpopjournal.tokyo/katseye-daniela-yoru-manon/",
+      "post_id": 21751,
       "genre": "breaking",
-      "artist": "STAYC",
+      "artist": "KATSEYE",
       "priority": "high",
-      "queued_at": "2026-09-29T21:31:28.853527"
+      "queued_at": "2026-09-30T19:32:16.395106"
     },
     {
-      "title": "ZEROBASEONE初ユニット「EMP」作詞・作曲・プロデュース",
-      "url": "https://www.kpopjournal.tokyo/zerobaseone-emp-first-unit-production/",
-      "post_id": 21655,
+      "title": "BLACKPINKジス、DIORショーで涙の再会",
+      "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-dior-show-reunion/",
+      "post_id": 21735,
       "genre": "breaking",
-      "artist": "제로베이스원",
+      "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-09-29T19:35:06.920949"
+      "queued_at": "2026-09-30T17:38:02.145669"
     }
   ]
 }

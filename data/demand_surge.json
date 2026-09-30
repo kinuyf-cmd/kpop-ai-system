@@ -1,58 +1,58 @@
 {
   "window": [
-    "2026-09-20",
-    "2026-09-26"
+    "2026-09-21",
+    "2026-09-27"
   ],
-  "generated_at": "2026-09-29",
+  "generated_at": "2026-09-30",
   "rows": [
     {
       "query": "鉄槌教師 声優",
-      "imp": 411,
-      "prev_imp": 50,
-      "delta": 361,
-      "clicks": 1,
-      "ctr_pct": 0.24,
-      "position": 10.2,
-      "ratio": 8.2
+      "imp": 453,
+      "prev_imp": 76,
+      "delta": 377,
+      "clicks": 2,
+      "ctr_pct": 0.44,
+      "position": 10.0,
+      "ratio": 6.0
     },
     {
       "query": "kjournal",
-      "imp": 171,
+      "imp": 211,
       "prev_imp": 2,
-      "delta": 169,
-      "clicks": 46,
-      "ctr_pct": 26.9,
-      "position": 1.2,
-      "ratio": 85.5
-    },
-    {
-      "query": "the love lab",
-      "imp": 118,
-      "prev_imp": 11,
-      "delta": 107,
-      "clicks": 6,
-      "ctr_pct": 5.08,
-      "position": 9.1,
-      "ratio": 10.7
+      "delta": 209,
+      "clicks": 56,
+      "ctr_pct": 26.54,
+      "position": 1.1,
+      "ratio": 105.5
     },
     {
       "query": "ジェヒョン サナ",
-      "imp": 93,
+      "imp": 112,
       "prev_imp": 0,
-      "delta": 93,
+      "delta": 112,
       "clicks": 17,
-      "ctr_pct": 18.28,
-      "position": 4.1,
+      "ctr_pct": 15.18,
+      "position": 4.2,
       "ratio": null
     },
     {
+      "query": "the love lab",
+      "imp": 120,
+      "prev_imp": 12,
+      "delta": 108,
+      "clicks": 6,
+      "ctr_pct": 5.0,
+      "position": 8.9,
+      "ratio": 10.0
+    },
+    {
       "query": "サナ ジェヒョン",
-      "imp": 82,
+      "imp": 95,
       "prev_imp": 0,
-      "delta": 82,
-      "clicks": 10,
-      "ctr_pct": 12.2,
-      "position": 4.9,
+      "delta": 95,
+      "clicks": 13,
+      "ctr_pct": 13.68,
+      "position": 5.0,
       "ratio": null
     }
   ]
