@@ -1,42 +1,33 @@
 {
-  "updated": "2026-09-30 21:32",
-  "count": 4,
+  "updated": "2026-10-01 21:40",
+  "count": 3,
   "queue": [
     {
-      "title": "IU、耳管開放症で国内公演を断念",
-      "url": "https://www.kpopjournal.tokyo/iu-ear-pressure-syndrome-concert-cancellation/",
-      "post_id": 21767,
-      "genre": "breaking",
-      "artist": "아이유",
-      "priority": "high",
-      "queued_at": "2026-09-30T21:32:48.893007"
+      "title": "2026 KGMA 日程・出演者・Hulu配信情報",
+      "url": "https://www.kpopjournal.tokyo/kgma-2026-lineup-schedule-hulu-guide/",
+      "post_id": 21866,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-01T17:03:35.491902"
     },
     {
-      "title": "ペ・ソンジェ、48歳で父親に…新しい命を迎える準備中",
-      "url": "https://www.kpopjournal.tokyo/pe-songjae-father-48-new-baby-preparation/",
-      "post_id": 21763,
+      "title": "IU、一部ファンの不満に自ら説明し擁護",
+      "url": "https://www.kpopjournal.tokyo/iu-fan-discontent-explanation/",
+      "post_id": 21903,
       "genre": "breaking",
-      "artist": "에이티즈",
+      "artist": "IU",
       "priority": "high",
-      "queued_at": "2026-09-30T21:31:30.766109"
+      "queued_at": "2026-10-01T21:35:54.534141"
     },
     {
-      "title": "KATSEYEダニエラが恋人とマノンを揶揄",
-      "url": "https://www.kpopjournal.tokyo/katseye-daniela-yoru-manon/",
-      "post_id": 21751,
+      "title": "RIIZEアントン、空港でのサングラスファッション",
+      "url": "https://www.kpopjournal.tokyo/?p=21892",
+      "post_id": 21892,
       "genre": "breaking",
-      "artist": "KATSEYE",
+      "artist": "라이즈",
       "priority": "high",
-      "queued_at": "2026-09-30T19:32:16.395106"
-    },
-    {
-      "title": "BLACKPINKジス、DIORショーで涙の再会",
-      "url": "https://www.kpopjournal.tokyo/blackpink-jisoo-dior-show-reunion/",
-      "post_id": 21735,
-      "genre": "breaking",
-      "artist": "BLACKPINK",
-      "priority": "high",
-      "queued_at": "2026-09-30T17:38:02.145669"
+      "queued_at": "2026-10-01T21:31:19.932926"
     }
   ]
 }

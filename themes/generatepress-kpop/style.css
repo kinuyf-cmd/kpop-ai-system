@@ -5375,6 +5375,27 @@ ins.adsbygoogle.adsbygoogle-noablate:not([data-ad-status="unfilled"]) {
 	min-height: 280px;
 }
 
+/* CLS 対策 (2026-10-01) — 記事冒頭に入る auto ads の枠を予約
+   モバイルの記事ページでは auto ads が .inside-article の先頭(パンくずの上)に
+   div.google-auto-placed (280px + 上下マージン = 300px) を描画後に注入し、
+   パンくず・タイトル・3行まとめを 300px 押し下げていた(実測 CLS 0.197、
+   Lighthouse の指摘要素は .kpj-summary-lead)。
+   広告が入るまで同じ高さを ::before で確保し、注入された瞬間に :has() が
+   外れて予約が消えるので差し引きゼロになる(実測 CLS 0)。
+   広告が入らない閲覧(広告ブロック等)では 6 秒後に予約を畳む。
+   :has() 非対応ブラウザはルールごと無視され、従来どおりの挙動。 */
+@media (max-width: 768px) {
+	body.single-post .inside-article:not(:has(> .google-auto-placed:first-child))::before {
+		content: "";
+		display: block;
+		height: 300px;
+		animation: kpj-topad-release 0s linear 6s forwards;
+	}
+}
+@keyframes kpj-topad-release {
+	to { height: 0; }
+}
+
 /* ==========================================================================
    アフィリエイト CTA(.kpj-cta-block)— ミニマル・洗練版(2026-05-26 v3)
    旧版(ピンク枠+グラデ+派手なピルボタン)は俗っぽいとの指摘。
