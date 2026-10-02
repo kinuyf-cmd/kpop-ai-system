@@ -1,7 +1,16 @@
 {
-  "updated": "2026-10-01 21:40",
-  "count": 3,
+  "updated": "2026-10-02 21:35",
+  "count": 4,
   "queue": [
+    {
+      "title": "GOT7ジニョン×キム・ユジョン『100日の嘘』配信日",
+      "url": "https://www.kpopjournal.tokyo/hyakunichi-no-uso-cast-episodes-netflix-guide/",
+      "post_id": 21915,
+      "genre": "feature",
+      "artist": "GOT7",
+      "priority": "normal",
+      "queued_at": "2026-10-01T23:49:13.638206"
+    },
     {
       "title": "2026 KGMA 日程・出演者・Hulu配信情報",
       "url": "https://www.kpopjournal.tokyo/kgma-2026-lineup-schedule-hulu-guide/",
@@ -12,22 +21,22 @@
       "queued_at": "2026-10-01T17:03:35.491902"
     },
     {
-      "title": "IU、一部ファンの不満に自ら説明し擁護",
-      "url": "https://www.kpopjournal.tokyo/iu-fan-discontent-explanation/",
-      "post_id": 21903,
+      "title": "STAYCアイサ、ショートカットで清涼ビジュアル",
+      "url": "https://www.kpopjournal.tokyo/stayc-aisa-short-hair-fresh-visual/",
+      "post_id": 22032,
       "genre": "breaking",
-      "artist": "IU",
+      "artist": "스테이씨",
       "priority": "high",
-      "queued_at": "2026-10-01T21:35:54.534141"
+      "queued_at": "2026-10-02T21:35:47.305418"
     },
     {
-      "title": "RIIZEアントン、空港でのサングラスファッション",
-      "url": "https://www.kpopjournal.tokyo/?p=21892",
-      "post_id": 21892,
+      "title": "EVNNE、6枚目ミニアルバム「on: our noise」スケジュール公開",
+      "url": "https://www.kpopjournal.tokyo/?p=22026",
+      "post_id": 22026,
       "genre": "breaking",
-      "artist": "라이즈",
+      "artist": "EVNNE",
       "priority": "high",
-      "queued_at": "2026-10-01T21:31:19.932926"
+      "queued_at": "2026-10-02T21:30:47.237780"
     }
   ]
 }

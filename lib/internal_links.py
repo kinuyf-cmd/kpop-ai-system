@@ -274,6 +274,17 @@ def _score_relevance(
     # 1. タイトルキーワード共起（重み: 40）
     cand_tokens = _tokenize_title(candidate_title)
     token_overlap = len(new_title_tokens & cand_tokens)
+
+    # 関連の根拠が無い候補は 0 点で打ち切る。根拠 = アーティスト名の一致、
+    # またはタイトル語が2語以上重なること。「韓国」「ソウル」などの汎用語の一致や
+    # タイトル長ボーナス(下の3)だけで閾値を超え、無関係な記事へリンクしていた。
+    artist_match = any(
+        _keyword_in(kw, candidate_title)
+        for kw in new_keywords if kw in ARTIST_NAMES
+    )
+    if not artist_match and token_overlap < 2:
+        return 0.0
+
     score += min(token_overlap * 8, 40)
 
     # 2. アーティスト/ジャンルキーワード一致（重み: 40）
@@ -360,9 +371,16 @@ def _insert_inline_links(html_body: str, related: list[dict]) -> str:
 
     result_parts: list[str] = []
     remaining_links = list(related)
+    seen_first_paragraph = False
 
     for part in paragraphs:
         if not re.match(r"<p", part, re.IGNORECASE):
+            result_parts.append(part)
+            continue
+
+        # 冒頭段落(リード文)にはリンクを足さない。記事の第一印象を崩すため。
+        if not seen_first_paragraph:
+            seen_first_paragraph = True
             result_parts.append(part)
             continue
 
@@ -373,8 +391,12 @@ def _insert_inline_links(html_body: str, related: list[dict]) -> str:
         for link in remaining_links:
             if link["url"] in inserted_urls:
                 continue
-            # リンク先記事のキーワードが段落に含まれるかチェック
-            link_keywords = _extract_keywords_from_text(link["title"])
+            # リンク先記事のアーティスト名が段落に含まれるかチェック
+            # (汎用語の一致では置かない。無関係な段落に付くため)
+            link_keywords = [
+                kw for kw in _extract_keywords_from_text(link["title"])
+                if kw in ARTIST_NAMES
+            ]
             if any(
                 _keyword_in(kw, plain)
                 for kw in link_keywords

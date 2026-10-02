@@ -514,7 +514,7 @@
         "prefecture": "大阪府"
       }
     ],
-    "cached_at": "2026-09-25T04:02:12.528003"
+    "cached_at": "2026-10-02T04:02:23.679259"
   },
   "b2667709": {
     "event_bundle_cd": "b2667709",
@@ -1075,5 +1075,19 @@
     "image": "https://image.pia.jp/images/202606/202606160062_ex.png",
     "performances": [],
     "cached_at": "2026-10-01T04:02:14.573357"
+  },
+  "b2670904": {
+    "event_bundle_cd": "b2670904",
+    "title": "2026 GONG YOO ASIA FANMEETING TOUR＜THE LONG TAKE＞IN JAPAN",
+    "description": "『トッケビ～君がくれた愛しい日々～』『新感染 ファイナル・エクスプレス』に主演の韓国トップ俳優、コン・ユが来日！10/4(日)パシフィコ横浜 国立大ホールにてファンミーティング開催！",
+    "image": "https://image.pia.jp/images/202609/202609070065_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-04",
+        "venue": "パシフィコ横浜 国立大ホール",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-10-02T04:02:21.792037"
   }
 }

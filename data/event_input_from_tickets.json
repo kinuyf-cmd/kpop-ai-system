@@ -92,16 +92,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "PENTAGON",
-   "title": "PENTAGON",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670565",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-01",
-   "venue": "Zepp Namba",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "BOYNEXTDOOR",
    "title": "BOYNEXTDOOR",
    "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
@@ -119,6 +109,16 @@
    "start_date": "2026-10-15",
    "venue": "東京ガーデンシアター",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "GONG",
+   "title": "2026 GONG YOO ASIA FANMEETING TOUR＜THE LONG TAKE＞IN JAPAN",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670904",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-04",
+   "venue": "パシフィコ横浜 国立大ホール",
+   "_source_id": "pia"
   }
  ]
 }
