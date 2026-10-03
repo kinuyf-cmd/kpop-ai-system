@@ -12,16 +12,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "Ji",
-   "title": "Ji Chang Wook",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670555",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-02",
-   "venue": "大阪国際会議場 メインホール",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "ILLIT",
    "title": "ILLIT",
    "source_url": "https://l-tike.com/concert/mevent/?mid=751241",
@@ -118,6 +108,26 @@
    "source_media": "ぴあ",
    "start_date": "2026-10-04",
    "venue": "パシフィコ横浜 国立大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "YANG",
+   "title": "YANG SE JONG",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670810",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-10",
+   "venue": "なかのZERO 大ホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SUNGMIN",
+   "title": "SUNGMIN FANMEETING in OSAKA 「思い」",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671179",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-17",
+   "venue": "It’s K Fc live Osaka",
    "_source_id": "pia"
   }
  ]

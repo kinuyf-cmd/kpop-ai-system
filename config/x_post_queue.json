@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-02 21:35",
+  "updated": "2026-10-03 21:37",
   "count": 4,
   "queue": [
     {
@@ -12,31 +12,31 @@
       "queued_at": "2026-10-01T23:49:13.638206"
     },
     {
-      "title": "2026 KGMA 日程・出演者・Hulu配信情報",
-      "url": "https://www.kpopjournal.tokyo/kgma-2026-lineup-schedule-hulu-guide/",
-      "post_id": 21866,
-      "genre": "feature",
-      "artist": "",
-      "priority": "normal",
-      "queued_at": "2026-10-01T17:03:35.491902"
+      "title": "TAEYEONの人気、北朝鮮でも衝撃的だった",
+      "url": "https://www.kpopjournal.tokyo/taeyeon-popularity-north-korea-impact/",
+      "post_id": 22168,
+      "genre": "breaking",
+      "artist": "태연",
+      "priority": "high",
+      "queued_at": "2026-10-03T21:37:17.416704"
     },
     {
-      "title": "STAYCアイサ、ショートカットで清涼ビジュアル",
-      "url": "https://www.kpopjournal.tokyo/stayc-aisa-short-hair-fresh-visual/",
-      "post_id": 22032,
+      "title": "TWICEモモ「歩く瞬間から漂うグラビア感",
+      "url": "https://www.kpopjournal.tokyo/?p=22164",
+      "post_id": 22164,
       "genre": "breaking",
-      "artist": "스테이씨",
+      "artist": "트와이스",
       "priority": "high",
-      "queued_at": "2026-10-02T21:35:47.305418"
+      "queued_at": "2026-10-03T21:35:37.357988"
     },
     {
-      "title": "EVNNE、6枚目ミニアルバム「on: our noise」スケジュール公開",
-      "url": "https://www.kpopjournal.tokyo/?p=22026",
-      "post_id": 22026,
+      "title": "IVE Liz、オールブラックで街角ビジュアル披露",
+      "url": "https://www.kpopjournal.tokyo/ive-liz-all-black-street-visuals/",
+      "post_id": 22158,
       "genre": "breaking",
-      "artist": "EVNNE",
+      "artist": "아이브",
       "priority": "high",
-      "queued_at": "2026-10-02T21:30:47.237780"
+      "queued_at": "2026-10-03T19:39:19.321999"
     }
   ]
 }

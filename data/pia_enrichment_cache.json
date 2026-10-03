@@ -1089,5 +1089,33 @@
       }
     ],
     "cached_at": "2026-10-02T04:02:21.792037"
+  },
+  "b2670810": {
+    "event_bundle_cd": "b2670810",
+    "title": "YANG SE JONG",
+    "description": "YANG SE JONG(なかのＺＥＲＯ　大ホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609280073_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-10-10",
+        "venue": "なかのZERO 大ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-03T04:02:21.787042"
+  },
+  "b2671179": {
+    "event_bundle_cd": "b2671179",
+    "title": "SUNGMIN FANMEETING in OSAKA 「思い」",
+    "description": "SUNGMIN FANMEETING in OSAKA 「思い」(Ｉｔ’ｓ　Ｋ　Ｆｃ　ｌｉｖｅ　Ｏｓａｋａ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609150081_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-17",
+        "venue": "It’s K Fc live Osaka",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-10-03T04:02:22.950417"
   }
 }
