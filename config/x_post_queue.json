@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-03 21:37",
+  "updated": "2026-10-04 21:39",
   "count": 4,
   "queue": [
     {
-      "title": "GOT7ジニョン×キム・ユジョン『100日の嘘』配信日",
-      "url": "https://www.kpopjournal.tokyo/hyakunichi-no-uso-cast-episodes-netflix-guide/",
-      "post_id": 21915,
-      "genre": "feature",
-      "artist": "GOT7",
-      "priority": "normal",
-      "queued_at": "2026-10-01T23:49:13.638206"
+      "title": "SEVENTEENジョンハン、パリでセンスあふれるビジュアル公開",
+      "url": "https://www.kpopjournal.tokyo/seventeen-junghan-paris-visuals/",
+      "post_id": 22273,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-10-04T21:39:39.124475"
     },
     {
-      "title": "TAEYEONの人気、北朝鮮でも衝撃的だった",
-      "url": "https://www.kpopjournal.tokyo/taeyeon-popularity-north-korea-impact/",
-      "post_id": 22168,
+      "title": "BIBI、アイドル事務所から警戒対象に",
+      "url": "https://www.kpopjournal.tokyo/bibi-idol-agency-warning/",
+      "post_id": 22269,
       "genre": "breaking",
-      "artist": "태연",
+      "artist": "비비",
       "priority": "high",
-      "queued_at": "2026-10-03T21:37:17.416704"
+      "queued_at": "2026-10-04T21:38:20.951457"
     },
     {
-      "title": "TWICEモモ「歩く瞬間から漂うグラビア感",
-      "url": "https://www.kpopjournal.tokyo/?p=22164",
-      "post_id": 22164,
+      "title": "ZEROBASEONE、江南での熱いパフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/?p=22265",
+      "post_id": 22265,
       "genre": "breaking",
-      "artist": "트와이스",
+      "artist": "제로베이스원",
       "priority": "high",
-      "queued_at": "2026-10-03T21:35:37.357988"
+      "queued_at": "2026-10-04T21:37:04.534739"
     },
     {
-      "title": "IVE Liz、オールブラックで街角ビジュアル披露",
-      "url": "https://www.kpopjournal.tokyo/ive-liz-all-black-street-visuals/",
-      "post_id": 22158,
+      "title": "サムスン・ライオンズ、フェデック代替にイ・スンヒョン",
+      "url": "https://www.kpopjournal.tokyo/samsung-lions-lee-seung-hyun-alternative-fedeck/",
+      "post_id": 22261,
       "genre": "breaking",
-      "artist": "아이브",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-10-03T19:39:19.321999"
+      "queued_at": "2026-10-04T21:35:52.345734"
     }
   ]
 }

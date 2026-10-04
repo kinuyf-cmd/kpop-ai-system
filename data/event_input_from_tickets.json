@@ -129,6 +129,16 @@
    "start_date": "2026-10-17",
    "venue": "It’s K Fc live Osaka",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "QWER",
+   "title": "QWER",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670998",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-13",
+   "venue": "UNITEDLAB",
+   "_source_id": "pia"
   }
  ]
 }

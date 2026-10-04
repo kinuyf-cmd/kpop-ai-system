@@ -1,29 +1,8 @@
 {
   "window": [
-    "2026-09-24",
-    "2026-09-30"
+    "2026-09-25",
+    "2026-10-01"
   ],
-  "generated_at": "2026-10-03",
-  "rows": [
-    {
-      "query": "kjournal",
-      "imp": 217,
-      "prev_imp": 42,
-      "delta": 175,
-      "clicks": 58,
-      "ctr_pct": 26.73,
-      "position": 1.1,
-      "ratio": 5.2
-    },
-    {
-      "query": "ジェヒョン サナ",
-      "imp": 108,
-      "prev_imp": 30,
-      "delta": 78,
-      "clicks": 14,
-      "ctr_pct": 12.96,
-      "position": 4.3,
-      "ratio": 3.6
-    }
-  ]
+  "generated_at": "2026-10-04",
+  "rows": []
 }

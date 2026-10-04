@@ -1020,7 +1020,7 @@
     "event_bundle_cd": "b2670833",
     "title": "キム・キュジョン",
     "description": "キム・キュジョン(Ｉ’Ｍ　Ａ　ＳＨＯＷ)をチケットぴあで今すぐチェック！",
-    "image": "https://image.pia.jp/images/202609/202609020066_ex.png",
+    "image": "https://image.pia.jp/images/202609/202609290059_ex.png",
     "performances": [
       {
         "date": "2026-10-10",
@@ -1028,7 +1028,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-26T04:02:33.265172"
+    "cached_at": "2026-10-04T04:02:08.752833"
   },
   "b2670998": {
     "event_bundle_cd": "b2670998",
@@ -1036,6 +1036,11 @@
     "description": "QWER(Ｓｐｏｔｉｆｙ　Ｏ－ＥＡＳＴ ＧＯＲＩＬＬＡ　ＨＡＬＬ　ＯＳＡＫＡ ＵＮＩＴＥＤＬＡＢ)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
     "performances": [
+      {
+        "date": "2026-10-13",
+        "venue": "UNITEDLAB",
+        "prefecture": "福岡県"
+      },
       {
         "date": "2026-10-15",
         "venue": "GORILLA HALL OSAKA",
@@ -1047,7 +1052,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-09-26T04:02:34.719357"
+    "cached_at": "2026-10-04T04:02:10.100986"
   },
   "b2670565": {
     "event_bundle_cd": "b2670565",
