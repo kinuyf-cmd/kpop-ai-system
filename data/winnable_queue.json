@@ -1,198 +1,174 @@
 {
  "days": 90,
- "count": 226,
+ "count": 219,
  "items": [
   {
    "query": "恋は雨模様 相関図",
-   "impressions": 9083,
-   "clicks": 51,
-   "position": 3.7,
-   "score": 13353.2,
-   "potential_clicks": 581.2
+   "impressions": 9671,
+   "clicks": 53,
+   "position": 3.6,
+   "score": 14411.0,
+   "potential_clicks": 620.1
   },
   {
    "query": "鉄槌教師 相関図",
-   "impressions": 4625,
-   "clicks": 42,
+   "impressions": 4258,
+   "clicks": 39,
    "position": 5.9,
-   "score": 5585.0,
-   "potential_clicks": 279.9
+   "score": 5154.8,
+   "potential_clicks": 257.4
   },
   {
    "query": "鉄槌教師 声優",
-   "impressions": 3774,
-   "clicks": 46,
+   "impressions": 3672,
+   "clicks": 39,
    "position": 9.6,
-   "score": 2890.9,
-   "potential_clicks": 216.7
-  },
-  {
-   "query": "デーモンハンターズ キャラクター",
-   "impressions": 2328,
-   "clicks": 87,
-   "position": 6.8,
-   "score": 2578.7,
-   "potential_clicks": 75.0
+   "score": 2841.1,
+   "potential_clicks": 216.6
   },
   {
    "query": "恋は飴模様 相関図",
-   "impressions": 1665,
-   "clicks": 23,
-   "position": 4.6,
-   "score": 2282.2,
-   "potential_clicks": 92.9
+   "impressions": 1880,
+   "clicks": 26,
+   "position": 4.2,
+   "score": 2669.0,
+   "potential_clicks": 104.8
+  },
+  {
+   "query": "デーモンハンターズ キャラクター",
+   "impressions": 2188,
+   "clicks": 82,
+   "position": 6.6,
+   "score": 2455.7,
+   "potential_clicks": 70.3
   },
   {
    "query": "エージェントキム 吹き替え",
-   "impressions": 1419,
-   "clicks": 32,
-   "position": 6.0,
-   "score": 1699.2,
-   "potential_clicks": 66.8
-  },
-  {
-   "query": "鉄槌教師 吹き替え 声優",
-   "impressions": 2114,
-   "clicks": 25,
-   "position": 9.4,
-   "score": 1661.6,
-   "potential_clicks": 122.1
+   "impressions": 1466,
+   "clicks": 33,
+   "position": 5.9,
+   "score": 1772.5,
+   "potential_clicks": 69.0
   },
   {
    "query": "bts 仲良し相関図",
-   "impressions": 1231,
-   "clicks": 43,
-   "position": 5.0,
-   "score": 1619.8,
-   "potential_clicks": 42.7
+   "impressions": 1197,
+   "clicks": 42,
+   "position": 4.9,
+   "score": 1601.4,
+   "potential_clicks": 41.3
   },
   {
    "query": "エージェントキム 日本語吹き替え",
-   "impressions": 1073,
+   "impressions": 1118,
    "clicks": 26,
    "position": 6.0,
-   "score": 1284.0,
-   "potential_clicks": 48.7
+   "score": 1347.7,
+   "potential_clicks": 51.8
+  },
+  {
+   "query": "鉄槌教師 吹き替え 声優",
+   "impressions": 1651,
+   "clicks": 22,
+   "position": 9.2,
+   "score": 1337.6,
+   "potential_clicks": 92.9
   },
   {
    "query": "恋は飴もよう 相関図",
-   "impressions": 787,
+   "impressions": 795,
    "clicks": 13,
-   "position": 3.7,
-   "score": 1164.7,
-   "potential_clicks": 41.8
+   "position": 3.6,
+   "score": 1179.1,
+   "potential_clicks": 42.3
   },
   {
    "query": "サジャボーイズ 声優",
-   "impressions": 605,
-   "clicks": 40,
-   "position": 4.0,
-   "score": 868.1,
-   "potential_clicks": 2.1
+   "impressions": 545,
+   "clicks": 34,
+   "position": 4.1,
+   "score": 778.7,
+   "potential_clicks": 3.9
   },
   {
    "query": "ノスルビ",
-   "impressions": 1360,
+   "impressions": 1366,
    "clicks": 5,
    "position": 9.3,
-   "score": 732.2,
-   "potential_clicks": 89.7
+   "score": 735.4,
+   "potential_clicks": 90.1
   },
   {
    "query": "twice 脱退",
-   "impressions": 767,
+   "impressions": 768,
    "clicks": 1,
    "position": 8.9,
-   "score": 657.1,
-   "potential_clicks": 52.4
-  },
-  {
-   "query": "btsメンバー 年齢 2026",
-   "impressions": 643,
-   "clicks": 10,
-   "position": 7.9,
-   "score": 628.7,
-   "potential_clicks": 34.8
+   "score": 658.7,
+   "potential_clicks": 52.5
   },
   {
    "query": "cortis メンバー",
-   "impressions": 937,
+   "impressions": 943,
    "clicks": 1,
-   "position": 10.4,
-   "score": 627.1,
-   "potential_clicks": 64.2
+   "position": 10.5,
+   "score": 624.6,
+   "potential_clicks": 64.6
   },
   {
    "query": "鉄槌教師 キャスト 相関図",
-   "impressions": 552,
+   "impressions": 553,
    "clicks": 4,
    "position": 7.0,
-   "score": 593.6,
-   "potential_clicks": 34.4
-  },
-  {
-   "query": "鉄槌教師 吹き替え",
-   "impressions": 606,
-   "clicks": 7,
-   "position": 7.9,
-   "score": 588.0,
-   "potential_clicks": 35.2
-  },
-  {
-   "query": "鉄槌教師 キャスト 声優",
-   "impressions": 615,
-   "clicks": 2,
-   "position": 8.0,
-   "score": 586.9,
-   "potential_clicks": 40.8
-  },
-  {
-   "query": "デーモンハンターズ メンバー",
-   "impressions": 477,
-   "clicks": 22,
-   "position": 6.9,
-   "score": 518.4,
-   "potential_clicks": 11.2
+   "score": 594.7,
+   "potential_clicks": 34.5
   },
   {
    "query": "txt 兵役",
-   "impressions": 678,
-   "clicks": 9,
-   "position": 9.6,
-   "score": 518.3,
-   "potential_clicks": 38.2
+   "impressions": 739,
+   "clicks": 11,
+   "position": 9.5,
+   "score": 578.8,
+   "potential_clicks": 40.4
   },
   {
-   "query": "メイディン 神戸",
-   "impressions": 435,
-   "clicks": 54,
-   "position": 6.3,
-   "score": 506.0,
-   "potential_clicks": -23.7
+   "query": "鉄槌教師 吹き替え",
+   "impressions": 575,
+   "clicks": 6,
+   "position": 7.7,
+   "score": 569.6,
+   "potential_clicks": 34.0
   },
   {
-   "query": "デーモンハンターズ 声優",
-   "impressions": 631,
-   "clicks": 8,
-   "position": 9.4,
-   "score": 501.4,
-   "potential_clicks": 35.9
+   "query": "btsメンバー 年齢 2026",
+   "impressions": 579,
+   "clicks": 7,
+   "position": 8.0,
+   "score": 555.0,
+   "potential_clicks": 33.3
   },
   {
-   "query": "鉄槌 教師 キャスト 相関 図",
-   "impressions": 336,
-   "clicks": 4,
-   "position": 4.8,
-   "score": 453.4,
-   "potential_clicks": 19.4
+   "query": "鉄槌教師 キャスト 声優",
+   "impressions": 556,
+   "clicks": 3,
+   "position": 7.8,
+   "score": 548.2,
+   "potential_clicks": 35.7
   },
   {
-   "query": "madein 無料ライブ",
-   "impressions": 366,
-   "clicks": 26,
-   "position": 6.2,
-   "score": 429.6,
-   "potential_clicks": -0.5
+   "query": "デーモンハンターズ メンバー",
+   "impressions": 489,
+   "clicks": 25,
+   "position": 6.8,
+   "score": 542.8,
+   "potential_clicks": 9.0
+  },
+  {
+   "query": "エージェントキム吹き替え",
+   "impressions": 352,
+   "clicks": 6,
+   "position": 5.6,
+   "score": 440.2,
+   "potential_clicks": 18.5
   },
   {
    "query": "bts テテ 事故",
@@ -203,20 +179,12 @@
    "potential_clicks": -13.5
   },
   {
-   "query": "エージェントキム吹き替え",
-   "impressions": 339,
-   "clicks": 5,
-   "position": 5.7,
-   "score": 419.2,
-   "potential_clicks": 18.6
-  },
-  {
    "query": "鉄槌教師 日本語声優",
-   "impressions": 493,
-   "clicks": 3,
-   "position": 8.9,
-   "score": 417.1,
-   "potential_clicks": 31.3
+   "impressions": 498,
+   "clicks": 2,
+   "position": 9.0,
+   "score": 420.1,
+   "potential_clicks": 32.7
   },
   {
    "query": "テテ 事故",
@@ -227,11 +195,19 @@
    "potential_clicks": 13.3
   },
   {
+   "query": "鉄槌 教師 キャスト 相関 図",
+   "impressions": 293,
+   "clicks": 3,
+   "position": 4.5,
+   "score": 405.5,
+   "potential_clicks": 17.4
+  },
+  {
    "query": "ive ユジン怪我",
-   "impressions": 337,
+   "impressions": 338,
    "clicks": 32,
    "position": 6.2,
-   "score": 396.0,
+   "score": 396.7,
    "potential_clicks": -8.5
   },
   {
@@ -244,35 +220,27 @@
   },
   {
    "query": "エージェントキム日本語吹き替え",
-   "impressions": 310,
+   "impressions": 313,
    "clicks": 6,
    "position": 6.1,
-   "score": 369.2,
-   "potential_clicks": 15.6
+   "score": 373.2,
+   "potential_clicks": 15.8
   },
   {
    "query": "the love lab 日本",
-   "impressions": 319,
+   "impressions": 323,
    "clicks": 25,
-   "position": 6.6,
-   "score": 361.1,
-   "potential_clicks": -2.8
+   "position": 6.5,
+   "score": 367.6,
+   "potential_clicks": -2.5
   },
   {
    "query": "デーモンハンター キャラ",
-   "impressions": 257,
-   "clicks": 23,
+   "impressions": 248,
+   "clicks": 18,
    "position": 4.3,
-   "score": 360.4,
-   "potential_clicks": -5.1
-  },
-  {
-   "query": "madein 神戸",
-   "impressions": 340,
-   "clicks": 56,
-   "position": 7.3,
-   "score": 354.8,
-   "potential_clicks": -32.3
+   "score": 347.9,
+   "potential_clicks": -0.7
   },
   {
    "query": "bts v 事故",
@@ -283,20 +251,28 @@
    "potential_clicks": -22.3
   },
   {
-   "query": "bts 年齢 2026",
-   "impressions": 310,
-   "clicks": 7,
-   "position": 7.2,
-   "score": 326.4,
-   "potential_clicks": 14.6
+   "query": "デーモンハンターズ 声優",
+   "impressions": 433,
+   "clicks": 3,
+   "position": 9.7,
+   "score": 329.6,
+   "potential_clicks": 27.1
   },
   {
    "query": "恋は 雨 模様 相関図",
-   "impressions": 239,
+   "impressions": 241,
    "clicks": 0,
    "position": 4.9,
-   "score": 318.4,
-   "potential_clicks": 16.6
+   "score": 322.0,
+   "potential_clicks": 16.8
+  },
+  {
+   "query": "bts 年齢 2026",
+   "impressions": 300,
+   "clicks": 6,
+   "position": 7.2,
+   "score": 318.1,
+   "potential_clicks": 14.9
   },
   {
    "query": "ユジン 怪我",
@@ -307,235 +283,203 @@
    "potential_clicks": -5.0
   },
   {
-   "query": "オリーブベター おすすめ",
-   "impressions": 210,
-   "clicks": 6,
-   "position": 4.4,
-   "score": 293.2,
-   "potential_clicks": 8.6
+   "query": "メイディン 神戸",
+   "impressions": 288,
+   "clicks": 22,
+   "position": 7.4,
+   "score": 296.0,
+   "potential_clicks": -2.0
   },
   {
    "query": "the love lab netflix 日本",
-   "impressions": 208,
-   "clicks": 25,
-   "position": 5.1,
-   "score": 271.4,
-   "potential_clicks": -10.5
+   "impressions": 214,
+   "clicks": 26,
+   "position": 5.0,
+   "score": 281.6,
+   "potential_clicks": -11.1
+  },
+  {
+   "query": "オリーブベター おすすめ",
+   "impressions": 192,
+   "clicks": 4,
+   "position": 3.9,
+   "score": 277.7,
+   "potential_clicks": 9.4
   },
   {
    "query": "エージェント キム 日本 語 吹き替え",
-   "impressions": 233,
+   "impressions": 234,
    "clicks": 12,
    "position": 6.3,
-   "score": 271.2,
-   "potential_clicks": 4.2
+   "score": 273.0,
+   "potential_clicks": 4.3
   },
   {
    "query": "ハン トリックス メンバー 名前",
-   "impressions": 309,
-   "clicks": 3,
-   "position": 8.7,
-   "score": 269.3,
-   "potential_clicks": 18.5
+   "impressions": 298,
+   "clicks": 2,
+   "position": 8.4,
+   "score": 272.0,
+   "potential_clicks": 18.7
   },
   {
    "query": "thelovelab 韓国",
-   "impressions": 222,
+   "impressions": 223,
    "clicks": 15,
    "position": 5.9,
-   "score": 268.8,
+   "score": 270.6,
    "potential_clicks": 0.5
   },
   {
    "query": "キャッツアイ マノン 復帰",
-   "impressions": 321,
+   "impressions": 328,
    "clicks": 6,
    "position": 9.2,
-   "score": 262.6,
-   "potential_clicks": 16.3
+   "score": 267.8,
+   "potential_clicks": 16.8
   },
   {
-   "query": "オジョギャング メンバー",
-   "impressions": 213,
-   "clicks": 5,
-   "position": 6.0,
-   "score": 256.3,
-   "potential_clicks": 9.8
+   "query": "madein 無料ライブ",
+   "impressions": 248,
+   "clicks": 10,
+   "position": 7.2,
+   "score": 261.4,
+   "potential_clicks": 7.3
   },
   {
-   "query": "鉄槌教師 キャスト 吹き替え",
-   "impressions": 299,
-   "clicks": 3,
-   "position": 9.3,
-   "score": 241.9,
-   "potential_clicks": 17.8
+   "query": "madein 神戸",
+   "impressions": 265,
+   "clicks": 41,
+   "position": 8.0,
+   "score": 253.7,
+   "potential_clicks": -22.6
   },
   {
    "query": "鉄槌教室 声優",
-   "impressions": 250,
-   "clicks": 2,
+   "impressions": 256,
+   "clicks": 3,
    "position": 7.9,
-   "score": 241.6,
-   "potential_clicks": 15.4
-  },
-  {
-   "query": "madein 神戸ワールド記念ホール",
-   "impressions": 198,
-   "clicks": 38,
-   "position": 5.9,
-   "score": 239.6,
-   "potential_clicks": -24.2
-  },
-  {
-   "query": "鉄槌教師吹き替え声優",
-   "impressions": 280,
-   "clicks": 3,
-   "position": 9.2,
-   "score": 228.1,
-   "potential_clicks": 16.5
-  },
-  {
-   "query": "鉄槌教師声優",
-   "impressions": 417,
-   "clicks": 7,
-   "position": 9.2,
-   "score": 225.2,
-   "potential_clicks": 22.0
-  },
-  {
-   "query": "鉄槌教師 声優 日本語",
-   "impressions": 242,
-   "clicks": 1,
-   "position": 8.3,
-   "score": 223.3,
-   "potential_clicks": 15.8
-  },
-  {
-   "query": "恋は飴模様相関図",
-   "impressions": 286,
-   "clicks": 6,
-   "position": 6.3,
-   "score": 223.0,
-   "potential_clicks": 13.9
-  },
-  {
-   "query": "ヨンジュン アイスクリーム グッズ",
-   "impressions": 182,
-   "clicks": 19,
-   "position": 5.9,
-   "score": 220.8,
-   "potential_clicks": -6.3
-  },
-  {
-   "query": "エージェントキム 吹替",
-   "impressions": 197,
-   "clicks": 3,
-   "position": 6.8,
-   "score": 217.9,
-   "potential_clicks": 10.7
+   "score": 249.4,
+   "potential_clicks": 14.8
   },
   {
    "query": "ウィンター ポニョ",
-   "impressions": 255,
+   "impressions": 286,
+   "clicks": 7,
+   "position": 9.1,
+   "score": 236.4,
+   "potential_clicks": 12.9
+  },
+  {
+   "query": "恋は飴模様相関図",
+   "impressions": 290,
    "clicks": 6,
-   "position": 8.9,
-   "score": 215.8,
-   "potential_clicks": 11.7
+   "position": 6.2,
+   "score": 227.8,
+   "potential_clicks": 14.2
+  },
+  {
+   "query": "鉄槌教師声優",
+   "impressions": 421,
+   "clicks": 6,
+   "position": 9.2,
+   "score": 227.7,
+   "potential_clicks": 23.3
+  },
+  {
+   "query": "鉄槌教師 声優 日本語",
+   "impressions": 248,
+   "clicks": 1,
+   "position": 8.4,
+   "score": 227.6,
+   "potential_clicks": 16.3
+  },
+  {
+   "query": "エージェントキム 吹替",
+   "impressions": 201,
+   "clicks": 3,
+   "position": 6.7,
+   "score": 224.4,
+   "potential_clicks": 11.0
+  },
+  {
+   "query": "鉄槌教師 キャスト 吹き替え",
+   "impressions": 262,
+   "clicks": 3,
+   "position": 9.0,
+   "score": 219.0,
+   "potential_clicks": 15.2
   },
   {
    "query": "鉄槌教師 日本語吹き替え",
-   "impressions": 198,
+   "impressions": 195,
    "clicks": 2,
    "position": 7.1,
-   "score": 211.4,
-   "potential_clicks": 11.8
-  },
-  {
-   "query": "デーモンハンターズキャラ",
-   "impressions": 205,
-   "clicks": 5,
-   "position": 7.4,
-   "score": 210.4,
-   "potential_clicks": 9.3
-  },
-  {
-   "query": "恋愛実験室 netflix",
-   "impressions": 170,
-   "clicks": 18,
-   "position": 5.8,
-   "score": 207.6,
-   "potential_clicks": -6.2
-  },
-  {
-   "query": "ojo gang メンバー",
-   "impressions": 152,
-   "clicks": 3,
-   "position": 4.8,
-   "score": 204.1,
-   "potential_clicks": 7.6
-  },
-  {
-   "query": "ag squad",
-   "impressions": 184,
-   "clicks": 3,
-   "position": 6.8,
-   "score": 204.0,
-   "potential_clicks": 9.8
-  },
-  {
-   "query": "デーモン ハンターズ メンバー",
-   "impressions": 181,
-   "clicks": 8,
-   "position": 6.6,
-   "score": 203.8,
-   "potential_clicks": 4.6
+   "score": 209.4,
+   "potential_clicks": 11.6
   },
   {
    "query": "the love lab 日本 配信",
-   "impressions": 205,
+   "impressions": 206,
    "clicks": 16,
    "position": 7.8,
-   "score": 202.0,
+   "score": 203.8,
    "potential_clicks": -1.7
   },
   {
+   "query": "ag squad",
+   "impressions": 182,
+   "clicks": 3,
+   "position": 6.7,
+   "score": 203.4,
+   "potential_clicks": 9.7
+  },
+  {
+   "query": "恋愛実験室 netflix",
+   "impressions": 164,
+   "clicks": 17,
+   "position": 5.7,
+   "score": 202.2,
+   "potential_clicks": -5.6
+  },
+  {
+   "query": "鉄槌教師吹き替え声優",
+   "impressions": 244,
+   "clicks": 3,
+   "position": 9.1,
+   "score": 202.0,
+   "potential_clicks": 14.0
+  },
+  {
+   "query": "ジェヒョン サナ",
+   "impressions": 138,
+   "clicks": 22,
+   "position": 4.0,
+   "score": 199.0,
+   "potential_clicks": -12.4
+  },
+  {
    "query": "treasure 高雄",
-   "impressions": 175,
-   "clicks": 9,
-   "position": 6.5,
-   "score": 200.5,
-   "potential_clicks": 3.2
+   "impressions": 169,
+   "clicks": 6,
+   "position": 6.6,
+   "score": 190.7,
+   "potential_clicks": 5.8
   },
   {
-   "query": "鉄槌 教師 吹き替え 声優",
-   "impressions": 253,
-   "clicks": 1,
-   "position": 9.4,
-   "score": 199.4,
-   "potential_clicks": 16.6
-  },
-  {
-   "query": "ojogang メンバー",
-   "impressions": 162,
-   "clicks": 1,
-   "position": 6.4,
-   "score": 187.0,
-   "potential_clicks": 10.3
-  },
-  {
-   "query": "ヨンジュン ポップアップ",
-   "impressions": 160,
-   "clicks": 14,
-   "position": 6.4,
-   "score": 184.3,
-   "potential_clicks": -2.9
+   "query": "デーモンハンターズキャラ",
+   "impressions": 183,
+   "clicks": 5,
+   "position": 7.3,
+   "score": 190.4,
+   "potential_clicks": 7.7
   },
   {
    "query": "鉄槌教師相関図",
    "impressions": 232,
    "clicks": 2,
-   "position": 6.2,
-   "score": 181.2,
+   "position": 6.3,
+   "score": 180.5,
    "potential_clicks": 14.1
   },
   {
@@ -549,10 +493,18 @@
   {
    "query": "rhtokyo",
    "impressions": 164,
-   "clicks": 13,
+   "clicks": 14,
    "position": 3.6,
    "score": 163.0,
-   "potential_clicks": -1.6
+   "potential_clicks": -2.6
+  },
+  {
+   "query": "ヒュニンカイ 兵役",
+   "impressions": 223,
+   "clicks": 1,
+   "position": 10.0,
+   "score": 160.1,
+   "potential_clicks": 14.5
   },
   {
    "query": "twice チェヨン 脱退",
@@ -563,6 +515,22 @@
    "potential_clicks": 4.4
   },
   {
+   "query": "the love lab netflix 見れ ない",
+   "impressions": 153,
+   "clicks": 7,
+   "position": 7.4,
+   "score": 158.2,
+   "potential_clicks": 3.6
+  },
+  {
+   "query": "ヨンジュン アイスクリーム グッズ",
+   "impressions": 130,
+   "clicks": 11,
+   "position": 5.9,
+   "score": 158.0,
+   "potential_clicks": -2.0
+  },
+  {
    "query": "kickflip キャラクター",
    "impressions": 119,
    "clicks": 6,
@@ -571,76 +539,100 @@
    "potential_clicks": 2.3
   },
   {
-   "query": "メイディン 無料ライブ",
-   "impressions": 109,
-   "clicks": 16,
-   "position": 4.2,
-   "score": 154.9,
-   "potential_clicks": -8.4
-  },
-  {
-   "query": "the love lab netflix 見れ ない",
-   "impressions": 150,
-   "clicks": 7,
-   "position": 7.4,
-   "score": 154.3,
-   "potential_clicks": 3.4
-  },
-  {
-   "query": "デーモンハンターズ キャラ",
-   "impressions": 157,
-   "clicks": 4,
-   "position": 7.8,
-   "score": 153.8,
-   "potential_clicks": 6.9
-  },
-  {
    "query": "ive ユジン 怪我",
-   "impressions": 121,
+   "impressions": 125,
    "clicks": 16,
-   "position": 5.5,
-   "score": 153.0,
-   "potential_clicks": -7.6
-  },
-  {
-   "query": "olive better おすすめ",
-   "impressions": 126,
-   "clicks": 7,
-   "position": 5.9,
-   "score": 152.9,
-   "potential_clicks": 1.8
-  },
-  {
-   "query": "明洞 kpopショップ",
-   "impressions": 179,
-   "clicks": 2,
-   "position": 9.0,
-   "score": 150.4,
-   "potential_clicks": 10.5
-  },
-  {
-   "query": "ウォンヒ 熱愛 報道",
-   "impressions": 119,
-   "clicks": 10,
-   "position": 5.7,
-   "score": 147.5,
-   "potential_clicks": -1.7
-  },
-  {
-   "query": "デーモンハンター 名前",
-   "impressions": 106,
-   "clicks": 2,
-   "position": 4.6,
-   "score": 145.3,
-   "potential_clicks": 5.4
+   "position": 5.6,
+   "score": 156.6,
+   "potential_clicks": -7.3
   },
   {
    "query": "鉄槌教師 キャスト相関図",
-   "impressions": 125,
+   "impressions": 139,
    "clicks": 0,
+   "position": 6.7,
+   "score": 154.3,
+   "potential_clicks": 9.7
+  },
+  {
+   "query": "the love lab",
+   "impressions": 189,
+   "clicks": 9,
+   "position": 9.4,
+   "score": 150.5,
+   "potential_clicks": 4.2
+  },
+  {
+   "query": "ウォンヒ 熱愛 報道",
+   "impressions": 120,
+   "clicks": 11,
+   "position": 5.6,
+   "score": 149.3,
+   "potential_clicks": -2.6
+  },
+  {
+   "query": "デーモンハンターズ キャラ",
+   "impressions": 147,
+   "clicks": 3,
+   "position": 7.6,
+   "score": 148.6,
+   "potential_clicks": 7.2
+  },
+  {
+   "query": "明洞 kpopショップ",
+   "impressions": 178,
+   "clicks": 2,
+   "position": 9.1,
+   "score": 147.8,
+   "potential_clicks": 10.4
+  },
+  {
+   "query": "デーモン ハンターズ メンバー",
+   "impressions": 127,
+   "clicks": 5,
+   "position": 6.4,
+   "score": 146.3,
+   "potential_clicks": 3.8
+  },
+  {
+   "query": "ヨンジュン ポップアップ",
+   "impressions": 128,
+   "clicks": 11,
    "position": 6.5,
+   "score": 145.8,
+   "potential_clicks": -2.1
+  },
+  {
+   "query": "エージェントキム 吹き替え 日本語",
+   "impressions": 112,
+   "clicks": 4,
+   "position": 5.2,
+   "score": 145.0,
+   "potential_clicks": 3.8
+  },
+  {
+   "query": "エージェント キム 日本 語 吹き替え ない",
+   "impressions": 104,
+   "clicks": 3,
+   "position": 4.5,
+   "score": 143.5,
+   "potential_clicks": 4.2
+  },
+  {
+   "query": "ノスルビ 年齢",
+   "impressions": 132,
+   "clicks": 0,
+   "position": 7.0,
    "score": 142.2,
-   "potential_clicks": 8.7
+   "potential_clicks": 9.2
+  },
+  {
+   "query": "olive better おすすめ",
+   "impressions": 115,
+   "clicks": 5,
+   "position": 5.7,
+   "score": 141.8,
+   "potential_clicks": 3.0
   },
   {
    "query": "twice脱退",
@@ -659,44 +651,44 @@
    "potential_clicks": -0.5
   },
   {
-   "query": "エージェント キム 日本 語 吹き替え ない",
-   "impressions": 102,
-   "clicks": 3,
-   "position": 4.5,
-   "score": 140.8,
-   "potential_clicks": 4.1
+   "query": "サナ ジェヒョン",
+   "impressions": 106,
+   "clicks": 17,
+   "position": 5.0,
+   "score": 140.5,
+   "potential_clicks": -9.6
   },
   {
-   "query": "ノスルビ 年齢",
-   "impressions": 129,
-   "clicks": 0,
-   "position": 7.1,
-   "score": 137.9,
-   "potential_clicks": 9.0
-  },
-  {
-   "query": "メイディン神戸",
-   "impressions": 210,
-   "clicks": 25,
+   "query": "オジョギャング メンバー",
+   "impressions": 143,
+   "clicks": 2,
    "position": 7.9,
+   "score": 139.0,
+   "potential_clicks": 8.0
+  },
+  {
+   "query": "mamamoo セトリ",
+   "impressions": 109,
+   "clicks": 16,
+   "position": 5.6,
    "score": 136.4,
-   "potential_clicks": -10.4
+   "potential_clicks": -8.4
   },
   {
    "query": "bts メンバー 年齢 2026",
    "impressions": 131,
    "clicks": 1,
    "position": 7.4,
-   "score": 135.0,
+   "score": 135.2,
    "potential_clicks": 8.1
   },
   {
-   "query": "エージェントキム 吹き替え 日本語",
-   "impressions": 105,
-   "clicks": 4,
-   "position": 5.4,
-   "score": 134.0,
-   "potential_clicks": 3.3
+   "query": "鉄拳教師 声優",
+   "impressions": 135,
+   "clicks": 0,
+   "position": 7.8,
+   "score": 133.4,
+   "potential_clicks": 9.4
   },
   {
    "query": "hwasa 結婚",
@@ -707,76 +699,36 @@
    "potential_clicks": 7.3
   },
   {
-   "query": "デーモンハンターズ 声優 日本語",
-   "impressions": 153,
-   "clicks": 1,
-   "position": 8.7,
-   "score": 133.3,
-   "potential_clicks": 9.6
+   "query": "デーモンハンターズ キャラ 名前",
+   "impressions": 89,
+   "clicks": 5,
+   "position": 4.0,
+   "score": 127.9,
+   "potential_clicks": 1.2
   },
   {
-   "query": "鉄槌教師 関係図",
-   "impressions": 107,
-   "clicks": 0,
-   "position": 5.7,
-   "score": 132.5,
-   "potential_clicks": 7.4
+   "query": "鉄槌教師 声優 一覧",
+   "impressions": 118,
+   "clicks": 6,
+   "position": 7.0,
+   "score": 127.4,
+   "potential_clicks": 2.2
+  },
+  {
+   "query": "デーモンハンター 名前",
+   "impressions": 91,
+   "clicks": 3,
+   "position": 4.4,
+   "score": 127.0,
+   "potential_clicks": 3.3
   },
   {
    "query": "ホンデ 24時間営業 ごはん",
-   "impressions": 119,
-   "clicks": 18,
-   "position": 6.7,
-   "score": 132.1,
-   "potential_clicks": -9.7
-  },
-  {
-   "query": "ハントリックス 声優",
-   "impressions": 159,
-   "clicks": 0,
-   "position": 9.1,
-   "score": 132.0,
-   "potential_clicks": 11.1
-  },
-  {
-   "query": "スキズ ost",
-   "impressions": 88,
-   "clicks": 12,
-   "position": 3.5,
-   "score": 131.9,
-   "potential_clicks": -5.9
-  },
-  {
-   "query": "鉄拳教師 声優",
-   "impressions": 132,
-   "clicks": 0,
-   "position": 7.8,
-   "score": 130.2,
-   "potential_clicks": 9.2
-  },
-  {
-   "query": "鉄槌教師 キャスト声優",
-   "impressions": 133,
-   "clicks": 3,
-   "position": 7.9,
-   "score": 129.5,
-   "potential_clicks": 6.3
-  },
-  {
-   "query": "メイディン ライブ 神戸",
-   "impressions": 124,
-   "clicks": 11,
-   "position": 7.4,
-   "score": 128.0,
-   "potential_clicks": -2.4
-  },
-  {
-   "query": "デーモンハンターズ キャラ 名前",
-   "impressions": 90,
-   "clicks": 5,
-   "position": 4.2,
-   "score": 127.6,
-   "potential_clicks": 1.3
+   "impressions": 116,
+   "clicks": 16,
+   "position": 6.9,
+   "score": 126.6,
+   "potential_clicks": -7.9
   },
   {
    "query": "キックフリップ キャラクター",
@@ -787,44 +739,28 @@
    "potential_clicks": -5.0
   },
   {
-   "query": "riehata tokyo メンバー",
+   "query": "スキズ ost",
    "impressions": 85,
-   "clicks": 7,
+   "clicks": 11,
    "position": 3.6,
-   "score": 126.1,
-   "potential_clicks": -1.1
-  },
-  {
-   "query": "mamamoo セトリ",
-   "impressions": 100,
-   "clicks": 15,
-   "position": 5.5,
-   "score": 125.4,
-   "potential_clicks": -8.0
+   "score": 126.6,
+   "potential_clicks": -5.1
   },
   {
    "query": "デーモンハンターズキャラ名前",
-   "impressions": 85,
+   "impressions": 84,
    "clicks": 9,
    "position": 3.9,
-   "score": 123.4,
-   "potential_clicks": -3.1
-  },
-  {
-   "query": "イジュンヨン",
-   "impressions": 255,
-   "clicks": 3,
-   "position": 10.0,
    "score": 122.3,
-   "potential_clicks": 14.7
+   "potential_clicks": -3.2
   },
   {
-   "query": "the love lab",
-   "impressions": 162,
-   "clicks": 7,
-   "position": 9.7,
-   "score": 122.2,
-   "potential_clicks": 4.3
+   "query": "鉄槌 教師 吹き替え 声優",
+   "impressions": 134,
+   "clicks": 1,
+   "position": 8.4,
+   "score": 121.9,
+   "potential_clicks": 8.3
   },
   {
    "query": "ive tima",
@@ -835,52 +771,76 @@
    "potential_clicks": -12.3
   },
   {
-   "query": "ケーポップデーモンハンターズ キャラ",
-   "impressions": 109,
-   "clicks": 6,
-   "position": 6.9,
-   "score": 118.9,
-   "potential_clicks": 1.6
+   "query": "ハントリックス 声優",
+   "impressions": 140,
+   "clicks": 0,
+   "position": 8.8,
+   "score": 120.4,
+   "potential_clicks": 9.7
+  },
+  {
+   "query": "メイディン ライブ 神戸",
+   "impressions": 116,
+   "clicks": 8,
+   "position": 7.6,
+   "score": 117.2,
+   "potential_clicks": 0.1
+  },
+  {
+   "query": "riehata tokyo メンバー",
+   "impressions": 79,
+   "clicks": 7,
+   "position": 3.6,
+   "score": 117.2,
+   "potential_clicks": -1.5
+  },
+  {
+   "query": "鉄槌教師 キャスト声優",
+   "impressions": 115,
+   "clicks": 1,
+   "position": 7.5,
+   "score": 117.0,
+   "potential_clicks": 7.0
+  },
+  {
+   "query": "デーモンハンターズ 声優 日本語",
+   "impressions": 132,
+   "clicks": 1,
+   "position": 8.8,
+   "score": 114.4,
+   "potential_clicks": 8.2
+  },
+  {
+   "query": "ミンジュ 整形",
+   "impressions": 121,
+   "clicks": 1,
+   "position": 8.3,
+   "score": 111.6,
+   "potential_clicks": 7.4
   },
   {
    "query": "鉄槌教師 日本語吹き替え 声優",
-   "impressions": 131,
+   "impressions": 120,
    "clicks": 0,
-   "position": 8.6,
-   "score": 116.9,
-   "potential_clicks": 9.1
+   "position": 8.4,
+   "score": 110.0,
+   "potential_clicks": 8.4
   },
   {
-   "query": "kpopガールズ デーモン・ハンターズ キャラクター",
-   "impressions": 106,
-   "clicks": 14,
+   "query": "ケーポップデーモンハンターズ キャラ",
+   "impressions": 101,
+   "clicks": 5,
    "position": 6.9,
-   "score": 115.8,
-   "potential_clicks": -6.6
+   "score": 109.8,
+   "potential_clicks": 2.0
   },
   {
-   "query": "鉄槌教師 声優 一覧",
-   "impressions": 107,
-   "clicks": 6,
+   "query": "ojogang メンバー",
+   "impressions": 102,
+   "clicks": 1,
    "position": 7.0,
-   "score": 115.0,
-   "potential_clicks": 1.4
-  },
-  {
-   "query": "すばらしき新世界 相関図",
-   "impressions": 82,
-   "clicks": 2,
-   "position": 4.7,
-   "score": 111.1,
-   "potential_clicks": 3.7
-  },
-  {
-   "query": "ジェヒョン サナ",
-   "impressions": 74,
-   "clicks": 12,
-   "position": 3.6,
-   "score": 110.3,
-   "potential_clicks": -6.8
+   "score": 109.7,
+   "potential_clicks": 6.1
   },
   {
    "query": "ノスルビ韓国",
@@ -891,28 +851,20 @@
    "potential_clicks": 9.8
   },
   {
-   "query": "オジョ ギャング メンバー",
-   "impressions": 80,
+   "query": "kpopガールズ デーモン・ハンターズ キャラクター",
+   "impressions": 97,
+   "clicks": 13,
+   "position": 7.0,
+   "score": 105.2,
+   "potential_clicks": -6.2
+  },
+  {
+   "query": "the love lab ネトフリ",
+   "impressions": 89,
    "clicks": 4,
-   "position": 5.0,
-   "score": 106.1,
-   "potential_clicks": 1.6
-  },
-  {
-   "query": "ヒュニンカイ 兵役",
-   "impressions": 164,
-   "clicks": 1,
-   "position": 10.6,
-   "score": 106.1,
-   "potential_clicks": 10.4
-  },
-  {
-   "query": "デーモンハンターズ 日本 声優",
-   "impressions": 126,
-   "clicks": 5,
-   "position": 9.1,
-   "score": 104.9,
-   "potential_clicks": 3.8
+   "position": 6.2,
+   "score": 104.3,
+   "potential_clicks": 2.2
   },
   {
    "query": "the love lab 韓国",
@@ -923,52 +875,60 @@
    "potential_clicks": -3.0
   },
   {
-   "query": "riehata東京 メンバー",
-   "impressions": 71,
-   "clicks": 6,
-   "position": 3.9,
+   "query": "鉄槌教師 関係図",
+   "impressions": 84,
+   "clicks": 0,
+   "position": 5.7,
    "score": 103.4,
-   "potential_clicks": -1.1
-  },
-  {
-   "query": "the love lab ネトフリ",
-   "impressions": 88,
-   "clicks": 4,
-   "position": 6.2,
-   "score": 103.0,
-   "potential_clicks": 2.1
-  },
-  {
-   "query": "デーモンハンターズ 日本語 声優",
-   "impressions": 113,
-   "clicks": 4,
-   "position": 8.4,
-   "score": 102.8,
-   "potential_clicks": 3.9
-  },
-  {
-   "query": "ミンジュ 整形",
-   "impressions": 115,
-   "clicks": 1,
-   "position": 8.6,
-   "score": 102.7,
-   "potential_clicks": 7.0
-  },
-  {
-   "query": "tima 2026 ive",
-   "impressions": 92,
-   "clicks": 17,
-   "position": 7.1,
-   "score": 98.2,
-   "potential_clicks": -10.6
+   "potential_clicks": 5.8
   },
   {
    "query": "デーモンハンターズ 名前 女の子",
-   "impressions": 70,
+   "impressions": 73,
+   "clicks": 4,
+   "position": 4.3,
+   "score": 102.1,
+   "potential_clicks": 1.1
+  },
+  {
+   "query": "madein 神戸ワールド記念ホール",
+   "impressions": 99,
+   "clicks": 12,
+   "position": 7.5,
+   "score": 101.3,
+   "potential_clicks": -5.1
+  },
+  {
+   "query": "tima 2026 ive",
+   "impressions": 93,
+   "clicks": 17,
+   "position": 7.1,
+   "score": 99.1,
+   "potential_clicks": -10.5
+  },
+  {
+   "query": "riehata東京 メンバー",
+   "impressions": 67,
    "clicks": 5,
-   "position": 4.4,
-   "score": 97.7,
-   "potential_clicks": -0.1
+   "position": 3.8,
+   "score": 97.9,
+   "potential_clicks": -0.3
+  },
+  {
+   "query": "メイディン神戸",
+   "impressions": 171,
+   "clicks": 5,
+   "position": 8.9,
+   "score": 97.8,
+   "potential_clicks": 6.9
+  },
+  {
+   "query": "メイディン 無料ライブ",
+   "impressions": 72,
+   "clicks": 9,
+   "position": 4.8,
+   "score": 97.1,
+   "potential_clicks": -4.0
   },
   {
    "query": "鉄槌 教師 声優 一覧",
@@ -995,84 +955,36 @@
    "potential_clicks": -0.3
   },
   {
-   "query": "デーモンハンターズ 声優 日本",
-   "impressions": 108,
-   "clicks": 2,
-   "position": 8.6,
-   "score": 95.5,
-   "potential_clicks": 5.5
-  },
-  {
-   "query": "鉄槌 教師 日本 語 吹き替え 声優",
-   "impressions": 134,
-   "clicks": 0,
-   "position": 10.1,
-   "score": 95.3,
-   "potential_clicks": 9.3
+   "query": "デーモンハンターズ 日本語 声優",
+   "impressions": 104,
+   "clicks": 4,
+   "position": 8.4,
+   "score": 94.3,
+   "potential_clicks": 3.2
   },
   {
    "query": "鉄槌教師日本語声優",
-   "impressions": 164,
-   "clicks": 3,
-   "position": 8.8,
-   "score": 94.5,
-   "potential_clicks": 8.4
-  },
-  {
-   "query": "サナ ジェヒョン",
-   "impressions": 69,
-   "clicks": 10,
-   "position": 4.7,
-   "score": 93.6,
-   "potential_clicks": -5.2
-  },
-  {
-   "query": "メディキューブ 使い方 順番",
-   "impressions": 131,
+   "impressions": 162,
    "clicks": 2,
-   "position": 10.1,
-   "score": 93.4,
-   "potential_clicks": 7.1
+   "position": 8.8,
+   "score": 93.8,
+   "potential_clicks": 9.3
   },
   {
-   "query": "ブースタープロ 使い方 順番",
-   "impressions": 101,
-   "clicks": 3,
-   "position": 8.3,
-   "score": 93.1,
-   "potential_clicks": 4.0
-  },
-  {
-   "query": "中川慶一 鉄槌教師",
-   "impressions": 112,
-   "clicks": 0,
+   "query": "デーモンハンターズ 日本 声優",
+   "impressions": 113,
+   "clicks": 5,
    "position": 9.1,
-   "score": 92.9,
-   "potential_clicks": 7.8
+   "score": 93.2,
+   "potential_clicks": 2.9
   },
   {
-   "query": "鉄槌教師 吹き替え声優",
-   "impressions": 123,
-   "clicks": 0,
-   "position": 9.7,
-   "score": 92.8,
-   "potential_clicks": 8.6
-  },
-  {
-   "query": "サジャ ボーイズ 声優",
-   "impressions": 65,
+   "query": "ウォンヒ 小さい頃",
+   "impressions": 88,
    "clicks": 1,
-   "position": 4.1,
-   "score": 92.6,
-   "potential_clicks": 3.5
-  },
-  {
-   "query": "鉄槌教室 吹き替え 声優",
-   "impressions": 91,
-   "clicks": 4,
-   "position": 7.6,
-   "score": 91.4,
-   "potential_clicks": 2.3
+   "position": 7.2,
+   "score": 92.9,
+   "potential_clicks": 5.1
   },
   {
    "query": "イ ジン バレーボール",
@@ -1083,6 +995,14 @@
    "potential_clicks": 7.0
   },
   {
+   "query": "ascender メンバー",
+   "impressions": 98,
+   "clicks": 3,
+   "position": 8.3,
+   "score": 90.6,
+   "potential_clicks": 3.8
+  },
+  {
    "query": "ハンロロ cortis",
    "impressions": 90,
    "clicks": 0,
@@ -1091,60 +1011,52 @@
    "potential_clicks": 6.3
   },
   {
-   "query": "ウォンヒ 小さい頃",
-   "impressions": 86,
-   "clicks": 0,
-   "position": 7.3,
-   "score": 89.3,
-   "potential_clicks": 6.0
-  },
-  {
    "query": "デーモンハンターズ 登場人物",
    "impressions": 70,
-   "clicks": 13,
-   "position": 5.6,
-   "score": 87.5,
-   "potential_clicks": -8.1
+   "clicks": 14,
+   "position": 5.3,
+   "score": 89.9,
+   "potential_clicks": -9.1
   },
   {
    "query": "アンユジン 怪我",
-   "impressions": 62,
+   "impressions": 63,
    "clicks": 4,
+   "position": 4.4,
+   "score": 88.0,
+   "potential_clicks": 0.4
+  },
+  {
+   "query": "the love lab 日本 見れ ない",
+   "impressions": 62,
+   "clicks": 9,
    "position": 4.3,
-   "score": 86.8,
-   "potential_clicks": 0.3
+   "score": 87.4,
+   "potential_clicks": -4.7
   },
   {
    "query": "bts年齢2026",
    "impressions": 119,
    "clicks": 0,
-   "position": 6.9,
-   "score": 86.7,
+   "position": 6.8,
+   "score": 87.1,
    "potential_clicks": 8.3
   },
   {
-   "query": "the love lab 日本 見れ ない",
-   "impressions": 61,
-   "clicks": 9,
-   "position": 4.3,
-   "score": 85.6,
-   "potential_clicks": -4.8
+   "query": "サジャ ボーイズ 声優",
+   "impressions": 60,
+   "clicks": 1,
+   "position": 4.2,
+   "score": 84.8,
+   "potential_clicks": 3.2
   },
   {
-   "query": "恋愛実験室 netflix 日本",
-   "impressions": 62,
-   "clicks": 8,
-   "position": 4.7,
-   "score": 84.1,
-   "potential_clicks": -3.7
-  },
-  {
-   "query": "madein ライブ 神戸",
-   "impressions": 84,
-   "clicks": 5,
-   "position": 7.7,
-   "score": 84.1,
-   "potential_clicks": 0.8
+   "query": "中川慶一 鉄槌教師",
+   "impressions": 100,
+   "clicks": 0,
+   "position": 8.9,
+   "score": 84.8,
+   "potential_clicks": 7.0
   },
   {
    "query": "ツウィ 脱退",
@@ -1155,20 +1067,52 @@
    "potential_clicks": 6.6
   },
   {
+   "query": "鉄槌教室 吹き替え 声優",
+   "impressions": 80,
+   "clicks": 4,
+   "position": 7.2,
+   "score": 84.0,
+   "potential_clicks": 1.6
+  },
+  {
+   "query": "鉄槌教師 吹替 声優",
+   "impressions": 84,
+   "clicks": 0,
+   "position": 7.7,
+   "score": 83.6,
+   "potential_clicks": 5.8
+  },
+  {
+   "query": "鉄槌教師 吹き替え声優",
+   "impressions": 108,
+   "clicks": 0,
+   "position": 9.6,
+   "score": 82.9,
+   "potential_clicks": 7.5
+  },
+  {
+   "query": "tomorrow x together 兵役",
+   "impressions": 103,
+   "clicks": 5,
+   "position": 9.3,
+   "score": 82.7,
+   "potential_clicks": 2.2
+  },
+  {
+   "query": "デーモンハンターズ 声優 日本",
+   "impressions": 92,
+   "clicks": 2,
+   "position": 8.5,
+   "score": 82.3,
+   "potential_clicks": 4.4
+  },
+  {
    "query": "明洞 ケーポップショップ",
    "impressions": 100,
    "clicks": 0,
    "position": 9.1,
-   "score": 83.4,
+   "score": 82.3,
    "potential_clicks": 7.0
-  },
-  {
-   "query": "オサカ・オジョ・ギャング",
-   "impressions": 103,
-   "clicks": 0,
-   "position": 9.3,
-   "score": 83.2,
-   "potential_clicks": 7.2
   },
   {
    "query": "チェヨン脱退",
@@ -1179,12 +1123,28 @@
    "potential_clicks": 3.5
   },
   {
-   "query": "saja boys 声優",
-   "impressions": 58,
-   "clicks": 3,
-   "position": 4.4,
-   "score": 81.0,
-   "potential_clicks": 1.0
+   "query": "恋愛実験室 netflix 日本",
+   "impressions": 59,
+   "clicks": 8,
+   "position": 4.5,
+   "score": 81.1,
+   "potential_clicks": -3.9
+  },
+  {
+   "query": "メディキューブ 使い方 順番",
+   "impressions": 113,
+   "clicks": 1,
+   "position": 10.1,
+   "score": 80.4,
+   "potential_clicks": 6.9
+  },
+  {
+   "query": "tima ive",
+   "impressions": 67,
+   "clicks": 8,
+   "position": 6.1,
+   "score": 79.3,
+   "potential_clicks": -3.3
   },
   {
    "query": "エージェント キム 吹き替え",
@@ -1195,52 +1155,28 @@
    "potential_clicks": 1.1
   },
   {
-   "query": "ascender メンバー",
-   "impressions": 85,
-   "clicks": 3,
-   "position": 8.3,
-   "score": 78.5,
-   "potential_clicks": 2.9
-  },
-  {
-   "query": "デーモンハンターズ メンバー 名前",
-   "impressions": 59,
-   "clicks": 3,
-   "position": 5.0,
+   "query": "txt ヒュニンカイ 兵役",
+   "impressions": 77,
+   "clicks": 6,
+   "position": 7.6,
    "score": 77.9,
-   "potential_clicks": 1.1
+   "potential_clicks": -0.6
   },
   {
-   "query": "tomorrow x together 兵役",
-   "impressions": 97,
-   "clicks": 4,
-   "position": 9.4,
-   "score": 76.9,
-   "potential_clicks": 2.8
-  },
-  {
-   "query": "madein 神戸 ワールド 記念 ホール",
-   "impressions": 61,
-   "clicks": 9,
-   "position": 5.7,
-   "score": 75.7,
-   "potential_clicks": -4.8
-  },
-  {
-   "query": "デーモンハンターズ 敵",
-   "impressions": 53,
+   "query": "ハントリックス メンバー",
+   "impressions": 79,
    "clicks": 0,
-   "position": 4.2,
-   "score": 75.1,
-   "potential_clicks": 3.7
+   "position": 7.9,
+   "score": 77.2,
+   "potential_clicks": 5.5
   },
   {
-   "query": "madein ライブ 2026",
-   "impressions": 70,
-   "clicks": 9,
-   "position": 7.1,
-   "score": 75.0,
-   "potential_clicks": -4.1
+   "query": "デーモンハンターズ 男キャラ",
+   "impressions": 52,
+   "clicks": 2,
+   "position": 3.7,
+   "score": 76.8,
+   "potential_clicks": 1.6
   },
   {
    "query": "twiceチェヨン脱退",
@@ -1251,36 +1187,100 @@
    "potential_clicks": 2.9
   },
   {
-   "query": "bts ポジション",
-   "impressions": 98,
-   "clicks": 2,
-   "position": 9.7,
-   "score": 74.0,
-   "potential_clicks": 4.8
+   "query": "オリーブベター 江南",
+   "impressions": 117,
+   "clicks": 3,
+   "position": 10.7,
+   "score": 74.5,
+   "potential_clicks": 5.1
   },
   {
-   "query": "tima ive",
-   "impressions": 62,
-   "clicks": 8,
-   "position": 6.1,
-   "score": 73.9,
-   "potential_clicks": -3.7
+   "query": "saja boys 声優",
+   "impressions": 52,
+   "clicks": 3,
+   "position": 4.1,
+   "score": 74.4,
+   "potential_clicks": 0.6
+  },
+  {
+   "query": "鉄槌教師 相関図 生徒",
+   "impressions": 70,
+   "clicks": 1,
+   "position": 7.2,
+   "score": 74.2,
+   "potential_clicks": 3.9
   },
   {
    "query": "kpop demon hunters キャラクター",
    "impressions": 52,
-   "clicks": 12,
+   "clicks": 10,
    "position": 4.2,
-   "score": 73.6,
-   "potential_clicks": -8.4
+   "score": 73.9,
+   "potential_clicks": -6.4
   },
   {
-   "query": "ハントリックス 名前",
-   "impressions": 66,
+   "query": "イジュンヨン",
+   "impressions": 148,
    "clicks": 1,
-   "position": 7.0,
-   "score": 71.5,
-   "potential_clicks": 3.6
+   "position": 9.8,
+   "score": 73.8,
+   "potential_clicks": 9.3
+  },
+  {
+   "query": "bts ポジション",
+   "impressions": 95,
+   "clicks": 2,
+   "position": 9.6,
+   "score": 73.2,
+   "potential_clicks": 4.6
+  },
+  {
+   "query": "ウィンター 犬 名前",
+   "impressions": 62,
+   "clicks": 1,
+   "position": 6.2,
+   "score": 73.2,
+   "potential_clicks": 3.3
+  },
+  {
+   "query": "ロイヤルファミリー ダンス",
+   "impressions": 51,
+   "clicks": 0,
+   "position": 4.0,
+   "score": 73.2,
+   "potential_clicks": 3.5
+  },
+  {
+   "query": "すばらしき新世界 相関図",
+   "impressions": 58,
+   "clicks": 1,
+   "position": 5.5,
+   "score": 73.1,
+   "potential_clicks": 3.0
+  },
+  {
+   "query": "デーモンハンターズ メンバー 名前",
+   "impressions": 55,
+   "clicks": 3,
+   "position": 5.0,
+   "score": 72.6,
+   "potential_clicks": 0.8
+  },
+  {
+   "query": "ojo gang メンバー",
+   "impressions": 73,
+   "clicks": 3,
+   "position": 7.8,
+   "score": 71.8,
+   "potential_clicks": 2.1
+  },
+  {
+   "query": "txt兵役",
+   "impressions": 132,
+   "clicks": 0,
+   "position": 9.3,
+   "score": 71.0,
+   "potential_clicks": 9.2
   },
   {
    "query": "ウォヌ 春夏秋冬",
@@ -1291,22 +1291,6 @@
    "potential_clicks": 2.2
   },
   {
-   "query": "ロイヤルファミリー ダンス",
-   "impressions": 50,
-   "clicks": 0,
-   "position": 4.3,
-   "score": 70.3,
-   "potential_clicks": 3.5
-  },
-  {
-   "query": "デーモンハンターズメンバー",
-   "impressions": 67,
-   "clicks": 2,
-   "position": 7.3,
-   "score": 70.0,
-   "potential_clicks": 2.7
-  },
-  {
    "query": "iu スタイリスト",
    "impressions": 50,
    "clicks": 0,
@@ -1315,76 +1299,20 @@
    "potential_clicks": 3.5
   },
   {
-   "query": "ateez bad 女優",
-   "impressions": 105,
-   "clicks": 0,
-   "position": 10.5,
-   "score": 68.9,
-   "potential_clicks": 7.3
-  },
-  {
-   "query": "wowpass デザイン",
-   "impressions": 78,
-   "clicks": 0,
-   "position": 8.7,
-   "score": 68.6,
-   "potential_clicks": 5.4
-  },
-  {
-   "query": "オリーブベター 江南",
-   "impressions": 111,
-   "clicks": 3,
-   "position": 10.9,
-   "score": 68.5,
-   "potential_clicks": 4.7
-  },
-  {
-   "query": "txt ヒュニンカイ 兵役",
-   "impressions": 69,
-   "clicks": 4,
-   "position": 7.7,
-   "score": 68.4,
-   "potential_clicks": 0.8
-  },
-  {
-   "query": "ウィンター 犬 名前",
-   "impressions": 58,
-   "clicks": 1,
-   "position": 6.2,
-   "score": 68.4,
-   "potential_clicks": 3.0
-  },
-  {
-   "query": "鉄槌教師 ドラマ 声優",
-   "impressions": 71,
-   "clicks": 0,
-   "position": 8.0,
-   "score": 67.9,
-   "potential_clicks": 4.9
-  },
-  {
    "query": "リアクティべーティッド 意味",
-   "impressions": 56,
+   "impressions": 57,
    "clicks": 0,
-   "position": 6.0,
-   "score": 67.0,
-   "potential_clicks": 3.9
+   "position": 6.1,
+   "score": 67.8,
+   "potential_clicks": 4.0
   },
   {
-   "query": "鉄槌教師 吹替 声優",
-   "impressions": 75,
-   "clicks": 0,
-   "position": 8.6,
-   "score": 66.8,
-   "potential_clicks": 5.2
-  },
-  {
-   "query": "ハントリックス 日本語 声優",
-   "impressions": 66,
-   "clicks": 1,
-   "position": 7.6,
+   "query": "k-pop 誕生日 一覧",
+   "impressions": 71,
+   "clicks": 3,
+   "position": 8.2,
    "score": 66.6,
-   "potential_clicks": 3.6
+   "potential_clicks": 1.9
   },
   {
    "query": "tima 2026 受賞",
@@ -1395,36 +1323,52 @@
    "potential_clicks": 4.0
   },
   {
-   "query": "illit ミンジュ 痩せ た",
-   "impressions": 80,
-   "clicks": 6,
-   "position": 9.1,
-   "score": 65.9,
-   "potential_clicks": -0.4
-  },
-  {
    "query": "btsテテ事故",
-   "impressions": 81,
+   "impressions": 82,
    "clicks": 4,
-   "position": 5.8,
-   "score": 65.9,
-   "potential_clicks": 1.6
+   "position": 5.9,
+   "score": 66.5,
+   "potential_clicks": 1.7
   },
   {
-   "query": "illit ミンジュ 痩せた",
+   "query": "ブースタープロ 使い方 順番",
    "impressions": 77,
    "clicks": 3,
-   "position": 9.0,
-   "score": 64.8,
+   "position": 8.8,
+   "score": 66.5,
    "potential_clicks": 2.4
   },
   {
-   "query": "鉄槌 教師 声優",
-   "impressions": 79,
+   "query": "ハントリックス 名前",
+   "impressions": 59,
    "clicks": 1,
-   "position": 9.2,
-   "score": 64.7,
-   "potential_clicks": 4.5
+   "position": 6.6,
+   "score": 66.2,
+   "potential_clicks": 3.1
+  },
+  {
+   "query": "txt 兵役 いつ",
+   "impressions": 83,
+   "clicks": 0,
+   "position": 9.4,
+   "score": 66.1,
+   "potential_clicks": 5.8
+  },
+  {
+   "query": "ウォンヒ小さい頃",
+   "impressions": 81,
+   "clicks": 0,
+   "position": 5.8,
+   "score": 65.8,
+   "potential_clicks": 5.6
+  },
+  {
+   "query": "クルアルバ",
+   "impressions": 72,
+   "clicks": 6,
+   "position": 4.7,
+   "score": 65.0,
+   "potential_clicks": -1.0
   },
   {
    "query": "illit fruits",
@@ -1435,68 +1379,68 @@
    "potential_clicks": 3.5
   },
   {
-   "query": "鉄槌教師 ハンリム 声優",
-   "impressions": 74,
-   "clicks": 1,
-   "position": 8.7,
-   "score": 64.6,
-   "potential_clicks": 4.2
+   "query": "鉄槌教師 ドラマ 声優",
+   "impressions": 66,
+   "clicks": 0,
+   "position": 7.9,
+   "score": 64.3,
+   "potential_clicks": 4.6
   },
   {
-   "query": "デーモンハンターズ 吹き替え 声優",
-   "impressions": 67,
+   "query": "鉄槌教師 ハンリム 声優",
+   "impressions": 73,
    "clicks": 1,
-   "position": 8.0,
-   "score": 64.4,
+   "position": 8.7,
+   "score": 63.8,
+   "potential_clicks": 4.1
+  },
+  {
+   "query": "デーモンハンターズメンバー",
+   "impressions": 61,
+   "clicks": 2,
+   "position": 7.3,
+   "score": 63.5,
+   "potential_clicks": 2.2
+  },
+  {
+   "query": "デーモンハンターズ 曲",
+   "impressions": 53,
+   "clicks": 0,
+   "position": 6.0,
+   "score": 63.4,
    "potential_clicks": 3.7
   },
   {
-   "query": "cortisメンバー",
-   "impressions": 115,
-   "clicks": 0,
-   "position": 11.3,
-   "score": 64.4,
-   "potential_clicks": 8.0
-  },
-  {
-   "query": "メディキューブ エージー アール 使い方",
-   "impressions": 68,
-   "clicks": 0,
-   "position": 8.1,
-   "score": 64.2,
-   "potential_clicks": 4.7
-  },
-  {
-   "query": "鉄槌教師 相関図 生徒",
-   "impressions": 61,
+   "query": "ハントリックス 日本語 声優",
+   "impressions": 62,
    "clicks": 1,
-   "position": 7.3,
-   "score": 63.4,
-   "potential_clicks": 3.2
+   "position": 7.6,
+   "score": 62.6,
+   "potential_clicks": 3.3
   },
   {
-   "query": "txt兵役",
-   "impressions": 119,
-   "clicks": 0,
-   "position": 9.4,
-   "score": 62.8,
-   "potential_clicks": 8.3
-  },
-  {
-   "query": "鉄槌教師 キャスト吹き替え声優",
+   "query": "デーモンハンターズ 吹き替え 声優",
    "impressions": 65,
    "clicks": 1,
    "position": 8.0,
-   "score": 62.6,
+   "score": 62.3,
    "potential_clicks": 3.5
   },
   {
-   "query": "boynextdoor 釜山",
-   "impressions": 52,
+   "query": "鉄槌教師 キャスト吹き替え声優",
+   "impressions": 61,
    "clicks": 1,
-   "position": 6.1,
-   "score": 62.0,
-   "potential_clicks": 2.6
+   "position": 7.5,
+   "score": 61.9,
+   "potential_clicks": 3.2
+  },
+  {
+   "query": "bts 顔 変わった 2026",
+   "impressions": 73,
+   "clicks": 4,
+   "position": 9.0,
+   "score": 61.6,
+   "potential_clicks": 1.1
   },
   {
    "query": "kara ファンダム名",
@@ -1507,20 +1451,28 @@
    "potential_clicks": 3.7
   },
   {
-   "query": "bts 顔 変わった 2026",
+   "query": "illit ミンジュ 痩せた",
    "impressions": 72,
-   "clicks": 4,
+   "clicks": 3,
    "position": 9.0,
    "score": 60.7,
-   "potential_clicks": 1.0
+   "potential_clicks": 2.0
   },
   {
-   "query": "鉄槌教師吹き替え",
-   "impressions": 99,
-   "clicks": 2,
-   "position": 8.4,
-   "score": 60.6,
-   "potential_clicks": 4.9
+   "query": "olive better seoul",
+   "impressions": 103,
+   "clicks": 0,
+   "position": 11.1,
+   "score": 60.7,
+   "potential_clicks": 7.2
+  },
+  {
+   "query": "ハン トリックス メンバー 紹介",
+   "impressions": 51,
+   "clicks": 5,
+   "position": 6.1,
+   "score": 60.5,
+   "potential_clicks": -1.5
   },
   {
    "query": "ジヒョ 整形",
@@ -1531,35 +1483,35 @@
    "potential_clicks": 0.9
   },
   {
-   "query": "txt 兵役 いつ",
-   "impressions": 74,
-   "clicks": 0,
-   "position": 9.4,
-   "score": 58.7,
-   "potential_clicks": 5.2
+   "query": "鉄槌教師吹き替え",
+   "impressions": 93,
+   "clicks": 1,
+   "position": 8.2,
+   "score": 58.1,
+   "potential_clicks": 5.5
   },
   {
-   "query": "ハン トリックス メンバー 紹介",
-   "impressions": 50,
-   "clicks": 4,
-   "position": 6.2,
-   "score": 58.6,
-   "potential_clicks": -0.5
+   "query": "cortisメンバー",
+   "impressions": 116,
+   "clicks": 0,
+   "position": 11.9,
+   "score": 57.6,
+   "potential_clicks": 8.1
   },
   {
-   "query": "ウォンヒ小さい頃",
-   "impressions": 75,
+   "query": "ヨンジュン 兵役 いつまで",
+   "impressions": 56,
    "clicks": 0,
-   "position": 6.2,
-   "score": 58.6,
-   "potential_clicks": 5.2
+   "position": 7.4,
+   "score": 57.6,
+   "potential_clicks": 3.9
   },
   {
    "query": "鉄槌 教師 吹き替え キャスト",
-   "impressions": 55,
+   "impressions": 54,
    "clicks": 3,
    "position": 7.2,
-   "score": 57.8,
+   "score": 57.2,
    "potential_clicks": 0.8
   },
   {
@@ -1571,12 +1523,12 @@
    "potential_clicks": 1.9
   },
   {
-   "query": "ウォンヒ 方言",
-   "impressions": 65,
-   "clicks": 0,
-   "position": 8.7,
-   "score": 57.1,
-   "potential_clicks": 4.5
+   "query": "鉄槌教室 相関図",
+   "impressions": 50,
+   "clicks": 1,
+   "position": 6.7,
+   "score": 56.0,
+   "potential_clicks": 2.5
   },
   {
    "query": "ママム東京",
@@ -1587,36 +1539,44 @@
    "potential_clicks": 4.9
   },
   {
-   "query": "ヨンジュン 兵役 いつまで",
-   "impressions": 54,
-   "clicks": 0,
-   "position": 7.4,
-   "score": 55.7,
-   "potential_clicks": 3.8
-  },
-  {
-   "query": "k-pop 誕生日 一覧",
-   "impressions": 63,
-   "clicks": 2,
-   "position": 8.9,
-   "score": 53.9,
-   "potential_clicks": 2.4
-  },
-  {
    "query": "katseye マノン 復帰",
-   "impressions": 59,
+   "impressions": 62,
    "clicks": 1,
    "position": 8.6,
-   "score": 52.4,
-   "potential_clicks": 3.1
+   "score": 54.7,
+   "potential_clicks": 3.3
+  },
+  {
+   "query": "鉄槌 教師 声優",
+   "impressions": 66,
+   "clicks": 1,
+   "position": 9.1,
+   "score": 54.7,
+   "potential_clicks": 3.6
   },
   {
    "query": "マノン 復帰",
-   "impressions": 63,
+   "impressions": 64,
    "clicks": 1,
    "position": 9.1,
-   "score": 52.2,
-   "potential_clicks": 3.4
+   "score": 52.9,
+   "potential_clicks": 3.5
+  },
+  {
+   "query": "今日誕生日のケーポップアイドル",
+   "impressions": 60,
+   "clicks": 0,
+   "position": 8.7,
+   "score": 52.8,
+   "potential_clicks": 4.2
+  },
+  {
+   "query": "madein ライブ 神戸",
+   "impressions": 61,
+   "clicks": 2,
+   "position": 8.8,
+   "score": 52.4,
+   "potential_clicks": 2.2
   },
   {
    "query": "テテ事故",
@@ -1627,52 +1587,44 @@
    "potential_clicks": 0.0
   },
   {
-   "query": "olive better seoul",
-   "impressions": 93,
+   "query": "ateez bad 女優",
+   "impressions": 80,
    "clicks": 0,
-   "position": 11.5,
-   "score": 50.8,
-   "potential_clicks": 6.5
+   "position": 10.8,
+   "score": 50.2,
+   "potential_clicks": 5.6
   },
   {
-   "query": "鉄槌教師 キャスト吹き替え",
-   "impressions": 59,
+   "query": "ウォンヒ 方言",
+   "impressions": 58,
    "clicks": 0,
-   "position": 8.8,
-   "score": 50.8,
-   "potential_clicks": 4.1
+   "position": 9.0,
+   "score": 48.7,
+   "potential_clicks": 4.0
   },
   {
-   "query": "鉄拳教師 吹き替え",
-   "impressions": 52,
-   "clicks": 2,
-   "position": 8.1,
-   "score": 49.3,
-   "potential_clicks": 1.6
-  },
-  {
-   "query": "クルアルバ",
-   "impressions": 55,
-   "clicks": 6,
-   "position": 5.0,
-   "score": 48.6,
-   "potential_clicks": -2.2
+   "query": "ヒュニンカイ 国籍 兵役",
+   "impressions": 72,
+   "clicks": 0,
+   "position": 10.4,
+   "score": 48.5,
+   "potential_clicks": 5.0
   },
   {
    "query": "mama2026 いつ",
-   "impressions": 81,
-   "clicks": 1,
-   "position": 11.2,
-   "score": 46.9,
-   "potential_clicks": 4.6
+   "impressions": 80,
+   "clicks": 0,
+   "position": 11.1,
+   "score": 46.8,
+   "potential_clicks": 5.6
   },
   {
-   "query": "ミンジュ 痩せ た",
-   "impressions": 69,
-   "clicks": 7,
-   "position": 10.4,
-   "score": 46.4,
-   "potential_clicks": -2.2
+   "query": "txt 兵役 いつから",
+   "impressions": 62,
+   "clicks": 1,
+   "position": 9.7,
+   "score": 46.7,
+   "potential_clicks": 3.3
   },
   {
    "query": "clickb",
@@ -1691,60 +1643,60 @@
    "potential_clicks": -0.5
   },
   {
-   "query": "メディキューブ ブースタープロ 使い方 順番",
-   "impressions": 54,
-   "clicks": 0,
-   "position": 9.3,
-   "score": 43.7,
-   "potential_clicks": 3.8
+   "query": "ミンジュ 痩せ た",
+   "impressions": 64,
+   "clicks": 5,
+   "position": 10.2,
+   "score": 44.5,
+   "potential_clicks": -0.5
   },
   {
-   "query": "txt 兵役 いつから",
-   "impressions": 58,
+   "query": "鉄槌教師 キャスト吹き替え",
+   "impressions": 51,
    "clicks": 0,
-   "position": 9.8,
-   "score": 43.3,
-   "potential_clicks": 4.0
-  },
-  {
-   "query": "ojogang",
-   "impressions": 93,
-   "clicks": 3,
-   "position": 10.3,
-   "score": 42.2,
+   "position": 8.8,
+   "score": 44.3,
    "potential_clicks": 3.5
+  },
+  {
+   "query": "ナファジン役 声優",
+   "impressions": 57,
+   "clicks": 0,
+   "position": 9.6,
+   "score": 44.0,
+   "potential_clicks": 4.0
   },
   {
    "query": "鉄槌教師 日本語 声優",
    "impressions": 50,
    "clicks": 0,
    "position": 9.0,
-   "score": 42.0,
+   "score": 41.9,
    "potential_clicks": 3.5
   },
   {
-   "query": "ギュチョル 鉄槌教師",
-   "impressions": 59,
+   "query": "イッジ リュジン ドラマ",
+   "impressions": 50,
    "clicks": 0,
-   "position": 10.2,
-   "score": 41.4,
-   "potential_clicks": 4.1
+   "position": 9.2,
+   "score": 40.9,
+   "potential_clicks": 3.5
   },
   {
-   "query": "今日誕生日のケーポップアイドル",
-   "impressions": 53,
+   "query": "メディキューブ ブースタープロ 使い方 順番",
+   "impressions": 50,
    "clicks": 0,
-   "position": 9.7,
-   "score": 40.2,
-   "potential_clicks": 3.7
+   "position": 9.3,
+   "score": 40.3,
+   "potential_clicks": 3.5
   },
   {
-   "query": "鉄槌教師 wiki",
-   "impressions": 61,
+   "query": "トゥモローバイトゥゲザー 兵役",
+   "impressions": 52,
    "clicks": 0,
-   "position": 10.7,
-   "score": 39.0,
-   "potential_clicks": 4.2
+   "position": 9.8,
+   "score": 38.9,
+   "potential_clicks": 3.6
   },
   {
    "query": "ツウィ 整形",
@@ -1755,52 +1707,36 @@
    "potential_clicks": 2.2
   },
   {
-   "query": "ハントリックス メンバー",
-   "impressions": 51,
+   "query": "ギュチョル 鉄槌教師",
+   "impressions": 53,
    "clicks": 0,
-   "position": 9.9,
-   "score": 37.3,
-   "potential_clicks": 3.5
-  },
-  {
-   "query": "xg 衣装",
-   "impressions": 54,
-   "clicks": 0,
-   "position": 10.5,
-   "score": 35.8,
-   "potential_clicks": 3.8
+   "position": 10.2,
+   "score": 37.2,
+   "potential_clicks": 3.7
   },
   {
    "query": "illit ミンジュ 整形",
-   "impressions": 53,
+   "impressions": 54,
    "clicks": 2,
-   "position": 10.5,
-   "score": 35.2,
-   "potential_clicks": 1.7
+   "position": 10.3,
+   "score": 37.0,
+   "potential_clicks": 1.8
   },
   {
-   "query": "ジョンハン ジョシュア ユニット",
+   "query": "xg 衣装",
    "impressions": 50,
    "clicks": 0,
-   "position": 10.8,
-   "score": 31.4,
+   "position": 10.5,
+   "score": 33.1,
    "potential_clicks": 3.5
   },
   {
-   "query": "オジョギャング",
-   "impressions": 71,
-   "clicks": 1,
-   "position": 10.8,
-   "score": 29.7,
-   "potential_clicks": 3.9
-  },
-  {
    "query": "illit",
-   "impressions": 67,
+   "impressions": 63,
    "clicks": 4,
-   "position": 10.5,
-   "score": 29.4,
-   "potential_clicks": 0.7
+   "position": 9.7,
+   "score": 31.8,
+   "potential_clicks": 0.4
   },
   {
    "query": "ノスルビは",
@@ -1809,6 +1745,14 @@
    "position": 10.0,
    "score": 27.3,
    "potential_clicks": 4.0
+  },
+  {
+   "query": "txt兵役いつ",
+   "impressions": 50,
+   "clicks": 1,
+   "position": 9.3,
+   "score": 26.8,
+   "potential_clicks": 2.5
   }
  ]
 }

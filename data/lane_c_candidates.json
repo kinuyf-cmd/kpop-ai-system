@@ -1,93 +1,69 @@
 {
-  "generated_at": "2026-09-28T07:00:04.615997",
+  "generated_at": "2026-10-05T07:00:04.246477",
   "candidates": [
     {
       "query": "cortis メンバー",
       "page": "/artists/cortis/",
-      "imp": 924,
+      "imp": 912,
       "clicks": 1,
       "ctr": 0.1,
-      "pos": 10.1
+      "pos": 10.0
     },
     {
       "query": "鉄槌教師 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 745,
-      "clicks": 4,
-      "ctr": 0.5,
-      "pos": 10.9
+      "imp": 793,
+      "clicks": 3,
+      "ctr": 0.4,
+      "pos": 10.5
+    },
+    {
+      "query": "デーモンハンターズ キャラクター",
+      "page": "/kpop-demon-hunters-cast-characters/",
+      "imp": 655,
+      "clicks": 28,
+      "ctr": 4.3,
+      "pos": 6.1
     },
     {
       "query": "txt 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 562,
-      "clicks": 6,
-      "ctr": 1.1,
-      "pos": 9.4
+      "imp": 477,
+      "clicks": 8,
+      "ctr": 1.7,
+      "pos": 8.8
     },
     {
       "query": "鉄槌教師 キャスト 相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 311,
+      "imp": 251,
       "clicks": 1,
-      "ctr": 0.3,
-      "pos": 6.8
-    },
-    {
-      "query": "鉄槌教師 吹き替え 声優",
-      "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 289,
-      "clicks": 3,
-      "ctr": 1.0,
-      "pos": 10.0
-    },
-    {
-      "query": "デーモンハンターズ メンバー",
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 241,
-      "clicks": 11,
-      "ctr": 4.6,
-      "pos": 6.1
-    },
-    {
-      "query": "ジヒョ 鼻",
-      "page": "/twice-jihyo-surgery-rumors-debate/",
-      "imp": 225,
-      "clicks": 5,
-      "ctr": 2.2,
-      "pos": 9.1
-    },
-    {
-      "query": "btsメンバー 年齢 2026",
-      "page": "/bts-relationship-map-2026/",
-      "imp": 216,
-      "clicks": 0,
-      "ctr": 0.0,
-      "pos": 8.3
-    },
-    {
-      "query": "キャッツアイ マノン 復帰",
-      "page": "/katseye-sofia-manon-fukki/",
-      "imp": 203,
-      "clicks": 2,
-      "ctr": 1.0,
-      "pos": 8.6
+      "ctr": 0.4,
+      "pos": 6.3
     },
     {
       "query": "ヒュニンカイ 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 162,
+      "imp": 219,
       "clicks": 1,
-      "ctr": 0.6,
-      "pos": 10.6
+      "ctr": 0.5,
+      "pos": 9.9
+    },
+    {
+      "query": "キャッツアイ マノン 復帰",
+      "page": "/katseye-sofia-manon-fukki/",
+      "imp": 165,
+      "clicks": 2,
+      "ctr": 1.2,
+      "pos": 8.3
     },
     {
       "query": "the love lab",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 154,
-      "clicks": 7,
-      "ctr": 4.5,
-      "pos": 9.6
+      "imp": 160,
+      "clicks": 8,
+      "ctr": 5.0,
+      "pos": 9.2
     }
   ]
 }
