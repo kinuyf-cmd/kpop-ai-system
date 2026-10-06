@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-05 21:32",
+  "updated": "2026-10-06 21:37",
   "count": 4,
   "queue": [
     {
-      "title": "モレノ監督、ウズベキスタン戦で意志強調",
-      "url": "https://www.kpopjournal.tokyo/moreno-director-uzbekistan-match-intent/",
-      "post_id": 22352,
+      "title": "リュ・ヒョンギョン、HWASAのような笑顔公開",
+      "url": "https://www.kpopjournal.tokyo/?p=22458",
+      "post_id": 22458,
+      "genre": "breaking",
+      "artist": "화사",
+      "priority": "high",
+      "queued_at": "2026-10-06T21:37:13.976469"
+    },
+    {
+      "title": "TWICE モモ 長時間フライト後も美貌維持",
+      "url": "https://www.kpopjournal.tokyo/?p=22454",
+      "post_id": 22454,
+      "genre": "breaking",
+      "artist": "트와이스",
+      "priority": "high",
+      "queued_at": "2026-10-06T21:35:46.317539"
+    },
+    {
+      "title": "孫興民がフリーキックで得点、韓国1-0リード",
+      "url": "https://www.kpopjournal.tokyo/son-heung-min-free-kick-goal-korea-lead/",
+      "post_id": 22450,
       "genre": "breaking",
       "artist": "우즈",
       "priority": "high",
-      "queued_at": "2026-10-05T19:34:22.573364"
+      "queued_at": "2026-10-06T21:33:04.697025"
     },
     {
-      "title": "RIIZE、テレビ朝日「バスケ☆FIVE」に2週連続出演",
-      "url": "https://www.kpopjournal.tokyo/riize-basket-five-appearance/",
-      "post_id": 22347,
+      "title": "BTSの兵役特例廃止請願が話題に",
+      "url": "https://www.kpopjournal.tokyo/bts-heisei-plea-discussion/",
+      "post_id": 22446,
       "genre": "breaking",
-      "artist": "RIIZE",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-10-05T19:32:28.811403"
-    },
-    {
-      "title": "エリック・ナム、10月16日正規4集カムバック",
-      "url": "https://www.kpopjournal.tokyo/eric-nam-4th-album-comeback-october-16/",
-      "post_id": 22332,
-      "genre": "breaking",
-      "artist": "에릭남",
-      "priority": "high",
-      "queued_at": "2026-10-05T17:31:13.968155"
-    },
-    {
-      "title": "キム・ジェジュン、中国ファンミーティング白紙に",
-      "url": "https://www.kpopjournal.tokyo/kim-jaejoong-china-fanmeeting-cancelled/",
-      "post_id": 22361,
-      "genre": "breaking",
-      "artist": "김재중",
-      "priority": "high",
-      "queued_at": "2026-10-05T21:32:25.965823"
+      "queued_at": "2026-10-06T21:31:16.246232"
     }
   ]
 }
