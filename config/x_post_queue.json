@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-06 21:37",
+  "updated": "2026-10-07 21:35",
   "count": 4,
   "queue": [
     {
-      "title": "リュ・ヒョンギョン、HWASAのような笑顔公開",
-      "url": "https://www.kpopjournal.tokyo/?p=22458",
-      "post_id": 22458,
+      "title": "ファン・ミンヒョン、新曲「OUR」本日リリース",
+      "url": "https://www.kpopjournal.tokyo/fan-minhyeon-our-new-song-release/",
+      "post_id": 22625,
       "genre": "breaking",
-      "artist": "화사",
+      "artist": "황민현",
       "priority": "high",
-      "queued_at": "2026-10-06T21:37:13.976469"
+      "queued_at": "2026-10-07T21:35:53.317531"
     },
     {
-      "title": "TWICE モモ 長時間フライト後も美貌維持",
-      "url": "https://www.kpopjournal.tokyo/?p=22454",
-      "post_id": 22454,
+      "title": "THE BOYZ サンヨン、除隊後の休養を公開",
+      "url": "https://www.kpopjournal.tokyo/the-boyz-sungyeon-post-discharge-rest/",
+      "post_id": 22621,
       "genre": "breaking",
-      "artist": "트와이스",
+      "artist": "더보이즈",
       "priority": "high",
-      "queued_at": "2026-10-06T21:35:46.317539"
+      "queued_at": "2026-10-07T21:34:12.604997"
     },
     {
-      "title": "孫興民がフリーキックで得点、韓国1-0リード",
-      "url": "https://www.kpopjournal.tokyo/son-heung-min-free-kick-goal-korea-lead/",
-      "post_id": 22450,
-      "genre": "breaking",
-      "artist": "우즈",
-      "priority": "high",
-      "queued_at": "2026-10-06T21:33:04.697025"
-    },
-    {
-      "title": "BTSの兵役特例廃止請願が話題に",
-      "url": "https://www.kpopjournal.tokyo/bts-heisei-plea-discussion/",
-      "post_id": 22446,
+      "title": "BTS JINのVへの予想外行動が衝撃呼ぶ",
+      "url": "https://www.kpopjournal.tokyo/bts-jin-v-yosougai-koudou-shougeki/",
+      "post_id": 22617,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-10-06T21:31:16.246232"
+      "queued_at": "2026-10-07T21:32:47.052485"
+    },
+    {
+      "title": "SEVENTEENエスクプス「憂愁に満ちた眼差し」公開",
+      "url": "https://www.kpopjournal.tokyo/?p=22613",
+      "post_id": 22613,
+      "genre": "breaking",
+      "artist": "세븐틴",
+      "priority": "high",
+      "queued_at": "2026-10-07T21:31:27.416316"
     }
   ]
 }
