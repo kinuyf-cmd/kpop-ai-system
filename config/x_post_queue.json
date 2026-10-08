@@ -1,42 +1,33 @@
 {
-  "updated": "2026-10-07 21:35",
-  "count": 4,
+  "updated": "2026-10-08 21:37",
+  "count": 3,
   "queue": [
     {
-      "title": "ファン・ミンヒョン、新曲「OUR」本日リリース",
-      "url": "https://www.kpopjournal.tokyo/fan-minhyeon-our-new-song-release/",
-      "post_id": 22625,
-      "genre": "breaking",
-      "artist": "황민현",
-      "priority": "high",
-      "queued_at": "2026-10-07T21:35:53.317531"
+      "title": "ソン・ソック×永山瑛太『プルンギル』配信日決定",
+      "url": "https://www.kpopjournal.tokyo/purungil-ao-no-michi-cast-netflix-guide/",
+      "post_id": 22640,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-08T00:11:57.699638"
     },
     {
-      "title": "THE BOYZ サンヨン、除隊後の休養を公開",
-      "url": "https://www.kpopjournal.tokyo/the-boyz-sungyeon-post-discharge-rest/",
-      "post_id": 22621,
-      "genre": "breaking",
-      "artist": "더보이즈",
-      "priority": "high",
-      "queued_at": "2026-10-07T21:34:12.604997"
+      "title": "『キアンの破天荒ゲストハウス シーズン2』配信開始",
+      "url": "https://www.kpopjournal.tokyo/kian-bizarre-bnb-season2-cast-episodes-guide/",
+      "post_id": 22633,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-07T23:46:57.568782"
     },
     {
-      "title": "BTS JINのVへの予想外行動が衝撃呼ぶ",
-      "url": "https://www.kpopjournal.tokyo/bts-jin-v-yosougai-koudou-shougeki/",
-      "post_id": 22617,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-10-07T21:32:47.052485"
-    },
-    {
-      "title": "SEVENTEENエスクプス「憂愁に満ちた眼差し」公開",
-      "url": "https://www.kpopjournal.tokyo/?p=22613",
-      "post_id": 22613,
-      "genre": "breaking",
-      "artist": "세븐틴",
-      "priority": "high",
-      "queued_at": "2026-10-07T21:31:27.416316"
+      "title": "キム・ヨングァン×チェ・スビン『ハートにチャージして』10月9日配信",
+      "url": "https://www.kpopjournal.tokyo/heart-ni-charge-shite-cast-episodes-netflix-guide/",
+      "post_id": 22630,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-07T23:45:46.371111"
     }
   ]
 }

@@ -993,5 +993,19 @@
         "license": "CC BY 3.0"
       }
     ]
+  },
+  "jisoo": {
+    "name": "Jisoo",
+    "files": [
+      "jisoo_e5baf6cc.png"
+    ],
+    "sources": [
+      {
+        "file": "jisoo_e5baf6cc.png",
+        "wikimedia_title": "File:Jisoo for Marie Claire Korea x Dior, September 2021 Issue (11).png",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/Jisoo_for_Marie_Claire_Korea_x_Dior%2C_September_2021_Issue_%2811%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

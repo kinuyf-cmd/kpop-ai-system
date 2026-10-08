@@ -1865,16 +1865,24 @@ function kpop_inject_internal_links( $content ) {
 
 	// 既存リンク(<a>...</a>)の内側にもネストさせない。タグ深度を追う。
 	$in_anchor = 0;
+	// <script>/<style> の中身は preg_split 上「テキスト」に見えるが HTML ではない。
+	// FAQPage JSON-LD 内の「&TEAM」に <a ... "> を注入し、引用符で JSON を壊した
+	// (2026-10-08 本番で確認。本文側が &amp;TEAM で先にマッチせず、script 内が初出になった)。
+	$in_raw    = false;
 	$linked    = array();
 
 	foreach ( $segments as $i => $seg ) {
 		if ( $seg === '' ) { continue; }
 		// タグ要素はそのまま通す。<a>/<a ...> で深度+1、</a> で深度-1。
 		if ( $seg[0] === '<' ) {
-			if ( preg_match( '/^<a[\s>]/i', $seg ) )      { $in_anchor++; }
-			elseif ( preg_match( '/^<\/a\s*>/i', $seg ) ) { $in_anchor = max( 0, $in_anchor - 1 ); }
+			if ( preg_match( '/^<(script|style)[\s>]/i', $seg ) )      { $in_raw = true; }
+			elseif ( preg_match( '/^<\/(script|style)\s*>/i', $seg ) ) { $in_raw = false; }
+			elseif ( preg_match( '/^<a[\s>]/i', $seg ) )               { $in_anchor++; }
+			elseif ( preg_match( '/^<\/a\s*>/i', $seg ) )              { $in_anchor = max( 0, $in_anchor - 1 ); }
 			continue;
 		}
+		// script/style の中身は書き換えない。
+		if ( $in_raw ) { continue; }
 		// アンカー内のテキストは二重リンク防止のためスキップ。
 		if ( $in_anchor > 0 ) { continue; }
 

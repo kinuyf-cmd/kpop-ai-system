@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-09-28",
-    "2026-10-04"
+    "2026-09-29",
+    "2026-10-05"
   ],
-  "generated_at": "2026-10-07",
+  "generated_at": "2026-10-08",
   "rows": [
     {
       "query": "allday project",
-      "imp": 88,
-      "prev_imp": 0,
-      "delta": 88,
+      "imp": 81,
+      "prev_imp": 7,
+      "delta": 74,
       "clicks": 3,
-      "ctr_pct": 3.41,
-      "position": 4,
-      "ratio": null
+      "ctr_pct": 3.7,
+      "position": 4.1,
+      "ratio": 11.6
     },
     {
       "query": "クルアルバ",
-      "imp": 91,
-      "prev_imp": 12,
-      "delta": 79,
+      "imp": 87,
+      "prev_imp": 15,
+      "delta": 72,
       "clicks": 1,
-      "ctr_pct": 1.1,
-      "position": 7.7,
-      "ratio": 7.6
+      "ctr_pct": 1.15,
+      "position": 7.9,
+      "ratio": 5.8
     }
   ]
 }

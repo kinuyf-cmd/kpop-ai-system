@@ -1079,7 +1079,7 @@
     "description": "ラ・スペランザ(コーチャンフォー釧路文化ホール　大ホール 札幌コンサートホールＫｉｔａｒａ　大ホール 電力ホール あきた芸術劇場ミルハス　大ホール 荘銀タクト鶴岡　大ホール 狭山市市民会館　大ホール 君津市民文化ホール　大ホール Ｊ：ＣＯＭホール八王子 一宮市民会館 刈谷市総合文化センター　アイ...",
     "image": "https://image.pia.jp/images/202606/202606160062_ex.png",
     "performances": [],
-    "cached_at": "2026-10-01T04:02:14.573357"
+    "cached_at": "2026-10-08T04:02:21.852093"
   },
   "b2670904": {
     "event_bundle_cd": "b2670904",
@@ -1122,5 +1122,79 @@
       }
     ],
     "cached_at": "2026-10-03T04:02:22.950417"
+  },
+  "b2670364": {
+    "event_bundle_cd": "b2670364",
+    "title": "KARA",
+    "description": "K-POPのレジェンドガールグループが、10/23(金)・24(土)に横浜BUNTAIにてファンコンサート「2026 KARA JAPAN FAN-CON : Hello, KAMILIA! -GRAND FINALE in JAPAN-」を開催！",
+    "image": "https://image.pia.jp/images/202608/202608100077_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-23",
+        "venue": "横浜BUNTAI",
+        "prefecture": "神奈川県",
+        "date_end": "2026-10-24"
+      }
+    ],
+    "cached_at": "2026-10-08T04:02:23.305940"
+  },
+  "b2670657": {
+    "event_bundle_cd": "b2670657",
+    "title": "2026 LEE YIKYUNG SHOW",
+    "description": "ドラマ『結婚してYOU』『私の夫と結婚して』などに出演の俳優イ・イギョンが来日！10/25(日)日本教育会館 一ツ橋ホールにて、ファンミーティング開催！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-10-25",
+        "venue": "日本教育会館 一ツ橋ホール",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-08T04:02:24.525177"
+  },
+  "b2670592": {
+    "event_bundle_cd": "b2670592",
+    "title": "IRENE & SEULGI",
+    "description": "IRENE & SEULGI(仙台銀行ホール　イズミティ２１　大ホール パシフィコ横浜　国立大ホール Ｎｉｔｅｒｒａ日本特殊陶業市民会館　フォレストホール 堺市民芸術文化ホール（フェニーチェ堺）　大ホール 神戸国際会館こくさいホール ふくやま芸術文化ホール　リーデンローズ　大ホール 福岡市民ホー...",
+    "image": "https://image.pia.jp/images/202608/202608180057_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-09-19",
+        "venue": "福岡市民ホール 大ホール",
+        "prefecture": "福岡県"
+      },
+      {
+        "date": "2026-09-21",
+        "venue": "神戸国際会館こくさいホール",
+        "prefecture": "兵庫県"
+      },
+      {
+        "date": "2026-09-23",
+        "venue": "堺市民芸術文化ホール(フェニーチェ堺) 大ホール",
+        "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-09-27",
+        "venue": "仙台銀行ホール イズミティ21 大ホール",
+        "prefecture": "宮城県"
+      },
+      {
+        "date": "2026-10-18",
+        "venue": "ふくやま芸術文化ホール リーデンローズ 大ホール",
+        "prefecture": "広島県"
+      },
+      {
+        "date": "2026-10-24",
+        "venue": "Niterra日本特殊陶業市民会館 フォレストホール",
+        "prefecture": "愛知県"
+      },
+      {
+        "date": "2026-11-04",
+        "venue": "パシフィコ横浜 国立大ホール",
+        "prefecture": "神奈川県",
+        "date_end": "2026-11-05"
+      }
+    ],
+    "cached_at": "2026-10-08T04:02:26.351751"
   }
 }

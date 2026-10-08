@@ -119,6 +119,26 @@
    "start_date": "2026-10-13",
    "venue": "UNITEDLAB",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KARA",
+   "title": "KARA",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670364",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-23",
+   "venue": "横浜BUNTAI",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LEE",
+   "title": "2026 LEE YIKYUNG SHOW",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670657",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-25",
+   "venue": "日本教育会館 一ツ橋ホール",
+   "_source_id": "pia"
   }
  ]
 }
