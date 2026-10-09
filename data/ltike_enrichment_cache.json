@@ -97,7 +97,7 @@
     "prefecture": "兵庫県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/751923/main.webp?20260820071207",
     "url": "https://l-tike.com/concert/mevent/?mid=751923",
-    "cached_at": "2026-10-08T04:02:46.495730"
+    "cached_at": "2026-10-09T04:02:27.674008"
   },
   "concert:784200": {
     "mid": "784200",
@@ -142,7 +142,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/402049/main.webp?20260601115226",
     "url": "https://l-tike.com/concert/mevent/?mid=402049",
-    "cached_at": "2026-10-08T04:02:36.985072"
+    "cached_at": "2026-10-09T04:02:18.489909"
   },
   "concert:517988": {
     "mid": "517988",
@@ -158,9 +158,14 @@
   },
   "concert:695728": {
     "mid": "695728",
+    "title": "ＬＥ　ＳＳＥＲＡＦＩＭ",
+    "startDate": "2026-12-19",
+    "endDate": "2026-12-20",
+    "venue": "京セラドーム大阪",
+    "prefecture": "大阪府",
+    "image": "https://img.hmv.co.jp/hybridimage/eventpage/695728/main.webp?20260925105230",
     "url": "https://l-tike.com/concert/mevent/?mid=695728",
-    "cached_at": "2026-10-08T04:02:40.487228",
-    "not_found": true
+    "cached_at": "2026-10-09T04:02:21.709953"
   },
   "concert:654310": {
     "mid": "654310",
@@ -199,7 +204,7 @@
     "prefecture": "千葉県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/751241/main.webp?20260910050810",
     "url": "https://l-tike.com/concert/mevent/?mid=751241",
-    "cached_at": "2026-10-08T04:02:45.367576"
+    "cached_at": "2026-10-09T04:02:26.265843"
   },
   "concert:291495": {
     "mid": "291495",
@@ -300,7 +305,7 @@
   "news:444647": {
     "mid": "444647",
     "url": "https://l-tike.com/news/mevent/?mid=444647",
-    "cached_at": "2026-10-08T04:03:01.301985",
+    "cached_at": "2026-10-09T04:02:45.584077",
     "not_found": true
   },
   "concert:430471": {
@@ -450,13 +455,13 @@
   "concert:786139": {
     "mid": "786139",
     "title": "Ｈ／／ＰＥ　Ｐｒｉｎｃｅｓｓ",
-    "startDate": "2026-10-08",
-    "endDate": "2026-10-08",
-    "venue": "北浦和Ａｙｅｒｓ",
-    "prefecture": "埼玉県",
+    "startDate": "2026-10-09",
+    "endDate": "2026-10-09",
+    "venue": "横浜７ｔｈ　ＡＶＥＮＵＥ",
+    "prefecture": "神奈川県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/786139/main.webp?20260918112811",
     "url": "https://l-tike.com/concert/mevent/?mid=786139",
-    "cached_at": "2026-10-08T04:02:48.491462"
+    "cached_at": "2026-10-09T04:02:30.025828"
   },
   "concert:624936": {
     "mid": "624936",
@@ -585,7 +590,7 @@
     "prefecture": "千葉県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/737874/main2.webp?20260612093313",
     "url": "https://l-tike.com/concert/mevent/?mid=737874",
-    "cached_at": "2026-10-08T04:02:43.909208"
+    "cached_at": "2026-10-09T04:02:25.101970"
   },
   "concert:787090": {
     "mid": "787090",
@@ -901,7 +906,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/668314/main.webp?20260427012952",
     "url": "https://l-tike.com/concert/mevent/?mid=668314",
-    "cached_at": "2026-10-08T04:02:38.253736"
+    "cached_at": "2026-10-09T04:02:19.425982"
   },
   "concert:777558": {
     "mid": "777558",
@@ -912,7 +917,7 @@
     "prefecture": "大阪府",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/777558/main.webp?20260818034931",
     "url": "https://l-tike.com/concert/mevent/?mid=777558",
-    "cached_at": "2026-10-08T04:02:47.471530"
+    "cached_at": "2026-10-09T04:02:28.837444"
   },
   "concert:779359": {
     "mid": "779359",
@@ -940,14 +945,19 @@
   "concert:302699": {
     "mid": "302699",
     "url": "https://l-tike.com/concert/mevent/?mid=302699",
-    "cached_at": "2026-10-08T04:02:49.774341",
+    "cached_at": "2026-10-09T04:02:31.151380",
     "not_found": true
   },
   "concert:780664": {
     "mid": "780664",
+    "title": "２ＮＥ１＆ＴＥＮ",
+    "startDate": "2026-12-08",
+    "endDate": "2026-12-09",
+    "venue": "ＬａＬａ　ａｒｅｎａ　ＴＯＫＹＯ－ＢＡＹ",
+    "prefecture": "千葉県",
+    "image": "https://img.hmv.co.jp/hybridimage/eventpage/780664/main2.webp?20260807114924",
     "url": "https://l-tike.com/concert/mevent/?mid=780664",
-    "cached_at": "2026-10-08T04:02:55.597189",
-    "not_found": true
+    "cached_at": "2026-10-09T04:02:38.937489"
   },
   "concert:755096": {
     "mid": "755096",
@@ -958,7 +968,7 @@
     "prefecture": "広島県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/755096/main.webp?20260818123837",
     "url": "https://l-tike.com/concert/mevent/?mid=755096",
-    "cached_at": "2026-10-01T04:02:47.819580"
+    "cached_at": "2026-10-09T04:02:44.502298"
   },
   "concert:471823": {
     "mid": "471823",
@@ -1064,7 +1074,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/702711/main.webp?20260826124957",
     "url": "https://l-tike.com/concert/mevent/?mid=702711",
-    "cached_at": "2026-10-08T04:02:51.214092"
+    "cached_at": "2026-10-09T04:02:32.169583"
   },
   "concert:355515": {
     "mid": "355515",
@@ -1114,7 +1124,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/791579/main.webp?20260821091327",
     "url": "https://l-tike.com/play/mevent/?mid=791579",
-    "cached_at": "2026-10-08T04:02:35.756028"
+    "cached_at": "2026-10-09T04:02:17.328208"
   },
   "concert:517371": {
     "mid": "517371",
@@ -1147,7 +1157,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/332627/main.webp?20260326031810",
     "url": "https://l-tike.com/concert/mevent/?mid=332627",
-    "cached_at": "2026-10-08T04:02:59.021307"
+    "cached_at": "2026-10-09T04:02:42.350532"
   },
   "concert:735100": {
     "mid": "735100",
@@ -1192,7 +1202,7 @@
     "prefecture": "大阪府",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/689105/main.webp?20260907095442",
     "url": "https://l-tike.com/event/mevent/?mid=689105",
-    "cached_at": "2026-10-08T04:02:39.501185"
+    "cached_at": "2026-10-09T04:02:20.589290"
   },
   "concert:793495": {
     "mid": "793495",
@@ -1203,7 +1213,7 @@
     "prefecture": "神奈川県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/793495/main.webp?20260902095742",
     "url": "https://l-tike.com/concert/mevent/?mid=793495",
-    "cached_at": "2026-10-08T04:02:52.280783"
+    "cached_at": "2026-10-09T04:02:33.219844"
   },
   "cinema:792926": {
     "mid": "792926",
@@ -1253,7 +1263,7 @@
     "prefecture": "埼玉県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/482316/main.webp?20260903110733",
     "url": "https://l-tike.com/concert/mevent/?mid=482316",
-    "cached_at": "2026-10-08T04:03:00.208181"
+    "cached_at": "2026-10-09T04:02:43.352085"
   },
   "concert:715799": {
     "mid": "715799",
@@ -1286,7 +1296,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/new20260910030418/main.webp",
     "url": "https://l-tike.com/concert/mevent/?mid=794340",
-    "cached_at": "2026-10-08T04:02:53.621494"
+    "cached_at": "2026-10-09T04:02:34.355914"
   },
   "concert:763751": {
     "mid": "763751",
@@ -1341,7 +1351,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/794608/main.webp?20260915065843",
     "url": "https://l-tike.com/concert/mevent/?mid=794608",
-    "cached_at": "2026-10-08T04:02:30.648286"
+    "cached_at": "2026-10-09T04:02:12.158112"
   },
   "concert:791841": {
     "mid": "791841",
@@ -1380,7 +1390,7 @@
     "prefecture": "神奈川県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/793874/main.webp?20260911013420",
     "url": "https://l-tike.com/concert/mevent/?mid=793874",
-    "cached_at": "2026-10-08T04:02:56.663595"
+    "cached_at": "2026-10-09T04:02:40.029648"
   },
   "concert:640614": {
     "mid": "640614",
@@ -1446,7 +1456,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/new20260928100038/main.webp",
     "url": "https://l-tike.com/concert/mevent/?mid=795339",
-    "cached_at": "2026-10-08T04:02:54.606613"
+    "cached_at": "2026-10-09T04:02:35.519914"
   },
   "concert:590440": {
     "mid": "590440",
@@ -1462,7 +1472,7 @@
   "concert:321428": {
     "mid": "321428",
     "url": "https://l-tike.com/concert/mevent/?mid=321428",
-    "cached_at": "2026-10-08T04:02:42.762815",
+    "cached_at": "2026-10-09T04:02:24.096623",
     "not_found": true
   },
   "concert:328258": {
@@ -1507,7 +1517,7 @@
     "prefecture": "神奈川県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/727493/main.webp?20261005031034",
     "url": "https://l-tike.com/concert/mevent/?mid=727493",
-    "cached_at": "2026-10-08T04:02:41.616907"
+    "cached_at": "2026-10-09T04:02:22.690304"
   },
   "concert:380733": {
     "mid": "380733",
@@ -1518,7 +1528,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/380733/main.webp?20260925112655",
     "url": "https://l-tike.com/concert/mevent/?mid=380733",
-    "cached_at": "2026-10-08T04:02:57.857406"
+    "cached_at": "2026-10-09T04:02:41.186196"
   },
   "concert:755829": {
     "mid": "755829",
@@ -1540,7 +1550,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/476734/main.webp?20260114032130",
     "url": "https://l-tike.com/concert/mevent/?mid=476734",
-    "cached_at": "2026-10-08T04:02:32.647687"
+    "cached_at": "2026-10-09T04:02:14.176674"
   },
   "concert:697716": {
     "mid": "697716",
@@ -1573,7 +1583,7 @@
     "prefecture": "神奈川県",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/325138/main.webp?20260424094316",
     "url": "https://l-tike.com/concert/mevent/?mid=325138",
-    "cached_at": "2026-10-08T04:02:33.655980"
+    "cached_at": "2026-10-09T04:02:15.185192"
   },
   "sports:702741": {
     "mid": "702741",
@@ -1595,7 +1605,7 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/496836/main.webp?20260707094105",
     "url": "https://l-tike.com/concert/mevent/?mid=496836",
-    "cached_at": "2026-10-08T04:02:34.668020"
+    "cached_at": "2026-10-09T04:02:16.308536"
   },
   "concert:704991": {
     "mid": "704991",
@@ -1617,6 +1627,28 @@
     "prefecture": "東京都",
     "image": "https://img.hmv.co.jp/hybridimage/eventpage/700098/main.webp?20260904031658",
     "url": "https://l-tike.com/sports/mevent/?mid=700098",
-    "cached_at": "2026-10-08T04:02:31.668509"
+    "cached_at": "2026-10-09T04:02:13.211185"
+  },
+  "cinema:796048": {
+    "mid": "796048",
+    "title": "「ＪＥＯＮＧＨＡＮ　Ｘ　ＪＯＳＨＵＡ　ＪＯＵＲＮＥＹ　ＩＮＴＯ　［ＤＲＥＡＭＩＮＧ］　－　ＪＡＰＡＮ」ライブビューイング",
+    "startDate": "2026-11-22",
+    "endDate": "2026-11-22",
+    "venue": "ローソン・ユナイテッドシネマ札幌",
+    "prefecture": "北海道",
+    "image": "https://img.hmv.co.jp/hybridimage/eventpage/796048/main.webp?20261008105423",
+    "url": "https://l-tike.com/cinema/mevent/?mid=796048",
+    "cached_at": "2026-10-09T04:02:36.945133"
+  },
+  "concert:796126": {
+    "mid": "796126",
+    "title": "ＬＵＮＡ",
+    "startDate": "2026-10-18",
+    "endDate": "2026-10-18",
+    "venue": "スタァライト劇場（旧飛行船シアター）",
+    "prefecture": "東京都",
+    "image": "https://img.hmv.co.jp/hybridimage/eventpage/796126/main.webp?20261005113441",
+    "url": "https://l-tike.com/concert/mevent/?mid=796126",
+    "cached_at": "2026-10-09T04:02:37.948645"
   }
 }

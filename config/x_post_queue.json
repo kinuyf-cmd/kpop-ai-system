@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-08 21:37",
-  "count": 3,
+  "updated": "2026-10-09 21:36",
+  "count": 4,
   "queue": [
     {
       "title": "ソン・ソック×永山瑛太『プルンギル』配信日決定",
@@ -28,6 +28,15 @@
       "artist": "",
       "priority": "normal",
       "queued_at": "2026-10-07T23:45:46.371111"
+    },
+    {
+      "title": "BOYNEXTDOOR「M COUNTDOWN」で初の1位獲得",
+      "url": "https://www.kpopjournal.tokyo/boynextdoor-m-countdown-first-1st-place/",
+      "post_id": 22939,
+      "genre": "breaking",
+      "artist": "BOYNEXTDOOR",
+      "priority": "high",
+      "queued_at": "2026-10-09T21:36:44.755097"
     }
   ]
 }

@@ -1,29 +1,49 @@
 {
   "window": [
-    "2026-09-29",
-    "2026-10-05"
+    "2026-09-30",
+    "2026-10-06"
   ],
-  "generated_at": "2026-10-08",
+  "generated_at": "2026-10-09",
   "rows": [
     {
+      "query": "uncore 所属アーティスト",
+      "imp": 105,
+      "prev_imp": 0,
+      "delta": 105,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 9.0,
+      "ratio": null
+    },
+    {
+      "query": "twice ファンパーティー",
+      "imp": 83,
+      "prev_imp": 0,
+      "delta": 83,
+      "clicks": 2,
+      "ctr_pct": 2.41,
+      "position": 7.7,
+      "ratio": null
+    },
+    {
       "query": "allday project",
-      "imp": 81,
-      "prev_imp": 7,
-      "delta": 74,
+      "imp": 80,
+      "prev_imp": 12,
+      "delta": 68,
       "clicks": 3,
-      "ctr_pct": 3.7,
-      "position": 4.1,
-      "ratio": 11.6
+      "ctr_pct": 3.75,
+      "position": 4.2,
+      "ratio": 6.7
     },
     {
       "query": "クルアルバ",
-      "imp": 87,
-      "prev_imp": 15,
-      "delta": 72,
+      "imp": 91,
+      "prev_imp": 23,
+      "delta": 68,
       "clicks": 1,
-      "ctr_pct": 1.15,
-      "position": 7.9,
-      "ratio": 5.8
+      "ctr_pct": 1.1,
+      "position": 8.4,
+      "ratio": 4.0
     }
   ]
 }
