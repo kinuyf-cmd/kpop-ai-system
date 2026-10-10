@@ -1,9 +1,9 @@
 {
   "window": [
-    "2026-09-30",
-    "2026-10-06"
+    "2026-10-01",
+    "2026-10-07"
   ],
-  "generated_at": "2026-10-09",
+  "generated_at": "2026-10-10",
   "rows": [
     {
       "query": "uncore 所属アーティスト",
@@ -24,26 +24,6 @@
       "ctr_pct": 2.41,
       "position": 7.7,
       "ratio": null
-    },
-    {
-      "query": "allday project",
-      "imp": 80,
-      "prev_imp": 12,
-      "delta": 68,
-      "clicks": 3,
-      "ctr_pct": 3.75,
-      "position": 4.2,
-      "ratio": 6.7
-    },
-    {
-      "query": "クルアルバ",
-      "imp": 91,
-      "prev_imp": 23,
-      "delta": 68,
-      "clicks": 1,
-      "ctr_pct": 1.1,
-      "position": 8.4,
-      "ratio": 4.0
     }
   ]
 }
