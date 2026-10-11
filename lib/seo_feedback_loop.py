@@ -105,14 +105,44 @@ def aggregate():
     return summary, rows
 
 
-def build_proposals(summary):
+def _treated_stats(rows):
+    """施策(enrich/rewrite)を実際に受けた記事の行だけで theme 別に集計する。
+
+    追跡クエリには未施策の記事も混ざる。また crossed_10 は「10位の外から中へ
+    入った」ときだけ立つので、基準時点で既に10位以内の記事は成功しても 0 のまま。
+    どちらも「施策が効かなかった」証拠ではない(2026-10-11: theme='other' は
+    未施策の pos65 と、pos7→3 に上がった記事の2本だけで「効果薄」と出ていた)。
+    成功は「いま10位以内にいるか」で数える。
+    """
+    routes = _route_map()
+    groups = {}
+    for r in rows:
+        if ("slug", r.get("slug")) not in routes:
+            continue
+        groups.setdefault(r.get("theme", "unknown"), []).append(r)
+    out = {}
+    for theme, rs in groups.items():
+        on_page_one = sum(1 for r in rs if (r.get("current_pos") or 99) < 10)
+        out[theme] = {"n": len(rs), "page_one_rate": round(on_page_one / len(rs), 3)}
+    return out
+
+
+def build_proposals(summary, rows=None):
     """効果が芳しくない theme に対する seo_config.json 変更案(提案のみ)。"""
     proposals = []
     cfg = _load_json(SEO_CONFIG, default={})
     allocation = cfg.get("difficulty_article_allocation", {})
+    treated = _treated_stats(rows) if rows is not None else None
     for theme, stats in summary.items():
         if stats["n"] < MIN_SAMPLES_FOR_JUDGEMENT:
             continue
+        if treated is not None:
+            t = treated.get(theme)
+            if not t or t["n"] < MIN_SAMPLES_FOR_JUDGEMENT:
+                continue
+            if t["page_one_rate"] >= LOW_EFFECT_CROSSED10_RATE:
+                continue
+            stats = dict(stats, treated_n=t["n"], page_one_rate=t["page_one_rate"])
         if stats["crossed_10_rate"] < LOW_EFFECT_CROSSED10_RATE and stats["clicks_delta_avg"] <= 0:
             proposals.append({
                 "ts": datetime.now(timezone.utc).isoformat(),
@@ -150,7 +180,7 @@ def notify_discord(message):
 
 def run():
     summary, rows = aggregate()
-    proposals = build_proposals(summary)
+    proposals = build_proposals(summary, rows)
 
     if proposals:
         os.makedirs(os.path.dirname(PROPOSALS_LOG), exist_ok=True)

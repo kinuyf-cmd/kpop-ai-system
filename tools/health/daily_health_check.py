@@ -243,8 +243,24 @@ def check_gsc_drop(results, digest):
             str(SA), scopes=["https://www.googleapis.com/auth/webmasters.readonly"])
         svc = build("searchconsole", "v1", credentials=creds, cache_discovery=False)
 
+        # GSC の反映は 2〜5 日と揺れる。固定ラグ(3日)だと未着の日を 0 と数えて
+        # 急落を誤報する(2026-10-11: 実 -22% を -45% と報告)。実際にデータが
+        # ある最新日を調べ、途中値の恐れがあるその日を除いた前日を窓の終端にする。
+        today = datetime.date.today()
+        days = svc.searchanalytics().query(siteUrl=SITE, body={
+            "startDate": (today - datetime.timedelta(days=14)).isoformat(),
+            "endDate": today.isoformat(),
+            "dimensions": ["date"]}).execute().get("rows", [])
+        if not days:
+            results.append(("WARN", "gsc", "GSC に直近14日のデータが無い"))
+            return
+        latest = max(datetime.date.fromisoformat(r["keys"][0]) for r in days)
+        anchor = min(latest - datetime.timedelta(days=1),
+                     today - datetime.timedelta(days=3))
+        digest["gsc_window_end"] = anchor.isoformat()
+
         def clicks(back):
-            end = datetime.date.today() - datetime.timedelta(days=3 + back)
+            end = anchor - datetime.timedelta(days=back)
             start = end - datetime.timedelta(days=6)
             r = svc.searchanalytics().query(siteUrl=SITE, body={
                 "startDate": start.isoformat(), "endDate": end.isoformat(),

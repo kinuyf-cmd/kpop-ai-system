@@ -42,16 +42,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "キム・キュジョン",
-   "title": "キム・キュジョン",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670833",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-10",
-   "venue": "I’M A SHOW",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "QWER",
    "title": "QWER",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670998",
@@ -72,16 +62,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-10-10",
-   "venue": "LaLa arena TOKYO-BAY",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "&TEAM",
    "title": "&TEAM",
    "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
@@ -89,16 +69,6 @@
    "start_date": "2026-10-15",
    "venue": "東京ガーデンシアター",
    "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "YANG",
-   "title": "YANG SE JONG",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670810",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-10",
-   "venue": "なかのZERO 大ホール",
-   "_source_id": "pia"
   },
   {
    "type": "event",
@@ -139,6 +109,26 @@
    "start_date": "2026-10-25",
    "venue": "日本教育会館 一ツ橋ホール",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "LUNA",
+   "title": "2026 LUNA FAN-CONCERT in JAPAN",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671434",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-18",
+   "venue": "スタァライト劇場",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "BOYNEXTDOOR",
+   "title": "BOYNEXTDOOR",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-10-11",
+   "venue": "LaLa arena TOKYO-BAY",
+   "_source_id": "ltike"
   }
  ]
 }

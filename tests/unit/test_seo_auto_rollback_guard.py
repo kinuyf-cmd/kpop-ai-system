@@ -46,3 +46,54 @@ def test_first_week_all_zero_never_triggers_rollback():
     delta = rb._latest_clicks_delta(first_week, "foo")
     assert delta == 0
     assert delta > rb.ROLLBACK_CLICKS_DELTA_THRESHOLD   # 0 > -3 → スキップされる
+
+
+# ── 2026-10-11: 前週比の実分布から決めた閾値と、手動改稿を守るガード ──────────
+
+def _row(week, delta, abs_, slug="foo"):
+    return {"week": week, "slug": slug, "clicks_delta": delta, "clicks_abs": abs_,
+            "delta_basis": "prev_week"}
+
+
+def test_week_totals_sum_all_queries_of_latest_week():
+    """1記事が同じ週に複数クエリ行を持つ。最新週の全行を合計する。"""
+    rows = [_row("2026-10-02", -9, 1), _row("2026-10-09", -4, 6), _row("2026-10-09", -2, 3)]
+    assert rb._latest_week_totals(rows, "foo") == (-6, 15)
+
+
+def test_week_totals_none_for_unknown_slug():
+    assert rb._latest_week_totals([_row("2026-10-09", -6, 1)], "他") == (None, None)
+
+
+def test_main_article_natural_swing_is_not_harmful():
+    """実測: 主力記事が 33→28clk(-5, -15%)。自然な揺れなので差し戻さない。"""
+    assert not rb._is_harmful(-5, 33)
+
+
+def test_small_absolute_drop_is_not_harmful():
+    """実測: 5→2clk(-3, -60%)。割合は大きいが絶対数が小さい。"""
+    assert not rb._is_harmful(-3, 5)
+
+
+def test_large_absolute_and_relative_drop_is_harmful():
+    assert rb._is_harmful(-8, 20)
+
+
+def test_missing_delta_is_not_harmful():
+    assert not rb._is_harmful(None, None)
+
+
+def test_modified_after_enrich_blocks_rollback():
+    """強化後に手動改稿された記事を古いバックアップで上書きしない。"""
+    api = lambda m, p: ({"modified_gmt": "2026-10-11T09:07:00"}, None)
+    assert rb._modified_after(1, "2026-10-05T06:45:00+00:00", api)
+
+
+def test_untouched_since_enrich_allows_rollback():
+    api = lambda m, p: ({"modified_gmt": "2026-10-05T06:45:30"}, None)
+    assert not rb._modified_after(1, "2026-10-05T06:45:00+00:00", api)
+
+
+def test_unknown_modified_time_blocks_rollback():
+    """更新日時が取れないときは安全側(差し戻さない)。"""
+    assert rb._modified_after(1, "2026-10-05T06:45:00+00:00", lambda m, p: (None, "API_FAIL"))

@@ -518,6 +518,24 @@ def post_to_x(hook_text, url, is_reply=False, reply_to_id=None):
         return False, str(e)
 
 
+def has_manual_seo_title(post_id):
+    """AIOSEO のタイトルが個別設定されていれば True(=人が検索語に合わせて調整済み)。
+
+    キューに載るのは流入の大きい記事で、多くは手動でタイトル・メタを詰めてある。
+    そこへ LLM のタイトルと抜粋を上書きすると、効いている調整を壊す。
+    確認できないときも True を返し、書き換えない側に倒す。
+    """
+    try:
+        r = subprocess.run(
+            ["sudo", "-n", "/usr/local/sbin/kpop/kpop-wp-ro", "db", "query",
+             "SELECT COUNT(*) FROM wp_aioseo_posts WHERE post_id=%d AND title IS NOT NULL AND title<>''"
+             % int(post_id)],
+            capture_output=True, text=True, timeout=60)
+        return r.returncode != 0 or r.stdout.strip().splitlines()[-1].strip() != "0"
+    except Exception:
+        return True
+
+
 # ── メインリライト処理 ────────────────────────────────────────────────────────────
 
 def process_item(item, gsc_data, action_hist):
@@ -565,6 +583,12 @@ def process_item(item, gsc_data, action_hist):
         print(f"  SKIP post_id={post_id}: {reason}")
         return action
 
+    if has_manual_seo_title(post_id):
+        action["skipped"] = True
+        action["skip_reason"] = "手動でSEOタイトル設定済み(上書きしない)"
+        print(f"  SKIP post_id={post_id}: {action['skip_reason']}")
+        return action
+
     print(f"  処理中: [{priority}] {rank} post_id={post_id} {title[:30]}")
 
     wp_updates = {}
@@ -605,15 +629,18 @@ def process_item(item, gsc_data, action_hist):
         wp_ok, wp_err = update_wp_post(post_id, wp_updates)
         action["wp_update_ok"] = wp_ok
         action["wp_error"] = wp_err if not wp_ok else None
+        if not wp_ok:
+            print(f"    ⚠️ WP更新失敗: {wp_err}")
+        else:
+            print(f"    ✅ WP更新成功")
     else:
         # 変更点が無いのは「失敗」ではない。初期値 False のままだと
         # ログ上 WP更新成功=0 が続き、失敗と誤読される(2026-09-10)。
         action["wp_update_ok"] = None
         action["wp_error"] = "no_change"
-        if not wp_ok:
-            print(f"    ⚠️ WP更新失敗: {wp_err}")
-        else:
-            print(f"    ✅ WP更新成功")
+        # 記事が変わっていないのに X で再告知する理由は無い。
+        print(f"    — WP変更なし(X投稿もスキップ)")
+        return action
 
     # ── X投稿 ────────────────────────────────────────────────────────────────────
     hook_title = action["new_title"] or title
@@ -678,9 +705,12 @@ def run(dry_run=False):
 
 
 if __name__ == "__main__":
-    dry = "--dry-run" in sys.argv
+    # 2026-10-11: クラッシュ修理で本処理まで届くようになったが、実キューで試すと
+    # 流入最大の記事(post 8982、公演は終了済み)のタイトルを「【速報】…」へ書き換え、
+    # X にも投稿する結果になった。owner が内容を確認して --live を付けるまで書き込まない。
+    dry = "--live" not in sys.argv
     if dry:
-        print("[DRY-RUN モード] WP/X更新は実行しません")
+        print("[DRY-RUN モード] WP/X更新は実行しません(本実行は --live)")
 
     results = run(dry_run=dry)
 

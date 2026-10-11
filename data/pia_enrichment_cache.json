@@ -1052,7 +1052,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-10-04T04:02:10.100986"
+    "cached_at": "2026-10-11T04:02:12.007986"
   },
   "b2670565": {
     "event_bundle_cd": "b2670565",
@@ -1121,7 +1121,7 @@
         "prefecture": "大阪府"
       }
     ],
-    "cached_at": "2026-10-03T04:02:22.950417"
+    "cached_at": "2026-10-11T04:02:13.445160"
   },
   "b2670364": {
     "event_bundle_cd": "b2670364",
@@ -1196,5 +1196,19 @@
       }
     ],
     "cached_at": "2026-10-08T04:02:26.351751"
+  },
+  "b2671434": {
+    "event_bundle_cd": "b2671434",
+    "title": "2026 LUNA FAN-CONCERT in JAPAN",
+    "description": "2026 LUNA FAN-CONCERT in JAPAN(スタァライト劇場)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202609/202609300072_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-18",
+        "venue": "スタァライト劇場",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-11T04:02:14.796701"
   }
 }

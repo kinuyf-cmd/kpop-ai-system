@@ -58,3 +58,41 @@ def test_aggregate_falls_back_to_unknown_for_legacy_rows(monkeypatch):
     monkeypatch.setattr(fb, "_recent_progress", lambda *a, **k: legacy)
     summary, _ = fb.aggregate()
     assert "unknown" in summary
+
+
+# ── 2026-10-11: 未施策の記事と「既に10位以内」の記事を効果薄に数えない ──────────
+
+def _other_rows():
+    """実測の再現: theme='other' は未施策の pos65 と、pos7→3 に上がった施策済みの2本。"""
+    rows = []
+    for w in ("2026-09-18", "2026-09-25", "2026-10-02", "2026-10-09"):
+        rows.append({"week": w, "slug": "untreated", "theme": "other", "crossed_10": False,
+                     "clicks_delta": 0, "current_pos": 65.0, "baseline_pos": 69.5})
+        rows.append({"week": w, "slug": "treated", "theme": "other", "crossed_10": False,
+                     "clicks_delta": 0, "current_pos": 3.0, "baseline_pos": 7.26})
+    return rows
+
+
+def _summary(rows, monkeypatch):
+    monkeypatch.setattr(fb, "_recent_progress", lambda *a, **k: rows)
+    return fb.aggregate()[0]
+
+
+def test_no_proposal_when_treated_samples_are_too_few(monkeypatch):
+    rows = _other_rows()
+    monkeypatch.setattr(fb, "_route_map", lambda: {("slug", "treated"): "enrich"})
+    assert fb.build_proposals(_summary(rows, monkeypatch), rows) == []
+
+
+def test_no_proposal_when_treated_article_is_on_page_one(monkeypatch):
+    rows = _other_rows() + _other_rows()
+    monkeypatch.setattr(fb, "_route_map", lambda: {("slug", "treated"): "enrich"})
+    assert fb.build_proposals(_summary(rows, monkeypatch), rows) == []
+
+
+def test_proposal_when_treated_articles_stay_off_page_one(monkeypatch):
+    rows = _other_rows() + _other_rows()
+    monkeypatch.setattr(fb, "_route_map", lambda: {("slug", "untreated"): "enrich"})
+    props = fb.build_proposals(_summary(rows, monkeypatch), rows)
+    assert [p["theme"] for p in props] == ["other"]
+    assert props[0]["observed"]["page_one_rate"] == 0.0

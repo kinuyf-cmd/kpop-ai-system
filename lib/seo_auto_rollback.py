@@ -4,9 +4,10 @@ backups/body_enrich/ に保存済みの更新前 HTML へ自動で差し戻す�
 
 判定条件(いずれも満たした場合のみロールバック):
   - body_enrich.jsonl に result=updated の記録があり、実行から
-    ROLLBACK_WINDOW_DAYS 日以上経過している
-  - data/page_one_progress.jsonl に同一 slug の直近計測があり、
-    clicks_delta が ROLLBACK_CLICKS_DELTA_THRESHOLD 以下(悪化)
+    ROLLBACK_WINDOW_DAYS 日以上 ROLLBACK_MAX_AGE_DAYS 日以内
+  - data/page_one_progress.jsonl の最新週で、記事合計の clicks_delta が
+    ROLLBACK_CLICKS_DELTA_THRESHOLD 以下、かつ前週比 ROLLBACK_RELATIVE_DROP 以下
+  - 強化後に記事が編集されていない(手動改稿を古いバックアップで潰さない)
   - 同一 slug に対し過去にロールバック済みでない(二重差し戻し防止)
 
 ロールバックは「更新前バックアップの content で上書き」のみ(削除・改変ではなく
@@ -32,10 +33,15 @@ BACKUP_DIR = os.path.join(BASE_DIR, "backups", "body_enrich")
 ROLLBACK_LOG = os.path.join(BASE_DIR, "logs", "seo_rollback.jsonl")
 
 ROLLBACK_WINDOW_DAYS = 7
-# 前週比でこれ以下悪化していたら差し戻し。値 -3 は baseline(28日累積)比の重みで
-# 決めたもので、前週比では過剰に効く。第2週以降の実 delta 分布を見て決め直すまで
-# main() が dry-run を固定する。
-ROLLBACK_CLICKS_DELTA_THRESHOLD = -3
+# 強化からこれより古い記事は差し戻さない。上限が無いと、数か月前のバックアップで
+# その後の手動改稿ごと上書きしてしまう。
+ROLLBACK_MAX_AGE_DAYS = 28
+# 前週比の実 delta 分布(2026-07-17〜10-09 の13週・201行)で決めた閾値。
+#   p5=-1 / 中央値0 / 最小-8。-3以下は3行(1.5%)で、うち2行は週19〜28clkの主力記事の
+#   自然な揺れ(-15%〜-30%)だった。絶対値だけだと主力記事の揺れを拾うので、
+#   「記事合計で -5 以下」かつ「前週比 -30% 以下」の両方を満たしたときだけ差し戻す。
+ROLLBACK_CLICKS_DELTA_THRESHOLD = -5
+ROLLBACK_RELATIVE_DROP = -0.30
 
 
 def _load_jsonl(path):
@@ -73,6 +79,39 @@ def _latest_clicks_delta(progress_rows, slug):
     return matches[-1].get("clicks_delta")
 
 
+def _latest_week_totals(progress_rows, slug):
+    """同一 slug の最新週について (clicks_delta 合計, 前週 clicks 合計) を返す。
+
+    tracker はクエリ単位で行を書くので、1記事が同じ週に複数行を持つ。
+    1行だけ見ると、どのクエリを引いたかで判定が変わる。
+    """
+    matches = [r for r in progress_rows
+               if r.get("slug") == slug and r.get("delta_basis") == "prev_week"]
+    if not matches:
+        return None, None
+    week = max(r.get("week", "") for r in matches)
+    rows = [r for r in matches if r.get("week", "") == week]
+    delta = sum(r.get("clicks_delta") or 0 for r in rows)
+    prev = sum((r.get("clicks_abs") or 0) - (r.get("clicks_delta") or 0) for r in rows)
+    return delta, prev
+
+
+def _is_harmful(delta, prev):
+    if delta is None or delta > ROLLBACK_CLICKS_DELTA_THRESHOLD:
+        return False
+    return prev > 0 and delta / prev <= ROLLBACK_RELATIVE_DROP
+
+
+def _modified_after(post_id, enrich_ts, wp_request):
+    """強化後に記事が編集されていれば True。確認できないときも True(差し戻さない)。"""
+    resp, err = wp_request("GET", f"/posts/{post_id}?context=edit&_fields=modified_gmt")
+    if not resp or not resp.get("modified_gmt"):
+        print(f"[rollback] post {post_id} の更新日時を取得できない({err}) → 差し戻さない")
+        return True
+    modified = datetime.fromisoformat(resp["modified_gmt"]).replace(tzinfo=timezone.utc)
+    return modified > datetime.fromisoformat(enrich_ts) + timedelta(minutes=10)
+
+
 def _candidates():
     enrich_rows = [r for r in _load_jsonl(ENRICH_LOG) if r.get("result") == "updated"]
     progress_rows = _load_jsonl(PROGRESS)
@@ -89,10 +128,10 @@ def _candidates():
             t = datetime.fromisoformat(ts)
         except Exception:
             continue
-        if (now - t).days < ROLLBACK_WINDOW_DAYS:
+        if not ROLLBACK_WINDOW_DAYS <= (now - t).days <= ROLLBACK_MAX_AGE_DAYS:
             continue
-        delta = _latest_clicks_delta(progress_rows, slug)
-        if delta is None or delta > ROLLBACK_CLICKS_DELTA_THRESHOLD:
+        delta, prev = _latest_week_totals(progress_rows, slug)
+        if not _is_harmful(delta, prev):
             continue
         # 対応するバックアップファイルを探す(slugプレフィックスの最新1件)
         backup = r.get("backup")
@@ -135,6 +174,9 @@ def run(dry_run=False):
     done_count = 0
     for c in cands:
         print(f"[rollback] {c['slug']} clicks_delta={c['clicks_delta']} backup={c['backup']}")
+        if _modified_after(c["post_id"], c["enrich_ts"], wp_request):
+            print(f"[rollback] {c['slug']} は強化後に編集されている → 差し戻さない")
+            continue
         if dry_run:
             continue
         original = open(c["backup"], encoding="utf-8").read()
@@ -158,16 +200,10 @@ def run(dry_run=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    # 2026-10-11 に閾値を実分布から決めたので dry-run 固定は解除。旧フラグは互換のため受けるだけ。
     ap.add_argument("--i-have-set-the-threshold-from-observed-distribution",
-                    action="store_true", dest="threshold_set",
-                    help="第2週以降の delta 分布を観測し閾値を決めた後にのみ指定")
+                    action="store_true", dest="threshold_set", help=argparse.SUPPRESS)
     args = ap.parse_args()
-    if not args.threshold_set:
-        # 前週比への移行直後。閾値 -3 は baseline 比の重みで決めた値であり、
-        # 前週比では過剰に差し戻す。分布を観測するまで dry-run 固定。
-        print("[rollback] 移行期のため --dry-run 固定 "
-              "(第2週以降の分布を見て閾値を決めるまで本実行しない)", file=sys.stderr)
-        sys.exit(run(dry_run=True))
     sys.exit(run(dry_run=args.dry_run))
 
 
