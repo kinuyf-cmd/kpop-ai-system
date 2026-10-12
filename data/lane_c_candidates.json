@@ -1,69 +1,37 @@
 {
-  "generated_at": "2026-10-05T07:00:04.246477",
+  "generated_at": "2026-10-12T07:00:03.538711",
   "candidates": [
-    {
-      "query": "cortis メンバー",
-      "page": "/artists/cortis/",
-      "imp": 912,
-      "clicks": 1,
-      "ctr": 0.1,
-      "pos": 10.0
-    },
     {
       "query": "鉄槌教師 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 793,
-      "clicks": 3,
-      "ctr": 0.4,
-      "pos": 10.5
-    },
-    {
-      "query": "デーモンハンターズ キャラクター",
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 655,
-      "clicks": 28,
-      "ctr": 4.3,
-      "pos": 6.1
+      "imp": 1030,
+      "clicks": 2,
+      "ctr": 0.2,
+      "pos": 10.3
     },
     {
       "query": "txt 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 477,
-      "clicks": 8,
-      "ctr": 1.7,
-      "pos": 8.8
-    },
-    {
-      "query": "鉄槌教師 キャスト 相関図",
-      "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 251,
-      "clicks": 1,
-      "ctr": 0.4,
-      "pos": 6.3
+      "imp": 511,
+      "clicks": 9,
+      "ctr": 1.8,
+      "pos": 7.9
     },
     {
       "query": "ヒュニンカイ 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 219,
-      "clicks": 1,
-      "ctr": 0.5,
-      "pos": 9.9
-    },
-    {
-      "query": "キャッツアイ マノン 復帰",
-      "page": "/katseye-sofia-manon-fukki/",
-      "imp": 165,
-      "clicks": 2,
-      "ctr": 1.2,
-      "pos": 8.3
+      "imp": 332,
+      "clicks": 6,
+      "ctr": 1.8,
+      "pos": 8.1
     },
     {
       "query": "the love lab",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 160,
-      "clicks": 8,
-      "ctr": 5.0,
-      "pos": 9.2
+      "imp": 181,
+      "clicks": 15,
+      "ctr": 8.3,
+      "pos": 8.1
     }
   ]
 }

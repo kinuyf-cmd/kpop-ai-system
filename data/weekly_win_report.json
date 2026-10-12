@@ -1,151 +1,161 @@
 {
-  "generated_at": "2026-10-05T07:00:04.246477",
+  "generated_at": "2026-10-12T07:00:03.538711",
   "wins": [
     {
-      "page": "/txt-2026-global-citizen-festival-cancellation/",
-      "clicks_7d": 75,
+      "page": "/kpop-demon-hunters-movie-review/",
+      "clicks_7d": 44,
+      "clicks_prev": 16,
+      "imp": 631,
+      "pos": 5.3
+    },
+    {
+      "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
+      "clicks_7d": 21,
+      "clicks_prev": 0,
+      "imp": 239,
+      "pos": 5.6
+    },
+    {
+      "page": "/nmixx-hewon-health-issue-schedule-absence/",
+      "clicks_7d": 14,
+      "clicks_prev": 2,
+      "imp": 60,
+      "pos": 3.3
+    },
+    {
+      "page": "/aaa-2026-ranking-pyon-usok-1st/",
+      "clicks_7d": 11,
+      "clicks_prev": 0,
+      "imp": 69,
+      "pos": 5.8
+    },
+    {
+      "page": "/kim-jaejoong-china-fanmeeting-cancelled/",
+      "clicks_7d": 10,
+      "clicks_prev": 0,
+      "imp": 132,
+      "pos": 6.2
+    },
+    {
+      "page": "/twice-debut-11th-anniversary-event/",
+      "clicks_7d": 8,
+      "clicks_prev": 0,
+      "imp": 331,
+      "pos": 7.6
+    },
+    {
+      "page": "/swf3-rhtokyo-profile/",
+      "clicks_7d": 12,
+      "clicks_prev": 5,
+      "imp": 158,
+      "pos": 7.7
+    },
+    {
+      "page": "/txt-huening-kai-2026-4-20260409/",
+      "clicks_7d": 15,
       "clicks_prev": 9,
-      "imp": 531,
-      "pos": 4.5
+      "imp": 688,
+      "pos": 6.0
     },
     {
-      "page": "/kpop-idol-birthday-calendar/",
-      "clicks_7d": 24,
-      "clicks_prev": 13,
-      "imp": 1037,
-      "pos": 5.9
+      "page": "/mamamoo-concert-40songs-setlist/",
+      "clicks_7d": 11,
+      "clicks_prev": 5,
+      "imp": 102,
+      "pos": 7.3
     },
     {
-      "page": "/illits-wonhi-childhood-photos/",
+      "page": "/ateez-mingi-ost-doko-ni-iru/",
       "clicks_7d": 6,
-      "clicks_prev": 2,
-      "imp": 183,
-      "pos": 3.7
-    },
-    {
-      "page": "/seventeen-the8-smoking-club/",
-      "clicks_7d": 5,
-      "clicks_prev": 2,
-      "imp": 17,
-      "pos": 3.8
+      "clicks_prev": 0,
+      "imp": 120,
+      "pos": 5.2
     }
   ],
   "losses": [
     {
-      "page": "/netflix-renai-jikkenshitsu-guide/",
-      "clicks_7d": 16,
-      "clicks_prev": 50
-    },
-    {
-      "page": "/bts-iheartradio-festival-racism-comments/",
-      "clicks_7d": 3,
-      "clicks_prev": 34
-    },
-    {
-      "page": "/bts-relationship-map-2026/",
-      "clicks_7d": 12,
-      "clicks_prev": 33
-    },
-    {
-      "page": "/ive-gaul-2026-tima-absence/",
-      "clicks_7d": 8,
-      "clicks_prev": 24
-    },
-    {
-      "page": "/illit-ticket-sales-issues/",
-      "clicks_7d": 3,
-      "clicks_prev": 14
-    },
-    {
-      "page": "/swf3-bumsup-members-analysis/",
-      "clicks_7d": 1,
-      "clicks_prev": 11
-    },
-    {
-      "page": "/nmixx-hewon-health-issue-schedule-absence/",
+      "page": "/txt-2026-global-citizen-festival-cancellation/",
       "clicks_7d": 0,
-      "clicks_prev": 9
+      "clicks_prev": 75
     },
     {
-      "page": "/hongdae-late-night-food-map/",
-      "clicks_7d": 3,
+      "page": "/nct-jaehyun-twice-sana-kouryu/",
+      "clicks_7d": 2,
+      "clicks_prev": 38
+    },
+    {
+      "page": "/kuru-alba-oishii-baito-cast-guide/",
+      "clicks_7d": 10,
+      "clicks_prev": 37
+    },
+    {
+      "page": "/about/",
+      "clicks_7d": 5,
+      "clicks_prev": 15
+    },
+    {
+      "page": "/koi-wa-ame-moyou-cast-guide/",
+      "clicks_7d": 4,
       "clicks_prev": 11
     },
     {
-      "page": "/mamamoo-concert-40songs-setlist/",
-      "clicks_7d": 3,
+      "page": "/seventeen-the8-smoking-club/",
+      "clicks_7d": 1,
+      "clicks_prev": 8
+    },
+    {
+      "page": "/tettsui-kyoshi-dub-episodes/",
+      "clicks_7d": 5,
+      "clicks_prev": 11
+    },
+    {
+      "page": "/illits-wonhi-childhood-photos/",
+      "clicks_7d": 1,
+      "clicks_prev": 7
+    },
+    {
+      "page": "/tuide-members-profile-debut-guide/",
+      "clicks_7d": 5,
       "clicks_prev": 10
     },
     {
-      "page": "/kickflip-kikuduns-official-character/",
+      "page": "/bts-iheartradio-festival-racism-comments/",
       "clicks_7d": 0,
-      "clicks_prev": 6
+      "clicks_prev": 5
     }
   ],
   "lane_c_candidates": [
     {
-      "query": "cortis メンバー",
-      "page": "/artists/cortis/",
-      "imp": 912,
-      "clicks": 1,
-      "ctr": 0.1,
-      "pos": 10.0
-    },
-    {
       "query": "鉄槌教師 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 793,
-      "clicks": 3,
-      "ctr": 0.4,
-      "pos": 10.5
-    },
-    {
-      "query": "デーモンハンターズ キャラクター",
-      "page": "/kpop-demon-hunters-cast-characters/",
-      "imp": 655,
-      "clicks": 28,
-      "ctr": 4.3,
-      "pos": 6.1
+      "imp": 1030,
+      "clicks": 2,
+      "ctr": 0.2,
+      "pos": 10.3
     },
     {
       "query": "txt 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 477,
-      "clicks": 8,
-      "ctr": 1.7,
-      "pos": 8.8
-    },
-    {
-      "query": "鉄槌教師 キャスト 相関図",
-      "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 251,
-      "clicks": 1,
-      "ctr": 0.4,
-      "pos": 6.3
+      "imp": 511,
+      "clicks": 9,
+      "ctr": 1.8,
+      "pos": 7.9
     },
     {
       "query": "ヒュニンカイ 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 219,
-      "clicks": 1,
-      "ctr": 0.5,
-      "pos": 9.9
-    },
-    {
-      "query": "キャッツアイ マノン 復帰",
-      "page": "/katseye-sofia-manon-fukki/",
-      "imp": 165,
-      "clicks": 2,
-      "ctr": 1.2,
-      "pos": 8.3
+      "imp": 332,
+      "clicks": 6,
+      "ctr": 1.8,
+      "pos": 8.1
     },
     {
       "query": "the love lab",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 160,
-      "clicks": 8,
-      "ctr": 5.0,
-      "pos": 9.2
+      "imp": 181,
+      "clicks": 15,
+      "ctr": 8.3,
+      "pos": 8.1
     }
   ]
 }

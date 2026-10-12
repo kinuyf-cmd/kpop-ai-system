@@ -1,28 +1,28 @@
 {
   "window": [
-    "2026-10-02",
-    "2026-10-08"
+    "2026-10-03",
+    "2026-10-09"
   ],
-  "generated_at": "2026-10-11",
+  "generated_at": "2026-10-12",
   "rows": [
     {
       "query": "uncore 所属アーティスト",
-      "imp": 105,
+      "imp": 106,
       "prev_imp": 0,
-      "delta": 105,
+      "delta": 106,
       "clicks": 0,
       "ctr_pct": 0,
-      "position": 9.0,
+      "position": 9,
       "ratio": null
     },
     {
       "query": "twice ファンパーティー",
-      "imp": 83,
+      "imp": 96,
       "prev_imp": 0,
-      "delta": 83,
+      "delta": 96,
       "clicks": 2,
-      "ctr_pct": 2.41,
-      "position": 7.7,
+      "ctr_pct": 2.08,
+      "position": 8.1,
       "ratio": null
     }
   ]

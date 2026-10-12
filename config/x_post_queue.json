@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-11 21:39",
+  "updated": "2026-10-12 21:17",
   "count": 4,
   "queue": [
     {
-      "title": "イェソン、正規2集リリース後の近況公開",
-      "url": "https://www.kpopjournal.tokyo/yesung-regular-album-update/",
-      "post_id": 23097,
+      "title": "キム・ジェファン、タイトル曲で秋の感性表現",
+      "url": "https://www.kpopjournal.tokyo/kim-jae-hwan-autumn-sensation/",
+      "post_id": 23183,
       "genre": "breaking",
-      "artist": "예성",
+      "artist": "김재환",
       "priority": "high",
-      "queued_at": "2026-10-11T21:39:58.273881"
+      "queued_at": "2026-10-12T19:38:11.368890"
     },
     {
-      "title": "ユ・ジェソク、デビュー35年目で当日キャンセル理由公開",
-      "url": "https://www.kpopjournal.tokyo/yu-jaesuk-debut-35th-cancellation-reason/",
-      "post_id": 23093,
-      "genre": "breaking",
-      "artist": "유재석",
-      "priority": "high",
-      "queued_at": "2026-10-11T21:38:41.073396"
-    },
-    {
-      "title": "fromis_9イ・チェヨン、オールブラックで近況報告",
-      "url": "https://www.kpopjournal.tokyo/fromis9-lee-chaeyoung-all-black-update/",
-      "post_id": 23089,
+      "title": "ノ・ジソン「オーディション1位も名誉なし",
+      "url": "https://www.kpopjournal.tokyo/?p=23178",
+      "post_id": 23178,
       "genre": "breaking",
       "artist": "프로미스나인",
       "priority": "high",
-      "queued_at": "2026-10-11T21:37:24.612027"
+      "queued_at": "2026-10-12T19:36:08.853577"
     },
     {
-      "title": "ユン・ヨンギョン、夫ナム・チャンヒが妊娠発表",
-      "url": "https://www.kpopjournal.tokyo/yun-youngkyung-nam-changhi-pregnancy-announcement/",
-      "post_id": 23085,
+      "title": "BLACKPINK LISA「スキャンダル」BTS関連論争再燃",
+      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-scan-dal-bts-ronsou/",
+      "post_id": 23174,
       "genre": "breaking",
-      "artist": "IU",
+      "artist": "BLACKPINK",
       "priority": "high",
-      "queued_at": "2026-10-11T21:35:54.190885"
+      "queued_at": "2026-10-12T19:30:56.138626"
+    },
+    {
+      "title": "ZEROBASEONEソン・ハンビン、ソロのロールモデル明かす",
+      "url": "https://www.kpopjournal.tokyo/zerobaseone-song-hanbin-solo-role-model/",
+      "post_id": 23168,
+      "genre": "breaking",
+      "artist": "NCT",
+      "priority": "high",
+      "queued_at": "2026-10-12T19:00:56.463803"
     }
   ]
 }

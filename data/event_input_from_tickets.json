@@ -119,16 +119,6 @@
    "start_date": "2026-10-18",
    "venue": "スタァライト劇場",
    "_source_id": "pia"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "BOYNEXTDOOR",
-   "title": "BOYNEXTDOOR",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=737874",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-10-11",
-   "venue": "LaLa arena TOKYO-BAY",
-   "_source_id": "ltike"
   }
  ]
 }
