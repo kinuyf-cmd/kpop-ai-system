@@ -48,6 +48,19 @@ def append_lessons(post_id: int, title: str, result: dict) -> None:
             }, ensure_ascii=False) + '\n')
 
 
+def _is_noise(issue: str) -> bool:
+    """誤検知と判明している型の指摘か(プロンプトへ再注入しない)。
+
+    2026-10-13: 誤検知が lessons 経由で「再検出せよ」と毎回載り自己強化していた。
+    判定は factcheck_v2.is_lesson_noise に一本化(循環 import を避けるため遅延 import)。
+    """
+    try:
+        from lib.factcheck_v2 import is_lesson_noise
+        return is_lesson_noise(issue)
+    except Exception:
+        return False
+
+
 def _neg_ts(ts: str) -> float:
     """ts を「新しいほど小さい」数値に変換 (昇順ソートで新着優先にするため)。
 
@@ -87,7 +100,7 @@ def get_recent_lessons(days: int = 30, max_count: int = MAX_LESSONS_IN_PROMPT) -
                 try:
                     d = json.loads(line)
                     ts = datetime.fromisoformat(d.get('ts', ''))
-                    if cutoff <= ts < today_start:
+                    if cutoff <= ts < today_start and not _is_noise(d.get('issue', '')):
                         lessons.append(d)
                 except (json.JSONDecodeError, ValueError):
                     continue

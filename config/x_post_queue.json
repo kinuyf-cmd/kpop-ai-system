@@ -1,42 +1,33 @@
 {
-  "updated": "2026-10-12 21:17",
-  "count": 4,
+  "updated": "2026-10-13 22:04",
+  "count": 3,
   "queue": [
     {
-      "title": "キム・ジェファン、タイトル曲で秋の感性表現",
-      "url": "https://www.kpopjournal.tokyo/kim-jae-hwan-autumn-sensation/",
-      "post_id": 23183,
+      "title": "パク・キリャン、蚕室球場で華やかなパフォーマンス",
+      "url": "https://www.kpopjournal.tokyo/?p=23299",
+      "post_id": 23299,
       "genre": "breaking",
-      "artist": "김재환",
+      "artist": "보아",
       "priority": "high",
-      "queued_at": "2026-10-12T19:38:11.368890"
+      "queued_at": "2026-10-13T22:02:40.951032"
     },
     {
-      "title": "ノ・ジソン「オーディション1位も名誉なし",
-      "url": "https://www.kpopjournal.tokyo/?p=23178",
-      "post_id": 23178,
+      "title": "ATEEZウヨン、コーチェラ出演秘訣はサンの胸ダンス",
+      "url": "https://www.kpopjournal.tokyo/ateez-wooyoung-coachella-sans-dance/",
+      "post_id": 23295,
       "genre": "breaking",
-      "artist": "프로미스나인",
+      "artist": "에이티즈",
       "priority": "high",
-      "queued_at": "2026-10-12T19:36:08.853577"
+      "queued_at": "2026-10-13T22:01:06.091948"
     },
     {
-      "title": "BLACKPINK LISA「スキャンダル」BTS関連論争再燃",
-      "url": "https://www.kpopjournal.tokyo/blackpink-lisa-scan-dal-bts-ronsou/",
-      "post_id": 23174,
+      "title": "BTS、南米公演ライブビューイングで実施",
+      "url": "https://www.kpopjournal.tokyo/bts-nanbei-kouen-live-viewing/",
+      "post_id": 23290,
       "genre": "breaking",
-      "artist": "BLACKPINK",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-10-12T19:30:56.138626"
-    },
-    {
-      "title": "ZEROBASEONEソン・ハンビン、ソロのロールモデル明かす",
-      "url": "https://www.kpopjournal.tokyo/zerobaseone-song-hanbin-solo-role-model/",
-      "post_id": 23168,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-10-12T19:00:56.463803"
+      "queued_at": "2026-10-13T21:33:39.025520"
     }
   ]
 }

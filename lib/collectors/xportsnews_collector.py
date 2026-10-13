@@ -2,7 +2,7 @@
 """Xports News (xportsnews.com) scraper"""
 import sys, re
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
-from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log
+from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log, clean_title
 from lib.kpop_topic_filter import classify_non_kpop_topic
 
 
@@ -21,7 +21,7 @@ def collect():
     seen = set()
     for pat in patterns:
         for m in re.finditer(pat, html, re.DOTALL):
-            path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
+            path, title = m.group(1), clean_title(m.group(2))
             url = path if path.startswith('http') else 'https://www.xportsnews.com/' + path.lstrip('/')
             if url in seen or len(title) < 5:
                 continue

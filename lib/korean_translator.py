@@ -32,19 +32,84 @@ def _load_proper_nouns():
     return pairs
 
 
-def apply_proper_noun_dict(text: str) -> tuple[str, int]:
-    """前置換: 固有名詞辞書で単純な substring 置換。
+# 一般語としても普通に使われる辞書キー。翻訳の前置換では機械的に置き換えず、
+# 文脈で訳し分けるよう翻訳モデルへ注記する(context_dependent_hints)。
+# 実例(2026-10-13): 「여자친구는 있지…」→「GFRIENDはITZY…」、「화사한 미소」→「HWASAした微笑み」。
+CONTEXT_DEPENDENT_KEYS = frozenset({
+    '있지', '화사', '여자친구', '여친', '아이들', '승리', '태양', '대성', '다이아',
+    '아홉', '위너', '아이콘', '오마이', '시카고', '소시',
+    '가을', '유리', '수영', '지수', '유아', '백호', '레이', '리즈', '미미',
+    '하니', '다라', '이서', '공유', '엑스', '큐브', '안테나',
+})
+_NAME_SECTIONS = ('groups', 'members', 'labels', 'personalities')
+_HANGUL_RE = re.compile(r'[\uac00-\ud7af]')
+# 名詞の直後に付きうる助詞・接尾辞(これ以外のハングルが続けば別の語とみなす)
+_NOUN_PARTICLES = '가이는은를을의와과도에로만랑측들씨님'
+
+
+@functools.lru_cache(maxsize=1)
+def _load_name_keys() -> frozenset:
+    """人名・グループ名・事務所名のキー集合(語の境界を見て置換する対象)。"""
+    try:
+        d = json.load(open(PROPER_NOUNS_PATH, encoding='utf-8'))
+    except Exception:
+        return frozenset()
+    keys = set()
+    for section in _NAME_SECTIONS:
+        keys.update(k for k in (d.get(section) or {}) if k and not k.startswith('_'))
+    return frozenset(keys)
+
+
+def _name_key_pattern(ko: str) -> 're.Pattern':
+    """名前キーの置換パターン。別の語の一部(한지민 の 지민 等)には当てない。"""
+    pat = r'(?<![\uac00-\ud7af])' + re.escape(ko)
+    if len(ko) <= 2:
+        pat += r'(?![\uac00-\ud7af])|' + pat + r'(?=[' + _NOUN_PARTICLES + r'])'
+    return re.compile(pat)
+
+
+def context_dependent_hints(text: str) -> str:
+    """原文に含まれる文脈依存キーを、翻訳モデル向けの注記文字列にして返す(無ければ空)。"""
+    if not text:
+        return ''
+    d = dict(_load_proper_nouns())
+    # 別の語の一部として出ているだけ(엑스포츠뉴스 の 엑스 等)なら注記しない
+    def _standalone(k):
+        return re.search(r'(?<![\uac00-\ud7af])' + re.escape(k)
+                         + r'(?:(?![\uac00-\ud7af])|(?=[' + _NOUN_PARTICLES + r']))', text)
+    hits = [f'{k}→{d[k]}' for k in sorted(CONTEXT_DEPENDENT_KEYS) if k in d and _standalone(k)]
+    if not hits:
+        return ''
+    return ('次の語は一般の言葉としても使われる。文脈上あきらかにグループ名・人名を指す場合だけ'
+            '右の表記にし、それ以外は普通の言葉として訳す: ' + ' / '.join(hits))
+
+
+def apply_proper_noun_dict(text: str, context_aware: bool = False) -> tuple[str, int]:
+    """前置換: 固有名詞辞書で置換。
+
+    context_aware=True (翻訳の前置換用):
+      - 一般語と紛れるキー(CONTEXT_DEPENDENT_KEYS)は置換しない
+      - 人名・グループ名は語の境界を見る(直前がハングルなら別の語)
+    context_aware=False: 従来どおりの単純な substring 置換(名寄せ・検索語の正規化用)。
 
     Returns: (置換済テキスト, 置換回数)
     """
     if not text:
         return text, 0
     pairs = _load_proper_nouns()
+    name_keys = _load_name_keys() if context_aware else frozenset()
     count = 0
     for ko, ja in pairs:
-        if ko in text:
-            count += text.count(ko)
-            text = text.replace(ko, ja)
+        if ko not in text:
+            continue
+        if context_aware and ko in CONTEXT_DEPENDENT_KEYS:
+            continue
+        if context_aware and ko in name_keys and _HANGUL_RE.search(ko):
+            text, n = _name_key_pattern(ko).subn(lambda _m, _ja=ja: _ja, text)
+            count += n
+            continue
+        count += text.count(ko)
+        text = text.replace(ko, ja)
     # 重複併記の除去: 韓国語側を置換した結果 "BTS (BTS)" のような冗長表記が出るため整理
     text = re.sub(r'(\S+?)\s*[（(]\s*\1\s*[)）]', r'\1', text)
     return text, count
@@ -136,7 +201,8 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
         return {'success': False, 'translated': text, 'reason': f'1日上限{DAILY_LIMIT}到達'}
 
     # 固有名詞を決定論的に前置換 (アーティスト名/メンバー名/事務所名/番組名/共通用語)
-    text, _replaced_count = apply_proper_noun_dict(text)
+    _ctx_hints = context_dependent_hints(text)
+    text, _replaced_count = apply_proper_noun_dict(text, context_aware=True)
 
     # Lv2: agent_lessonsから最新教訓を自動注入
     try:
@@ -185,7 +251,9 @@ def translate_ko_to_ja(text, context='K-POP entertainment news'):
         'model': 'gpt-4o-mini',
         'messages': [
             {'role': 'system', 'content': system},
-            {'role': 'user', 'content': f"Context: {context}\n\n韓国語原文:\n{text[:3000]}\n\n日本語訳:"}
+            {'role': 'user', 'content': (f"Context: {context}\n\n"
+                                         + (f"注記: {_ctx_hints}\n\n" if _ctx_hints else "")
+                                         + f"韓国語原文:\n{text[:3000]}\n\n日本語訳:")}
         ],
         'temperature': 0.3,
         'max_tokens': 2000,

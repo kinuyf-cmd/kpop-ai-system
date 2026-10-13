@@ -219,6 +219,34 @@ GENERIC_EVENT_KW = {
 }
 
 
+# 名詞の直後に付きうる助詞・接尾辞(これ以外のハングルが続けば別の語とみなす)
+_NOUN_PARTICLES = set('가이는은를을의와과도에로만랑측들씨님')
+# 一般語としても頻出する名前。名前として読めない文脈を個別に弾く
+_AMBIGUOUS_KW_NEG = {
+    '있지': (r'', r'(?:만|요|\s*(?:않|못|말))'),          # 〜있지만 / 있지 않다
+    '보아': (r'(?:로|를|을|미뤄|미루어)\s?$', r'(?:하니|서|야|라|요|주)'),  # 〜로 보아 / 보아하니
+}
+
+
+def _hangul_kw_hit_ok(text, start, end, kw, strict_after):
+    """ハングルKWの1出現が「その語そのもの」として成立しているか。"""
+    import re as _re
+    if start > 0 and _re.match(r'[\uac00-\ud7af]', text[start - 1]):
+        return False
+    if strict_after and end < len(text):
+        nxt = text[end]
+        if _re.match(r'[\uac00-\ud7af]', nxt) and nxt not in _NOUN_PARTICLES:
+            return False
+    neg = _AMBIGUOUS_KW_NEG.get(kw)
+    if neg:
+        before_re, after_re = neg
+        if before_re and _re.search(before_re, text[:start]):
+            return False
+        if after_re and _re.match(after_re, text[end:]):
+            return False
+    return True
+
+
 def is_kpop_related(text):
     """K-POP関連シグナルかつアーティスト名を抽出。
     返却順序保証: 固有アーティスト名 → ジェネリック語 → 事務所名
@@ -246,11 +274,18 @@ def is_kpop_related(text):
             # 直後はハングル許容 (助詞만/는/이/가/의/에 等を弾かないため)
             if kw_lower not in _matched_text:
                 continue
-            m = _re.search(_re.escape(kw_lower), _matched_text)
-            if m and m.start() > 0:
-                before = _matched_text[m.start()-1]
-                if _re.match(r'[\uac00-\ud7af]', before):
+            # 2026-10-13: 2音節以下の固有名は直後もハングル(助詞以外)なら別語として却下
+            # (実例: 화사한→HWASA / 카라스코→KARA / 우즈베크→WOODZ / 제시카→Jessi)。
+            # 一般語(컴백한 等)は従来どおり直後を問わない。最初の出現だけでなく全出現を見る。
+            strict_after = len(kw) <= 2 and kw not in GENERIC_EVENT_KW
+            m = None
+            for cand in _re.finditer(_re.escape(kw_lower), _matched_text):
+                if not _hangul_kw_hit_ok(_matched_text, cand.start(), cand.end(), kw, strict_after):
                     continue
+                m = cand
+                break
+            if m is None:
+                continue
         else:
             # ASCII KW: ASCII単語境界必須 (\bがCJK文字を語と認識する問題回避)
             # BTS新曲 / (G)I-DLE Tour なども正しくマッチ

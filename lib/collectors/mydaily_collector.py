@@ -2,7 +2,7 @@
 """MyDaily (music + entertainment) scraper"""
 import sys, re
 sys.path.insert(0, '/home/aiuser/kpop-ai-system')
-from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log
+from lib.collectors.korean_base import fetch_html, is_kpop_related, is_urgent, save_signals, make_signal, log, clean_title
 
 SECTIONS = [
     ('mydaily_ent', 'https://www.mydaily.co.kr/news/newslist.html?cate=E'),
@@ -26,7 +26,7 @@ def collect():
         count = 0
         for pat in patterns:
             for m in re.finditer(pat, html, re.DOTALL):
-                path, title = m.group(1), re.sub(r'<[^>]+>', '', m.group(2)).strip()
+                path, title = m.group(1), clean_title(m.group(2))
                 full_url = path if path.startswith('http') else 'https://www.mydaily.co.kr' + path
                 if full_url in seen or len(title) < 5:
                     continue

@@ -1,28 +1,58 @@
 {
   "window": [
-    "2026-10-03",
-    "2026-10-09"
+    "2026-10-04",
+    "2026-10-10"
   ],
-  "generated_at": "2026-10-12",
+  "generated_at": "2026-10-13",
   "rows": [
     {
-      "query": "uncore 所属アーティスト",
-      "imp": 106,
+      "query": "ハートにチャージして 吹き替え",
+      "imp": 137,
       "prev_imp": 0,
-      "delta": 106,
+      "delta": 137,
+      "clicks": 18,
+      "ctr_pct": 13.14,
+      "position": 5.0,
+      "ratio": null
+    },
+    {
+      "query": "ハンロロ txt",
+      "imp": 110,
+      "prev_imp": 0,
+      "delta": 110,
       "clicks": 0,
       "ctr_pct": 0,
-      "position": 9,
+      "position": 8.4,
+      "ratio": null
+    },
+    {
+      "query": "uncore 所属アーティスト",
+      "imp": 108,
+      "prev_imp": 0,
+      "delta": 108,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 9.0,
       "ratio": null
     },
     {
       "query": "twice ファンパーティー",
-      "imp": 96,
+      "imp": 97,
       "prev_imp": 0,
-      "delta": 96,
+      "delta": 97,
       "clicks": 2,
-      "ctr_pct": 2.08,
+      "ctr_pct": 2.06,
       "position": 8.1,
+      "ratio": null
+    },
+    {
+      "query": "ハンロロ スビン",
+      "imp": 88,
+      "prev_imp": 0,
+      "delta": 88,
+      "clicks": 6,
+      "ctr_pct": 6.82,
+      "position": 5.4,
       "ratio": null
     }
   ]

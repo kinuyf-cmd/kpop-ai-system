@@ -28,7 +28,8 @@ from dotenv import load_dotenv
 load_dotenv('/home/aiuser/kpop-ai-system/.env')
 
 # 既存の固有名詞辞書とutil再利用
-from lib.korean_translator import apply_proper_noun_dict, _count_today, _update_threshold
+from lib.korean_translator import (apply_proper_noun_dict, context_dependent_hints,
+                                   _count_today, _update_threshold)
 
 LOG = '/home/aiuser/kpop-ai-system/logs/translation_v2.jsonl'
 DAILY_LIMIT = 500
@@ -118,11 +119,14 @@ def translate_ko_to_ja_v2(text: str, context: str = 'K-POP entertainment news') 
         return {'success': False, 'translated': text, 'reason': f'1日上限{DAILY_LIMIT}到達'}
 
     # 固有名詞を決定論的に前置換 (既存ロジック再利用)
-    text_pre, replaced_count = apply_proper_noun_dict(text)
+    # 一般語と紛れる語(있지/화사 等)は置換せず、文脈で訳し分けるよう注記する
+    _hints = context_dependent_hints(text)
+    text_pre, replaced_count = apply_proper_noun_dict(text, context_aware=True)
 
     user_prompt = (
         f"Context: {context}\n\n"
-        f"韓国語原文 (固有名詞は事前に日本語表記済み):\n"
+        + (f"注記: {_hints}\n\n" if _hints else "")
+        + f"韓国語原文 (固有名詞は事前に日本語表記済み):\n"
         f"{text_pre[:3000]}\n\n"
         f"上記をJSON schemaに従って自然な日本語に翻訳してください。"
     )

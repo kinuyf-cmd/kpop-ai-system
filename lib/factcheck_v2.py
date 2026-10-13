@@ -22,7 +22,7 @@ import json
 import re
 import hashlib
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import anthropic
@@ -139,10 +139,81 @@ def _is_romaji_name_noise(text: str) -> bool:
     return bool(re.search(r'[ァ-ヶー]{2,}・[ァ-ヶー]{2,}', t))
 
 
+# ── 「知識基盤に載っていない=架空」誤検知 (2026-10-13) ─────────────────
+# 覚え書き/確定データは主要グループしか持たない。そこに無いことだけを根拠に
+# 「実在が確認できない・架空の可能性」と critical を出し、実在する新人グループの
+# 記事を止めていた。実例(いずれも実在): MODYSSEY(2026 MAMA新人賞候補) /
+# RESCENE(リセンヌ) / KickFlip(キックフリップ) / POW。
+# 条件は厳密に: 「知識基盤に無い」と「実在/架空」の両方を述べている指摘だけ。
+# 「基礎情報と矛盾する」「別人物」等、中身のある指摘には一致しない。
+_KB_ABSENCE_RE = re.compile(
+    r'(?:知識基盤|覚え書き|確定データ|基礎情報)[^。]{0,60}?'
+    r'(?:存在せず|存在しない|該当せず|確認できず|確認できない)')
+_KB_ABSENCE_CLAIM_RE = re.compile(r'実在|架空')
+
+# BTS は2025年6月に全員が除隊済み。「兵役で活動休止中」を前提にした指摘は
+# 知識が古いだけの誤検知(実例: 2026年のワールドツアー記事を「兵役休止期間と矛盾」で停止)。
+_BTS_STALE_MILITARY_RE = re.compile(
+    r'BTS[^。]{0,60}(?:兵役|軍服務)[^。]{0,40}(?:休止|中であり|のため)')
+
+# 校閲対象は韓国エンタメ全般(owner明示: Kドラマ/K映画も対象)。「K-POPと無関係」は
+# 事実誤りではないので lessons に入れない(結果からは落とさない: 韓国と無関係な
+# 記事を止める働きは残す)。
+_SCOPE_COMPLAINT_RE = re.compile(r'K-?POPと(?:完全に|全く)?無関係|K-?pop専門メディアの校閲対象', re.I)
+
+
+# 速報の生成プロンプトは記事末尾に「今後の注目ポイント」3点の箇条書きを必ず付ける
+# (pipeline/breaking_news_detector.py)。これを「構成案・取材メモの残存」とする指摘は
+# 仕様どおりの記事を止める誤検知(2026-10-11以降 1日7〜9記事で発生し lessons で自己強化)。
+_OUTLOOK_SECTION_RE = re.compile(r'今後の注目ポイント')
+_OUTLOOK_MEMO_CLAIM_RE = re.compile(r'構成案|取材メモ|編集メモ|編集未完成|未完成')
+
+
+# 知識基盤に載っているグループの「メンバー名が合わない」は中身のある指摘なので残す
+# (実例: SEVENTEEN のメンバーに「Woongsan」は居ない)。
+_KB_MEMBER_MISMATCH_RE = re.compile(r'のメンバーに|メンバーは存在しない|存在しないメンバー')
+
+
+def _is_kb_absence_noise(text: str) -> bool:
+    """知識基盤に載っていないことだけを根拠に実在性を否定する指摘か(=誤検知)。"""
+    t = str(text)
+    if _KB_MEMBER_MISMATCH_RE.search(t):
+        return False
+    return bool(_KB_ABSENCE_RE.search(t) and _KB_ABSENCE_CLAIM_RE.search(t))
+
+
+def _is_stale_knowledge_noise(text: str) -> bool:
+    """古い知識(BTS兵役中)を前提にした指摘か(=誤検知)。
+
+    「除隊」に触れている指摘は現況を踏まえた別の論点なので残す。
+    """
+    t = str(text)
+    return bool(_BTS_STALE_MILITARY_RE.search(t)) and '除隊' not in t
+
+
+def _is_outlook_section_noise(text: str) -> bool:
+    """定型の「今後の注目ポイント」節を編集メモの残存とみなす指摘か(=誤検知)。"""
+    t = str(text)
+    return bool(_OUTLOOK_SECTION_RE.search(t) and _OUTLOOK_MEMO_CLAIM_RE.search(t))
+
+
+def is_lesson_noise(text: str) -> bool:
+    """lessons(過去の検出事例)として再注入してはいけない指摘か。
+
+    誤検知が lessons に入ると「類似パターンを再検出せよ」と毎回プロンプトに載り、
+    同じ誤検知を自己強化する(実例: 「リセンヌは架空…過去の検出事例でも同様」)。
+    """
+    t = str(text)
+    return (_is_kb_absence_noise(t) or _is_stale_knowledge_noise(t)
+            or _is_outlook_section_noise(t)
+            or bool(_SCOPE_COMPLAINT_RE.search(t)))
+
+
 def _strip_cta_noise(result: dict) -> dict:
     """result内のcritical/high/mediumからCTA注入起因のnoiseを除去して返す。
 
     2026-09-10: ローマ字根拠の表記ゆれ誤検知も同時に除去する。
+    2026-10-13: 知識基盤に無い=架空 / BTS兵役中 の誤検知も除去する。
     """
     if not isinstance(result, dict):
         return result
@@ -152,11 +223,14 @@ def _strip_cta_noise(result: dict) -> dict:
         if items:
             out[level] = [x for x in items
                           if not _CTA_NOISE_RE.search(str(x))
-                          and not _is_romaji_name_noise(x)]
+                          and not _is_romaji_name_noise(x)
+                          and not _is_kb_absence_noise(x)
+                          and not _is_stale_knowledge_noise(x)
+                          and not _is_outlook_section_noise(x)]
     return out
 
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
-KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
+KPOP_FACTCHECK_PREFIX = """あなたは韓国エンタメ(K-POP・韓国ドラマ・韓国映画・韓国の俳優/タレント)を扱うメディアの校閲AIです。以下のK-pop知識基盤と判定ルールに従って記事を校閲してください。
 
 ## 主要K-popグループ覚え書き
 - BLACKPINK (YG, 2016年デビュー, 4人, 女性): Jisoo/Jennie/Rosé/Lisa
@@ -206,6 +280,18 @@ KPOP_FACTCHECK_PREFIX = """あなたはK-POP専門メディアの校閲AIです�
   medium で指摘する(実例: 『鉄槌教師』でナ・ファジンを特戦司出身と書いた記事は
   オリコンの記載通りで正しかったが、HanCinema を根拠に critical にして公開が止まった)
 - カムバック/ファンミ/アンコール等のK-POPファン用語
+- **知識基盤(覚え書き・確定データ)に載っていないことを理由にした「実在が確認できない」「架空の可能性」**。
+  知識基盤は主要グループだけの抜粋で、新人グループは毎月デビューする。載っていないのは普通のこと。
+  実例(いずれも実在するのに critical にして公開を止めた): MODYSSEY / RESCENE(リセンヌ) / KickFlip(キックフリップ) / POW。
+  グループや人物を「存在しない」と指摘してよいのは、web_search で別の名前・別のグループだと確認できた場合のみ
+- **メンバー名のカタカナ表記**。「ジョンヨン」は TWICE の Jeongyeon の正しい日本語表記。
+  覚え書きがローマ字だからといって、カタカナ表記を「存在しないメンバー」としてはならない
+- **韓国ドラマ・韓国映画・韓国の俳優/タレント/バラエティ番組の記事を「K-POPと無関係」と指摘すること**。
+  これらは当メディアの対象。指摘するのは韓国エンタメと関係がない記事(ハリウッド映画、スポーツ選手のみの記事等)だけ
+- **BTSを「兵役で活動休止中」とする前提**。BTSは2025年6月に全員が除隊し、2026年は7人で活動している
+  (アルバム『ARIRANG』、ワールドツアー)。兵役を理由に2026年の活動を矛盾としてはならない
+- **「今日の日付」と記事内の日付が1日ずれていること**。時差や公開予約によるもので矛盾ではない
+- **記事末尾の「今後の注目ポイント」の箇条書き**。当メディアの速報記事の定型セクションであり、構成案・取材メモ・編集未完成の残存ではない(箇条書きが短い名詞句や問いかけだけでも問題にしない)
 - 「TWICE・ITZY・Stray Kids」のようなグループ列挙は「TWICEはX人」と主張していないので、メンバー数誤りとして報告してはならない
 - 「JYP所属のTWICE」のような所属関係の記述は事実関係でメンバー数とは無関係
 - slug/URL/メタ情報は本文の事実とは無関係
@@ -434,7 +520,9 @@ def proofread_post_v2(post: dict, use_web_search: bool = True) -> dict:
     except ImportError:
         pass
 
-    today = datetime.now(timezone.utc).strftime('%Y年%m月%d日')
+    # 2026-10-13: UTC で渡していたため、JST 0〜9時の記事は「今日」が前日になり、
+    # 「記事の日付が未来」という誤 critical が出ていた。読者と同じ JST で渡す。
+    today = datetime.now(timezone(timedelta(hours=9))).strftime('%Y年%m月%d日')
 
     # 2026-05-12 (Phase 2): lessons は system cached block 側に移動 (cache_read 0.1x で再利用)。
     # 旧実装は user_prompt 末尾に注入していたため毎回 input token として課金されていた。
