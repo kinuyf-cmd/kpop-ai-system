@@ -1301,6 +1301,27 @@ if ( file_exists( $kpop_sidebar_sc ) ) {
 	require_once $kpop_sidebar_sc;
 }
 
+/* --- [kpop_birthday_today] 誕生日カレンダー記事の本文用(2026-10-14) ---
+ * 「今日誕生日のkpopアイドル」系の検索(約270表示/90日・平均8位)が来ているのに、
+ * 記事本文は月別一覧だけで「今日」の答えが無くクリック0だった。サイドバーと同じ
+ * データ(idol_artist の members_N_member_birthday)で、表示した日の今日・明日を本文に出す。 */
+function kpop_birthday_today_shortcode() {
+	if ( ! function_exists( 'kpop_birthday_members_for' ) || ! function_exists( 'kpop_birthday_render_list' ) ) {
+		return '';
+	}
+	$today_ts = current_time( 'timestamp' );
+	$tmrw_ts  = $today_ts + DAY_IN_SECONDS;
+	ob_start();
+	echo '<div class="kpop-birthday-today-inline">';
+	echo '<h3>' . esc_html( date_i18n( 'n月j日', $today_ts ) ) . '(今日)が誕生日のK-POPアイドル</h3>';
+	kpop_birthday_render_list( kpop_birthday_members_for( $today_ts ), '今日が誕生日のメンバーは、当サイトのアイドルWiki掲載グループにはいません。' );
+	echo '<h3>' . esc_html( date_i18n( 'n月j日', $tmrw_ts ) ) . '(明日)が誕生日のK-POPアイドル</h3>';
+	kpop_birthday_render_list( kpop_birthday_members_for( $tmrw_ts ), '明日が誕生日のメンバーは、当サイトのアイドルWiki掲載グループにはいません。' );
+	echo '</div>';
+	return ob_get_clean();
+}
+add_shortcode( 'kpop_birthday_today', 'kpop_birthday_today_shortcode' );
+
 /* --- ライター紹介ページ(writer CPT・JSON 連動)を読み込む ---
  * config/x_writer_personas.json を真実のソースに /writers/ を生成。
  * 詳細は inc/writer-profiles.php 冒頭コメント参照。 */

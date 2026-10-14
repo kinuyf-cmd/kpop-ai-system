@@ -1,6 +1,6 @@
 {
   "_comment": "先回りクラスタ記事の効果測定対象。tools/seo/preemptive_cluster_tracker.py が週次で参照する。新しい先回り記事を公開したらここに追記すること。target_date = 配信日/公開日/公演初日(検索需要が立ち上がる日)。",
-  "_last_updated": "2026-10-08",
+  "_last_updated": "2026-10-14",
   "_candidate_note": "候補の自動抽出は断念した(2026-08-12)。TECの未来イベントは871件中866件が誕生日で、公演/配信は5件しか登録されていないため、DBから候補を機械抽出しても候補ゼロになる。公演・映画・配信の発見は web 調査で行うこと。選定基準は『日付が確定』『自社がその語で既に順位を持つ(GSCで確認)』『未カバー』の3点。",
   "_candidates_pending": [
     {
@@ -106,6 +106,30 @@
       "title": "プルンギル －青の道－(第10弾)",
       "target_date": "2026-11-20",
       "note": "Netflix・ソン・ソック×永山瑛太。配信6週前に公開。話数/吹き替え未発表。MAMA初日と同日"
+    },
+    {
+      "slug": "mma-2026-lineup-schedule-unext-guide",
+      "title": "MMA2026ハブ(授賞式型・post 23381)",
+      "target_date": "2026-11-14",
+      "note": "10/14公開(最終ラインナップ発表当日)。U-NEXT独占・字幕なし。HANA(日本)出演とI.O.I再結集が日本向けの引き。KGMA/MAMAとの出演日比較表あり"
+    },
+    {
+      "slug": "aaa-2026-kaohsiung-lineup-vote-guide",
+      "title": "AAA 2026ハブ(授賞式型・post 23390)",
+      "target_date": "2026-12-05",
+      "note": "10/14公開。人気賞の決選投票(〜11/4)中の需要も狙う。なにわ男子(12/5)・道枝駿佑(12/6)が日本向けの引き。日本の配信先は未発表"
+    },
+    {
+      "slug": "moshimo-no-ai-possible-love-netflix-guide",
+      "title": "もしもの愛(Netflix映画・post 23409)",
+      "target_date": "2026-11-06",
+      "note": "10/14公開。10/23劇場先行・11/6配信。Netflix映画型の初検証"
+    },
+    {
+      "slug": "kpop-idol-military-service-schedule-2026",
+      "title": "兵役スケジュール一覧(横断型・post 23415)",
+      "target_date": "2026-10-26",
+      "note": "10/14公開。スングァン・ディノ10/26入隊で需要。入隊・除隊のたびに表を更新"
     }
   ]
 }

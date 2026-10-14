@@ -81,58 +81,111 @@ def _load_artist_profiles():
         return {}
 
 
+# 数字が「現在のそのグループ」の話でないことを示す語。これが間にあれば照合しない
+# (デビュー当時の人数、元メンバー、派生ユニット、先輩・後輩グループの話など)。
+_PROFILE_SKIP_RE = re.compile(
+    r'当時|デビュー時|結成時|かつて|以前は|元|出身|脱退|卒業|ユニット|弟分|妹分|後輩|先輩|体制')
+# 名前と数字のあいだに許す文字数。離れているほど別のグループの数字を拾う
+_PROFILE_GAP = 14
+_PROFILE_AFTER_GAP_RE = re.compile(
+    r'^の?(?:\d+人組)?の?(?:ボーイズ|ガールズ|バーチャル|新人|多国籍|韓国|日本人)*'
+    r'(?:グループ|バンド|アイドル)?[の、・「『\s]*$')
+
+
+def _profile_name_spans(plain_lower, names):
+    """本文中で「その名前そのもの」として現れている位置を返す。
+
+    NCT WISH の NCT、live の ive のように、別の名前・単語の一部である出現は除く。
+    """
+    spans = []
+    for n in sorted(set(names), key=len, reverse=True):
+        for m in re.finditer(re.escape(n), plain_lower):
+            s, e = m.start(), m.end()
+            if s > 0 and plain_lower[s - 1].isascii() and plain_lower[s - 1].isalnum():
+                continue
+            # 直後に英数字(空白1つを挟む場合を含む)が続けば別の名前 (NCT WISH / NCT 127)
+            if re.match(r'[ _\-]?[a-z0-9]', plain_lower[e:e + 2]):
+                continue
+            spans.append((s, e))
+    return spans
+
+
+def _claim_belongs_to(plain, spans, claim_start, claim_end):
+    """数字の記述が、その名前のすぐ隣に書かれているか。
+
+    「NAME は N人組」「N人組グループ NAME」の形だけを対象にする。あいだに句点や
+    別の話題を示す語があれば、別のグループの数字とみなして照合しない。
+    """
+    for s, e in spans:
+        if e <= claim_start:
+            gap = plain[e:claim_start]
+        elif s >= claim_end:
+            gap = plain[claim_end:s]
+            # 名前が後ろに来るのは「N人組ガールズグループのNAME」の形だけ。
+            # 「NCT WISHは6人組で、NCTの…」の後ろの NCT に数字を結びつけない。
+            if not _PROFILE_AFTER_GAP_RE.match(gap):
+                continue
+        else:
+            continue
+        if len(gap) > _PROFILE_GAP or '。' in gap or _PROFILE_SKIP_RE.search(gap):
+            continue
+        # あいだに別の固有名(英字の連なり)があれば、そちらの数字とみなす
+        if re.search(r'[A-Za-z]{3,}', gap):
+            continue
+        return True
+    return False
+
+
 def _check_artist_profile(title, plain):
     """記事内のアーティスト基本情報をartist_profiles.jsonと照合
 
     検出: メンバー人数の矛盾、デビュー年の矛盾
     Returns: list of issue strings (critical level)
+
+    2026-10-13: 直近30日のBLOCK 19件中およそ17件が誤検知だったため照合条件を絞った。
+      - 名前は語として一致したものだけ(NCT WISH を NCT と読まない)
+      - 数字は名前のすぐ隣に書かれたものだけ(60字以内なら何でも、をやめた)
+      - 一覧が全員でないプロフィール(members_partial)は人数を照合しない
     """
     profiles = _load_artist_profiles()
     if not profiles:
         return []
 
     issues = []
-    # タイトル+本文冒頭からアーティスト名を検索
-    text_to_check = (title + ' ' + plain[:1500]).lower()
+    plain_lower = plain.lower()
+    head = (title + ' ' + plain[:1500]).lower()
 
     for key, prof in profiles.items():
+        if not isinstance(prof, dict):
+            continue
         names = [prof.get('display_name', ''), prof.get('name_en', ''), key]
         names = [n.lower() for n in names if n]
-        if not any(n in text_to_check for n in names):
+        if not _profile_name_spans(head, names):
+            continue
+        spans = _profile_name_spans(plain_lower, names)
+        if not spans:
             continue
 
-        # このアーティストが記事に登場
         display = prof.get('display_name', key)
         members = prof.get('members', [])
         debut_year = prof.get('debut_year')
         member_count = len(members)
 
-        if member_count > 0:
-            # 「N人組」パターンを検索
+        if member_count > 0 and not prof.get('members_partial'):
             for m in re.finditer(r'(\d+)\s*人組', plain):
                 num = int(m.group(1))
-                # その付近にアーティスト名があるか確認
-                ctx_start = max(0, m.start() - 60)
-                ctx_end = min(len(plain), m.end() + 60)
-                ctx = plain[ctx_start:ctx_end].lower()
-                if any(n in ctx for n in names):
-                    if num != member_count:
-                        issues.append(
-                            f'{display}のメンバー人数が誤り: 記事では{num}人組と記載、正しくは{member_count}人組（{", ".join(members)}）'
-                        )
+                if num != member_count and _claim_belongs_to(plain, spans, m.start(), m.end()):
+                    issues.append(
+                        f'{display}のメンバー人数が誤り: 記事では{num}人組と記載、正しくは{member_count}人組（{", ".join(members)}）'
+                    )
 
         if debut_year:
-            # 「NNNN年デビュー」「NNNN年にデビュー」パターン
             for m in re.finditer(r'(\d{4})年(?:に)?デビュー', plain):
                 yr = int(m.group(1))
-                ctx_start = max(0, m.start() - 60)
-                ctx_end = min(len(plain), m.end() + 60)
-                ctx = plain[ctx_start:ctx_end].lower()
-                if any(n in ctx for n in names):
-                    if yr != debut_year:
-                        issues.append(
-                            f'{display}のデビュー年が誤り: 記事では{yr}年と記載、正しくは{debut_year}年'
-                        )
+                if yr != debut_year and _claim_belongs_to(plain, spans, m.start(), m.end()):
+                    issues.append(
+                        f'{display}のデビュー年が誤り: 記事では{yr}年と記載、正しくは{debut_year}年'
+                    )
 
     return issues
 

@@ -82,16 +82,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "QWER",
-   "title": "QWER",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670998",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-13",
-   "venue": "UNITEDLAB",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "KARA",
    "title": "KARA",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670364",
@@ -119,6 +109,16 @@
    "start_date": "2026-10-18",
    "venue": "スタァライト劇場",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "TOMORROW X TOGETHER",
+   "title": "TOMORROW X TOGETHER",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=654310",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-12-19",
+   "venue": "みずほPayPayドーム福岡",
+   "_source_id": "ltike"
   }
  ]
 }

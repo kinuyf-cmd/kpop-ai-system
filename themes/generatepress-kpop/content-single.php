@@ -190,7 +190,12 @@ if ( $kpop_is_popup_single ) {
 		$kpop_related_tag_ids = array();
 		$kpop_related_post_tags = get_the_tags( get_the_ID() );
 		if ( $kpop_related_post_tags && ! is_wp_error( $kpop_related_post_tags ) ) {
-			foreach ( $kpop_related_post_tags as $t ) { $kpop_related_tag_ids[] = $t->term_id; }
+			/* 2026-10-14: 種別タグ(速報=2,400本超)を含めると tag__in が「直近の速報」になり、
+			   関連記事が同じアーティストでなく新着の速報で埋まっていた。アーティスト等のタグだけで探す。 */
+			$kpop_related_generic = array( '速報', 'カムバック', 'チャート' );
+			foreach ( $kpop_related_post_tags as $t ) {
+				if ( ! in_array( $t->name, $kpop_related_generic, true ) ) { $kpop_related_tag_ids[] = $t->term_id; }
+			}
 		}
 		if ( ! empty( $kpop_related_tag_ids ) ) {
 			$kpop_related_q = new WP_Query( array(

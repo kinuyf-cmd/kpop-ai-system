@@ -191,6 +191,27 @@ def _is_stale_knowledge_noise(text: str) -> bool:
     return bool(_BTS_STALE_MILITARY_RE.search(t)) and '除隊' not in t
 
 
+# 知識基盤のメンバー名はローマ字、記事の人名はカタカナ(翻訳ルール)。カタカナ名を
+# ローマ字一覧と突き合わせて「そんなメンバーは存在しない」とする指摘は、照合のしようが
+# ない表記違いで、直近30日の実例はほぼ全て誤検知だった(ジョンヨン=JEONGYEON、
+# ドギョム=DK、ソヒ=SOHEE、ウィジュ=EJ、セウン=SEEUN、ジソン=JISUNG)。
+# ローマ字の名前を名指しした指摘(「HARA」「Woongsan」は存在しない)は残す。
+_KATAKANA_QUOTED_RE = re.compile(r'[「『]([ァ-ヶー・]{2,12})[」』]')
+_ROMAJI_QUOTED_RE = re.compile(r'[「『][A-Za-z][A-Za-z .\-]{1,20}[」』]')
+_MEMBER_DENIAL_RE = re.compile(
+    r'存在しない|存在せず|実在しない|確認できない|確認できず|含まれておらず|含まれていない|一致しない')
+
+
+def _is_katakana_member_denial_noise(text: str) -> bool:
+    """カタカナ表記のメンバー名を「存在しない」とする指摘か(=表記違いの誤検知)。"""
+    for sent in re.split(r'[。\n]', str(text)):
+        if ('メンバー' in sent and _MEMBER_DENIAL_RE.search(sent)
+                and _KATAKANA_QUOTED_RE.search(sent)
+                and not _ROMAJI_QUOTED_RE.search(sent)):
+            return True
+    return False
+
+
 def _is_outlook_section_noise(text: str) -> bool:
     """定型の「今後の注目ポイント」節を編集メモの残存とみなす指摘か(=誤検知)。"""
     t = str(text)
@@ -206,6 +227,7 @@ def is_lesson_noise(text: str) -> bool:
     t = str(text)
     return (_is_kb_absence_noise(t) or _is_stale_knowledge_noise(t)
             or _is_outlook_section_noise(t)
+            or _is_katakana_member_denial_noise(t)
             or bool(_SCOPE_COMPLAINT_RE.search(t)))
 
 
@@ -226,7 +248,8 @@ def _strip_cta_noise(result: dict) -> dict:
                           and not _is_romaji_name_noise(x)
                           and not _is_kb_absence_noise(x)
                           and not _is_stale_knowledge_noise(x)
-                          and not _is_outlook_section_noise(x)]
+                          and not _is_outlook_section_noise(x)
+                          and not _is_katakana_member_denial_noise(x)]
     return out
 
 # Prompt caching用 K-pop審査基準 (1500+ tokens, 5分TTL)
@@ -286,6 +309,7 @@ KPOP_FACTCHECK_PREFIX = """あなたは韓国エンタメ(K-POP・韓国ドラ�
   グループや人物を「存在しない」と指摘してよいのは、web_search で別の名前・別のグループだと確認できた場合のみ
 - **メンバー名のカタカナ表記**。「ジョンヨン」は TWICE の Jeongyeon の正しい日本語表記。
   覚え書きがローマ字だからといって、カタカナ表記を「存在しないメンバー」としてはならない
+  (ジソン/チソン=JISUNG、ドギョム=DK、ソヒ=SOHEE、ウィジュ=EJ、ロラ=RORA)。当メディアは人名をカタカナで書く
 - **韓国ドラマ・韓国映画・韓国の俳優/タレント/バラエティ番組の記事を「K-POPと無関係」と指摘すること**。
   これらは当メディアの対象。指摘するのは韓国エンタメと関係がない記事(ハリウッド映画、スポーツ選手のみの記事等)だけ
 - **BTSを「兵役で活動休止中」とする前提**。BTSは2025年6月に全員が除隊し、2026年は7人で活動している

@@ -67,7 +67,9 @@ def _extract_text(html: str) -> str:
 def _split_sentences(text: str) -> list[str]:
     """日本語・英語の文を分割する。"""
     # Japanese sentence endings: 。！？ and English: . ! ?
-    parts = re.split(r'(?<=[。！？\.\!\?])\s*', text)
+    # 英字の . ! ? は直後が空白か末尾のときだけ文末とみなす。
+    # 「N.Flying」「Mr.」のような表記の途中で切ると、要約が「Flyingが…」で始まる(2026-10-14 実例)。
+    parts = re.split(r'(?<=[。！？])\s*|(?<=[\.\!\?])(?:\s+|$)', text)
     sentences = []
     for p in parts:
         p = p.strip()

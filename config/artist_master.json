@@ -555,7 +555,9 @@
           "birthday": "2000-06-06",
           "role": "メインボーカル(NCT 127/NCT DREAM)"
         }
-      ]
+      ],
+      "members_partial": true,
+      "member_note": "ユニット制の多人数グループ(NCT 127 / NCT DREAM / WayV / NCT WISH など)。下の一覧は一部のみで全員ではない。人数の正誤や「メンバーに居ない」の判定に使わないこと。NCT WISH は6人組(2024年デビュー)、JISUNG・CHENLE・JENO・JAEMIN・RENJUN は NCT DREAM のメンバー"
     },
     {
       "id": "txt",
@@ -972,10 +974,8 @@
           "role": "リードダンサー・サブボーカル・マンネ"
         },
         {
-          "name": "HARAM",
-          "name_ko": "하람",
-          "birthday": "2008-05-28",
-          "role": "リードボーカル"
+          "name": "RORA",
+          "name_ko": "로라"
         }
       ]
     },
@@ -1070,12 +1070,6 @@
           "role": "リーダー・メインラッパー・プロデューサー"
         },
         {
-          "name": "T.O.P",
-          "name_ko": "최승현",
-          "birthday": "1987-11-04",
-          "role": "リードラッパー"
-        },
-        {
           "name": "TAEYANG",
           "name_ko": "동영배",
           "birthday": "1988-05-18",
@@ -1086,6 +1080,18 @@
           "name_ko": "강대성",
           "birthday": "1989-04-26",
           "role": "リードボーカル"
+        }
+      ],
+      "former_members": [
+        {
+          "name": "T.O.P",
+          "name_ko": "탑",
+          "role": "2023年脱退"
+        },
+        {
+          "name": "SEUNGRI",
+          "name_ko": "승리",
+          "role": "2019年脱退"
         }
       ]
     },

@@ -282,10 +282,75 @@ def _pick_subject_name(title):
     return m.group(1) if m else ''
 
 
+_PRIORITY_CACHE = None
+
+
+def _load_priority():
+    """config/breaking_priority_artists.json を読む(表記→正規名, 日本関連語)。
+    読めなければ None(=絞り込みなし。速報を止めない FAIL OPEN)。"""
+    global _PRIORITY_CACHE
+    if _PRIORITY_CACHE is None:
+        try:
+            with open(os.path.join('/home/aiuser/kpop-ai-system',
+                                   'config/breaking_priority_artists.json'), encoding='utf-8') as f:
+                d = json.load(f)
+            alias = {}
+            for canon, names in d.get('artists', {}).items():
+                for n in names:
+                    alias[n.lower()] = canon
+            _PRIORITY_CACHE = (alias, list(d.get('japan_keywords', [])))
+        except Exception as e:  # noqa: BLE001
+            print(f"  priority list load err: {e}")
+            _PRIORITY_CACHE = False
+    return _PRIORITY_CACHE or None
+
+
+def _is_japan_related(title):
+    pr = _load_priority()
+    if not pr:
+        return True
+    t = str(title or '')
+    return any(k in t for k in pr[1])
+
+
+def _priority_ok(artist, title):
+    """速報の対象か。日本で需要のある主要アーティスト、またはタイトルが日本に関わる話題だけ通す
+    (2026-10-14 owner決定。直近30日の公開525本の75%が検索クリック0だった)。"""
+    pr = _load_priority()
+    if not pr:
+        return True
+    if str(artist or '').lower() in pr[0]:
+        return True
+    return _is_japan_related(title)
+
+
+def _hallyu_published_today():
+    """今日(ローカル日付)公開済みの hallyu 速報の件数。
+    HALLYU_LIMIT はコメント上「1日上限」だったが、実装は1回の実行ごとの上限で、
+    cron 8回/日のため最大24件/日まで出ていた(30日で125本)。ログから当日分を数える。"""
+    today = datetime.now().strftime('%Y-%m-%d')
+    n = 0
+    try:
+        with open(BREAKING_LOG, encoding='utf-8') as f:
+            for line in f:
+                if '"hallyu"' not in line or today not in line:
+                    continue
+                try:
+                    d = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if d.get('date') == today and d.get('type') == 'hallyu' and d.get('status') != 'skipped':
+                    n += 1
+    except FileNotFoundError:
+        pass
+    return n
+
+
 def detect_breaking(signals):
     from lib.collectors.korean_base import is_kpop_related
     candidates = []
     seen = set()
+    dropped = []
 
     # 1. urgency=high (音楽番組1位等)
     for s in signals:
@@ -296,6 +361,9 @@ def detect_breaking(signals):
         if not artist or artist in seen:
             continue
         if is_processed(s['url']) or _is_stale_source(s):
+            continue
+        if not _priority_ok(artist, s.get('title', '')):
+            dropped.append(artist)
             continue
         seen.add(artist)
         candidates.append((artist, [s], 'urgent'))
@@ -318,6 +386,9 @@ def detect_breaking(signals):
         if not fresh_sigs:
             continue
         sources = set(s.get('source_id', '') for s in fresh_sigs)
+        if not any(_priority_ok(artist, s.get('title', '')) for s in fresh_sigs):
+            dropped.append(artist)
+            continue
         if len(sources) >= 2 and not any(is_processed(s['url']) for s in fresh_sigs):
             seen.add(artist)
             candidates.append((artist, fresh_sigs, 'multi'))
@@ -351,6 +422,9 @@ def detect_breaking(signals):
             continue
         # 既選titleと類似 (共通名詞50%以上) なら却下
         title = s.get('title', '')
+        if not _priority_ok(artist, title):
+            dropped.append(artist)
+            continue
         if any(_titles_too_similar(title, t) for t in artist_titles.get(artist, [])):
             continue
         artist_count[artist] = cnt + 1
@@ -363,7 +437,8 @@ def detect_breaking(signals):
     #   - 被写体名が読点付きで明示されたものだけ(_pick_subject_name)
     #   - 1日 HALLYU_LIMIT 件まで(K-POP速報の枠を圧迫しない)
     #   - サムネは出典og固定(publish_breaking 側で thumbnail_og_only)
-    hallyu_picked = 0
+    #   - 2026-10-14: 日本に関わる話題(タイトルに japan_keywords)だけ。上限は当日の公開実績で数える
+    hallyu_picked = _hallyu_published_today()
     for s in high_eng:
         if hallyu_picked >= HALLYU_LIMIT:
             break
@@ -375,10 +450,16 @@ def detect_breaking(signals):
         subject = _pick_subject_name(s.get('title', ''))
         if not subject or subject in seen:
             continue
+        if not _is_japan_related(s.get('title', '')):
+            dropped.append(subject)
+            continue
         seen.add(subject)
         hallyu_picked += 1
         candidates.append((subject, [s], 'hallyu'))
 
+    if dropped:
+        uniq = sorted(set(map(str, dropped)))
+        print(f"  対象外(主要アーティスト外・日本無関係)で見送り: {len(uniq)}件 {uniq[:15]}")
     return candidates
 
 

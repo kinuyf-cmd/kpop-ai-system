@@ -200,6 +200,78 @@ def _gsc_notify(url):
         return False
 
 
+def _artist_hub_block(artist, slug=None, today=None, max_links=2):
+    """アーティストの定番記事への案内HTML(無ければ '')。期限つき(授賞式ハブ等)を先に出す。"""
+    import datetime as _dt
+    import html as _html
+    today = today or _dt.date.today().isoformat()
+    with open('/home/aiuser/kpop-ai-system/config/artist_hub_links.json', encoding='utf-8') as f:
+        links = json.load(f).get('links', [])
+    a = str(artist or '').strip().lower()
+    hits = []
+    for ln in links:
+        if ln.get('until') and ln['until'] < today:
+            continue
+        if slug and f"/{slug}/" in ln.get('url', ''):
+            continue
+        if a in (x.lower() for x in ln.get('artists', [])):
+            hits.append(ln)
+    hits.sort(key=lambda ln: (0, ln['until']) if ln.get('until') else (1, ''))
+    hits = hits[:max_links]
+    if not hits:
+        return ''
+    items = ''.join(f'<li><a href="{_html.escape(ln["url"])}">{_html.escape(ln["title"])}</a></li>' for ln in hits)
+    return f'<div class="kpj-artist-hubs"><p><strong>あわせて読みたい</strong></p><ul>{items}</ul></div>'
+
+
+def _truncate_title(title, limit=42):
+    """タイトルを limit 字以内に、区切り(、・｜ 空白 —)の位置で切る。
+    単純に [:42] で切ると「…そしてILLI」「「2026 Kワールドドリームアワ」のように語の途中や
+    括弧の内側で切れ、そのまま記事タイトルと内部リンクの文字列になっていた(2026-10-14)。"""
+    t = str(title or '').strip()
+    if len(t) <= limit:
+        return t
+    head = t[:limit]
+    cut = max(head.rfind(c) for c in ('、', '・', '｜', '|', ' ', '　', '—', '…', '，', ','))
+    if cut >= limit // 2:
+        head = head[:cut]
+    # 開いたまま閉じていない括弧があれば、その括弧の手前で切る
+    for op, cl in (('「', '」'), ('『', '』'), ('(', ')'), ('（', '）'), ('【', '】')):
+        if head.count(op) > head.count(cl):
+            i = head.rfind(op)
+            if i >= limit // 3:
+                head = head[:i]
+    return head.rstrip('、・｜| 　—…，,:：')
+
+
+def _tag_name_for_artist(artist):
+    """タグ名を日本での表記(英字)に寄せる。ハングルのままだと「방탄소년단」と「BTS」のように
+    同じグループのタグが分かれ、関連記事(タグ一致)がつながらない(2026-10-14 に既存405タグを統合)。
+    一般語と紛れる語(있지/화사 等)は誤検知の可能性があるのでタグを付けない。"""
+    import re as _re_t
+    a = str(artist or '').strip()
+    if not a or not _re_t.search(r'[가-힣]', a):
+        return a
+    try:
+        from lib.korean_translator import CONTEXT_DEPENDENT_KEYS
+        if a in CONTEXT_DEPENDENT_KEYS or a in ('우즈', '제시', '비비'):
+            return ''
+        base = '/home/aiuser/kpop-ai-system/config/'
+        with open(base + 'tag_name_aliases.json', encoding='utf-8') as f:
+            m = dict(json.load(f).get('aliases', {}))
+        with open(base + 'korean_proper_nouns.json', encoding='utf-8') as f:
+            d = json.load(f)
+        for sec in ('members', 'groups'):
+            for k, v in (d.get(sec) or {}).items():
+                m.setdefault(k, v)
+        v = m.get(a)
+        if v and not _re_t.search(r'[가-힣]', v):
+            return v
+    except Exception:  # noqa: BLE001
+        pass
+    return a
+
+
 def unified_publish(
     raw_title: str,
     body_html: str,
@@ -224,6 +296,16 @@ def unified_publish(
     log = []
     auto_draft_reasons = []
 
+    # 翻訳後に残りやすい直訳語・日本人名の音写を直す(2026-10-14)。全公開経路で効くようここで行う
+    try:
+        from lib.korean_translator import fix_translation_calques
+        raw_title, _n_t = fix_translation_calques(raw_title)
+        body_html, _n_b = fix_translation_calques(body_html)
+        if _n_t or _n_b:
+            log.append(f"calque_fix: title {_n_t} / body {_n_b}")
+    except Exception as _cfe:  # noqa: BLE001
+        log.append(f"calque_fix skip: {_cfe}")
+
     # 0. source_text 取得確認: news kind で <1500字 → draft化
     # memory: feedback_must_read_source.md
     if source_url and kind in ('news', 'breaking', 'feature'):
@@ -241,7 +323,7 @@ def unified_publish(
     # ユーザー指示 (2026-05-07): 速報タイトルの【速報】prefix廃止。低信頼度の【韓国メディア速報】は維持
     optimized = optimize_title(raw_title, body_html[:500] if body_html else '')
     if kind == 'breaking':
-        title_final = optimized[:42]  # prefix無し、監査基準42字厳守
+        title_final = _truncate_title(optimized, 42)  # prefix無し、監査基準42字厳守
     elif confidence == 'low':
         title_final = f"【韓国メディア速報】{optimized}"[:42]
     else:
@@ -557,6 +639,20 @@ def unified_publish(
     except Exception as e:
         log.append(f"internal_links err: {e}")
 
+    # 6.3.0b. 同じアーティストの定番記事へ案内(2026-10-14)。速報は1回読まれて終わるため、
+    # 相関図・兵役・授賞式ハブなど何度も読まれる記事へ送る。案内先は config/artist_hub_links.json
+    if kind == 'breaking' and artist:
+        try:
+            _hub = _artist_hub_block(artist, slug)
+            if _hub:
+                if '<aside class="kpop-sources"' in content:
+                    content = content.replace('<aside class="kpop-sources"', _hub + '\n<aside class="kpop-sources"', 1)
+                else:
+                    content = content + '\n' + _hub
+                log.append("artist_hub_links OK")
+        except Exception as e:  # noqa: BLE001
+            log.append(f"artist_hub_links err: {e}")
+
     # 6.3. CTA自動挿入 (Phase 14) — 内部リンク挿入の「後」に行い CTA 内混入を防ぐ
     try:
         content = inject_cta_into_content(title_final, content)
@@ -659,7 +755,9 @@ def unified_publish(
     # タグ自動設定: アーティスト名 + kind
     _auto_tags = []
     if artist:
-        _auto_tags.append(artist)
+        _tag_artist = _tag_name_for_artist(artist)
+        if _tag_artist:
+            _auto_tags.append(_tag_artist)
     # kind タグ (breaking/comeback等)
     if kind and kind not in ('feature', 'default', 'news'):
         _kind_tag_map = {'breaking': '速報', 'comeback': 'カムバック', 'chart': 'チャート'}
@@ -674,7 +772,7 @@ def unified_publish(
                 _t_req = urllib.request.Request(_t_url, headers={'Authorization': f'Basic {AUTH}', 'User-Agent': 'up/1.0'})
                 with urllib.request.urlopen(_t_req, timeout=10) as _tr:
                     _existing = json.loads(_tr.read())
-                _found = next((t['id'] for t in _existing if t['name'].lower() == _tname.lower()), None)
+                _found = next((t['id'] for t in _existing if __import__('html').unescape(t['name']).lower() == _tname.lower()), None)
                 if _found:
                     _tag_ids.append(_found)
                 else:

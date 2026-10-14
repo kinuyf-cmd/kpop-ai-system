@@ -1,33 +1,42 @@
 {
-  "updated": "2026-10-13 22:04",
-  "count": 3,
+  "updated": "2026-10-14 21:35",
+  "count": 4,
   "queue": [
     {
-      "title": "パク・キリャン、蚕室球場で華やかなパフォーマンス",
-      "url": "https://www.kpopjournal.tokyo/?p=23299",
-      "post_id": 23299,
-      "genre": "breaking",
-      "artist": "보아",
-      "priority": "high",
-      "queued_at": "2026-10-13T22:02:40.951032"
+      "title": "アイドル兵役スケジュール一覧【2026年10月版】",
+      "url": "https://www.kpopjournal.tokyo/kpop-idol-military-service-schedule-2026/",
+      "post_id": 23415,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-14T13:56:14.863509"
     },
     {
-      "title": "ATEEZウヨン、コーチェラ出演秘訣はサンの胸ダンス",
-      "url": "https://www.kpopjournal.tokyo/ateez-wooyoung-coachella-sans-dance/",
-      "post_id": 23295,
-      "genre": "breaking",
-      "artist": "에이티즈",
-      "priority": "high",
-      "queued_at": "2026-10-13T22:01:06.091948"
+      "title": "イ・チャンドン監督『もしもの愛』配信日決定",
+      "url": "https://www.kpopjournal.tokyo/moshimo-no-ai-possible-love-netflix-guide/",
+      "post_id": 23409,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-14T13:54:29.305687"
     },
     {
-      "title": "BTS、南米公演ライブビューイングで実施",
-      "url": "https://www.kpopjournal.tokyo/bts-nanbei-kouen-live-viewing/",
-      "post_id": 23290,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-10-13T21:33:39.025520"
+      "title": "なにわ男子・道枝駿佑がAAA 2026参加",
+      "url": "https://www.kpopjournal.tokyo/aaa-2026-kaohsiung-lineup-vote-guide/",
+      "post_id": 23390,
+      "genre": "feature",
+      "artist": "",
+      "priority": "normal",
+      "queued_at": "2026-10-14T13:10:18.083715"
+    },
+    {
+      "title": "MMA2026 HANA・I.O.I・aespaら26組出演決定",
+      "url": "https://www.kpopjournal.tokyo/mma-2026-lineup-schedule-unext-guide/",
+      "post_id": 23381,
+      "genre": "feature",
+      "artist": "aespa",
+      "priority": "normal",
+      "queued_at": "2026-10-14T13:03:42.994954"
     }
   ]
 }

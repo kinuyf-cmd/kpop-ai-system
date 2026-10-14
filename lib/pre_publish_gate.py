@@ -235,6 +235,22 @@ def _real_issues(items):
     return out
 
 
+def _heading_hangul(body_html):
+    """本文の見出し(h2〜h4)に残ったハングルを含む見出しを返す。引用符内の曲名・番組名と、
+    「BTS（방탄소년단）」のような括弧併記は除く。"""
+    try:
+        from lib.translation_residue_check import (
+            _strip_quoted_proper_nouns, _strip_proper_noun_glosses, has_hangul)
+    except Exception:
+        return []
+    out = []
+    for m in re.finditer(r'<h([2-4])[^>]*>(.*?)</h\1>', body_html or '', re.S | re.I):
+        text = re.sub(r'<[^>]+>', '', m.group(2))
+        if has_hangul(_strip_proper_noun_glosses(_strip_quoted_proper_nouns(text))):
+            out.append(text.strip()[:40])
+    return out
+
+
 def find_duplicate_published(keywords):
     """公開済み記事に同テーマ(キーワード重複)があれば {'id','title'} を返す。無ければ None。
 
@@ -427,6 +443,14 @@ def pre_publish_gate(
                 'type': 'translation_residue_block',
                 'severity': 'block',
                 'detail': f"翻訳残存ハングル: {_residue['reason']} samples={_residue['samples'][:2]}",
+            })
+        elif _residue['verdict'] != 'BLOCK' and _heading_hangul(body_html):
+            # 2026-10-14: 見出しはタイトル同様に目立つ。本文の総数が少なくても1字で止める
+            # (実例: h2「써클チャート1位・한터チャート2位で初動好成績」が WARN 止まりで公開)
+            issues.append({
+                'type': 'translation_residue_block',
+                'severity': 'block',
+                'detail': f"翻訳残存ハングル: 見出しにハングル混入 samples={_heading_hangul(body_html)[:2]}",
             })
         elif _residue['verdict'] == 'WARN':
             issues.append({

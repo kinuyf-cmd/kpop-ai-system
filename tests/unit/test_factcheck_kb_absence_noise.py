@@ -91,3 +91,25 @@ def test_outlook_section_real_issue_kept():
 
 def test_prompt_allows_outlook_section():
     assert '今後の注目ポイント' in f.KPOP_FACTCHECK_PREFIX
+
+
+KATAKANA_DENIALS = [
+    "TWICEに『ジョンヨン』というメンバーは存在しない。TWICEの正式メンバーはNAYEON/JEONGYEON/MOMOの9人である。",
+    "本文中で言及されるメンバーのうち、『ロラ』はBABYMONSTERの知識基盤に存在しないメンバー名。",
+    "SEVENTEENに『ドギョム』『ブスングァン』というメンバーは存在しない。",
+    "タイトルに『ジソン』とあるが、知識基盤のNCT メンバーには『ジソン(パク・ジソン)』というメンバーは存在せず、実在性が確認できない。",
+    "特に『セウン』という名前はSTAYCメンバーに存在しない",
+]
+
+
+@pytest.mark.parametrize("text", KATAKANA_DENIALS)
+def test_katakana_member_denial_is_noise(text):
+    # 知識基盤はローマ字、記事はカタカナ。表記違いを「存在しない」とする誤検知
+    assert f._is_katakana_member_denial_noise(text)
+    assert f.is_lesson_noise(text)
+    assert f._strip_cta_noise({'critical': [text]})['critical'] == []
+
+
+@pytest.mark.parametrize("text", REAL_ERRORS)
+def test_katakana_filter_keeps_real_errors(text):
+    assert not f._is_katakana_member_denial_noise(text)

@@ -64,7 +64,16 @@ def _format_artist(a: dict) -> str:
         lines.append(f"- デビュー日: {debut}")
 
     members = a.get('members', [])
-    if members:
+    # 2026-10-13: 一覧が全員でないグループ(NCT 等)は人数を書かない。5人だけ載せて
+    # 「メンバー人数: 5人」と出していたため、NCT WISH(6人組)や JISUNG の記事を
+    # 「人数が違う」「メンバーに居ない」で止めていた。
+    if a.get('member_note'):
+        lines.append(f"- 注意: {a['member_note']}")
+    if members and a.get('members_partial'):
+        lines.append("- メンバー(一部のみ・全員ではない):")
+        for m in members:
+            lines.append(f"  - {_format_member(m)}")
+    elif members:
         lines.append(f"- メンバー人数: {len(members)}人")
         lines.append("- メンバー:")
         for m in members:

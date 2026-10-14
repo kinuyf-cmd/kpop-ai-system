@@ -1,0 +1,179 @@
+{
+ "_comment": "速報の末尾に置く「あわせて読みたい」の案内先(2026-10-14)。速報は1回読まれて終わるので、同じアーティストの定番記事(相関図・兵役・授賞式ハブ等)へ送る。artists は is_kpop_related が返す表記(英字・ハングル)で書く。until を過ぎたものは出さない。1記事に最大2本。",
+ "links": [
+  {
+   "url": "https://www.kpopjournal.tokyo/bts-relationship-map-2026/",
+   "title": "BTS 仲良し相関図2026|7人の友情とメンバー年齢・ポジション一覧",
+   "artists": [
+    "BTS",
+    "방탄소년단"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/txt-huening-kai-2026-4-20260409/",
+   "title": "TXTの兵役はいつ?メンバー5人の入隊時期の目安",
+   "artists": [
+    "TXT",
+    "투모로우바이투게더",
+    "TOMORROW X TOGETHER"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/tuide-members-profile-debut-guide/",
+   "title": "TUIDEメンバープロフィールとデビューまでの歩み",
+   "artists": [
+    "TUIDE",
+    "튜이드"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/kgma-2026-lineup-schedule-hulu-guide/",
+   "title": "2026 KGMAの日程・日別出演者・Hulu配信ガイド(11月7日・8日)",
+   "until": "2026-11-09",
+   "artists": [
+    "TREASURE",
+    "트레저",
+    "tripleS",
+    "트리플에스",
+    "P1Harmony",
+    "피원하모니",
+    "CRAVITY",
+    "Cravity",
+    "크래비티",
+    "RESCENE",
+    "리센느",
+    "TUIDE",
+    "RIIZE",
+    "라이즈",
+    "ATEEZ",
+    "에이티즈",
+    "ITZY",
+    "TWS",
+    "투어스",
+    "WayV",
+    "NEXZ",
+    "KISS OF LIFE",
+    "키스오브라이프",
+    "Hearts2Hearts",
+    "KiiiKiii",
+    "ALPHA DRIVE ONE",
+    "MEOVV",
+    "FIFTY FIFTY",
+    "피프티피프티",
+    "ALLDAY PROJECT"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/mma-2026-lineup-schedule-unext-guide/",
+   "title": "MMA2026 出演者・日程・U-NEXT配信ガイド(11月14日・15日)",
+   "until": "2026-11-16",
+   "artists": [
+    "I.O.I",
+    "아이오아이",
+    "aespa",
+    "에스파",
+    "NCT",
+    "ATEEZ",
+    "에이티즈",
+    "RIIZE",
+    "라이즈",
+    "TWS",
+    "투어스",
+    "RESCENE",
+    "리센느",
+    "Hearts2Hearts",
+    "IVE",
+    "아이브",
+    "ILLIT",
+    "아일릿",
+    "KiiiKiii",
+    "CORTIS",
+    "코르티스",
+    "PLAVE",
+    "플레이브",
+    "ALPHA DRIVE ONE",
+    "AND2BLE",
+    "82MAJOR"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/mama-awards-2026-osaka-guide/",
+   "title": "MAMA AWARDS 2026 完全ガイド(京セラドーム大阪・出演者・チケット)",
+   "until": "2026-11-22",
+   "artists": [
+    "ENHYPEN",
+    "엔하이픈",
+    "BABYMONSTER",
+    "베이비몬스터",
+    "ILLIT",
+    "아일릿",
+    "LE SSERAFIM",
+    "르세라핌",
+    "ZEROBASEONE",
+    "제로베이스원",
+    "TWICE",
+    "트와이스",
+    "CORTIS",
+    "코르티스",
+    "NCT",
+    "INI",
+    "KiiiKiii",
+    "RESCENE",
+    "리센느",
+    "ALPHA DRIVE ONE"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/aaa-2026-kaohsiung-lineup-vote-guide/",
+   "title": "AAA 2026 出演者・人気賞の投票ガイド(12月5日・6日 高雄)",
+   "until": "2026-12-07",
+   "artists": [
+    "TXT",
+    "투모로우바이투게더",
+    "ZEROBASEONE",
+    "제로베이스원",
+    "NMIXX",
+    "엔믹스",
+    "MONSTA X",
+    "monsta x",
+    "몬스타엑스",
+    "&TEAM",
+    "앤팀",
+    "ITZY",
+    "ATEEZ",
+    "에이티즈",
+    "RIIZE",
+    "라이즈",
+    "TWS",
+    "투어스",
+    "CORTIS",
+    "코르티스",
+    "QWER",
+    "KISS OF LIFE",
+    "키스오브라이프",
+    "tripleS",
+    "트리플에스"
+   ]
+  },
+  {
+   "url": "https://www.kpopjournal.tokyo/kpop-idol-military-service-schedule-2026/",
+   "title": "K-POPアイドルの兵役(入隊・除隊)スケジュール一覧【2026年最新】",
+   "artists": [
+    "SEVENTEEN",
+    "세븐틴",
+    "NCT",
+    "GOT7",
+    "갓세븐",
+    "ASTRO",
+    "아스트로",
+    "MONSTA X",
+    "monsta x",
+    "몬스타엑스",
+    "iKON",
+    "아이콘",
+    "THE BOYZ",
+    "더보이즈"
+   ]
+  }
+ ]
+}

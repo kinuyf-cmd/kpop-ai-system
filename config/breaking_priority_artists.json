@@ -1,0 +1,260 @@
+{
+  "_comment": "速報の対象を日本で需要のあるアーティストに絞る一覧(2026-10-14 owner決定)。breaking_news_detector.detect_breaking が参照する。キー=正規名、値=is_kpop_related が返しうる表記(ハングル/英字/メンバー名)。ここに無いアーティストと純韓国エンタメ(hallyu)は、タイトルに japan_keywords を含む場合だけ速報にする。根拠: 直近30日の速報652本は202の対象に散らばり、公開525本の75%が検索クリック0。",
+  "artists": {
+    "BTS": [
+      "BTS",
+      "방탄소년단"
+    ],
+    "SEVENTEEN": [
+      "SEVENTEEN",
+      "세븐틴"
+    ],
+    "TWICE": [
+      "TWICE",
+      "트와이스"
+    ],
+    "Stray Kids": [
+      "Stray Kids",
+      "스트레이키즈"
+    ],
+    "ENHYPEN": [
+      "ENHYPEN",
+      "엔하이픈"
+    ],
+    "TXT": [
+      "TXT",
+      "투모로우바이투게더",
+      "TOMORROW X TOGETHER",
+      "TOMORROW_X_TOGETHER"
+    ],
+    "IVE": [
+      "IVE",
+      "아이브"
+    ],
+    "aespa": [
+      "aespa",
+      "에스파"
+    ],
+    "LE SSERAFIM": [
+      "LE SSERAFIM",
+      "르세라핌"
+    ],
+    "NewJeans": [
+      "NewJeans",
+      "뉴진스"
+    ],
+    "ILLIT": [
+      "ILLIT",
+      "아일릿"
+    ],
+    "ITZY": [
+      "ITZY",
+      "있지"
+    ],
+    "NMIXX": [
+      "NMIXX",
+      "엔믹스"
+    ],
+    "BLACKPINK": [
+      "BLACKPINK",
+      "블랙핑크",
+      "LISA",
+      "JENNIE",
+      "JISOO",
+      "ROSÉ",
+      "로제"
+    ],
+    "BABYMONSTER": [
+      "BABYMONSTER",
+      "베이비몬스터"
+    ],
+    "RIIZE": [
+      "RIIZE",
+      "라이즈"
+    ],
+    "NCT": [
+      "NCT"
+    ],
+    "ZEROBASEONE": [
+      "ZEROBASEONE",
+      "제로베이스원"
+    ],
+    "BOYNEXTDOOR": [
+      "BOYNEXTDOOR",
+      "보이넥스트도어"
+    ],
+    "TWS": [
+      "TWS",
+      "티더블유에스",
+      "투어스"
+    ],
+    "CORTIS": [
+      "CORTIS",
+      "코르티스"
+    ],
+    "ATEEZ": [
+      "ATEEZ",
+      "에이티즈"
+    ],
+    "THE BOYZ": [
+      "THE BOYZ",
+      "더보이즈"
+    ],
+    "TREASURE": [
+      "TREASURE",
+      "트레저"
+    ],
+    "&TEAM": [
+      "&TEAM",
+      "앤팀"
+    ],
+    "PLAVE": [
+      "PLAVE",
+      "플레이브"
+    ],
+    "KISS OF LIFE": [
+      "KISS OF LIFE",
+      "키스오브라이프"
+    ],
+    "i-dle": [
+      "(G)I-DLE",
+      "여자아이들",
+      "(여자)아이들"
+    ],
+    "Red Velvet": [
+      "Red Velvet",
+      "레드벨벳"
+    ],
+    "Kep1er": [
+      "KEP1ER",
+      "Kep1er",
+      "케플러"
+    ],
+    "STAYC": [
+      "STAYC",
+      "스테이씨"
+    ],
+    "MONSTA X": [
+      "monsta x",
+      "몬스타엑스",
+      "셔누",
+      "형원",
+      "민혁"
+    ],
+    "BIGBANG": [
+      "빅뱅",
+      "지드래곤",
+      "TAEYANG",
+      "태양"
+    ],
+    "EXO": [
+      "엑소"
+    ],
+    "東方神起": [
+      "동방신기"
+    ],
+    "SUPER JUNIOR": [
+      "슈퍼주니어"
+    ],
+    "少女時代": [
+      "소녀시대",
+      "YOONA",
+      "윤아",
+      "태연"
+    ],
+    "IU": [
+      "IU",
+      "아이유"
+    ],
+    "KARA": [
+      "카라"
+    ],
+    "MAMAMOO": [
+      "마마무",
+      "솔라",
+      "화사",
+      "휘인",
+      "문별"
+    ],
+    "fromis_9": [
+      "fromis_9",
+      "프로미스나인"
+    ],
+    "BoA": [
+      "보아"
+    ],
+    "KANG DANIEL": [
+      "KANG DANIEL",
+      "강다니엘",
+      "カン・ダニエル",
+      "カンダニエル"
+    ],
+    "I.O.I / Wanna One": [
+      "I.O.I",
+      "아이오아이",
+      "Wanna One",
+      "워너원"
+    ],
+    "KATSEYE": [
+      "KATSEYE",
+      "CAT'S EYE",
+      "CAT’S EYE",
+      "CATS EYE"
+    ],
+    "XG": [
+      "XG"
+    ],
+    "P1Harmony": [
+      "P1Harmony",
+      "피원하모니"
+    ],
+    "CRAVITY": [
+      "Cravity",
+      "CRAVITY",
+      "크래비티"
+    ],
+    "tripleS": [
+      "tripleS",
+      "트리플에스"
+    ],
+    "WOODZ": [
+      "WOODZ",
+      "우즈",
+      "조승연",
+      "チョ・スンヨン",
+      "チョスンヨン"
+    ],
+    "NiziU": [
+      "NiziU",
+      "니쥬"
+    ]
+  },
+  "japan_keywords": [
+    "일본",
+    "日本",
+    "도쿄",
+    "東京",
+    "오사카",
+    "大阪",
+    "후쿠오카",
+    "나고야",
+    "요코하마",
+    "삿포로",
+    "교토",
+    "재팬",
+    "Japan",
+    "JAPAN",
+    "Tokyo",
+    "Osaka",
+    "오리콘",
+    "Oricon",
+    "NHK",
+    "홍백",
+    "紅白",
+    "J-POP",
+    "제이팝",
+    "닛케이",
+    "일본인",
+    "日本人"
+  ]
+}

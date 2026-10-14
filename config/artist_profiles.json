@@ -223,8 +223,8 @@
         "ASA",
         "AHYEON",
         "RAMI",
-        "CHIQUITA",
-        "HARAM"
+        "RORA",
+        "CHIQUITA"
       ],
       "description": "2024年デビューの7人組ガールズグループ。YG Entertainment期待の新世代グループ。",
       "wp_category_id": 38,
@@ -263,7 +263,8 @@
       ],
       "description": "2016年活動開始のボーイズグループ。NCT 127、NCT DREAM、WayVなど複数ユニットで構成される革新的なコンセプト。",
       "wp_category_id": 40,
-      "category_slug": "nct"
+      "category_slug": "nct",
+      "members_partial": true
     },
     "bigbang": {
       "display_name": "BIGBANG",
@@ -272,11 +273,10 @@
       "debut_year": 2006,
       "members": [
         "G-DRAGON",
-        "T.O.P",
         "TAEYANG",
         "DAESUNG"
       ],
-      "description": "2006年デビューの4人組ボーイズグループ。K-POPの世界進出の礎を築いたレジェンドグループ。",
+      "description": "2006年デビューのボーイズグループ。現在はG-DRAGON・TAEYANG・DAESUNGの3人で活動(T.O.Pは2023年に脱退)。K-POPの世界進出の礎を築いたレジェンドグループ。",
       "wp_category_id": 19,
       "category_slug": "bigbang"
     },
@@ -624,20 +624,16 @@
     "fromis_9": {
       "display_name": "fromis_9",
       "name_en": "fromis_9",
-      "agency": "PLEDIS Entertainment / HYBE",
+      "agency": "ASND",
       "debut_year": 2018,
       "members": [
-        "SAEROM",
         "HAYOUNG",
-        "GYURI",
         "JIWON",
         "JIHEON",
-        "SEOYEON",
         "CHAEYOUNG",
-        "NAGYUNG",
-        "JISUN"
+        "NAGYUNG"
       ],
-      "description": "2018年デビューの9人組ガールズグループ。アイドル学校出身で、清純派コンセプトからの進化が注目。",
+      "description": "2018年デビューのガールズグループ。アイドル学校出身。2025年からASND所属の5人体制で活動(デビュー時は9人)。",
       "wp_category_id": 158,
       "category_slug": "fromis-9"
     },
