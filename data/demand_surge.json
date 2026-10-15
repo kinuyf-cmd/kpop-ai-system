@@ -1,25 +1,25 @@
 {
   "window": [
-    "2026-10-05",
-    "2026-10-11"
+    "2026-10-06",
+    "2026-10-12"
   ],
-  "generated_at": "2026-10-14",
+  "generated_at": "2026-10-15",
   "rows": [
     {
       "query": "ハートにチャージして 吹き替え",
-      "imp": 215,
+      "imp": 291,
       "prev_imp": 0,
-      "delta": 215,
-      "clicks": 22,
-      "ctr_pct": 10.23,
-      "position": 6.0,
+      "delta": 291,
+      "clicks": 26,
+      "ctr_pct": 8.93,
+      "position": 6.8,
       "ratio": null
     },
     {
       "query": "ハンロロ txt",
-      "imp": 127,
+      "imp": 134,
       "prev_imp": 0,
-      "delta": 127,
+      "delta": 134,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 8.4,
@@ -27,33 +27,33 @@
     },
     {
       "query": "ハンロロ スビン",
-      "imp": 99,
+      "imp": 114,
       "prev_imp": 0,
-      "delta": 99,
+      "delta": 114,
       "clicks": 7,
-      "ctr_pct": 7.07,
-      "position": 5.6,
+      "ctr_pct": 6.14,
+      "position": 5.8,
       "ratio": null
     },
     {
       "query": "twice ファンパーティー",
-      "imp": 98,
+      "imp": 99,
       "prev_imp": 0,
-      "delta": 98,
+      "delta": 99,
       "clicks": 2,
-      "ctr_pct": 2.04,
-      "position": 8.1,
+      "ctr_pct": 2.02,
+      "position": 8.2,
       "ratio": null
     },
     {
-      "query": "uncore 所属アーティスト",
+      "query": "rht メンバー",
       "imp": 86,
-      "prev_imp": 22,
-      "delta": 64,
-      "clicks": 0,
-      "ctr_pct": 0,
-      "position": 9.3,
-      "ratio": 3.9
+      "prev_imp": 11,
+      "delta": 75,
+      "clicks": 1,
+      "ctr_pct": 1.16,
+      "position": 9.7,
+      "ratio": 7.8
     }
   ]
 }

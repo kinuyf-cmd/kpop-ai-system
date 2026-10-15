@@ -119,6 +119,26 @@
    "start_date": "2026-12-19",
    "venue": "みずほPayPayドーム福岡",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "ONEWE",
+   "title": "ONEWE",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671691",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-08",
+   "venue": "横浜ベイホール",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "MONSTA X",
+   "title": "MONSTA X",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=319537",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-12-08",
+   "venue": "ぴあアリーナMM",
+   "_source_id": "ltike"
   }
  ]
 }

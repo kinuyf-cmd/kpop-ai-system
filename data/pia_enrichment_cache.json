@@ -796,7 +796,7 @@
         "date_end": "2026-10-18"
       }
     ],
-    "cached_at": "2026-10-05T04:02:36.667225"
+    "cached_at": "2026-10-15T04:02:13.795497"
   },
   "b2670401": {
     "event_bundle_cd": "b2670401",
@@ -1210,5 +1210,19 @@
       }
     ],
     "cached_at": "2026-10-11T04:02:14.796701"
+  },
+  "b2671691": {
+    "event_bundle_cd": "b2671691",
+    "title": "ONEWE",
+    "description": "ONEWE(横浜ベイホール)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-11-08",
+        "venue": "横浜ベイホール",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-10-15T04:02:15.135866"
   }
 }
