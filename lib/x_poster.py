@@ -404,7 +404,7 @@ def _fetch_and_upload_featured(post_id: int, creds: dict) -> list:
 
 def post_hook_and_reply(text: str, url: str, post_id: int = None,
                         genre: str = "", artist: str = "",
-                        variant: str = None) -> dict:
+                        variant: str = None, require_concrete: bool = False) -> dict:
     """2段投稿: フック(URLなし)→URLリプライ (IMP最大化ハック)
 
     1) generate_tweet(include_url=False) でフック投稿（URLペナルティ回避）
@@ -412,6 +412,9 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
 
     variant: M10 AB割当。"A"=ペルソナ型(等身大ライター)、"B"=Pop Crave型(faceless事実)。
              Noneは.env (X_PERSONA_LLM/X_TWEET_LLM) を尊重し後方互換維持。
+    require_concrete: True ならフックに日時/場所/価格/条件の具体が無い場合、記事本文から
+             具体を1行足し、それでも無ければ投稿しない(Phase3, 2026-10-17)。
+             「〜気になるよね、どうする?」型の感想文はURL付きでもクリックされないため。
 
     Returns:
         {'success': bool, 'tweet_id': str, 'reply_id': str|None, 'error': str|None, 'variant': str}
@@ -517,6 +520,32 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
 
     if not hook_text:
         hook_text = text[:200] + '\n\n#KPOPJOURNAL #KPOP'
+
+    if require_concrete:
+        from lib.x_traffic_picker import (has_concrete_info, extract_concrete_facts,
+                                          concrete_line)
+        _chk = has_concrete_info(hook_text)
+        if not _chk['ok'] and _source_text and variant != 'B':
+            # ペルソナ型は感想文になりやすく具体を落とす(MAMA第2弾で実測)。
+            # 事実型(B)で1回だけ作り直す。AB集計は実際に使った B として記録。
+            try:
+                _retry = generate_tweet_llm(text, '', _source_text, _genre, include_url=False)
+                if _retry and has_concrete_info(_retry)['ok']:
+                    hook_text, variant = _retry, 'B'
+                    _chk = has_concrete_info(hook_text)
+            except Exception:
+                pass
+        if not _chk['ok']:
+            _line = concrete_line(extract_concrete_facts(_source_text)) if _source_text else ''
+            if _line:
+                # ハッシュタグ行の手前に具体を差し込む
+                _body, _sep, _tags = hook_text.rpartition('\n\n#')
+                hook_text = (f"{_body}\n{_line}{_sep}{_tags}" if _sep
+                             else f"{hook_text}\n{_line}")
+                _chk = has_concrete_info(hook_text)
+        if not _chk['ok']:
+            return {'success': False, 'skip_concrete': True,
+                    'error': f"具体なし — X投稿スキップ: {_chk['issue']}"}
 
     # 2026-05-28: 画像同梱(featured_mediaがある記事のみ)。両variantに適用。
     # 失敗してもtext-onlyで投稿継続(致命にしない)。

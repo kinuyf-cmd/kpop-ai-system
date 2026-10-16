@@ -113,10 +113,17 @@ def _next_ab_variant() -> str:
 CONVERSATION_HOURS = {17, 19, 21}   # Phase2: 夕+ゴールデン2枠は会話
 ARTICLE_HOURS = {12}                # Phase2: 昼1枠のみ記事誘導(URLなし)
 
-# 2026-08-16: Phase2 の記事誘導は URL を投げない。True に戻すと本文リンク/URL
-# リプライが復活するが、それがシャドウバン再発の主トリガーだった
-# (x-shadowban-state-and-history)。戻すのは Phase3 で、再度 imp 実測を確認してから。
-POST_ARTICLE_URL = False
+# 2026-08-16: Phase2 の記事誘導は URL を投げない(シャドウバン再発の主トリガー)。
+# 2026-10-17 Phase3: 記事帯(ARTICLE_HOURS)のキュー経路に限り自己リプURLを付ける。
+#   Phase は lib/x_phase.py の状態ファイルで持ち、悪化時は x_auto_repause_guard が
+#   Phase2 へ自動降格する。会話帯で会話を見送ってキュー記事に落ちた場合は URL なし
+#   (リンク比率を 1日1本に抑えるため)。スレッド(フック→要点→URL)は投稿数が増え
+#   bot シグネチャを作るので使わない。
+def _queue_url_allowed(hour: int) -> bool:
+    from lib.x_phase import get_phase
+    return get_phase() >= 3 and hour in ARTICLE_HOURS
+
+
 def slot_role(hour: int) -> str:
     if hour in CONVERSATION_HOURS:
         return 'conversation'
@@ -433,9 +440,12 @@ def _post_traffic(dry_run: bool = False) -> dict:
         print(f"  [traffic] DRY リプ: {post['reply'][:60]}")
         return {'success': True, 'dry_run': True}
     from google_metrics.post_to_x import post_tweet, validate_credentials
+    from lib.x_phase import with_utm
     creds, errors = validate_credentials()
     if creds is None:
         return {'success': False, 'reason': '; '.join(errors)}
+    # 2026-10-17: X流入を経路別に GA4 で数えるため UTM を付ける
+    post['reply'] = post['reply'].replace(post['url'], with_utm(post['url'], 'x_traffic'))
     tid, err = post_tweet(post['hook'], creds=creds)
     if not tid:
         print(f"  [traffic] 本文投稿失敗: {err}")
@@ -602,11 +612,16 @@ def process_queue(dry_run: bool = False) -> dict:
     # 選定スコアで並べ、同一アーティスト連投を避けて選ぶ
     queue = _sort_queue(queue)
     to_post = min(remaining_slots, 2)  # 1回の実行で最大2件
-    selected = _select_with_diversity(queue, to_post)
+    with_url = _queue_url_allowed(hour)
+    # Phase3 の URL 枠は具体のない記事を飛ばすため、候補を多めに見て先頭の合格で止める
+    selected = _select_with_diversity(queue, 3 if with_url else to_post)
     processed = 0
+    posted = 0
     new_queue = list(queue)
 
     for entry in selected:
+        if posted >= to_post:
+            break
         title = entry.get('title', '')
         url = entry.get('url', '')
         post_id = entry.get('post_id')
@@ -646,26 +661,22 @@ def process_queue(dry_run: bool = False) -> dict:
             new_queue.remove(entry)
             continue
 
-        # 2026-05-26(施策4): high priority 記事はスレッド(フック→要点→URL、単発比+40-60%imp)、
-        # その他は従来の2段。post_thread は要点生成不可なら自動で2段にフォールバック。
         # M10 AB (2026-05-28 / 偏り修正 2026-06-05): variant を「実投稿件数が少ない方」へ
         # 割当(A=ペルソナ/B=PopCrave)。旧 post_id%2 は記事IDの偶奇偏りで A:B=16:36 に崩れた。
         variant = _next_ab_variant()
-        # 2026-08-16 Phase2: POST_ARTICLE_URL=False の間は URL を渡さない。
-        # post_hook_and_reply は url='' なら Step2 の URL リプライを打たず、
-        # フック単発(URLゼロ)で終わる。post_thread は末尾に URL を出す設計のため
-        # Phase2 では high priority でも使わず、単発に統一する。
-        if not POST_ARTICLE_URL:
-            from lib.x_poster import post_hook_and_reply
-            result = post_hook_and_reply(title, '', post_id=post_id, genre=genre,
-                                         artist=artist, variant=variant)
-        elif entry.get('priority') == 'high' or genre in PRIORITY_GENRES:
-            from lib.x_poster import post_thread
-            result = post_thread(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
-        else:
-            from lib.x_poster import post_hook_and_reply
-            result = post_hook_and_reply(title, url, post_id=post_id, genre=genre, artist=artist, variant=variant)
+        # 2026-10-17 Phase3: URL は記事帯のみ・自己リプ1本(post_thread は使わない)。
+        # URL を付けるときはフックに具体を必須にする。url='' ならフック単発で終わる。
+        from lib.x_poster import post_hook_and_reply
+        from lib.x_phase import with_utm
+        result = post_hook_and_reply(title, with_utm(url, 'x_queue') if with_url else '',
+                                     post_id=post_id, genre=genre, artist=artist,
+                                     variant=variant, require_concrete=with_url)
+        if result.get('skip_concrete'):
+            # 具体の無い記事は URL 枠に出さないだけで、キューからは消さない
+            print(f"    – {result.get('error', '')[:60]}")
+            continue
         if result.get('success'):
+            posted += 1
             tid = result.get('tweet_id', '')
             rid = result.get('reply_id', '')
             actual_variant = result.get('variant', variant)

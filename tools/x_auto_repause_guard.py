@@ -14,6 +14,12 @@ get_public_metrics で実測し、平均が閾値を割ったら X系cronを
 
 冪等: アクティブなX系cronが無ければ何もしない。判定結果は毎回
 logs/x_repause_guard.jsonl に記録(可観測化)。
+
+2026-10-17 Phase3 降格判定を追加(全停止より手前の安全網)。Phase>=3 のとき、
+  - 直近7日の平均imp < X_PHASE_MIN_AVG (default 50。Phase3開始時は159)
+  - 直近14日の URL付き投稿の imp 中央値 < 会話型の中央値 × X_PHASE_URL_RATIO (default 0.5)
+    (両方 n>=X_PHASE_MIN_N=5 のときのみ判定)
+のどちらかで Phase を1段下げ(lib/x_phase.py)、Discord に通知する。
 """
 import json
 import os
@@ -37,6 +43,10 @@ THRESHOLD = float(os.environ.get("X_REPAUSE_THRESHOLD", "5.0"))
 MIN_N = int(os.environ.get("X_REPAUSE_MIN_N", "8"))
 WINDOW_D = int(os.environ.get("X_REPAUSE_WINDOW_D", "7"))
 AGE_H = int(os.environ.get("X_REPAUSE_AGE_H", "24"))
+PHASE_MIN_AVG = float(os.environ.get("X_PHASE_MIN_AVG", "50"))
+PHASE_URL_RATIO = float(os.environ.get("X_PHASE_URL_RATIO", "0.5"))
+PHASE_MIN_N = int(os.environ.get("X_PHASE_MIN_N", "5"))
+PHASE_WINDOW_D = 14
 
 # 停止対象のX系cron(実行行のみ。既にコメントの行は対象外)
 X_CRON_RE = re.compile(
@@ -82,6 +92,83 @@ def _avg_impression(ids: list[str]) -> tuple[float, int]:
     if not imps:
         return 0.0, 0
     return sum(imps) / len(imps), len(imps)
+
+
+def _url_and_conversation_ids() -> tuple[list[str], list[str]]:
+    """直近PHASE_WINDOW_D日・AGE_H以上経過の (URL付きフック, 会話型) tweet_id。
+
+    URL付き = traffic 経路で自己リプが付いたもの、またはキュー経路で url 付きのフック。
+    """
+    url_ids, conv_ids = [], []
+    if not POSTS_LOG.exists():
+        return url_ids, conv_ids
+    now = datetime.now()
+    lo = now - timedelta(days=PHASE_WINDOW_D)
+    hi = now - timedelta(hours=AGE_H)
+    for line in POSTS_LOG.read_text().splitlines():
+        try:
+            d = json.loads(line)
+            ts = datetime.fromisoformat(d["ts"])
+        except (json.JSONDecodeError, KeyError, ValueError):
+            continue
+        if d.get("status") != "ok" or not d.get("tweet_id") or d.get("reply_to"):
+            continue
+        if not lo <= ts <= hi:
+            continue
+        if d.get("kind") == "conversation":
+            conv_ids.append(str(d["tweet_id"]))
+        elif (d.get("kind") == "traffic" and d.get("reply_id")) or \
+                (d.get("mode") == "hook" and d.get("url")):
+            url_ids.append(str(d["tweet_id"]))
+    return url_ids, conv_ids
+
+
+def _impressions(ids: list[str]) -> list[int]:
+    from post_to_x import get_public_metrics
+
+    imps = []
+    for i in range(0, len(ids), 100):
+        data = get_public_metrics(ids[i : i + 100]) or {}
+        imps += [int(m.get("impression_count", 0)) for m in data.values()]
+    return imps
+
+
+def _median(xs: list[int]) -> float:
+    s = sorted(xs)
+    n = len(s)
+    return float(s[n // 2]) if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
+
+
+def _phase_check(avg: float, dry_run: bool) -> dict:
+    """Phase>=3 の悪化判定。降格したら理由を返す。"""
+    from lib.x_phase import get_phase, set_phase
+
+    phase = get_phase()
+    out = {"phase": phase}
+    if phase < 3:
+        return out
+    reasons = []
+    if avg < PHASE_MIN_AVG:
+        reasons.append(f"7日平均imp {avg:.1f} < {PHASE_MIN_AVG:.0f}")
+    url_ids, conv_ids = _url_and_conversation_ids()
+    url_imps, conv_imps = _impressions(url_ids), _impressions(conv_ids)
+    out.update({"url_n": len(url_imps), "conv_n": len(conv_imps)})
+    if len(url_imps) >= PHASE_MIN_N and len(conv_imps) >= PHASE_MIN_N:
+        url_med, conv_med = _median(url_imps), _median(conv_imps)
+        out.update({"url_median": url_med, "conv_median": conv_med})
+        if url_med < conv_med * PHASE_URL_RATIO:
+            reasons.append(f"URL付き中央値 {url_med:.0f} < 会話型 {conv_med:.0f}×{PHASE_URL_RATIO}")
+    if not reasons:
+        return out
+    out["phase_downgrade"] = "; ".join(reasons)
+    if not dry_run:
+        set_phase(phase - 1, out["phase_downgrade"])
+        _notify_discord(
+            f"⚠️ [X Phase降格] Phase{phase}→Phase{phase - 1}: {out['phase_downgrade']}。"
+            f"記事帯キュー経路のURLリプを停止しました。戻すには lib/x_phase.set_phase(3, ...)"
+        )
+    print(f"phase downgrade{' (dry-run)' if dry_run else ''}: {out['phase_downgrade']}")
+    return out
 
 
 def _active_x_cron_lines(cron_text: str) -> list[str]:
@@ -157,6 +244,10 @@ def main() -> int:
     record.update({"avg_impression": round(avg, 2), "n": n})
     if avg >= THRESHOLD:
         record["result"] = "healthy"
+        try:
+            record.update(_phase_check(avg, dry_run))
+        except Exception as e:  # 降格判定の失敗で全停止ガードの記録を止めない
+            record["phase_error"] = str(e)[:200]
         _log(record)
         print(f"healthy: avg imp {avg:.2f} >= {THRESHOLD} (n={n})")
         return 0
