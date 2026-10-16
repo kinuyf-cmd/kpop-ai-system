@@ -128,6 +128,35 @@ def _add_to_retry_queue(text: str, url: str, post_id: int = None):
     RETRY_QUEUE.write_text(json.dumps(queue_data, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
+def _wp_post_block_reason(post_id) -> str | None:
+    """投稿対象のWP記事が publish かつ featured_media 有りか検証し、NGなら理由を返す。
+
+    2026-10-17: 旧版は失効済みアプリパスワードで認証し常に401→例外を握り潰して素通り
+    (fail-open)していた。publish記事は認証なしで取得でき、draft/trash/private は401、
+    不在は404が返るため、認証を外し 401/403/404/410 を「publish以外」として扱う。
+    WP停止などそれ以外の失敗は従来どおりログのみで投稿を止めない。
+    """
+    import urllib.request as _ur, urllib.error as _ue
+    _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status,featured_media'
+    try:
+        with _ur.urlopen(_ur.Request(_u, headers={'User-Agent': 'kpop-x-poster/1.0'}), timeout=10) as _r:
+            _wp = json.loads(_r.read())
+    except _ue.HTTPError as _e:
+        if _e.code in (401, 403, 404, 410):
+            return f'WP記事 {post_id} 非公開または不在(HTTP {_e.code}) — X投稿スキップ'
+        print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+        return None
+    except Exception as _e:
+        print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+        return None
+    if _wp.get('status') != 'publish':
+        return f'WP記事 {post_id} status={_wp.get("status")} (publish以外) — X投稿スキップ'
+    # featured_media が無い記事は og-default になりサムネ不一致 → スキップ
+    if not _wp.get('featured_media'):
+        return f'WP記事 {post_id} featured_media未設定 — サムネ不一致防止のためX投稿スキップ'
+    return None
+
+
 def post_tweet(text: str, url: str = None, post_id: int = None,
                genre: str = "", artist: str = "",
                schedule: bool = True) -> dict:
@@ -170,23 +199,9 @@ def post_tweet(text: str, url: str = None, post_id: int = None,
 
     # --- WP記事status再検証 (2026-05-07: trash記事へのX投稿事故防止) ---
     if post_id:
-        try:
-            import urllib.request as _ur, base64 as _b64, json as _json
-            _AUTH = _b64.b64encode(b'kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh').decode()
-            _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status,featured_media&status=any'
-            _req = _ur.Request(_u, headers={'Authorization': f'Basic {_AUTH}'})
-            with _ur.urlopen(_req, timeout=10) as _r:
-                _wp = _json.loads(_r.read())
-            if _wp.get('status') != 'publish':
-                return {'success': False,
-                        'error': f'WP記事 {post_id} status={_wp.get("status")} (publish以外) — X投稿スキップ',
-                        'queued': False}
-            if _wp.get('featured_media', 0) == 0:
-                return {'success': False,
-                        'error': f'WP記事 {post_id} featured_media未設定 — サムネ不一致防止のためX投稿スキップ',
-                        'queued': False}
-        except Exception as _e:
-            print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+        _block = _wp_post_block_reason(post_id)
+        if _block:
+            return {'success': False, 'error': _block, 'queued': False}
 
     # --- OGP事前検証 (2026-05-07更新: og-default も block) ---
     # ユーザー指示「サムネイルは投稿記事と必ず同じものを使用」厳守のため、
@@ -411,22 +426,9 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
 
     # --- WP記事status再検証 (2026-05-07: 投稿後trash化されたbroken linkをXに送る事故防止) ---
     if post_id:
-        try:
-            import urllib.request as _ur, urllib.error as _ue, base64 as _b64, json as _json
-            _AUTH = _b64.b64encode(b'kpop-bot:vl1H 1brV m4Pq Z1sm F8lZ 3nzh').decode()
-            _u = f'https://www.kpopjournal.tokyo/wp-json/wp/v2/posts/{post_id}?_fields=id,status,featured_media,link&status=any'
-            _req = _ur.Request(_u, headers={'Authorization': f'Basic {_AUTH}'})
-            with _ur.urlopen(_req, timeout=10) as _r:
-                _wp = _json.loads(_r.read())
-            if _wp.get('status') != 'publish':
-                return {'success': False,
-                        'error': f'WP記事 {post_id} status={_wp.get("status")} (publish以外) — X投稿スキップ'}
-            # featured_media が無い記事は og-default になりサムネ不一致 → スキップ
-            if _wp.get('featured_media', 0) == 0:
-                return {'success': False,
-                        'error': f'WP記事 {post_id} featured_media未設定 — X投稿スキップ'}
-        except Exception as _e:
-            print(f"[x_poster] WP status check err: {_e}", file=sys.stderr)
+        _block = _wp_post_block_reason(post_id)
+        if _block:
+            return {'success': False, 'error': _block}
 
     # --- URL事前検証 (soft-404 + OGP og-default 検出) ---
     if url:
