@@ -42,32 +42,12 @@
   },
   {
    "type": "event",
-   "artist_keyword": "QWER",
-   "title": "QWER",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670998",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-15",
-   "venue": "GORILLA HALL OSAKA",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "LE SSERAFIM",
    "title": "LE SSERAFIM",
    "source_url": "https://l-tike.com/concert/mevent/?mid=695728",
    "source_media": "ローソンチケット",
    "start_date": "2026-12-19",
    "venue": "京セラドーム大阪",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
-   "artist_keyword": "&TEAM",
-   "title": "&TEAM",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=686034",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-10-15",
-   "venue": "東京ガーデンシアター",
    "_source_id": "ltike"
   },
   {
@@ -138,6 +118,46 @@
    "source_media": "ローソンチケット",
    "start_date": "2026-12-08",
    "venue": "ぴあアリーナMM",
+   "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "HYOJUNG",
+   "title": "HYOJUNG",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671665",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-01",
+   "venue": "TIAT SKY HALL",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "K-Drama",
+   "title": "K-Drama OST Tribute Concert 2026",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670325",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-10",
+   "venue": "横浜BUNTAI",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Night",
+   "title": "Night Tempo",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670902",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-30",
+   "venue": "Fukuoka BEAT STATION",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "fromis",
+   "title": "fromis_9",
+   "source_url": "https://l-tike.com/concert/mevent/?mid=508979",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-11-14",
+   "venue": "日本工学院アリーナ(片柳アリーナ)",
    "_source_id": "ltike"
   }
  ]

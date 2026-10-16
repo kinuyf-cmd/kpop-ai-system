@@ -1,59 +1,49 @@
 {
   "window": [
-    "2026-10-06",
-    "2026-10-12"
+    "2026-10-07",
+    "2026-10-13"
   ],
-  "generated_at": "2026-10-15",
+  "generated_at": "2026-10-16",
   "rows": [
     {
       "query": "ハートにチャージして 吹き替え",
-      "imp": 291,
+      "imp": 355,
       "prev_imp": 0,
-      "delta": 291,
-      "clicks": 26,
-      "ctr_pct": 8.93,
-      "position": 6.8,
+      "delta": 355,
+      "clicks": 27,
+      "ctr_pct": 7.61,
+      "position": 7.0,
       "ratio": null
     },
     {
       "query": "ハンロロ txt",
-      "imp": 134,
+      "imp": 135,
       "prev_imp": 0,
-      "delta": 134,
+      "delta": 135,
       "clicks": 0,
       "ctr_pct": 0,
-      "position": 8.4,
+      "position": 8.5,
       "ratio": null
     },
     {
       "query": "ハンロロ スビン",
-      "imp": 114,
+      "imp": 120,
       "prev_imp": 0,
-      "delta": 114,
+      "delta": 120,
       "clicks": 7,
-      "ctr_pct": 6.14,
-      "position": 5.8,
-      "ratio": null
-    },
-    {
-      "query": "twice ファンパーティー",
-      "imp": 99,
-      "prev_imp": 0,
-      "delta": 99,
-      "clicks": 2,
-      "ctr_pct": 2.02,
-      "position": 8.2,
+      "ctr_pct": 5.83,
+      "position": 5.9,
       "ratio": null
     },
     {
       "query": "rht メンバー",
-      "imp": 86,
-      "prev_imp": 11,
+      "imp": 88,
+      "prev_imp": 13,
       "delta": 75,
       "clicks": 1,
-      "ctr_pct": 1.16,
+      "ctr_pct": 1.14,
       "position": 9.7,
-      "ratio": 7.8
+      "ratio": 6.8
     }
   ]
 }

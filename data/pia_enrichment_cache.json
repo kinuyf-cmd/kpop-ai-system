@@ -1079,7 +1079,7 @@
     "description": "ラ・スペランザ(コーチャンフォー釧路文化ホール　大ホール 札幌コンサートホールＫｉｔａｒａ　大ホール 電力ホール あきた芸術劇場ミルハス　大ホール 荘銀タクト鶴岡　大ホール 狭山市市民会館　大ホール 君津市民文化ホール　大ホール Ｊ：ＣＯＭホール八王子 一宮市民会館 刈谷市総合文化センター　アイ...",
     "image": "https://image.pia.jp/images/202606/202606160062_ex.png",
     "performances": [],
-    "cached_at": "2026-10-08T04:02:21.852093"
+    "cached_at": "2026-10-16T04:02:51.108415"
   },
   "b2670904": {
     "event_bundle_cd": "b2670904",
@@ -1150,7 +1150,7 @@
         "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-10-08T04:02:24.525177"
+    "cached_at": "2026-10-16T04:02:52.294354"
   },
   "b2670592": {
     "event_bundle_cd": "b2670592",
@@ -1195,7 +1195,7 @@
         "date_end": "2026-11-05"
       }
     ],
-    "cached_at": "2026-10-08T04:02:26.351751"
+    "cached_at": "2026-10-16T04:02:54.963113"
   },
   "b2671434": {
     "event_bundle_cd": "b2671434",
@@ -1224,5 +1224,76 @@
       }
     ],
     "cached_at": "2026-10-15T04:02:15.135866"
+  },
+  "b2671665": {
+    "event_bundle_cd": "b2671665",
+    "title": "HYOJUNG",
+    "description": "HYOJUNG(ＴＩＡＴ　ＳＫＹ　ＨＡＬＬ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-11-01",
+        "venue": "TIAT SKY HALL",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-16T04:02:53.440234"
+  },
+  "b2670325": {
+    "event_bundle_cd": "b2670325",
+    "title": "K-Drama OST Tribute Concert 2026",
+    "description": "『冬のソナタ』から『太陽の末裔』『トッケビ』、『涙の女王』まで、日本の韓流史を彩ったメガヒット韓国ドラマのオリジナル・サウンドトラックの歌い手が一堂に集結。11/10(火)横浜BUNTAIにて唯一無二のオムニバスコンサート開催！",
+    "image": "https://image.pia.jp/images/202609/202609100073_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-11-10",
+        "venue": "横浜BUNTAI",
+        "prefecture": "神奈川県"
+      }
+    ],
+    "cached_at": "2026-10-16T04:02:56.457211"
+  },
+  "b2670655": {
+    "event_bundle_cd": "b2670655",
+    "title": "CHANYEOL",
+    "description": "CHANYEOL(Ｚｅｐｐ　ＤｉｖｅｒＣｉｔｙ（ＴＯＫＹＯ） ＫＴ　Ｚｅｐｐ　Ｙｏｋｏｈａｍａ Ｚｅｐｐ　Ｎａｇｏｙａ Ｚｅｐｐ　Ｏｓａｋａ　Ｂａｙｓｉｄｅ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202608/202608140036_ex.png",
+    "performances": [
+      {
+        "date": "2026-10-14",
+        "venue": "KT Zepp Yokohama",
+        "prefecture": "神奈川県"
+      },
+      {
+        "date": "2026-10-29",
+        "venue": "Zepp Nagoya",
+        "prefecture": "愛知県"
+      },
+      {
+        "date": "2026-11-02",
+        "venue": "Zepp Osaka Bayside",
+        "prefecture": "大阪府"
+      }
+    ],
+    "cached_at": "2026-10-16T04:02:57.910814"
+  },
+  "b2670902": {
+    "event_bundle_cd": "b2670902",
+    "title": "Night Tempo",
+    "description": "Night Tempo(札幌近松 仙台ＲＯＣＫＡＴＥＲＩＡ ＲＥＤＳＵＮ ＣＬＵＢ　ＭＡＧＯ Ｆｕｋｕｏｋａ　ＢＥＡＴ　ＳＴＡＴＩＯＮ ｃｌｕｂ　ＳＰＯＴ)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/images/202606/202606240008_ex.jpg",
+    "performances": [
+      {
+        "date": "2026-10-30",
+        "venue": "Fukuoka BEAT STATION",
+        "prefecture": "福岡県"
+      },
+      {
+        "date": "2026-11-03",
+        "venue": "仙台ROCKATERIA",
+        "prefecture": "宮城県"
+      }
+    ],
+    "cached_at": "2026-10-16T04:02:59.512216"
   }
 }
