@@ -1,25 +1,45 @@
 {
   "window": [
-    "2026-10-07",
-    "2026-10-13"
+    "2026-10-08",
+    "2026-10-14"
   ],
-  "generated_at": "2026-10-16",
+  "generated_at": "2026-10-17",
   "rows": [
     {
-      "query": "ハートにチャージして 吹き替え",
-      "imp": 355,
+      "query": "mma2026",
+      "imp": 572,
       "prev_imp": 0,
-      "delta": 355,
-      "clicks": 27,
-      "ctr_pct": 7.61,
-      "position": 7.0,
+      "delta": 572,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 9.2,
+      "ratio": null
+    },
+    {
+      "query": "ハートにチャージして 吹き替え",
+      "imp": 407,
+      "prev_imp": 0,
+      "delta": 407,
+      "clicks": 28,
+      "ctr_pct": 6.88,
+      "position": 7.3,
+      "ratio": null
+    },
+    {
+      "query": "ハートにチャージして 声優",
+      "imp": 150,
+      "prev_imp": 0,
+      "delta": 150,
+      "clicks": 6,
+      "ctr_pct": 4.0,
+      "position": 6.8,
       "ratio": null
     },
     {
       "query": "ハンロロ txt",
-      "imp": 135,
+      "imp": 139,
       "prev_imp": 0,
-      "delta": 135,
+      "delta": 139,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 8.5,
@@ -27,23 +47,33 @@
     },
     {
       "query": "ハンロロ スビン",
-      "imp": 120,
+      "imp": 123,
       "prev_imp": 0,
-      "delta": 120,
+      "delta": 123,
       "clicks": 7,
-      "ctr_pct": 5.83,
-      "position": 5.9,
+      "ctr_pct": 5.69,
+      "position": 6.0,
+      "ratio": null
+    },
+    {
+      "query": "ハートにチャージして吹き替え",
+      "imp": 83,
+      "prev_imp": 0,
+      "delta": 83,
+      "clicks": 4,
+      "ctr_pct": 4.82,
+      "position": 8.4,
       "ratio": null
     },
     {
       "query": "rht メンバー",
-      "imp": 88,
-      "prev_imp": 13,
-      "delta": 75,
+      "imp": 91,
+      "prev_imp": 12,
+      "delta": 79,
       "clicks": 1,
-      "ctr_pct": 1.14,
+      "ctr_pct": 1.1,
       "position": 9.7,
-      "ratio": 6.8
+      "ratio": 7.6
     }
   ]
 }

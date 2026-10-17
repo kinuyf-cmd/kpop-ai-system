@@ -1136,7 +1136,7 @@
         "date_end": "2026-10-24"
       }
     ],
-    "cached_at": "2026-10-08T04:02:23.305940"
+    "cached_at": "2026-10-17T04:03:05.299748"
   },
   "b2670657": {
     "event_bundle_cd": "b2670657",
@@ -1295,5 +1295,13 @@
       }
     ],
     "cached_at": "2026-10-16T04:02:59.512216"
+  },
+  "b2671470": {
+    "event_bundle_cd": "b2671470",
+    "title": "NCT 127",
+    "description": "NCT 127(ベルーナドーム)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [],
+    "cached_at": "2026-10-17T04:03:06.524238"
   }
 }
