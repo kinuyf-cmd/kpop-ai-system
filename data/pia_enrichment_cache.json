@@ -1303,5 +1303,19 @@
     "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
     "performances": [],
     "cached_at": "2026-10-17T04:03:06.524238"
+  },
+  "b2671732": {
+    "event_bundle_cd": "b2671732",
+    "title": "CHANSUNG（2PM) FAN MEETING 2026 －BLUE SKY－",
+    "description": "CHANSUNG（2PM) FAN MEETING 2026 －BLUE SKY－(Ｚｅｐｐ　Ｓｈｉｎｊｕｋｕ（ＴＯＫＹＯ）)をチケットぴあで今すぐチェック！",
+    "image": "https://image.pia.jp/common2/images/facebook_noimage.jpg",
+    "performances": [
+      {
+        "date": "2026-11-02",
+        "venue": "Zepp Shinjuku",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-18T04:02:01.216631"
   }
 }

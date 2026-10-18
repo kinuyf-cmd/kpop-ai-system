@@ -1,45 +1,45 @@
 {
   "window": [
-    "2026-10-08",
-    "2026-10-14"
+    "2026-10-09",
+    "2026-10-15"
   ],
-  "generated_at": "2026-10-17",
+  "generated_at": "2026-10-18",
   "rows": [
     {
       "query": "mma2026",
-      "imp": 572,
+      "imp": 814,
       "prev_imp": 0,
-      "delta": 572,
+      "delta": 814,
       "clicks": 0,
       "ctr_pct": 0,
-      "position": 9.2,
+      "position": 9.5,
       "ratio": null
     },
     {
       "query": "ハートにチャージして 吹き替え",
-      "imp": 407,
+      "imp": 457,
       "prev_imp": 0,
-      "delta": 407,
-      "clicks": 28,
-      "ctr_pct": 6.88,
-      "position": 7.3,
+      "delta": 457,
+      "clicks": 29,
+      "ctr_pct": 6.35,
+      "position": 7.5,
       "ratio": null
     },
     {
       "query": "ハートにチャージして 声優",
-      "imp": 150,
+      "imp": 194,
       "prev_imp": 0,
-      "delta": 150,
-      "clicks": 6,
-      "ctr_pct": 4.0,
-      "position": 6.8,
+      "delta": 194,
+      "clicks": 10,
+      "ctr_pct": 5.15,
+      "position": 6.7,
       "ratio": null
     },
     {
       "query": "ハンロロ txt",
-      "imp": 139,
+      "imp": 141,
       "prev_imp": 0,
-      "delta": 139,
+      "delta": 141,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 8.5,
@@ -47,33 +47,53 @@
     },
     {
       "query": "ハンロロ スビン",
-      "imp": 123,
+      "imp": 126,
       "prev_imp": 0,
-      "delta": 123,
+      "delta": 126,
       "clicks": 7,
-      "ctr_pct": 5.69,
-      "position": 6.0,
+      "ctr_pct": 5.56,
+      "position": 6,
       "ratio": null
     },
     {
       "query": "ハートにチャージして吹き替え",
-      "imp": 83,
+      "imp": 106,
       "prev_imp": 0,
-      "delta": 83,
+      "delta": 106,
       "clicks": 4,
-      "ctr_pct": 4.82,
-      "position": 8.4,
+      "ctr_pct": 3.77,
+      "position": 8.7,
+      "ratio": null
+    },
+    {
+      "query": "ミンギュ スペイン",
+      "imp": 87,
+      "prev_imp": 0,
+      "delta": 87,
+      "clicks": 24,
+      "ctr_pct": 27.59,
+      "position": 2.2,
+      "ratio": null
+    },
+    {
+      "query": "ハートにチャージして吹き替え声優",
+      "imp": 85,
+      "prev_imp": 0,
+      "delta": 85,
+      "clicks": 1,
+      "ctr_pct": 1.18,
+      "position": 4.1,
       "ratio": null
     },
     {
       "query": "rht メンバー",
-      "imp": 91,
-      "prev_imp": 12,
-      "delta": 79,
+      "imp": 87,
+      "prev_imp": 16,
+      "delta": 71,
       "clicks": 1,
-      "ctr_pct": 1.1,
+      "ctr_pct": 1.15,
       "position": 9.7,
-      "ratio": 7.6
+      "ratio": 5.4
     }
   ]
 }
