@@ -1,37 +1,61 @@
 {
-  "generated_at": "2026-10-12T07:00:03.538711",
+  "generated_at": "2026-10-19T07:00:04.400789",
   "candidates": [
     {
       "query": "鉄槌教師 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 1030,
-      "clicks": 2,
-      "ctr": 0.2,
-      "pos": 10.3
+      "imp": 1285,
+      "clicks": 4,
+      "ctr": 0.3,
+      "pos": 10.4
+    },
+    {
+      "query": "ハートにチャージして 吹き替え",
+      "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
+      "imp": 478,
+      "clicks": 29,
+      "ctr": 6.1,
+      "pos": 7.6
     },
     {
       "query": "txt 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 511,
-      "clicks": 9,
-      "ctr": 1.8,
-      "pos": 7.9
+      "imp": 454,
+      "clicks": 7,
+      "ctr": 1.5,
+      "pos": 7.5
     },
     {
       "query": "ヒュニンカイ 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 332,
-      "clicks": 6,
-      "ctr": 1.8,
-      "pos": 8.1
+      "imp": 368,
+      "clicks": 5,
+      "ctr": 1.4,
+      "pos": 6.9
+    },
+    {
+      "query": "鉄槌教師 キャスト相関図",
+      "page": "/tettsui-kyoshi-cast-chart/",
+      "imp": 320,
+      "clicks": 1,
+      "ctr": 0.3,
+      "pos": 6.8
+    },
+    {
+      "query": "ハートにチャージして 声優",
+      "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
+      "imp": 226,
+      "clicks": 11,
+      "ctr": 4.9,
+      "pos": 7
     },
     {
       "query": "the love lab",
       "page": "/netflix-renai-jikkenshitsu-guide/",
-      "imp": 181,
-      "clicks": 15,
-      "ctr": 8.3,
-      "pos": 8.1
+      "imp": 202,
+      "clicks": 18,
+      "ctr": 8.9,
+      "pos": 7.7
     }
   ]
 }
