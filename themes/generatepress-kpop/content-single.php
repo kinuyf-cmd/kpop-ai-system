@@ -187,6 +187,42 @@ if ( $kpop_is_popup_single ) {
 		   タグ + カテゴリ + 直近性で重みづけして 5件選出。
 		   サムネ + タイトル + 抜粋(2行)を grid で表示。 */
 		$kpop_related_q = null;
+		/* 2026-10-19: 定番記事は「同じシリーズ」を先に出す。MAMAハブの関連記事が新着ニュースで埋まり、
+		   KGMA/MMA/AAAハブへ1本も送れていなかった(サイト内遷移は検索1セッションあたり0.11回)。
+		   グループは先に書いた方を優先し、並びは配列の順。足りない分は従来のタグ/カテゴリで埋める。
+		   新しい定番記事を書いたらここに ID を足す。 */
+		$kpop_related_series = array(
+			/* 同じ作品 */
+			array( 1317, 1340, 1339, 1338, 7274, 1359 ),          // KPOPデーモンハンターズ
+			array( 9185, 9189, 9190 ),                           // 鉄槌教師
+			array( 6204, 6206, 6209 ),                           // 素晴らしき新世界
+			array( 4814, 4818 ),                                 // 21世紀の大君夫人
+			array( 11657, 11676 ),                               // 最後列からの声
+			array( 11655, 11677 ),                               // エージェント・キム
+			/* 年末授賞式2026(開催順) */
+			array( 21866, 23381, 4826, 23390 ),                  // KGMA → MMA → MAMA → AAA
+			/* いま配信中・配信予定のNetflix韓国作品(新しい順) */
+			array( 23409, 22640, 22633, 22630, 21915, 21550, 16874, 16582, 13501 ),
+		);
+		$kpop_related_ids = array();
+		foreach ( $kpop_related_series as $kpop_series ) {
+			if ( in_array( get_the_ID(), $kpop_series, true ) ) {
+				foreach ( $kpop_series as $kpop_sid ) {
+					if ( $kpop_sid !== get_the_ID() && ! in_array( $kpop_sid, $kpop_related_ids, true ) ) { $kpop_related_ids[] = $kpop_sid; }
+				}
+			}
+		}
+		$kpop_related_ids = array_slice( $kpop_related_ids, 0, 5 );
+		$kpop_related_series_posts = array();
+		if ( ! empty( $kpop_related_ids ) ) {
+			$kpop_related_series_posts = get_posts( array(
+				'post__in'            => $kpop_related_ids,
+				'orderby'             => 'post__in',
+				'post_status'         => 'publish',
+				'posts_per_page'      => 5,
+				'ignore_sticky_posts' => true,
+			) );
+		}
 		$kpop_related_tag_ids = array();
 		$kpop_related_post_tags = get_the_tags( get_the_ID() );
 		if ( $kpop_related_post_tags && ! is_wp_error( $kpop_related_post_tags ) ) {
@@ -197,13 +233,15 @@ if ( $kpop_is_popup_single ) {
 				if ( ! in_array( $t->name, $kpop_related_generic, true ) ) { $kpop_related_tag_ids[] = $t->term_id; }
 			}
 		}
-		if ( ! empty( $kpop_related_tag_ids ) ) {
+		$kpop_related_need = 5 - count( $kpop_related_series_posts );
+		$kpop_related_exclude = array_merge( array( get_the_ID() ), wp_list_pluck( $kpop_related_series_posts, 'ID' ) );
+		if ( $kpop_related_need > 0 && ! empty( $kpop_related_tag_ids ) ) {
 			$kpop_related_q = new WP_Query( array(
 				'post_type'           => 'post',
 				'post_status'         => 'publish',
 				'tag__in'             => $kpop_related_tag_ids,
-				'post__not_in'        => array( get_the_ID() ),
-				'posts_per_page'      => 5,
+				'post__not_in'        => $kpop_related_exclude,
+				'posts_per_page'      => $kpop_related_need,
 				'orderby'             => 'date',
 				'order'               => 'DESC',
 				'ignore_sticky_posts' => true,
@@ -211,29 +249,34 @@ if ( $kpop_is_popup_single ) {
 			) );
 		}
 		// タグマッチが少ない場合はカテゴリでフォールバック
-		if ( ! $kpop_related_q || ! $kpop_related_q->have_posts() ) {
+		if ( $kpop_related_need > 0 && ( ! $kpop_related_q || ! $kpop_related_q->have_posts() ) ) {
 			$kpop_related_cats_fb = get_the_category( get_the_ID() );
 			if ( $kpop_related_cats_fb ) {
 				$kpop_related_q = new WP_Query( array(
 					'post_type'           => 'post',
 					'post_status'         => 'publish',
 					'cat'                 => $kpop_related_cats_fb[0]->term_id,
-					'post__not_in'        => array( get_the_ID() ),
-					'posts_per_page'      => 5,
+					'post__not_in'        => $kpop_related_exclude,
+					'posts_per_page'      => $kpop_related_need,
 					'orderby'             => 'date',
 					'order'               => 'DESC',
 					'no_found_rows'       => true,
 				) );
 			}
 		}
-		if ( $kpop_related_q && $kpop_related_q->have_posts() ) :
+		$kpop_related_posts = $kpop_related_series_posts;
+		if ( $kpop_related_need > 0 && $kpop_related_q && $kpop_related_q->have_posts() ) {
+			$kpop_related_posts = array_merge( $kpop_related_posts, $kpop_related_q->posts );
+		}
+		if ( ! empty( $kpop_related_posts ) ) :
 			?>
 			<section class="kpop-related-section" aria-label="関連記事">
 				<h2 class="kpop-related-heading">関連記事</h2>
 				<ul class="kpop-related-cards" aria-label="関連記事5件">
 					<?php
-					while ( $kpop_related_q->have_posts() ) :
-						$kpop_related_q->the_post();
+					global $post;
+					foreach ( $kpop_related_posts as $post ) :
+						setup_postdata( $post );
 						$excerpt = get_the_excerpt();
 						if ( mb_strlen( $excerpt ) > 60 ) { $excerpt = mb_substr( $excerpt, 0, 60 ) . '…'; }
 						?>
@@ -247,7 +290,7 @@ if ( $kpop_is_popup_single ) {
 							</a>
 						</li>
 						<?php
-					endwhile;
+					endforeach;
 					wp_reset_postdata();
 					?>
 				</ul>
