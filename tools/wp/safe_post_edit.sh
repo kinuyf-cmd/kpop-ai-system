@@ -153,7 +153,10 @@ PY
     else
       cd "$BASE"
       venv_kpi/bin/python3 lib/gsc_indexing.py --url "$SITE/$slug/" 2>&1 | tail -1
-      echo "[DONE] post $post_id 更新完了(バックアップ・検証・GSC申請済)"
+      # 2026-10-20: Bing へも更新を通知。MAMAハブは流入の9割がBing(Edge)だったのに、
+      # 手動更新では GSC にしか申請していなかった。新規公開は post_publish_hook が送っている。
+      venv_kpi/bin/python3 lib/indexnow.py --url "$SITE/$slug/" 2>&1 | tail -1
+      echo "[DONE] post $post_id 更新完了(バックアップ・検証・GSC/IndexNow申請済)"
     fi
     ;;
 
