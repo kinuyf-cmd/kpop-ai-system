@@ -1,15 +1,15 @@
 {
   "window": [
-    "2026-10-12",
-    "2026-10-18"
+    "2026-10-13",
+    "2026-10-19"
   ],
-  "generated_at": "2026-10-21",
+  "generated_at": "2026-10-22",
   "rows": [
     {
       "query": "mma2026",
-      "imp": 824,
+      "imp": 827,
       "prev_imp": 0,
-      "delta": 824,
+      "delta": 827,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 9.5,
@@ -17,43 +17,23 @@
     },
     {
       "query": "ハートにチャージして 声優",
-      "imp": 241,
-      "prev_imp": 3,
-      "delta": 238,
-      "clicks": 11,
-      "ctr_pct": 4.56,
-      "position": 7.4,
-      "ratio": 80.3
+      "imp": 236,
+      "prev_imp": 8,
+      "delta": 228,
+      "clicks": 10,
+      "ctr_pct": 4.24,
+      "position": 7.2,
+      "ratio": 29.5
     },
     {
       "query": "君へダイブ ost",
-      "imp": 173,
+      "imp": 192,
       "prev_imp": 0,
-      "delta": 173,
-      "clicks": 7,
-      "ctr_pct": 4.05,
-      "position": 8.5,
+      "delta": 192,
+      "clicks": 8,
+      "ctr_pct": 4.17,
+      "position": 8.3,
       "ratio": null
-    },
-    {
-      "query": "ミンギュ スペイン",
-      "imp": 120,
-      "prev_imp": 0,
-      "delta": 120,
-      "clicks": 37,
-      "ctr_pct": 30.83,
-      "position": 2.4,
-      "ratio": null
-    },
-    {
-      "query": "ハートにチャージして吹き替え",
-      "imp": 88,
-      "prev_imp": 24,
-      "delta": 64,
-      "clicks": 3,
-      "ctr_pct": 3.41,
-      "position": 9.1,
-      "ratio": 3.7
     }
   ]
 }

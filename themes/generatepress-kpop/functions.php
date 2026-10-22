@@ -427,7 +427,12 @@ function kpop_render_single_footer( $post_id ) {
 function kpop_ad_config() {
 	static $cfg = null;
 	if ( $cfg !== null ) { return $cfg; }
-	$path = get_stylesheet_directory() . '/../../../../config/affiliate/sidebar_ad.json';
+	// 本番はテーマ同梱の写しを読む。php-fpm は open_basedir/ProtectHome で
+	// /home を読めないため(2026-10-22 hardening)。素材を変えたら写しも更新する。
+	$path = get_stylesheet_directory() . '/sidebar_ad.json';
+	if ( ! file_exists( $path ) ) {
+		$path = get_stylesheet_directory() . '/../../../../config/affiliate/sidebar_ad.json';
+	}
 	if ( ! file_exists( $path ) ) {
 		$alt = '/home/aiuser/kpop-ai-system/config/affiliate/sidebar_ad.json';
 		if ( file_exists( $alt ) ) { $path = $alt; }

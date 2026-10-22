@@ -149,6 +149,16 @@
    "start_date": "2026-11-02",
    "venue": "Zepp Shinjuku",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "パク・ソハム",
+   "title": "パク・ソハム Japan 1st Fanmeeting 2026 -Prologue-",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670679",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-14",
+   "venue": "ヒューリックホール東京",
+   "_source_id": "pia"
   }
  ]
 }

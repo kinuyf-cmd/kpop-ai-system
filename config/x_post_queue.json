@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-21 21:17",
+  "updated": "2026-10-22 21:32",
   "count": 4,
   "queue": [
     {
-      "title": "NCT 127、10周年公演を埼玉でWOWOW生中継",
-      "url": "https://www.kpopjournal.tokyo/nct127-10th-anniversary-saitama-wowow/",
-      "post_id": 25731,
-      "genre": "breaking",
-      "artist": "NCT",
-      "priority": "high",
-      "queued_at": "2026-10-21T19:37:16.579347"
-    },
-    {
-      "title": "TWICEナヨン、11月に新ソロアルバム発表",
-      "url": "https://www.kpopjournal.tokyo/twice-nayon-new-solo-album-november/",
-      "post_id": 25727,
-      "genre": "breaking",
-      "artist": "TWICE",
-      "priority": "high",
-      "queued_at": "2026-10-21T19:35:47.535535"
-    },
-    {
-      "title": "TXTスビンのディープフェイク疑惑に言及した男性インフルエンサー",
-      "url": "https://www.kpopjournal.tokyo/txt-subin-deepfake-controversy-influencer/",
-      "post_id": 25723,
+      "title": "TXTメンバーに関する悪質な噂拡散、BIGHIT対応",
+      "url": "https://www.kpopjournal.tokyo/txt-member-rumors-bighit-response/",
+      "post_id": 25850,
       "genre": "breaking",
       "artist": "TXT",
       "priority": "high",
-      "queued_at": "2026-10-21T19:30:53.600829"
+      "queued_at": "2026-10-22T21:32:53.456771"
     },
     {
-      "title": "TWICEナヨン、11月下旬にソロカムバック準備中",
-      "url": "https://www.kpopjournal.tokyo/?p=25719",
-      "post_id": 25719,
+      "title": "ホ・ナムジュン、IUのコーヒーカーに感謝",
+      "url": "https://www.kpopjournal.tokyo/ho-namjoon-iu-coffee-car-thanks/",
+      "post_id": 25846,
       "genre": "breaking",
-      "artist": "TWICE",
+      "artist": "아이유",
       "priority": "high",
-      "queued_at": "2026-10-21T19:00:51.784374"
+      "queued_at": "2026-10-22T21:31:40.130370"
+    },
+    {
+      "title": "aespa、デビュー6周年記念ファンミ11月開催",
+      "url": "https://www.kpopjournal.tokyo/aespa-debut-6th-anniversary-fanmeeting/",
+      "post_id": 25842,
+      "genre": "breaking",
+      "artist": "aespa",
+      "priority": "high",
+      "queued_at": "2026-10-22T19:36:54.348307"
+    },
+    {
+      "title": "ホ・ナムジュン、IUからのコーヒーカー公開",
+      "url": "https://www.kpopjournal.tokyo/?p=25838",
+      "post_id": 25838,
+      "genre": "breaking",
+      "artist": "IU",
+      "priority": "high",
+      "queued_at": "2026-10-22T19:35:44.120873"
     }
   ]
 }
