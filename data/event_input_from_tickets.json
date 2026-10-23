@@ -159,6 +159,16 @@
    "start_date": "2026-11-14",
    "venue": "ヒューリックホール東京",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "EXO",
+   "title": "EXO PLANET ♯6 - EXhOrizon 〔dot〕 - in CINEMAS",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=797217",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-11-08",
+   "venue": "ローソン・ユナイテッドシネマ札幌",
+   "_source_id": "ltike"
   }
  ]
 }

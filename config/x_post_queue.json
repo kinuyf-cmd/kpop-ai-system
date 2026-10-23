@@ -1,42 +1,42 @@
 {
-  "updated": "2026-10-22 21:32",
+  "updated": "2026-10-23 21:17",
   "count": 4,
   "queue": [
     {
-      "title": "TXTメンバーに関する悪質な噂拡散、BIGHIT対応",
-      "url": "https://www.kpopjournal.tokyo/txt-member-rumors-bighit-response/",
-      "post_id": 25850,
+      "title": "BTS、5thアルバム収録「2.0」MV再生数2億回突破",
+      "url": "https://www.kpopjournal.tokyo/bts-5th-album-2-0-mv-200-million-views/",
+      "post_id": 25914,
       "genre": "breaking",
-      "artist": "TXT",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-10-22T21:32:53.456771"
+      "queued_at": "2026-10-23T19:32:55.991980"
     },
     {
-      "title": "ホ・ナムジュン、IUのコーヒーカーに感謝",
-      "url": "https://www.kpopjournal.tokyo/ho-namjoon-iu-coffee-car-thanks/",
-      "post_id": 25846,
+      "title": "IUとイ・ジョンソク、破局後初の公式イベント",
+      "url": "https://www.kpopjournal.tokyo/iu-lee-jung-suk-breakup-event/",
+      "post_id": 25910,
       "genre": "breaking",
       "artist": "아이유",
       "priority": "high",
-      "queued_at": "2026-10-22T21:31:40.130370"
+      "queued_at": "2026-10-23T19:31:41.837997"
     },
     {
-      "title": "aespa、デビュー6周年記念ファンミ11月開催",
-      "url": "https://www.kpopjournal.tokyo/aespa-debut-6th-anniversary-fanmeeting/",
-      "post_id": 25842,
+      "title": "キム・ユジョン、海外スケジュールで出国",
+      "url": "https://www.kpopjournal.tokyo/?p=25901",
+      "post_id": 25901,
       "genre": "breaking",
-      "artist": "aespa",
+      "artist": "Stray Kids",
       "priority": "high",
-      "queued_at": "2026-10-22T19:36:54.348307"
+      "queued_at": "2026-10-23T17:31:29.606500"
     },
     {
-      "title": "ホ・ナムジュン、IUからのコーヒーカー公開",
-      "url": "https://www.kpopjournal.tokyo/?p=25838",
-      "post_id": 25838,
+      "title": "ENHYPEN、献血キャンペーンで成果を共有",
+      "url": "https://www.kpopjournal.tokyo/enhypen-blood-donation-campaign/",
+      "post_id": 25889,
       "genre": "breaking",
-      "artist": "IU",
+      "artist": "ENHYPEN",
       "priority": "high",
-      "queued_at": "2026-10-22T19:35:44.120873"
+      "queued_at": "2026-10-23T13:35:54.278110"
     }
   ]
 }
