@@ -52,16 +52,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "KARA",
-   "title": "KARA",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670364",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-23",
-   "venue": "横浜BUNTAI",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "LEE",
    "title": "2026 LEE YIKYUNG SHOW",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670657",
@@ -169,6 +159,26 @@
    "start_date": "2026-11-08",
    "venue": "ローソン・ユナイテッドシネマ札幌",
    "_source_id": "ltike"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "KIRARA",
+   "title": "KIRARA",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671135",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-12",
+   "venue": "UNIT",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "Night",
+   "title": "Night Tempo",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670902",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-29",
+   "venue": "club SPOT",
+   "_source_id": "pia"
   }
  ]
 }

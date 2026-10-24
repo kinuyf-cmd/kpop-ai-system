@@ -1195,7 +1195,7 @@
         "date_end": "2026-11-05"
       }
     ],
-    "cached_at": "2026-10-16T04:02:54.963113"
+    "cached_at": "2026-10-24T04:02:33.320868"
   },
   "b2671434": {
     "event_bundle_cd": "b2671434",
@@ -1251,7 +1251,7 @@
         "prefecture": "神奈川県"
       }
     ],
-    "cached_at": "2026-10-16T04:02:56.457211"
+    "cached_at": "2026-10-24T04:02:34.479116"
   },
   "b2670655": {
     "event_bundle_cd": "b2670655",
@@ -1273,9 +1273,14 @@
         "date": "2026-11-02",
         "venue": "Zepp Osaka Bayside",
         "prefecture": "大阪府"
+      },
+      {
+        "date": "2026-11-11",
+        "venue": "Zepp DiverCity",
+        "prefecture": "東京都"
       }
     ],
-    "cached_at": "2026-10-16T04:02:57.910814"
+    "cached_at": "2026-10-24T04:02:35.760583"
   },
   "b2670902": {
     "event_bundle_cd": "b2670902",
@@ -1283,6 +1288,11 @@
     "description": "Night Tempo(札幌近松 仙台ＲＯＣＫＡＴＥＲＩＡ ＲＥＤＳＵＮ ＣＬＵＢ　ＭＡＧＯ Ｆｕｋｕｏｋａ　ＢＥＡＴ　ＳＴＡＴＩＯＮ ｃｌｕｂ　ＳＰＯＴ)をチケットぴあで今すぐチェック！",
     "image": "https://image.pia.jp/images/202606/202606240008_ex.jpg",
     "performances": [
+      {
+        "date": "2026-10-29",
+        "venue": "club SPOT",
+        "prefecture": "大分県"
+      },
       {
         "date": "2026-10-30",
         "venue": "Fukuoka BEAT STATION",
@@ -1294,7 +1304,7 @@
         "prefecture": "宮城県"
       }
     ],
-    "cached_at": "2026-10-16T04:02:59.512216"
+    "cached_at": "2026-10-24T04:02:38.532387"
   },
   "b2671470": {
     "event_bundle_cd": "b2671470",
@@ -1331,5 +1341,19 @@
       }
     ],
     "cached_at": "2026-10-22T04:02:41.718190"
+  },
+  "b2671135": {
+    "event_bundle_cd": "b2671135",
+    "title": "KIRARA",
+    "description": "韓国発のエレクトロニック・ミュージシャン、KIRARA初の単独公演を11/12(木)UNITにて開催！",
+    "image": "https://image.pia.jp/images/202609/202609150097_ex.png",
+    "performances": [
+      {
+        "date": "2026-11-12",
+        "venue": "UNIT",
+        "prefecture": "東京都"
+      }
+    ],
+    "cached_at": "2026-10-24T04:02:37.227998"
   }
 }

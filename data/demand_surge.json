@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-10-14",
-    "2026-10-20"
+    "2026-10-15",
+    "2026-10-21"
   ],
-  "generated_at": "2026-10-23",
+  "generated_at": "2026-10-24",
   "rows": [
     {
-      "query": "mma2026",
-      "imp": 832,
+      "query": "スビン 流出",
+      "imp": 567,
       "prev_imp": 0,
-      "delta": 832,
+      "delta": 567,
+      "clicks": 34,
+      "ctr_pct": 6.0,
+      "position": 6.1,
+      "ratio": null
+    },
+    {
+      "query": "ジヒョ 退社",
+      "imp": 194,
+      "prev_imp": 0,
+      "delta": 194,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 9.4,
       "ratio": null
-    },
-    {
-      "query": "君へダイブ ost",
-      "imp": 162,
-      "prev_imp": 35,
-      "delta": 127,
-      "clicks": 7,
-      "ctr_pct": 4.32,
-      "position": 8.4,
-      "ratio": 4.6
     }
   ]
 }
