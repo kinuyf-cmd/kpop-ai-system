@@ -1,18 +1,18 @@
 {
   "window": [
-    "2026-10-15",
-    "2026-10-21"
+    "2026-10-16",
+    "2026-10-22"
   ],
-  "generated_at": "2026-10-24",
+  "generated_at": "2026-10-25",
   "rows": [
     {
       "query": "スビン 流出",
-      "imp": 567,
+      "imp": 627,
       "prev_imp": 0,
-      "delta": 567,
-      "clicks": 34,
-      "ctr_pct": 6.0,
-      "position": 6.1,
+      "delta": 627,
+      "clicks": 37,
+      "ctr_pct": 5.9,
+      "position": 6.5,
       "ratio": null
     },
     {

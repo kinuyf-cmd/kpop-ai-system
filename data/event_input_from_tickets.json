@@ -22,16 +22,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "NCT",
-   "title": "NCT 127",
-   "source_url": "https://l-tike.com/concert/mevent/?mid=482316",
-   "source_media": "ローソンチケット",
-   "start_date": "2026-10-24",
-   "venue": "ベルーナドーム",
-   "_source_id": "ltike"
-  },
-  {
-   "type": "event",
    "artist_keyword": "NMIXX",
    "title": "NMIXX",
    "source_url": "https://l-tike.com/concert/mevent/?mid=751210",
@@ -178,6 +168,36 @@
    "source_media": "ぴあ",
    "start_date": "2026-10-29",
    "venue": "club SPOT",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "N.Flying",
+   "title": "N.Flying",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671474",
+   "source_media": "ぴあ",
+   "start_date": "2026-10-27",
+   "venue": "Zepp Nagoya",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "IVE",
+   "title": "2026 Click-B Yoo Hoseok EVAN LIVE in Tokyo ～Special Moment～",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671767",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-07",
+   "venue": "I’M A SHOW",
+   "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "SONG",
+   "title": "2026 SONG KANG FANMEETING ＜PLAY, SONG KANG＞ IN JAPAN",
+   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671633",
+   "source_media": "ぴあ",
+   "start_date": "2026-11-12",
+   "venue": "SGC HALL ARIAKE",
    "_source_id": "pia"
   }
  ]
