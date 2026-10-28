@@ -162,16 +162,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "N.Flying",
-   "title": "N.Flying",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671474",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-27",
-   "venue": "Zepp Nagoya",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "IVE",
    "title": "2026 Click-B Yoo Hoseok EVAN LIVE in Tokyo ～Special Moment～",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671767",

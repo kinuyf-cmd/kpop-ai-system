@@ -1,18 +1,18 @@
 {
   "window": [
-    "2026-10-18",
-    "2026-10-24"
+    "2026-10-19",
+    "2026-10-25"
   ],
-  "generated_at": "2026-10-27",
+  "generated_at": "2026-10-28",
   "rows": [
     {
       "query": "スビン 流出",
-      "imp": 650,
+      "imp": 662,
       "prev_imp": 0,
-      "delta": 650,
+      "delta": 662,
       "clicks": 39,
-      "ctr_pct": 6.0,
-      "position": 6.9,
+      "ctr_pct": 5.89,
+      "position": 7.0,
       "ratio": null
     },
     {
@@ -27,23 +27,33 @@
     },
     {
       "query": "ハンロロ スビン",
-      "imp": 136,
-      "prev_imp": 42,
-      "delta": 94,
+      "imp": 133,
+      "prev_imp": 35,
+      "delta": 98,
       "clicks": 1,
-      "ctr_pct": 0.74,
-      "position": 9.8,
-      "ratio": 3.2
+      "ctr_pct": 0.75,
+      "position": 9.7,
+      "ratio": 3.8
     },
     {
       "query": "スビン ハンロロ",
-      "imp": 113,
-      "prev_imp": 25,
-      "delta": 88,
-      "clicks": 4,
-      "ctr_pct": 3.54,
+      "imp": 111,
+      "prev_imp": 14,
+      "delta": 97,
+      "clicks": 3,
+      "ctr_pct": 2.7,
       "position": 8.5,
-      "ratio": 4.5
+      "ratio": 7.9
+    },
+    {
+      "query": "mamamoo セトリ",
+      "imp": 116,
+      "prev_imp": 27,
+      "delta": 89,
+      "clicks": 2,
+      "ctr_pct": 1.72,
+      "position": 5.2,
+      "ratio": 4.3
     }
   ]
 }
