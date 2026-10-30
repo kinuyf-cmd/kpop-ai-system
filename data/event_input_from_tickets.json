@@ -152,16 +152,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "Night",
-   "title": "Night Tempo",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670902",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-29",
-   "venue": "club SPOT",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "IVE",
    "title": "2026 Click-B Yoo Hoseok EVAN LIVE in Tokyo ～Special Moment～",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671767",
