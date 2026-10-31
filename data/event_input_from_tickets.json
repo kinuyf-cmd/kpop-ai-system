@@ -92,16 +92,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "Night",
-   "title": "Night Tempo",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670902",
-   "source_media": "ぴあ",
-   "start_date": "2026-10-30",
-   "venue": "Fukuoka BEAT STATION",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "fromis",
    "title": "fromis_9",
    "source_url": "https://l-tike.com/concert/mevent/?mid=508979",
@@ -169,6 +159,16 @@
    "start_date": "2026-11-12",
    "venue": "SGC HALL ARIAKE",
    "_source_id": "pia"
+  },
+  {
+   "type": "event",
+   "artist_keyword": "&TEAM",
+   "title": "「2026-2027 &TEAM CONCERT TOUR ’Mark on You’」ライブビューイング",
+   "source_url": "https://l-tike.com/cinema/mevent/?mid=797414",
+   "source_media": "ローソンチケット",
+   "start_date": "2026-12-19",
+   "venue": "ローソン・ユナイテッドシネマ札幌",
+   "_source_id": "ltike"
   }
  ]
 }

@@ -1,59 +1,39 @@
 {
   "window": [
-    "2026-10-21",
-    "2026-10-27"
+    "2026-10-22",
+    "2026-10-28"
   ],
-  "generated_at": "2026-10-30",
+  "generated_at": "2026-10-31",
   "rows": [
     {
-      "query": "スビン 流出",
-      "imp": 669,
-      "prev_imp": 0,
-      "delta": 669,
-      "clicks": 39,
-      "ctr_pct": 5.83,
-      "position": 7.1,
-      "ratio": null
-    },
-    {
-      "query": "ジヒョ 退社",
-      "imp": 194,
-      "prev_imp": 0,
-      "delta": 194,
-      "clicks": 0,
-      "ctr_pct": 0,
-      "position": 9.4,
-      "ratio": null
+      "query": "rht メンバー",
+      "imp": 119,
+      "prev_imp": 12,
+      "delta": 107,
+      "clicks": 4,
+      "ctr_pct": 3.36,
+      "position": 9.7,
+      "ratio": 9.9
     },
     {
       "query": "mamamoo セトリ",
-      "imp": 126,
-      "prev_imp": 22,
-      "delta": 104,
+      "imp": 127,
+      "prev_imp": 24,
+      "delta": 103,
       "clicks": 2,
-      "ctr_pct": 1.59,
+      "ctr_pct": 1.57,
       "position": 5.4,
-      "ratio": 5.7
+      "ratio": 5.3
     },
     {
       "query": "プネクド ポップアップ",
-      "imp": 87,
-      "prev_imp": 0,
-      "delta": 87,
+      "imp": 86,
+      "prev_imp": 2,
+      "delta": 84,
       "clicks": 4,
-      "ctr_pct": 4.6,
-      "position": 7.2,
-      "ratio": null
-    },
-    {
-      "query": "rht メンバー",
-      "imp": 97,
-      "prev_imp": 14,
-      "delta": 83,
-      "clicks": 3,
-      "ctr_pct": 3.09,
-      "position": 9.6,
-      "ratio": 6.9
+      "ctr_pct": 4.65,
+      "position": 7.3,
+      "ratio": 43.0
     }
   ]
 }
