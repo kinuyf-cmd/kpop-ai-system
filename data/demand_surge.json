@@ -1,28 +1,28 @@
 {
   "window": [
-    "2026-10-22",
-    "2026-10-28"
+    "2026-10-23",
+    "2026-10-29"
   ],
-  "generated_at": "2026-10-31",
+  "generated_at": "2026-11-01",
   "rows": [
     {
       "query": "rht メンバー",
-      "imp": 119,
-      "prev_imp": 12,
-      "delta": 107,
+      "imp": 118,
+      "prev_imp": 17,
+      "delta": 101,
       "clicks": 4,
-      "ctr_pct": 3.36,
+      "ctr_pct": 3.39,
       "position": 9.7,
-      "ratio": 9.9
+      "ratio": 6.9
     },
     {
       "query": "mamamoo セトリ",
-      "imp": 127,
-      "prev_imp": 24,
-      "delta": 103,
+      "imp": 121,
+      "prev_imp": 23,
+      "delta": 98,
       "clicks": 2,
-      "ctr_pct": 1.57,
-      "position": 5.4,
+      "ctr_pct": 1.65,
+      "position": 5.5,
       "ratio": 5.3
     },
     {
@@ -34,6 +34,16 @@
       "ctr_pct": 4.65,
       "position": 7.3,
       "ratio": 43.0
+    },
+    {
+      "query": "ハントリックス メンバー",
+      "imp": 90,
+      "prev_imp": 30,
+      "delta": 60,
+      "clicks": 3,
+      "ctr_pct": 3.33,
+      "position": 2.2,
+      "ratio": 3.0
     }
   ]
 }
