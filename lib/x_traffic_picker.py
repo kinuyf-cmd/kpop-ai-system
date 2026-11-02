@@ -750,6 +750,60 @@ def search_event_articles(limit: int = 30) -> list[dict]:
     return out
 
 
+_WD = "月火水木金土日"
+
+
+def _md(d) -> str:
+    return f"{d.month}/{d.day}({_WD[d.weekday()]})"
+
+
+def build_event_reply(url: str, period: str, facts: dict | None = None,
+                      today: str = "") -> str:
+    """イベント投稿の自己リプ。「詳細はこちら」だけだった文面を、会期から計算できる
+    事実(残り日数・最終日の曜日・会期の長さ)に置き換える。
+
+    2026-11-02: 流入投稿のリプが「開催中。詳細はこちら」だけで、本文(会場+会期)と
+    同じ情報しか無かったため。ポップアップ記事の本文は会場と会期だけの131字で、
+    記事側に新情報が無い。そのためリプには「いつまで/あと何日」という行動を決める
+    情報を足す。営業時間・価格が本文から取れたときだけ併記する(取れなければ書かない)。
+    """
+    facts = facts or {}
+    start, end = _parse_period(period)
+    now = _today(today)
+    lines = []
+    if start and end:
+        total = (end - start).days + 1
+        if start <= now <= end:
+            left = (end - now).days
+            if left == 0:
+                lines.append(f"本日{_md(end)}が最終日です")
+            elif left == 1:
+                lines.append(f"明日{_md(end)}までです")
+            else:
+                lines.append(f"{_md(end)}まで、あと{left}日です")
+        elif now < start:
+            wait = (start - now).days
+            when = "明日" if wait == 1 else f"{wait}日後"
+            lines.append(f"{_md(start)}から{_md(end)}まで({total}日間)。始まるのは{when}です")
+        if total <= 7 and start <= now <= end:
+            lines.append(f"会期は{total}日間と短めです")
+    extra = []
+    for key, label in (("hours", "営業時間 "), ("price", "")):
+        v = (facts.get(key) or [""])[0]
+        v = re.sub(r"\s+", " ", v).strip()
+        if v:
+            extra.append(label + v[:30])
+    if extra:
+        lines.append(" / ".join(extra))
+    if not lines:
+        return f"会場と会期のまとめはこちら\n{url}"
+    date_lines = [l for l in lines if not l.startswith(("営業時間", ))and l not in extra]
+    body = "。".join(date_lines) + "。"
+    if extra:
+        body += "\n" + " / ".join(extra)
+    return f"{body}\n会場・会期のまとめ\n{url}"
+
+
 def pick_event_post(today: str = "") -> dict | None:
     """開催中(または直近で始まる)イベント記事から投稿を1件組み立てる。
 
@@ -778,7 +832,8 @@ def pick_event_post(today: str = "") -> dict | None:
         hook = f"{art['title']}\n\n{line}"
         if not has_concrete_info(hook)["ok"]:
             continue
-        return {"hook": hook, "reply": f"{opening}。詳細はこちら\n{art['url']}",
+        reply = build_event_reply(art["url"], period, facts, today=today)
+        return {"hook": hook, "reply": reply,
                 "url": art["url"], "post_id": art["post_id"],
                 "artist": art.get("artist", ""), "fact": art["title"],
                 "title": art["title"], "kind": "event"}

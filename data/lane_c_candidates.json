@@ -1,58 +1,74 @@
 {
-  "generated_at": "2026-10-26T07:00:04.672280",
+  "generated_at": "2026-11-02T07:00:04.217804",
   "candidates": [
     {
       "query": "鉄槌教師 相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 1202,
-      "clicks": 10,
-      "ctr": 0.8,
-      "pos": 6.2
+      "imp": 989,
+      "clicks": 6,
+      "ctr": 0.6,
+      "pos": 6.1
     },
     {
       "query": "鉄槌教師 声優",
       "page": "/tettsui-kyoshi-dub-episodes/",
-      "imp": 1130,
-      "clicks": 3,
+      "imp": 773,
+      "clicks": 2,
       "ctr": 0.3,
-      "pos": 10.4
+      "pos": 10.7
     },
     {
       "query": "スビン 流出",
       "page": "/txt-subin-deepfake-controversy-influencer/",
-      "imp": 640,
-      "clicks": 38,
-      "ctr": 5.9,
-      "pos": 6.7
+      "imp": 676,
+      "clicks": 41,
+      "ctr": 6.1,
+      "pos": 7.3
     },
     {
       "query": "ハートにチャージして 吹き替え",
       "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
-      "imp": 481,
+      "imp": 489,
       "clicks": 29,
-      "ctr": 6.0,
+      "ctr": 5.9,
       "pos": 7.7
+    },
+    {
+      "query": "kジャーナル",
+      "page": "/about/",
+      "imp": 469,
+      "clicks": 10,
+      "ctr": 2.1,
+      "pos": 6.2
     },
     {
       "query": "txt 兵役",
       "page": "/txt-huening-kai-2026-4-20260409/",
-      "imp": 370,
-      "clicks": 3,
-      "ctr": 0.8,
-      "pos": 7.8
+      "imp": 358,
+      "clicks": 1,
+      "ctr": 0.3,
+      "pos": 8.1
     },
     {
       "query": "ハートにチャージして 声優",
       "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
-      "imp": 297,
-      "clicks": 11,
-      "ctr": 3.7,
-      "pos": 7.9
+      "imp": 340,
+      "clicks": 12,
+      "ctr": 3.5,
+      "pos": 8.1
+    },
+    {
+      "query": "ハートにチャージして吹き替え声優",
+      "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
+      "imp": 322,
+      "clicks": 4,
+      "ctr": 1.2,
+      "pos": 6.6
     },
     {
       "query": "鉄槌教師 キャスト相関図",
       "page": "/tettsui-kyoshi-cast-chart/",
-      "imp": 295,
+      "imp": 290,
       "clicks": 1,
       "ctr": 0.3,
       "pos": 6.6
@@ -60,34 +76,34 @@
     {
       "query": "ハンロロ スビン",
       "page": "/txt-subin-friendship-song-lyrics/",
-      "imp": 266,
+      "imp": 272,
       "clicks": 8,
-      "ctr": 3.0,
+      "ctr": 2.9,
       "pos": 8.0
     },
     {
-      "query": "ハートにチャージして吹き替え声優",
-      "page": "/heart-ni-charge-shite-cast-episodes-netflix-guide/",
-      "imp": 236,
-      "clicks": 1,
-      "ctr": 0.4,
-      "pos": 6.8
+      "query": "rht メンバー",
+      "page": "/swf3-rhtokyo-profile/",
+      "imp": 242,
+      "clicks": 7,
+      "ctr": 2.9,
+      "pos": 9.8
     },
     {
       "query": "君へダイブ ost",
       "page": "/lee-minhyuk-kimi-ni-dive-ost-sonokisetsu/",
-      "imp": 197,
+      "imp": 201,
       "clicks": 9,
-      "ctr": 4.6,
-      "pos": 8.3
+      "ctr": 4.5,
+      "pos": 8.4
     },
     {
       "query": "スビン ハンロロ",
       "page": "/txt-subin-friendship-song-lyrics/",
-      "imp": 162,
+      "imp": 193,
       "clicks": 9,
-      "ctr": 5.6,
-      "pos": 7.7
+      "ctr": 4.7,
+      "pos": 7.6
     }
   ]
 }

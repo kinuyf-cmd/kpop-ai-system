@@ -72,16 +72,6 @@
   },
   {
    "type": "event",
-   "artist_keyword": "HYOJUNG",
-   "title": "HYOJUNG",
-   "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2671665",
-   "source_media": "ぴあ",
-   "start_date": "2026-11-01",
-   "venue": "TIAT SKY HALL",
-   "_source_id": "pia"
-  },
-  {
-   "type": "event",
    "artist_keyword": "K-Drama",
    "title": "K-Drama OST Tribute Concert 2026",
    "source_url": "http://t.pia.jp/pia/event/event.do?eventBundleCd=b2670325",

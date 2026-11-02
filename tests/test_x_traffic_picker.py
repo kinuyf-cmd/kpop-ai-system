@@ -158,3 +158,23 @@ def test_番組出演者一覧のような記事は引きに使わない():
             "POWが「Flavor」、WHIBが「CHERRY PIE」、NOWZが「Achilles」、"
             "AxMxPが「10 Reasons to Date」をそれぞれ披露した。")
     assert not has_substance(body)
+
+
+def test_build_event_reply_counts_days_and_weekday():
+    from lib.x_traffic_picker import build_event_reply
+    r = build_event_reply("https://x/y", "2026/11/04〜2026/11/10", {}, today="2026-11-05")
+    assert "11/10(火)まで、あと5日" in r
+    assert "短め" in r and r.endswith("https://x/y")
+
+
+def test_build_event_reply_last_day_and_before_start():
+    from lib.x_traffic_picker import build_event_reply
+    assert "本日11/11(水)が最終日" in build_event_reply(
+        "u", "2026/10/16〜2026/11/11", {}, today="2026-11-11")
+    r = build_event_reply("u", "2026/11/04〜2026/11/10", {"hours": ["11:00〜20:00"]}, today="2026-11-03")
+    assert "始まるのは明日" in r and "営業時間 11:00〜20:00" in r
+
+
+def test_build_event_reply_unparseable_period_still_has_url():
+    from lib.x_traffic_picker import build_event_reply
+    assert build_event_reply("https://x/y", "???", {}).endswith("https://x/y")
