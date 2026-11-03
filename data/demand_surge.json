@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-10-24",
-    "2026-10-30"
+    "2026-10-25",
+    "2026-10-31"
   ],
-  "generated_at": "2026-11-02",
+  "generated_at": "2026-11-03",
   "rows": [
     {
-      "query": "rht メンバー",
-      "imp": 123,
-      "prev_imp": 16,
-      "delta": 107,
-      "clicks": 5,
-      "ctr_pct": 4.07,
-      "position": 9.8,
-      "ratio": 7.7
+      "query": "illit 笛",
+      "imp": 156,
+      "prev_imp": 0,
+      "delta": 156,
+      "clicks": 0,
+      "ctr_pct": 0,
+      "position": 8.1,
+      "ratio": null
     },
     {
-      "query": "mamamoo セトリ",
-      "imp": 116,
-      "prev_imp": 31,
-      "delta": 85,
-      "clicks": 2,
-      "ctr_pct": 1.72,
-      "position": 5.5,
-      "ratio": 3.7
+      "query": "rht メンバー",
+      "imp": 133,
+      "prev_imp": 14,
+      "delta": 119,
+      "clicks": 5,
+      "ctr_pct": 3.76,
+      "position": 9.9,
+      "ratio": 9.5
     }
   ]
 }

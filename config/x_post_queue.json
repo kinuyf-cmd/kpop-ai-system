@@ -1,42 +1,42 @@
 {
-  "updated": "2026-11-02 21:35",
+  "updated": "2026-11-03 21:36",
   "count": 4,
   "queue": [
     {
-      "title": "IVE Gaeul、オールブラックコーデで近況報告",
-      "url": "https://www.kpopjournal.tokyo/ive-gaeul-all-black-outfit-update/",
-      "post_id": 26654,
+      "title": "少女時代 HYOYEON、パリでのオールブラックスタイル",
+      "url": "https://www.kpopjournal.tokyo/hyoyeon-paris-all-black-style/",
+      "post_id": 26754,
       "genre": "breaking",
-      "artist": "아이브",
+      "artist": "소녀시대",
       "priority": "high",
-      "queued_at": "2026-11-02T21:35:03.037299"
+      "queued_at": "2026-11-03T21:36:25.388622"
     },
     {
-      "title": "PLAVE・IVE・aespaがMMA 2026部門別首位",
-      "url": "https://www.kpopjournal.tokyo/plave-ive-aespa-mma-2026-top-positions/",
-      "post_id": 26649,
+      "title": "HYBE、BTSツアー効果で過去最高業績記録",
+      "url": "https://www.kpopjournal.tokyo/hybe-bts-tour-performance-record/",
+      "post_id": 26749,
       "genre": "breaking",
-      "artist": "플레이브",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-11-02T21:32:48.950620"
+      "queued_at": "2026-11-03T21:32:34.592580"
     },
     {
-      "title": "TXTヒュニンカイ、保護猫と心温まる出会い",
-      "url": "https://www.kpopjournal.tokyo/txt-hyuninkai-cat-encounter/",
-      "post_id": 26644,
+      "title": "ENHYPEN JAY、プライバシー侵害で法的対応",
+      "url": "https://www.kpopjournal.tokyo/enhypen-jay-privacy-legal-action/",
+      "post_id": 26745,
       "genre": "breaking",
-      "artist": "투모로우바이투게더",
+      "artist": "엔하이픈",
       "priority": "high",
-      "queued_at": "2026-11-02T19:34:19.124535"
+      "queued_at": "2026-11-03T21:31:13.363536"
     },
     {
-      "title": "SEVENTEEN THE8、整形疑惑浮上の最近の姿",
-      "url": "https://www.kpopjournal.tokyo/seventeen-the8-seikei-uwakuwaku-recent-appearance/",
-      "post_id": 26640,
+      "title": "BTS、南米ツアー完走 動員数853,000人",
+      "url": "https://www.kpopjournal.tokyo/bts-nanbei-tour-douin-853000/",
+      "post_id": 26728,
       "genre": "breaking",
-      "artist": "SEVENTEEN",
+      "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-11-02T19:32:39.019523"
+      "queued_at": "2026-11-03T17:35:41.304413"
     }
   ]
 }
