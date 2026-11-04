@@ -1,29 +1,29 @@
 {
   "window": [
-    "2026-10-25",
-    "2026-10-31"
+    "2026-10-26",
+    "2026-11-01"
   ],
-  "generated_at": "2026-11-03",
+  "generated_at": "2026-11-04",
   "rows": [
     {
       "query": "illit 笛",
-      "imp": 156,
+      "imp": 157,
       "prev_imp": 0,
-      "delta": 156,
+      "delta": 157,
       "clicks": 0,
       "ctr_pct": 0,
       "position": 8.1,
       "ratio": null
     },
     {
-      "query": "rht メンバー",
-      "imp": 133,
-      "prev_imp": 14,
-      "delta": 119,
-      "clicks": 5,
-      "ctr_pct": 3.76,
-      "position": 9.9,
-      "ratio": 9.5
+      "query": "クルアルバーキャスト",
+      "imp": 89,
+      "prev_imp": 0,
+      "delta": 89,
+      "clicks": 1,
+      "ctr_pct": 1.12,
+      "position": 4.9,
+      "ratio": null
     }
   ]
 }

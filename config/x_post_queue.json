@@ -1,42 +1,33 @@
 {
-  "updated": "2026-11-03 21:36",
-  "count": 4,
+  "updated": "2026-11-04 21:41",
+  "count": 3,
   "queue": [
     {
-      "title": "少女時代 HYOYEON、パリでのオールブラックスタイル",
-      "url": "https://www.kpopjournal.tokyo/hyoyeon-paris-all-black-style/",
-      "post_id": 26754,
+      "title": "ATEEZ・SANとのTikTok共演でIVE Liz批判殺到",
+      "url": "https://www.kpopjournal.tokyo/ateez-san-tiktok-ive-liz-k/",
+      "post_id": 26849,
       "genre": "breaking",
-      "artist": "소녀시대",
+      "artist": "ATEEZ",
       "priority": "high",
-      "queued_at": "2026-11-03T21:36:25.388622"
+      "queued_at": "2026-11-04T21:38:39.544232"
     },
     {
-      "title": "HYBE、BTSツアー効果で過去最高業績記録",
-      "url": "https://www.kpopjournal.tokyo/hybe-bts-tour-performance-record/",
-      "post_id": 26749,
+      "title": "TXT YEONJUN、堂々たるカリスマで注目集める",
+      "url": "https://www.kpopjournal.tokyo/?p=26844",
+      "post_id": 26844,
+      "genre": "breaking",
+      "artist": "TXT",
+      "priority": "high",
+      "queued_at": "2026-11-04T21:36:26.864896"
+    },
+    {
+      "title": "BTS、「ARIRANG」がFIMIプラチナ認定獲得",
+      "url": "https://www.kpopjournal.tokyo/bts-arirang-fimi-platinum/",
+      "post_id": 26839,
       "genre": "breaking",
       "artist": "BTS",
       "priority": "high",
-      "queued_at": "2026-11-03T21:32:34.592580"
-    },
-    {
-      "title": "ENHYPEN JAY、プライバシー侵害で法的対応",
-      "url": "https://www.kpopjournal.tokyo/enhypen-jay-privacy-legal-action/",
-      "post_id": 26745,
-      "genre": "breaking",
-      "artist": "엔하이픈",
-      "priority": "high",
-      "queued_at": "2026-11-03T21:31:13.363536"
-    },
-    {
-      "title": "BTS、南米ツアー完走 動員数853,000人",
-      "url": "https://www.kpopjournal.tokyo/bts-nanbei-tour-douin-853000/",
-      "post_id": 26728,
-      "genre": "breaking",
-      "artist": "BTS",
-      "priority": "high",
-      "queued_at": "2026-11-03T17:35:41.304413"
+      "queued_at": "2026-11-04T19:35:43.269455"
     }
   ]
 }
