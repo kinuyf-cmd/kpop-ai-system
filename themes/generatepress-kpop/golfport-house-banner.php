@@ -50,11 +50,16 @@ function kpop_ghb_def( $placement = 'article_footer' ) {
 		// スマホで「振/り返る。」のように不自然な位置で改行されないよう、句の境目でだけ折り返す(結合した文字列は sub と同一)。
 		'sub_parts' => array( 'ラウンド・練習・写真を', '記録して振り返る。' ),
 		'cta'      => 'GOLF PORTを見てみる',
-		// GOLF PORT 正式ロゴ(横組み 1637×435 透過PNG)を、再保存・再描画・変形・色変更せず本番の正式ファイルのまま参照する。
+		// GOLF PORT 正式ロゴ(横組み 1637×435 透過PNG)と正式アイコン(512×512)。再保存・再描画・変形・色変更なし。
+		// golfport.top/logo.png・icon.png を**無加工のまま**WPメディアに登録した実体(md5が原本と一致)。1年immutableでキャッシュされ、
+		// GOLF PORTの稼働に依存しない。ロゴを差し替えるときは同じ手順で再登録しURLを更新する(docs/golfport_banner_brand/README.md)。
 		// 縦組み/白抜き/簡略版は存在しない(作らない)。規定: ロゴの高さの半分以上の余白・白または淡色の無地背景。
-		'logo_src' => 'https://golfport.top/logo.png',
+		'logo_src' => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png',
 		'logo_w'   => 1637,
 		'logo_h'   => 435,
+		'icon_src' => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png',
+		'icon_w'   => 512,
+		'icon_h'   => 512,
 		'logo_alt' => 'ゴルフポート GOLF PORT',
 	);
 }
@@ -170,8 +175,8 @@ function kpop_ghb_assets() {
 /* トップ右サイドバー用 1:1(正方形)。上のモバイル規則より後ろに置き、詳細度で確実に上書きする。 */
 .kpop-ghb.kpop-ghb--square{width:100%;max-width:300px;min-height:0;margin:0 auto}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-label{text-align:center}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:14px}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-logo{height:38px;align-self:center;margin:0 auto 6px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:36px 20px 24px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-icon{display:block;width:72px;height:72px;align-self:center;margin:0 auto 6px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-text{flex:0 0 auto;align-items:center;gap:3px;width:100%}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}
@@ -224,7 +229,11 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 	<p class="kpop-ghb-label"><?php echo esc_html( $label ); ?></p>
 	<a class="kpop-ghb-link" href="<?php echo esc_url( $url ); ?>">
 		<span class="kpop-ghb-text">
+			<?php if ( $square ) : ?>
+			<img class="kpop-ghb-icon" src="<?php echo esc_url( $d['icon_src'] ); ?>" alt="<?php echo esc_attr( $d['logo_alt'] ); ?>" width="<?php echo (int) $d['icon_w']; ?>" height="<?php echo (int) $d['icon_h']; ?>" loading="lazy" decoding="async">
+			<?php else : ?>
 			<img class="kpop-ghb-logo" src="<?php echo esc_url( $d['logo_src'] ); ?>" alt="<?php echo esc_attr( $d['logo_alt'] ); ?>" width="<?php echo (int) $d['logo_w']; ?>" height="<?php echo (int) $d['logo_h']; ?>" loading="lazy" decoding="async">
+			<?php endif; ?>
 			<span class="kpop-ghb-title"><?php foreach ( $d['title_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 			<span class="kpop-ghb-sub"><?php foreach ( $d['sub_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 		</span>

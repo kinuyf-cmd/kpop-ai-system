@@ -19,8 +19,8 @@
 /* トップ右サイドバー用 1:1(正方形)。上のモバイル規則より後ろに置き、詳細度で確実に上書きする。 */
 .kpop-ghb.kpop-ghb--square{width:100%;max-width:300px;min-height:0;margin:0 auto}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-label{text-align:center}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:14px}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-logo{height:38px;align-self:center;margin:0 auto 6px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:36px 20px 24px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-icon{display:block;width:72px;height:72px;align-self:center;margin:0 auto 6px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-text{flex:0 0 auto;align-items:center;gap:3px;width:100%}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}

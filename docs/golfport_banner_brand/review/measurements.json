@@ -14,7 +14,7 @@
   },
   "bg": "rgb(248, 250, 252)",
   "cta": "rgb(37, 99, 235)",
-  "src": "https://golfport.top/logo.png",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
   "alt": "ゴルフポート GOLF PORT",
   "ratio_rendered": 3.763,
   "ratio_original": 3.7632,
@@ -22,23 +22,23 @@
  },
  "pc_square": {
   "natural": [
-   1637,
-   435
+   512,
+   512
   ],
   "loaded": true,
-  "w": 143,
-  "h": 38,
+  "w": 72,
+  "h": 72,
   "pad": {
-   "top": 76.65625,
-   "left": 78.5,
-   "right": 78.5
+   "top": 55.90625,
+   "left": 114,
+   "right": 114
   },
   "bg": "rgb(248, 250, 252)",
   "cta": "rgb(37, 99, 235)",
-  "src": "https://golfport.top/logo.png",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
   "alt": "ゴルフポート GOLF PORT",
-  "ratio_rendered": 3.7632,
-  "ratio_original": 3.7632,
+  "ratio_rendered": 1.0,
+  "ratio_original": 1.0,
   "min_margin_ok": true
  },
  "mobile_footer": {
@@ -56,7 +56,7 @@
   },
   "bg": "rgb(248, 250, 252)",
   "cta": "rgb(37, 99, 235)",
-  "src": "https://golfport.top/logo.png",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
   "alt": "ゴルフポート GOLF PORT",
   "ratio_rendered": 3.763,
   "ratio_original": 3.7632,
@@ -64,23 +64,23 @@
  },
  "mobile_square": {
   "natural": [
-   1637,
-   435
+   512,
+   512
   ],
   "loaded": true,
-  "w": 143,
-  "h": 38,
+  "w": 72,
+  "h": 72,
   "pad": {
-   "top": 76.65625,
-   "left": 78.5,
-   "right": 78.5
+   "top": 55.90625,
+   "left": 114,
+   "right": 114
   },
   "bg": "rgb(248, 250, 252)",
   "cta": "rgb(37, 99, 235)",
-  "src": "https://golfport.top/logo.png",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
   "alt": "ゴルフポート GOLF PORT",
-  "ratio_rendered": 3.7632,
-  "ratio_original": 3.7632,
+  "ratio_rendered": 1.0,
+  "ratio_original": 1.0,
   "min_margin_ok": true
  }
 }

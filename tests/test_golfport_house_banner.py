@@ -82,8 +82,8 @@ $out['second']=kpop_ghb_render($cfg);
         assert banned not in html, banned
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
         assert banned not in html, banned
-    # 正式ロゴ: 本番の logo.png そのもの(再保存/再描画/変形/色変更なし)
-    assert html.count('<img class="kpop-ghb-logo" src="https://golfport.top/logo.png"') == 1
+    # 正式ロゴ: golfport.top/logo.png を無加工でWPメディアに登録した実体(md5が原本と一致・再保存/再描画/変形/色変更なし)
+    assert html.count('<img class="kpop-ghb-logo" src="https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png"') == 1
     assert 'alt="ゴルフポート GOLF PORT"' in html and 'width="1637" height="435"' in html  # 縦横比(1637:435)を属性で固定
     assert 'loading="lazy"' in html
     assert "<svg" not in html and "kpop-ghb-art" not in html  # 自前のイラスト/ロゴ描画なし
@@ -223,3 +223,20 @@ $out['footer']=kpop_ghb_render($cfg,'article_footer');
     assert "background:#f8fafc" in css and "gradient" not in css and "url(" not in css
     assert "padding:20px" in css                                # >=15px
     assert "background:#2563eb" in css                          # CTA=K-POP JOURNALのサイト色(GOLF PORTのブランド色としては扱わない)
+
+
+def test_square_uses_official_icon_and_horizontal_uses_logo_with_ratio_locked():
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true));
+$out['sq']=kpop_ghb_render($cfg,'top_sidebar'); $out['hz']=kpop_ghb_render($cfg,'event_page');
+""")
+    sq, hz = out["sq"], out["hz"]
+    assert '<img class="kpop-ghb-icon" src="https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png"' in sq
+    assert 'width="512" height="512"' in sq and "kpop-ghb-logo\" src" not in sq   # 1:1は正方形のアイコン
+    assert '<img class="kpop-ghb-logo"' in hz and 'width="1637" height="435"' in hz and "kpop-ghb-icon\" src" not in hz
+    css = sq[sq.index("<style>"):sq.index("</style>")]
+    assert "width:72px;height:72px" in css                      # 正方形のまま(引き伸ばさない)
+    assert "padding:36px 20px 24px" in css                      # アイコン高さ72pxの半分(36px)以上の上余白
+    icon_rules = " ".join(__import__("re").findall(r"[^{}]*kpop-ghb-icon[^{}]*\{[^}]*\}", css))
+    for banned in ("transform", "filter", "object-fit", "opacity", "clip", "border-radius", "mask", "rotate", "scale"):
+        assert banned not in icon_rules, banned
