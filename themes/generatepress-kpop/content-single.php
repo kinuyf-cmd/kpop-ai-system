@@ -180,6 +180,12 @@ if ( $kpop_is_popup_single ) {
 		if ( '' !== $kpop_held_cta ) {
 			echo $kpop_held_cta;
 		}
+
+		/* GOLF PORT 自社バナー(記事末尾・関連記事の直前に1枠)。
+		   オプション kpop_golfport_banner が enabled のときだけ出る(既定OFF)。 */
+		if ( function_exists( 'kpop_render_golfport_house_banner' ) ) {
+			kpop_render_golfport_house_banner( get_the_ID() );
+		}
 		?>
 
 		<?php

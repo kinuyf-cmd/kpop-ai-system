@@ -1335,6 +1335,13 @@ if ( file_exists( $kpop_writer_inc ) ) {
 	require_once $kpop_writer_inc;
 }
 
+/* --- GOLF PORT 自社バナー(記事末尾1枠・既定OFF・WPオプションで制御) ---
+ * 詳細は golfport-house-banner.php 冒頭コメント参照。 */
+$kpop_ghb_inc = get_stylesheet_directory() . '/golfport-house-banner.php';
+if ( file_exists( $kpop_ghb_inc ) ) {
+	require_once $kpop_ghb_inc;
+}
+
 /* --- A-3: カムバック予定ボックスを削除 ---
  * 既存サイドバー4箱に「カムバック予定」がある場合、CSS で表示抑制。
  * (functions.php に PHP 出力は無い — 段階5f の kpop_single_sidebar_extras
