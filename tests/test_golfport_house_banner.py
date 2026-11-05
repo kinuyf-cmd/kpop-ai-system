@@ -73,7 +73,9 @@ $out['second']=kpop_ghb_render($cfg);
     assert html.count('class="kpop-ghb"') == 1
     assert "運営関連サービスのご案内" in html
     assert "ゴルフの思い出、ひとつに。" in html
-    assert "ラウンド・練習・写真を記録して振り返る。" in html
+    import re as _re
+    assert "ラウンド・練習・写真を記録して振り返る。" in _re.sub(r"<[^>]+>", "", html)  # 句ごとのspanを除いた本文は従来と同一
+    assert 'class="kpop-ghb-ph"' in html  # 句の境目で折り返す
     assert "GOLF PORTを見てみる" in html
     for banned in ("無料", "完全", "必ず", "上達する"):
         assert banned not in html, banned
@@ -122,6 +124,8 @@ $GLOBALS['OPT']=array('enabled'=>true,'top_sidebar'=>false); $out['off']=kpop_gh
     assert "kpop-ghb--square" in h and 'data-ghb-content="top_sidebar"' in h
     assert "utm_content=top_sidebar" in h and "運営関連サービス" in h
     assert "ゴルフの思い出、ひとつに。" in h and "GOLF PORTを見てみる" in h
+    import re as _re
+    assert "ラウンド・練習・写真を記録して振り返る。" in _re.sub(r"<[^>]+>", "", h)
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料", "a8.net", "px.a8"):
         assert banned not in h, banned
     assert h.count("<script>") == 1  # イベント束縛スクリプトは1ページに1回だけ

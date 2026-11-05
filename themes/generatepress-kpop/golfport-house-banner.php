@@ -46,6 +46,8 @@ function kpop_ghb_def( $placement = 'article_footer' ) {
 		'content'  => $placement,
 		'title'    => 'ゴルフの思い出、ひとつに。',
 		'sub'      => 'ラウンド・練習・写真を記録して振り返る。',
+		// スマホで「振/り返る。」のように不自然な位置で改行されないよう、句の境目でだけ折り返す(結合した文字列は sub と同一)。
+		'sub_parts' => array( 'ラウンド・練習・写真を', '記録して振り返る。' ),
 		'cta'      => 'GOLF PORTを見てみる',
 		'alt'      => 'ゴルフ場のグリーンとピンフラッグのイラスト',
 	);
@@ -151,6 +153,7 @@ function kpop_ghb_assets() {
 .kpop-ghb-brand{font-size:12px;font-weight:700;letter-spacing:.06em;color:#1d6b3f}
 .kpop-ghb-title{font-size:18px;line-height:1.4;font-weight:700}
 .kpop-ghb-sub{font-size:14px;line-height:1.5;color:#3d4852}
+.kpop-ghb-ph{display:inline-block}
 .kpop-ghb-cta{flex:0 0 auto;padding:11px 18px;min-height:44px;box-sizing:border-box;border-radius:999px;background:#1d6b3f;color:#fff;font-size:14px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center}
 @media (max-width:600px){
 .kpop-ghb{min-height:196px}
@@ -229,7 +232,7 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 		<span class="kpop-ghb-text">
 			<span class="kpop-ghb-brand">GOLF PORT</span>
 			<span class="kpop-ghb-title"><?php echo esc_html( $d['title'] ); ?></span>
-			<span class="kpop-ghb-sub"><?php echo esc_html( $d['sub'] ); ?></span>
+			<span class="kpop-ghb-sub"><?php foreach ( $d['sub_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 		</span>
 		<span class="kpop-ghb-cta"><?php echo esc_html( $d['cta'] ); ?><span aria-hidden="true"> →</span></span>
 	</a>
