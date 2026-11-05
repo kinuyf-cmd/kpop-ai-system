@@ -50,7 +50,17 @@ function kpop_ghb_def( $placement = 'article_footer' ) {
 		// スマホで「振/り返る。」のように不自然な位置で改行されないよう、句の境目でだけ折り返す(結合した文字列は sub と同一)。
 		'sub_parts' => array( 'ラウンド・練習・写真を', '記録して振り返る。' ),
 		'cta'      => 'GOLF PORTを見てみる',
-		'alt'      => 'ゴルフ場のグリーンとピンフラッグのイラスト',
+		// GOLF PORT 正式ロゴ(横組み 1637×435 透過PNG)と正式アイコン(512×512)。再保存・再描画・変形・色変更なし。
+		// golfport.top/logo.png・icon.png を**無加工のまま**WPメディアに登録した実体(md5が原本と一致)。1年immutableでキャッシュされ、
+		// GOLF PORTの稼働に依存しない。ロゴを差し替えるときは同じ手順で再登録しURLを更新する(docs/golfport_banner_brand/README.md)。
+		// 縦組み/白抜き/簡略版は存在しない(作らない)。規定: ロゴの高さの半分以上の余白・白または淡色の無地背景。
+		'logo_src' => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png',
+		'logo_w'   => 1637,
+		'logo_h'   => 435,
+		'icon_src' => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png',
+		'icon_w'   => 512,
+		'icon_h'   => 512,
+		'logo_alt' => 'ゴルフポート GOLF PORT',
 	);
 }
 
@@ -145,30 +155,28 @@ function kpop_ghb_assets() {
 	?>
 <style>
 .kpop-ghb{margin:2.5em 0 1.5em;padding:0;box-sizing:border-box;min-height:132px}
-.kpop-ghb-label{margin:0 0 6px;font-size:12px;line-height:1.4;color:#5b6470}
-.kpop-ghb-link{display:flex;align-items:center;gap:16px;padding:16px 18px;min-height:96px;box-sizing:border-box;border:1px solid #cfe3d6;border-radius:12px;background:#f6fbf8;color:#1f2a24;text-decoration:none}
-.kpop-ghb-link:hover{background:#eef8f1;border-color:#9fcdb0}
-.kpop-ghb-link:focus-visible{outline:3px solid #1d6b3f;outline-offset:2px}
-.kpop-ghb-art{flex:0 0 72px;width:72px;height:72px}
+.kpop-ghb-label{margin:0 0 6px;font-size:12px;line-height:1.4;color:#64748b}
+.kpop-ghb-link{display:flex;align-items:center;gap:16px;padding:20px;min-height:96px;box-sizing:border-box;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#1e293b;text-decoration:none}
+.kpop-ghb-link:hover{background:#f1f5f9;border-color:#cbd5e1}
+.kpop-ghb-link:focus-visible{outline:3px solid #1e293b;outline-offset:2px}
+.kpop-ghb-logo{display:block;height:30px;width:auto;max-width:100%;align-self:flex-start;margin:0 0 6px}
 .kpop-ghb-text{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0}
-.kpop-ghb-brand{font-size:12px;font-weight:700;letter-spacing:.06em;color:#1d6b3f}
 .kpop-ghb-title{font-size:18px;line-height:1.4;font-weight:700}
-.kpop-ghb-sub{font-size:14px;line-height:1.5;color:#3d4852}
+.kpop-ghb-sub{font-size:14px;line-height:1.5;color:#475569}
 .kpop-ghb-ph{display:inline-block}
-.kpop-ghb-cta{flex:0 0 auto;padding:11px 18px;min-height:44px;box-sizing:border-box;border-radius:999px;background:#1d6b3f;color:#fff;font-size:14px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center}
+.kpop-ghb-cta{flex:0 0 auto;padding:11px 18px;min-height:44px;box-sizing:border-box;border-radius:999px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center}
 @media (max-width:600px){
 .kpop-ghb{min-height:196px}
-.kpop-ghb-link{flex-wrap:wrap;gap:12px;padding:14px}
-.kpop-ghb-art{flex-basis:56px;width:56px;height:56px}
-.kpop-ghb-text{flex-basis:calc(100% - 72px)}
+.kpop-ghb-link{flex-wrap:wrap;gap:12px;padding:18px}
+.kpop-ghb-text{flex-basis:100%}
 .kpop-ghb-title{font-size:17px}
 .kpop-ghb-cta{flex:1 1 100%;justify-content:center}
 }
 /* トップ右サイドバー用 1:1(正方形)。上のモバイル規則より後ろに置き、詳細度で確実に上書きする。 */
 .kpop-ghb.kpop-ghb--square{width:100%;max-width:300px;min-height:0;margin:0 auto}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-label{text-align:center}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:14px}
-.kpop-ghb.kpop-ghb--square .kpop-ghb-art{flex:0 0 auto;width:84px;height:84px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:36px 20px 24px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-icon{display:block;width:72px;height:72px;align-self:center;margin:0 auto 6px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-text{flex:0 0 auto;align-items:center;gap:3px;width:100%}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}
@@ -214,24 +222,18 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 	$url    = kpop_ghb_url( $placement );
 	$square = ( 'top_sidebar' === $placement );
 	$label  = $square ? '運営関連サービス' : '運営関連サービスのご案内';
-	$artpx  = $square ? 84 : 72;
 
 	ob_start();
 	?>
 <aside class="kpop-ghb<?php echo $square ? ' kpop-ghb--square' : ''; ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>">
 	<p class="kpop-ghb-label"><?php echo esc_html( $label ); ?></p>
 	<a class="kpop-ghb-link" href="<?php echo esc_url( $url ); ?>">
-		<svg class="kpop-ghb-art" viewBox="0 0 120 120" width="<?php echo (int) $artpx; ?>" height="<?php echo (int) $artpx; ?>" role="img" aria-label="<?php echo esc_attr( $d['alt'] ); ?>" focusable="false">
-			<rect width="120" height="120" rx="16" fill="#e8f5ec"/>
-			<path d="M0 92c28-14 52-16 120-4v32H0z" fill="#8cc9a0"/>
-			<path d="M0 104c34-10 66-10 120 0v16H0z" fill="#5aa874"/>
-			<line x1="76" y1="28" x2="76" y2="86" stroke="#3b6b4a" stroke-width="3" stroke-linecap="round"/>
-			<path d="M76 28l24 9-24 9z" fill="#e5484d"/>
-			<ellipse cx="56" cy="90" rx="9" ry="3.5" fill="#4a8a62"/>
-			<circle cx="56" cy="82" r="7" fill="#fff" stroke="#c9d6cd" stroke-width="1.5"/>
-		</svg>
 		<span class="kpop-ghb-text">
-			<span class="kpop-ghb-brand">GOLF PORT</span>
+			<?php if ( $square ) : ?>
+			<img class="kpop-ghb-icon" src="<?php echo esc_url( $d['icon_src'] ); ?>" alt="<?php echo esc_attr( $d['logo_alt'] ); ?>" width="<?php echo (int) $d['icon_w']; ?>" height="<?php echo (int) $d['icon_h']; ?>" loading="lazy" decoding="async">
+			<?php else : ?>
+			<img class="kpop-ghb-logo" src="<?php echo esc_url( $d['logo_src'] ); ?>" alt="<?php echo esc_attr( $d['logo_alt'] ); ?>" width="<?php echo (int) $d['logo_w']; ?>" height="<?php echo (int) $d['logo_h']; ?>" loading="lazy" decoding="async">
+			<?php endif; ?>
 			<span class="kpop-ghb-title"><?php foreach ( $d['title_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 			<span class="kpop-ghb-sub"><?php foreach ( $d['sub_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 		</span>

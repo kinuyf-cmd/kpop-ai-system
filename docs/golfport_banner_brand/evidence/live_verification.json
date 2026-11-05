@@ -1,0 +1,542 @@
+{
+ "article_footer/pc": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 21,
+  "ml": 21,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 457,
+    "h": 25
+   },
+   {
+    "t": "ひとつに。",
+    "top": 457,
+    "h": 25
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 484,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 484,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "article_footer"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0.2061,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer"
+ },
+ "article_footer/m390": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 19,
+  "ml": 19,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 401,
+    "h": 24
+   },
+   {
+    "t": "ひとつに。",
+    "top": 401,
+    "h": 24
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 427,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 427,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "article_footer"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0,
+  "landed": null
+ },
+ "article_footer/m320": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 19,
+  "ml": 19,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 318,
+    "h": 24
+   },
+   {
+    "t": "ひとつに。",
+    "top": 318,
+    "h": 24
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 344,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 365,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "article_footer"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0.3429,
+  "landed": null
+ },
+ "event_page/pc": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 21,
+  "ml": 21,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 507,
+    "h": 25
+   },
+   {
+    "t": "ひとつに。",
+    "top": 507,
+    "h": 25
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 534,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 534,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "event_page"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0.0179,
+  "total_cls": 0.231,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page"
+ },
+ "event_page/m390": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 19,
+  "ml": 19,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 425,
+    "h": 24
+   },
+   {
+    "t": "ひとつに。",
+    "top": 425,
+    "h": 24
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 451,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 451,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "event_page"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0.0189,
+  "landed": null
+ },
+ "event_page/m320": {
+  "banners": 1,
+  "kind": "kpop-ghb-logo",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "loaded": true,
+  "nat": [
+   1637,
+   435
+  ],
+  "ratio": 3.763,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 19,
+  "ml": 19,
+  "ih": 30,
+  "hscroll": false,
+  "label": "運営関連サービスのご案内",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 342,
+    "h": 24
+   },
+   {
+    "t": "ひとつに。",
+    "top": 342,
+    "h": 24
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 368,
+    "h": 21
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 389,
+    "h": 21
+   }
+  ],
+  "related": 1,
+  "adslots": 1,
+  "adtop": 0,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "event_page"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0.0181,
+  "landed": null
+ },
+ "top_sidebar/pc": {
+  "banners": 1,
+  "kind": "kpop-ghb-icon",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
+  "loaded": true,
+  "nat": [
+   512,
+   512
+  ],
+  "ratio": 1,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 56,
+  "ml": 114,
+  "ih": 72,
+  "hscroll": false,
+  "label": "運営関連サービス",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 449,
+    "h": 25
+   },
+   {
+    "t": "ひとつに。",
+    "top": 449,
+    "h": 25
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 477,
+    "h": 20
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 496,
+    "h": 20
+   }
+  ],
+  "related": 0,
+  "adslots": 2,
+  "adtop": 1,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "top_sidebar"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0.1998,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar"
+ },
+ "top_sidebar/m390": {
+  "banners": 1,
+  "kind": "kpop-ghb-icon",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
+  "loaded": true,
+  "nat": [
+   512,
+   512
+  ],
+  "ratio": 1,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 56,
+  "ml": 114,
+  "ih": 72,
+  "hscroll": false,
+  "label": "運営関連サービス",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 420,
+    "h": 25
+   },
+   {
+    "t": "ひとつに。",
+    "top": 420,
+    "h": 25
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 448,
+    "h": 20
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 468,
+    "h": 20
+   }
+  ],
+  "related": 0,
+  "adslots": 2,
+  "adtop": 1,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "top_sidebar"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0,
+  "landed": null
+ },
+ "top_sidebar/m320": {
+  "banners": 1,
+  "kind": "kpop-ghb-icon",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
+  "loaded": true,
+  "nat": [
+   512,
+   512
+  ],
+  "ratio": 1,
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "mt": 49,
+  "ml": 107,
+  "ih": 72,
+  "hscroll": false,
+  "label": "運営関連サービス",
+  "wrapLines": [
+   {
+    "t": "ゴルフの思い出、",
+    "top": 348,
+    "h": 25
+   },
+   {
+    "t": "ひとつに。",
+    "top": 348,
+    "h": 25
+   },
+   {
+    "t": "ラウンド・練習・写真を",
+    "top": 376,
+    "h": 20
+   },
+   {
+    "t": "記録して振り返る。",
+    "top": 396,
+    "h": 20
+   }
+  ],
+  "related": 0,
+  "adslots": 2,
+  "adtop": 1,
+  "banners_on_page": 1,
+  "utm_contents": [
+   "top_sidebar"
+  ],
+  "view_events": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_cls": 0,
+  "total_cls": 0,
+  "landed": null
+ }
+}

@@ -82,8 +82,11 @@ $out['second']=kpop_ghb_render($cfg);
         assert banned not in html, banned
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
         assert banned not in html, banned
-    assert 'role="img"' in html and 'aria-label="ゴルフ場' in html  # 画像のalt相当
-    assert "<img" not in html and "src=" not in html  # 外部画像/JSなし
+    # 正式ロゴ: golfport.top/logo.png を無加工でWPメディアに登録した実体(md5が原本と一致・再保存/再描画/変形/色変更なし)
+    assert html.count('<img class="kpop-ghb-logo" src="https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png"') == 1
+    assert 'alt="ゴルフポート GOLF PORT"' in html and 'width="1637" height="435"' in html  # 縦横比(1637:435)を属性で固定
+    assert 'loading="lazy"' in html
+    assert "<svg" not in html and "kpop-ghb-art" not in html  # 自前のイラスト/ロゴ描画なし
 
 
 def test_placement_toggles_are_independent_and_back_compatible():
@@ -196,3 +199,55 @@ $out['h2']=kpop_ghb_render($cfg,'event_page');
     assert '<aside class="kpop-ghb"' in h  # イベントページは横長(記事末尾と同形・squareクラスは付かない)
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料"):
         assert banned not in h, banned
+
+
+def test_brand_rules_colors_and_no_logo_transforms():
+    """GOLF PORT ブランド規定(5e/be 2026-11-05): ロゴは変形・色変更なし/背景は白か淡色の無地/ロゴ識別色#5064FAとサイトの青をGOLF PORTの色として持ち込まない。"""
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true));
+$out['footer']=kpop_ghb_render($cfg,'article_footer');
+""")
+    h = out["footer"].lower()
+    css = h[h.index("<style>"):h.index("</style>")]
+    assert "#5064fa" not in h                                   # ロゴ専用色をUIに使わない
+    for green in ("#1d6b3f", "#e8f5ec", "#f6fbf8"):             # 旧グリーン案の残骸なし
+        assert green not in h, green
+    # ロゴ(.kpop-ghb-logo)の規則に変形・フィルタ・色変更・切り抜きを入れない
+    import re as _re
+    logo_rules = " ".join(_re.findall(r"[^{}]*kpop-ghb-logo[^{}]*\{[^}]*\}", css))
+    for banned in ("transform", "filter", "object-fit", "opacity", "clip", "mix-blend", "rotate", "scale", "border-radius", "mask"):
+        assert banned not in logo_rules, banned
+    assert "height:30px;width:auto" in css                      # 高さ固定・幅auto=縦横比保持
+    assert "align-self:flex-start" in css and "align-self:center" in css  # 縦組みflexで引き伸ばされない
+    # 背景は白/淡色の無地(グラデーション・画像なし)・余白はロゴ高さ(30px)の半分(15px)以上
+    assert "background:#f8fafc" in css and "gradient" not in css and "url(" not in css
+    assert "padding:20px" in css                                # >=15px
+    assert "background:#2563eb" in css                          # CTA=K-POP JOURNALのサイト色(GOLF PORTのブランド色としては扱わない)
+
+
+def test_square_uses_official_icon_and_horizontal_uses_logo_with_ratio_locked():
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true));
+$out['sq']=kpop_ghb_render($cfg,'top_sidebar'); $out['hz']=kpop_ghb_render($cfg,'event_page');
+""")
+    sq, hz = out["sq"], out["hz"]
+    assert '<img class="kpop-ghb-icon" src="https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png"' in sq
+    assert 'width="512" height="512"' in sq and "kpop-ghb-logo\" src" not in sq   # 1:1は正方形のアイコン
+    assert '<img class="kpop-ghb-logo"' in hz and 'width="1637" height="435"' in hz and "kpop-ghb-icon\" src" not in hz
+    css = sq[sq.index("<style>"):sq.index("</style>")]
+    assert "width:72px;height:72px" in css                      # 正方形のまま(引き伸ばさない)
+    assert "padding:36px 20px 24px" in css                      # アイコン高さ72pxの半分(36px)以上の上余白
+    icon_rules = " ".join(__import__("re").findall(r"[^{}]*kpop-ghb-icon[^{}]*\{[^}]*\}", css))
+    for banned in ("transform", "filter", "object-fit", "opacity", "clip", "border-radius", "mask", "rotate", "scale"):
+        assert banned not in icon_rules, banned
+
+
+def test_logo_min_height_and_brand_color_notes():
+    """be規定: ロゴの高さ30pxが最小(これより小さくしない)。CTAの#2563ebはK-POP JOURNALのサイト色でGOLF PORTのブランド色ではない(READMEに明記)。"""
+    import re as _re
+    out = run("""$cfg=kpop_ghb_config(array('enabled'=>true)); $out['h']=kpop_ghb_render($cfg,'article_footer');""")
+    css = out["h"][out["h"].index("<style>"):out["h"].index("</style>")]
+    heights = [int(v) for v in _re.findall(r"\.kpop-ghb-logo\{[^}]*?height:(\d+)px", css)]
+    assert heights and min(heights) >= 30, heights              # ロゴの高さは30px以上
+    readme = (PHP_FILE.parents[2] / "docs/golfport_banner_brand/README.md").read_text(encoding="utf-8")
+    assert "GOLF PORT のブランド色ではない" in readme and "ロゴの高さ 30px が下限" in readme

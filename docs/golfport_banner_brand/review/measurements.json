@@ -1,0 +1,86 @@
+{
+ "pc_footer": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 112.890625,
+  "h": 30,
+  "pad": {
+   "top": 21,
+   "left": 21,
+   "right": 590.109375
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.763,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ },
+ "pc_square": {
+  "natural": [
+   512,
+   512
+  ],
+  "loaded": true,
+  "w": 72,
+  "h": 72,
+  "pad": {
+   "top": 55.90625,
+   "left": 114,
+   "right": 114
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 1.0,
+  "ratio_original": 1.0,
+  "min_margin_ok": true
+ },
+ "mobile_footer": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 112.890625,
+  "h": 30,
+  "pad": {
+   "top": 19,
+   "left": 19,
+   "right": 198.109375
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.763,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ },
+ "mobile_square": {
+  "natural": [
+   512,
+   512
+  ],
+  "loaded": true,
+  "w": 72,
+  "h": 72,
+  "pad": {
+   "top": 55.90625,
+   "left": 114,
+   "right": 114
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 1.0,
+  "ratio_original": 1.0,
+  "min_margin_ok": true
+ }
+}
