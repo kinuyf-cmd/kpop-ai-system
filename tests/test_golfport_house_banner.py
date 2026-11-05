@@ -251,3 +251,45 @@ def test_logo_min_height_and_brand_color_notes():
     assert heights and min(heights) >= 30, heights              # ロゴの高さは30px以上
     readme = (PHP_FILE.parents[2] / "docs/golfport_banner_brand/README.md").read_text(encoding="utf-8")
     assert "GOLF PORT のブランド色ではない" in readme and "ロゴの高さ 30px が下限" in readme
+
+
+def test_design_option_defaults_to_html_and_only_image_switches():
+    out = run("""
+$out['none']=kpop_ghb_config(array('enabled'=>true))['design'];
+$out['html']=kpop_ghb_config(array('design'=>'html'))['design'];
+$out['image']=kpop_ghb_config(array('design'=>'image'))['design'];
+$out['junk']=kpop_ghb_config(array('design'=>'IMAGE '))['design'];      // 不正値は現行(html)に倒す
+$out['junk2']=kpop_ghb_config(array('design'=>true))['design'];
+""")
+    assert out == {"none": "html", "html": "html", "image": "image", "junk": "html", "junk2": "html"}
+
+
+def test_image_design_markup_keeps_url_events_and_single_banner():
+    out = run("""
+$img=kpop_ghb_config(array('enabled'=>true,'design'=>'image'));
+$out['top']=kpop_ghb_render($img,'top_sidebar'); $out['top2']=kpop_ghb_render($img,'top_sidebar');
+$out['ev']=kpop_ghb_render($img,'event_page'); $out['af']=kpop_ghb_render($img,'article_footer');
+""")
+    out["html_ev"] = run("""$html=kpop_ghb_config(array('enabled'=>true)); $out['h']=kpop_ghb_render($html,'event_page');""")["h"]  # 別プロセス(同一リクエストでは重複防止が働くため)
+    import re as _re
+    top, ev = out["top"], out["ev"]
+    assert out["top2"] == ""                                              # 1ページ1枠(同一設置場所の二重表示防止)は不変
+    # 遷移先・UTM・utm_content・GA4束縛(data-ghb-content)は現行どおり
+    assert "utm_content=top_sidebar" in top and 'data-ghb-content="top_sidebar"' in top
+    assert "utm_content=event_page" in ev and 'data-ghb-content="event_page"' in ev
+    assert "utm_content=article_footer" in out["af"]
+    for h in (top, ev):
+        for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
+            assert banned not in h, banned
+        assert 'data-ghb-design="image"' in h and 'loading="lazy"' in h
+        assert "運営関連サービス" in h                                       # 開示は(スクリーンリーダー用に)テキストでも残す
+        assert "ゴルフの思い出、ひとつに。" in h and "GOLF PORTを見てみる" in h  # altに既存コピーのみ(新しい文言なし)
+    # トップ=正方形のみ、イベント/記事末尾=<picture>(PC横長・スマホ正方形)
+    assert "<picture>" not in top and 'width="660" height="660"' in top
+    assert "<picture>" in ev and 'media="(max-width:600px)"' in ev and 'width="1536" height="337"' in ev
+    # 画像のURLは当サイトのWPメディア(1年immutable)で外部ドメインを増やさない
+    assert _re.findall(r'(?:src|srcset)="(https://[^"]+)"', top + ev) and all("www.kpopjournal.tokyo/wp-content/uploads/" in u for u in _re.findall(r'(?:src|srcset)="(https://[^"]+)"', top + ev))
+    # 既定(html)の出力は画像版の導入前と変わらない
+    assert 'data-ghb-design' not in out["html_ev"] and 'class="kpop-ghb-logo"' in out["html_ev"]
+    # 枠の高さを比率で予約(CLS防止)
+    assert "aspect-ratio:1536/337" in top and "aspect-ratio:1/1" in top   # CSS/JSは1リクエストに1回(最初の出力に含まれる)
