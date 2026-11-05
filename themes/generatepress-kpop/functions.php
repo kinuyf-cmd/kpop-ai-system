@@ -2940,6 +2940,45 @@ function kpj_revenue_head_tags() {
 add_action('wp_head', 'kpj_revenue_head_tags', 20);
 
 /**
+ * 表(table)・更新お知らせ枠(.kpj-update-note)・見出し直後に入った AdSense 自動広告を取り除く (2026-11-05 新設)。
+ *
+ * 真因: 自動広告は本文の <tr> の間にも <div.google-auto-placed> を差し込む
+ *   (mama-awards-2026-osaka-guide で表内2か所を実測)。表の行が広告で分断され、読み手は
+ *   広告を表の一部と誤認する(誤クリック誘発=ポリシー面でも不利)。
+ * 対処: 記事内の table/tr/td 配下に入った広告コンテナだけを削除する。表の外の広告は触らない。
+ *   Google 側の挿入は描画後に非同期で起きるため MutationObserver で都度除去する。
+ */
+function kpj_strip_ads_inside_tables() {
+    if ( is_admin() || ! is_singular() ) { return; }
+    ?>
+<script>
+(function () {
+  function strip(root) {
+    var list = (root || document).querySelectorAll('.google-auto-placed');
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      var prev = el.previousElementSibling;
+      var bad = el.closest('table, .kpj-update-note') ||
+                (prev && /^H[1-6]$/.test(prev.tagName)); // 見出し直後(見出しと本文の分断)
+      if (bad) { el.parentNode && el.parentNode.removeChild(el); }
+    }
+  }
+  strip();
+  if (window.MutationObserver) {
+    var t = null;
+    new MutationObserver(function () {
+      if (t) { return; }
+      t = setTimeout(function () { t = null; strip(); }, 50);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+<style>table .google-auto-placed,.kpj-update-note .google-auto-placed{display:none!important}</style>
+    <?php
+}
+add_action('wp_footer', 'kpj_strip_ads_inside_tables', 99);
+
+/**
  * アフィリエイトリンクのクリックを GA4 イベントとして記録する (2026-08-12 新設)。
  *
  * 背景: CTA を公開1,742本中1,467本に設置していたが、クリック計測が一切存在せず
