@@ -248,6 +248,13 @@ except Exception as e:
   fi
 fi
 
+# ─── [5b] 広告の不自然な位置(表/お知らせ枠/見出し直後)を実描画で検査(2026-11-05) ───
+if [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
+  log "--- [5b] 広告位置の検査 ---"
+  "$SCRIPT_DIR/venv_kpi/bin/python" "$SCRIPT_DIR/tools/audit/ad_misplacement_audit.py" --max 12 --notify >> "$LOG_DIR/ad_misplacement.log" 2>&1 \
+    || log "広告位置の違反を検出 → $LOG_DIR/ad_misplacement.log"
+fi
+
 # ─── [6] 新規 AI bot Disallow 検出時は urgent_errors にも通知 ───────────
 if [[ ${#ROBOTS_NEW_BAN[@]} -gt 0 || ${#QUALITY_ALERTS[@]} -gt 0 ]] && [[ "${AUDIT_DRY_RUN:-0}" != "1" ]]; then
   log "--- [6] CRITICAL 検出 → urgent_errors 通知 ---"

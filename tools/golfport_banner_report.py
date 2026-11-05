@@ -30,7 +30,10 @@ sys.path.insert(0, str(BASE))
 PUBLISH_DATE = date(2026, 11, 5)  # 3枠とも2026-11-05(18:11〜18:23 JST)に公開(旧=グリーン基調版)
 # 旧(グリーン)→新(GOLF PORT正式ロゴ/アイコン・白〜淡色無地)への切替: 2026-11-05 18:51:26 JST(テーマデプロイ ts=20261105_185126)。
 # コピー/CTA文言/UTM/utm_content/GA4イベント名/50%可視/掲載対象は不変。効果測定では切替前後を区別する。
-SWITCH_HOUR = "2026110518"  # GA4 dateHour(YYYYMMDDHH)。この時間帯は旧版(18:11〜18:51)と新版(18:51〜)が混在
+SWITCH_HOUR = "2026110518"  # GA4 dateHour(YYYYMMDDHH)。この時間帯は v1(18:11〜18:51)と v2(18:51〜)が混在
+# v2→v3(AI制作の画像版・GOLF PORT側の例外同意+L確認済み・option design=image): 2026-11-05 19:16:51 JST。
+# 19時台は v2(〜19:16)と v3(19:16〜)が混在、20時台以降は v3 のみ。コピー/UTM/GA4/対象/停止制御は不変。
+V3_SWITCH_HOUR = "2026110519"
 RO = ["sudo", "-n", "/usr/local/sbin/kpop/kpop-wp-ro"]
 DUMP_DIR = Path("/home/aiuser/golfport-backups")
 PLACEMENTS = ("top_sidebar", "article_footer", "event_page")
@@ -139,24 +142,27 @@ def section_banner_events(pmap, start, end):
 
 
 def section_design_switch(pmap, start, end):
-    """切替前後(旧グリーン版 / 新ブランド版)でバナー表示・クリックを分けて集計。GA4 dateHour は GA4プロパティのタイムゾーン基準
-    (JSTと仮定。未確認)。切替時刻と同じ時間帯(18時台)は旧新が混在するので別枠にする。"""
+    """デザイン切替前後で表示・クリックを分けて集計。v1=グリーン(11/5 18:11〜18:51)/v2=公式ロゴ+HTML(18:51:26〜19:16:51)/
+    v3=AI制作の画像版(19:16:51〜)。GA4 dateHour は GA4プロパティのタイムゾーン基準(JSTと仮定・未確認)。
+    時間単位なので、切替の時間帯(18時台・19時台)は旧新が混在する。デザイン差の優劣は母数が小さい間は断定しない。"""
     rows = ga4(["dateHour", "pagePath", "eventName"], ["eventCount"], start, end, ["house_banner_view", "house_banner_click"])
-    buckets = {"公開前(〜17時台)": Counter(), "切替の時間帯(18時台・旧版18:11〜18:51/新版18:51〜 混在)": Counter(), "新版(19時台〜)": Counter()}
+    order = ["公開前(〜17時台)", "18時台(v1 18:11〜18:51 / v2 18:51〜 混在)", "19時台(v2 〜19:16:51 / v3 19:16:51〜 混在)", "v3のみ(20時台〜)"]
+    buckets = {k: Counter() for k in order}
     for r in rows:
         if r["pagePath"] not in pmap:
             continue
         h = r["dateHour"]
-        key = ("公開前(〜17時台)" if h < SWITCH_HOUR else
-               "新版(19時台〜)" if h > SWITCH_HOUR else "切替の時間帯(18時台・旧版18:11〜18:51/新版18:51〜 混在)")
+        key = (order[0] if h < SWITCH_HOUR else order[1] if h == SWITCH_HOUR else order[2] if h == V3_SWITCH_HOUR else order[3])
         buckets[key][r["eventName"]] += r["eventCount"]
-    lines = ["### [A'] デザイン切替前後の区別(旧=グリーン / 新=GOLF PORT正式ロゴ・無地)",
-             "切替: 2026-11-05 18:51:26 JST。旧版の掲載は 11/5 18:11〜18:51 の約40分のみで母数は小さい。",
+    lines = ["### [A'] デザイン切替前後の区別(v1=グリーン / v2=公式ロゴ+HTML / v3=AI制作の画像版)",
+             "切替: v1→v2 2026-11-05 18:51:26 JST、v2→v3 2026-11-05 19:16:51 JST(option design=image・差し戻しは design=html)。",
              "| 期間 | view | click | CTR |", "|---|---:|---:|---:|"]
-    for k, c in buckets.items():
+    for k in order:
+        c = buckets[k]
         v, ck = c["house_banner_view"], c["house_banner_click"]
         lines.append(f"| {k} | {v} | {ck} | {pct(ck, v)} |")
-    lines.append("※ 旧版の母数が極小のため、デザイン差の比較は参考程度(統計的な優劣は判断しない)。")
+    lines.append("※ 11/5 は当方の検証アクセスを含む。v1・v2 の母数は極小。v2→v3 の比較は日を分けて(11/6以降の v3 単独期間 vs 別期間)記録し、"
+                 "同一期間の混在や曜日差で優劣を断定しない。差し戻した場合はその日時を追記する。")
     return lines
 
 

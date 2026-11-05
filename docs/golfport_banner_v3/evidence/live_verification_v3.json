@@ -1,0 +1,587 @@
+{
+ "article_footer/1440": {
+  "design": "image",
+  "src": "golfport-banner-v3-wide.webp",
+  "loaded": true,
+  "nat": [
+   1536,
+   337
+  ],
+  "box": [
+   724,
+   159
+  ],
+  "ratio": 4.558,
+  "imgfit": [
+   722,
+   157
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "article_footer"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.1688,
+  "landed": null
+ },
+ "article_footer/1280": {
+  "design": "image",
+  "src": "golfport-banner-v3-wide.webp",
+  "loaded": true,
+  "nat": [
+   1536,
+   337
+  ],
+  "box": [
+   724,
+   159
+  ],
+  "ratio": 4.558,
+  "imgfit": [
+   722,
+   157
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "article_footer"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.2053,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer"
+ },
+ "article_footer/390": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   330,
+   330
+  ],
+  "ratio": 1,
+  "imgfit": [
+   328,
+   328
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "article_footer"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer"
+ },
+ "article_footer/375": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   315,
+   315
+  ],
+  "ratio": 1,
+  "imgfit": [
+   313,
+   313
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "article_footer"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": null
+ },
+ "article_footer/320": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   260,
+   260
+  ],
+  "ratio": 1,
+  "imgfit": [
+   258,
+   258
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=article_footer",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "article_footer"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "article_footer"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": null
+ },
+ "event_page/1440": {
+  "design": "image",
+  "src": "golfport-banner-v3-wide.webp",
+  "loaded": true,
+  "nat": [
+   1536,
+   337
+  ],
+  "box": [
+   724,
+   159
+  ],
+  "ratio": 4.558,
+  "imgfit": [
+   722,
+   157
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "event_page"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.1824,
+  "landed": null
+ },
+ "event_page/1280": {
+  "design": "image",
+  "src": "golfport-banner-v3-wide.webp",
+  "loaded": true,
+  "nat": [
+   1536,
+   337
+  ],
+  "box": [
+   724,
+   159
+  ],
+  "ratio": 4.558,
+  "imgfit": [
+   722,
+   157
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "event_page"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.2311,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page"
+ },
+ "event_page/390": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   330,
+   330
+  ],
+  "ratio": 1,
+  "imgfit": [
+   328,
+   328
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "event_page"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.0205,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page"
+ },
+ "event_page/375": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   315,
+   315
+  ],
+  "ratio": 1,
+  "imgfit": [
+   313,
+   313
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "event_page"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": null
+ },
+ "event_page/320": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   260,
+   260
+  ],
+  "ratio": 1,
+  "imgfit": [
+   258,
+   258
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=event_page",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 1,
+  "banners": 1,
+  "utms": [
+   "event_page"
+  ],
+  "adslots": 1,
+  "view": [
+   [
+    "house_banner_view",
+    "event_page"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.0389,
+  "landed": null
+ },
+ "top_sidebar/1440": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "imgfit": [
+   298,
+   298
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 0,
+  "banners": 1,
+  "utms": [
+   "top_sidebar"
+  ],
+  "adslots": 2,
+  "view": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.1708,
+  "landed": null
+ },
+ "top_sidebar/1280": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "imgfit": [
+   298,
+   298
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 0,
+  "banners": 1,
+  "utms": [
+   "top_sidebar"
+  ],
+  "adslots": 2,
+  "view": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0.1986,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar"
+ },
+ "top_sidebar/390": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "imgfit": [
+   298,
+   298
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 0,
+  "banners": 1,
+  "utms": [
+   "top_sidebar"
+  ],
+  "adslots": 2,
+  "view": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar"
+ },
+ "top_sidebar/375": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "imgfit": [
+   298,
+   298
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 0,
+  "banners": 1,
+  "utms": [
+   "top_sidebar"
+  ],
+  "adslots": 2,
+  "view": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": null
+ },
+ "top_sidebar/320": {
+  "design": "image",
+  "src": "golfport-banner-v3-square.webp",
+  "loaded": true,
+  "nat": [
+   660,
+   660
+  ],
+  "box": [
+   286,
+   286
+  ],
+  "ratio": 1,
+  "imgfit": [
+   284,
+   284
+  ],
+  "href": "https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner&utm_campaign=golf_record_202611&utm_content=top_sidebar",
+  "rel": null,
+  "target": null,
+  "alt": "GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる",
+  "hscroll": false,
+  "related": 0,
+  "banners": 1,
+  "utms": [
+   "top_sidebar"
+  ],
+  "adslots": 2,
+  "view": [
+   [
+    "house_banner_view",
+    "top_sidebar"
+   ]
+  ],
+  "events_after_rescroll": 1,
+  "banner_size_changed": false,
+  "total_cls": 0,
+  "landed": null
+ }
+}

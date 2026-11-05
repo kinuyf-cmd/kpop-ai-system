@@ -1,0 +1,152 @@
+{
+ "1440/footer_event": {
+  "box": [
+   1380,
+   303
+  ],
+  "ratio": 4.558,
+  "src": "golfport-banner-v3-wide.webp",
+  "nat": [
+   1536,
+   337
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.897
+ },
+ "1440/top_sidebar": {
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.452
+ },
+ "1280/footer_event": {
+  "box": [
+   1220,
+   268
+  ],
+  "ratio": 4.558,
+  "src": "golfport-banner-v3-wide.webp",
+  "nat": [
+   1536,
+   337
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.793
+ },
+ "1280/top_sidebar": {
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.452
+ },
+ "390/footer_event": {
+  "box": [
+   330,
+   330
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.497
+ },
+ "390/top_sidebar": {
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.452
+ },
+ "375/footer_event": {
+  "box": [
+   315,
+   315
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.474
+ },
+ "375/top_sidebar": {
+  "box": [
+   300,
+   300
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.452
+ },
+ "320/footer_event": {
+  "box": [
+   260,
+   260
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.391
+ },
+ "320/top_sidebar": {
+  "box": [
+   260,
+   260
+  ],
+  "ratio": 1,
+  "src": "golfport-banner-v3-square.webp",
+  "nat": [
+   660,
+   660
+  ],
+  "loaded": true,
+  "hscroll": false,
+  "renderedScale": 0.391
+ }
+}

@@ -17,6 +17,8 @@
  *    article_footer は未指定=true(従来挙動)、false で記事末尾だけ停止。
  *    event_page は未指定=false。true かつ ID が event_page_ids にある記事にだけ出る。
  *    新しい大型イベントページを作ったら event_page_ids に記事IDを足す(デプロイ不要)。
+ *    design は未指定/"html"=公式ロゴ+HTML/CSS(現行・既定)、"image"=AI制作の画像版(v3・オーナー例外承認が前提)。
+ *    オプションを変えるだけで切替・即時差し戻しできる(デプロイ不要)。
  *    top_sidebar は未指定=false。true でトップ右サイドバーのPORT広告をGOLF PORTに置換、
  *    false/削除/enabled=false で PORT 広告が即座に戻る。
  *    categories が空なら記事末尾は「どの記事にも出さない」(許可リスト方式)。
@@ -61,6 +63,15 @@ function kpop_ghb_def( $placement = 'article_footer' ) {
 		'icon_w'   => 512,
 		'icon_h'   => 512,
 		'logo_alt' => 'ゴルフポート GOLF PORT',
+		// v3(画像版・AI制作・オーナー例外承認): ロゴ/文言/CTAは画像内に焼き込まれており、画像内のロゴは公式 logo.png の再描画(例外)。
+		// 正方形=トップ1:1とスマホ、横長=PCの記事末尾/イベントページ。人物・場所・看板の特定要素なし。
+		'v3_square' => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/golfport-banner-v3-square.webp',
+		'v3_sq_w'   => 660,
+		'v3_sq_h'   => 660,
+		'v3_wide'   => 'https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/golfport-banner-v3-wide.webp',
+		'v3_wd_w'   => 1536,
+		'v3_wd_h'   => 337,
+		'v3_alt'    => 'GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる',
 	);
 }
 
@@ -98,6 +109,7 @@ function kpop_ghb_config( $raw = null ) {
 		'top_sidebar'    => ! empty( $raw['top_sidebar'] ) && true === (bool) $raw['top_sidebar'],
 		'event_page'     => ! empty( $raw['event_page'] ) && true === (bool) $raw['event_page'],
 		'event_page_ids' => $ids,
+		'design'         => ( isset( $raw['design'] ) && 'image' === $raw['design'] ) ? 'image' : 'html',
 	);
 }
 
@@ -181,6 +193,17 @@ function kpop_ghb_assets() {
 .kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-cta{flex:0 0 auto;justify-content:center;width:100%;padding:10px 12px}
+/* v3 画像版: 比率ごと枠を予約(CLS防止)。PC=横長 1536:337 / スマホ・トップ=正方形 */
+.kpop-ghb.kpop-ghb--img{min-height:0}
+.kpop-ghb-imglink{display:block;position:relative;width:100%;aspect-ratio:1536/337;overflow:hidden;border:1px solid #e2e8f0;border-radius:12px;box-sizing:border-box;background:#f8fafc}
+.kpop-ghb-imglink:focus-visible{outline:3px solid #1e293b;outline-offset:2px}
+.kpop-ghb-imglink picture{display:block;width:100%;height:100%}
+.kpop-ghb-img{display:block;width:100%;height:100%}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-imglink{aspect-ratio:1/1;max-width:300px;margin:0 auto}
+@media (max-width:600px){
+.kpop-ghb.kpop-ghb--img .kpop-ghb-imglink{aspect-ratio:1/1;max-width:330px;margin:0 auto}
+.kpop-ghb.kpop-ghb--img.kpop-ghb--square .kpop-ghb-imglink{max-width:300px}
+}
 </style>
 <script>
 (function () {
@@ -221,9 +244,29 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 	$d      = kpop_ghb_def( $placement );
 	$url    = kpop_ghb_url( $placement );
 	$square = ( 'top_sidebar' === $placement );
+	$image  = ( isset( $cfg['design'] ) && 'image' === $cfg['design'] );
 	$label  = $square ? '運営関連サービス' : '運営関連サービスのご案内';
 
 	ob_start();
+	if ( $image ) :
+		?>
+<aside class="kpop-ghb kpop-ghb--img<?php echo $square ? ' kpop-ghb--square' : ''; ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>" data-ghb-design="image">
+	<?php // 開示ラベルは v2 と同じ実テキスト(12px・画像の外)。画像内の札はスマホで7〜9pxに縮み読めないため、視覚的な表示はこちらが担う(be指摘 2026-11-05)。 ?>
+	<p class="kpop-ghb-label"><?php echo esc_html( $label ); ?></p>
+	<a class="kpop-ghb-imglink" href="<?php echo esc_url( $url ); ?>">
+		<?php if ( $square ) : ?>
+		<img class="kpop-ghb-img" src="<?php echo esc_url( $d['v3_square'] ); ?>" alt="<?php echo esc_attr( $d['v3_alt'] ); ?>" width="<?php echo (int) $d['v3_sq_w']; ?>" height="<?php echo (int) $d['v3_sq_h']; ?>" loading="lazy" decoding="async">
+		<?php else : ?>
+		<picture>
+			<source media="(max-width:600px)" srcset="<?php echo esc_url( $d['v3_square'] ); ?>" width="<?php echo (int) $d['v3_sq_w']; ?>" height="<?php echo (int) $d['v3_sq_h']; ?>">
+			<img class="kpop-ghb-img" src="<?php echo esc_url( $d['v3_wide'] ); ?>" alt="<?php echo esc_attr( $d['v3_alt'] ); ?>" width="<?php echo (int) $d['v3_wd_w']; ?>" height="<?php echo (int) $d['v3_wd_h']; ?>" loading="lazy" decoding="async">
+		</picture>
+		<?php endif; ?>
+	</a>
+</aside>
+		<?php
+		return ob_get_clean() . kpop_ghb_assets();
+	endif;
 	?>
 <aside class="kpop-ghb<?php echo $square ? ' kpop-ghb--square' : ''; ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>">
 	<p class="kpop-ghb-label"><?php echo esc_html( $label ); ?></p>

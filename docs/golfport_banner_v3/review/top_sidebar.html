@@ -1,0 +1,46 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'><style>body{font-family:'Noto Sans JP',sans-serif;margin:0;padding:20px 30px;background:#fff}.cap{font:700 12px sans-serif;color:#888;margin:14px 0 4px}
+.kpop-ghb{margin:2.5em 0 1.5em;padding:0;box-sizing:border-box;min-height:132px}
+.kpop-ghb-label{margin:0 0 6px;font-size:12px;line-height:1.4;color:#64748b}
+.kpop-ghb-link{display:flex;align-items:center;gap:16px;padding:20px;min-height:96px;box-sizing:border-box;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#1e293b;text-decoration:none}
+.kpop-ghb-link:hover{background:#f1f5f9;border-color:#cbd5e1}
+.kpop-ghb-link:focus-visible{outline:3px solid #1e293b;outline-offset:2px}
+.kpop-ghb-logo{display:block;height:30px;width:auto;max-width:100%;align-self:flex-start;margin:0 0 6px}
+.kpop-ghb-text{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0}
+.kpop-ghb-title{font-size:18px;line-height:1.4;font-weight:700}
+.kpop-ghb-sub{font-size:14px;line-height:1.5;color:#475569}
+.kpop-ghb-ph{display:inline-block}
+.kpop-ghb-cta{flex:0 0 auto;padding:11px 18px;min-height:44px;box-sizing:border-box;border-radius:999px;background:#2563eb;color:#fff;font-size:14px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center}
+@media (max-width:600px){
+.kpop-ghb{min-height:196px}
+.kpop-ghb-link{flex-wrap:wrap;gap:12px;padding:18px}
+.kpop-ghb-text{flex-basis:100%}
+.kpop-ghb-title{font-size:17px}
+.kpop-ghb-cta{flex:1 1 100%;justify-content:center}
+}
+/* トップ右サイドバー用 1:1(正方形)。上のモバイル規則より後ろに置き、詳細度で確実に上書きする。 */
+.kpop-ghb.kpop-ghb--square{width:100%;max-width:300px;min-height:0;margin:0 auto}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-label{text-align:center}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-link{flex-direction:column;flex-wrap:nowrap;justify-content:center;text-align:center;gap:8px;width:100%;aspect-ratio:1/1;min-height:0;padding:36px 20px 24px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-icon{display:block;width:72px;height:72px;align-self:center;margin:0 auto 6px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-text{flex:0 0 auto;align-items:center;gap:3px;width:100%}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-cta{flex:0 0 auto;justify-content:center;width:100%;padding:10px 12px}
+.kpop-ghb-label--sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* v3 画像版: 比率ごと枠を予約(CLS防止)。PC=横長 1536:337 / スマホ・トップ=正方形 */
+.kpop-ghb.kpop-ghb--img{min-height:0}
+.kpop-ghb-imglink{display:block;position:relative;width:100%;aspect-ratio:1536/337;overflow:hidden;border:1px solid #e2e8f0;border-radius:12px;box-sizing:border-box;background:#f8fafc}
+.kpop-ghb-imglink:focus-visible{outline:3px solid #1e293b;outline-offset:2px}
+.kpop-ghb-imglink picture{display:block;width:100%;height:100%}
+.kpop-ghb-img{display:block;width:100%;height:100%}
+.kpop-ghb.kpop-ghb--square .kpop-ghb-imglink{aspect-ratio:1/1;max-width:300px;margin:0 auto}
+@media (max-width:600px){
+.kpop-ghb.kpop-ghb--img .kpop-ghb-imglink{aspect-ratio:1/1;max-width:330px;margin:0 auto}
+.kpop-ghb.kpop-ghb--img.kpop-ghb--square .kpop-ghb-imglink{max-width:300px}
+}
+</style><aside class="kpop-ghb kpop-ghb--img kpop-ghb--square" aria-label="運営関連サービス" data-ghb-content="top_sidebar" data-ghb-design="image">
+	<p class="kpop-ghb-label kpop-ghb-label--sr">運営関連サービス</p>
+	<a class="kpop-ghb-imglink" href="https://golfport.top/record?utm_source=kpopjournal&amp;utm_medium=house_banner&amp;utm_campaign=golf_record_202611&amp;utm_content=top_sidebar">
+				<img class="kpop-ghb-img" src="https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/golfport-banner-v3-square.webp" alt="GOLF PORT ゴルフの思い出、ひとつに。ラウンド・練習・写真を記録して振り返る。GOLF PORTを見てみる" width="660" height="660" loading="lazy" decoding="async">
+			</a>
+</aside>
