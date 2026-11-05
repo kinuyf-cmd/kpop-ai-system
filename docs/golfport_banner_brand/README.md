@@ -17,6 +17,13 @@ GOLF PORT 側(5e/be)の確認は公開後の事後確認(be の観点: 変形な
 - 余白: ロゴ高さ(30px)の半分以上=padding 20px(スマホ18px)。アイコン(72px)は上余白36px以上。縦横比は width/height 属性+`height固定・width:auto`(アイコンは72×72)で固定、`align-self`で引き伸ばし防止。transform/filter/object-fit/opacity/clip/border-radius/mask は使用しない(テストで検査)。
 - 不変: コピー/CTA文言/遷移先URL/UTM固定値/utm_content/GA4イベント名/50%可視判定/1ページ1枠/掲載対象/停止制御/「運営関連サービス」表示。
 
+## GOLF PORT側(be/5e)の確認結果と守るべき条件(2026-11-05 夜)
+- **事後確認: 4観点(変形なし/色の変更なし/余白/背景との組み合わせ)すべて合格・差し戻し不要。**
+- **CTA の #2563eb は「K-POP JOURNAL のサイト色」であり、GOLF PORT のブランド色ではない。** GOLF PORT の画面のリンクの青と同じ値だが、ブランドカラーとして扱わない・書かない(ロゴ専用色 #5064FA も別物)。
+- **ロゴの高さ 30px が下限**。これより小さくしない(テストで検査: `test_logo_min_height_and_brand_color_notes`)。アイコンは 72px。
+- **今後版を変えるときは、事前に 5e へ次の4点を見せる**: (1) PC/スマホのスクリーンショット(3か所それぞれ・実寸とロゴ拡大)、(2) バナーのHTML/CSS(ロゴ指定・縦横比固定・余白・背景色の値)、(3) 使ったロゴが golfport.top の logo.png/icon.png そのもの(再保存・再描画なし)である確認、(4) 公開前の確認用であること。
+- ロゴ・アイコンがオーナー提供ファイルと同一かの照合、および権利台帳への登録は GOLF PORT 側(T1・L)で進行中。
+
 ## 証跡(`evidence/`・`review/`)
 - `evidence/live_verification.json` … 本番3系統×(PC/390px/320px)の実測(ロゴ読込・比率・URL・イベント・CLS・関連記事・広告枠)。`evidence/{article_footer,event_page,top_sidebar}_{pc,m390,m320}.png` … 本番の実表示。
 - `review/` … 事前確認用(スクリーンショット・拡大・HTML/CSS・measurements.json)。

@@ -240,3 +240,14 @@ $out['sq']=kpop_ghb_render($cfg,'top_sidebar'); $out['hz']=kpop_ghb_render($cfg,
     icon_rules = " ".join(__import__("re").findall(r"[^{}]*kpop-ghb-icon[^{}]*\{[^}]*\}", css))
     for banned in ("transform", "filter", "object-fit", "opacity", "clip", "border-radius", "mask", "rotate", "scale"):
         assert banned not in icon_rules, banned
+
+
+def test_logo_min_height_and_brand_color_notes():
+    """be規定: ロゴの高さ30pxが最小(これより小さくしない)。CTAの#2563ebはK-POP JOURNALのサイト色でGOLF PORTのブランド色ではない(READMEに明記)。"""
+    import re as _re
+    out = run("""$cfg=kpop_ghb_config(array('enabled'=>true)); $out['h']=kpop_ghb_render($cfg,'article_footer');""")
+    css = out["h"][out["h"].index("<style>"):out["h"].index("</style>")]
+    heights = [int(v) for v in _re.findall(r"\.kpop-ghb-logo\{[^}]*?height:(\d+)px", css)]
+    assert heights and min(heights) >= 30, heights              # ロゴの高さは30px以上
+    readme = (PHP_FILE.parents[2] / "docs/golfport_banner_brand/README.md").read_text(encoding="utf-8")
+    assert "GOLF PORT のブランド色ではない" in readme and "ロゴの高さ 30px が下限" in readme
