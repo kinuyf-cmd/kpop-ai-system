@@ -193,7 +193,6 @@ function kpop_ghb_assets() {
 .kpop-ghb.kpop-ghb--square .kpop-ghb-title{font-size:18px}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-sub{font-size:13px;line-height:1.5}
 .kpop-ghb.kpop-ghb--square .kpop-ghb-cta{flex:0 0 auto;justify-content:center;width:100%;padding:10px 12px}
-.kpop-ghb-label--sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* v3 画像版: 比率ごと枠を予約(CLS防止)。PC=横長 1536:337 / スマホ・トップ=正方形 */
 .kpop-ghb.kpop-ghb--img{min-height:0}
 .kpop-ghb-imglink{display:block;position:relative;width:100%;aspect-ratio:1536/337;overflow:hidden;border:1px solid #e2e8f0;border-radius:12px;box-sizing:border-box;background:#f8fafc}
@@ -252,7 +251,8 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 	if ( $image ) :
 		?>
 <aside class="kpop-ghb kpop-ghb--img<?php echo $square ? ' kpop-ghb--square' : ''; ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>" data-ghb-design="image">
-	<p class="kpop-ghb-label kpop-ghb-label--sr"><?php echo esc_html( $label ); ?></p>
+	<?php // 開示ラベルは v2 と同じ実テキスト(12px・画像の外)。画像内の札はスマホで7〜9pxに縮み読めないため、視覚的な表示はこちらが担う(be指摘 2026-11-05)。 ?>
+	<p class="kpop-ghb-label"><?php echo esc_html( $label ); ?></p>
 	<a class="kpop-ghb-imglink" href="<?php echo esc_url( $url ); ?>">
 		<?php if ( $square ) : ?>
 		<img class="kpop-ghb-img" src="<?php echo esc_url( $d['v3_square'] ); ?>" alt="<?php echo esc_attr( $d['v3_alt'] ); ?>" width="<?php echo (int) $d['v3_sq_w']; ?>" height="<?php echo (int) $d['v3_sq_h']; ?>" loading="lazy" decoding="async">

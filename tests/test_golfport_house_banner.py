@@ -282,7 +282,7 @@ $out['ev']=kpop_ghb_render($img,'event_page'); $out['af']=kpop_ghb_render($img,'
         for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
             assert banned not in h, banned
         assert 'data-ghb-design="image"' in h and 'loading="lazy"' in h
-        assert "運営関連サービス" in h                                       # 開示は(スクリーンリーダー用に)テキストでも残す
+        assert 'class="kpop-ghb-label">運営関連サービス' in h and "kpop-ghb-label--sr" not in h  # 開示は画像の外に見える実テキスト(12px)
         assert "ゴルフの思い出、ひとつに。" in h and "GOLF PORTを見てみる" in h  # altに既存コピーのみ(新しい文言なし)
     # トップ=正方形のみ、イベント/記事末尾=<picture>(PC横長・スマホ正方形)
     assert "<picture>" not in top and 'width="660" height="660"' in top
@@ -293,3 +293,13 @@ $out['ev']=kpop_ghb_render($img,'event_page'); $out['af']=kpop_ghb_render($img,'
     assert 'data-ghb-design' not in out["html_ev"] and 'class="kpop-ghb-logo"' in out["html_ev"]
     # 枠の高さを比率で予約(CLS防止)
     assert "aspect-ratio:1536/337" in top and "aspect-ratio:1/1" in top   # CSS/JSは1リクエストに1回(最初の出力に含まれる)
+
+
+def test_image_design_visible_disclosure_label_is_real_text_12px():
+    """be指摘(2026-11-05): 画像内の札はスマホで7〜9pxで読めない → v2と同じ12pxの実テキストを画像の外に表示する。"""
+    out = run("""$img=kpop_ghb_config(array('enabled'=>true,'design'=>'image')); $out['ev']=kpop_ghb_render($img,'event_page'); $out['x']=1;""")
+    h = out["ev"]
+    css = h[h.index("<style>"):h.index("</style>")]
+    assert 'class="kpop-ghb-label">運営関連サービスのご案内</p>' in h
+    assert "label--sr" not in css and "clip:rect" not in css and "position:absolute" not in css   # 視覚的に隠していない
+    assert ".kpop-ghb-label{margin:0 0 6px;font-size:12px" in css                           # v2と同じ12px
