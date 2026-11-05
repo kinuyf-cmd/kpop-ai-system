@@ -39,6 +39,11 @@ def wp(*args: str) -> str:
     return r.stdout.strip()
 
 
+def small(n: int, unit: str = "件") -> str:
+    """GOLF PORT側(5e)と同じ秘匿ルール: 1〜2 は個人が特定されうるので「3件未満」と書く。"""
+    return f"3{unit}未満" if 1 <= n <= 2 else f"{n}{unit}"
+
+
 def pct(n: float, d: float) -> str:
     return f"{n / d * 100:.2f}%" if d else "n/a"
 
@@ -232,20 +237,20 @@ def section_golfport(start, end):
     signups = [r for r in win if r["kind"] == "SIGNUP"]
     consent_yes = sum(1 for r in signups if r["analyticsConsent"] == "t")
     kp = [r for r in win if "kpopjournal" in ((r.get("firstUtmSource") or ""), (r.get("lastUtmSource") or ""))]
-    lines += [f"- 【GOLF PORT全体の参考値】期間内の登録(SIGNUP)記録: {len(signups)}件。うち解析Cookie許可: {consent_yes}件({pct(consent_yes, len(signups))})。"
+    lines += [f"- 【GOLF PORT全体の参考値】期間内の登録(SIGNUP)記録: {small(len(signups))}。うち解析Cookie許可: {small(consent_yes)}。"
               "バナー由来と証明できる分ではない(流入元はバナー以外も含む)。",
-              f"- 【UTMで確認できた分=下限値】kpopjournal経由の記録(first/lastのどちらか): {len(kp)}件。"
+              f"- 【UTMで確認できた分=下限値】kpopjournal経由の記録(first/lastのどちらか): {small(len(kp))}。"
               "解析不許可・同意前に登録まで進んだ分は流入元がDBに残らないため、実際のバナー経由より少なく出る。推定で補わない。"]
     byk = Counter((r["kind"], (r.get("firstUtmContent") or r.get("lastUtmContent") or "-")) for r in kp)
     if byk:
         lines += ["", "| 種別 | utm_content | 件数 |", "|---|---|---:|"]
-        lines += [f"| {k} | {c} | {n} |" for (k, c), n in sorted(byk.items())]
+        lines += [f"| {k} | {c} | {small(n, '')} |" for (k, c), n in sorted(byk.items())]
     # 初回記録(登録ユーザーが登録後に記録したか)
     kp_users = {r["refId"] for r in kp if r["kind"] == "SIGNUP"}
     rec = {"ラウンド記録": ("RoundLog", "studentId", "createdAt"),
            "練習記録": ("PracticeLog", "studentId", "createdAt"),
            "思い出(単体)": ("StandaloneMemory", "studentId", "createdAt")}
-    lines += ["", f"- 【下限値】UTMで確認できたkpopjournal経由の新規登録ユーザー: {len(kp_users)}人 → 登録後の初回記録(人数・集計のみ):"]
+    lines += ["", f"- 【下限値】UTMで確認できたkpopjournal経由の新規登録ユーザー: {small(len(kp_users), "人")} → 登録後の初回記録(人数・集計のみ):"]
     for label, (tbl, ucol, tcol) in rec.items():
         owners = set()
         for r in read_table(dump, tbl):
@@ -254,7 +259,7 @@ def section_golfport(start, end):
                 tc, tu = parse_ts(r.get(tcol)), parse_ts(u.get("createdAt"))
                 if tc and tu and tc >= tu:
                     owners.add(r[ucol])
-        lines.append(f"  - {label}: {len(owners)}人")
+        lines.append(f"  - {label}: {small(len(owners), '人')}")
     # 参考: 期間内に登録した全ユーザー(バナー由来とは限らない)の初回記録
     win_users = {r["refId"] for r in signups}
     allrec = []
@@ -266,8 +271,8 @@ def section_golfport(start, end):
                 tc, tu = parse_ts(r.get(tcol)), parse_ts(u.get("createdAt"))
                 if tc and tu and tc >= tu:
                     owners.add(r[ucol])
-        allrec.append(f"{label} {len(owners)}人")
-    lines.append(f"- 【GOLF PORT全体の参考値】期間内に登録した{len(win_users)}人のうち、登録後の初回記録: " + " / ".join(allrec)
+        allrec.append(f"{label} {small(len(owners), '人')}")
+    lines.append(f"- 【GOLF PORT全体の参考値】期間内に登録した{small(len(win_users), "人")}のうち、登録後の初回記録: " + " / ".join(allrec)
                  + "(バナー由来とは限らない)")
     lines.append("\n※ 記録の種別は一部(ラウンド/練習/単体メモリー)。ラウンド/練習に紐づく写真メモリー等は含まない。"
                  "GOLF PORTのGA4(訪問・セッション・参照元/メディア)は別プロパティで、このサーバーからは未接続 → GOLF PORT側から提供が必要。")
