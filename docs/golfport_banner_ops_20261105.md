@@ -98,3 +98,12 @@
 - 余白は規定未制定。暫定(be提案)=ロゴ高さの半分以上を四方に。画像は権利台帳に載る。作った版は本番前に 5e に見せる(be が 変形なし/色の変更なし/余白/背景との組み合わせ を見る)。
 - CTA #2563eb は「K-POP JOURNAL のサイト色」として使用可(5e了承)。GOLF PORT のブランドカラーとは書かない。
 - 確認用パッケージ: `docs/golfport_banner_brand/`(README.md と review/)。ブランチ feat/golfport-banner-brand(PR #2・本番未反映)。
+
+## 8. ブランド統一版の公開記録(オーナー裁定 2026-11-05 夜)
+- **切替日時: 2026-11-05 18:51:26 JST**(`kpop-theme-deploy.sh` ts=20261105_185126・`golfport-house-banner.php` md5 `f9ec2e8009daca55207bcec0509436d4`)。旧=グリーン基調版(11/5 18:11〜18:51・約40分)→ 新=GOLF PORT正式ロゴ/アイコン。**効果測定は切替前後を区別**(レポート [A'] 参照)。
+- 3系統とも同時に切替。掲載場所・対象・表示条件・コピー・CTA・UTM・GA4イベント・停止制御は不変。コミット c960c9c(ブランチ feat/golfport-banner-brand=PR #2・base=PR #1 ブランチ)。PR #1 は旧版(切替前の本番)のまま。**本番=PR #2 head のバナーファイル**。
+- 素材: WPメディア 26905(logo)/26906(icon)。詳細・md5・差し替え手順は `docs/golfport_banner_brand/README.md`。
+- **ロールバック**: 即時停止=WPオプション(従来どおり・デプロイ不要)。**デザインだけ旧版へ戻す**=`git show origin/feat/golfport-house-banner:themes/generatepress-kpop/golfport-house-banner.php` を作業ツリーに置いて `kpop-theme-deploy.sh golfport-house-banner.php`(旧版は logo/icon を使わず SVG)。デプロイ前に本番ファイルを自動バックアップ(`.kpop_theme_backups/ts=20261105_185126` に切替前の版)。
+- 検証: テスト13件通過。本番実測は `docs/golfport_banner_brand/evidence/`(3系統×PC/390/320)。バナー起因のCLSなし・UTM/GA4イベント重複なし。
+- GOLF PORT の事後確認(be): 変形なし/色の変更なし/余白/背景との組み合わせ。5e へ通知済み。
+- 計測の注意: 11/5 は当方の検証アクセスを含む → 評価は 11/6 以降。AdSense・A8 は引き続き未計測(収益影響は未確認)。news拡大は保留。

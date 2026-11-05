@@ -1,31 +1,27 @@
-# GOLF PORT バナー ブランド版(公開前確認用・本番未反映) 2026-11-05
+# GOLF PORT バナー ブランド統一版(2026-11-05 公開)
 
-**これは公開前の確認用です。本番には出していません。** 本番反映は GOLF PORT 側(be)の確認が済んでから。
+**公開済み**(オーナー裁定 2026-11-05)。**切替日時: 2026-11-05 18:51:26 JST**(旧=グリーン基調版 → 新=GOLF PORT正式ロゴ/アイコン+白〜淡色の無地)。
+GOLF PORT 側(5e/be)の確認は公開後の事後確認(be の観点: 変形なし/色の変更なし/余白/背景との組み合わせ)。指摘があれば即修正・差し戻し可能。
 
-## 5e が求めた確認の4点
-1. **スクリーンショット**(`review/`): 実寸 `pc_footer.png` `pc_square.png`(PC)、`mobile_footer.png` `mobile_square.png`(スマホ・2倍密度)。ロゴ拡大(3倍) `pc_logo_zoom.png` `mobile_logo_zoom.png`。
-   - 3か所の対応: 記事末尾(kdrama)=横長・イベントページ(MAMA/KGMA/MMA/AAA)=同じ横長・トップ右サイドバー=1:1。記事末尾とイベントページは同一デザインで、違うのは `utm_content`(article_footer / event_page)だけ。
-2. **HTML と CSS**: `review/banner_markup.html`(ロゴの指定)、`review/banner.css`(縦横比・余白・背景色の値)。実装 `themes/generatepress-kpop/golfport-house-banner.php`。
-3. **ロゴは正式ファイルそのもの**: `<img src="https://golfport.top/logo.png" width="1637" height="435">` で本番の正式ファイルを**直接参照**している。当方でファイルを保存・変換・再エンコード・描画していない(複製を持たない)。
-   - 参照時点の `logo.png` = 1637×435 / 280713 bytes / md5 `d1893dce2fdb140e81986fbb56a525c0`、`icon.png` = 512×512 / md5 `9bcea51c41896765679dfd1c59a67a5a`(取得日 2026-11-05。icon.png は今回使っていない)。
-   - 画像は遅延読み込み(`loading=lazy`)。縦横比は width/height 属性(1637:435)と CSS(`height:30px; width:auto`)で固定。
-4. **公開前の確認用**であり、本番反映は be の確認後。
+## 使用素材(再保存・変換・再描画なし)
+| 素材 | 実体(K-POP JOURNALのWPメディア) | md5(原本=配信=一致) | 使う場所 |
+|---|---|---|---|
+| 横組みロゴ 1637×435 | media 26905 / `https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/logo.png` | `d1893dce2fdb140e81986fbb56a525c0` | 記事末尾・イベントページ(横長の帯) |
+| アイコン 512×512 | media 26906 / `https://www.kpopjournal.tokyo/wp-content/uploads/2026/11/icon.png` | `9bcea51c41896765679dfd1c59a67a5a` | トップ右サイドバー(1:1) |
+- 原本: `https://golfport.top/logo.png` `icon.png` を 2026-11-05 に取得 = GOLF PORT リポジトリ `public/logo.png` `icon.png` とバイト一致。**オーナー提供の「GOLGPORT logo.png」「Golf port icon(1).png」は、このサーバー上に見当たらず照合できていない**(提供ファイルが上と異なる場合は知らせてほしい)。
+- 配信方式の比較(決定=自サイトのWPメディアに無加工で登録): 直接参照は GOLF PORT 側が `Cache-Control: public, max-age=0`(毎回再検証)で稼働にも依存。自サイトのアップロードは `max-age=31536000, immutable`、外部依存なし、再保存なし(md5一致を検証済み)。Data URI は再エンコード不要で作れるが HTML に毎回 約380KB(base64)が載るため不採用。容量(ロゴ281KB・アイコン223KB)は遅延読み込み(`loading=lazy`)・初回のみ。軽量な正式派生版が必要なら GOLF PORT(be)に依頼する。
+- 差し替え手順: 新しい正式ファイルを `wp media import`(無加工)→ md5 検証 → `golfport-house-banner.php` の URL を更新 → be の確認。
 
-## be の4観点に対する実測(`review/measurements.json`)
-| 観点 | 結果 |
-|---|---|
-| 変形なし | 描画 112.9×30.0(比率3.763)= 元 1637:435(3.7632)。1:1側 143.0×38.0(3.7632)。ロゴの規則に transform/filter/object-fit/opacity/clip/border-radius/mask なし(テストで検査) |
-| 色の変更なし | 画像そのまま。ロゴ専用色 #5064FA はUIに使っていない。CSSの色変更・不透明度変更なし |
-| 余白 | ロゴ高さの半分以上(要件)。実測: 横長 21px(≥15)、1:1 は上下左右 77px以上。スマホ横長 19px(≥15)。padding 20px(スマホ18px) |
-| 背景との組み合わせ | 白〜淡色の無地 #f8fafc(グラデーション・画像なし)。サイトの青は背景/補助色に使っていない |
+## デザイン(変更したのは見た目だけ)
+- 背景 #f8fafc(白に近い淡色の無地)、枠 #e2e8f0、文字 #1e293b/#475569、CTA #2563eb(白文字)=K-POP JOURNALのサイト色(GOLF PORTのブランドカラーとしては扱わない)。ロゴ専用色 #5064FA は不使用。グラデ・画像背景なし。
+- 余白: ロゴ高さ(30px)の半分以上=padding 20px(スマホ18px)。アイコン(72px)は上余白36px以上。縦横比は width/height 属性+`height固定・width:auto`(アイコンは72×72)で固定、`align-self`で引き伸ばし防止。transform/filter/object-fit/opacity/clip/border-radius/mask は使用しない(テストで検査)。
+- 不変: コピー/CTA文言/遷移先URL/UTM固定値/utm_content/GA4イベント名/50%可視判定/1ページ1枠/掲載対象/停止制御/「運営関連サービス」表示。
 
-## 色の扱い(5e/be の指示どおり)
-- ロゴの周りは淡色の無地(#f8fafc)、枠 #e2e8f0、文字 #1e293b / #475569。
-- **CTA ボタン #2563eb は「K-POP JOURNAL のサイト色」**であり、GOLF PORT のブランドカラーとしては扱わない(5e 了承済み)。
-- 旧グリーン案・自作のゴルフ場イラスト(SVG)は撤去。ロゴの縦組み/白抜き/簡略版は作っていない。
+## 証跡(`evidence/`・`review/`)
+- `evidence/live_verification.json` … 本番3系統×(PC/390px/320px)の実測(ロゴ読込・比率・URL・イベント・CLS・関連記事・広告枠)。`evidence/{article_footer,event_page,top_sidebar}_{pc,m390,m320}.png` … 本番の実表示。
+- `review/` … 事前確認用(スクリーンショット・拡大・HTML/CSS・measurements.json)。
 
-## 変えていないもの
-コピー(ゴルフの思い出、ひとつに。/ラウンド・練習・写真を記録して振り返る。/GOLF PORTを見てみる)、遷移先 URL・固定4つのUTM・utm_content、「運営関連サービス」表示、枠別 ON/OFF、GA4 イベント。禁止表現(効果の言い切り・完全無料/すべて無料・最上級・実名/写真・料金/返金の数字)は含まない。
-
-## 権利の台帳について
-画像は GOLF PORT の正式ファイルの直接参照のみ。当方で作った画像ファイルは無い(スクリーンショットは確認用の画面キャプチャ)。台帳に載せる必要のある「作った版のファイル」は `review/` 一式(確認用スクリーンショット・HTML/CSS)。
+## 検証結果(本番・2026-11-05 18:5x JST)
+- 3系統×PC/390/320 全て: バナー1枠・ロゴ/アイコン読込OK・比率一致・UTM4項目一致(utm_content=設置場所)・rel/target なし・横スクロールなし・view 1回(再スクロールでも増えない)・クリックで /record に遷移(PC)。
+- バナー自体の寸法は不変(イベントページPCで高さ151px一定)。CLSは既存要因(ヘッダー速報バー/ヒーロー画像、バナーを押し下げる分のみ)でバナー起因ではない。トップに関連記事セクションは元々ない。
+- 注意: この検証アクセス(ヘッドレスブラウザ)は GA4 に実イベントとして送られるため、**11/5 のGA4数値は参考値**。評価は 11/6 以降。

@@ -27,7 +27,10 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BASE))
 
-PUBLISH_DATE = date(2026, 11, 5)  # 3枠とも2026-11-05(18:11〜18:23 JST)に公開
+PUBLISH_DATE = date(2026, 11, 5)  # 3枠とも2026-11-05(18:11〜18:23 JST)に公開(旧=グリーン基調版)
+# 旧(グリーン)→新(GOLF PORT正式ロゴ/アイコン・白〜淡色無地)への切替: 2026-11-05 18:51:26 JST(テーマデプロイ ts=20261105_185126)。
+# コピー/CTA文言/UTM/utm_content/GA4イベント名/50%可視/掲載対象は不変。効果測定では切替前後を区別する。
+SWITCH_HOUR = "2026110518"  # GA4 dateHour(YYYYMMDDHH)。この時間帯は旧版(18:11〜18:51)と新版(18:51〜)が混在
 RO = ["sudo", "-n", "/usr/local/sbin/kpop/kpop-wp-ro"]
 DUMP_DIR = Path("/home/aiuser/golfport-backups")
 PLACEMENTS = ("top_sidebar", "article_footer", "event_page")
@@ -115,6 +118,8 @@ def section_banner_events(pmap, start, end):
         agg[pl][r["eventName"]] += r["eventCount"]
         dev[(pl, r["deviceCategory"])][r["eventName"]] += r["eventCount"]
     lines = ["### [A] バナー表示・クリック(GA4 / K-POP JOURNAL)",
+             "> **注意: 2026-11-05 の数値には、公開直後の実機検証(当方のヘッドレスブラウザ)による view/click が含まれる。**"
+             "11/5 は参考値とし、評価は 11/6 以降で行う(11/6 以降は検証アクセスなしの想定。再検証した日は別途記録)。",
              "| 設置場所 | 表示(view) | クリック | CTR |", "|---|---:|---:|---:|"]
     tv = tc = 0
     for pl in PLACEMENTS:
@@ -131,6 +136,28 @@ def section_banner_events(pmap, start, end):
     lines.append("\n※ view=バナーが50%見えた回数(1ページ1回)。ページPVとは別物。placement は pagePath から判定"
                  "(banner_content はGA4カスタムディメンション未登録のため直接は集計できない)。")
     return lines, {pl: (agg[pl]["house_banner_view"], agg[pl]["house_banner_click"]) for pl in PLACEMENTS}
+
+
+def section_design_switch(pmap, start, end):
+    """切替前後(旧グリーン版 / 新ブランド版)でバナー表示・クリックを分けて集計。GA4 dateHour は GA4プロパティのタイムゾーン基準
+    (JSTと仮定。未確認)。切替時刻と同じ時間帯(18時台)は旧新が混在するので別枠にする。"""
+    rows = ga4(["dateHour", "pagePath", "eventName"], ["eventCount"], start, end, ["house_banner_view", "house_banner_click"])
+    buckets = {"公開前(〜17時台)": Counter(), "切替の時間帯(18時台・旧版18:11〜18:51/新版18:51〜 混在)": Counter(), "新版(19時台〜)": Counter()}
+    for r in rows:
+        if r["pagePath"] not in pmap:
+            continue
+        h = r["dateHour"]
+        key = ("公開前(〜17時台)" if h < SWITCH_HOUR else
+               "新版(19時台〜)" if h > SWITCH_HOUR else "切替の時間帯(18時台・旧版18:11〜18:51/新版18:51〜 混在)")
+        buckets[key][r["eventName"]] += r["eventCount"]
+    lines = ["### [A'] デザイン切替前後の区別(旧=グリーン / 新=GOLF PORT正式ロゴ・無地)",
+             "切替: 2026-11-05 18:51:26 JST。旧版の掲載は 11/5 18:11〜18:51 の約40分のみで母数は小さい。",
+             "| 期間 | view | click | CTR |", "|---|---:|---:|---:|"]
+    for k, c in buckets.items():
+        v, ck = c["house_banner_view"], c["house_banner_click"]
+        lines.append(f"| {k} | {v} | {ck} | {pct(ck, v)} |")
+    lines.append("※ 旧版の母数が極小のため、デザイン差の比較は参考程度(統計的な優劣は判断しない)。")
+    return lines
 
 
 def section_pv_and_ads(pmap, w_before, w_after):
@@ -308,6 +335,7 @@ def main() -> int:
            "", "> **最重要**: 表示数・CTRではなく、GOLF PORTでの実利用(登録→初回記録)につながったかで評価する。"
            "GA4/A8/AdSense/GOLF PORTは計測条件が異なり、数値は一致しない。", ""]
     for fn in (lambda: section_banner_events(pmap, start, end)[0],
+               lambda: section_design_switch(pmap, start, end),
                lambda: section_pv_and_ads(pmap, w_before, w_after),
                lambda: section_a8_adsense(w_before, w_after),
                lambda: section_golfport(start, end),
