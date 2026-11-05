@@ -515,6 +515,13 @@ function kpop_ad_top_sidebar() {
 	$fkey  = isset( $cfg['top_fixed_key'] ) ? $cfg['top_fixed_key'] : '';
 	$fixed = $fkey !== '' ? kpop_ad_banner_html( $fkey ) : '';
 	$rot   = kpop_ad_rotate( 1, array( $fkey ) );
+	// GOLF PORT 自社バナー(top_sidebar ON のときだけ)で旧PORT広告(固定枠)を置換。
+	// OFF なら ''(従来どおり A8 の固定枠)。ローテ枠・他の広告枠は一切触らない。
+	$ghb = function_exists( 'kpop_ghb_top_sidebar_html' ) ? kpop_ghb_top_sidebar_html() : '';
+	if ( $ghb !== '' ) {
+		echo $ghb; // phpcs:ignore WordPress.Security.EscapeOutput -- 内部で esc_* 済み
+		$fixed = '';
+	}
 	foreach ( array( $fixed, $rot ) as $b ) {
 		if ( $b === '' ) { continue; }
 		echo '<div class="kpop-sidebar-box kpop-ad-slot" role="complementary" aria-label="広告">';

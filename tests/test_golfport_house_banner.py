@@ -11,7 +11,10 @@ define('ABSPATH', '/');
 function esc_attr($s){return htmlspecialchars($s, ENT_QUOTES);}
 function esc_html($s){return htmlspecialchars($s, ENT_QUOTES);}
 function esc_url($s){return htmlspecialchars($s, ENT_QUOTES);}
-function get_option($k,$d=null){return $d;}
+function is_admin(){return false;} function is_feed(){return false;} function is_embed(){return false;} function is_preview(){return false;}
+function is_front_page(){return $GLOBALS['FRONT'];} function is_home(){return false;}
+$GLOBALS['FRONT']=false; $GLOBALS['OPT']=array();
+function get_option($k,$d=null){return $GLOBALS['OPT'];}
 require %s;
 $out = array();
 %s
@@ -78,3 +81,55 @@ $out['second']=kpop_ghb_render($cfg);
         assert banned not in html, banned
     assert 'role="img"' in html and 'aria-label="ゴルフ場' in html  # 画像のalt相当
     assert "<img" not in html and "src=" not in html  # 外部画像/JSなし
+
+
+def test_placement_toggles_are_independent_and_back_compatible():
+    out = run("""
+$legacy=kpop_ghb_config(array('enabled'=>true,'categories'=>array('kdrama')));   // 公開済みの既存オプション
+$out['legacy_footer']=$legacy['article_footer']; $out['legacy_top']=$legacy['top_sidebar'];
+$ctx=array('is_post'=>true,'is_popup'=>false,'is_preview'=>false,'category_slugs'=>array('kdrama'));
+$out['legacy_shows']=kpop_ghb_should_show($legacy,$ctx);
+$off=kpop_ghb_config(array('enabled'=>true,'categories'=>array('kdrama'),'article_footer'=>false,'top_sidebar'=>true));
+$out['footer_off_hides']=kpop_ghb_should_show($off,$ctx); $out['top_on']=$off['top_sidebar'];
+$m=kpop_ghb_config(array('enabled'=>false,'top_sidebar'=>true,'categories'=>array('kdrama')));
+$out['master_off_footer']=kpop_ghb_should_show($m,$ctx);
+""")
+    assert out == {"legacy_footer": True, "legacy_top": False, "legacy_shows": True,
+                   "footer_off_hides": False, "top_on": True, "master_off_footer": False}
+
+
+def test_top_sidebar_url_differs_only_in_utm_content():
+    out = run("$out['t']=kpop_ghb_url('top_sidebar'); $out['f']=kpop_ghb_url('article_footer'); $out['bad']=kpop_ghb_url('x&y');")
+    assert out["t"] == ("https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner"
+                        "&utm_campaign=golf_record_202611&utm_content=top_sidebar")
+    assert out["f"].endswith("utm_content=article_footer")
+    assert out["bad"].endswith("utm_content=article_footer")  # 不正な設置場所名は既定に戻る(注入不可)
+
+
+def test_top_sidebar_html_only_on_front_page_and_when_enabled():
+    out = run("""
+$GLOBALS['OPT']=array('enabled'=>true,'top_sidebar'=>true);
+$GLOBALS['FRONT']=false; $out['not_front']=kpop_ghb_top_sidebar_html();
+$GLOBALS['FRONT']=true;  $out['front']=kpop_ghb_top_sidebar_html();
+$out['front_again']=kpop_ghb_top_sidebar_html();   // 二重表示防止
+$GLOBALS['OPT']=array('enabled'=>true,'top_sidebar'=>false); $out['off']=kpop_ghb_top_sidebar_html();
+""")
+    assert out["not_front"] == ""
+    assert out["off"] == ""
+    assert out["front_again"] == ""
+    h = out["front"]
+    assert 'class="kpop-sidebar-box kpop-ad-slot kpop-ghb-slot"' in h  # サイドバー並べ替えの広告枠扱いを維持
+    assert "kpop-ghb--square" in h and 'data-ghb-content="top_sidebar"' in h
+    assert "utm_content=top_sidebar" in h and "運営関連サービス" in h
+    assert "ゴルフの思い出、ひとつに。" in h and "GOLF PORTを見てみる" in h
+    for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料", "a8.net", "px.a8"):
+        assert banned not in h, banned
+    assert h.count("<script>") == 1  # イベント束縛スクリプトは1ページに1回だけ
+
+
+def test_functions_php_replaces_only_the_fixed_port_slot():
+    src = (PHP_FILE.parent / "functions.php").read_text(encoding="utf-8")
+    assert "kpop_ghb_top_sidebar_html()" in src
+    # 置換は固定枠($fixed)のみ。ローテ枠($rot)には触れない
+    seg = src[src.index("function kpop_ad_top_sidebar"):src.index("add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar'")]
+    assert "$fixed = '';" in seg and "$rot   = kpop_ad_rotate( 1, array( $fkey ) );" in seg
