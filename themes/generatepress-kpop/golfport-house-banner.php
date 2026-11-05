@@ -1,16 +1,22 @@
 <?php
 /**
  * GOLF PORT 自社バナー(GolfPortHouseBanner)— 運営関連サービス案内。
- * 設置場所は2つ(個別ON/OFF可・utm_content で区別して計測):
+ * 設置場所は3つ(個別ON/OFF可・utm_content で区別して計測):
  *   article_footer … 記事末尾・関連記事の直前(kdrama 等の許可カテゴリのみ)
+ *   event_page     … 大型イベント特設ページ(授賞式ハブ等)の主要情報の下・関連記事の直前。
+ *                    記事IDの許可リスト(event_page_ids)だけ。イベント名が本文に出るだけの記事は対象外。
+ *                    同じページでは event_page が優先し article_footer は出さない(1ページ1枠)。
  *   top_sidebar    … トップページ右サイドバーの旧PORT広告枠(A8 top_fixed)の置換・1:1
  *
  * 設計(2026-11-05・MKT house banner 施策):
  *  - 画像を使わない(HTML/CSS + インラインSVG)。権利問題なし・CLSなし・外部JSなし。
  *  - 表示可否は WP オプション `kpop_golfport_banner` で制御(コードのデプロイ不要で停止できる)。
- *      {"enabled":true,"categories":["kdrama"],"article_footer":true,"top_sidebar":false}
+ *      {"enabled":true,"categories":["kdrama"],"article_footer":true,"top_sidebar":false,
+ *       "event_page":false,"event_page_ids":[4826,21866,23381,23390]}
  *    既定は enabled=false。enabled は全体のマスタースイッチ。
  *    article_footer は未指定=true(従来挙動)、false で記事末尾だけ停止。
+ *    event_page は未指定=false。true かつ ID が event_page_ids にある記事にだけ出る。
+ *    新しい大型イベントページを作ったら event_page_ids に記事IDを足す(デプロイ不要)。
  *    top_sidebar は未指定=false。true でトップ右サイドバーのPORT広告をGOLF PORTに置換、
  *    false/削除/enabled=false で PORT 広告が即座に戻る。
  *    categories が空なら記事末尾は「どの記事にも出さない」(許可リスト方式)。
@@ -31,7 +37,7 @@ const KPOP_GHB_BASE   = 'https://golfport.top';
 /** バナー定義。遷移先は GOLF PORT 側確定仕様で /record 固定(変更は GOLF PORT への事前連絡が必要)。
  *  utm_content は設置場所(半角英小文字・数字・_・40字以内)。同一場所で別クリエイティブなら article_footer_a 等。 */
 function kpop_ghb_def( $placement = 'article_footer' ) {
-	if ( ! in_array( $placement, array( 'article_footer', 'top_sidebar' ), true ) ) {
+	if ( ! in_array( $placement, array( 'article_footer', 'top_sidebar', 'event_page' ), true ) ) {
 		$placement = 'article_footer';
 	}
 	return array(
@@ -64,11 +70,21 @@ function kpop_ghb_config( $raw = null ) {
 			}
 		}
 	}
+	$ids = array();
+	if ( isset( $raw['event_page_ids'] ) && is_array( $raw['event_page_ids'] ) ) {
+		foreach ( $raw['event_page_ids'] as $i ) {
+			if ( is_int( $i ) && $i > 0 ) {
+				$ids[] = $i;
+			}
+		}
+	}
 	return array(
 		'enabled'        => ! empty( $raw['enabled'] ) && true === (bool) $raw['enabled'],
 		'categories'     => $cats,
 		'article_footer' => ! array_key_exists( 'article_footer', $raw ) || ! empty( $raw['article_footer'] ),
 		'top_sidebar'    => ! empty( $raw['top_sidebar'] ) && true === (bool) $raw['top_sidebar'],
+		'event_page'     => ! empty( $raw['event_page'] ) && true === (bool) $raw['event_page'],
+		'event_page_ids' => $ids,
 	);
 }
 
@@ -86,6 +102,25 @@ function kpop_ghb_should_show( $cfg, $ctx ) {
 	}
 	$slugs = isset( $ctx['category_slugs'] ) ? (array) $ctx['category_slugs'] : array();
 	return (bool) array_intersect( $cfg['categories'], $slugs );
+}
+
+/**
+ * 記事ページで出す設置場所を1つだけ決める(純関数)。''=出さない。
+ * event_page が article_footer より優先(同じページに2枠出さない)。
+ * @param array $ctx  post_id(int) / is_post / is_popup / is_preview / category_slugs
+ */
+function kpop_ghb_article_placement( $cfg, $ctx ) {
+	if ( empty( $cfg['enabled'] ) ) {
+		return '';
+	}
+	if ( empty( $ctx['is_post'] ) || ! empty( $ctx['is_popup'] ) || ! empty( $ctx['is_preview'] ) ) {
+		return '';
+	}
+	$pid = isset( $ctx['post_id'] ) ? (int) $ctx['post_id'] : 0;
+	if ( ! empty( $cfg['event_page'] ) && $pid > 0 && in_array( $pid, $cfg['event_page_ids'], true ) ) {
+		return 'event_page';
+	}
+	return kpop_ghb_should_show( $cfg, $ctx ) ? 'article_footer' : '';
 }
 
 /** UTM 付き遷移先URL。個人情報は入れない。 */
@@ -235,6 +270,9 @@ function kpop_render_golfport_house_banner( $post_id = 0 ) {
 	if ( ! $cfg['enabled'] ) {
 		return; // 無効時は DB クエリも走らせない
 	}
+	if ( ! $cfg['article_footer'] && ! $cfg['event_page'] ) {
+		return;
+	}
 	$post_id = $post_id ? $post_id : get_the_ID();
 	$cats    = get_the_category( $post_id );
 	$slugs   = array();
@@ -244,12 +282,14 @@ function kpop_render_golfport_house_banner( $post_id = 0 ) {
 		}
 	}
 	$ctx = array(
+		'post_id'        => (int) $post_id,
 		'is_post'        => is_singular( 'post' ),
 		'is_popup'       => in_category( 'popup', $post_id ),
 		'is_preview'     => is_preview(),
 		'category_slugs' => $slugs,
 	);
-	if ( kpop_ghb_should_show( $cfg, $ctx ) ) {
-		echo kpop_ghb_render( $cfg, 'article_footer' ); // phpcs:ignore WordPress.Security.EscapeOutput -- 内部で esc_* 済み
+	$placement = kpop_ghb_article_placement( $cfg, $ctx );
+	if ( '' !== $placement ) {
+		echo kpop_ghb_render( $cfg, $placement ); // phpcs:ignore WordPress.Security.EscapeOutput -- 内部で esc_* 済み
 	}
 }

@@ -133,3 +133,59 @@ def test_functions_php_replaces_only_the_fixed_port_slot():
     # 置換は固定枠($fixed)のみ。ローテ枠($rot)には触れない
     seg = src[src.index("function kpop_ad_top_sidebar"):src.index("add_action( 'generate_after_right_sidebar_content', 'kpop_ad_top_sidebar'")]
     assert "$fixed = '';" in seg and "$rot   = kpop_ad_rotate( 1, array( $fkey ) );" in seg
+
+
+def test_event_page_allowlist_only_and_one_banner_per_page():
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true,'categories'=>array('kdrama'),'event_page'=>true,'event_page_ids'=>array(4826,21866,'999',-1,0)));
+$out['ids']=$cfg['event_page_ids'];                       // int の正の値だけ残る
+$c=function($id,$cats,$extra=array()){return array_merge(array('post_id'=>$id,'is_post'=>true,'is_popup'=>false,'is_preview'=>false,'category_slugs'=>$cats),$extra);};
+$out['hub_news']=kpop_ghb_article_placement($cfg,$c(4826,array('news')));          // 許可リストID→カテゴリ非対象でも出る
+$out['hub_live']=kpop_ghb_article_placement($cfg,$c(21866,array('live')));
+$out['plain_news_mentions_mama']=kpop_ghb_article_placement($cfg,$c(26321,array('news')));  // 本文にMAMAが出るだけの一般記事は出ない
+$out['kdrama_article']=kpop_ghb_article_placement($cfg,$c(22640,array('kdrama')));
+$out['event_wins_over_footer']=kpop_ghb_article_placement($cfg,$c(21866,array('kdrama','live')));  // 両方該当→event_pageだけ(1枠)
+$out['popup']=kpop_ghb_article_placement($cfg,$c(4826,array('popup'),array('is_popup'=>true)));
+$out['preview']=kpop_ghb_article_placement($cfg,$c(4826,array('news'),array('is_preview'=>true)));
+$out['not_post']=kpop_ghb_article_placement($cfg,$c(4826,array('news'),array('is_post'=>false)));
+""")
+    assert out["ids"] == [4826, 21866]
+    assert out["hub_news"] == "event_page" and out["hub_live"] == "event_page"
+    assert out["plain_news_mentions_mama"] == ""
+    assert out["kdrama_article"] == "article_footer"
+    assert out["event_wins_over_footer"] == "event_page"
+    assert out["popup"] == "" and out["preview"] == "" and out["not_post"] == ""
+
+
+def test_event_page_toggle_master_and_legacy_options():
+    out = run("""
+$c=array('post_id'=>4826,'is_post'=>true,'is_popup'=>false,'is_preview'=>false,'category_slugs'=>array('news'));
+$legacy=kpop_ghb_config(array('enabled'=>true,'categories'=>array('kdrama'),'article_footer'=>true,'top_sidebar'=>true)); // 公開中の既存オプション形
+$out['legacy_event_off']=$legacy['event_page']; $out['legacy_hub']=kpop_ghb_article_placement($legacy,$c);
+$off=kpop_ghb_config(array('enabled'=>true,'event_page'=>false,'event_page_ids'=>array(4826)));
+$out['event_off']=kpop_ghb_article_placement($off,$c);
+$m=kpop_ghb_config(array('enabled'=>false,'event_page'=>true,'event_page_ids'=>array(4826)));
+$out['master_off']=kpop_ghb_article_placement($m,$c);
+$only_event=kpop_ghb_config(array('enabled'=>true,'article_footer'=>false,'event_page'=>true,'event_page_ids'=>array(4826),'categories'=>array('news')));
+$out['footer_off_event_on']=kpop_ghb_article_placement($only_event,$c);   // 記事末尾OFFでもeventは独立して出る
+$out['footer_off_plain_news']=kpop_ghb_article_placement($only_event,array_merge($c,array('post_id'=>1)));
+""")
+    assert out == {"legacy_event_off": False, "legacy_hub": "", "event_off": "",
+                   "master_off": "", "footer_off_event_on": "event_page", "footer_off_plain_news": ""}
+
+
+def test_event_page_url_and_render():
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true,'event_page'=>true,'event_page_ids'=>array(4826)));
+$out['u']=kpop_ghb_url('event_page');
+$out['h']=kpop_ghb_render($cfg,'event_page');
+$out['h2']=kpop_ghb_render($cfg,'event_page');
+""")
+    assert out["u"] == ("https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner"
+                        "&utm_campaign=golf_record_202611&utm_content=event_page")
+    assert out["h2"] == ""
+    h = out["h"]
+    assert 'data-ghb-content="event_page"' in h and "utm_content=event_page" in h
+    assert '<aside class="kpop-ghb"' in h  # イベントページは横長(記事末尾と同形・squareクラスは付かない)
+    for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料"):
+        assert banned not in h, banned
