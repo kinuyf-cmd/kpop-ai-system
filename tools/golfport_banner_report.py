@@ -232,9 +232,10 @@ def section_golfport(start, end):
     signups = [r for r in win if r["kind"] == "SIGNUP"]
     consent_yes = sum(1 for r in signups if r["analyticsConsent"] == "t")
     kp = [r for r in win if "kpopjournal" in ((r.get("firstUtmSource") or ""), (r.get("lastUtmSource") or ""))]
-    lines += [f"- 期間内の登録(SIGNUP)記録: {len(signups)}件。うち解析Cookie許可: {consent_yes}件({pct(consent_yes, len(signups))})。"
-              "**不許可の登録はUTMが記録されないため、バナー経由の登録は実際より少なく出る。**",
-              f"- kpopjournal経由の記録(first/lastのどちらか): {len(kp)}件"]
+    lines += [f"- 【GOLF PORT全体の参考値】期間内の登録(SIGNUP)記録: {len(signups)}件。うち解析Cookie許可: {consent_yes}件({pct(consent_yes, len(signups))})。"
+              "バナー由来と証明できる分ではない(流入元はバナー以外も含む)。",
+              f"- 【UTMで確認できた分=下限値】kpopjournal経由の記録(first/lastのどちらか): {len(kp)}件。"
+              "解析不許可・同意前に登録まで進んだ分は流入元がDBに残らないため、実際のバナー経由より少なく出る。推定で補わない。"]
     byk = Counter((r["kind"], (r.get("firstUtmContent") or r.get("lastUtmContent") or "-")) for r in kp)
     if byk:
         lines += ["", "| 種別 | utm_content | 件数 |", "|---|---|---:|"]
@@ -244,7 +245,7 @@ def section_golfport(start, end):
     rec = {"ラウンド記録": ("RoundLog", "studentId", "createdAt"),
            "練習記録": ("PracticeLog", "studentId", "createdAt"),
            "思い出(単体)": ("StandaloneMemory", "studentId", "createdAt")}
-    lines += ["", f"- kpopjournal経由の新規登録ユーザー: {len(kp_users)}人 → 登録後の初回記録(人数・集計のみ):"]
+    lines += ["", f"- 【下限値】UTMで確認できたkpopjournal経由の新規登録ユーザー: {len(kp_users)}人 → 登録後の初回記録(人数・集計のみ):"]
     for label, (tbl, ucol, tcol) in rec.items():
         owners = set()
         for r in read_table(dump, tbl):
@@ -254,9 +255,32 @@ def section_golfport(start, end):
                 if tc and tu and tc >= tu:
                     owners.add(r[ucol])
         lines.append(f"  - {label}: {len(owners)}人")
+    # 参考: 期間内に登録した全ユーザー(バナー由来とは限らない)の初回記録
+    win_users = {r["refId"] for r in signups}
+    allrec = []
+    for label, (tbl, ucol, tcol) in rec.items():
+        owners = set()
+        for r in read_table(dump, tbl):
+            u = users.get(r.get(ucol) or "")
+            if r.get(ucol) in win_users and u:
+                tc, tu = parse_ts(r.get(tcol)), parse_ts(u.get("createdAt"))
+                if tc and tu and tc >= tu:
+                    owners.add(r[ucol])
+        allrec.append(f"{label} {len(owners)}人")
+    lines.append(f"- 【GOLF PORT全体の参考値】期間内に登録した{len(win_users)}人のうち、登録後の初回記録: " + " / ".join(allrec)
+                 + "(バナー由来とは限らない)")
     lines.append("\n※ 記録の種別は一部(ラウンド/練習/単体メモリー)。ラウンド/練習に紐づく写真メモリー等は含まない。"
                  "GOLF PORTのGA4(訪問・セッション・参照元/メディア)は別プロパティで、このサーバーからは未接続 → GOLF PORT側から提供が必要。")
     return lines
+
+
+def section_reconcile():
+    return ["### 突き合わせの注意(K-POP JOURNALのクリック数 ≠ GOLF PORTの流入セッション数 となる主な理由)",
+            "- **同意**: GOLF PORTは解析Cookie許可者のみUTMを記録。不許可・同意前に登録まで進んだ分は流入元がDBに残らない。K-POP JOURNAL側のGA4は同意管理なしで計測している。",
+            "- **計測条件**: クリックは「バナーを押した回数」、GOLF PORTのセッションは「着地後にGA4が計測した訪問」。着地前離脱・広告ブロック・GA4未読込で差が出る。",
+            "- **期間・確定**: GA4は24〜48hで確定。dumpは毎日03:00 JST時点。窓の端がずれる。",
+            "- **重複**: 同一人物の複数クリック(ユーザー数とクリック数は別)、複数端末、再訪(first/lastタッチの違い)。",
+            "- 推定で補わない。数値が合わないこと自体を成果の失敗とも成功とも判断しない。"]
 
 
 # ───────────── main ─────────────
@@ -281,7 +305,8 @@ def main() -> int:
     for fn in (lambda: section_banner_events(pmap, start, end)[0],
                lambda: section_pv_and_ads(pmap, w_before, w_after),
                lambda: section_a8_adsense(w_before, w_after),
-               lambda: section_golfport(start, end)):
+               lambda: section_golfport(start, end),
+               section_reconcile):
         try:
             out += fn() + [""]
         except Exception as ex:  # noqa: BLE001 — 1セクションの失敗で全体を止めない
