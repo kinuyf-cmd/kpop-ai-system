@@ -1,0 +1,86 @@
+{
+ "pc_footer": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 112.890625,
+  "h": 30,
+  "pad": {
+   "top": 21,
+   "left": 21,
+   "right": 590.109375
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://golfport.top/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.763,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ },
+ "pc_square": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 143,
+  "h": 38,
+  "pad": {
+   "top": 76.65625,
+   "left": 78.5,
+   "right": 78.5
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://golfport.top/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.7632,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ },
+ "mobile_footer": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 112.890625,
+  "h": 30,
+  "pad": {
+   "top": 19,
+   "left": 19,
+   "right": 198.109375
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://golfport.top/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.763,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ },
+ "mobile_square": {
+  "natural": [
+   1637,
+   435
+  ],
+  "loaded": true,
+  "w": 143,
+  "h": 38,
+  "pad": {
+   "top": 76.65625,
+   "left": 78.5,
+   "right": 78.5
+  },
+  "bg": "rgb(248, 250, 252)",
+  "cta": "rgb(37, 99, 235)",
+  "src": "https://golfport.top/logo.png",
+  "alt": "ゴルフポート GOLF PORT",
+  "ratio_rendered": 3.7632,
+  "ratio_original": 3.7632,
+  "min_margin_ok": true
+ }
+}

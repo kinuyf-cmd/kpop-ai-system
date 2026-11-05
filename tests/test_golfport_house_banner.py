@@ -82,8 +82,11 @@ $out['second']=kpop_ghb_render($cfg);
         assert banned not in html, banned
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
         assert banned not in html, banned
-    assert 'role="img"' in html and 'aria-label="ゴルフ場' in html  # 画像のalt相当
-    assert "<img" not in html and "src=" not in html  # 外部画像/JSなし
+    # 正式ロゴ: 本番の logo.png そのもの(再保存/再描画/変形/色変更なし)
+    assert html.count('<img class="kpop-ghb-logo" src="https://golfport.top/logo.png"') == 1
+    assert 'alt="ゴルフポート GOLF PORT"' in html and 'width="1637" height="435"' in html  # 縦横比(1637:435)を属性で固定
+    assert 'loading="lazy"' in html
+    assert "<svg" not in html and "kpop-ghb-art" not in html  # 自前のイラスト/ロゴ描画なし
 
 
 def test_placement_toggles_are_independent_and_back_compatible():
@@ -196,3 +199,27 @@ $out['h2']=kpop_ghb_render($cfg,'event_page');
     assert '<aside class="kpop-ghb"' in h  # イベントページは横長(記事末尾と同形・squareクラスは付かない)
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料"):
         assert banned not in h, banned
+
+
+def test_brand_rules_colors_and_no_logo_transforms():
+    """GOLF PORT ブランド規定(5e/be 2026-11-05): ロゴは変形・色変更なし/背景は白か淡色の無地/ロゴ識別色#5064FAとサイトの青をGOLF PORTの色として持ち込まない。"""
+    out = run("""
+$cfg=kpop_ghb_config(array('enabled'=>true));
+$out['footer']=kpop_ghb_render($cfg,'article_footer');
+""")
+    h = out["footer"].lower()
+    css = h[h.index("<style>"):h.index("</style>")]
+    assert "#5064fa" not in h                                   # ロゴ専用色をUIに使わない
+    for green in ("#1d6b3f", "#e8f5ec", "#f6fbf8"):             # 旧グリーン案の残骸なし
+        assert green not in h, green
+    # ロゴ(.kpop-ghb-logo)の規則に変形・フィルタ・色変更・切り抜きを入れない
+    import re as _re
+    logo_rules = " ".join(_re.findall(r"[^{}]*kpop-ghb-logo[^{}]*\{[^}]*\}", css))
+    for banned in ("transform", "filter", "object-fit", "opacity", "clip", "mix-blend", "rotate", "scale", "border-radius", "mask"):
+        assert banned not in logo_rules, banned
+    assert "height:30px;width:auto" in css                      # 高さ固定・幅auto=縦横比保持
+    assert "align-self:flex-start" in css and "align-self:center" in css  # 縦組みflexで引き伸ばされない
+    # 背景は白/淡色の無地(グラデーション・画像なし)・余白はロゴ高さ(30px)の半分(15px)以上
+    assert "background:#f8fafc" in css and "gradient" not in css and "url(" not in css
+    assert "padding:20px" in css                                # >=15px
+    assert "background:#2563eb" in css                          # CTA=K-POP JOURNALのサイト色(GOLF PORTのブランド色としては扱わない)
