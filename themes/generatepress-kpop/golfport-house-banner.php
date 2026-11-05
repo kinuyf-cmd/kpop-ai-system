@@ -5,12 +5,13 @@
  * 設計(2026-11-05・MKT house banner 施策):
  *  - 画像を使わない(HTML/CSS + インラインSVG)。権利問題なし・CLSなし・外部JSなし。
  *  - 表示可否は WP オプション `kpop_golfport_banner` で制御(コードのデプロイ不要で停止できる)。
- *      {"enabled":true,"variant":"a","categories":["kdrama","k-pop"]}
+ *      {"enabled":true,"categories":["kdrama"]}
  *    既定は enabled=false。categories が空なら「どの記事にも出さない」(許可リスト方式)。
  *  - 出さないページ: 非 post / popup カテゴリ / プレビュー / フィード。
  *  - 計測: GA4 イベント house_banner_view(50%可視で1回) / house_banner_click。
  *    gtag が無い環境では何もしない(既存 affiliate_click と同じ作法)。
- *  - リンクは rel="nofollow noopener"(SEO目的の内部リンク構造にしない)。
+ *  - リンクは通常の<a>(同一タブ)。短縮/中継/リダイレクト/nofollow/sponsored/noreferrer 禁止(GOLF PORT確定仕様)。
+ *  - 文言に「無料」等の断定表現を使わない(GOLF PORT側で条件確認できるまで)。
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,23 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 const KPOP_GHB_OPTION = 'kpop_golfport_banner';
 const KPOP_GHB_BASE   = 'https://golfport.top';
 
-/** variant 定義。a=無料記録(初回の本命)、b=コーチ(比較テスト候補・初回は出さない)。 */
-function kpop_ghb_variants() {
+/** バナー定義。遷移先は GOLF PORT 側確定仕様で /record 固定(変更は GOLF PORT への事前連絡が必要)。
+ *  utm_content は設置場所(半角英小文字・数字・_・40字以内)。同一場所で別クリエイティブなら article_footer_a 等。 */
+function kpop_ghb_def() {
 	return array(
-		'a' => array(
-			'path'    => '/record',
-			'content' => 'article_end_free_record',
-			'title'   => 'ゴルフの思い出、無料で記録。',
-			'sub'     => 'ラウンド・練習・写真をひとつに。',
-			'cta'     => 'GOLF PORTを見てみる',
-		),
-		'b' => array(
-			'path'    => '/',
-			'content' => 'article_end_coach',
-			'title'   => 'あなたに合うゴルフコーチを。',
-			'sub'     => 'コーチを探して、相談・予約。',
-			'cta'     => 'GOLF PORTを見てみる',
-		),
+		'url_base' => 'https://golfport.top/record',
+		'campaign' => 'golf_record_202611',
+		'content'  => 'article_footer',
+		'title'    => 'ゴルフの思い出、ひとつに。',
+		'sub'      => 'ラウンド・練習・写真を記録して振り返る。',
+		'cta'      => 'GOLF PORTを見てみる',
+		'alt'      => 'ゴルフ場のグリーンとピンフラッグのイラスト',
 	);
 }
 
@@ -51,8 +46,6 @@ function kpop_ghb_config( $raw = null ) {
 	if ( ! is_array( $raw ) ) {
 		$raw = array();
 	}
-	$variants = kpop_ghb_variants();
-	$variant  = ( isset( $raw['variant'] ) && isset( $variants[ $raw['variant'] ] ) ) ? $raw['variant'] : 'a';
 	$cats     = array();
 	if ( isset( $raw['categories'] ) && is_array( $raw['categories'] ) ) {
 		foreach ( $raw['categories'] as $c ) {
@@ -63,10 +56,7 @@ function kpop_ghb_config( $raw = null ) {
 	}
 	return array(
 		'enabled'    => ! empty( $raw['enabled'] ) && true === (bool) $raw['enabled'],
-		'variant'    => $variant,
 		'categories' => $cats,
-		'campaign'   => ( isset( $raw['campaign'] ) && is_string( $raw['campaign'] ) && preg_match( '/^[a-z0-9_]{1,40}$/', $raw['campaign'] ) )
-			? $raw['campaign'] : 'golfport_202611',
 	);
 }
 
@@ -87,20 +77,11 @@ function kpop_ghb_should_show( $cfg, $ctx ) {
 }
 
 /** UTM 付き遷移先URL。個人情報は入れない。 */
-function kpop_ghb_url( $cfg ) {
-	$v = kpop_ghb_variants();
-	$d = $v[ $cfg['variant'] ];
-	return KPOP_GHB_BASE . $d['path'] . '?' . http_build_query(
-		array(
-			'utm_source'   => 'kpopjournal',
-			'utm_medium'   => 'house_banner',
-			'utm_campaign' => $cfg['campaign'],
-			'utm_content'  => $d['content'],
-		),
-		'',
-		'&',
-		PHP_QUERY_RFC3986
-	);
+function kpop_ghb_url() {
+	$d = kpop_ghb_def();
+	// 固定4パラメータのみ。短縮・中継・リダイレクト・utm_term・個人情報は付けない。
+	return $d['url_base'] . '?utm_source=kpopjournal&utm_medium=house_banner'
+		. '&utm_campaign=' . $d['campaign'] . '&utm_content=' . $d['content'];
 }
 
 /** バナーHTML(1回だけ出力するための静的ガード付き)。 */
@@ -111,16 +92,15 @@ function kpop_ghb_render( $cfg ) {
 	}
 	$rendered = true;
 
-	$v   = kpop_ghb_variants();
-	$d   = $v[ $cfg['variant'] ];
-	$url = kpop_ghb_url( $cfg );
+	$d   = kpop_ghb_def();
+	$url = kpop_ghb_url();
 
 	ob_start();
 	?>
-<aside class="kpop-ghb" aria-label="運営関連サービスのご案内" data-ghb-variant="<?php echo esc_attr( $cfg['variant'] ); ?>" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>">
+<aside class="kpop-ghb" aria-label="運営関連サービスのご案内" data-ghb-content="<?php echo esc_attr( $d['content'] ); ?>">
 	<p class="kpop-ghb-label">運営関連サービスのご案内</p>
-	<a class="kpop-ghb-link" href="<?php echo esc_url( $url ); ?>" rel="nofollow noopener" target="_blank">
-		<svg class="kpop-ghb-art" viewBox="0 0 120 120" width="72" height="72" aria-hidden="true" focusable="false">
+	<a class="kpop-ghb-link" href="<?php echo esc_url( $url ); ?>">
+		<svg class="kpop-ghb-art" viewBox="0 0 120 120" width="72" height="72" role="img" aria-label="<?php echo esc_attr( $d['alt'] ); ?>" focusable="false">
 			<rect width="120" height="120" rx="16" fill="#e8f5ec"/>
 			<path d="M0 92c28-14 52-16 120-4v32H0z" fill="#8cc9a0"/>
 			<path d="M0 104c34-10 66-10 120 0v16H0z" fill="#5aa874"/>
@@ -164,7 +144,6 @@ function kpop_ghb_render( $cfg ) {
   if (!el || typeof window.gtag !== 'function') { return; }
   var p = {
     banner_id: 'golfport',
-    banner_variant: el.getAttribute('data-ghb-variant') || '',
     banner_content: el.getAttribute('data-ghb-content') || '',
     page_path: window.location.pathname
   };

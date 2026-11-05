@@ -51,19 +51,15 @@ $out['empty_allowlist']=kpop_ghb_should_show($empty,$base);
                    "preview": False, "empty_allowlist": False}
 
 
-def test_url_has_spec_utm_and_no_pii():
-    out = run("""
-$out['a']=kpop_ghb_url(kpop_ghb_config(array('enabled'=>true,'categories'=>array('x'))));
-$out['b']=kpop_ghb_url(kpop_ghb_config(array('variant'=>'b')));
-$out['bad_campaign']=kpop_ghb_config(array('campaign'=>'a b&c=d'))['campaign'];
-""")
-    assert out["a"] == ("https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner"
-                        "&utm_campaign=golfport_202611&utm_content=article_end_free_record")
-    assert "utm_content=article_end_coach" in out["b"]
-    assert out["bad_campaign"] == "golfport_202611"  # 不正値は既定に戻る
+def test_url_is_exactly_the_four_fixed_params():
+    out = run("$out['u']=kpop_ghb_url();")
+    assert out["u"] == ("https://golfport.top/record?utm_source=kpopjournal&utm_medium=house_banner"
+                        "&utm_campaign=golf_record_202611&utm_content=article_footer")
+    import re
+    assert re.fullmatch(r"[a-z0-9_]{1,40}", out["u"].rsplit("utm_content=", 1)[1])
 
 
-def test_render_once_with_disclosure_nofollow_and_copy():
+def test_render_once_and_spec_compliant_markup():
     out = run("""
 $cfg=kpop_ghb_config(array('enabled'=>true,'categories'=>array('x')));
 $out['first']=kpop_ghb_render($cfg);
@@ -73,9 +69,12 @@ $out['second']=kpop_ghb_render($cfg);
     assert out["second"] == ""  # 二重表示防止
     assert html.count('class="kpop-ghb"') == 1
     assert "運営関連サービスのご案内" in html
-    assert "ゴルフの思い出、無料で記録。" in html
-    assert "ラウンド・練習・写真をひとつに。" in html
+    assert "ゴルフの思い出、ひとつに。" in html
+    assert "ラウンド・練習・写真を記録して振り返る。" in html
     assert "GOLF PORTを見てみる" in html
-    assert 'rel="nofollow noopener"' in html
-    assert "<img" not in html  # 外部画像なし
-    assert "src=" not in html  # 外部JSなし
+    for banned in ("無料", "完全", "必ず", "上達する"):
+        assert banned not in html, banned
+    for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term"):
+        assert banned not in html, banned
+    assert 'role="img"' in html and 'aria-label="ゴルフ場' in html  # 画像のalt相当
+    assert "<img" not in html and "src=" not in html  # 外部画像/JSなし
