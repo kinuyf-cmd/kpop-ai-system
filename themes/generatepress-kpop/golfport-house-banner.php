@@ -45,6 +45,7 @@ function kpop_ghb_def( $placement = 'article_footer' ) {
 		'campaign' => 'golf_record_202611',
 		'content'  => $placement,
 		'title'    => 'ゴルフの思い出、ひとつに。',
+		'title_parts' => array( 'ゴルフの思い出、', 'ひとつに。' ), // 狭いスマホで「ひ/とつに。」と切れないよう句の境目で折り返す
 		'sub'      => 'ラウンド・練習・写真を記録して振り返る。',
 		// スマホで「振/り返る。」のように不自然な位置で改行されないよう、句の境目でだけ折り返す(結合した文字列は sub と同一)。
 		'sub_parts' => array( 'ラウンド・練習・写真を', '記録して振り返る。' ),
@@ -231,7 +232,7 @@ function kpop_ghb_render( $cfg, $placement = 'article_footer' ) {
 		</svg>
 		<span class="kpop-ghb-text">
 			<span class="kpop-ghb-brand">GOLF PORT</span>
-			<span class="kpop-ghb-title"><?php echo esc_html( $d['title'] ); ?></span>
+			<span class="kpop-ghb-title"><?php foreach ( $d['title_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 			<span class="kpop-ghb-sub"><?php foreach ( $d['sub_parts'] as $kpop_ghb_part ) { echo '<span class="kpop-ghb-ph">' . esc_html( $kpop_ghb_part ) . '</span>'; } ?></span>
 		</span>
 		<span class="kpop-ghb-cta"><?php echo esc_html( $d['cta'] ); ?><span aria-hidden="true"> →</span></span>

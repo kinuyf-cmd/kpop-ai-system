@@ -68,11 +68,12 @@ $cfg=kpop_ghb_config(array('enabled'=>true,'categories'=>array('x')));
 $out['first']=kpop_ghb_render($cfg);
 $out['second']=kpop_ghb_render($cfg);
 """)
+    import re as _re
     html = out["first"]
     assert out["second"] == ""  # 二重表示防止
     assert html.count('class="kpop-ghb"') == 1
     assert "運営関連サービスのご案内" in html
-    assert "ゴルフの思い出、ひとつに。" in html
+    assert "ゴルフの思い出、ひとつに。" in _re.sub(r"<[^>]+>", "", html)
     import re as _re
     assert "ラウンド・練習・写真を記録して振り返る。" in _re.sub(r"<[^>]+>", "", html)  # 句ごとのspanを除いた本文は従来と同一
     assert 'class="kpop-ghb-ph"' in html  # 句の境目で折り返す
@@ -119,11 +120,13 @@ $GLOBALS['OPT']=array('enabled'=>true,'top_sidebar'=>false); $out['off']=kpop_gh
     assert out["not_front"] == ""
     assert out["off"] == ""
     assert out["front_again"] == ""
+    import re as _re
     h = out["front"]
     assert 'class="kpop-sidebar-box kpop-ad-slot kpop-ghb-slot"' in h  # サイドバー並べ替えの広告枠扱いを維持
     assert "kpop-ghb--square" in h and 'data-ghb-content="top_sidebar"' in h
     assert "utm_content=top_sidebar" in h and "運営関連サービス" in h
-    assert "ゴルフの思い出、ひとつに。" in h and "GOLF PORTを見てみる" in h
+    assert "GOLF PORTを見てみる" in h
+    assert "ゴルフの思い出、ひとつに。" in _re.sub(r"<[^>]+>", "", h)
     import re as _re
     assert "ラウンド・練習・写真を記録して振り返る。" in _re.sub(r"<[^>]+>", "", h)
     for banned in ("nofollow", "sponsored", "noreferrer", "_blank", "utm_term", "無料", "a8.net", "px.a8"):
