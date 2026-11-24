@@ -118,6 +118,16 @@ def _validate_thumbnail(image_path: str, expected_artist: str = '',
         return False, f"validate err: {e}"
 
 
+def _artist_named_in_title(artist, title):
+    """タイトルに artist 名が出ているか(大小・空白・記号を無視)。
+    2026-11-24: 信号のアーティスト(BIGBANG)と記事の主役(2xFE)が別のとき、og画像(2xFE本人)を
+    「BIGBANGが写っていない」と身元検査で落とし、BIGBANGのMV画像に差し替わっていた(post 28703)。"""
+    import re as _re
+    norm = lambda x: _re.sub(r'[\s_\-・.]', '', str(x or '')).casefold()
+    a = norm(artist)
+    return bool(a) and a in norm(title)
+
+
 def _upload_media(image_path, alt_text='', expected_artist='', article_title=''):
     # 公開前gate: 不正サムネはアップロードしない
     # expected_artist指定時は Vision で身元検査(段階1で素通りした別人写真の最終防御)
@@ -446,8 +456,11 @@ def unified_publish(
             thumb = None
         if thumb and thumb.get('path'):
             _src_alt = f"{title_final}のサムネイル画像"
+            # タイトルに名前が出ない artist(信号由来)で og画像を落とさない。og画像は resolve_thumbnail で
+            # タイトル由来の主役に対して検査済み
+            _og_expected = artist if _artist_named_in_title(artist, title_final) else ''
             media_id = _upload_media(thumb['path'], alt_text=_src_alt,
-                                     expected_artist=artist, article_title=title_final)
+                                     expected_artist=_og_expected, article_title=title_final)
             if media_id:
                 log.append(f"media_id: {media_id} (source_og_primary: {thumb.get('source','')})")
                 if thumb.get('source_url'):

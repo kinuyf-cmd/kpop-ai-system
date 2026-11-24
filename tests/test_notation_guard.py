@@ -43,3 +43,17 @@ def test_inconsistent_name_in_same_article():
 def test_gate_blocks_hybrid():
     from lib.pre_publish_gate import BLOCK_TYPES
     assert {"kanji_katakana_hybrid", "dict_notation_mismatch", "name_inconsistency"} <= BLOCK_TYPES
+
+
+def test_roman_name_wrong_title_notation_blocked():
+    from lib.notation_guard import check_notation
+    rm = {"Jeongyeon": "ジョンヨン"}
+    src = "TWICE’s Jeongyeon Transforms Into A Military Nurse Officer"
+    bad = check_notation("TWICEチョン・ヨン、新作映画で軍看護将校役", "<p>ジョンヨンは看護将校を演じる</p>", src, name_dict={}, roman_map=rm)
+    assert [i["type"] for i in bad] == ["roman_notation_mismatch"]
+    ok = check_notation("TWICEジョンヨン、新作映画で軍看護将校役", "<p>ジョンヨン</p>", src, name_dict={}, roman_map=rm)
+    assert ok == []
+    # 題に名前が無いだけなら止めない(本文に正表記がある)
+    assert check_notation("TWICE、新作映画に出演", "<p>ジョンヨン</p>", src, name_dict={}, roman_map=rm) == []
+    # 本文にも正表記が無ければ止める
+    assert check_notation("TWICE、新作映画に出演", "<p>メンバー</p>", src, name_dict={}, roman_map=rm)

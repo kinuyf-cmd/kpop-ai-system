@@ -54,6 +54,7 @@ BLOCK_TYPES = frozenset({
     'title_source_mismatch',   # タイトルがソースと乖離 (2026-05-06追加)
     'llm_factcheck_critical',  # Claude v2 factcheck CRITICAL — 事実捏造/主語逆転等 (2026-05-11追加)
     'non_kpop_topic',          # 非K-POPトピック(婚活リアリティ番組/政治/非アイドルゴシップ) (2026-05-29追加)
+    'roman_notation_mismatch',  # 元記事のローマ字人名が正表記でない (2026-11-24追加)
     'dict_notation_mismatch',  # 元記事の辞書登録人名が正表記でない (2026-11-18追加)
     'kanji_katakana_hybrid',   # 「体ポハゲッソ」型の翻訳化け造語 (2026-11-18追加)
     'name_inconsistency',      # 同一記事内で人名が1字違いの2通り (2026-11-18追加)
