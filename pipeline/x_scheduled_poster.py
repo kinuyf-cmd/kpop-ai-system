@@ -82,6 +82,41 @@ PRIORITY_GENRES = {'news', 'breaking', 'comeback', 'chart'}  # 優先ジャン�
 AB_LOG = "/home/aiuser/kpop-ai-system/logs/x_ab_log.jsonl"
 
 
+URL_POS_STATE = "/home/aiuser/kpop-ai-system/data/x_url_pos_state.json"
+URL_POS_BODY_DAILY_CAP = 1   # 本文URLは念のため1日1本まで。過去の主因は連投なので間隔はMIN_INTERVAL_MINが守る(owner承認 2026-11-06)
+
+
+def _next_url_pos() -> str:
+    """URL位置A/Bの割当。実投稿の少ない側へ。body は日次上限+ガード停止で制限する。
+    state: {"body_enabled": bool}。ファイル無し/破損は有効(開始時)。ガードが false にする。"""
+    try:
+        with open(URL_POS_STATE, encoding="utf-8") as f:
+            if not json.load(f).get("body_enabled", True):
+                return "reply"
+    except (OSError, ValueError):
+        pass
+    n = {"reply": 0, "body": 0}
+    body_today = 0
+    today = datetime.now().date().isoformat()
+    try:
+        with open(AB_LOG, encoding="utf-8") as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                except ValueError:
+                    continue
+                pos = d.get("url_pos")
+                if pos in n and d.get("ts", "") >= "2026-11-06T13":
+                    n[pos] += 1
+                    if pos == "body" and d["ts"][:10] == today:
+                        body_today += 1
+    except OSError:
+        pass
+    if body_today >= URL_POS_BODY_DAILY_CAP:
+        return "reply"
+    return "body" if n["body"] < n["reply"] else "reply"
+
+
 def _next_ab_variant() -> str:
     """M10 AB の variant を「これまでの実投稿件数が少ない方」に割り当てる。
     旧実装(post_id%2)は breaking 記事IDが偶奇に偏るため A:B が崩れた(実測16:36)。
@@ -435,10 +470,10 @@ def _post_traffic(dry_run: bool = False) -> dict:
         print(f"  [traffic] import失敗: {e}")
         return {'success': False, 'reason': f'import失敗: {e}'}
     post = pick_traffic_post()
-    if not post:
-        # 2026-08-21: トレンド連動はニュース記事しか当たらず、会場・会期の具体を
-        # 持たないため具体ゲートで落ちる(実測 6/6)。具体を確実に持つイベント記事
-        # (開催中/直近の国内ポップアップ)へフォールバックする。
+    if not post and os.environ.get('X_TRAFFIC_EVENT_FALLBACK') == '1':
+        # 2026-08-21: イベント(ポップアップ)記事へのフォールバック。
+        # 2026-11-06 owner指示「popupにリプライは不要・popup投稿は不要か少なく」で
+        # 既定OFF。飛び先が131字の骨で流入にもならない([[x-traffic-slots-3...]])。
         post = pick_event_post()
         if post:
             print(f"  [traffic] トレンド空振り→イベント記事に切替: {post['title'][:40]}")
@@ -619,7 +654,8 @@ def process_queue(dry_run: bool = False) -> dict:
             print(f"[scheduler] 流入投稿なし({traffic['reason']}) — キュー経路へ")
 
     # 選定スコアで並べ、同一アーティスト連投を避けて選ぶ
-    queue = _sort_queue(queue)
+    # 2026-11-06 owner指示: popup記事はXに出さない(記事帯・会話帯のキュー経路とも)
+    queue = [e for e in _sort_queue(queue) if e.get('genre') != 'popup']
     to_post = min(remaining_slots, 2)  # 1回の実行で最大2件
     with_url = _queue_url_allowed(hour)
     # Phase3 の URL 枠は具体のない記事を飛ばすため、候補を多めに見て先頭の合格で止める
@@ -677,9 +713,12 @@ def process_queue(dry_run: bool = False) -> dict:
         # URL を付けるときはフックに具体を必須にする。url='' ならフック単発で終わる。
         from lib.x_poster import post_hook_and_reply
         from lib.x_phase import with_utm
-        result = post_hook_and_reply(title, with_utm(url, 'x_queue') if with_url else '',
+        # 2026-11-06 URL位置A/B(reply=自己リプ / body=本文)。URL枠のときだけ割当。
+        url_pos = _next_url_pos() if with_url else 'reply'
+        result = post_hook_and_reply(title, with_utm(url, 'x_queue', url_pos) if with_url else '',
                                      post_id=post_id, genre=genre, artist=artist,
-                                     variant=variant, require_concrete=with_url)
+                                     variant=variant, require_concrete=with_url,
+                                     url_position=url_pos)
         if result.get('skip_concrete'):
             # 具体の無い記事は URL 枠に出さないだけで、キューからは消さない
             print(f"    – {result.get('error', '')[:60]}")
@@ -702,6 +741,7 @@ def process_queue(dry_run: bool = False) -> dict:
                         "variant": actual_variant, "post_id": post_id,
                         "title": title[:120], "genre": genre,
                         "mode": result.get('mode', 'hook_reply'),
+                        "url_pos": result.get('url_pos', 'none'),
                     }, ensure_ascii=False) + "\n")
             except Exception as _e:
                 print(f"    [warn] AB log write failed: {_e}")

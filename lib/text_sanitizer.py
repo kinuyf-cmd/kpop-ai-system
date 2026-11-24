@@ -123,7 +123,13 @@ def sanitize_gpt_html(html: str) -> str:
                   html, flags=re.IGNORECASE)
 
     # 文字重複修正 (5文字以上の連続→2文字に)
-    html = re.sub(r'(.)\1{4,}', r'\1\1', html)
+    # 2026-11-12: タグ(属性のURL)と数字には効かせない。旧実装は全体に掛けていたため
+    # PR TIMES の出典URL 000000141→00141 / 000001873→001873 が404化、100000→100 も起きた。
+    # 対象はテキストノードの数字以外の文字(！！！！！ や ーーーーー など LLM の連打)。
+    html = re.sub(
+        r'(<[^>]*>)|([^\d\s<>])\2{4,}',
+        lambda m: m.group(1) if m.group(1) else m.group(2) * 2,
+        html)
 
     # 段落レベルの重複除去（同一文が2回以上出現→2回目以降を削除）
     html = _remove_duplicate_paragraphs(html)
