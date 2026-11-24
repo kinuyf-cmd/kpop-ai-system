@@ -44,9 +44,25 @@ DRY = False   # --dry: 承認判定まで行い、公開・X はしない(試運
 
 def _prompt(name: str, **kw) -> str:
     t = (PROMPTS / f"{name}.md").read_text(encoding="utf-8")
-    for k, v in kw.items():
-        t = t.replace("{" + k + "}", v if isinstance(v, str) else json.dumps(v, ensure_ascii=False, indent=1))
-    return t
+    vals = {k: (v if isinstance(v, str) else json.dumps(v, ensure_ascii=False, indent=1)) for k, v in kw.items()}
+    # 1パス置換: 差し込んだ値(記事本文・外部ソース由来)の中の「{FACTCHECK}」等を再展開させない
+    return re.sub(r"\{(" + "|".join(map(re.escape, vals)) + r")\}", lambda m: vals[m.group(1)], t) if vals else t
+
+
+def _is_public_http_url(u: str) -> bool:
+    """サムネ取得前のSSRF対策: http(s)のみ、解決先が全て公開IPのときだけ許可。
+    (リダイレクト先・og:image追撃は lib 側の取得で行われるため、ここでは最初のURLだけを守る)"""
+    import ipaddress
+    import socket
+    from urllib.parse import urlparse
+    try:
+        pu = urlparse(str(u).strip())
+        if pu.scheme not in ("http", "https") or not pu.hostname:
+            return False
+        infos = socket.getaddrinfo(pu.hostname, pu.port or (443 if pu.scheme == "https" else 80))
+        return bool(infos) and all(ipaddress.ip_address(i[4][0]).is_global for i in infos)
+    except (OSError, ValueError):
+        return False
 
 
 def _style() -> str:
@@ -157,6 +173,8 @@ def _thumbnail(art: dict, source_urls: list[str]) -> int | None:
     with tempfile.TemporaryDirectory(prefix="kpj_cp_") as td:
         out = str(Path(td) / "og.jpg")
         for u in source_urls[:3]:
+            if not _is_public_http_url(u):
+                continue
             try:
                 from lib.thumbnail_resolver import fetch_source_image
                 if fetch_source_image(u, out):

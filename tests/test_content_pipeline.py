@@ -76,3 +76,17 @@ def test_validator_flags_unsafe_raw():
     assert check_unsafe_html('<p onmouseover="x">a</p>')
     assert check_unsafe_html('<a href="javascript:void(0)">a</a>')
     assert check_unsafe_html('<iframe src="https://a"></iframe>')
+
+
+def test_prompt_substitution_is_single_pass(tmp_path, monkeypatch):
+    from tools.content_pipeline import pipeline as P
+    (tmp_path / "x.md").write_text("A={A}\nB={B}", encoding="utf-8")
+    monkeypatch.setattr(P, "PROMPTS", tmp_path)
+    out = P._prompt("x", A="{B}", B="secret")
+    assert out == "A={B}\nB=secret"
+
+
+def test_is_public_http_url_rejects_internal():
+    from tools.content_pipeline import pipeline as P
+    for u in ("file:///etc/passwd", "http://127.0.0.1/x", "http://169.254.169.254/latest", "http://localhost/", "ftp://example.com/"):
+        assert not P._is_public_http_url(u), u
