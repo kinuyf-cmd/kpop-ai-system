@@ -1,0 +1,9 @@
+{
+  "_comment": "元記事タイトルにローマ字で出る人名→日本語の正表記。表記ガードの roman_notation_mismatch が使う。曖昧な短い名前(Mina等)は入れない。",
+  "Jeongyeon": "ジョンヨン",
+  "Nayeon": "ナヨン",
+  "Jihyo": "ジヒョ",
+  "Dahyun": "ダヒョン",
+  "Chaeyoung": "チェヨン",
+  "Tzuyu": "ツウィ"
+}

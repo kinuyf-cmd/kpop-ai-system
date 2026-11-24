@@ -183,6 +183,10 @@ def _detect_unknown_artist(title: str) -> str:
         # されないよう除外。KPOP_KWのフルネームマッチで signal側は既に正規化される
         'TOMORROW', 'FUTURE', 'DREAM', 'KISS', 'LOVE', 'STAR', 'MOON',
         'BABY', 'GIRL', 'BOY', 'KING', 'QUEEN', 'GOLDEN', 'BLACK', 'WHITE',
+        # 2026-11-12: 番組・局・授賞式の名前がアーティストとして自動登録された
+        # (「FNS歌謡祭2026…」→ 'FNS' が concrete_vs_abstract.json の artists に入った)
+        'FNS', 'NHK', 'TBS', 'NTV', 'CDTV', 'FUJI', 'ABEMA', 'HULU', 'U-NEXT',
+        'MAMA', 'MMA', 'AAA', 'KGMA', 'SMA', 'GDA', 'MAJ', 'MUFG',
     }
 
     # パターン1: タイトル先頭の大文字英語 (句読点・括弧の前まで)

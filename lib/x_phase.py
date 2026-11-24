@@ -45,11 +45,13 @@ def set_phase(phase: int, reason: str) -> None:
     os.replace(tmp, STATE_FILE)
 
 
-def with_utm(url: str, campaign: str) -> str:
+def with_utm(url: str, campaign: str, content: str = '') -> str:
     """X 由来の流入を GA4 で投稿経路別に数えるための UTM を付ける。"""
     if not url:
         return url
     parts = urlsplit(url)
     query = [(k, v) for k, v in parse_qsl(parts.query) if not k.startswith('utm_')]
     query += [('utm_source', 'x'), ('utm_medium', 'social'), ('utm_campaign', campaign)]
+    if content:  # URL位置A/B(reply|body)をGA4で腕別に数える
+        query.append(('utm_content', content))
     return urlunsplit(parts._replace(query=urlencode(query)))

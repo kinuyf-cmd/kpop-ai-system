@@ -384,6 +384,13 @@ def _insert_inline_links(html_body: str, related: list[dict]) -> str:
             result_parts.append(part)
             continue
 
+        # FAQ の答え・出典の段落には足さない(2026-11-12)。FAQ の答えにリンクが付くと
+        # FAQPage JSON-LD の text と本文がずれ、無関係な記事が答えの末尾に並ぶ(post 27634)。
+        if re.match(r'<p[^>]*class="[^"]*\b(kpop-faq-a|kpop-citation-source|kpop-sources-label)\b',
+                    part, re.IGNORECASE):
+            result_parts.append(part)
+            continue
+
         # この段落のプレーンテキスト
         plain = re.sub(r"<[^>]+>", "", part)
         matched_link = None

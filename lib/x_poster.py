@@ -404,8 +404,13 @@ def _fetch_and_upload_featured(post_id: int, creds: dict) -> list:
 
 def post_hook_and_reply(text: str, url: str, post_id: int = None,
                         genre: str = "", artist: str = "",
-                        variant: str = None, require_concrete: bool = False) -> dict:
+                        variant: str = None, require_concrete: bool = False,
+                        url_position: str = "reply") -> dict:
     """2段投稿: フック(URLなし)→URLリプライ (IMP最大化ハック)
+
+    url_position: "reply"=URLは自己リプ(既定) / "body"=URLを本文に置きリプなし
+             (2026-11-06 URL位置A/B。過去のシャドウバンの主因は短時間の連続大量投稿で、
+             URL含有率は補助要因。呼び出し側が日次上限とガードで制御する)。
 
     1) generate_tweet(include_url=False) でフック投稿（URLペナルティ回避）
     2) tweet_idに対してURLリプライを投稿（OGPカード表示）
@@ -551,6 +556,17 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
     # 失敗してもtext-onlyで投稿継続(致命にしない)。
     _media_ids = _fetch_and_upload_featured(post_id, creds) if post_id else []
 
+    # URL位置A/B: body のときは hashtag ブロックの手前に URL を置く(媒体の「見出し+URL」形)。
+    # X の加重文字数(全角2・URL23固定)で280を超えるなら本文URLは諦めて reply に倒し、
+    # 実際の位置を url_pos として返す(集計は実際の位置で行う)。
+    _url_pos = 'reply'
+    if url_position == 'body' and url:
+        _body, _sep, _tags = hook_text.rpartition('\n\n#')
+        _cand = (f"{_body}\n{url}{_sep}{_tags}" if _sep else f"{hook_text}\n{url}")
+        _w = sum(2 if ord(c) > 0x10FF else 1 for c in _cand.replace(url, ''))
+        if _w + 23 <= 280:
+            hook_text, _url_pos = _cand, 'body'
+
     try:
         tweet_id, attempts = _post(hook_text, '', creds, media_ids=_media_ids or None)
     except Exception as e:
@@ -563,11 +579,12 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
         'ts': datetime.now().isoformat(), 'tweet_id': tweet_id,
         'text': hook_text[:120], 'url': url, 'attempts': attempts,
         'status': 'ok', 'mode': 'hook', 'post_id': post_id,
+        'url_pos': _url_pos if url else 'none',
     })
 
     # --- Step 2: URLリプライ（3秒後） ---
     reply_id = None
-    if url and tweet_id:
+    if url and tweet_id and _url_pos == 'reply':
         _time.sleep(3)
         try:
             from lib.x_post_templates import generate_url_reply
@@ -593,7 +610,8 @@ def post_hook_and_reply(text: str, url: str, post_id: int = None,
             })
 
     _variant_used = variant or ('A' if _persona_enabled else ('B' if _llm_enabled else None))
-    return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id, 'variant': _variant_used}
+    return {'success': True, 'tweet_id': tweet_id, 'reply_id': reply_id, 'variant': _variant_used,
+            'url_pos': _url_pos if url else 'none'}
 
 
 def post_thread(text: str, url: str, post_id: int = None,

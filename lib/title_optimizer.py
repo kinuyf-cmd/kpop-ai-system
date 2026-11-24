@@ -48,6 +48,21 @@ def _balance_brackets(title: str) -> str:
     return out
 
 
+def _strip_wrapping_quotes(title: str) -> str:
+    """タイトル全体を包む引用符だけ外す。
+
+    旧実装は .strip('「」""') で、「BoA、日本で連日ステージ出撃「楽しい」」の末尾の閉じ括弧まで
+    削り、閉じ括弧のないタイトルが公開されていた(2026-11-18に2本、11/24に追加で4本確認)。
+    先頭と末尾が対になり、内側に同種の括弧が無いときだけ外す。"""
+    t = (title or '').strip()
+    for op, cl in (('「', '」'), ('"', '"'), ('"', '"'), ('"', '"')):
+        if len(t) >= 2 and t.startswith(op) and t.endswith(cl):
+            inner = t[1:-1]
+            if op not in inner and cl not in inner:
+                return inner.strip()
+    return t
+
+
 def optimize_title(raw_title: str, body: str = '') -> str:
     key = os.getenv('OPENAI_API_KEY')
     if not key:
@@ -92,9 +107,9 @@ def optimize_title(raw_title: str, body: str = '') -> str:
     try:
         r = urllib.request.urlopen(req, timeout=30)
         res = json.loads(r.read())
-        title = res['choices'][0]['message']['content'].strip().strip('「」""').split('\n')[0].strip()
+        title = _strip_wrapping_quotes(res['choices'][0]['message']['content'].strip().split('\n')[0].strip())
         if len(title) > MAX_TITLE:
-            title = title[:MAX_TITLE]
+            title = _balance_brackets(_safe_truncate_title(title, MAX_TITLE))
         return title if len(title) >= 10 else raw_title[:MAX_TITLE]
     except Exception as e:
         print(f"  title_optimizer error: {e}")

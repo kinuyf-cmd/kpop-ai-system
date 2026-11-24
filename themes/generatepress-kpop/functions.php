@@ -3392,3 +3392,32 @@ add_filter( 'aioseo_schema_output', function ( $graph ) {
 	}
 	return $out;
 }, 20 );
+
+
+/**
+ * サイト名表示の補正(2026-11-08)。
+ * Google 検索結果のサイト名が「KPOP JOURNAL」でなく「K Journal (ケージャーナル)」と
+ * 表示された(owner 指摘)。原因は mu-plugin kpop-brand-altnames.php(root 所有・priority 20)が
+ * WebSite/Organization の alternateName に通称 6 件を全登録していること。
+ * mu-plugin は aiuser から編集できないため、後段(priority 30)で通称を絞る。
+ * 「Kジャーナル」「K-Journal」はカタカナ/ハイフン指名検索の拾い漏れ防止のため残し、
+ * サイト名として単独で表示されやすい「K Journal」「ケージャーナル」を外す。
+ * 正式名称 name="KPOP JOURNAL" は変更しない。title と本文の指名語ブロックは別判断(現状維持)。
+ */
+add_filter( 'aioseo_schema_output', function ( $graphs ) {
+	if ( ! is_array( $graphs ) ) {
+		return $graphs;
+	}
+	$drop = array( 'K Journal', 'ケージャーナル' );
+	foreach ( $graphs as &$node ) {
+		if ( ! is_array( $node ) || empty( $node['alternateName'] ) || ! is_array( $node['alternateName'] ) ) {
+			continue;
+		}
+		$type = is_array( $node['@type'] ?? '' ) ? $node['@type'] : array( $node['@type'] ?? '' );
+		if ( array_intersect( array( 'WebSite', 'Organization' ), $type ) ) {
+			$node['alternateName'] = array_values( array_diff( $node['alternateName'], $drop ) );
+		}
+	}
+	unset( $node );
+	return $graphs;
+}, 30 );

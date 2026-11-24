@@ -1,0 +1,10 @@
+{
+  "_comment": "publish-validate が照合するサイト設定(2026-11-13)。alternate_names は 2026-11-08 の整理後(functions.php の aioseo_schema_output フィルタで 'K Journal'/'ケージャーナル' を除去)。サイト側を変えたらここも変える。site_name は WP の blogname と一致しないと validate が失敗する。",
+  "site_name": "KPOP JOURNAL",
+  "og_site_name": "KPOP JOURNAL",
+  "title_suffix": " - KPOP JOURNAL",
+  "alternate_names": ["Kジャーナル", "K-Journal", "KPOPジャーナル", "kpopjournal"],
+  "description_min_chars": 50,
+  "description_max_chars": 160,
+  "post_title_max_chars": 60
+}

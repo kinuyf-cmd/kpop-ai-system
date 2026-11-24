@@ -118,6 +118,30 @@ def _validate_thumbnail(image_path: str, expected_artist: str = '',
         return False, f"validate err: {e}"
 
 
+def _artist_named_in_title(artist, title):
+    """タイトルに artist 名が出ているか(大小・空白・記号を無視)。
+    2026-11-24: 信号のアーティスト(BIGBANG)と記事の主役(2xFE)が別のとき、og画像(2xFE本人)を
+    「BIGBANGが写っていない」と身元検査で落とし、BIGBANGのMV画像に差し替わっていた(post 28703)。"""
+    import re as _re
+    norm = lambda x: _re.sub(r'[\s_\-・.]', '', str(x or '')).casefold()
+    a = norm(artist)
+    return bool(a) and a in norm(title)
+
+
+def _signal_artist_supported(artist, title):
+    """信号由来のartistを本人写真フォールバックに使ってよいか。
+    題名にartist名が出ているか、題名からK-POPの主役(メンバー名等)が検出できる場合だけ許す。
+    どちらも無い(俳優・芸能人・新人等で、信号のartistは本文中の言及に過ぎない)なら使わない。
+    2026-11-24: 10/25以降31本で、俳優/タレント記事に信号artistのMV画像が付いていた。"""
+    if _artist_named_in_title(artist, title):
+        return True
+    try:
+        from lib.article_topic_classifier import classify
+        return bool(classify(title or '', '').get('subjects'))
+    except Exception:
+        return True   # 判定不能なら従来挙動
+
+
 def _upload_media(image_path, alt_text='', expected_artist='', article_title=''):
     # 公開前gate: 不正サムネはアップロードしない
     # expected_artist指定時は Vision で身元検査(段階1で素通りした別人写真の最終防御)
@@ -446,8 +470,11 @@ def unified_publish(
             thumb = None
         if thumb and thumb.get('path'):
             _src_alt = f"{title_final}のサムネイル画像"
+            # タイトルに名前が出ない artist(信号由来)で og画像を落とさない。og画像は resolve_thumbnail で
+            # タイトル由来の主役に対して検査済み
+            _og_expected = artist if _artist_named_in_title(artist, title_final) else ''
             media_id = _upload_media(thumb['path'], alt_text=_src_alt,
-                                     expected_artist=artist, article_title=title_final)
+                                     expected_artist=_og_expected, article_title=title_final)
             if media_id:
                 log.append(f"media_id: {media_id} (source_og_primary: {thumb.get('source','')})")
                 if thumb.get('source_url'):
@@ -459,7 +486,7 @@ def unified_publish(
     # ソース og:image が取得できなかった場合のフォールバック: アーティスト本人写真
     # thumbnail_og_only=True (純韓国エンタメ等) では artist DB 照合をスキップ
     # (DBに無い被写体で誤った人物写真が乗る事故を防ぐ)。
-    if not media_id and artist and not thumbnail_og_only:
+    if not media_id and artist and not thumbnail_og_only and _signal_artist_supported(artist, title_final):
         try:
             from lib.thumbnail_source_resolver import resolve as _resolve_artist_thumb
             # 2026-05-12: 曲名 match で MV サムネを選定 (WDA 記事に THIRSTY MV 事故対策)

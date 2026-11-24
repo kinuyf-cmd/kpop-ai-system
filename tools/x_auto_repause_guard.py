@@ -139,6 +139,43 @@ def _median(xs: list[int]) -> float:
     return float(s[n // 2]) if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
 
 
+URL_POS_STATE = BASE / "data" / "x_url_pos_state.json"
+URL_POS_START = "2026-11-06T13"
+URL_POS_MIN_N = 4        # 各腕この本数が揃うまで判定しない
+URL_POS_BODY_RATIO = 0.5  # 本文URL腕の中央値がリプ腕のこの割合未満なら本文URL腕を停止
+
+
+def _url_pos_check(dry_run: bool) -> dict:
+    """URL位置A/B(2026-11-06)の安全弁。本文URL腕のimp中央値がリプ腕の半分を割ったら停止。"""
+    ab = BASE / "logs" / "x_ab_log.jsonl"
+    ids = {"reply": [], "body": []}
+    hi = datetime.now() - timedelta(hours=AGE_H)
+    if not ab.exists():
+        return {}
+    for line in ab.read_text().splitlines():
+        try:
+            d = json.loads(line)
+            ts = datetime.fromisoformat(d["ts"])
+        except (ValueError, KeyError):
+            continue
+        if d.get("url_pos") in ids and d["ts"] >= URL_POS_START and ts <= hi and d.get("tweet_id"):
+            ids[d["url_pos"]].append(str(d["tweet_id"]))
+    imps = {k: _impressions(v) for k, v in ids.items()}
+    out = {"urlpos_reply_n": len(imps["reply"]), "urlpos_body_n": len(imps["body"])}
+    if min(len(imps["reply"]), len(imps["body"])) < URL_POS_MIN_N:
+        return out
+    rm, bm = _median(imps["reply"]), _median(imps["body"])
+    out.update({"urlpos_reply_median": rm, "urlpos_body_median": bm})
+    if bm < rm * URL_POS_BODY_RATIO:
+        out["urlpos_body_stopped"] = f"本文URL中央値 {bm:.0f} < リプURL {rm:.0f}×{URL_POS_BODY_RATIO}"
+        if not dry_run:
+            URL_POS_STATE.write_text(json.dumps({"body_enabled": False, "reason": out["urlpos_body_stopped"],
+                                                 "ts": datetime.now().isoformat(timespec="seconds")},
+                                                ensure_ascii=False), encoding="utf-8")
+            _notify_discord(f"⚠️ [X URL位置A/B] 本文URL腕を停止: {out['urlpos_body_stopped']}")
+    return out
+
+
 def _phase_check(avg: float, dry_run: bool) -> dict:
     """Phase>=3 の悪化判定。降格したら理由を返す。"""
     from lib.x_phase import get_phase, set_phase
@@ -248,6 +285,10 @@ def main() -> int:
             record.update(_phase_check(avg, dry_run))
         except Exception as e:  # 降格判定の失敗で全停止ガードの記録を止めない
             record["phase_error"] = str(e)[:200]
+        try:
+            record.update(_url_pos_check(dry_run))
+        except Exception as e:
+            record["urlpos_error"] = str(e)[:200]
         _log(record)
         print(f"healthy: avg imp {avg:.2f} >= {THRESHOLD} (n={n})")
         return 0
