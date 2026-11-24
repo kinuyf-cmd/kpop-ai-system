@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """サムネ2段fallback: ソース画像(引用) → DALL-E 3"""
 import os, json, re, sys, urllib.request
+try:
+    from lib.net_safety import safe_urlopen
+except ImportError:  # lib/ を sys.path に直接足して import される経路
+    from net_safety import safe_urlopen
 from urllib.parse import urlparse
 
 # モジュール先頭で1回だけpath設定(hot pathでのinsertを避ける)
@@ -302,7 +306,7 @@ def _download_image(img_url, output_path):
         img_req = urllib.request.Request(img_url, headers={
             'User-Agent': _BROWSER_UA,
         })
-        with urllib.request.urlopen(img_req, timeout=20) as resp:
+        with safe_urlopen(img_req, timeout=20) as resp:
             with open(output_path, 'wb') as f:
                 f.write(resp.read())
         return os.path.exists(output_path) and os.path.getsize(output_path) > 5000
@@ -336,7 +340,7 @@ def fetch_source_image(source_url, output_path):
         req = urllib.request.Request(source_url, headers={
             'User-Agent': _BROWSER_UA,
         })
-        html = urllib.request.urlopen(req, timeout=20).read().decode('utf-8', errors='replace')
+        html = safe_urlopen(req, timeout=20).read().decode('utf-8', errors='replace')
 
         # --- og:image / twitter:image 取得 ---
         og_url = None

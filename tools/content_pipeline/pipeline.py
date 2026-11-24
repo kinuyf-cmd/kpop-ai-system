@@ -50,19 +50,9 @@ def _prompt(name: str, **kw) -> str:
 
 
 def _is_public_http_url(u: str) -> bool:
-    """サムネ取得前のSSRF対策: http(s)のみ、解決先が全て公開IPのときだけ許可。
-    (リダイレクト先・og:image追撃は lib 側の取得で行われるため、ここでは最初のURLだけを守る)"""
-    import ipaddress
-    import socket
-    from urllib.parse import urlparse
-    try:
-        pu = urlparse(str(u).strip())
-        if pu.scheme not in ("http", "https") or not pu.hostname:
-            return False
-        infos = socket.getaddrinfo(pu.hostname, pu.port or (443 if pu.scheme == "https" else 80))
-        return bool(infos) and all(ipaddress.ip_address(i[4][0]).is_global for i in infos)
-    except (OSError, ValueError):
-        return False
+    """サムネ取得前のSSRF対策(実体は lib/net_safety。リダイレクト先・og:image追撃は取得側 safe_urlopen が検査)"""
+    from lib.net_safety import is_public_http_url
+    return is_public_http_url(u)
 
 
 def _style() -> str:
